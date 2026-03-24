@@ -9,27 +9,6 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class DialogueMemoryServiceTests
 {
     [Test]
-    public void LoadOrCreate_WhenFileDoesNotExist_ShouldCreateDefaultMemoryFile()
-    {
-        using var tempDirectory = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
-        var service = new DialogueMemoryService(directoriesConfig);
-        var npcId = (Serial)0x12314u;
-
-        var memoryFile = service.LoadOrCreate(npcId);
-        var expectedPath = Path.Combine(tempDirectory.Path, "runtime", "dialogue_memory", "0x012314.json");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(File.Exists(expectedPath), Is.True);
-                Assert.That(memoryFile.NpcId, Is.EqualTo(npcId.Value));
-                Assert.That(memoryFile.Entries, Is.Empty);
-            }
-        );
-    }
-
-    [Test]
     public void GetOrCreateEntry_ShouldCreateTypedEntry_AndPersistAfterSave()
     {
         using var tempDirectory = new TempDirectory();
@@ -58,6 +37,27 @@ public sealed class DialogueMemoryServiceTests
                 Assert.That(reloadedEntry.Texts["last_service"], Is.EqualTo("room"));
                 Assert.That(reloadedEntry.LastNode, Is.EqualTo("room_done"));
                 Assert.That(reloadedEntry.LastTopic, Is.EqualTo("room"));
+            }
+        );
+    }
+
+    [Test]
+    public void LoadOrCreate_WhenFileDoesNotExist_ShouldCreateDefaultMemoryFile()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(tempDirectory.Path, Enum.GetNames<DirectoryType>());
+        var service = new DialogueMemoryService(directoriesConfig);
+        var npcId = (Serial)0x12314u;
+
+        var memoryFile = service.LoadOrCreate(npcId);
+        var expectedPath = Path.Combine(tempDirectory.Path, "runtime", "dialogue_memory", "0x012314.json");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(File.Exists(expectedPath), Is.True);
+                Assert.That(memoryFile.NpcId, Is.EqualTo(npcId.Value));
+                Assert.That(memoryFile.Entries, Is.Empty);
             }
         );
     }

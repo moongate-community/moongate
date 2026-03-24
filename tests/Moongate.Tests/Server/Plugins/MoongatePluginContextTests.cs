@@ -8,6 +8,18 @@ namespace Moongate.Tests.Server.Plugins;
 
 public class MoongatePluginContextTests
 {
+    private sealed class TestPacketHandler { }
+
+    private sealed class TestGameEventListener { }
+
+    private sealed class TestCommand { }
+
+    private sealed class TestFileLoader { }
+
+    private sealed class TestLuaUserData { }
+
+    private sealed class TestScriptModule { }
+
     [Test]
     public void RegisterMethods_ShouldPopulateBootstrapRegistrations()
     {
@@ -53,16 +65,4 @@ public class MoongatePluginContextTests
 
         Assert.That(registry.IsRegistered<HelpTicketEntity, Serial>(), Is.True);
     }
-
-    private sealed class TestPacketHandler { }
-
-    private sealed class TestGameEventListener { }
-
-    private sealed class TestCommand { }
-
-    private sealed class TestFileLoader { }
-
-    private sealed class TestLuaUserData { }
-
-    private sealed class TestScriptModule { }
 }

@@ -15,9 +15,7 @@ internal sealed class HelpTicketRepository : BaseRepository<HelpTicketEntity, Se
         IJournalService journalService,
         IPersistenceEntityDescriptor<HelpTicketEntity, Serial> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 
     public ValueTask<IReadOnlyList<HelpTicketEntity>> GetBySenderCharacterIdAsync(
         Serial senderCharacterId,

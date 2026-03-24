@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Version;
 using Moongate.Server.Interfaces.Characters;
@@ -29,6 +30,7 @@ namespace Moongate.Server.Handlers;
  RegisterPacketHandler(PacketDefinition.ServerSelectPacket),
  RegisterPacketHandler(PacketDefinition.GameLoginPacket),
  RegisterPacketHandler(PacketDefinition.LoginCharacterPacket),
+ RegisterPacketHandler(PacketDefinition.ClientTypePacket),
  RegisterPacketHandler(PacketDefinition.ClientVersionPacket)]
 
 /// <summary>
@@ -42,7 +44,9 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
     private readonly ICharacterService _characterService;
     private readonly IGameEventBusService _gameEventBusService;
 
+    private readonly IGameLoginHandoffService _gameLoginHandoffService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
+    private readonly IOutboundPacketSender _outboundPacketSender;
 
     private readonly MoongateConfig _serverConfig;
 
@@ -52,14 +56,18 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         ICharacterService characterService,
         IGameEventBusService gameEventBusService,
         MoongateConfig serverConfig,
-        IGameNetworkSessionService gameNetworkSessionService
+        IGameLoginHandoffService gameLoginHandoffService,
+        IGameNetworkSessionService gameNetworkSessionService,
+        IOutboundPacketSender outboundPacketSender
     ) : base(outgoingPacketQueue)
     {
         _accountService = accountService;
         _characterService = characterService;
         _gameEventBusService = gameEventBusService;
         _serverConfig = serverConfig;
+        _gameLoginHandoffService = gameLoginHandoffService;
         _gameNetworkSessionService = gameNetworkSessionService;
+        _outboundPacketSender = outboundPacketSender;
     }
 
     public Task HandleAsync(PlayerCharacterLoggedInEvent gameEvent, CancellationToken cancellationToken = default)
@@ -122,6 +130,11 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             return await HandleLoginCharacterPacketAsync(session, loginCharacterPacket);
         }
 
+        if (packet is ClientTypePacket clientTypePacket)
+        {
+            return HandleClientTypePacketAsync(session, clientTypePacket);
+        }
+
         if (packet is ClientVersionPacket clientVersionPacket)
         {
             return HandleClientVersionPacketAsync(session, clientVersionPacket);
@@ -173,6 +186,28 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return true;
     }
 
+    private bool HandleClientTypePacketAsync(GameSession session, ClientTypePacket clientTypePacket)
+    {
+        session.NetworkSession.SetClientType(clientTypePacket.ResolvedClientType);
+
+        if (!string.IsNullOrWhiteSpace(clientTypePacket.VersionString))
+        {
+            var clientVersion = new ClientVersion(clientTypePacket.VersionString);
+            session.SetClientVersion(clientVersion);
+            session.NetworkSession.SetClientVersion(clientVersion);
+        }
+
+        _logger.Debug(
+            "Received ClientTypePacket from session {SessionId}: advertised=0x{AdvertisedClientType:X8} resolved={ClientType} version={ClientVersion}",
+            session.SessionId,
+            clientTypePacket.AdvertisedClientType,
+            clientTypePacket.ResolvedClientType,
+            string.IsNullOrWhiteSpace(clientTypePacket.VersionString) ? "<none>" : clientTypePacket.VersionString
+        );
+
+        return true;
+    }
+
     private bool HandleClientVersionPacketAsync(GameSession session, ClientVersionPacket clientVersionPacket)
     {
         var rawVersion = clientVersionPacket.Version.TrimEnd('\0').Trim();
@@ -186,6 +221,7 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         var clientVersion = new ClientVersion(rawVersion);
         session.SetClientVersion(clientVersion);
+        session.NetworkSession.SetClientVersion(clientVersion);
 
         _logger.Debug(
             "Received ClientVersionPacket from session {SessionId}: {ClientVersion} ({ClientType})",
@@ -205,6 +241,25 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
             gameLoginPacket.AccountName
         );
 
+        if (_gameLoginHandoffService.TryConsume(gameLoginPacket.SessionKey, out var handoff))
+        {
+            session.NetworkSession.SetClientType(handoff.ClientType);
+
+            if (handoff.ClientVersion is not null)
+            {
+                session.SetClientVersion(handoff.ClientVersion);
+                session.NetworkSession.SetClientVersion(handoff.ClientVersion);
+            }
+
+            _logger.Debug(
+                "Applied game login handoff for session {SessionId}: session key 0x{SessionKey:X8}, client type {ClientType}, version {ClientVersion}",
+                session.SessionId,
+                gameLoginPacket.SessionKey,
+                handoff.ClientType,
+                handoff.ClientVersion?.SourceString ?? "<none>"
+            );
+        }
+
         var account = await _accountService.LoginAsync(gameLoginPacket.AccountName, gameLoginPacket.Password);
 
         if (account == null)
@@ -219,14 +274,17 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         session.NetworkSession.EnableCompression();
 
-        var characterListPacket = new CharactersStartingLocationsPacket();
+        var characterListPacket = new CharactersStartingLocationsPacket
+        {
+            IsEnhancedClient = session.NetworkSession.IsEnhancedClient
+        };
         characterListPacket.Cities.AddRange(StartingCities.AvailableStartingCities);
 
         var characters = await _characterService.GetCharactersForAccountAsync(session.AccountId);
         session.AccountCharactersCache = characters;
         characterListPacket.FillCharacters(characters);
 
-        Enqueue(session, new SupportFeaturesPacket());
+        Enqueue(session, new SupportFeaturesPacket(GetSupportFeatureFlags(), UseExtendedSupportFeatures(session)));
         Enqueue(session, characterListPacket);
 
         return true;
@@ -260,6 +318,9 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
     private Task<bool> HandleLoginSeedPacketAsync(GameSession session, LoginSeedPacket packet)
     {
+        session.NetworkSession.SetSeed(unchecked((uint)packet.Seed));
+        session.NetworkSession.SetClientVersion(packet.ClientVersion);
+
         _logger.Debug(
             "Received LoginSeedPacket from session {SessionId} with seed {Seed} and client version {ClientVersion}",
             session.SessionId,
@@ -270,28 +331,61 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
         return Task.FromResult(true);
     }
 
-    private Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket _)
+    private async Task<bool> HandleServerSelectPacketAsync(GameSession session, ServerSelectPacket packet)
     {
         try
         {
-            var sessionKey = new Random().Next();
+            var sessionKey = Random.Shared.Next();
+            var shardAddress = ResolveShardAddress(session);
 
             var connectToServer = new ServerRedirectPacket
             {
-                IPAddress = ResolveShardAddress(session),
+                IPAddress = shardAddress,
                 Port = 2593,
                 SessionKey = (uint)sessionKey
             };
 
             session.NetworkSession.SetSeed((uint)sessionKey);
+            _gameLoginHandoffService.Store(
+                connectToServer.SessionKey,
+                session.NetworkSession.ClientType,
+                session.NetworkSession.ClientVersion
+            );
 
-            Enqueue(session, connectToServer);
+            _logger.Debug(
+                "Received ServerSelectPacket from session {SessionId} with shard index {ShardIndex}; redirecting to {IPAddress}:{Port} with session key 0x{SessionKey:X8}",
+                session.SessionId,
+                packet.SelectedServerIndex,
+                shardAddress,
+                connectToServer.Port,
+                connectToServer.SessionKey
+            );
 
-            return Task.FromResult(true);
+            var client = session.NetworkSession.Client;
+
+            if (client is null)
+            {
+                _logger.Warning(
+                    "Session {SessionId} has no attached client during server select redirect.",
+                    session.SessionId
+                );
+
+                return true;
+            }
+
+            _ = await _outboundPacketSender.SendAsync(
+                client,
+                new OutgoingGamePacket(session.SessionId, connectToServer, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()),
+                CancellationToken.None
+            );
+
+            await client.CloseAsync();
+
+            return true;
         }
         catch (Exception exception)
         {
-            return Task.FromException<bool>(exception);
+            throw;
         }
     }
 
@@ -312,4 +406,12 @@ public class LoginHandler : BasePacketListener, IGameEventListener<PlayerCharact
 
         return IPAddress.Loopback;
     }
+
+    private static FeatureFlags GetSupportFeatureFlags()
+        => Moongate.UO.Data.Expansions.ExpansionInfo.Table is { Length: > 0 }
+            ? Moongate.UO.Data.Expansions.ExpansionInfo.CoreExpansion.SupportedFeatures
+            : FeatureFlags.ExpansionEJ;
+
+    private static bool UseExtendedSupportFeatures(GameSession session)
+        => session.NetworkSession.ClientVersion?.ProtocolChanges.HasFlag(ProtocolChanges.ExtendedSupportedFeatures) ?? true;
 }

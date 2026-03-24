@@ -152,17 +152,6 @@ public sealed class MoongateBootstrap : IDisposable
         await persistenceService.SaveAsync();
     }
 
-    private async Task StopAsync(List<IMoongateService> runningServices)
-    {
-        for (var i = runningServices.Count - 1; i >= 0; i--)
-        {
-            var service = runningServices[i];
-
-            _logger.Information("Stopping {ServiceTypeFullName}", service.GetType().Name);
-            await service.StopAsync();
-        }
-    }
-
     private async Task InitializePlugins(CancellationToken cancellationToken)
     {
         foreach (var loadedPlugin in _container.ResolveMany<LoadedPlugin>())
@@ -174,6 +163,17 @@ public sealed class MoongateBootstrap : IDisposable
             );
 
             await loadedPlugin.Instance.InitializeAsync(runtimeContext, cancellationToken);
+        }
+    }
+
+    private async Task StopAsync(List<IMoongateService> runningServices)
+    {
+        for (var i = runningServices.Count - 1; i >= 0; i--)
+        {
+            var service = runningServices[i];
+
+            _logger.Information("Stopping {ServiceTypeFullName}", service.GetType().Name);
+            await service.StopAsync();
         }
     }
 }

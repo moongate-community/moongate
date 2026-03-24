@@ -1,0 +1,174 @@
+[
+  {
+    "type": "item",
+    "id": "bloodwood_spirit",
+    "name": "Bloodwood Spirit",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x2F5A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "candelabra_of_souls",
+    "name": "Candelabra Of Souls",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x0B26",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ghost_ship_anchor",
+    "name": "Ghost Ship Anchor",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x14F7",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "gold_bricks",
+    "name": "Gold Bricks",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x1BEB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pads_of_the_cu_sidhe",
+    "name": "Pads Of The Cu Sidhe",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x047E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "robe_of_the_eclipse",
+    "name": "Robe Of The Eclipse",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x1F03",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "robe_of_the_equinox",
+    "name": "Robe Of The Equinox",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x1F04",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 3,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ship_model_of_the_hms_cape",
+    "name": "Ship Model Of The HMS Cape",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x14F3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "totem_of_void",
+    "name": "Totem Of Void",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x2F5B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor artifacts"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ship_model_of_the_hmscape",
+    "name": "Ship Model Of The HMSCape",
+    "category": "Minor Artifacts",
+    "description": "",
+    "itemId": "0x14F3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "minor_artifacts"
+    ]
+  }
+]

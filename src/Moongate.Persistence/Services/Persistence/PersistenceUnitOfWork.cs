@@ -55,22 +55,6 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
 
     public IMobileRepository Mobiles { get; }
 
-    public IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
-    {
-        object repository = typeof(TEntity) switch
-        {
-            var entityType when entityType == typeof(UOAccountEntity) && typeof(TKey) == typeof(Serial) => Accounts,
-            var entityType when entityType == typeof(UOMobileEntity) && typeof(TKey) == typeof(Serial) => Mobiles,
-            var entityType when entityType == typeof(UOItemEntity) && typeof(TKey) == typeof(Serial) => Items,
-            var entityType when entityType == typeof(BulletinBoardMessageEntity) && typeof(TKey) == typeof(Serial) =>
-                BulletinBoardMessages,
-            var entityType when entityType == typeof(HelpTicketEntity) && typeof(TKey) == typeof(Serial) => HelpTickets,
-            _ => GetOrCreateGenericRepository<TEntity, TKey>()
-        };
-
-        return (IBaseRepository<TEntity, TKey>)repository;
-    }
-
     public Serial AllocateNextAccountId()
     {
         lock (_stateStore.SyncRoot)
@@ -118,12 +102,12 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 EntityBuckets =
                 [
                     .. _entityRegistry.GetRegisteredDescriptors()
-                                     .Select(
-                                         descriptor =>
-                                             ((IInternalPersistenceEntityDescriptor)descriptor).CaptureBucket(_stateStore)
-                                     )
-                                     .OfType<EntitySnapshotBucket>()
-                ],
+                                      .Select(
+                                          descriptor =>
+                                              ((IInternalPersistenceEntityDescriptor)descriptor).CaptureBucket(_stateStore)
+                                      )
+                                      .OfType<EntitySnapshotBucket>()
+                ]
             };
             capturedLastSequenceId = _stateStore.LastSequenceId;
         }
@@ -141,6 +125,22 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
     {
         _journalService.Dispose();
         _snapshotService.Dispose();
+    }
+
+    public IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+    {
+        object repository = typeof(TEntity) switch
+        {
+            var entityType when entityType == typeof(UOAccountEntity) && typeof(TKey) == typeof(Serial) => Accounts,
+            var entityType when entityType == typeof(UOMobileEntity) && typeof(TKey) == typeof(Serial)  => Mobiles,
+            var entityType when entityType == typeof(UOItemEntity) && typeof(TKey) == typeof(Serial)    => Items,
+            var entityType when entityType == typeof(BulletinBoardMessageEntity) && typeof(TKey) == typeof(Serial) =>
+                BulletinBoardMessages,
+            var entityType when entityType == typeof(HelpTicketEntity) && typeof(TKey) == typeof(Serial) => HelpTickets,
+            _ => GetOrCreateGenericRepository<TEntity, TKey>()
+        };
+
+        return (IBaseRepository<TEntity, TKey>)repository;
     }
 
     public async ValueTask InitializeAsync(CancellationToken cancellationToken = default)
@@ -242,9 +242,11 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
         {
             case JournalEntityOperationType.Upsert:
                 descriptor.ApplyUpsert(_stateStore, entry.Payload);
+
                 break;
             case JournalEntityOperationType.Remove:
                 descriptor.ApplyRemove(_stateStore, entry.Payload);
+
                 break;
             default:
                 throw new InvalidOperationException(
@@ -268,7 +270,17 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
             var repository = new GenericRepository<TEntity, TKey>(_stateStore, _journalService, descriptor);
             _genericRepositories[cacheKey] = repository;
 
-            return (IBaseRepository<TEntity, TKey>)repository;
+            return repository;
+        }
+    }
+
+    private void RebuildAccountNameIndex()
+    {
+        _stateStore.AccountNameIndex.Clear();
+
+        foreach (var account in _stateStore.AccountsById.Values)
+        {
+            _stateStore.AccountNameIndex[account.Username] = account.Id;
         }
     }
 
@@ -300,16 +312,6 @@ public sealed class PersistenceUnitOfWork : IPersistenceUnitOfWork, IDisposable
                 _stateStore.LastItemId,
                 _stateStore.HelpTicketsById.Keys.Max(static id => (uint)id)
             );
-        }
-    }
-
-    private void RebuildAccountNameIndex()
-    {
-        _stateStore.AccountNameIndex.Clear();
-
-        foreach (var account in _stateStore.AccountsById.Values)
-        {
-            _stateStore.AccountNameIndex[account.Username] = account.Id;
         }
     }
 }

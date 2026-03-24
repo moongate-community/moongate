@@ -1,6 +1,9 @@
 using System.Net;
 using Moongate.Network.Client;
+using Moongate.Network.Interfaces;
+using Moongate.Server.Data.Internal.Network;
 using Moongate.UO.Data.Middlewares;
+using Moongate.UO.Data.Version;
 
 namespace Moongate.Server.Data.Session;
 
@@ -69,6 +72,11 @@ public sealed class GameNetworkSession
     public bool EncryptionEnabled { get; private set; }
 
     /// <summary>
+    /// Gets the active transport encryption for this session, when enabled.
+    /// </summary>
+    public IClientEncryption? Encryption { get; private set; }
+
+    /// <summary>
     /// Gets the authenticated account id, when available.
     /// </summary>
     public long? AccountId { get; private set; }
@@ -82,6 +90,21 @@ public sealed class GameNetworkSession
     /// Gets the authenticated account name, when available.
     /// </summary>
     public string? AccountName { get; private set; }
+
+    /// <summary>
+    /// Gets the negotiated client version, when available.
+    /// </summary>
+    public ClientVersion? ClientVersion { get; private set; }
+
+    /// <summary>
+    /// Gets the resolved client type for this session.
+    /// </summary>
+    public ClientType ClientType { get; private set; } = ClientType.Classic;
+
+    /// <summary>
+    /// Gets whether the session represents an enhanced-style client.
+    /// </summary>
+    public bool IsEnhancedClient { get; private set; }
 
     /// <summary>
     /// Gets the selected in-game character serial, when available.
@@ -118,6 +141,9 @@ public sealed class GameNetworkSession
         lock (_stateSync)
         {
             EncryptionEnabled = false;
+            Encryption = null;
+            var client = Client;
+            client?.RemoveMiddleware<EncryptionMiddleware>();
         }
     }
 
@@ -149,11 +175,29 @@ public sealed class GameNetworkSession
     /// <summary>
     /// Enables encryption for this session.
     /// </summary>
-    public void EnableEncryption()
+    public void EnableEncryption(IClientEncryption encryption)
     {
+        ArgumentNullException.ThrowIfNull(encryption);
+
         lock (_stateSync)
         {
+            var client = Client;
+
+            if (client is null)
+            {
+                EncryptionEnabled = false;
+                Encryption = null;
+
+                return;
+            }
+
             EncryptionEnabled = true;
+            Encryption = encryption;
+
+            if (!client.ContainsMiddleware<EncryptionMiddleware>())
+            {
+                client.AddMiddleware(new EncryptionMiddleware(this));
+            }
         }
     }
 
@@ -196,6 +240,40 @@ public sealed class GameNetworkSession
         LocalEndPoint = client.LocalEndPoint?.ToString();
         RemoteIpAddress = ResolveIpAddress(client.RemoteEndPoint);
         LocalIpAddress = ResolveIpAddress(client.LocalEndPoint);
+    }
+
+    /// <summary>
+    /// Stores the client type reported by the client.
+    /// </summary>
+    /// <param name="clientType">Reported client type.</param>
+    public void SetClientType(ClientType clientType)
+    {
+        lock (_stateSync)
+        {
+            ClientType = clientType;
+            IsEnhancedClient = clientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
+        }
+    }
+
+    /// <summary>
+    /// Stores the client version received during handshake negotiation.
+    /// </summary>
+    /// <param name="clientVersion">Client version metadata.</param>
+    public void SetClientVersion(ClientVersion clientVersion)
+    {
+        ArgumentNullException.ThrowIfNull(clientVersion);
+
+        lock (_stateSync)
+        {
+            ClientVersion = clientVersion;
+
+            if (ClientType == ClientType.Classic && clientVersion.Type != ClientType.Classic)
+            {
+                ClientType = clientVersion.Type;
+            }
+
+            IsEnhancedClient = ClientType is ClientType.KR or ClientType.SA or ClientType.UOTD;
+        }
     }
 
     /// <summary>

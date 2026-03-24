@@ -1,8 +1,8 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Listener;
-using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Session;
 
 namespace Moongate.Server.Listeners.Base;
 

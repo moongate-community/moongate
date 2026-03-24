@@ -1,5 +1,3 @@
-using MoonSharp.Interpreter;
-
 namespace Moongate.Server.Data.Scripting;
 
 /// <summary>

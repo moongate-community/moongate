@@ -7,6 +7,13 @@ namespace Moongate.Server.Interfaces.Services.Interaction;
 
 public interface IHelpTicketService : IMoongateService
 {
+    Task<HelpTicketEntity?> AssignToAccountAsync(
+        Serial ticketId,
+        Serial assignedToAccountId,
+        Serial? assignedToCharacterId,
+        CancellationToken cancellationToken = default
+    );
+
     Task<HelpTicketEntity?> CreateTicketAsync(
         long sessionId,
         HelpTicketCategory category,
@@ -15,6 +22,13 @@ public interface IHelpTicketService : IMoongateService
     );
 
     Task<IReadOnlyList<HelpTicketEntity>> GetAllTicketsAsync(CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
+        Serial senderAccountId,
+        CancellationToken cancellationToken = default
+    );
+
+    Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default);
 
     Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
         int page,
@@ -25,23 +39,9 @@ public interface IHelpTicketService : IMoongateService
         CancellationToken cancellationToken = default
     );
 
-    Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default);
-
-    Task<HelpTicketEntity?> AssignToAccountAsync(
-        Serial ticketId,
-        Serial assignedToAccountId,
-        Serial? assignedToCharacterId,
-        CancellationToken cancellationToken = default
-    );
-
     Task<HelpTicketEntity?> UpdateStatusAsync(
         Serial ticketId,
         HelpTicketStatus status,
-        CancellationToken cancellationToken = default
-    );
-
-    Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
-        Serial senderAccountId,
         CancellationToken cancellationToken = default
     );
 }

@@ -2,13 +2,16 @@
   {
     "type": "item",
     "id": "loot_test_chest",
-    "base_item": "metal_chest",
     "name": "Loot Test Chest",
     "category": "Test Containers",
     "description": "Spawnable chest used to verify first-open loot table generation.",
+    "itemId": "0x0E80",
     "container": [],
     "lootTables": ["loot_test_chest_basic"],
     "containerLayoutId": "metal_chest",
+    "weight": 1.0,
+    "weightMax": 40000,
+    "maxItems": 125,
     "params": {
       "loot_refillable": {
         "type": "string",
@@ -21,7 +24,7 @@
     },
     "goldValue": "0",
     "hue": "0",
-    "scriptId": "items.loot_test_chest",
+    "scriptId": "none",
     "isMovable": true,
     "tags": ["container", "test", "loot"]
   }

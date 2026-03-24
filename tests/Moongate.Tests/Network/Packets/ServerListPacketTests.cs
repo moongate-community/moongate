@@ -52,4 +52,32 @@ public class ServerListPacketTests
             }
         );
     }
+
+    [Test]
+    public void Write_WithSingleShard_ShouldSerializeIpAddressLikeModernUoServerList()
+    {
+        var packet = new ServerListPacket(
+            new GameServerEntry
+            {
+                Index = 0,
+                ServerName = "Moongate Shard",
+                IpAddress = IPAddress.Parse("192.168.0.206")
+            }
+        );
+
+        var writer = new SpanWriter(128, true);
+        packet.Write(ref writer);
+        var data = writer.ToArray();
+        writer.Dispose();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data[^4], Is.EqualTo(0xCE));
+                Assert.That(data[^3], Is.EqualTo(0x00));
+                Assert.That(data[^2], Is.EqualTo(0xA8));
+                Assert.That(data[^1], Is.EqualTo(0xC0));
+            }
+        );
+    }
 }

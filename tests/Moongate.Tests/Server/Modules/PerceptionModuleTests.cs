@@ -2,11 +2,14 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules;
+using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Modules;
@@ -124,7 +127,14 @@ public sealed class PerceptionModuleTests
     public void FindNearestEnemy_AndFriend_ShouldResolveClosestMobiles()
     {
         var spatial = new PerceptionTestSpatialWorldService();
-        var npc = new UOMobileEntity { Id = (Serial)0x10u, MapId = 1, Location = new(100, 100, 0) };
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x10u,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            BaseBody = 0x0003,
+            Notoriety = Notoriety.CanBeAttacked
+        };
         var enemyNear = new UOMobileEntity { Id = (Serial)0x11u, IsPlayer = true, MapId = 1, Location = new(102, 100, 0) };
         var enemyFar = new UOMobileEntity { Id = (Serial)0x12u, IsPlayer = true, MapId = 1, Location = new(110, 100, 0) };
         var friendNear = new UOMobileEntity { Id = (Serial)0x13u, IsPlayer = false, MapId = 1, Location = new(101, 100, 0) };
@@ -144,5 +154,132 @@ public sealed class PerceptionModuleTests
                 Assert.That(nearestFriend, Is.EqualTo((uint)friendNear.Id));
             }
         );
+    }
+
+    [Test]
+    public void FindNearestEnemy_ShouldTreatHostileNpcAsEnemyCandidate()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var npc = new UOMobileEntity { Id = (Serial)0x30u, MapId = 1, Location = new(100, 100, 0) };
+        var hostileNpc = new UOMobileEntity
+        {
+            Id = (Serial)0x31u,
+            IsPlayer = false,
+            Notoriety = Notoriety.CanBeAttacked,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        var playerFar = new UOMobileEntity
+        {
+            Id = (Serial)0x32u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(110, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(hostileNpc);
+        spatial.AddMobile(playerFar);
+        var module = new PerceptionModule(spatial);
+
+        var nearestEnemy = module.FindNearestEnemy((uint)npc.Id, 20);
+
+        Assert.That(nearestEnemy, Is.EqualTo((uint)hostileNpc.Id));
+    }
+
+    [Test]
+    public void FindNearestPlayerEnemy_ShouldIgnoreHostileNpcs_AndReturnNearestPlayer()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x40u,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            BaseBody = 0x0003,
+            Notoriety = Notoriety.CanBeAttacked
+        };
+        var hostileNpc = new UOMobileEntity
+        {
+            Id = (Serial)0x41u,
+            IsPlayer = false,
+            Notoriety = Notoriety.CanBeAttacked,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        var playerNear = new UOMobileEntity
+        {
+            Id = (Serial)0x42u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(102, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(hostileNpc);
+        spatial.AddMobile(playerNear);
+        var module = new PerceptionModule(spatial);
+
+        var nearestEnemy = module.FindNearestPlayerEnemy((uint)npc.Id, 20);
+
+        Assert.That(nearestEnemy, Is.EqualTo((uint)playerNear.Id));
+    }
+
+    [Test]
+    public void FindNearestPlayerEnemy_ShouldSkipSameFactionPlayer_AndReturnNearestHostilePlayer()
+    {
+        var spatial = new PerceptionTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x50u,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            FactionId = "true_britannians"
+        };
+        var sameFactionPlayer = new UOMobileEntity
+        {
+            Id = (Serial)0x51u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(101, 100, 0),
+            FactionId = "true_britannians"
+        };
+        var hostilePlayer = new UOMobileEntity
+        {
+            Id = (Serial)0x52u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(102, 100, 0),
+            FactionId = "shadowlords"
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(sameFactionPlayer);
+        spatial.AddMobile(hostilePlayer);
+        var module = new PerceptionModule(spatial, new AiRelationService(CreateFactionTemplateService()));
+
+        var nearestEnemy = module.FindNearestPlayerEnemy((uint)npc.Id, 20);
+
+        Assert.That(nearestEnemy, Is.EqualTo((uint)hostilePlayer.Id));
+    }
+
+    private static FactionTemplateService CreateFactionTemplateService()
+    {
+        var service = new FactionTemplateService();
+        service.Upsert(
+            new()
+            {
+                Id = "true_britannians",
+                Name = "True Britannians",
+                EnemyFactionIds = ["shadowlords"]
+            }
+        );
+        service.Upsert(
+            new()
+            {
+                Id = "shadowlords",
+                Name = "Shadowlords",
+                EnemyFactionIds = ["true_britannians"]
+            }
+        );
+
+        return service;
     }
 }

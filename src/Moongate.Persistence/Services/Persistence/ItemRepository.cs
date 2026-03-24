@@ -19,9 +19,7 @@ internal sealed class ItemRepository : BaseRepository<UOItemEntity, Serial>, IIt
         IJournalService journalService,
         IPersistenceEntityDescriptor<UOItemEntity, Serial> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 
     public async ValueTask BulkUpsertAsync(IReadOnlyList<UOItemEntity> items, CancellationToken cancellationToken = default)
     {
@@ -95,7 +93,5 @@ internal sealed class ItemRepository : BaseRepository<UOItemEntity, Serial>, IIt
     }
 
     protected override void BeforeUpsertLocked(UOItemEntity entity, UOItemEntity? existing)
-    {
-        _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)entity.Id);
-    }
+        => _stateStore.LastItemId = Math.Max(_stateStore.LastItemId, (uint)entity.Id);
 }

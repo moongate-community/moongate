@@ -42,75 +42,6 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         _gameNetworkSessionService = gameNetworkSessionService;
     }
 
-    public async Task<DialogueSession?> StartAsync(
-        UOMobileEntity npc,
-        UOMobileEntity listener,
-        string conversationId,
-        string? topicId = null,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-
-        if (!TryResolveDefinition(conversationId, out var definition))
-        {
-            return null;
-        }
-
-        var nodeId = definition.StartNodeId;
-
-        if (!string.IsNullOrWhiteSpace(topicId) &&
-            definition.TopicRoutes.TryGetValue(topicId.Trim(), out var topicNodeId))
-        {
-            nodeId = topicNodeId;
-        }
-
-        var session = new DialogueSession
-        {
-            NpcId = npc.Id,
-            ListenerId = listener.Id,
-            ConversationId = definition.ConversationId,
-            CurrentNodeId = nodeId,
-            LastTopicId = string.IsNullOrWhiteSpace(topicId) ? null : topicId.Trim(),
-            StartedUtc = DateTime.UtcNow,
-            LastUpdatedUtc = DateTime.UtcNow
-        };
-
-        _sessions[(npc.Id, listener.Id)] = session;
-
-        return await EnterNodeAsync(npc, listener, definition, session, nodeId);
-    }
-
-    public async Task<DialogueSession?> HandleTopicAsync(
-        UOMobileEntity npc,
-        UOMobileEntity listener,
-        string conversationId,
-        string text,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _ = cancellationToken;
-
-        if (!TryResolveDefinition(conversationId, out var definition))
-        {
-            return null;
-        }
-
-        if (!TryMatchTopic(definition, text, out var topicId))
-        {
-            return null;
-        }
-
-        if (_sessions.TryGetValue((npc.Id, listener.Id), out var activeSession) &&
-            string.Equals(activeSession.ConversationId, definition.ConversationId, StringComparison.OrdinalIgnoreCase))
-        {
-            activeSession.LastTopicId = topicId;
-            return await EnterNodeAsync(npc, listener, definition, activeSession, definition.TopicRoutes[topicId]);
-        }
-
-        return await StartAsync(npc, listener, definition.ConversationId, topicId, cancellationToken);
-    }
-
     public async Task<DialogueSession?> ChooseAsync(
         UOMobileEntity npc,
         UOMobileEntity listener,
@@ -162,6 +93,79 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         return await EnterNodeAsync(npc, listener, definition, session, option.GotoNodeId!);
     }
 
+    public bool EndSession(Serial npcId, Serial listenerId)
+        => _sessions.TryRemove((npcId, listenerId), out _);
+
+    public async Task<DialogueSession?> HandleTopicAsync(
+        UOMobileEntity npc,
+        UOMobileEntity listener,
+        string conversationId,
+        string text,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (!TryResolveDefinition(conversationId, out var definition))
+        {
+            return null;
+        }
+
+        if (!TryMatchTopic(definition, text, out var topicId))
+        {
+            return null;
+        }
+
+        if (_sessions.TryGetValue((npc.Id, listener.Id), out var activeSession) &&
+            string.Equals(activeSession.ConversationId, definition.ConversationId, StringComparison.OrdinalIgnoreCase))
+        {
+            activeSession.LastTopicId = topicId;
+
+            return await EnterNodeAsync(npc, listener, definition, activeSession, definition.TopicRoutes[topicId]);
+        }
+
+        return await StartAsync(npc, listener, definition.ConversationId, topicId, cancellationToken);
+    }
+
+    public async Task<DialogueSession?> StartAsync(
+        UOMobileEntity npc,
+        UOMobileEntity listener,
+        string conversationId,
+        string? topicId = null,
+        CancellationToken cancellationToken = default
+    )
+    {
+        _ = cancellationToken;
+
+        if (!TryResolveDefinition(conversationId, out var definition))
+        {
+            return null;
+        }
+
+        var nodeId = definition.StartNodeId;
+
+        if (!string.IsNullOrWhiteSpace(topicId) &&
+            definition.TopicRoutes.TryGetValue(topicId.Trim(), out var topicNodeId))
+        {
+            nodeId = topicNodeId;
+        }
+
+        var session = new DialogueSession
+        {
+            NpcId = npc.Id,
+            ListenerId = listener.Id,
+            ConversationId = definition.ConversationId,
+            CurrentNodeId = nodeId,
+            LastTopicId = string.IsNullOrWhiteSpace(topicId) ? null : topicId.Trim(),
+            StartedUtc = DateTime.UtcNow,
+            LastUpdatedUtc = DateTime.UtcNow
+        };
+
+        _sessions[(npc.Id, listener.Id)] = session;
+
+        return await EnterNodeAsync(npc, listener, definition, session, nodeId);
+    }
+
     public bool TryGetActiveSession(Serial npcId, Serial listenerId, out DialogueSession? session)
     {
         session = null;
@@ -169,14 +173,12 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         if (_sessions.TryGetValue((npcId, listenerId), out var resolved))
         {
             session = resolved;
+
             return true;
         }
 
         return false;
     }
-
-    public bool EndSession(Serial npcId, Serial listenerId)
-        => _sessions.TryRemove((npcId, listenerId), out _);
 
     private DialogueContext CreateContext(
         UOMobileEntity npc,
@@ -197,6 +199,7 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         if (!definition.Nodes.TryGetValue(nodeId, out var node))
         {
             EndSession(npc.Id, listener.Id);
+
             return null;
         }
 
@@ -216,6 +219,7 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         {
             PersistMemory(npc.Id, memory, node.NodeId, session.LastTopicId);
             EndSession(npc.Id, listener.Id);
+
             return null;
         }
 
@@ -228,6 +232,34 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         return session;
     }
 
+    private static void FlushToken(HashSet<string> tokens, StringBuilder builder)
+    {
+        if (builder.Length == 0)
+        {
+            return;
+        }
+
+        tokens.Add(builder.ToString());
+        builder.Clear();
+    }
+
+    private static bool IsTruthy(DynValue value)
+        => value.Type switch
+        {
+            DataType.Nil or DataType.Void => false,
+            DataType.Boolean              => value.Boolean,
+            _                             => true
+        };
+
+    private void PersistMemory(Serial npcId, DialogueMemoryEntry memory, string nodeId, string? topicId)
+    {
+        memory.LastNode = nodeId;
+        memory.LastTopic = topicId;
+        memory.LastInteractionUtc = DateTime.UtcNow;
+        _dialogueMemoryService.MarkDirty(npcId);
+        _dialogueMemoryService.Save(npcId);
+    }
+
     private static List<DialogueOptionDefinition> ResolveVisibleOptions(DialogueNodeDefinition node, DialogueContext context)
     {
         var visibleOptions = new List<DialogueOptionDefinition>(node.Options.Count);
@@ -237,6 +269,7 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
             if (option.Condition is null)
             {
                 visibleOptions.Add(option);
+
                 continue;
             }
 
@@ -251,13 +284,26 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         return visibleOptions;
     }
 
-    private void PersistMemory(Serial npcId, DialogueMemoryEntry memory, string nodeId, string? topicId)
+    private static HashSet<string> Tokenize(string text)
     {
-        memory.LastNode = nodeId;
-        memory.LastTopic = topicId;
-        memory.LastInteractionUtc = DateTime.UtcNow;
-        _dialogueMemoryService.MarkDirty(npcId);
-        _dialogueMemoryService.Save(npcId);
+        var tokens = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var builder = new StringBuilder(text.Length);
+
+        foreach (var ch in text)
+        {
+            if (char.IsLetterOrDigit(ch) || ch == '_')
+            {
+                builder.Append(char.ToLowerInvariant(ch));
+
+                continue;
+            }
+
+            FlushToken(tokens, builder);
+        }
+
+        FlushToken(tokens, builder);
+
+        return tokens;
     }
 
     private static bool TryMatchTopic(DialogueDefinition definition, string text, out string topicId)
@@ -288,52 +334,13 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
                 if (tokens.Contains(alias, StringComparer.OrdinalIgnoreCase))
                 {
                     topicId = topic.Key;
+
                     return true;
                 }
             }
         }
 
         return false;
-    }
-
-    private static bool IsTruthy(DynValue value)
-        => value.Type switch
-        {
-            DataType.Nil or DataType.Void => false,
-            DataType.Boolean => value.Boolean,
-            _ => true
-        };
-
-    private static HashSet<string> Tokenize(string text)
-    {
-        var tokens = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        var builder = new StringBuilder(text.Length);
-
-        foreach (var ch in text)
-        {
-            if (char.IsLetterOrDigit(ch) || ch == '_')
-            {
-                builder.Append(char.ToLowerInvariant(ch));
-                continue;
-            }
-
-            FlushToken(tokens, builder);
-        }
-
-        FlushToken(tokens, builder);
-
-        return tokens;
-    }
-
-    private static void FlushToken(HashSet<string> tokens, StringBuilder builder)
-    {
-        if (builder.Length == 0)
-        {
-            return;
-        }
-
-        tokens.Add(builder.ToString());
-        builder.Clear();
     }
 
     private bool TryResolveDefinition(string conversationId, out DialogueDefinition definition)
@@ -346,6 +353,7 @@ public sealed class DialogueRuntimeService : IDialogueRuntimeService
         }
 
         definition = resolved;
+
         return true;
     }
 }

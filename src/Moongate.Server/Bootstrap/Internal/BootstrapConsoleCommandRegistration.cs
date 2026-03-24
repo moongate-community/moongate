@@ -12,9 +12,6 @@ internal static partial class BootstrapConsoleCommandRegistration
     public static void RegisterCommands(Container container, ICommandSystemService commandSystemService)
         => RegisterCommandsGenerated(container, commandSystemService);
 
-    public static void RegisterServices(Container container)
-        => RegisterServicesGenerated(container);
-
     public static void RegisterCommands(
         Container container,
         ICommandSystemService commandSystemService,
@@ -31,6 +28,9 @@ internal static partial class BootstrapConsoleCommandRegistration
         }
     }
 
+    public static void RegisterServices(Container container)
+        => RegisterServicesGenerated(container);
+
     public static void RegisterServices(Container container, IEnumerable<Type> pluginCommandTypes)
     {
         ArgumentNullException.ThrowIfNull(container);
@@ -44,10 +44,6 @@ internal static partial class BootstrapConsoleCommandRegistration
             }
         }
     }
-
-    static partial void RegisterCommandsGenerated(Container container, ICommandSystemService commandSystemService);
-
-    static partial void RegisterServicesGenerated(Container container);
 
     private static void RegisterCommand(Container container, ICommandSystemService commandSystemService, Type commandType)
     {
@@ -85,4 +81,8 @@ internal static partial class BootstrapConsoleCommandRegistration
             executor.AutocompleteProvider
         );
     }
+
+    static partial void RegisterCommandsGenerated(Container container, ICommandSystemService commandSystemService);
+
+    static partial void RegisterServicesGenerated(Container container);
 }

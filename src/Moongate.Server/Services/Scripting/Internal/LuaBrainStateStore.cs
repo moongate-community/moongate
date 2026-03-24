@@ -1,6 +1,7 @@
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -12,25 +13,24 @@ namespace Moongate.Server.Services.Scripting.Internal;
 /// </summary>
 internal sealed class LuaBrainStateStore
 {
+    private readonly IAiRelationService _aiRelationService;
+    private readonly INotorietyService _notorietyService;
     private readonly Dictionary<Serial, LuaBrainRuntimeState> _states = [];
+    private readonly Dictionary<Serial, UOMobileEntity> _observedMobiles = [];
     private readonly Lock _sync = new();
+
+    public LuaBrainStateStore(INotorietyService notorietyService, IAiRelationService aiRelationService)
+    {
+        _notorietyService = notorietyService;
+        _aiRelationService = aiRelationService;
+    }
 
     public void Clear()
     {
         lock (_sync)
         {
             _states.Clear();
-        }
-    }
-
-    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
-    {
-        lock (_sync)
-        {
-            if (_states.TryGetValue(mobileId, out var state))
-            {
-                state.PendingDeath.Enqueue(deathContext);
-            }
+            _observedMobiles.Clear();
         }
     }
 
@@ -41,6 +41,17 @@ internal sealed class LuaBrainStateStore
             if (_states.TryGetValue(mobileId, out var state))
             {
                 state.PendingCombatHooks.Enqueue(combatContext);
+            }
+        }
+    }
+
+    public void EnqueueDeath(Serial mobileId, LuaBrainDeathContext deathContext)
+    {
+        lock (_sync)
+        {
+            if (_states.TryGetValue(mobileId, out var state))
+            {
+                state.PendingDeath.Enqueue(deathContext);
             }
         }
     }
@@ -57,7 +68,13 @@ internal sealed class LuaBrainStateStore
             state.PendingInRange.Enqueue(
                 new(
                     sourceMobile.Id,
-                    LuaBrainPayloadFactory.BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
+                    LuaBrainPayloadFactory.BuildInRangeEventPayload(
+                        state.Mobile,
+                        sourceMobile,
+                        range,
+                        _notorietyService,
+                        _aiRelationService
+                    )
                 )
             );
         }
@@ -75,7 +92,13 @@ internal sealed class LuaBrainStateStore
             state.PendingOutRange.Enqueue(
                 new(
                     sourceMobile.Id,
-                    LuaBrainPayloadFactory.BuildInRangeEventPayload(state.MobileId, sourceMobile, range)
+                    LuaBrainPayloadFactory.BuildInRangeEventPayload(
+                        state.Mobile,
+                        sourceMobile,
+                        range,
+                        _notorietyService,
+                        _aiRelationService
+                    )
                 )
             );
         }
@@ -140,7 +163,7 @@ internal sealed class LuaBrainStateStore
         }
     }
 
-    public bool TryResolveSourceMobile(Serial mobileId, int mapId, Point3D location, out UOMobileEntity? sourceMobile)
+    public bool TryResolveTrackedMobile(Serial mobileId, out UOMobileEntity? sourceMobile)
     {
         lock (_sync)
         {
@@ -150,17 +173,18 @@ internal sealed class LuaBrainStateStore
 
                 return true;
             }
+
+            if (_observedMobiles.TryGetValue(mobileId, out var observedMobile))
+            {
+                sourceMobile = observedMobile;
+
+                return true;
+            }
         }
 
-        sourceMobile = new()
-        {
-            Id = mobileId,
-            MapId = mapId,
-            Location = location,
-            IsPlayer = true
-        };
+        sourceMobile = null;
 
-        return true;
+        return false;
     }
 
     public void UpdateTrackedMobilePosition(Serial mobileId, int mapId, Point3D location)
@@ -171,6 +195,12 @@ internal sealed class LuaBrainStateStore
             {
                 tracked.Mobile.MapId = mapId;
                 tracked.Mobile.Location = location;
+            }
+
+            if (_observedMobiles.TryGetValue(mobileId, out var observed))
+            {
+                observed.MapId = mapId;
+                observed.Location = location;
             }
         }
     }
@@ -191,6 +221,14 @@ internal sealed class LuaBrainStateStore
         lock (_sync)
         {
             _states[state.MobileId] = state;
+        }
+    }
+
+    public void UpsertObservedMobile(UOMobileEntity mobile)
+    {
+        lock (_sync)
+        {
+            _observedMobiles[mobile.Id] = mobile;
         }
     }
 }

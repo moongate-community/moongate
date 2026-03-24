@@ -47,7 +47,7 @@ internal sealed class PluginLoaderService : IPluginLoaderService
             }
 
             var assembly = Assembly.LoadFrom(entryAssemblyPath);
-            var entryType = assembly.GetType(discoveredPlugin.Manifest.EntryType!, throwOnError: false);
+            var entryType = assembly.GetType(discoveredPlugin.Manifest.EntryType!, false);
 
             if (entryType is null)
             {

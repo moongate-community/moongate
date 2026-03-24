@@ -176,42 +176,6 @@ public sealed class DialogueDefinitionService : IDialogueDefinitionService
         return option;
     }
 
-    private static void ParseTopics(Table definition, DialogueDefinition parsed)
-    {
-        var topicsValue = definition.Get("topics");
-
-        if (topicsValue.Type != DataType.Table || topicsValue.Table is null)
-        {
-            return;
-        }
-
-        foreach (var pair in topicsValue.Table.Pairs)
-        {
-            if (pair.Key.Type != DataType.String || pair.Value.Type != DataType.Table || pair.Value.Table is null)
-            {
-                continue;
-            }
-
-            var topicId = pair.Key.String?.Trim();
-
-            if (string.IsNullOrWhiteSpace(topicId))
-            {
-                continue;
-            }
-
-            var aliases = pair.Value.Table.Pairs
-                              .OrderBy(static item => item.Key.CastToNumber())
-                              .Where(static item => item.Value.Type == DataType.String)
-                              .Select(static item => item.Value.String?.Trim())
-                              .Where(static value => !string.IsNullOrWhiteSpace(value))
-                              .Cast<string>()
-                              .Distinct(StringComparer.OrdinalIgnoreCase)
-                              .ToArray();
-
-            parsed.Topics[topicId] = aliases;
-        }
-    }
-
     private static void ParseTopicRoutes(Table definition, DialogueDefinition parsed)
     {
         var routesValue = definition.Get("topic_routes");
@@ -240,6 +204,44 @@ public sealed class DialogueDefinitionService : IDialogueDefinitionService
         }
     }
 
+    private static void ParseTopics(Table definition, DialogueDefinition parsed)
+    {
+        var topicsValue = definition.Get("topics");
+
+        if (topicsValue.Type != DataType.Table || topicsValue.Table is null)
+        {
+            return;
+        }
+
+        foreach (var pair in topicsValue.Table.Pairs)
+        {
+            if (pair.Key.Type != DataType.String || pair.Value.Type != DataType.Table || pair.Value.Table is null)
+            {
+                continue;
+            }
+
+            var topicId = pair.Key.String?.Trim();
+
+            if (string.IsNullOrWhiteSpace(topicId))
+            {
+                continue;
+            }
+
+            var aliases = pair.Value
+                              .Table
+                              .Pairs
+                              .OrderBy(static item => item.Key.CastToNumber())
+                              .Where(static item => item.Value.Type == DataType.String)
+                              .Select(static item => item.Value.String?.Trim())
+                              .Where(static value => !string.IsNullOrWhiteSpace(value))
+                              .Cast<string>()
+                              .Distinct(StringComparer.OrdinalIgnoreCase)
+                              .ToArray();
+
+            parsed.Topics[topicId] = aliases;
+        }
+    }
+
     private static string RequireString(Table table, string key, string message)
     {
         var value = table.Get(key);
@@ -264,6 +266,13 @@ public sealed class DialogueDefinitionService : IDialogueDefinitionService
         return value.Table;
     }
 
+    private static Closure? ResolveOptionalFunction(Table table, string key)
+    {
+        var value = table.Get(key);
+
+        return value.Type == DataType.Function ? value.Function : null;
+    }
+
     private static string? ResolveOptionalString(Table table, string key)
     {
         var value = table.Get(key);
@@ -274,12 +283,5 @@ public sealed class DialogueDefinitionService : IDialogueDefinitionService
         }
 
         return value.String.Trim();
-    }
-
-    private static Closure? ResolveOptionalFunction(Table table, string key)
-    {
-        var value = table.Get(key);
-
-        return value.Type == DataType.Function ? value.Function : null;
     }
 }

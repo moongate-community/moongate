@@ -25,6 +25,11 @@ function M.run(npc_serial, _ctx)
         return 250
     end
 
+    if combat.set_target(npc_serial, target_serial) ~= true then
+        npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)
+        return 250
+    end
+
     local stop_range = tonumber(npc_state.get_var(npc_serial, FOLLOW_STOP_RANGE_KEY) or 1) or 1
     steering.follow(npc_serial, target_serial, math.max(0, math.floor(stop_range)))
     return 250

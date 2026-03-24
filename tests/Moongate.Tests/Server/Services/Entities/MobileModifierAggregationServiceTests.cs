@@ -38,6 +38,40 @@ public class MobileModifierAggregationServiceTests
     }
 
     [Test]
+    public void RecalculateEquipmentModifiers_ShouldIncludeQuiverDefenseChanceIncrease()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001050
+        };
+
+        mobile.AddEquippedItem(
+            ItemLayerType.Cloak,
+            new UOItemEntity
+            {
+                Id = (Serial)0x40001050,
+                IsQuiver = true,
+                Modifiers = new()
+                {
+                    DefenseChanceIncrease = 5
+                }
+            }
+        );
+
+        var service = new MobileModifierAggregationService();
+
+        var modifiers = service.RecalculateEquipmentModifiers(mobile);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(modifiers.DefenseChanceIncrease, Is.EqualTo(5));
+                Assert.That(mobile.EffectiveDefenseChanceIncrease, Is.EqualTo(5));
+            }
+        );
+    }
+
+    [Test]
     public void RecalculateEquipmentModifiers_ShouldSumEquippedItemModifiers()
     {
         var mobile = new UOMobileEntity

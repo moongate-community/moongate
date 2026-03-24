@@ -94,15 +94,7 @@ internal abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity,
         await _journalService.AppendAsync(entry, cancellationToken);
     }
 
-    protected virtual TEntity PrepareEntityForStore(TEntity entity) => _descriptor.Clone(entity);
-
-    protected virtual void BeforeUpsertLocked(TEntity entity, TEntity? existing)
-    {
-    }
-
-    protected virtual void AfterRemoveLocked(TKey key, TEntity entity)
-    {
-    }
+    protected virtual void AfterRemoveLocked(TKey key, TEntity entity) { }
 
     protected ValueTask AppendAsync(JournalEntry entry, CancellationToken cancellationToken = default)
         => _journalService.AppendAsync(entry, cancellationToken);
@@ -110,7 +102,10 @@ internal abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity,
     protected ValueTask AppendBatchAsync(IReadOnlyList<JournalEntry> entries, CancellationToken cancellationToken = default)
         => _journalService.AppendBatchAsync(entries, cancellationToken);
 
-    protected TEntity CloneEntity(TEntity entity) => _descriptor.Clone(entity);
+    protected virtual void BeforeUpsertLocked(TEntity entity, TEntity? existing) { }
+
+    protected TEntity CloneEntity(TEntity entity)
+        => _descriptor.Clone(entity);
 
     protected JournalEntry CreateRemoveEntry(TKey key)
         => CreateEntry(++_stateStore.LastSequenceId, JournalEntityOperationType.Remove, _descriptor.SerializeKey(key));
@@ -126,7 +121,11 @@ internal abstract class BaseRepository<TEntity, TKey> : IBaseRepository<TEntity,
             _descriptor.SerializeEntity(entity)
         );
 
-    protected Dictionary<TKey, TEntity> GetBucket() => _stateStore.GetBucket<TEntity, TKey>(_descriptor.TypeId);
+    protected Dictionary<TKey, TEntity> GetBucket()
+        => _stateStore.GetBucket<TEntity, TKey>(_descriptor.TypeId);
+
+    protected virtual TEntity PrepareEntityForStore(TEntity entity)
+        => _descriptor.Clone(entity);
 
     private JournalEntry CreateEntry(long sequenceId, JournalEntityOperationType operation, byte[] payload)
         => CreateEntry(sequenceId, DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(), operation, payload);

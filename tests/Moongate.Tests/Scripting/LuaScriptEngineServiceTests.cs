@@ -646,6 +646,227 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
+    public async Task StartAsync_WhenLuaPluginExists_ShouldLoadPluginEntryScript()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "helpplus"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "helpplus", "plugin.lua"),
+            """
+            return {
+              id = "helpplus",
+              name = "Help Plus",
+              version = "0.1.0",
+              entry = "init.lua",
+            }
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "helpplus", "init.lua"),
+            """
+            HELPLUS_PLUGIN_LOADED = true
+            """
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction("(function() return HELPLUS_PLUGIN_LOADED == true end)()");
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(true));
+    }
+
+    [Test]
+    public async Task StartAsync_WhenPluginIdIsDuplicated_ShouldSkipSecondPluginEntry()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "alpha"));
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "beta"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "alpha", "plugin.lua"),
+            """return { id = "shared", entry = "init.lua" }"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "alpha", "init.lua"),
+            """PLUGIN_ALPHA = true"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "beta", "plugin.lua"),
+            """return { id = "shared", entry = "init.lua" }"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "beta", "init.lua"),
+            """PLUGIN_BETA = true"""
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var alphaResult = service.ExecuteFunction("(function() return PLUGIN_ALPHA == true end)()");
+        var betaResult = service.ExecuteFunction("(function() return PLUGIN_BETA == true end)()");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(alphaResult.Success, Is.True);
+                Assert.That(alphaResult.Data, Is.EqualTo(true));
+                Assert.That(betaResult.Success, Is.True);
+                Assert.That(betaResult.Data, Is.EqualTo(false));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WhenPluginManifestDoesNotReturnTable_ShouldSkipPlugin()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        var pluginsDir = dirs[DirectoryType.Plugins];
+        var luarcDir = temp.Path;
+        Directory.CreateDirectory(scriptsDir);
+        Directory.CreateDirectory(luarcDir);
+        Directory.CreateDirectory(Path.Combine(pluginsDir, "broken"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "broken", "plugin.lua"),
+            "return \"invalid\""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(pluginsDir, "broken", "init.lua"),
+            """BROKEN_PLUGIN_LOADED = true"""
+        );
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
+            []
+        );
+
+        await service.StartAsync();
+
+        var result = service.ExecuteFunction("(function() return BROKEN_PLUGIN_LOADED == true end)()");
+
+        Assert.That(result.Success, Is.True);
+        Assert.That(result.Data, Is.EqualTo(false));
+    }
+
+    [Test]
+    public async Task StartAsync_WhenReputationTitlesLuaOverrideExists_ShouldConfigureRuntimeTitles()
+    {
+        using var temp = new TempDirectory();
+        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var scriptsDir = dirs[DirectoryType.Scripts];
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "config"));
+
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "init.lua"),
+            """require("config.init")"""
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "init.lua"),
+            """
+            reputation_titles_config = require("config.reputation_titles_default")
+            local ok, override = pcall(require, "config.reputation_titles")
+            if ok and type(override) == "table" then
+                reputation_titles_config = override
+            end
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "reputation_titles_default.lua"),
+            """
+            return {
+              honorifics = {
+                male = "Lord",
+                female = "Lady"
+              },
+              fame_buckets = {
+                {
+                  max_fame = 10000,
+                  karma_buckets = {
+                    { max_karma = 10000, title = "The Default" }
+                  }
+                }
+              }
+            }
+            """
+        );
+        await File.WriteAllTextAsync(
+            Path.Combine(scriptsDir, "config", "reputation_titles.lua"),
+            """
+            return {
+              honorifics = {
+                male = "Baron",
+                female = "Baroness"
+              },
+              fame_buckets = {
+                {
+                  max_fame = 10000,
+                  karma_buckets = {
+                    { max_karma = 10000, title = "The Custom" }
+                  }
+                }
+              }
+            }
+            """
+        );
+
+        ReputationTitleRuntime.Reset();
+
+        var service = new LuaScriptEngineService(
+            dirs,
+            [],
+            new Container(),
+            new(temp.Path, scriptsDir, "0.1.0", false),
+            []
+        );
+
+        await service.StartAsync();
+
+        var mobile = new UOMobileEntity
+        {
+            Name = "Marcus",
+            Gender = GenderType.Male,
+            Fame = 10000,
+            Karma = 10000
+        };
+
+        Assert.That(ReputationTitleFormatter.FormatDisplayName(mobile), Is.EqualTo("The Custom Baron Marcus"));
+    }
+
+    [Test]
     public async Task StartAsync_WithCommandModule_ShouldExecuteCommandAndReturnOutput()
     {
         using var temp = new TempDirectory();
@@ -1772,143 +1993,6 @@ public class LuaScriptEngineServiceTests
         var name = service.ToScriptEngineFunctionName("HelloWorldMethod");
 
         Assert.That(name, Is.EqualTo("hello_world_method"));
-    }
-
-    [Test]
-    public async Task StartAsync_WhenLuaPluginExists_ShouldLoadPluginEntryScript()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var pluginsDir = dirs[DirectoryType.Plugins];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-        Directory.CreateDirectory(Path.Combine(pluginsDir, "helpplus"));
-
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "helpplus", "plugin.lua"),
-            """
-            return {
-              id = "helpplus",
-              name = "Help Plus",
-              version = "0.1.0",
-              entry = "init.lua",
-            }
-            """
-        );
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "helpplus", "init.lua"),
-            """
-            HELPLUS_PLUGIN_LOADED = true
-            """
-        );
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction("(function() return HELPLUS_PLUGIN_LOADED == true end)()");
-
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Data, Is.EqualTo(true));
-    }
-
-    [Test]
-    public async Task StartAsync_WhenPluginIdIsDuplicated_ShouldSkipSecondPluginEntry()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var pluginsDir = dirs[DirectoryType.Plugins];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-        Directory.CreateDirectory(Path.Combine(pluginsDir, "alpha"));
-        Directory.CreateDirectory(Path.Combine(pluginsDir, "beta"));
-
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "alpha", "plugin.lua"),
-            """return { id = "shared", entry = "init.lua" }"""
-        );
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "alpha", "init.lua"),
-            """PLUGIN_ALPHA = true"""
-        );
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "beta", "plugin.lua"),
-            """return { id = "shared", entry = "init.lua" }"""
-        );
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "beta", "init.lua"),
-            """PLUGIN_BETA = true"""
-        );
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
-            []
-        );
-
-        await service.StartAsync();
-
-        var alphaResult = service.ExecuteFunction("(function() return PLUGIN_ALPHA == true end)()");
-        var betaResult = service.ExecuteFunction("(function() return PLUGIN_BETA == true end)()");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(alphaResult.Success, Is.True);
-                Assert.That(alphaResult.Data, Is.EqualTo(true));
-                Assert.That(betaResult.Success, Is.True);
-                Assert.That(betaResult.Data, Is.EqualTo(false));
-            }
-        );
-    }
-
-    [Test]
-    public async Task StartAsync_WhenPluginManifestDoesNotReturnTable_ShouldSkipPlugin()
-    {
-        using var temp = new TempDirectory();
-        var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var scriptsDir = dirs[DirectoryType.Scripts];
-        var pluginsDir = dirs[DirectoryType.Plugins];
-        var luarcDir = temp.Path;
-        Directory.CreateDirectory(scriptsDir);
-        Directory.CreateDirectory(luarcDir);
-        Directory.CreateDirectory(Path.Combine(pluginsDir, "broken"));
-
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "broken", "plugin.lua"),
-            "return \"invalid\""
-        );
-        await File.WriteAllTextAsync(
-            Path.Combine(pluginsDir, "broken", "init.lua"),
-            """BROKEN_PLUGIN_LOADED = true"""
-        );
-
-        var service = new LuaScriptEngineService(
-            dirs,
-            [],
-            new Container(),
-            new(luarcDir, scriptsDir, "0.1.0", false, pluginsDir),
-            []
-        );
-
-        await service.StartAsync();
-
-        var result = service.ExecuteFunction("(function() return BROKEN_PLUGIN_LOADED == true end)()");
-
-        Assert.That(result.Success, Is.True);
-        Assert.That(result.Data, Is.EqualTo(false));
     }
 
     private static byte[] BuildGumpResponsePacket(uint serial, uint gumpId, uint buttonId)

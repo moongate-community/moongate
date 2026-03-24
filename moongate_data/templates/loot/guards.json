@@ -1,0 +1,39 @@
+[
+  {
+    "type": "loot",
+    "id": "guard.warrior",
+    "name": "GuardWarriorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 10,
+        "amountMax": 25
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "guard.archer",
+    "name": "GuardArcherLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 10,
+        "amountMax": 25
+      },
+      {
+        "itemTemplateId": "arrow",
+        "chance": 1.0,
+        "amount": 250
+      }
+    ]
+  }
+]

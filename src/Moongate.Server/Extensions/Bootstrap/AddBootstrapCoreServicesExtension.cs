@@ -40,12 +40,12 @@ using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Movement;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Scripting;
+using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Spatial;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.World;
-using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.UO.Data.Interfaces.Art;
 using Moongate.UO.Data.Interfaces.Maps;
 using Moongate.UO.Data.Interfaces.Names;
@@ -88,6 +88,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IOutboundPacketSender, OutboundPacketSender>(Reuse.Singleton);
         container.Register<IPacketDispatchService, PacketDispatchService>(Reuse.Singleton);
         container.Register<IGameNetworkSessionService, GameNetworkSessionService>(Reuse.Singleton);
+        container.Register<IGameLoginHandoffService, GameLoginHandoffService>(Reuse.Singleton);
         container.Register<ISpatialWorldService, SpatialWorldService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);
@@ -108,8 +109,27 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
         container.Register<IHelpTicketService, HelpTicketService>(Reuse.Singleton);
         container.Register<INotorietyService, NotorietyService>(Reuse.Singleton);
-        container.Register<ICombatService, CombatService>(Reuse.Singleton);
+        container.Register<IAiRelationService, AiRelationService>(Reuse.Singleton);
+        container.Register<ISkillAntiMacroService, SkillAntiMacroService>(Reuse.Singleton);
+        container.Register<IStatGainService, StatGainService>(Reuse.Singleton);
+        container.Register<ISkillGainService, SkillGainService>(Reuse.Singleton);
+        container.RegisterDelegate<ICombatService>(
+            resolver => new CombatService(
+                resolver.Resolve<IMobileService>(),
+                resolver.Resolve<IGameNetworkSessionService>(),
+                resolver.Resolve<IOutgoingPacketQueue>(),
+                resolver.Resolve<ITimerService>(),
+                resolver.Resolve<ISpatialWorldService>(),
+                resolver.Resolve<IGameEventBusService>(),
+                resolver.Resolve<IItemService>(),
+                resolver.Resolve<IDeathService>(),
+                resolver.Resolve<ISkillGainService>()
+            ),
+            Reuse.Singleton
+        );
+        container.Register<IBandageService, BandageService>(Reuse.Singleton);
         container.Register<IDeathService, DeathService>(Reuse.Singleton);
+        container.Register<IFameKarmaService, FameKarmaService>(Reuse.Singleton);
         container.Register<MobileCombatSoundResolver>(Reuse.Singleton);
         container.Register<IPlayerSellBuyService, PlayerSellBuyService>(Reuse.Singleton);
         container.Register<IItemScriptDispatcher, ItemScriptDispatcher>(Reuse.Singleton);
@@ -132,6 +152,7 @@ public static class AddBootstrapCoreServicesExtension
             {
                 var registry = new AsyncLuaJobRegistry();
                 _ = registry.TryRegister(resolver.Resolve<EchoAsyncLuaJobHandler>());
+
                 return registry;
             },
             Reuse.Singleton
@@ -144,6 +165,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
+        container.Register<IFactionTemplateService, FactionTemplateService>(Reuse.Singleton);
         container.Register<ISellProfileTemplateService, SellProfileTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IDoorGenerationMapSpecProvider, DefaultDoorGenerationMapSpecProvider>(Reuse.Singleton);

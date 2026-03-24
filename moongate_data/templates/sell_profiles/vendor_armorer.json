@@ -1,0 +1,63 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.armorer",
+    "name": "Armorer Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town armor vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "helmet",
+        "price": 28,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "plate_arms",
+        "price": 55,
+        "maxStock": 8,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "plate_chest",
+        "price": 75,
+        "maxStock": 8,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "plate_legs",
+        "price": 62,
+        "maxStock": 8,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "metal_shield",
+        "price": 34,
+        "maxStock": 10,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "iron_ingot",
+        "price": 3,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "plate_chest",
+        "price": 38,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "plate_legs",
+        "price": 31,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "metal_shield",
+        "price": 17,
+        "enabled": true
+      }
+    ]
+  }
+]

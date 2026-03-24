@@ -27,11 +27,11 @@ public sealed class BankModule
     [ScriptFunction("open", "Opens the bank box for the specified player session.")]
     public bool Open(long sessionId)
         => BankBoxOpenHelper.OpenAsync(
-               sessionId,
-               _gameNetworkSessionService,
-               _characterService,
-               _outgoingPacketQueue
-           )
-           .GetAwaiter()
-           .GetResult() is null;
+                                sessionId,
+                                _gameNetworkSessionService,
+                                _characterService,
+                                _outgoingPacketQueue
+                            )
+                            .GetAwaiter()
+                            .GetResult() is null;
 }

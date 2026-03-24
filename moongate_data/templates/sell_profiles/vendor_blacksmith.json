@@ -1,0 +1,53 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.blacksmith",
+    "name": "Blacksmith Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town blacksmith vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "hammer",
+        "price": 18,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "tongs",
+        "price": 12,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "hatchet",
+        "price": 16,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "pickaxe",
+        "price": 22,
+        "maxStock": 8,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "shovel",
+        "price": 8,
+        "maxStock": 12,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "iron_ingot",
+        "price": 3,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "hammer",
+        "price": 7,
+        "enabled": true
+      }
+    ]
+  }
+]

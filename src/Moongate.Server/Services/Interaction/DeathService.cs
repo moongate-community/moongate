@@ -1,14 +1,19 @@
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Types.Items;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Constants;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -39,8 +44,10 @@ public sealed class DeathService : IDeathService
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly ITimerService _timerService;
     private readonly IGameEventBusService _gameEventBusService;
+    private readonly IFameKarmaService _fameKarmaService;
     private readonly MoongateConfig _config;
     private readonly ILuaBrainRunner? _luaBrainRunner;
+    private readonly ILootGenerationService? _lootGenerationService;
 
     public DeathService(
         IMobileService mobileService,
@@ -48,8 +55,10 @@ public sealed class DeathService : IDeathService
         ISpatialWorldService spatialWorldService,
         ITimerService timerService,
         IGameEventBusService gameEventBusService,
+        IFameKarmaService fameKarmaService,
         MoongateConfig config,
-        ILuaBrainRunner? luaBrainRunner = null
+        ILuaBrainRunner? luaBrainRunner = null,
+        ILootGenerationService? lootGenerationService = null
     )
     {
         _mobileService = mobileService;
@@ -57,8 +66,10 @@ public sealed class DeathService : IDeathService
         _spatialWorldService = spatialWorldService;
         _timerService = timerService;
         _gameEventBusService = gameEventBusService;
+        _fameKarmaService = fameKarmaService;
         _config = config;
         _luaBrainRunner = luaBrainRunner;
+        _lootGenerationService = lootGenerationService;
     }
 
     public async Task<bool> ForceDeathAsync(
@@ -112,7 +123,9 @@ public sealed class DeathService : IDeathService
         {
             corpse = await CreateCorpseAsync(victim, cancellationToken);
             await MoveLootToCorpseAsync(victim, corpse, cancellationToken);
+            await GenerateCorpseLootAsync(victim, corpse, cancellationToken);
             _spatialWorldService.AddOrUpdateItem(corpse, corpse.MapId);
+            await BroadcastVisibleCorpsePacketsAsync(corpse);
             await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
                 new MobileDeathAnimationPacket(victim.Id, corpse.Id),
                 victim.MapId,
@@ -121,6 +134,11 @@ public sealed class DeathService : IDeathService
             _spatialWorldService.RemoveEntity(victim.Id);
             await _mobileService.DeleteAsync(victim.Id, cancellationToken);
             ScheduleCorpseDecay(corpse);
+        }
+
+        if (killer is not null && !victim.IsPlayer && killer.IsPlayer)
+        {
+            await _fameKarmaService.AwardNpcKillAsync(victim, killer, cancellationToken);
         }
 
         deathPayload = BuildDeathPayload(victim, killer, regionName, corpse);
@@ -137,6 +155,27 @@ public sealed class DeathService : IDeathService
         );
 
         return true;
+    }
+
+    private async Task BroadcastVisibleCorpsePacketsAsync(UOItemEntity corpse)
+    {
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            ItemPacketHelper.CreateObjectInformationPacket(corpse, AccountType.Regular),
+            corpse.MapId,
+            corpse.Location
+        );
+
+        List<IGameNetworkPacket> packets = [];
+        CorpsePacketHelper.EnqueueVisibleCorpsePackets(corpse, packet => packets.Add(packet));
+
+        foreach (var packet in packets)
+        {
+            await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+                packet,
+                corpse.MapId,
+                corpse.Location
+            );
+        }
     }
 
     private static Dictionary<string, object?> BuildDeathPayload(
@@ -193,6 +232,93 @@ public sealed class DeathService : IDeathService
         return corpse;
     }
 
+    private async Task DecayCorpseAsync(Serial corpseId, int mapId, Point3D location)
+    {
+        _ = await _itemService.DeleteItemAsync(corpseId);
+        _spatialWorldService.RemoveEntity(corpseId);
+        await _spatialWorldService.BroadcastToPlayersAsync(new DeleteObjectPacket(corpseId), mapId, location);
+    }
+
+    private void EnqueueLuaDeathHook(
+        UOMobileEntity victim,
+        LuaBrainDeathHookType hookType,
+        Serial? killerId,
+        Dictionary<string, object?> payload
+    )
+    {
+        if (victim.IsPlayer || _luaBrainRunner is null)
+        {
+            return;
+        }
+
+        _luaBrainRunner.EnqueueDeath(victim.Id, new(hookType, killerId, payload));
+    }
+
+    private async Task GenerateCorpseLootAsync(
+        UOMobileEntity victim,
+        UOItemEntity corpse,
+        CancellationToken cancellationToken
+    )
+    {
+        if (_lootGenerationService is null ||
+            !victim.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var lootTablesRaw) ||
+            string.IsNullOrWhiteSpace(lootTablesRaw))
+        {
+            return;
+        }
+
+        var lootTableIds = lootTablesRaw.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+        if (lootTableIds.Length == 0)
+        {
+            return;
+        }
+
+        await _lootGenerationService.GenerateForContainerAsync(
+            corpse,
+            lootTableIds,
+            LootGenerationMode.OnDeath,
+            cancellationToken
+        );
+    }
+
+    private static string GetCorpseTimerName(Serial corpseId)
+        => $"corpse-decay:{corpseId.Value}";
+
+    private static bool IsLootable(UOItemEntity item)
+    {
+        if (item.ItemId == 0)
+        {
+            return false;
+        }
+
+        if (item.TryGetCustomBoolean("immovable", out var isImmovable) && isImmovable)
+        {
+            return false;
+        }
+
+        if (item.TryGetCustomBoolean("system_item", out var isSystemItem) && isSystemItem)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private async Task MoveItemIntoCorpseAsync(UOItemEntity item, UOItemEntity corpse, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+        var position = ResolveCorpsePosition(corpse.Items.Count);
+        await _itemService.MoveItemToContainerAsync(item.Id, corpse.Id, position);
+        var moved = await _itemService.GetItemAsync(item.Id);
+
+        if (moved is not null && corpse.Items.All(existing => existing.Id != moved.Id))
+        {
+            corpse.AddItem(moved, position);
+            await _itemService.UpsertItemAsync(corpse);
+        }
+    }
+
     private async Task MoveLootToCorpseAsync(
         UOMobileEntity victim,
         UOItemEntity corpse,
@@ -247,38 +373,12 @@ public sealed class DeathService : IDeathService
         }
     }
 
-    private static bool IsLootable(UOItemEntity item)
+    private static Point2D ResolveCorpsePosition(int index)
     {
-        if (item.ItemId == 0)
-        {
-            return false;
-        }
+        var column = index % 5;
+        var row = index / 5;
 
-        if (item.TryGetCustomBoolean("immovable", out var isImmovable) && isImmovable)
-        {
-            return false;
-        }
-
-        if (item.TryGetCustomBoolean("system_item", out var isSystemItem) && isSystemItem)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    private async Task MoveItemIntoCorpseAsync(UOItemEntity item, UOItemEntity corpse, CancellationToken cancellationToken)
-    {
-        _ = cancellationToken;
-        var position = ResolveCorpsePosition(corpse.Items.Count);
-        await _itemService.MoveItemToContainerAsync(item.Id, corpse.Id, position);
-        var moved = await _itemService.GetItemAsync(item.Id);
-
-        if (moved is not null && corpse.Items.All(existing => existing.Id != moved.Id))
-        {
-            corpse.AddItem(moved, position);
-            await _itemService.UpsertItemAsync(corpse);
-        }
+        return new(20 + column * 18, 20 + row * 18);
     }
 
     private void ScheduleCorpseDecay(UOItemEntity corpse)
@@ -291,38 +391,5 @@ public sealed class DeathService : IDeathService
             () => DecayCorpseAsync(corpse.Id, corpse.MapId, corpse.Location).GetAwaiter().GetResult(),
             repeat: false
         );
-    }
-
-    private async Task DecayCorpseAsync(Serial corpseId, int mapId, Point3D location)
-    {
-        _ = await _itemService.DeleteItemAsync(corpseId);
-        _spatialWorldService.RemoveEntity(corpseId);
-        await _spatialWorldService.BroadcastToPlayersAsync(new DeleteObjectPacket(corpseId), mapId, location);
-    }
-
-    private void EnqueueLuaDeathHook(
-        UOMobileEntity victim,
-        LuaBrainDeathHookType hookType,
-        Serial? killerId,
-        Dictionary<string, object?> payload
-    )
-    {
-        if (victim.IsPlayer || _luaBrainRunner is null)
-        {
-            return;
-        }
-
-        _luaBrainRunner.EnqueueDeath(victim.Id, new LuaBrainDeathContext(hookType, killerId, payload));
-    }
-
-    private static string GetCorpseTimerName(Serial corpseId)
-        => $"corpse-decay:{corpseId.Value}";
-
-    private static Point2D ResolveCorpsePosition(int index)
-    {
-        var column = index % 5;
-        var row = index / 5;
-
-        return new Point2D(20 + column * 18, 20 + row * 18);
     }
 }

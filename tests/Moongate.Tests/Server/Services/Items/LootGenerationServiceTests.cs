@@ -1,17 +1,18 @@
 using System.Globalization;
-using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Services.Items;
+using Moongate.Server.Types.Items;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Tiles;
 using Moongate.UO.Data.Types;
-using Moongate.UO.Data.Interfaces.Templates;
 
 namespace Moongate.Tests.Server.Services.Items;
 
@@ -37,6 +38,18 @@ public sealed class LootGenerationServiceTests
                 };
             }
 
+            if (Templates.TryGetValue(itemTemplateId, out var template))
+            {
+                return new()
+                {
+                    Id = (Serial)_nextSerial++,
+                    ItemId = ParseItemId(template.ItemId),
+                    Name = template.Id,
+                    Amount = 1,
+                    IsStackable = false
+                };
+            }
+
             throw new NotSupportedException($"Unsupported template {itemTemplateId}");
         }
 
@@ -45,6 +58,16 @@ public sealed class LootGenerationServiceTests
 
         public bool TryGetItemTemplate(string itemTemplateId, out ItemTemplateDefinition? template)
             => Templates.TryGetValue(itemTemplateId, out template);
+
+        private static int ParseItemId(string itemId)
+        {
+            if (itemId.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return int.Parse(itemId.AsSpan(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
+            }
+
+            return int.Parse(itemId, CultureInfo.InvariantCulture);
+        }
     }
 
     private sealed class TestItemService : IItemService
@@ -153,31 +176,80 @@ public sealed class LootGenerationServiceTests
         }
     }
 
+    private sealed class TestItemTemplateService : IItemTemplateService
+    {
+        public Dictionary<string, ItemTemplateDefinition> Templates { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public int Count => Templates.Count;
+
+        public void Clear()
+            => Templates.Clear();
+
+        public IReadOnlyList<ItemTemplateDefinition> GetAll()
+            => Templates.Values.ToList();
+
+        public bool TryGet(string id, out ItemTemplateDefinition? definition)
+            => Templates.TryGetValue(id, out definition);
+
+        public void Upsert(ItemTemplateDefinition definition)
+            => Templates[definition.Id] = definition;
+
+        public void UpsertRange(IEnumerable<ItemTemplateDefinition> templates)
+        {
+            foreach (var template in templates)
+            {
+                Templates[template.Id] = template;
+            }
+        }
+    }
+
     [Test]
-    public async Task EnsureLootGeneratedAsync_WhenRefillWindowHasNotElapsed_ShouldNotRefillEmptyContainer()
+    public async Task EnsureLootGeneratedAsync_WhenLootEntryUsesItemTag_ShouldCreateRandomMatchingTemplateItem()
     {
         TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
         var itemFactory = CreateItemFactory();
         var itemService = new TestItemService();
         var lootTemplateService = CreateLootTemplateService();
-        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService);
-        var container = CreateRefillableContainer(DateTime.UtcNow.AddMinutes(5));
+        var itemTemplateService = CreateItemTemplateService();
+        lootTemplateService.Templates["loot_test_chest_basic"].Entries =
+        [
+            new()
+            {
+                ItemTag = "weapon.ranged",
+                Weight = 1,
+                Amount = 1
+            }
+        ];
+
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var container = CreateRefillableContainer(DateTime.UtcNow.AddMinutes(-5));
         itemService.ItemsById[container.Id] = container;
 
         var result = await service.EnsureLootGeneratedAsync(container);
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Items, Is.Empty);
-                Assert.That(itemService.ItemsById, Has.Count.EqualTo(1));
-                Assert.That(
-                    result.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyRaw),
-                    Is.True
-                );
-                Assert.That(refillReadyRaw, Is.Not.Null.And.Not.Empty);
-            }
-        );
+        Assert.That(result.Items, Has.Count.EqualTo(1));
+        Assert.That(result.Items[0].Name, Is.EqualTo("bow"));
+    }
+
+    [Test]
+    public async Task EnsureLootGeneratedAsync_WhenLootTableDefinesMultipleRolls_ShouldCreateItemsForEachRoll()
+    {
+        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        var itemTemplateService = CreateItemTemplateService();
+        lootTemplateService.Templates["loot_test_chest_basic"].Rolls = 3;
+
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var container = CreateRefillableContainer(DateTime.UtcNow.AddMinutes(-5));
+        itemService.ItemsById[container.Id] = container;
+
+        var result = await service.EnsureLootGeneratedAsync(container);
+
+        Assert.That(result.Items, Has.Count.EqualTo(3));
+        Assert.That(result.Items.All(static item => item.Name == "gold"), Is.True);
+        Assert.That(result.Items.Select(static item => item.Amount), Is.All.EqualTo(125));
     }
 
     [Test]
@@ -187,7 +259,8 @@ public sealed class LootGenerationServiceTests
         var itemFactory = CreateItemFactory();
         var itemService = new TestItemService();
         var lootTemplateService = CreateLootTemplateService();
-        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService);
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
         var container = CreateRefillableContainer(DateTime.UtcNow.AddMinutes(-5));
         itemService.ItemsById[container.Id] = container;
 
@@ -209,6 +282,185 @@ public sealed class LootGenerationServiceTests
         );
     }
 
+    [Test]
+    public async Task EnsureLootGeneratedAsync_WhenRefillWindowHasNotElapsed_ShouldNotRefillEmptyContainer()
+    {
+        TileData.ItemTable[0x0E75] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var container = CreateRefillableContainer(DateTime.UtcNow.AddMinutes(5));
+        itemService.ItemsById[container.Id] = container;
+
+        var result = await service.EnsureLootGeneratedAsync(container);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Items, Is.Empty);
+                Assert.That(itemService.ItemsById, Has.Count.EqualTo(1));
+                Assert.That(
+                    result.TryGetCustomString(ItemCustomParamKeys.Loot.RefillReadyAtUtc, out var refillReadyRaw),
+                    Is.True
+                );
+                Assert.That(refillReadyRaw, Is.Not.Null.And.Not.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task GenerateForContainerAsync_WhenAdditiveEntryChanceIsZero_ShouldSkipThatEntry()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        itemFactory.Templates["bandage"] = new()
+        {
+            Id = "bandage",
+            Description = "Bandage",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E21",
+            ScriptId = "none"
+        };
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        lootTemplateService.Templates["undead.zombie_sparse"] = new()
+        {
+            Id = "undead.zombie_sparse",
+            Name = "Sparse Zombie Loot",
+            Category = "loot",
+            Description = string.Empty,
+            Mode = LootTemplateMode.Additive,
+            Entries =
+            [
+                new()
+                {
+                    ItemTemplateId = "gold",
+                    Chance = 1.0,
+                    AmountMin = 25,
+                    AmountMax = 25
+                },
+                new()
+                {
+                    ItemTemplateId = "bandage",
+                    Chance = 0.0,
+                    Amount = 1
+                }
+            ]
+        };
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var corpse = new UOItemEntity
+        {
+            Id = (Serial)0x40000061u,
+            ItemId = 0x2006,
+            MapId = 1,
+            Name = "a corpse"
+        };
+        itemService.ItemsById[corpse.Id] = corpse;
+
+        var result = await service.GenerateForContainerAsync(
+                         corpse,
+                         ["undead.zombie_sparse"],
+                         LootGenerationMode.OnDeath
+                     );
+
+        Assert.That(result.Items, Has.Count.EqualTo(1));
+        Assert.That(result.Items[0].Name, Is.EqualTo("gold"));
+        Assert.That(result.Items[0].Amount, Is.EqualTo(25));
+    }
+
+    [Test]
+    public async Task GenerateForContainerAsync_WhenLootModeIsAdditive_ShouldCreateGuaranteedAndRangeBasedDrops()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        itemFactory.Templates["bandage"] = new()
+        {
+            Id = "bandage",
+            Description = "Bandage",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x0E21",
+            ScriptId = "none"
+        };
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        lootTemplateService.Templates["undead.zombie"] = new()
+        {
+            Id = "undead.zombie",
+            Name = "Zombie Loot",
+            Category = "loot",
+            Description = string.Empty,
+            Mode = LootTemplateMode.Additive,
+            Entries =
+            [
+                new()
+                {
+                    ItemTemplateId = "gold",
+                    Chance = 1.0,
+                    AmountMin = 20,
+                    AmountMax = 20
+                },
+                new()
+                {
+                    ItemTemplateId = "bandage",
+                    Chance = 1.0,
+                    Amount = 2
+                }
+            ]
+        };
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var corpse = new UOItemEntity
+        {
+            Id = (Serial)0x40000060u,
+            ItemId = 0x2006,
+            MapId = 1,
+            Name = "a corpse"
+        };
+        itemService.ItemsById[corpse.Id] = corpse;
+
+        var result = await service.GenerateForContainerAsync(
+                         corpse,
+                         ["undead.zombie"],
+                         LootGenerationMode.OnDeath
+                     );
+
+        Assert.That(result.Items, Has.Count.EqualTo(3));
+        Assert.That(result.Items.Single(item => item.Name == "gold").Amount, Is.EqualTo(20));
+        Assert.That(result.Items.Count(item => item.Name == "bandage"), Is.EqualTo(2));
+    }
+
+    [Test]
+    public async Task GenerateForContainerAsync_WhenModeIsOnDeath_ShouldBypassFirstOpenLootFlags()
+    {
+        TileData.ItemTable[0x2006] = new(string.Empty, UOTileFlag.Container, 0, 0, 0, 0, 0, 0);
+        var itemFactory = CreateItemFactory();
+        var itemService = new TestItemService();
+        var lootTemplateService = CreateLootTemplateService();
+        var itemTemplateService = CreateItemTemplateService();
+        var service = new LootGenerationService(itemFactory, itemService, lootTemplateService, itemTemplateService);
+        var corpse = new UOItemEntity
+        {
+            Id = (Serial)0x40000050u,
+            ItemId = 0x2006,
+            MapId = 1,
+            Name = "a corpse"
+        };
+        corpse.SetCustomBoolean(ItemCustomParamKeys.Loot.Generated, true);
+        itemService.ItemsById[corpse.Id] = corpse;
+
+        var result = await service.GenerateForContainerAsync(
+                         corpse,
+                         ["loot_test_chest_basic"],
+                         LootGenerationMode.OnDeath
+                     );
+
+        Assert.That(result.Items, Has.Count.EqualTo(1));
+        Assert.That(result.Items[0].Name, Is.EqualTo("gold"));
+    }
+
     private static TestItemFactoryService CreateItemFactory()
     {
         var itemFactory = new TestItemFactoryService();
@@ -226,8 +478,33 @@ public sealed class LootGenerationServiceTests
                 ["loot_refill_seconds"] = new() { Type = ItemTemplateParamType.String, Value = "300" }
             }
         };
+        itemFactory.Templates["bow"] = new()
+        {
+            Id = "bow",
+            Description = "Bow",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x13B2",
+            ScriptId = "none",
+            Tags = ["weapon.ranged"]
+        };
 
         return itemFactory;
+    }
+
+    private static TestItemTemplateService CreateItemTemplateService()
+    {
+        var itemTemplateService = new TestItemTemplateService();
+        itemTemplateService.Templates["bow"] = new()
+        {
+            Id = "bow",
+            Description = "Bow",
+            GoldValue = GoldValueSpec.FromValue(0),
+            ItemId = "0x13B2",
+            ScriptId = "none",
+            Tags = ["weapon.ranged"]
+        };
+
+        return itemTemplateService;
     }
 
     private static TestLootTemplateService CreateLootTemplateService()
@@ -241,7 +518,7 @@ public sealed class LootGenerationServiceTests
             Description = "Single-entry deterministic loot table for tests",
             Entries =
             [
-                new LootTemplateEntry
+                new()
                 {
                     ItemTemplateId = "gold",
                     Weight = 1,

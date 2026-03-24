@@ -16,6 +16,8 @@ namespace Moongate.Network.Packets.Outgoing.Login;
 /// </summary>
 public class CharactersStartingLocationsPacket : BaseGameNetworkPacket
 {
+    public bool IsEnhancedClient { get; set; }
+
     public List<CityInfo> Cities { get; } = [];
 
     public List<CharacterEntry?> Characters { get; } = [];

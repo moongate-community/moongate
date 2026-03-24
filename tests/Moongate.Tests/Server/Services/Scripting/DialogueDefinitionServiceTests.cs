@@ -1,4 +1,3 @@
-using Moongate.Server.Data.Scripting;
 using Moongate.Server.Services.Scripting;
 using MoonSharp.Interpreter;
 
@@ -36,16 +35,17 @@ public sealed class DialogueDefinitionServiceTests
     }
 
     [Test]
-    public void Register_WhenStartIsMissing_ShouldThrow()
+    public void Register_WhenGotoReferencesMissingNode_ShouldThrow()
     {
         var service = new DialogueDefinitionService();
         var script = new Script();
         var definition = BuildDefinition(script);
-        definition["start"] = DynValue.Nil;
+        var option = definition.Get("nodes").Table!.Get("start").Table!.Get("options").Table!.Get(1).Table!;
+        option["goto"] = "missing_node";
 
         Assert.That(
             () => service.Register("innkeeper", definition),
-            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing 'start'")
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("references missing goto node")
         );
     }
 
@@ -65,17 +65,16 @@ public sealed class DialogueDefinitionServiceTests
     }
 
     [Test]
-    public void Register_WhenGotoReferencesMissingNode_ShouldThrow()
+    public void Register_WhenStartIsMissing_ShouldThrow()
     {
         var service = new DialogueDefinitionService();
         var script = new Script();
         var definition = BuildDefinition(script);
-        var option = definition.Get("nodes").Table!.Get("start").Table!.Get("options").Table!.Get(1).Table!;
-        option["goto"] = "missing_node";
+        definition["start"] = DynValue.Nil;
 
         Assert.That(
             () => service.Register("innkeeper", definition),
-            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("references missing goto node")
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("missing 'start'")
         );
     }
 

@@ -62,7 +62,7 @@ On repeated violations, session is disconnected.
 - `0x8C` Server Redirect (`Length=11`, fixed)
 - `0x1B` Login Confirm (`Length=37`, fixed)
 - `0xA9` Character / Starting Locations (variable)
-- `0xB9` Support Features (`Length=5`, fixed)
+- `0xB9` Support Features (`Length=3` or `5`, variable)
 - `0x55` Login Complete (`Length=1`, fixed)
 - `0x22` Move Confirm (`Length=3`, fixed)
 - `0x21` Move Deny (`Length=8`, fixed)

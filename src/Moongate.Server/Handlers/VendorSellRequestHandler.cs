@@ -17,7 +17,11 @@ public sealed class VendorSellRequestHandler : IGameEventListener<VendorSellRequ
     }
 
     public Task HandleAsync(VendorSellRequestedEvent gameEvent, CancellationToken cancellationToken = default)
-        => _playerSellBuyService.HandleVendorSellRequestAsync(gameEvent.SessionId, gameEvent.VendorSerial, cancellationToken);
+        => _playerSellBuyService.HandleVendorSellRequestAsync(
+            gameEvent.SessionId,
+            gameEvent.VendorSerial,
+            cancellationToken
+        );
 
     public Task StartAsync()
         => Task.CompletedTask;

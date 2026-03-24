@@ -1,0 +1,87 @@
+[
+  {
+    "type": "item",
+    "id": "enchanted_switch",
+    "name": "Enchanted Switch",
+    "category": "Talismans",
+    "description": "",
+    "itemId": "0x2F5C",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "talismans"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "hollow_prism",
+    "name": "Hollow Prism",
+    "category": "Talismans",
+    "description": "",
+    "itemId": "0x2F5D",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "talismans"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "jeweled_filigree",
+    "name": "Jeweled Filigree",
+    "category": "Talismans",
+    "description": "",
+    "itemId": "0x2F5E",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "talismans"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runed_prism",
+    "name": "Runed Prism",
+    "category": "Talismans",
+    "description": "",
+    "itemId": "0x2F57",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "talismans"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "runed_switch",
+    "name": "Runed Switch",
+    "category": "Talismans",
+    "description": "",
+    "itemId": "0x2F61",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "talismans"
+    ]
+  }
+]

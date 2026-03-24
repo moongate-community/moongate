@@ -4,6 +4,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Modules;
@@ -62,7 +63,7 @@ public sealed class CombatModule
             return false;
         }
 
-        return _combatService.TrySetCombatantAsync(npc!.Id, (Moongate.UO.Data.Ids.Serial)targetSerial)
+        return _combatService.TrySetCombatantAsync(npc!.Id, (Serial)targetSerial)
                              .GetAwaiter()
                              .GetResult();
     }

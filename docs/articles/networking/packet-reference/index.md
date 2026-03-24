@@ -160,7 +160,7 @@ Generated packet pages: `201`
 | `0xB5` | Open Chat Window | `implemented` | Client | 64 bytes | OpenChatWindowPacket | [0xB5.md](0xB5.md) |
 | `0xB6` | Send Help/Tip Request | `implemented` | Client | 9 Bytes | SendHelpTipRequestPacket | [0xB6.md](0xB6.md) |
 | `0xB7` | Help/Tip Data | `placeholder` | Server | Variable | None | [0xB7.md](0xB7.md) |
-| `0xB8` | Request/Char Profile | `implemented` | Both | Variable | RequestCharProfilePacket | [0xB8.md](0xB8.md) |
+| `0xB8` | Request/Char Profile | `implemented` | Both | Variable | RequestCharProfilePacket, DisplayCharacterProfilePacket | [0xB8.md](0xB8.md) |
 | `0xB9` | Enable locked client features | `implemented` | Server | 3/5 Bytes | SupportFeaturesPacket | [0xB9.md](0xB9.md) |
 | `0xBA` | Quest Arrow | `placeholder` | Server | 6 or 10 Bytes | None | [0xBA.md](0xBA.md) |
 | `0xBB` | Ultima Messenger | `placeholder` | Both | 9 Bytes | None | [0xBB.md](0xBB.md) |

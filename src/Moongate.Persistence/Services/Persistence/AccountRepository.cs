@@ -20,9 +20,7 @@ internal sealed class AccountRepository : BaseRepository<UOAccountEntity, Serial
         IJournalService journalService,
         IPersistenceEntityDescriptor<UOAccountEntity, Serial> descriptor
     )
-        : base(stateStore, journalService, descriptor)
-    {
-    }
+        : base(stateStore, journalService, descriptor) { }
 
     public async ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default)
     {
@@ -124,9 +122,7 @@ internal sealed class AccountRepository : BaseRepository<UOAccountEntity, Serial
     }
 
     protected override void AfterRemoveLocked(Serial key, UOAccountEntity entity)
-    {
-        _stateStore.AccountNameIndex.Remove(entity.Username);
-    }
+        => _stateStore.AccountNameIndex.Remove(entity.Username);
 
     protected override void BeforeUpsertLocked(UOAccountEntity entity, UOAccountEntity? existing)
     {

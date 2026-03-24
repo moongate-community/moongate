@@ -239,4 +239,31 @@ public sealed class SteeringModuleTests
             }
         );
     }
+
+    [Test]
+    public void MoveTo_ShouldMoveNpcTowardWorldPointAndPublishMobilePositionChangedEvent()
+    {
+        var spatial = new SteeringTestSpatialWorldService();
+        var npc = new UOMobileEntity { Id = (Serial)0x311u, MapId = 1, Location = new(100, 100, 0) };
+        spatial.AddMobile(npc);
+        var eventBus = new SteeringTestGameEventBusService();
+        var module = new SteeringModule(
+            spatial,
+            new SteeringTestMovementValidationService(),
+            new SteeringTestPathfindingService(),
+            eventBus,
+            new SteeringTestSessionService()
+        );
+
+        var moved = module.MoveTo((uint)npc.Id, 105, 100, 0, 1);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moved, Is.True);
+                Assert.That(npc.Location, Is.EqualTo(new Point3D(101, 100, 0)));
+                Assert.That(eventBus.PublishedEvents.Any(gameEvent => gameEvent is MobilePositionChangedEvent), Is.True);
+            }
+        );
+    }
 }

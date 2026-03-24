@@ -1,11 +1,13 @@
 using Moongate.Server.Attributes;
+using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
-using Moongate.Server.Interfaces.Services.Files;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
+using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Templates.SellProfiles;
+using Moongate.UO.Data.Types;
 using Serilog;
 
 namespace Moongate.Server.FileLoaders;
@@ -19,6 +21,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<TemplateValidationLoader>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly IFactionTemplateService _factionTemplateService;
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
     private readonly IBookTemplateService _bookTemplateService;
     private readonly ILootTemplateService _lootTemplateService;
@@ -26,6 +29,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
         IMobileTemplateService mobileTemplateService,
+        IFactionTemplateService factionTemplateService,
         ISellProfileTemplateService sellProfileTemplateService,
         IBookTemplateService bookTemplateService,
         ILootTemplateService lootTemplateService
@@ -33,6 +37,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     {
         _itemTemplateService = itemTemplateService;
         _mobileTemplateService = mobileTemplateService;
+        _factionTemplateService = factionTemplateService;
         _sellProfileTemplateService = sellProfileTemplateService;
         _bookTemplateService = bookTemplateService;
         _lootTemplateService = lootTemplateService;
@@ -42,7 +47,9 @@ public sealed class TemplateValidationLoader : IFileLoader
     {
         var errors = new List<string>();
 
+        ValidateLootTemplates(errors);
         ValidateItems(errors);
+        ValidateFactions(errors);
         ValidateSellProfiles(errors);
         ValidateMobiles(errors);
 
@@ -75,6 +82,27 @@ public sealed class TemplateValidationLoader : IFileLoader
         if (!_bookTemplateService.TryLoad(item.BookId, null, out _))
         {
             errors.Add($"Item template '{item.Id}' references missing or invalid book template '{item.BookId}'.");
+        }
+    }
+
+    private void ValidateFactions(List<string> errors)
+    {
+        foreach (var faction in _factionTemplateService.GetAll())
+        {
+            foreach (var enemyFactionId in faction.EnemyFactionIds)
+            {
+                if (string.IsNullOrWhiteSpace(enemyFactionId))
+                {
+                    errors.Add($"Faction template '{faction.Id}' has an empty enemy faction id.");
+
+                    continue;
+                }
+
+                if (!_factionTemplateService.TryGet(enemyFactionId.Trim(), out _))
+                {
+                    errors.Add($"Faction template '{faction.Id}' references missing enemy faction '{enemyFactionId}'.");
+                }
+            }
         }
     }
 
@@ -125,6 +153,24 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
+    private void ValidateItemLootTables(ItemTemplateDefinition item, List<string> errors)
+    {
+        foreach (var lootTableId in item.LootTables)
+        {
+            if (string.IsNullOrWhiteSpace(lootTableId))
+            {
+                errors.Add($"Item template '{item.Id}' has an empty loot table id.");
+
+                continue;
+            }
+
+            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            {
+                errors.Add($"Item template '{item.Id}' references missing loot table '{lootTableId}'.");
+            }
+        }
+    }
+
     private void ValidateItems(List<string> errors)
     {
         foreach (var item in _itemTemplateService.GetAll())
@@ -155,21 +201,147 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
-    private void ValidateItemLootTables(ItemTemplateDefinition item, List<string> errors)
+    private void ValidateLootEntries(LootTemplateDefinition lootTemplate, List<string> errors)
     {
-        foreach (var lootTableId in item.LootTables)
+        for (var index = 0; index < lootTemplate.Entries.Count; index++)
         {
-            if (string.IsNullOrWhiteSpace(lootTableId))
+            var entry = lootTemplate.Entries[index];
+            var entryLabel = $"Loot template '{lootTemplate.Id}' entry {index}";
+            var referenceCount = 0;
+
+            if (!string.IsNullOrWhiteSpace(entry.ItemTemplateId))
             {
-                errors.Add($"Item template '{item.Id}' has an empty loot table id.");
+                referenceCount++;
+
+                if (!_itemTemplateService.TryGet(entry.ItemTemplateId.Trim(), out _))
+                {
+                    errors.Add($"{entryLabel} references missing item template '{entry.ItemTemplateId}'.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(entry.ItemId))
+            {
+                referenceCount++;
+            }
+
+            if (!string.IsNullOrWhiteSpace(entry.ItemTag))
+            {
+                referenceCount++;
+
+                if (!_itemTemplateService.GetAll()
+                                         .Any(
+                                             item => item.Tags.Any(
+                                                 tag => string.Equals(
+                                                     tag,
+                                                     entry.ItemTag.Trim(),
+                                                     StringComparison.OrdinalIgnoreCase
+                                                 )
+                                             )
+                                         )
+                   )
+                {
+                    errors.Add($"{entryLabel} references unknown item tag '{entry.ItemTag}'.");
+                }
+            }
+
+            if (referenceCount != 1)
+            {
+                errors.Add($"{entryLabel} must define exactly one of itemTemplateId, itemId, or itemTag.");
+            }
+
+            if (entry.Amount <= 0)
+            {
+                errors.Add($"{entryLabel} has non-positive amount {entry.Amount}.");
+            }
+
+            if (lootTemplate.Mode == LootTemplateMode.Weighted)
+            {
+                if (entry.Weight <= 0)
+                {
+                    errors.Add($"{entryLabel} has non-positive weight {entry.Weight}.");
+                }
+
+                if (entry.AmountMin.HasValue || entry.AmountMax.HasValue)
+                {
+                    errors.Add($"{entryLabel} cannot use amountMin/amountMax in weighted mode.");
+                }
+            }
+
+            if (lootTemplate.Mode == LootTemplateMode.Additive)
+            {
+                if (entry.Weight != 1)
+                {
+                    errors.Add($"{entryLabel} must keep default weight 1 in additive mode.");
+                }
+
+                if (entry.Chance is < 0d or > 1d)
+                {
+                    errors.Add($"{entryLabel} has invalid chance {entry.Chance}.");
+                }
+
+                var hasAnyRange = entry.AmountMin.HasValue || entry.AmountMax.HasValue;
+
+                if (entry.AmountMin.HasValue != entry.AmountMax.HasValue)
+                {
+                    errors.Add($"{entryLabel} must define both amountMin and amountMax together.");
+                }
+
+                if (hasAnyRange && entry.Amount != 1)
+                {
+                    errors.Add($"{entryLabel} cannot combine amount with amountMin/amountMax.");
+                }
+
+                if (entry.AmountMin.HasValue && entry.AmountMax.HasValue && entry.AmountMin.Value > entry.AmountMax.Value)
+                {
+                    errors.Add($"{entryLabel} has amountMin greater than amountMax.");
+                }
+            }
+        }
+    }
+
+    private void ValidateLootTemplates(List<string> errors)
+    {
+        foreach (var lootTemplate in _lootTemplateService.GetAll())
+        {
+            if (string.IsNullOrWhiteSpace(lootTemplate.Id))
+            {
+                errors.Add("Loot template has empty id.");
+            }
+
+            if (string.IsNullOrWhiteSpace(lootTemplate.Name))
+            {
+                errors.Add($"Loot template '{lootTemplate.Id}' has empty name.");
+            }
+
+            if (lootTemplate.Entries.Count == 0)
+            {
+                errors.Add($"Loot template '{lootTemplate.Id}' has no entries.");
 
                 continue;
             }
 
-            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            if (lootTemplate.Mode == LootTemplateMode.Weighted)
             {
-                errors.Add($"Item template '{item.Id}' references missing loot table '{lootTableId}'.");
+                if (lootTemplate.Rolls <= 0)
+                {
+                    errors.Add($"Loot template '{lootTemplate.Id}' has non-positive rolls {lootTemplate.Rolls}.");
+                }
+
+                if (lootTemplate.NoDropWeight < 0)
+                {
+                    errors.Add($"Loot template '{lootTemplate.Id}' has negative noDropWeight {lootTemplate.NoDropWeight}.");
+                }
             }
+
+            if (lootTemplate.Mode == LootTemplateMode.Additive)
+            {
+                if (lootTemplate.NoDropWeight != 0)
+                {
+                    errors.Add($"Loot template '{lootTemplate.Id}' cannot use noDropWeight in additive mode.");
+                }
+            }
+
+            ValidateLootEntries(lootTemplate, errors);
         }
     }
 
@@ -193,8 +365,34 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' references missing sell profile '{mobile.SellProfileId}'.");
             }
 
+            ValidateMobileLootTables(mobile, errors);
+
+            if (!string.IsNullOrWhiteSpace(mobile.DefaultFactionId) &&
+                !_factionTemplateService.TryGet(mobile.DefaultFactionId, out _))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' references missing default faction '{mobile.DefaultFactionId}'.");
+            }
+
             ValidateFixedEquipment(mobile, errors);
             ValidateRandomEquipment(mobile, errors);
+        }
+    }
+
+    private void ValidateMobileLootTables(MobileTemplateDefinition mobile, List<string> errors)
+    {
+        foreach (var lootTableId in mobile.LootTables)
+        {
+            if (string.IsNullOrWhiteSpace(lootTableId))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' has an empty loot table id.");
+
+                continue;
+            }
+
+            if (!_lootTemplateService.TryGet(lootTableId.Trim(), out _))
+            {
+                errors.Add($"Mobile template '{mobile.Id}' references missing loot table '{lootTableId}'.");
+            }
         }
     }
 

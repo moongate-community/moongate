@@ -1,4 +1,3 @@
-using System.Buffers.Binary;
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.System;
@@ -46,7 +45,6 @@ public sealed class PlayerHandlerTests
         var writer = new SpanWriter(300, true);
 
         writer.Write((byte)0xD9);
-        writer.Write((ushort)0); // placeholder length
         writer.Write((byte)0x02);
         writer.Write(0x11223344u);
         writer.Write(10u);
@@ -71,12 +69,10 @@ public sealed class PlayerHandlerTests
         writer.Write((byte)1);
         writer.Write((byte)1);
         writer.Write((byte)0);
-        writer.Write((byte)0);
         writer.WriteLittleUni("ENU", 4);
         writer.WriteAscii("tail", 64);
 
         var payload = writer.ToArray();
-        BinaryPrimitives.WriteUInt16BigEndian(payload.AsSpan(1, 2), (ushort)payload.Length);
         writer.Dispose();
 
         return payload;

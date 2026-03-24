@@ -1,7 +1,8 @@
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Events.Speech;
-using Moongate.UO.Data.Ids;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Scripting.Internal;
 
@@ -11,15 +12,32 @@ namespace Moongate.Server.Services.Scripting.Internal;
 internal static class LuaBrainPayloadFactory
 {
     public static Dictionary<string, object> BuildInRangeEventPayload(
-        Serial listenerNpcId,
+        UOMobileEntity listenerMobile,
         UOMobileEntity sourceMobile,
-        int range
+        int range,
+        INotorietyService notorietyService,
+        IAiRelationService aiRelationService
     )
-        => new()
+    {
+        ArgumentNullException.ThrowIfNull(listenerMobile);
+        ArgumentNullException.ThrowIfNull(sourceMobile);
+        ArgumentNullException.ThrowIfNull(notorietyService);
+        ArgumentNullException.ThrowIfNull(aiRelationService);
+
+        var resolvedNotoriety = notorietyService.Compute(listenerMobile, sourceMobile);
+        var relation = aiRelationService.Compute(listenerMobile, sourceMobile);
+
+        return new()
         {
-            ["listener_npc_id"] = (uint)listenerNpcId,
+            ["listener_npc_id"] = (uint)listenerMobile.Id,
             ["source_mobile_id"] = (uint)sourceMobile.Id,
+            ["source_name"] = sourceMobile.Name ?? string.Empty,
             ["source_is_player"] = sourceMobile.IsPlayer,
+            ["source_fame"] = sourceMobile.Fame,
+            ["source_karma"] = sourceMobile.Karma,
+            ["source_notoriety"] = resolvedNotoriety.ToString(),
+            ["source_is_enemy"] = relation == AiRelation.Hostile,
+            ["source_relation"] = relation.ToString(),
             ["map_id"] = sourceMobile.MapId,
             ["range"] = range,
             ["location"] = new Dictionary<string, int>
@@ -29,6 +47,7 @@ internal static class LuaBrainPayloadFactory
                 ["z"] = sourceMobile.Location.Z
             }
         };
+    }
 
     public static Dictionary<string, object> BuildSpawnEventPayload(MobileSpawnedFromSpawnerEvent spawn)
         => new()

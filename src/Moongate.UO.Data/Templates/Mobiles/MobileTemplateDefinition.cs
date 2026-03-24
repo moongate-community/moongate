@@ -55,6 +55,8 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public string? SellProfileId { get; set; }
 
+    public string? DefaultFactionId { get; set; }
+
     public Dictionary<MobileSoundType, int> Sounds { get; set; } = new();
 
     [JsonConverter(typeof(GoldValueSpecJsonConverter))]

@@ -16,6 +16,7 @@ public sealed class AsyncLuaJobRegistryTests
         {
             _ = payload;
             _ = cancellationToken;
+
             return Task.FromResult(new Dictionary<string, object?>());
         }
     }

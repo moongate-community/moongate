@@ -18,6 +18,10 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "defaultFactionId": "true_britannians",
+    "lootTables": [
+      "guard.warrior"
+    ],
     "fixedEquipment": [
       {
         "itemTemplateId": "plate_chest",
@@ -69,6 +73,10 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "defaultFactionId": "true_britannians",
+    "lootTables": [
+      "guard.warrior"
+    ],
     "fixedEquipment": [
       {
         "itemTemplateId": "leather_skirt",
@@ -112,6 +120,16 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "defaultFactionId": "true_britannians",
+    "lootTables": [
+      "guard.archer"
+    ],
+    "params": {
+      "guard_role": {
+        "type": "string",
+        "value": "ranged"
+      }
+    },
     "fixedEquipment": [
       {
         "itemTemplateId": "studded_chest",
@@ -175,6 +193,16 @@
     "intelligence": 25,
     "hits": 100,
     "brain": "guard",
+    "defaultFactionId": "true_britannians",
+    "lootTables": [
+      "guard.archer"
+    ],
+    "params": {
+      "guard_role": {
+        "type": "string",
+        "value": "ranged"
+      }
+    },
     "fixedEquipment": [
       {
         "itemTemplateId": "studded_chest",

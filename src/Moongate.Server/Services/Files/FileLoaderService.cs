@@ -22,8 +22,29 @@ public class FileLoaderService : IFileLoaderService
     }
 
     public void AddFileLoader<T>() where T : IFileLoader
+        => AddFileLoader(typeof(T));
+
+    public void AddFileLoader(Type loaderType)
     {
-        AddFileLoader(typeof(T));
+        ArgumentNullException.ThrowIfNull(loaderType);
+
+        if (!typeof(IFileLoader).IsAssignableFrom(loaderType))
+        {
+            throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
+        }
+
+        if (_fileLoaders.Any(loader => loader.GetType() == loaderType))
+        {
+            return;
+        }
+
+        if (!_container.IsRegistered(loaderType))
+        {
+            _container.Register(loaderType, Reuse.Singleton);
+        }
+
+        var fileLoader = (IFileLoader)_container.Resolve(loaderType);
+        _fileLoaders.Add(fileLoader);
     }
 
     public void Dispose()
@@ -59,27 +80,4 @@ public class FileLoaderService : IFileLoaderService
 
     public Task StopAsync()
         => Task.CompletedTask;
-
-    public void AddFileLoader(Type loaderType)
-    {
-        ArgumentNullException.ThrowIfNull(loaderType);
-
-        if (!typeof(IFileLoader).IsAssignableFrom(loaderType))
-        {
-            throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
-        }
-
-        if (_fileLoaders.Any(loader => loader.GetType() == loaderType))
-        {
-            return;
-        }
-
-        if (!_container.IsRegistered(loaderType))
-        {
-            _container.Register(loaderType, Reuse.Singleton);
-        }
-
-        var fileLoader = (IFileLoader)_container.Resolve(loaderType);
-        _fileLoaders.Add(fileLoader);
-    }
 }

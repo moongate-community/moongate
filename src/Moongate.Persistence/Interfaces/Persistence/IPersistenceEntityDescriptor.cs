@@ -37,19 +37,14 @@ public interface IPersistenceEntityDescriptor
 public interface IPersistenceEntityDescriptor<TEntity, TKey> : IPersistenceEntityDescriptor
 {
     /// <summary>
-    /// Gets the entity key.
-    /// </summary>
-    TKey GetKey(TEntity entity);
-
-    /// <summary>
     /// Creates a detached entity clone suitable for external callers.
     /// </summary>
     TEntity Clone(TEntity entity);
 
     /// <summary>
-    /// Serializes a single entity payload for journal upserts.
+    /// Deserializes a snapshot bucket payload.
     /// </summary>
-    byte[] SerializeEntity(TEntity entity);
+    IReadOnlyList<TEntity> DeserializeBucket(byte[] payload);
 
     /// <summary>
     /// Deserializes a single entity payload from the journal.
@@ -57,14 +52,14 @@ public interface IPersistenceEntityDescriptor<TEntity, TKey> : IPersistenceEntit
     TEntity DeserializeEntity(byte[] payload);
 
     /// <summary>
-    /// Serializes a key payload for journal removals.
-    /// </summary>
-    byte[] SerializeKey(TKey key);
-
-    /// <summary>
     /// Deserializes a key payload from the journal.
     /// </summary>
     TKey DeserializeKey(byte[] payload);
+
+    /// <summary>
+    /// Gets the entity key.
+    /// </summary>
+    TKey GetKey(TEntity entity);
 
     /// <summary>
     /// Serializes a snapshot bucket payload.
@@ -72,7 +67,12 @@ public interface IPersistenceEntityDescriptor<TEntity, TKey> : IPersistenceEntit
     byte[] SerializeBucket(IReadOnlyCollection<TEntity> entities);
 
     /// <summary>
-    /// Deserializes a snapshot bucket payload.
+    /// Serializes a single entity payload for journal upserts.
     /// </summary>
-    IReadOnlyList<TEntity> DeserializeBucket(byte[] payload);
+    byte[] SerializeEntity(TEntity entity);
+
+    /// <summary>
+    /// Serializes a key payload for journal removals.
+    /// </summary>
+    byte[] SerializeKey(TKey key);
 }

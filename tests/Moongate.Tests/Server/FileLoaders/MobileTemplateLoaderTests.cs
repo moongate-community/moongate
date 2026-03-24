@@ -11,6 +11,170 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class MobileTemplateLoaderTests
 {
     [Test]
+    public async Task LoadAsync_WhenRepositoryContainsGuardTemplates_ShouldLoadDefaultFactionIdAndLootTables()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobileTemplateService.TryGet("warrior_guard_male_npc", out var warriorMale), Is.True);
+                Assert.That(warriorMale, Is.Not.Null);
+                Assert.That(warriorMale!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(warriorMale.LootTables, Is.EqualTo(new[] { "guard.warrior" }));
+
+                Assert.That(mobileTemplateService.TryGet("warrior_guard_female_npc", out var warriorFemale), Is.True);
+                Assert.That(warriorFemale, Is.Not.Null);
+                Assert.That(warriorFemale!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(warriorFemale.LootTables, Is.EqualTo(new[] { "guard.warrior" }));
+
+                Assert.That(mobileTemplateService.TryGet("archer_guard_male_npc", out var archerMale), Is.True);
+                Assert.That(archerMale, Is.Not.Null);
+                Assert.That(archerMale!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(archerMale.LootTables, Is.EqualTo(new[] { "guard.archer" }));
+
+                Assert.That(mobileTemplateService.TryGet("archer_guard_female_npc", out var archerFemale), Is.True);
+                Assert.That(archerFemale, Is.Not.Null);
+                Assert.That(archerFemale!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(archerFemale.LootTables, Is.EqualTo(new[] { "guard.archer" }));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenRepositoryContainsVendorTemplates_ShouldLoadVendorDefinitions()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobileTemplateService.TryGet("blacksmith_vendor_npc", out var blacksmith), Is.True);
+                Assert.That(blacksmith, Is.Not.Null);
+                Assert.That(blacksmith!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(blacksmith.SellProfileId, Is.EqualTo("vendor.blacksmith"));
+                Assert.That(blacksmith.LootTables, Is.EqualTo(new[] { "vendor.blacksmith" }));
+                Assert.That(blacksmith.Title, Is.EqualTo("a blacksmith"));
+                Assert.That(blacksmith.FixedEquipment, Has.Count.EqualTo(5));
+                Assert.That(blacksmith.FixedEquipment[0].ItemTemplateId, Is.EqualTo("fancy_shirt"));
+                Assert.That(blacksmith.FixedEquipment[4].ItemTemplateId, Is.EqualTo("tongs"));
+
+                Assert.That(mobileTemplateService.TryGet("weaponsmith_vendor_npc", out var weaponsmith), Is.True);
+                Assert.That(weaponsmith, Is.Not.Null);
+                Assert.That(weaponsmith!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(weaponsmith.SellProfileId, Is.EqualTo("vendor.weaponsmith"));
+                Assert.That(weaponsmith.LootTables, Is.EqualTo(new[] { "vendor.weaponsmith" }));
+                Assert.That(weaponsmith.Strength, Is.EqualTo(80));
+                Assert.That(weaponsmith.Dexterity, Is.EqualTo(60));
+                Assert.That(weaponsmith.Intelligence, Is.EqualTo(45));
+                Assert.That(weaponsmith.Hits, Is.EqualTo(80));
+                Assert.That(weaponsmith.Title, Is.EqualTo("the weaponsmith"));
+                Assert.That(weaponsmith.FixedEquipment, Has.Count.EqualTo(5));
+                Assert.That(weaponsmith.FixedEquipment[4].ItemTemplateId, Is.EqualTo("hatchet"));
+
+                Assert.That(mobileTemplateService.TryGet("armorer_vendor_npc", out var armorer), Is.True);
+                Assert.That(armorer, Is.Not.Null);
+                Assert.That(armorer!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(armorer.SellProfileId, Is.EqualTo("vendor.armorer"));
+                Assert.That(armorer.LootTables, Is.EqualTo(new[] { "vendor.armorer" }));
+                Assert.That(armorer.Title, Is.EqualTo("an armorer"));
+                Assert.That(armorer.FixedEquipment, Has.Count.EqualTo(5));
+                Assert.That(armorer.FixedEquipment[4].ItemTemplateId, Is.EqualTo("helmet"));
+
+                Assert.That(mobileTemplateService.TryGet("provisioner_vendor_npc", out var provisioner), Is.True);
+                Assert.That(provisioner, Is.Not.Null);
+                Assert.That(provisioner!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(provisioner.SellProfileId, Is.EqualTo("vendor.provisioner"));
+                Assert.That(provisioner.LootTables, Is.EqualTo(new[] { "vendor.provisioner" }));
+                Assert.That(provisioner.Title, Is.EqualTo("the provisioner"));
+                Assert.That(provisioner.FixedEquipment, Has.Count.EqualTo(4));
+                Assert.That(provisioner.FixedEquipment[3].ItemTemplateId, Is.EqualTo("backpack"));
+
+                Assert.That(mobileTemplateService.TryGet("mage_vendor_npc", out var mage), Is.True);
+                Assert.That(mage, Is.Not.Null);
+                Assert.That(mage!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(mage.SellProfileId, Is.EqualTo("vendor.mage"));
+                Assert.That(mage.LootTables, Is.EqualTo(new[] { "vendor.mage" }));
+                Assert.That(mage.Title, Is.EqualTo("a mage"));
+                Assert.That(mage.FixedEquipment, Has.Count.EqualTo(4));
+                Assert.That(mage.FixedEquipment[2].ItemTemplateId, Is.EqualTo("wizards_hat"));
+                Assert.That(mage.FixedEquipment[3].ItemTemplateId, Is.EqualTo("spellbook"));
+
+                Assert.That(mobileTemplateService.TryGet("healer_vendor_npc", out var healer), Is.True);
+                Assert.That(healer, Is.Not.Null);
+                Assert.That(healer!.DefaultFactionId, Is.EqualTo("true_britannians"));
+                Assert.That(healer.SellProfileId, Is.EqualTo("vendor.healer"));
+                Assert.That(healer.LootTables, Is.EqualTo(new[] { "vendor.healer" }));
+                Assert.That(healer.Title, Is.EqualTo("a healer"));
+                Assert.That(healer.FixedEquipment, Has.Count.EqualTo(2));
+                Assert.That(healer.FixedEquipment[0].ItemTemplateId, Is.EqualTo("robe"));
+                Assert.That(healer.FixedEquipment[1].ItemTemplateId, Is.EqualTo("sandals"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenBaseMobileHasDefaultFactionId_ShouldInheritDefaultFactionId()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "factions.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_faction_guard",
+                "name": "Base Guard",
+                "body": "0x0190",
+                "defaultFactionId": "true_britannians"
+              },
+              {
+                "type": "mobile",
+                "id": "faction_guard",
+                "base_mobile": "base_faction_guard",
+                "name": "Faction Guard"
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("faction_guard", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+        Assert.That(template!.DefaultFactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileHasParams_ShouldInheritAndOverrideParams()
     {
         using var tempDirectory = new TempDirectory();
@@ -376,5 +540,22 @@ public class MobileTemplateLoaderTests
                 Assert.That(definition?.Brain, Is.EqualTo("aggressive_orc"));
             }
         );
+    }
+
+    private static string ResolveRepositoryRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
     }
 }

@@ -26,6 +26,43 @@ public class ItemTemplatePolymorphicTests
     }
 
     [Test]
+    public void Deserialize_WhenLayerIsPresent_ShouldBindItemLayerType()
+    {
+        var json = """
+                   [
+                     {
+                       "type": "item",
+                       "id": "bascinet",
+                       "name": "Bascinet",
+                       "category": "Armor",
+                       "description": "Plate helm",
+                       "itemId": "0x140C",
+                       "hue": "0",
+                       "goldValue": "0",
+                       "scriptId": "none",
+                       "layer": "Helm"
+                     }
+                   ]
+                   """;
+
+        var deserialized = JsonSerializer.Deserialize(
+            json,
+            MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(ItemTemplateDefinitionBase[]))
+        );
+        var result = deserialized as ItemTemplateDefinitionBase[];
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result!.Length, Is.EqualTo(1));
+                Assert.That(result[0], Is.TypeOf<ItemTemplateDefinition>());
+                Assert.That(((ItemTemplateDefinition)result[0]).Layer, Is.EqualTo(ItemLayerType.Helm));
+            }
+        );
+    }
+
+    [Test]
     public void Deserialize_WithPolymorphicTypeItem_ShouldCreateItemTemplateDefinition()
     {
         var json = """
@@ -73,6 +110,7 @@ public class ItemTemplatePolymorphicTests
                        "usesRemaining": 30,
                        "ammo": "0x0f3f",
                        "ammoFx": "0x1bfe",
+                       "weaponSkill": "Archery",
                        "maxRange": 8,
                        "baseRange": 2,
                        "dyeable": true,
@@ -132,6 +170,7 @@ public class ItemTemplatePolymorphicTests
                 Assert.That(item.UsesRemaining, Is.EqualTo(30));
                 Assert.That(item.Ammo, Is.EqualTo(0x0F3F));
                 Assert.That(item.AmmoFx, Is.EqualTo(0x1BFE));
+                Assert.That(item.WeaponSkill, Is.EqualTo(UOSkillName.Archery));
                 Assert.That(item.MaxRange, Is.EqualTo(8));
                 Assert.That(item.BaseRange, Is.EqualTo(2));
                 Assert.That(item.Visibility, Is.EqualTo(AccountType.Regular));

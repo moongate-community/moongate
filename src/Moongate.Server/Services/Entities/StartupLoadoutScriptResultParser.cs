@@ -27,33 +27,57 @@ public static class StartupLoadoutScriptResultParser
         return loadout;
     }
 
-    private static void ParseSection(Table result, string sectionName, List<StartupLoadoutItem> destination)
+    private static object? ConvertDynValue(DynValue value)
+        => value.Type switch
+        {
+            DataType.Nil or DataType.Void => null,
+            DataType.Boolean => value.Boolean,
+            DataType.String => value.String,
+            DataType.Number => ConvertNumber(value.Number),
+            DataType.Table when value.Table is not null => ConvertTable(value.Table),
+            _ => throw new InvalidOperationException($"Unsupported Lua value type '{value.Type}' in startup loadout args.")
+        };
+
+    private static object ConvertNumber(double number)
     {
-        var sectionValue = result.Get(sectionName);
+        var rounded = Math.Round(number);
 
-        if (sectionValue.Type is DataType.Nil or DataType.Void)
+        return Math.Abs(number - rounded) < double.Epsilon
+                   ? Convert.ToInt64(rounded)
+                   : number;
+    }
+
+    private static object ConvertTable(Table table)
+    {
+        var isArray = table.Pairs.All(
+            static pair => pair.Key.Type == DataType.Number &&
+                           Math.Abs(pair.Key.Number - Math.Round(pair.Key.Number)) < double.Epsilon &&
+                           pair.Key.Number >= 1
+        );
+
+        if (isArray)
         {
-            return;
+            return table.Pairs
+                        .OrderBy(static pair => pair.Key.Number)
+                        .Select(static pair => ConvertDynValue(pair.Value))
+                        .ToList();
         }
 
-        if (sectionValue.Type != DataType.Table || sectionValue.Table is null)
-        {
-            throw new InvalidOperationException(
-                $"Lua starting loadout section '{sectionName}' must be a table."
-            );
-        }
+        var dictionary = new Dictionary<string, object?>(StringComparer.Ordinal);
 
-        foreach (var pair in sectionValue.Table.Pairs.OrderBy(static pair => pair.Key.CastToNumber()))
+        foreach (var pair in table.Pairs)
         {
-            if (pair.Value.Type != DataType.Table || pair.Value.Table is null)
+            if (pair.Key.Type != DataType.String || string.IsNullOrWhiteSpace(pair.Key.String))
             {
                 throw new InvalidOperationException(
-                    $"Lua starting loadout entry in '{sectionName}' must be a table."
+                    "Lua startup loadout args tables must use string keys for object-style entries."
                 );
             }
 
-            destination.Add(ParseItem(sectionName, pair.Value.Table));
+            dictionary[pair.Key.String] = ConvertDynValue(pair.Value);
         }
+
+        return dictionary;
     }
 
     private static StartupLoadoutItem ParseItem(string sectionName, Table itemTable)
@@ -128,9 +152,7 @@ public static class StartupLoadoutScriptResultParser
         {
             if (hueValue.Type != DataType.Number)
             {
-                throw new InvalidOperationException(
-                    $"Lua starting loadout entry '{templateId.String}' has invalid 'hue'."
-                );
+                throw new InvalidOperationException($"Lua starting loadout entry '{templateId.String}' has invalid 'hue'.");
             }
 
             hue = Convert.ToInt32(hueValue.Number);
@@ -146,56 +168,28 @@ public static class StartupLoadoutScriptResultParser
         };
     }
 
-    private static object? ConvertDynValue(DynValue value)
-        => value.Type switch
-        {
-            DataType.Nil or DataType.Void => null,
-            DataType.Boolean => value.Boolean,
-            DataType.String => value.String,
-            DataType.Number => ConvertNumber(value.Number),
-            DataType.Table when value.Table is not null => ConvertTable(value.Table),
-            _ => throw new InvalidOperationException(
-                $"Unsupported Lua value type '{value.Type}' in startup loadout args."
-            )
-        };
-
-    private static object ConvertNumber(double number)
+    private static void ParseSection(Table result, string sectionName, List<StartupLoadoutItem> destination)
     {
-        var rounded = Math.Round(number);
-        return Math.Abs(number - rounded) < double.Epsilon
-            ? Convert.ToInt64(rounded)
-            : number;
-    }
+        var sectionValue = result.Get(sectionName);
 
-    private static object ConvertTable(Table table)
-    {
-        var isArray = table.Pairs.All(
-            static pair => pair.Key.Type == DataType.Number &&
-                           Math.Abs(pair.Key.Number - Math.Round(pair.Key.Number)) < double.Epsilon &&
-                           pair.Key.Number >= 1);
-
-        if (isArray)
+        if (sectionValue.Type is DataType.Nil or DataType.Void)
         {
-            return table.Pairs
-                        .OrderBy(static pair => pair.Key.Number)
-                        .Select(static pair => ConvertDynValue(pair.Value))
-                        .ToList();
+            return;
         }
 
-        var dictionary = new Dictionary<string, object?>(StringComparer.Ordinal);
-
-        foreach (var pair in table.Pairs)
+        if (sectionValue.Type != DataType.Table || sectionValue.Table is null)
         {
-            if (pair.Key.Type != DataType.String || string.IsNullOrWhiteSpace(pair.Key.String))
+            throw new InvalidOperationException($"Lua starting loadout section '{sectionName}' must be a table.");
+        }
+
+        foreach (var pair in sectionValue.Table.Pairs.OrderBy(static pair => pair.Key.CastToNumber()))
+        {
+            if (pair.Value.Type != DataType.Table || pair.Value.Table is null)
             {
-                throw new InvalidOperationException(
-                    "Lua startup loadout args tables must use string keys for object-style entries."
-                );
+                throw new InvalidOperationException($"Lua starting loadout entry in '{sectionName}' must be a table.");
             }
 
-            dictionary[pair.Key.String] = ConvertDynValue(pair.Value);
+            destination.Add(ParseItem(sectionName, pair.Value.Table));
         }
-
-        return dictionary;
     }
 }

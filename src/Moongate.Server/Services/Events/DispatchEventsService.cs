@@ -265,7 +265,12 @@ public sealed class DispatchEventsService
             {
                 _outgoingPacketQueue.Enqueue(
                     playerSession.SessionId,
-                    new MobileIncomingPacket(playerSession.Character, mobile, stygianAbyss)
+                    new MobileIncomingPacket(
+                        playerSession.Character,
+                        mobile,
+                        stygianAbyss,
+                        playerSession.NetworkSession.IsEnhancedClient
+                    )
                     {
                         ResolvedNotoriety = _notorietyService.Compute(playerSession.Character, mobile)
                     }
@@ -322,7 +327,11 @@ public sealed class DispatchEventsService
     public Task HandleAsync(MobileWarModeChangedEvent gameEvent, CancellationToken cancellationToken = default)
     {
         _ = cancellationToken;
-        var recipients = _spatialWorldService.GetPlayersInRange(gameEvent.Mobile.Location, MapSectorConsts.MaxViewRange, gameEvent.Mobile.MapId);
+        var recipients = _spatialWorldService.GetPlayersInRange(
+            gameEvent.Mobile.Location,
+            MapSectorConsts.MaxViewRange,
+            gameEvent.Mobile.MapId
+        );
 
         foreach (var session in recipients)
         {

@@ -65,6 +65,15 @@ public sealed class ItemFactoryService : IItemFactoryService
             Hue = template.Hue.Resolve(),
             GumpId = ResolveGumpId(template),
             ScriptId = template.ScriptId,
+            WeaponSkill = template.WeaponSkill,
+            AmmoItemId = ToNullableItemId(template.Ammo),
+            AmmoEffectId = ToNullableItemId(template.AmmoFx),
+            IsQuiver = template.IsQuiver,
+            QuiverLowerAmmoCost = template.LowerAmmoCost,
+            QuiverDamageIncrease = template.QuiverDamageIncrease,
+            QuiverWeightReduction = template.WeightReduction,
+            HitSound = template.HitSound,
+            MissSound = template.MissSound,
             Location = Point3D.Zero,
             ParentContainerId = Serial.Zero,
             ContainerPosition = Point2D.Zero,
@@ -458,4 +467,7 @@ public sealed class ItemFactoryService : IItemFactoryService
 
         return null;
     }
+
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
 }

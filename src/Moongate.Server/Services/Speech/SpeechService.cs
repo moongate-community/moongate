@@ -242,6 +242,20 @@ public sealed class SpeechService : ISpeechService
         return recipients;
     }
 
+    private static bool IsAsteriskWrappedEmote(string text)
+        => text.Length >= 3 &&
+           text[0] == '*' &&
+           text[^1] == '*' &&
+           !string.IsNullOrWhiteSpace(text[1..^1]);
+
+    private static string NormalizeIncomingText(ChatMessageType messageType, string text)
+        => messageType switch
+        {
+            ChatMessageType.Yell when text[0] == '!'    => text[1..].TrimStart(),
+            ChatMessageType.Whisper when text[0] == ';' => text[1..].TrimStart(),
+            _                                           => text
+        };
+
     private async Task PublishSpeechHeardEventsAsync(
         GameSession session,
         string text,
@@ -298,29 +312,15 @@ public sealed class SpeechService : ISpeechService
         {
             '!' when text.Length > 1 => ChatMessageType.Yell,
             ';' when text.Length > 1 => ChatMessageType.Whisper,
-            _ => messageType
+            _                        => messageType
         };
     }
-
-    private static string NormalizeIncomingText(ChatMessageType messageType, string text)
-        => messageType switch
-        {
-            ChatMessageType.Yell when text[0] == '!' => text[1..].TrimStart(),
-            ChatMessageType.Whisper when text[0] == ';' => text[1..].TrimStart(),
-            _ => text
-        };
-
-    private static bool IsAsteriskWrappedEmote(string text)
-        => text.Length >= 3 &&
-           text[0] == '*' &&
-           text[^1] == '*' &&
-           !string.IsNullOrWhiteSpace(text[1..^1]);
 
     private static int ResolveSpeechRange(ChatMessageType messageType)
         => messageType switch
         {
             ChatMessageType.Whisper => WhisperSpeechRange,
-            ChatMessageType.Yell => YellSpeechRange,
-            _ => DefaultSpeechRange
+            ChatMessageType.Yell    => YellSpeechRange,
+            _                       => DefaultSpeechRange
         };
 }

@@ -11,43 +11,6 @@ namespace Moongate.Tests.Server.Services.Plugins;
 public class PluginDiscoveryServiceTests
 {
     [Test]
-    public void DiscoverPlugins_WhenManifestExists_ShouldReturnDiscoveredPlugin()
-    {
-        using var temp = new TempDirectory();
-        var directoriesConfig = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var pluginsDirectory = directoriesConfig[DirectoryType.Plugins];
-        var pluginDirectory = Path.Combine(pluginsDirectory, "alpha");
-
-        Directory.CreateDirectory(pluginDirectory);
-        WriteManifest(
-            Path.Combine(pluginDirectory, "manifest.json"),
-            new MoongatePluginManifest
-            {
-                Id = "alpha",
-                Name = "Alpha",
-                Version = "1.0.0",
-                Authors = ["Squid"],
-                EntryAssembly = "bin/Alpha.dll",
-                EntryType = "Alpha.Plugin"
-            }
-        );
-
-        var service = new PluginDiscoveryService(directoriesConfig);
-
-        var discoveredPlugins = service.DiscoverPlugins();
-
-        Assert.That(discoveredPlugins, Has.Count.EqualTo(1));
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(discoveredPlugins[0].PluginId, Is.EqualTo("alpha"));
-                Assert.That(discoveredPlugins[0].Manifest.EntryAssembly, Is.EqualTo("bin/Alpha.dll"));
-                Assert.That(discoveredPlugins[0].Manifest.EntryType, Is.EqualTo("Alpha.Plugin"));
-            }
-        );
-    }
-
-    [Test]
     public void DiscoverPlugins_WhenDirectoryHasNoManifest_ShouldIgnoreDirectory()
     {
         using var temp = new TempDirectory();
@@ -60,7 +23,7 @@ public class PluginDiscoveryServiceTests
         Directory.CreateDirectory(manifestDirectory);
         WriteManifest(
             Path.Combine(manifestDirectory, "manifest.json"),
-            new MoongatePluginManifest
+            new()
             {
                 Id = "included",
                 Name = "Included",
@@ -90,7 +53,7 @@ public class PluginDiscoveryServiceTests
         Directory.CreateDirectory(pluginDirectory);
         WriteManifest(
             Path.Combine(pluginDirectory, "manifest.json"),
-            new MoongatePluginManifest
+            new()
             {
                 Id = "broken",
                 Name = "Broken",
@@ -105,11 +68,46 @@ public class PluginDiscoveryServiceTests
         Assert.Throws<InvalidOperationException>(() => service.DiscoverPlugins());
     }
 
-    private static void WriteManifest(string path, MoongatePluginManifest manifest)
+    [Test]
+    public void DiscoverPlugins_WhenManifestExists_ShouldReturnDiscoveredPlugin()
     {
-        File.WriteAllText(
+        using var temp = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var pluginsDirectory = directoriesConfig[DirectoryType.Plugins];
+        var pluginDirectory = Path.Combine(pluginsDirectory, "alpha");
+
+        Directory.CreateDirectory(pluginDirectory);
+        WriteManifest(
+            Path.Combine(pluginDirectory, "manifest.json"),
+            new()
+            {
+                Id = "alpha",
+                Name = "Alpha",
+                Version = "1.0.0",
+                Authors = ["Squid"],
+                EntryAssembly = "bin/Alpha.dll",
+                EntryType = "Alpha.Plugin"
+            }
+        );
+
+        var service = new PluginDiscoveryService(directoriesConfig);
+
+        var discoveredPlugins = service.DiscoverPlugins();
+
+        Assert.That(discoveredPlugins, Has.Count.EqualTo(1));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(discoveredPlugins[0].PluginId, Is.EqualTo("alpha"));
+                Assert.That(discoveredPlugins[0].Manifest.EntryAssembly, Is.EqualTo("bin/Alpha.dll"));
+                Assert.That(discoveredPlugins[0].Manifest.EntryType, Is.EqualTo("Alpha.Plugin"));
+            }
+        );
+    }
+
+    private static void WriteManifest(string path, MoongatePluginManifest manifest)
+        => File.WriteAllText(
             path,
             JsonSerializer.Serialize(manifest, MoongatePluginJsonContext.Default.MoongatePluginManifest)
         );
-    }
 }

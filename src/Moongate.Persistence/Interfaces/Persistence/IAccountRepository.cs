@@ -14,17 +14,17 @@ public interface IAccountRepository : IBaseRepository<UOAccountEntity, Serial>
     ValueTask<bool> AddAsync(UOAccountEntity account, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Gets an account by username.
-    /// </summary>
-    ValueTask<UOAccountEntity?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Returns true when at least one account matches the predicate.
     /// </summary>
     ValueTask<bool> ExistsAsync(
         Func<UOAccountEntity, bool> predicate,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Gets an account by username.
+    /// </summary>
+    ValueTask<UOAccountEntity?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Runs a projection query over account entities.

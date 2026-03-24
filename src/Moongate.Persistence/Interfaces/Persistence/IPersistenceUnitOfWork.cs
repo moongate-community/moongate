@@ -34,12 +34,6 @@ public interface IPersistenceUnitOfWork
     IHelpTicketRepository HelpTickets => throw new NotSupportedException();
 
     /// <summary>
-    /// Gets a repository by generic entity and key type.
-    /// </summary>
-    IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
-        => throw new NotSupportedException();
-
-    /// <summary>
     /// Allocates the next progressive account serial identifier.
     /// </summary>
     Serial AllocateNextAccountId();
@@ -59,6 +53,12 @@ public interface IPersistenceUnitOfWork
     /// </summary>
     ValueTask<CapturedWorldSnapshot> CaptureSnapshotAsync(CancellationToken cancellationToken = default)
         => ValueTask.FromException<CapturedWorldSnapshot>(new NotSupportedException());
+
+    /// <summary>
+    /// Gets a repository by generic entity and key type.
+    /// </summary>
+    IBaseRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+        => throw new NotSupportedException();
 
     /// <summary>
     /// Loads state from snapshot and replays journal entries.

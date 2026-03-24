@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Items;
@@ -12,7 +13,6 @@ using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using Serilog;
-using System.Globalization;
 
 namespace Moongate.Server.Services.Items;
 
@@ -79,6 +79,25 @@ public sealed class ItemService : IItemService
             ContainerPosition = item.ContainerPosition,
             EquippedMobileId = item.EquippedMobileId,
             EquippedLayer = item.EquippedLayer,
+            WeaponSkill = item.WeaponSkill,
+            AmmoItemId = item.AmmoItemId,
+            AmmoEffectId = item.AmmoEffectId,
+            CombatStats = item.CombatStats is null
+                              ? null
+                              : new()
+                              {
+                                  MinStrength = item.CombatStats.MinStrength,
+                                  MinDexterity = item.CombatStats.MinDexterity,
+                                  MinIntelligence = item.CombatStats.MinIntelligence,
+                                  DamageMin = item.CombatStats.DamageMin,
+                                  DamageMax = item.CombatStats.DamageMax,
+                                  Defense = item.CombatStats.Defense,
+                                  AttackSpeed = item.CombatStats.AttackSpeed,
+                                  RangeMin = item.CombatStats.RangeMin,
+                                  RangeMax = item.CombatStats.RangeMax,
+                                  MaxDurability = item.CombatStats.MaxDurability,
+                                  CurrentDurability = item.CombatStats.CurrentDurability
+                              },
             ContainedItemIds = [.. item.ContainedItemIds]
         };
 
@@ -196,8 +215,14 @@ public sealed class ItemService : IItemService
             return false;
         }
 
+        if (!CanEquipOnLayer(mobile, item, layer))
+        {
+            return false;
+        }
+
         await DetachFromCurrentOwnerAsync(item);
         await TryUnequipCurrentLayerItemAsync(mobile, layer);
+        await TryUnequipConflictingHandItemsAsync(mobile, item, layer);
 
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
@@ -396,6 +421,112 @@ public sealed class ItemService : IItemService
         }
     }
 
+    private void BackfillTemplateCombatMetadata(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (!TryResolveItemTemplate(item, out var template) || template is null)
+        {
+            return;
+        }
+
+        item.WeaponSkill ??= template.WeaponSkill;
+
+        if (item.AmmoItemId is null)
+        {
+            item.AmmoItemId = ToNullableItemId(template.Ammo);
+        }
+
+        if (item.AmmoEffectId is null)
+        {
+            item.AmmoEffectId = ToNullableItemId(template.AmmoFx);
+        }
+
+        if (template.BaseRange <= 0 && template.MaxRange <= 0)
+        {
+            return;
+        }
+
+        item.CombatStats ??= new();
+
+        if (item.CombatStats.RangeMin <= 0)
+        {
+            item.CombatStats.RangeMin = template.BaseRange;
+        }
+
+        if (item.CombatStats.RangeMax <= 0)
+        {
+            item.CombatStats.RangeMax = template.MaxRange;
+        }
+    }
+
+    private bool CanEquipOnLayer(UOMobileEntity mobile, UOItemEntity item, ItemLayerType requestedLayer)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (TryResolveItemTemplate(item, out var template) &&
+            template?.Layer is ItemLayerType expectedLayer &&
+            expectedLayer != requestedLayer)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: requested layer {RequestedLayer} does not match template layer {ExpectedLayer}",
+                item.Id,
+                mobile.Id,
+                requestedLayer,
+                expectedLayer
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats is null)
+        {
+            return true;
+        }
+
+        if (item.CombatStats.MinStrength > 0 && mobile.EffectiveStrength < item.CombatStats.MinStrength)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: strength {Strength} is below required {RequiredStrength}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveStrength,
+                item.CombatStats.MinStrength
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats.MinDexterity > 0 && mobile.EffectiveDexterity < item.CombatStats.MinDexterity)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: dexterity {Dexterity} is below required {RequiredDexterity}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveDexterity,
+                item.CombatStats.MinDexterity
+            );
+
+            return false;
+        }
+
+        if (item.CombatStats.MinIntelligence > 0 && mobile.EffectiveIntelligence < item.CombatStats.MinIntelligence)
+        {
+            _logger.Debug(
+                "Cannot equip item {ItemId} on mobile {MobileId}: intelligence {Intelligence} is below required {RequiredIntelligence}",
+                item.Id,
+                mobile.Id,
+                mobile.EffectiveIntelligence,
+                item.CombatStats.MinIntelligence
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
     private async Task DetachFromCurrentOwnerAsync(UOItemEntity item)
     {
         if (item.ParentContainerId != Serial.Zero)
@@ -442,32 +573,6 @@ public sealed class ItemService : IItemService
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile);
     }
 
-    private void MarkLootRefillReadyIfNeeded(UOItemEntity parentContainer)
-    {
-        ArgumentNullException.ThrowIfNull(parentContainer);
-
-        if (parentContainer.ContainedItemIds.Count > 0 ||
-            !TryResolveItemTemplate(parentContainer, out var template) ||
-            template is null ||
-            template.LootTables.Count == 0)
-        {
-            return;
-        }
-
-        var refillDelay = LootContainerTemplateHelper.GetRefillDelay(template);
-
-        if (refillDelay is null)
-        {
-            return;
-        }
-
-        var refillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
-        parentContainer.SetCustomString(
-            ItemCustomParamKeys.Loot.RefillReadyAtUtc,
-            refillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
-        );
-    }
-
     private async Task<UOItemEntity?> GetItemHydratedAsync(Serial itemId)
     {
         var visited = new HashSet<Serial>();
@@ -488,6 +593,8 @@ public sealed class ItemService : IItemService
         {
             return null;
         }
+
+        BackfillTemplateCombatMetadata(item);
 
         List<Serial> childIds;
 
@@ -530,6 +637,46 @@ public sealed class ItemService : IItemService
         return item;
     }
 
+    private void MarkLootRefillReadyIfNeeded(UOItemEntity parentContainer)
+    {
+        ArgumentNullException.ThrowIfNull(parentContainer);
+
+        if (parentContainer.ContainedItemIds.Count > 0 ||
+            !TryResolveItemTemplate(parentContainer, out var template) ||
+            template is null ||
+            template.LootTables.Count == 0)
+        {
+            return;
+        }
+
+        var refillDelay = LootContainerTemplateHelper.GetRefillDelay(template);
+
+        if (refillDelay is null)
+        {
+            return;
+        }
+
+        var refillReadyAtUtc = DateTime.UtcNow.Add(refillDelay.Value);
+        parentContainer.SetCustomString(
+            ItemCustomParamKeys.Loot.RefillReadyAtUtc,
+            refillReadyAtUtc.ToString("O", CultureInfo.InvariantCulture)
+        );
+    }
+
+    private bool OccupiesBothHands(UOItemEntity item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        if (item.WeaponSkill is not null && item.EquippedLayer == ItemLayerType.TwoHanded)
+        {
+            return true;
+        }
+
+        return TryResolveItemTemplate(item, out var template) &&
+               template?.Layer == ItemLayerType.TwoHanded &&
+               template.WeaponSkill is not null;
+    }
+
     private ValueTask PublishItemMovedEventAsync(
         long sessionId,
         Serial itemId,
@@ -546,6 +693,9 @@ public sealed class ItemService : IItemService
     private void RecalculateEquipmentModifiers(UOMobileEntity mobile)
         => _mobileModifierAggregationService?.RecalculateEquipmentModifiers(mobile);
 
+    private static int? ToNullableItemId(int itemId)
+        => itemId > 0 ? itemId : null;
+
     private bool TryResolveItemTemplate(UOItemEntity item, out ItemTemplateDefinition? template)
     {
         template = null;
@@ -558,6 +708,34 @@ public sealed class ItemService : IItemService
         }
 
         return _itemFactoryService.TryGetItemTemplate(templateId.Trim(), out template);
+    }
+
+    private async Task TryUnequipConflictingHandItemsAsync(
+        UOMobileEntity mobile,
+        UOItemEntity item,
+        ItemLayerType requestedLayer
+    )
+    {
+        if (requestedLayer == ItemLayerType.TwoHanded && OccupiesBothHands(item))
+        {
+            await TryUnequipCurrentLayerItemAsync(mobile, ItemLayerType.OneHanded);
+
+            return;
+        }
+
+        if (requestedLayer != ItemLayerType.OneHanded ||
+            !mobile.EquippedItemIds.TryGetValue(ItemLayerType.TwoHanded, out var equippedTwoHandedId) ||
+            equippedTwoHandedId == Serial.Zero)
+        {
+            return;
+        }
+
+        var equippedTwoHandedItem = await _persistenceService.UnitOfWork.Items.GetByIdAsync(equippedTwoHandedId);
+
+        if (equippedTwoHandedItem is not null && OccupiesBothHands(equippedTwoHandedItem))
+        {
+            await TryUnequipCurrentLayerItemAsync(mobile, ItemLayerType.TwoHanded);
+        }
     }
 
     private async Task TryUnequipCurrentLayerItemAsync(UOMobileEntity mobile, ItemLayerType layer)

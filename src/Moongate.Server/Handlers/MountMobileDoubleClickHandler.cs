@@ -6,7 +6,6 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Handlers;
 

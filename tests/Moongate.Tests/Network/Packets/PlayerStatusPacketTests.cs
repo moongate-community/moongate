@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Network.Packets;
 
@@ -50,6 +51,7 @@ public class PlayerStatusPacketTests
         {
             Id = (Serial)0x00000003,
             Name = "Effective Tommy",
+            IsPlayer = true,
             BaseStats = new()
             {
                 Strength = 60,
@@ -74,8 +76,6 @@ public class PlayerStatusPacketTests
                 MaxMana = 40
             },
             BaseLuck = 100,
-            Weight = 23,
-            MaxWeight = 450,
             StatCap = 260,
             Followers = 3,
             FollowersMax = 5,
@@ -121,6 +121,39 @@ public class PlayerStatusPacketTests
                 DefenseChanceIncrease = 45
             }
         };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000030,
+            ItemId = 0x0E75,
+            Weight = 2
+        };
+        var gold = new UOItemEntity
+        {
+            Id = (Serial)0x40000031,
+            ItemId = 0x0EED,
+            Weight = 0,
+            Amount = 1000
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40000032,
+            ItemId = 0x2FB7,
+            Weight = 2,
+            IsQuiver = true,
+            QuiverWeightReduction = 30
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40000033,
+            ItemId = 0x0F3F,
+            Weight = 1,
+            Amount = 10
+        };
+        backpack.AddItem(gold, new(1, 1));
+        quiver.AddItem(arrows, new(2, 2));
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.BackpackId = backpack.Id;
+        mobile.AddEquippedItem(ItemLayerType.Cloak, quiver);
         var packet = new PlayerStatusPacket(mobile);
 
         var data = Write(packet);
@@ -135,10 +168,10 @@ public class PlayerStatusPacketTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(52, 2)), Is.EqualTo((ushort)50));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(54, 2)), Is.EqualTo((ushort)35));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(56, 2)), Is.EqualTo((ushort)40));
-                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(58, 4)), Is.EqualTo((uint)0));
+                Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(58, 4)), Is.EqualTo((uint)1000));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(62, 2)), Is.EqualTo((ushort)8));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(64, 2)), Is.EqualTo((ushort)23));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(66, 2)), Is.EqualTo((ushort)450));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(64, 2)), Is.EqualTo((ushort)22));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(66, 2)), Is.EqualTo((ushort)264));
                 Assert.That(data[68], Is.EqualTo((byte)2));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(69, 2)), Is.EqualTo((ushort)260));
                 Assert.That(data[71], Is.EqualTo((byte)3));
@@ -148,8 +181,8 @@ public class PlayerStatusPacketTests
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(77, 2)), Is.EqualTo((ushort)20));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(79, 2)), Is.EqualTo((ushort)25));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(81, 2)), Is.EqualTo((ushort)150));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(83, 2)), Is.EqualTo((ushort)11));
-                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(85, 2)), Is.EqualTo((ushort)15));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(83, 2)), Is.EqualTo((ushort)1));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(85, 2)), Is.EqualTo((ushort)4));
                 Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(87, 4)), Is.EqualTo(777));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(91, 2)), Is.EqualTo((ushort)70));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(103, 2)), Is.EqualTo((ushort)45));

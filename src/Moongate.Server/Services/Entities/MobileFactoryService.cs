@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Persistence;
 using Moongate.UO.Data.Bodies;
@@ -78,6 +79,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             SkinHue = (short)template.SkinHue.Resolve(),
             HairStyle = (short)template.HairStyle,
             HairHue = (short)template.HairHue.Resolve(),
+            FactionId = string.IsNullOrWhiteSpace(template.DefaultFactionId) ? null : template.DefaultFactionId.Trim(),
             BaseStats = new()
             {
                 Strength = template.Strength,
@@ -98,6 +100,11 @@ public sealed class MobileFactoryService : IMobileFactoryService
         mobile.RecalculateMaxStats();
         InitializeTemplateSkills(mobile, template);
         mobile.Sounds = new(template.Sounds);
+
+        if (template.LootTables.Count > 0)
+        {
+            mobile.SetCustomString(MobileCustomParamKeys.Loot.LootTables, string.Join(',', template.LootTables));
+        }
 
         if (template.MaxHits > 0)
         {

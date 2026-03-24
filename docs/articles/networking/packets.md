@@ -44,6 +44,12 @@ Key types:
 
 `PacketDispatchService` then routes by opcode to registered `IPacketListener` instances.
 
+Before packet dispatch, `NetworkService` also handles the login bootstrap boundary:
+
+- `0xEF` login seed remains plain and sets the session seed/client version
+- plain `0x80` and `0x91` bootstraps continue to work
+- when `game.encryptionMode` allows it, Moongate can autodetect encrypted `0x80` and `0x91` bootstrap packets and attach transport encryption middleware for the rest of the session
+
 Current gameplay examples:
 
 - `PlayerStatusHandler` listens to `PacketDefinition.GetPlayerStatusPacket`
@@ -85,6 +91,7 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x91` | Game Login | C -> S | `GameLoginPacket` | `handler` | `LoginHandler` | Game-server auth |
 | `0x5D` | Login Character | C -> S | `LoginCharacterPacket` | `handler` | `LoginHandler` | Character enter world |
 | `0xBD` | Client Version | C -> S | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores negotiated client version |
+| `0xE1` | Client Type | C -> S | `ClientTypePacket` | `handler` | `LoginHandler`, `GeneralInformationHandler` | Stores session client capabilities for KR/SA/EC-aware flows |
 | `0xF8` | Character Creation | C -> S | `CharacterCreationPacket` | `handler` | `CharacterHandler` | Modern creation flow |
 | `0x72` | Request War Mode / War Mode | both | `RequestWarModePacket`, `WarModePacket` | `handler` + `outgoing` | `CharacterHandler` | Inbound toggle request and outbound war-mode state reply share opcode `0x72`; outgoing packet is intentionally not registry-decorated to avoid direction-agnostic opcode collision |
 | `0x02` | Move Request | C -> S | `MoveRequestPacket` | `handler` | `MovementHandler` | Core movement |
@@ -95,11 +102,11 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0xB5` | Open Chat Window | C -> S | `OpenChatWindowPacket` | `handler` | `ChatHandler` | Opens classic conference chat and creates runtime chat user |
 | `0xB3` | Chat Text | C -> S | `ChatTextPacket` | `handler` | `ChatHandler` | Conference chat actions (`message`, `join`, `pm`, `ignore`, `ops`, `voice`, `kick`, `whois`, `emote`) |
 | `0x6C` | Target Cursor Commands | C -> S | `TargetCursorCommandsPacket` | `handler` | `PlayerTargetService` | Target callbacks |
-| `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands |
+| `0xBF` | General Information | C -> S | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Includes context menu / stat lock subcommands; stat lock requests are persisted onto the active character |
 | `0xD6` | Mega Cliloc | C -> S | `MegaClilocPacket` | `handler` | `ToolTipHandler` | Tooltip requests |
 | `0xB1` | Gump Menu Selection | C -> S | `GumpMenuSelectionPacket` | `handler` | `GumpHandler` | Gump button replies |
 | `0x9B` | Request Help | C -> S | `RequestHelpPacket` | `handler` | `HelpHandler -> HelpRequestService` | Opens the Lua help-ticket wizard and submits persisted tickets through `help_tickets` |
-| `0x05` | Request Attack | C -> S | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, forces warmode, schedules melee swing |
+| `0x05` | Request Attack | C -> S | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, forces warmode, and schedules the current weapon auto-attack flow (melee or ranged) |
 | `0x06` | Double Click | C -> S | `DoubleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Item use / open flows |
 | `0x09` | Single Click | C -> S | `SingleClickPacket` | `handler` | `ItemHandler -> ItemInteractionService` | Labels / tooltip-side behavior |
 | `0x07` | Pick Up Item | C -> S | `PickUpItemPacket` | `handler` | `ItemHandler -> ItemManipulationService` | Drag start |
@@ -126,12 +133,12 @@ This matrix tracks the packet subset that is already present in Moongate or stil
 | `0x2E` | Worn Item | S -> C | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
 | `0x24` | Draw Container | S -> C | `DrawContainerPacket` | `outgoing` | container flow | Open container |
 | `0x3C` | Add Multiple Items To Container | S -> C | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched contents |
-| `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open |
+| `0x88` | Paperdoll | S -> C | `PaperdollPacket` | `outgoing` | character UI | Paperdoll open with a computed fame/karma reputation title prefix loaded at startup from Lua config |
 | `0x11` | Status Bar Info | S -> C | `PlayerStatusPacket` | `outgoing` | `PlayerStatusHandler` | Modern `7.x` status payload |
 | `0x2F` | Fight Occuring | S -> C | `FightOccurringPacket` | `outgoing` | `CombatService` | Broadcast when a scheduled melee swing is attempted |
 | `0xAA` | Allow/Refuse Attack | S -> C | `ChangeCombatantPacket` | `outgoing` | `CombatService` | Current combatant serial or `Serial.Zero` |
 | `0xB2` | Chat Command | S -> C | `ChatCommandPacket` | `outgoing` | `ChatSystemService` | Classic conference chat responses and UI updates |
-| `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Full skill list with lock state |
+| `0x3A` | Send Skills | S -> C | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Full skill list with lock state, reused after combat-driven skill gains and any resulting stat progression |
 | `0x23` | Dragging Of Item | S -> C | `DraggingOfItemPacket` | `outgoing` | item drag flow | Drag visual |
 | `0xAE` | Unicode Speech Message | S -> C | `UnicodeSpeechMessagePacket` | `outgoing` | speech/system messages | Server speech |
 | `0xB0` | Generic Gump | S -> C | `GenericGumpPacket` | `outgoing` | gump flow | Standard gump |
@@ -160,6 +167,18 @@ Current notable outgoing packet classes:
 - `PlayerStatusPacket`
   - modern `7.x` status layout
   - reads effective mobile state from `UOMobileEntity`
+- `CharactersStartingLocationsPacket`
+  - outgoing `0xA9`
+  - uses the modern `7.x` character-list shape without forcing extra KR/UO3D bits beyond the expansion flags
+- `MobileIncomingPacket`
+  - outgoing `0x78`
+  - chooses the new mobile format from the recipient session capability instead of assuming one global client shape
+- `PaperdollPacket`
+  - outgoing `0x88`
+  - serializes the paperdoll display name using the fame/karma reputation title table
+  - the title table is loaded at startup from `moongate_data/scripts/config/reputation_titles_default.lua`
+  - an optional `moongate_data/scripts/config/reputation_titles.lua` override can replace the default table
+  - preserves the existing custom mobile `Title` as a suffix after the name
 - `SkillListPacket`
   - outgoing `0x3A`
   - serializes the persisted mobile skill table in skill-id order

@@ -16,7 +16,6 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Types.Commands;
-using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -24,7 +23,6 @@ using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
-using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Commands.Player;
 
@@ -261,6 +259,9 @@ public sealed class SpawnItemCommandTests
         public List<MapSector> GetActiveSectors()
             => [];
 
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+            => [];
+
         public int GetMusic(int mapId, Point3D location)
             => 0;
 
@@ -270,10 +271,12 @@ public sealed class SpawnItemCommandTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [];
 
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-            => [];
-
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -318,6 +321,58 @@ public sealed class SpawnItemCommandTests
         await command.ExecuteCommandAsync(context);
 
         Assert.That(output[^1], Is.EqualTo("Usage: .spawn_item <templateId>"));
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenLocationSelected_ShouldCreateItemAtTargetedTile()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000044u,
+            Character = new()
+            {
+                Id = (Serial)0x00000044u,
+                MapId = 3,
+                Location = new(150, 150, 0)
+            }
+        };
+        var gameEventBus = new SpawnItemTestGameEventBusService();
+        var itemFactory = new SpawnItemTestItemFactoryService();
+        var itemService = new SpawnItemTestItemService();
+        var spatial = new SpawnItemTestSpatialWorldService();
+        var command = new SpawnItemCommand(
+            gameEventBus,
+            itemFactory,
+            itemService,
+            spatial,
+            new SpawnItemTestGameNetworkSessionService(session),
+            new SpawnItemTestCharacterService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            ".spawn_item brick",
+            ["brick"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+        gameEventBus.TriggerLocationCallback(new(120, 121, 5));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemFactory.LastRequestedTemplateId, Is.EqualTo("brick"));
+                Assert.That(itemService.LastCreatedItem, Is.Not.Null);
+                Assert.That(itemService.LastCreatedItem!.MapId, Is.EqualTo(3));
+                Assert.That(itemService.LastCreatedItem.Location, Is.EqualTo(new Point3D(120, 121, 5)));
+                Assert.That(spatial.AddOrUpdateItemCalls, Is.EqualTo(1));
+                Assert.That(output[^1], Does.StartWith("Item 'brick' spawned"));
+            }
+        );
     }
 
     [Test]
@@ -371,58 +426,6 @@ public sealed class SpawnItemCommandTests
         Assert.That(
             gameEventBus.LastTargetRequestEvent!.Value.SelectionType,
             Is.EqualTo(TargetCursorSelectionType.SelectLocation)
-        );
-    }
-
-    [Test]
-    public async Task ExecuteCommandAsync_WhenLocationSelected_ShouldCreateItemAtTargetedTile()
-    {
-        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        using var client = new MoongateTCPClient(socket);
-        var session = new GameSession(new(client))
-        {
-            CharacterId = (Serial)0x00000044u,
-            Character = new()
-            {
-                Id = (Serial)0x00000044u,
-                MapId = 3,
-                Location = new(150, 150, 0)
-            }
-        };
-        var gameEventBus = new SpawnItemTestGameEventBusService();
-        var itemFactory = new SpawnItemTestItemFactoryService();
-        var itemService = new SpawnItemTestItemService();
-        var spatial = new SpawnItemTestSpatialWorldService();
-        var command = new SpawnItemCommand(
-            gameEventBus,
-            itemFactory,
-            itemService,
-            spatial,
-            new SpawnItemTestGameNetworkSessionService(session),
-            new SpawnItemTestCharacterService()
-        );
-        var output = new List<string>();
-        var context = new CommandSystemContext(
-            ".spawn_item brick",
-            ["brick"],
-            CommandSourceType.InGame,
-            session.SessionId,
-            (message, _) => output.Add(message)
-        );
-
-        await command.ExecuteCommandAsync(context);
-        gameEventBus.TriggerLocationCallback(new(120, 121, 5));
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(itemFactory.LastRequestedTemplateId, Is.EqualTo("brick"));
-                Assert.That(itemService.LastCreatedItem, Is.Not.Null);
-                Assert.That(itemService.LastCreatedItem!.MapId, Is.EqualTo(3));
-                Assert.That(itemService.LastCreatedItem.Location, Is.EqualTo(new Point3D(120, 121, 5)));
-                Assert.That(spatial.AddOrUpdateItemCalls, Is.EqualTo(1));
-                Assert.That(output[^1], Does.StartWith("Item 'brick' spawned"));
-            }
         );
     }
 }

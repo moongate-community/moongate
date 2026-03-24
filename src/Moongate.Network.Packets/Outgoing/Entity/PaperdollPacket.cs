@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Network.Packets.Outgoing.Entity;
 
@@ -34,9 +35,7 @@ public class PaperdollPacket : BaseGameNetworkPacket
         writer.Write(OpCode);
         writer.Write(Mobile.Id.Value);
 
-        var displayName = string.IsNullOrWhiteSpace(Mobile.Title)
-                              ? Mobile.Name ?? string.Empty
-                              : $"{Mobile.Name} {Mobile.Title}";
+        var displayName = ReputationTitleFormatter.FormatDisplayName(Mobile);
 
         writer.WriteAscii(displayName, 60);
 

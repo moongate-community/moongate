@@ -32,6 +32,15 @@ public static class ItemCustomParamKeys
         public const string LockId = "door_lock_id";
     }
 
+    public static class Light
+    {
+        public const string LitItemId = "light_lit_item_id";
+        public const string UnlitItemId = "light_unlit_item_id";
+        public const string Burning = "light_burning";
+        public const string ToggleSoundOn = "light_toggle_sound_on";
+        public const string ToggleSoundOff = "light_toggle_sound_off";
+    }
+
     public static class Key
     {
         public const string LockId = "key_lock_id";

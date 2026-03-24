@@ -1,27 +1,25 @@
 using MemoryPack;
 using Moongate.Persistence.Data.Internal;
 using Moongate.Persistence.Interfaces.Persistence;
-using Moongate.Persistence.Services.Persistence;
 
 namespace Moongate.Persistence.Data.Persistence;
 
 internal interface IInternalPersistenceEntityDescriptor
 {
+    void ApplyRemove(PersistenceStateStore stateStore, byte[] payload);
+
+    void ApplyUpsert(PersistenceStateStore stateStore, byte[] payload);
     EntitySnapshotBucket? CaptureBucket(PersistenceStateStore stateStore);
 
     void LoadBucket(PersistenceStateStore stateStore, EntitySnapshotBucket bucket);
-
-    void ApplyUpsert(PersistenceStateStore stateStore, byte[] payload);
-
-    void ApplyRemove(PersistenceStateStore stateStore, byte[] payload);
 }
 
 /// <summary>
 /// Default descriptor implementation for a persisted entity kind.
 /// </summary>
-public sealed class PersistenceEntityDescriptor<TEntity, TKey> :
-    IPersistenceEntityDescriptor<TEntity, TKey>,
-    IInternalPersistenceEntityDescriptor
+public sealed class PersistenceEntityDescriptor<TEntity, TKey>
+    : IPersistenceEntityDescriptor<TEntity, TKey>,
+      IInternalPersistenceEntityDescriptor
     where TKey : notnull
 {
     private readonly Func<TEntity, TKey> _keySelector;
@@ -58,21 +56,41 @@ public sealed class PersistenceEntityDescriptor<TEntity, TKey> :
 
     public Type KeyType => typeof(TKey);
 
-    public TKey GetKey(TEntity entity) => _keySelector(entity);
+    public TEntity Clone(TEntity entity)
+        => DeserializeEntity(SerializeEntity(entity));
 
-    public TEntity Clone(TEntity entity) => DeserializeEntity(SerializeEntity(entity));
+    public IReadOnlyList<TEntity> DeserializeBucket(byte[] payload)
+        => MemoryPackSerializer.Deserialize<TEntity[]>(payload) ?? [];
 
-    public byte[] SerializeEntity(TEntity entity) => MemoryPackSerializer.Serialize(entity);
+    public TEntity DeserializeEntity(byte[] payload)
+        => MemoryPackSerializer.Deserialize<TEntity>(payload)!;
 
-    public TEntity DeserializeEntity(byte[] payload) => MemoryPackSerializer.Deserialize<TEntity>(payload)!;
+    public TKey DeserializeKey(byte[] payload)
+        => _deserializeKey(payload);
 
-    public byte[] SerializeKey(TKey key) => _serializeKey(key);
+    public TKey GetKey(TEntity entity)
+        => _keySelector(entity);
 
-    public TKey DeserializeKey(byte[] payload) => _deserializeKey(payload);
+    public byte[] SerializeBucket(IReadOnlyCollection<TEntity> entities)
+        => MemoryPackSerializer.Serialize(entities.ToArray());
 
-    public byte[] SerializeBucket(IReadOnlyCollection<TEntity> entities) => MemoryPackSerializer.Serialize(entities.ToArray());
+    public byte[] SerializeEntity(TEntity entity)
+        => MemoryPackSerializer.Serialize(entity);
 
-    public IReadOnlyList<TEntity> DeserializeBucket(byte[] payload) => MemoryPackSerializer.Deserialize<TEntity[]>(payload) ?? [];
+    public byte[] SerializeKey(TKey key)
+        => _serializeKey(key);
+
+    void IInternalPersistenceEntityDescriptor.ApplyRemove(PersistenceStateStore stateStore, byte[] payload)
+    {
+        var key = DeserializeKey(payload);
+        stateStore.GetBucket<TEntity, TKey>(TypeId).Remove(key);
+    }
+
+    void IInternalPersistenceEntityDescriptor.ApplyUpsert(PersistenceStateStore stateStore, byte[] payload)
+    {
+        var entity = DeserializeEntity(payload);
+        stateStore.GetBucket<TEntity, TKey>(TypeId)[_keySelector(entity)] = entity;
+    }
 
     EntitySnapshotBucket? IInternalPersistenceEntityDescriptor.CaptureBucket(PersistenceStateStore stateStore)
     {
@@ -101,17 +119,5 @@ public sealed class PersistenceEntityDescriptor<TEntity, TKey> :
         {
             typedBucket[_keySelector(entity)] = entity;
         }
-    }
-
-    void IInternalPersistenceEntityDescriptor.ApplyUpsert(PersistenceStateStore stateStore, byte[] payload)
-    {
-        var entity = DeserializeEntity(payload);
-        stateStore.GetBucket<TEntity, TKey>(TypeId)[_keySelector(entity)] = entity;
-    }
-
-    void IInternalPersistenceEntityDescriptor.ApplyRemove(PersistenceStateStore stateStore, byte[] payload)
-    {
-        var key = DeserializeKey(payload);
-        stateStore.GetBucket<TEntity, TKey>(TypeId).Remove(key);
     }
 }

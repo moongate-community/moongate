@@ -7,6 +7,7 @@ namespace Moongate.Abstractions.Types;
 public static class ServicePriority
 {
     public const int Persistence = 110;
+    public const int CorpseStartupCleanup = 115;
     public const int FileLoader = 120;
     public const int WorldGenerationStartup = 121;
     public const int GameLoop = 130;

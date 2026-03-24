@@ -25,24 +25,6 @@ public interface IMobileService
     Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Loads a mobile entity by serial identifier.
-    /// </summary>
-    /// <param name="id">Mobile serial identifier.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The mobile entity when found; otherwise <see langword="null" />.</returns>
-    Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Tries to link a rider mobile to a mount mobile.
-    /// </summary>
-    /// <param name="riderId">Rider mobile identifier.</param>
-    /// <param name="mountId">Mount mobile identifier.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns><see langword="true" /> when the relationship was created; otherwise <see langword="false" />.</returns>
-    Task<bool> TryMountAsync(Serial riderId, Serial mountId, CancellationToken cancellationToken = default)
-        => Task.FromResult(false);
-
-    /// <summary>
     /// Removes the current mount relationship for a rider mobile.
     /// </summary>
     /// <param name="riderId">Rider mobile identifier.</param>
@@ -50,6 +32,14 @@ public interface IMobileService
     /// <returns><see langword="true" /> when a mount relationship existed and was cleared; otherwise <see langword="false" />.</returns>
     Task<bool> DismountAsync(Serial riderId, CancellationToken cancellationToken = default)
         => Task.FromResult(false);
+
+    /// <summary>
+    /// Loads a mobile entity by serial identifier.
+    /// </summary>
+    /// <param name="id">Mobile serial identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The mobile entity when found; otherwise <see langword="null" />.</returns>
+    Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Loads persisted world mobiles (non-player) that belong to a specific sector.
@@ -82,6 +72,16 @@ public interface IMobileService
         Serial? accountId = null,
         CancellationToken cancellationToken = default
     );
+
+    /// <summary>
+    /// Tries to link a rider mobile to a mount mobile.
+    /// </summary>
+    /// <param name="riderId">Rider mobile identifier.</param>
+    /// <param name="mountId">Mount mobile identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><see langword="true" /> when the relationship was created; otherwise <see langword="false" />.</returns>
+    Task<bool> TryMountAsync(Serial riderId, Serial mountId, CancellationToken cancellationToken = default)
+        => Task.FromResult(false);
 
     /// <summary>
     /// Tries to create and persist a mobile from template.

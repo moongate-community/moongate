@@ -1,0 +1,722 @@
+[
+  {
+    "type": "item",
+    "id": "arms_and_weapons_primer",
+    "name": "Arms And Weapons Primer",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "arms_and_weapons_primer"
+  },
+  {
+    "type": "item",
+    "id": "birds_of_britannia",
+    "name": "Birds Of Britannia",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "birds_of_britannia"
+  },
+  {
+    "type": "item",
+    "id": "blackthorn_welcome_book",
+    "name": "A Welcome",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "blackthorn_welcome_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "blue_book",
+    "name": "Blue Book",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "params": {
+      "writable": {
+        "type": "string",
+        "value": "true"
+      },
+      "pages": {
+        "type": "string",
+        "value": "40"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "bold_stranger",
+    "name": "Bold Stranger",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "bold_stranger"
+  },
+  {
+    "type": "item",
+    "id": "britannian_flora",
+    "name": "Britannian Flora",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "britannian_flora"
+  },
+  {
+    "type": "item",
+    "id": "brown_book",
+    "name": "Brown Book",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "params": {
+      "writable": {
+        "type": "string",
+        "value": "true"
+      },
+      "pages": {
+        "type": "string",
+        "value": "20"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "burning_of_trinsic",
+    "name": "Burning Of Trinsic",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "burning_of_trinsic"
+  },
+  {
+    "type": "item",
+    "id": "call_to_anarchy",
+    "name": "Call To Anarchy",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "call_to_anarchy"
+  },
+  {
+    "type": "item",
+    "id": "children_tales_vol2",
+    "name": "Children Tales Vol2",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "children_tales_vol2"
+  },
+  {
+    "type": "item",
+    "id": "deceit_dungeon_of_horror",
+    "name": "Deceit Dungeon Of Horror",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "deceit_dungeon_of_horror"
+  },
+  {
+    "type": "item",
+    "id": "dimensional_travel",
+    "name": "Dimensional Travel",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "dimensional_travel"
+  },
+  {
+    "type": "item",
+    "id": "diversity_of_our_land",
+    "name": "Diversity Of Our Land",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "diversity_of_our_land"
+  },
+  {
+    "type": "item",
+    "id": "drakovs_journal",
+    "name": "Drakov's Journal",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "drakovs_journal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "ethical_hedonism",
+    "name": "Ethical Hedonism",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "ethical_hedonism"
+  },
+  {
+    "type": "item",
+    "id": "fropoz_journal",
+    "name": "Journal",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "fropoz_journal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "grammar_of_orcish",
+    "name": "Grammar Of Orcish",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "grammar_of_orcish"
+  },
+  {
+    "type": "item",
+    "id": "guide_to_guilds",
+    "name": "Guide To Guilds",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "guide_to_guilds"
+  },
+  {
+    "type": "item",
+    "id": "kabur_journal",
+    "name": "Journal",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "kabur_journal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "life_of_a_travelling_minstrel",
+    "name": "Life Of A Travelling Minstrel",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "life_of_a_travelling_minstrel"
+  },
+  {
+    "type": "item",
+    "id": "major_trade_association",
+    "name": "Major Trade Association",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "major_trade_association"
+  },
+  {
+    "type": "item",
+    "id": "my_story",
+    "name": "My Story",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "my_story"
+  },
+  {
+    "type": "item",
+    "id": "new_aquarium_book",
+    "name": "Your New Aquarium",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "new_aquarium_book",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "quest_of_virtues",
+    "name": "Quest Of Virtues",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "quest_of_virtues"
+  },
+  {
+    "type": "item",
+    "id": "rankings_of_trades",
+    "name": "Rankings Of Trades",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "rankings_of_trades"
+  },
+  {
+    "type": "item",
+    "id": "red_book",
+    "name": "Red Book",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF1",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "params": {
+      "writable": {
+        "type": "string",
+        "value": "true"
+      },
+      "pages": {
+        "type": "string",
+        "value": "20"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "regarding_llamas",
+    "name": "Regarding Llamas",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "regarding_llamas"
+  },
+  {
+    "type": "item",
+    "id": "song_of_samlethe",
+    "name": "Song Of Samlethe",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "song_of_samlethe"
+  },
+  {
+    "type": "item",
+    "id": "tale_of_three_tribes",
+    "name": "Tale Of Three Tribes",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "tale_of_three_tribes"
+  },
+  {
+    "type": "item",
+    "id": "tales_of_vesper_vol1",
+    "name": "Tales Of Vesper Vol1",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "tales_of_vesper_vol1"
+  },
+  {
+    "type": "item",
+    "id": "talking_to_wisps",
+    "name": "Talking To Wisps",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "talking_to_wisps"
+  },
+  {
+    "type": "item",
+    "id": "taming_dragons",
+    "name": "Taming Dragons",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "taming_dragons"
+  },
+  {
+    "type": "item",
+    "id": "tan_book",
+    "name": "Tan Book",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "params": {
+      "writable": {
+        "type": "string",
+        "value": "true"
+      },
+      "pages": {
+        "type": "string",
+        "value": "20"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "the_fight",
+    "name": "The Fight",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "the_fight"
+  },
+  {
+    "type": "item",
+    "id": "translated_gargoyle_journal",
+    "name": "Translated Journal",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FF2",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "bookId": "translated_gargoyle_journal",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treatise_on_alchemy",
+    "name": "Treatise On Alchemy",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "treatise_on_alchemy"
+  },
+  {
+    "type": "item",
+    "id": "virtue_book",
+    "name": "Virtue Book",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "virtue_book"
+  },
+  {
+    "type": "item",
+    "id": "wild_girl_of_the_forest",
+    "name": "Wild Girl Of The Forest",
+    "category": "Books",
+    "description": "",
+    "itemId": "0x0FEF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "books"
+    ],
+    "bookId": "wild_girl_of_the_forest"
+  }
+]

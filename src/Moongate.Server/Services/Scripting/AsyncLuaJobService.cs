@@ -1,4 +1,5 @@
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Services;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Scripting;
@@ -25,12 +26,16 @@ internal sealed class AsyncLuaJobService : IAsyncLuaJobService
         AsyncLuaValueConverter converter
     )
     {
-        _asyncWorkSchedulerService = asyncWorkSchedulerService ?? throw new ArgumentNullException(nameof(asyncWorkSchedulerService));
+        _asyncWorkSchedulerService =
+            asyncWorkSchedulerService ?? throw new ArgumentNullException(nameof(asyncWorkSchedulerService));
         _jobRegistry = jobRegistry ?? throw new ArgumentNullException(nameof(jobRegistry));
         _scriptEngineService = scriptEngineService ?? throw new ArgumentNullException(nameof(scriptEngineService));
         _converter = converter ?? throw new ArgumentNullException(nameof(converter));
-        _luaScript = (scriptEngineService as Moongate.Scripting.Services.LuaScriptEngineService)?.LuaScript
-                     ?? throw new ArgumentException("AsyncLuaJobService requires LuaScriptEngineService.", nameof(scriptEngineService));
+        _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript ??
+                     throw new ArgumentException(
+                         "AsyncLuaJobService requires LuaScriptEngineService.",
+                         nameof(scriptEngineService)
+                     );
     }
 
     public bool Run(string jobName, string requestId, Table? payload = null)
@@ -44,6 +49,26 @@ internal sealed class AsyncLuaJobService : IAsyncLuaJobService
         }
 
         return Schedule(jobName, requestId, key.Trim(), payload);
+    }
+
+    private void DispatchError(AsyncLuaJobRequest request, Exception ex)
+        => _scriptEngineService.CallFunction(ErrorCallbackName, request.JobName, request.RequestId, ex.Message);
+
+    private void DispatchResult(AsyncLuaJobResult result)
+    {
+        var luaResult = _converter.ToLuaTable(_luaScript, result.Payload);
+        _scriptEngineService.CallFunction(ResultCallbackName, result.JobName, result.RequestId, luaResult);
+    }
+
+    private async Task<AsyncLuaJobResult> ExecuteAsync(
+        IAsyncLuaJobHandler handler,
+        AsyncLuaJobRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var result = await handler.ExecuteAsync(request.Payload, cancellationToken).ConfigureAwait(false);
+
+        return new(request.JobName, request.RequestId, result);
     }
 
     private bool Schedule(string jobName, string requestId, string scheduleKey, Table? payload)
@@ -67,23 +92,4 @@ internal sealed class AsyncLuaJobService : IAsyncLuaJobService
             ex => DispatchError(request, ex)
         );
     }
-
-    private async Task<AsyncLuaJobResult> ExecuteAsync(
-        IAsyncLuaJobHandler handler,
-        AsyncLuaJobRequest request,
-        CancellationToken cancellationToken
-    )
-    {
-        var result = await handler.ExecuteAsync(request.Payload, cancellationToken).ConfigureAwait(false);
-        return new(request.JobName, request.RequestId, result);
-    }
-
-    private void DispatchResult(AsyncLuaJobResult result)
-    {
-        var luaResult = _converter.ToLuaTable(_luaScript, result.Payload);
-        _scriptEngineService.CallFunction(ResultCallbackName, result.JobName, result.RequestId, luaResult);
-    }
-
-    private void DispatchError(AsyncLuaJobRequest request, Exception ex)
-        => _scriptEngineService.CallFunction(ErrorCallbackName, request.JobName, request.RequestId, ex.Message);
 }

@@ -11,6 +11,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Version;
 
 namespace Moongate.Tests.Server.Handlers;
 
@@ -266,6 +267,30 @@ public class GeneralInformationHandlerTests
                 Assert.That(gameEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(gameEvent.SpellId, Is.EqualTo((ushort)0x002D));
                 Assert.That(gameEvent.TargetSerial, Is.EqualTo((Serial)0x00000005u));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_ShouldStoreEnhancedClientType_ForClientTypeSubcommand()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new GeneralInformationHandler(new BasePacketListenerTestOutgoingPacketQueue(), eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.ClientType,
+            new byte[] { 0x00, 0x00, 0x00, 0x03, 0x00 }
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(session.NetworkSession.ClientType, Is.EqualTo(ClientType.SA));
+                Assert.That(session.NetworkSession.IsEnhancedClient, Is.True);
             }
         );
     }

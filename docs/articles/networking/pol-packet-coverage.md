@@ -39,7 +39,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x24` | Draw container | S -> C | `?Packet=0x24` | `DrawContainerPacket` | `outgoing` | container flow | Container open packet |
 | `0x2E` | Worn item | S -> C | `?Packet=0x2E` | `WornItemPacket` | `outgoing` | equipment sync | Equipped visuals |
 | `0x34` | Get player status | C -> S | `?Packet=0x34` | `GetPlayerStatusPacket` | `handler` | `PlayerStatusHandler` | `BasicStatus -> 0x11`, `RequestSkills -> 0x3A` |
-| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler` | Moongate sends the skill list; no inbound listener |
+| `0x3A` | Send skills | both | `?Packet=0x3A` | `SkillListPacket` | `outgoing` | `PlayerStatusHandler`, `CombatService` | Moongate sends the full skill list on explicit requests and after combat-driven skill gains/stat progression; no inbound listener |
 | `0x3C` | Add multiple items to container | S -> C | `?Packet=0x3C` | `AddMultipleItemsToContainerPacket` | `outgoing` | container flow | Batched container contents |
 | `0x4E` | Personal light level | S -> C | `?Packet=0x4E` | `PersonalLightLevelPacket` | `outgoing` | world presentation | Client light state |
 | `0x4F` | Overall light level | S -> C | `?Packet=0x4F` | `OverallLightLevelPacket` | `outgoing` | world presentation | Global light state |
@@ -74,7 +74,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xB9` | Enable locked client features | S -> C | `?Packet=0xB9` | `SupportFeaturesPacket` | `outgoing` | login flow | Client feature flags |
 | `0xBC` | Season | S -> C | `?Packet=0xBC` | `SeasonPacket` | `outgoing` | world presentation | Season state |
 | `0xBD` | Client version | C -> S | `?Packet=0xBD` | `ClientVersionPacket` | `handler` | `LoginHandler` | Stores client version |
-| `0xBF` | General information | C -> S | `?Packet=0xBF` | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Context menus, stat locks, targeted actions |
+| `0xBF` | General information | C -> S | `?Packet=0xBF` | `GeneralInformationPacket` | `handler` | `GeneralInformationHandler` | Context menus, persisted stat-lock updates, targeted actions |
 | `0xC0` | Hued effect | S -> C | `?Packet=0xC0` | `HuedEffectPacket` | `outgoing` | world presentation | Colored effect |
 | `0xC7` | Particle effect | S -> C | `?Packet=0xC7` | `ParticleEffectPacket` | `outgoing` | world presentation | Particle effect |
 | `0xC8` | Client view range | C -> S | `?Packet=0xC8` | `ClientViewRangePacket` | `handler` | `ClientViewRangeHandler` | View range update |
@@ -93,7 +93,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0x00` | Legacy create character | C -> S | `?Packet=0x00` | `CreateCharacterPacket` | `parse-only` | Legacy character creation path is not wired |
 | `0x01` | Disconnect notification | C -> S | `?Packet=0x01` | `DisconnectNotificationPacket` | `parse-only` | Session shutdown is not modeled via gameplay listener |
 | `0x03` | Talk request | C -> S | `?Packet=0x03` | `TalkRequestPacket` | `parse-only` | Legacy speech path not wired; Unicode path is used |
-| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, schedules melee swing |
+| `0x05` | Request attack | C -> S | `?Packet=0x05` | `RequestAttackPacket` | `handler` | `RequestAttackHandler -> CombatService` | Sets combatant, enters warmode, and schedules the weapon-driven auto-attack loop (melee or ranged) |
 | `0x12` | Skill or action use request | C -> S | `?Packet=0x12` | `RequestSkillUsePacket` | `parse-only` | Skill-use flow still missing |
 | `0x2C` | Resurrection menu | both | `?Packet=0x2C` | `ResurrectionMenuPacket` | `parse-only` | No resurrect handler yet |
 | `0x3B` | Buy items | C -> S | `?Packet=0x3B` | `BuyItemsPacket` | `parse-only` | Vendor buy flow missing |
@@ -112,14 +112,14 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xA7` | Request tip / notice window | C -> S | `?Packet=0xA7` | `RequestTipNoticeWindowPacket` | `parse-only` | Tip flow missing |
 | `0xB3` | Chat text | C -> S | `?Packet=0xB3` | `ChatTextPacket` | `handler` | ModernUO-style conference chat action dispatch via `IChatSystemService` |
 | `0xB6` | Help / tip request | C -> S | `?Packet=0xB6` | `SendHelpTipRequestPacket` | `parse-only` | Tip flow missing |
-| `0xB8` | Character profile request | C -> S | `?Packet=0xB8` | `RequestCharProfilePacket` | `parse-only` | Profile flow missing |
+| `0xB8` | Character profile request | C -> S | `?Packet=0xB8` | `RequestCharProfilePacket` | `handler` | `CharacterProfileHandler` | Player-only profile display and self-edit flow with lock and account-age footer |
 | `0xBE` | Assist version | C -> S | `?Packet=0xBE` | `AssistVersionPacket` | `parse-only` | No behavior attached |
 | `0xC2` | Unicode text entry | C -> S | `?Packet=0xC2` | `UnicodeTextEntryPacket` | `parse-only` | Text entry flow missing |
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
 | `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler -> ItemBookService` | Writable `title` / `author` save for client `7.x` |
 | `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
-| `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `parse-only` | Client-type-specific behavior missing |
+| `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `handler` | `LoginHandler` | Stores session client capability and also accepts the Enhanced Client variant that carries the version string; runtime then drives `0x78` sync shape |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |
 | `0xED` | Unequip macro | C -> S | `?Packet=0xED` | `UnequipItemMacroPacket` | `parse-only` | KR macro flow missing |
 | `0xF0` | KR movement request | C -> S | `?Packet=0xF0` | `NewMovementRequestPacket` | `parse-only` | Alternate movement path not wired |

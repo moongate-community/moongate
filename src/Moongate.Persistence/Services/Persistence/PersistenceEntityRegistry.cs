@@ -13,6 +13,30 @@ public sealed class PersistenceEntityRegistry : IPersistenceEntityRegistry
 
     public bool IsFrozen { get; private set; }
 
+    public void Freeze()
+        => IsFrozen = true;
+
+    public IPersistenceEntityDescriptor GetDescriptor(ushort typeId)
+        => _descriptorsByTypeId.TryGetValue(typeId, out var descriptor)
+               ? descriptor
+               : throw new KeyNotFoundException($"No persistence descriptor registered for type id {typeId}.");
+
+    public IPersistenceEntityDescriptor<TEntity, TKey> GetDescriptor<TEntity, TKey>()
+        => _descriptorsByClrTypes.TryGetValue((typeof(TEntity), typeof(TKey)), out var descriptor)
+               ? (IPersistenceEntityDescriptor<TEntity, TKey>)descriptor
+               : throw new KeyNotFoundException(
+                     $"No persistence descriptor registered for entity '{typeof(TEntity).FullName}' and key '{typeof(TKey).FullName}'."
+                 );
+
+    public IReadOnlyCollection<IPersistenceEntityDescriptor> GetRegisteredDescriptors()
+        => _descriptorsByTypeId.Values.OrderBy(static descriptor => descriptor.TypeId).ToArray();
+
+    public bool IsRegistered(ushort typeId)
+        => _descriptorsByTypeId.ContainsKey(typeId);
+
+    public bool IsRegistered<TEntity, TKey>()
+        => _descriptorsByClrTypes.ContainsKey((typeof(TEntity), typeof(TKey)));
+
     public void Register<TEntity, TKey>(PersistenceEntityDescriptor<TEntity, TKey> descriptor)
         where TKey : notnull
     {
@@ -25,7 +49,9 @@ public sealed class PersistenceEntityRegistry : IPersistenceEntityRegistry
 
         if (_descriptorsByTypeId.ContainsKey(descriptor.TypeId))
         {
-            throw new InvalidOperationException($"A persistence descriptor is already registered for type id {descriptor.TypeId}.");
+            throw new InvalidOperationException(
+                $"A persistence descriptor is already registered for type id {descriptor.TypeId}."
+            );
         }
 
         var typeKey = (descriptor.EntityType, descriptor.KeyType);
@@ -40,25 +66,4 @@ public sealed class PersistenceEntityRegistry : IPersistenceEntityRegistry
         _descriptorsByTypeId[descriptor.TypeId] = descriptor;
         _descriptorsByClrTypes[typeKey] = descriptor;
     }
-
-    public void Freeze() => IsFrozen = true;
-
-    public bool IsRegistered(ushort typeId) => _descriptorsByTypeId.ContainsKey(typeId);
-
-    public bool IsRegistered<TEntity, TKey>() => _descriptorsByClrTypes.ContainsKey((typeof(TEntity), typeof(TKey)));
-
-    public IPersistenceEntityDescriptor GetDescriptor(ushort typeId)
-        => _descriptorsByTypeId.TryGetValue(typeId, out var descriptor)
-               ? descriptor
-               : throw new KeyNotFoundException($"No persistence descriptor registered for type id {typeId}.");
-
-    public IPersistenceEntityDescriptor<TEntity, TKey> GetDescriptor<TEntity, TKey>()
-        => _descriptorsByClrTypes.TryGetValue((typeof(TEntity), typeof(TKey)), out var descriptor)
-               ? (IPersistenceEntityDescriptor<TEntity, TKey>)descriptor
-               : throw new KeyNotFoundException(
-                   $"No persistence descriptor registered for entity '{typeof(TEntity).FullName}' and key '{typeof(TKey).FullName}'."
-               );
-
-    public IReadOnlyCollection<IPersistenceEntityDescriptor> GetRegisteredDescriptors()
-        => _descriptorsByTypeId.Values.OrderBy(static descriptor => descriptor.TypeId).ToArray();
 }

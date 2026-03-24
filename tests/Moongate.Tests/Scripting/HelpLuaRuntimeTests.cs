@@ -1,4 +1,6 @@
+using System.Buffers.Binary;
 using System.Net.Sockets;
+using System.Text;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
@@ -7,8 +9,8 @@ using Moongate.Network.Packets.Incoming.UI;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Services;
 using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Modules;
@@ -31,6 +33,14 @@ public sealed class HelpLuaRuntimeTests
         public string? LastMessage { get; private set; }
 
         public long LastSessionId { get; private set; }
+
+        public Task<HelpTicketEntity?> AssignToAccountAsync(
+            Serial ticketId,
+            Serial assignedToAccountId,
+            Serial? assignedToCharacterId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<HelpTicketEntity?>(null);
 
         public Task<HelpTicketEntity?> CreateTicketAsync(
             long sessionId,
@@ -64,6 +74,15 @@ public sealed class HelpLuaRuntimeTests
         public Task<IReadOnlyList<HelpTicketEntity>> GetAllTicketsAsync(CancellationToken cancellationToken = default)
             => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
 
+        public Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
+            Serial senderAccountId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
+
+        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
+            => Task.FromResult<HelpTicketEntity?>(null);
+
         public Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
             int page,
             int pageSize,
@@ -74,16 +93,11 @@ public sealed class HelpLuaRuntimeTests
         )
             => Task.FromResult<(IReadOnlyList<HelpTicketEntity>, int)>(([], 0));
 
-        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
-            => Task.FromResult<HelpTicketEntity?>(null);
+        public Task StartAsync()
+            => Task.CompletedTask;
 
-        public Task<HelpTicketEntity?> AssignToAccountAsync(
-            Serial ticketId,
-            Serial assignedToAccountId,
-            Serial? assignedToCharacterId,
-            CancellationToken cancellationToken = default
-        )
-            => Task.FromResult<HelpTicketEntity?>(null);
+        public Task StopAsync()
+            => Task.CompletedTask;
 
         public Task<HelpTicketEntity?> UpdateStatusAsync(
             Serial ticketId,
@@ -91,18 +105,6 @@ public sealed class HelpLuaRuntimeTests
             CancellationToken cancellationToken = default
         )
             => Task.FromResult<HelpTicketEntity?>(null);
-
-        public Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
-            Serial senderAccountId,
-            CancellationToken cancellationToken = default
-        )
-            => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
-
-        public Task StartAsync()
-            => Task.CompletedTask;
-
-        public Task StopAsync()
-            => Task.CompletedTask;
     }
 
     [Test]
@@ -116,7 +118,8 @@ public sealed class HelpLuaRuntimeTests
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
         Directory.CreateDirectory(luarcDir);
 
-        var repoRoot = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+        var repoRoot =
+            Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
         File.Copy(
             Path.Combine(repoRoot, "moongate_data", "scripts", "interaction", "help.lua"),
             Path.Combine(scriptsDir, "interaction", "help.lua")
@@ -189,7 +192,8 @@ public sealed class HelpLuaRuntimeTests
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
         Directory.CreateDirectory(luarcDir);
 
-        var repoRoot = Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+        var repoRoot =
+            Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
         File.Copy(
             Path.Combine(repoRoot, "moongate_data", "scripts", "interaction", "help.lua"),
             Path.Combine(scriptsDir, "interaction", "help.lua")
@@ -286,7 +290,7 @@ public sealed class HelpLuaRuntimeTests
     )
     {
         using var ms = new MemoryStream();
-        using var bw = new BinaryWriter(ms, System.Text.Encoding.UTF8, true);
+        using var bw = new BinaryWriter(ms, Encoding.UTF8, true);
 
         bw.Write((byte)0xB1);
         bw.Write((ushort)0);
@@ -301,7 +305,7 @@ public sealed class HelpLuaRuntimeTests
         foreach (var (id, text) in entries)
         {
             var value = text ?? string.Empty;
-            var textBytes = System.Text.Encoding.BigEndianUnicode.GetBytes(value);
+            var textBytes = Encoding.BigEndianUnicode.GetBytes(value);
             WriteUInt16BE(bw, id);
             WriteUInt16BE(bw, (ushort)value.Length);
             bw.Write(textBytes);
@@ -309,16 +313,17 @@ public sealed class HelpLuaRuntimeTests
 
         bw.Flush();
         var bytes = ms.ToArray();
-        System.Buffers.Binary.BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(1, 2), (ushort)bytes.Length);
+        BinaryPrimitives.WriteUInt16BigEndian(bytes.AsSpan(1, 2), (ushort)bytes.Length);
+
         return bytes;
     }
 
     private static void WriteInt32BE(BinaryWriter writer, int value)
-        => writer.Write(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value));
+        => writer.Write(BinaryPrimitives.ReverseEndianness(value));
 
     private static void WriteUInt16BE(BinaryWriter writer, ushort value)
-        => writer.Write(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value));
+        => writer.Write(BinaryPrimitives.ReverseEndianness(value));
 
     private static void WriteUInt32BE(BinaryWriter writer, uint value)
-        => writer.Write(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(value));
+        => writer.Write(BinaryPrimitives.ReverseEndianness(value));
 }

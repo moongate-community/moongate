@@ -1,5 +1,4 @@
 using Moongate.Core.Data.Directories;
-using Moongate.Core.Types;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Ids;
 

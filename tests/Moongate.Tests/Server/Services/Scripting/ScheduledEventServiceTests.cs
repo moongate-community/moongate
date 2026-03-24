@@ -36,6 +36,7 @@ public sealed class ScheduledEventServiceTests
         )
         {
             Registrations.Add((name, interval, delay, callback));
+
             return $"{name}:{Registrations.Count}";
         }
 
@@ -61,32 +62,31 @@ public sealed class ScheduledEventServiceTests
             _definitionService = definitionService;
         }
 
-#pragma warning disable CS0067
-        public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
-        public event EventHandler<ScriptErrorInfo>? OnScriptError;
-#pragma warning restore CS0067
-
         public void AddCallback(string name, Action<object[]> callback) { }
         public void AddConstant(string name, object value) { }
         public void AddInitScript(string script) { }
         public void AddManualModuleFunction(string moduleName, string functionName, Action<object[]> callback) { }
-        public void AddManualModuleFunction<TInput, TOutput>(string moduleName, string functionName, Func<TInput?, TOutput> callback) { }
+
+        public void AddManualModuleFunction<TInput, TOutput>(
+            string moduleName,
+            string functionName,
+            Func<TInput?, TOutput> callback
+        ) { }
+
         public void AddScriptModule(Type type) { }
         public void CallFunction(string functionName, params object[] args) { }
         public void ClearScriptCache() { }
         public void ExecuteCallback(string name, params object[] args) { }
         public void ExecuteEngineReady() { }
-        public ScriptResult ExecuteFunction(string command) => new();
-        public Task<ScriptResult> ExecuteFunctionAsync(string command) => Task.FromResult(new ScriptResult());
+
+        public ScriptResult ExecuteFunction(string command)
+            => new();
+
+        public Task<ScriptResult> ExecuteFunctionAsync(string command)
+            => Task.FromResult(new ScriptResult());
+
         public void ExecuteFunctionFromBootstrap(string name) { }
         public void ExecuteScript(string script) { }
-        public ScriptExecutionMetrics GetExecutionMetrics() => new();
-        public void RegisterGlobal(string name, object value) { }
-        public void RegisterGlobalFunction(string name, Delegate func) { }
-        public Task StartAsync() => Task.CompletedTask;
-        public Task StopAsync() => Task.CompletedTask;
-        public string ToScriptEngineFunctionName(string name) => name;
-        public bool UnregisterGlobal(string name) => true;
 
         public void ExecuteScriptFile(string scriptFile)
         {
@@ -94,6 +94,29 @@ public sealed class ScheduledEventServiceTests
             var definition = script.DoString(File.ReadAllText(scriptFile)).Table!;
             _ = _definitionService.Register(Path.GetFileNameWithoutExtension(scriptFile), definition, scriptFile);
         }
+
+        public ScriptExecutionMetrics GetExecutionMetrics()
+            => new();
+
+        public void RegisterGlobal(string name, object value) { }
+        public void RegisterGlobalFunction(string name, Delegate func) { }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+
+        public string ToScriptEngineFunctionName(string name)
+            => name;
+
+        public bool UnregisterGlobal(string name)
+            => true;
+
+    #pragma warning disable CS0067
+        public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
+        public event EventHandler<ScriptErrorInfo>? OnScriptError;
+    #pragma warning restore CS0067
     }
 
     private sealed class ScheduledEventServiceTestGameEventBusService : IGameEventBusService
@@ -104,10 +127,42 @@ public sealed class ScheduledEventServiceTests
             where TEvent : IGameEvent
         {
             PublishedEvents.Add(gameEvent);
+
             return ValueTask.CompletedTask;
         }
 
         public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent { }
+    }
+
+    [Test]
+    public async Task StartAsync_WhenDailyEventUsesTimeZone_ShouldScheduleUsingZone()
+    {
+        using var tempDirectory = new TempDirectory();
+        var scriptsRoot = Path.Combine(tempDirectory.Path, "scripts");
+        var eventsDirectory = Path.Combine(scriptsRoot, "events");
+        Directory.CreateDirectory(eventsDirectory);
+        await File.WriteAllTextAsync(
+            Path.Combine(eventsDirectory, "rome_daily.lua"),
+            """
+            return {
+                trigger_name = "rome_daily_trigger",
+                recurrence = "daily",
+                time = "09:00",
+                time_zone = "Europe/Rome"
+            }
+            """
+        );
+
+        var definitions = new ScheduledEventDefinitionService();
+        var timer = new ScheduledEventServiceTestTimerService();
+        var bus = new ScheduledEventServiceTestGameEventBusService();
+        var utcNow = new DateTime(2026, 03, 19, 7, 30, 0, DateTimeKind.Utc);
+        var service = CreateService(tempDirectory.Path, definitions, timer, bus, utcNow);
+
+        await service.StartAsync();
+
+        Assert.That(timer.Registrations, Has.Count.EqualTo(1));
+        Assert.That(timer.Registrations[0].Delay, Is.EqualTo(TimeSpan.FromMinutes(30)));
     }
 
     [Test]
@@ -131,7 +186,13 @@ public sealed class ScheduledEventServiceTests
         var definitions = new ScheduledEventDefinitionService();
         var timer = new ScheduledEventServiceTestTimerService();
         var bus = new ScheduledEventServiceTestGameEventBusService();
-        var service = CreateService(tempDirectory.Path, definitions, timer, bus, new DateTime(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc));
+        var service = CreateService(
+            tempDirectory.Path,
+            definitions,
+            timer,
+            bus,
+            new(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc)
+        );
 
         await service.StartAsync();
 
@@ -169,7 +230,13 @@ public sealed class ScheduledEventServiceTests
         var definitions = new ScheduledEventDefinitionService();
         var timer = new ScheduledEventServiceTestTimerService();
         var bus = new ScheduledEventServiceTestGameEventBusService();
-        var service = CreateService(tempDirectory.Path, definitions, timer, bus, new DateTime(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc));
+        var service = CreateService(
+            tempDirectory.Path,
+            definitions,
+            timer,
+            bus,
+            new(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc)
+        );
 
         await service.StartAsync();
 
@@ -182,37 +249,6 @@ public sealed class ScheduledEventServiceTests
                 Assert.That(timer.Registrations, Is.Empty);
             }
         );
-    }
-
-    [Test]
-    public async Task StartAsync_WhenDailyEventUsesTimeZone_ShouldScheduleUsingZone()
-    {
-        using var tempDirectory = new TempDirectory();
-        var scriptsRoot = Path.Combine(tempDirectory.Path, "scripts");
-        var eventsDirectory = Path.Combine(scriptsRoot, "events");
-        Directory.CreateDirectory(eventsDirectory);
-        await File.WriteAllTextAsync(
-            Path.Combine(eventsDirectory, "rome_daily.lua"),
-            """
-            return {
-                trigger_name = "rome_daily_trigger",
-                recurrence = "daily",
-                time = "09:00",
-                time_zone = "Europe/Rome"
-            }
-            """
-        );
-
-        var definitions = new ScheduledEventDefinitionService();
-        var timer = new ScheduledEventServiceTestTimerService();
-        var bus = new ScheduledEventServiceTestGameEventBusService();
-        var utcNow = new DateTime(2026, 03, 19, 7, 30, 0, DateTimeKind.Utc);
-        var service = CreateService(tempDirectory.Path, definitions, timer, bus, utcNow);
-
-        await service.StartAsync();
-
-        Assert.That(timer.Registrations, Has.Count.EqualTo(1));
-        Assert.That(timer.Registrations[0].Delay, Is.EqualTo(TimeSpan.FromMinutes(30)));
     }
 
     [Test]
@@ -236,7 +272,13 @@ public sealed class ScheduledEventServiceTests
         var definitions = new ScheduledEventDefinitionService();
         var timer = new ScheduledEventServiceTestTimerService();
         var bus = new ScheduledEventServiceTestGameEventBusService();
-        var service = CreateService(tempDirectory.Path, definitions, timer, bus, new DateTime(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc));
+        var service = CreateService(
+            tempDirectory.Path,
+            definitions,
+            timer,
+            bus,
+            new(2026, 03, 19, 8, 0, 0, DateTimeKind.Utc)
+        );
 
         await service.StartAsync();
         timer.FireSingle("scheduled_event:town_crier_morning");
@@ -264,7 +306,7 @@ public sealed class ScheduledEventServiceTests
         var directories = new DirectoriesConfig(root, Enum.GetNames<DirectoryType>());
         Directory.CreateDirectory(directories[DirectoryType.Scripts]);
 
-        return new ScheduledEventService(
+        return new(
             directories,
             new ScheduledEventServiceTestScriptEngineService(definitions),
             definitions,

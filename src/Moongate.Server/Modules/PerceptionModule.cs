@@ -1,7 +1,10 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
+using Moongate.Server.Services.Interaction;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Modules;
 
@@ -12,10 +15,15 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class PerceptionModule
 {
+    private readonly IAiRelationService _aiRelationService;
     private readonly ISpatialWorldService _spatialWorldService;
 
-    public PerceptionModule(ISpatialWorldService spatialWorldService)
+    public PerceptionModule(
+        ISpatialWorldService spatialWorldService,
+        IAiRelationService? aiRelationService = null
+    )
     {
+        _aiRelationService = aiRelationService ?? new AiRelationService();
         _spatialWorldService = spatialWorldService;
     }
 
@@ -43,7 +51,7 @@ public sealed class PerceptionModule
         var nearest = FindNearestByPredicate(
             npc!,
             range,
-            candidate => candidate.Id != npc!.Id && candidate.IsPlayer
+            candidate => candidate.Id != npc!.Id && _aiRelationService.Compute(npc!, candidate) == AiRelation.Hostile
         );
 
         return nearest is null ? null : (uint)nearest.Id;
@@ -62,6 +70,26 @@ public sealed class PerceptionModule
             npc!,
             range,
             candidate => candidate.Id != npc!.Id && !candidate.IsPlayer
+        );
+
+        return nearest is null ? null : (uint)nearest.Id;
+    }
+
+    [ScriptFunction("find_nearest_player_enemy", "Returns nearest player-controlled enemy mobile serial in range, or nil.")]
+    public uint? FindNearestPlayerEnemy(uint npcSerial, int range)
+    {
+        if (range <= 0 ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
+        {
+            return null;
+        }
+
+        var nearest = FindNearestByPredicate(
+            npc!,
+            range,
+            candidate => candidate.Id != npc!.Id &&
+                         candidate.IsPlayer &&
+                         _aiRelationService.Compute(npc!, candidate) == AiRelation.Hostile
         );
 
         return nearest is null ? null : (uint)nearest.Id;

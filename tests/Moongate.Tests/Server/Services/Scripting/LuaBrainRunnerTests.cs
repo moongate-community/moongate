@@ -146,6 +146,168 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
+    public async Task
+        HandleAsync_WhenEnemyMobileIsWithinRangedGuardAcquisitionRange_ShouldNotifyRangedGuardButNotMeleeGuard()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var archerGuard = new UOMobileEntity
+        {
+            Id = (Serial)0x720,
+            Name = "archer_guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var warriorGuard = new UOMobileEntity
+        {
+            Id = (Serial)0x721,
+            Name = "warrior_guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x722,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(106, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        archerGuard.SetCustomString("guard_role", "ranged");
+
+        runner.Register(archerGuard, archerGuard.BrainId);
+        runner.Register(warriorGuard, warriorGuard.BrainId);
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var inRangeEvents = scriptEngine.Calls
+                                        .Where(
+                                            call => call.FunctionName == "on_event" &&
+                                                    call.Args.Length > 0 &&
+                                                    Equals(call.Args[0], "in_range")
+                                        )
+                                        .ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(inRangeEvents.Count, Is.EqualTo(1));
+
+                if (inRangeEvents.Count == 1)
+                {
+                    Assert.That(inRangeEvents[0].Args[1], Is.EqualTo((uint)zombie.Id));
+                }
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenEnemyMobileWithoutBrainIsAdded_ShouldPreserveEnemyPayload()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x700,
+            Name = "guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x701,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(101, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        runner.Register(guard, guard.BrainId);
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var eventCall = scriptEngine.Calls.First(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+        var payload = (Dictionary<string, object>)eventCall.Args[2]!;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(payload["source_is_player"], Is.EqualTo(false));
+                Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
+                Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+                Assert.That(payload["source_relation"], Is.EqualTo(nameof(AiRelation.Hostile)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_WhenEnemyMobileWithoutBrainMovesIntoRange_ShouldPreserveEnemyPayload()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x710,
+            Name = "guard",
+            BrainId = "guard",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var zombie = new UOMobileEntity
+        {
+            Id = (Serial)0x711,
+            Name = "zombie",
+            IsPlayer = false,
+            MapId = 1,
+            Location = new(120, 100, 0),
+            Notoriety = Notoriety.CanBeAttacked
+        };
+
+        runner.Register(guard, guard.BrainId);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        await runner.HandleAsync(new MobileAddedInWorldEvent(zombie, zombie.BrainId));
+        await runner.TickAllAsync(now);
+        scriptEngine.Calls.Clear();
+
+        zombie.Location = new(102, 100, 0);
+        await runner.HandleAsync(new MobilePositionChangedEvent(1, zombie.Id, 1, 1, new(120, 100, 0), zombie.Location));
+        await runner.TickAllAsync(now + 1000);
+
+        var eventCall = scriptEngine.Calls.First(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "in_range")
+        );
+        var payload = (Dictionary<string, object>)eventCall.Args[2]!;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(payload["source_is_player"], Is.EqualTo(false));
+                Assert.That(payload["source_is_enemy"], Is.EqualTo(true));
+                Assert.That(payload["source_notoriety"], Is.EqualTo(nameof(Notoriety.CanBeAttacked)));
+                Assert.That(payload["source_relation"], Is.EqualTo(nameof(AiRelation.Hostile)));
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_WhenMobileAddedInWorldWithBrain_ShouldRegisterAndTick()
     {
         using var temp = new TempDirectory();
@@ -173,93 +335,6 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
-    public async Task TickAllAsync_WhenCombatHitHookIsQueued_ShouldDispatchOnAttack()
-    {
-        using var temp = new TempDirectory();
-        var timerService = new LuaBrainRunnerTimerServiceSpy();
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
-        var npc = new UOMobileEntity
-        {
-            Id = (Serial)0x640,
-            Name = "fighter",
-            BrainId = "fighter_brain",
-            MapId = 1,
-            Location = new(100, 100, 0)
-        };
-
-        runner.Register(npc, npc.BrainId);
-        runner.EnqueueCombatHook(
-            npc.Id,
-            new LuaBrainCombatHookContext(
-                LuaBrainCombatHookType.Attack,
-                (Serial)0x777,
-                new Dictionary<string, object?>
-                {
-                    ["damage"] = 6
-                }
-            )
-        );
-
-        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-
-        var attackCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_attack");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(attackCall.FunctionName, Is.EqualTo("on_attack"));
-                Assert.That(attackCall.Args.Length, Is.EqualTo(2));
-                Assert.That(attackCall.Args[0], Is.EqualTo((uint)(Serial)0x777));
-                Assert.That(attackCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task TickAllAsync_WhenCombatMissHookIsQueued_ShouldDispatchOnMissedByAttack()
-    {
-        using var temp = new TempDirectory();
-        var timerService = new LuaBrainRunnerTimerServiceSpy();
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
-        var npc = new UOMobileEntity
-        {
-            Id = (Serial)0x650,
-            Name = "fighter",
-            BrainId = "fighter_brain",
-            MapId = 1,
-            Location = new(100, 100, 0)
-        };
-
-        runner.Register(npc, npc.BrainId);
-        runner.EnqueueCombatHook(
-            npc.Id,
-            new LuaBrainCombatHookContext(
-                LuaBrainCombatHookType.MissedByAttack,
-                (Serial)0x778,
-                new Dictionary<string, object?>()
-            )
-        );
-
-        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-
-        var missCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_missed_by_attack");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(missCall.FunctionName, Is.EqualTo("on_missed_by_attack"));
-                Assert.That(missCall.Args.Length, Is.EqualTo(2));
-                Assert.That(missCall.Args[0], Is.EqualTo((uint)(Serial)0x778));
-                Assert.That(missCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
-            }
-        );
-    }
-
-    [Test]
     public async Task HandleAsync_WhenMobileMovesIntoNpcRange_ShouldInvokeOnEventInRange()
     {
         using var temp = new TempDirectory();
@@ -279,11 +354,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x600,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(120, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);
@@ -336,11 +413,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x620,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(102, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         // Prime in-range state.
@@ -387,11 +466,13 @@ public sealed class LuaBrainRunnerTests
         {
             Id = (Serial)0x610,
             Name = "traveler",
-            IsPlayer = true,
+            IsPlayer = false,
+            BrainId = "traveler_brain",
             MapId = 1,
             Location = new(120, 100, 0)
         };
         runner.Register(npc, npc.BrainId);
+        runner.Register(source, source.BrainId);
         var now = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         source.Location = new(102, 100, 0);
@@ -426,6 +507,150 @@ public sealed class LuaBrainRunnerTests
             {
                 Assert.That(timerService.RegisteredTimerId, Is.Not.Null.And.Not.Empty);
                 Assert.That(timerService.Unregistered, Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenBeforeAndAfterDeathAreQueued_ShouldInvokeSpecificHooks()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x62,
+            Name = "orion",
+            BrainId = "orion",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
+        runner.EnqueueDeath(
+            npc.Id,
+            new(
+                LuaBrainDeathHookType.BeforeDeath,
+                (Serial)0x08,
+                new() { ["reason"] = "test_before" }
+            )
+        );
+        runner.EnqueueDeath(
+            npc.Id,
+            new(
+                LuaBrainDeathHookType.AfterDeath,
+                (Serial)0x08,
+                new() { ["reason"] = "test_after" }
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var beforeEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "before_death")
+        );
+        var beforeCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_before_death");
+        var afterEventCall = scriptEngine.Calls.FirstOrDefault(
+            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "after_death")
+        );
+        var afterCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_after_death");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(beforeEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(beforeCall.FunctionName, Is.EqualTo("on_before_death"));
+                Assert.That(afterEventCall.FunctionName, Is.EqualTo("on_event"));
+                Assert.That(afterCall.FunctionName, Is.EqualTo("on_after_death"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenCombatHitHookIsQueued_ShouldDispatchOnAttack()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x640,
+            Name = "fighter",
+            BrainId = "fighter_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        runner.Register(npc, npc.BrainId);
+        runner.EnqueueCombatHook(
+            npc.Id,
+            new(
+                LuaBrainCombatHookType.Attack,
+                (Serial)0x777,
+                new()
+                {
+                    ["damage"] = 6
+                }
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var attackCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_attack");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(attackCall.FunctionName, Is.EqualTo("on_attack"));
+                Assert.That(attackCall.Args.Length, Is.EqualTo(2));
+                Assert.That(attackCall.Args[0], Is.EqualTo((uint)(Serial)0x777));
+                Assert.That(attackCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
+            }
+        );
+    }
+
+    [Test]
+    public async Task TickAllAsync_WhenCombatMissHookIsQueued_ShouldDispatchOnMissedByAttack()
+    {
+        using var temp = new TempDirectory();
+        var timerService = new LuaBrainRunnerTimerServiceSpy();
+        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
+        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
+        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x650,
+            Name = "fighter",
+            BrainId = "fighter_brain",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        runner.Register(npc, npc.BrainId);
+        runner.EnqueueCombatHook(
+            npc.Id,
+            new(
+                LuaBrainCombatHookType.MissedByAttack,
+                (Serial)0x778,
+                new()
+            )
+        );
+
+        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+
+        var missCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_missed_by_attack");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(missCall.FunctionName, Is.EqualTo("on_missed_by_attack"));
+                Assert.That(missCall.Args.Length, Is.EqualTo(2));
+                Assert.That(missCall.Args[0], Is.EqualTo((uint)(Serial)0x778));
+                Assert.That(missCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
             }
         );
     }
@@ -472,63 +697,6 @@ public sealed class LuaBrainRunnerTests
                 Assert.That(onDeathCall.Args.Length, Is.EqualTo(2));
                 Assert.That(onDeathCall.Args[0], Is.EqualTo((uint)0x07));
                 Assert.That(onDeathCall.Args[1], Is.TypeOf<Dictionary<string, object?>>());
-            }
-        );
-    }
-
-    [Test]
-    public async Task TickAllAsync_WhenBeforeAndAfterDeathAreQueued_ShouldInvokeSpecificHooks()
-    {
-        using var temp = new TempDirectory();
-        var timerService = new LuaBrainRunnerTimerServiceSpy();
-        var scriptEngine = new ItemScriptDispatcherTestScriptEngineService();
-        var directories = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
-        var runner = new LuaBrainRunner(timerService, scriptEngine, new LuaBrainRegistryStub(), directories);
-        var npc = new UOMobileEntity
-        {
-            Id = (Serial)0x62,
-            Name = "orion",
-            BrainId = "orion",
-            MapId = 1,
-            Location = new(100, 100, 0)
-        };
-
-        await runner.HandleAsync(new MobileAddedInWorldEvent(npc, npc.BrainId));
-        runner.EnqueueDeath(
-            npc.Id,
-            new LuaBrainDeathContext(
-                LuaBrainDeathHookType.BeforeDeath,
-                (Serial)0x08,
-                new() { ["reason"] = "test_before" }
-            )
-        );
-        runner.EnqueueDeath(
-            npc.Id,
-            new LuaBrainDeathContext(
-                LuaBrainDeathHookType.AfterDeath,
-                (Serial)0x08,
-                new() { ["reason"] = "test_after" }
-            )
-        );
-
-        await runner.TickAllAsync(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
-
-        var beforeEventCall = scriptEngine.Calls.FirstOrDefault(
-            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "before_death")
-        );
-        var beforeCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_before_death");
-        var afterEventCall = scriptEngine.Calls.FirstOrDefault(
-            call => call.FunctionName == "on_event" && call.Args.Length > 0 && Equals(call.Args[0], "after_death")
-        );
-        var afterCall = scriptEngine.Calls.FirstOrDefault(call => call.FunctionName == "on_after_death");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(beforeEventCall.FunctionName, Is.EqualTo("on_event"));
-                Assert.That(beforeCall.FunctionName, Is.EqualTo("on_before_death"));
-                Assert.That(afterEventCall.FunctionName, Is.EqualTo("on_event"));
-                Assert.That(afterCall.FunctionName, Is.EqualTo("on_after_death"));
             }
         );
     }

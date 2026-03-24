@@ -1,0 +1,1856 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.agapite_elemental",
+    "name": "AgapiteElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.air_elemental",
+    "name": "AirElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ancient_lich",
+    "name": "AncientLich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ancient_wyrm",
+    "name": "AncientWyrm",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.bake_kitsune",
+    "name": "BakeKitsune",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.balron",
+    "name": "Balron",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.betrayer",
+    "name": "Betrayer",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.bone_magi",
+    "name": "BoneMagi",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.bronze_elemental",
+    "name": "BronzeElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.centaur",
+    "name": "Centaur",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.chaos_dragoon_elite",
+    "name": "ChaosDragoonElite",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.copper_elemental",
+    "name": "CopperElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.corrosive_slime",
+    "name": "CorrosiveSlime",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.crystal_lattice_seeker",
+    "name": "CrystalLatticeSeeker",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.daemon",
+    "name": "Daemon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.dark_guardian",
+    "name": "DarkGuardian",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.deathwatch_beetle",
+    "name": "DeathwatchBeetle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.deathwatch_beetle_hatchling",
+    "name": "DeathwatchBeetleHatchling",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.dragon",
+    "name": "Dragon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.drake",
+    "name": "Drake",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.dull_copper_elemental",
+    "name": "DullCopperElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.earth_elemental",
+    "name": "EarthElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.efreet",
+    "name": "Efreet",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.elite_ninja",
+    "name": "EliteNinja",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.enslaved_gargoyle",
+    "name": "EnslavedGargoyle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ethereal_warrior",
+    "name": "EtherealWarrior",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.evil_mage",
+    "name": "EvilMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.evil_mage_lord",
+    "name": "EvilMageLord",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.fan_dancer",
+    "name": "FanDancer",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.fire_elemental",
+    "name": "FireElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.fire_gargoyle",
+    "name": "FireGargoyle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.frost_troll",
+    "name": "FrostTroll",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.gargoyle",
+    "name": "Gargoyle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.gargoyle_destroyer",
+    "name": "GargoyleDestroyer",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.gargoyle_enforcer",
+    "name": "GargoyleEnforcer",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.golden_elemental",
+    "name": "GoldenElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.greater_dragon",
+    "name": "GreaterDragon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.harrower_tentacles",
+    "name": "HarrowerTentacles",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ice_elemental",
+    "name": "IceElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ice_fiend",
+    "name": "IceFiend",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.imp",
+    "name": "Imp",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.juggernaut",
+    "name": "Juggernaut",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.juka_mage",
+    "name": "JukaMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.juka_warrior",
+    "name": "JukaWarrior",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.lich",
+    "name": "Lich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.lich_lord",
+    "name": "LichLord",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.meer_eternal",
+    "name": "MeerEternal",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.meer_mage",
+    "name": "MeerMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.mound_of_maggots",
+    "name": "MoundOfMaggots",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.mummy",
+    "name": "Mummy",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ophidian_archmage",
+    "name": "OphidianArchmage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ophidian_mage",
+    "name": "OphidianMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ophidian_matriarch",
+    "name": "OphidianMatriarch",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ophidian_warrior",
+    "name": "OphidianWarrior",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.orcish_mage",
+    "name": "OrcishMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.pixie",
+    "name": "Pixie",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.plague_spawn",
+    "name": "PlagueSpawn",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.poison_elemental",
+    "name": "PoisonElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.rai_ju",
+    "name": "RaiJu",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ratman_mage",
+    "name": "RatmanMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.revenant_lion",
+    "name": "RevenantLion",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.ronin",
+    "name": "Ronin",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.rune_beetle",
+    "name": "RuneBeetle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.serpentine_dragon",
+    "name": "SerpentineDragon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.shadow_iron_elemental",
+    "name": "ShadowIronElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.shadow_wyrm",
+    "name": "ShadowWyrm",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.silver_serpent",
+    "name": "SilverSerpent",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.skeletal_dragon",
+    "name": "SkeletalDragon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.skeletal_mage",
+    "name": "SkeletalMage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.slime",
+    "name": "Slime",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.stone_gargoyle",
+    "name": "StoneGargoyle",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.stone_harpy",
+    "name": "StoneHarpy",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.succubus",
+    "name": "Succubus",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.terathan_matriarch",
+    "name": "TerathanMatriarch",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.titan",
+    "name": "Titan",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.valorite_elemental",
+    "name": "ValoriteElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.verite_elemental",
+    "name": "VeriteElemental",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.wyvern",
+    "name": "Wyvern",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.yamandon",
+    "name": "Yamandon",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.yomotsu_elder",
+    "name": "YomotsuElder",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.yomotsu_priest",
+    "name": "YomotsuPriest",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "creature.yomotsu_warrior",
+    "name": "YomotsuWarrior",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.low_scrolls",
+    "name": "Low Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.med_scrolls",
+    "name": "Med Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.high_scrolls",
+    "name": "High Scrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.gems",
+    "name": "Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.potions",
+    "name": "Potions",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "entries": [
+      {
+        "itemTemplateId": "agility_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_cure_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.poor",
+    "name": "Poor Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 10,
+        "amountMax": 30
+      },
+      {
+        "itemTemplateId": "bone",
+        "chance": 0.25,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.meager",
+    "name": "Meager Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 20,
+        "amountMax": 50
+      },
+      {
+        "itemTemplateId": "left_arm",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "right_arm",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "torso",
+        "chance": 0.1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone",
+        "chance": 0.7,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "pack.average",
+    "name": "Average Pack",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 50,
+        "amountMax": 100
+      },
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 0.35,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "agility_potion",
+        "chance": 0.25,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "chance": 0.25,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "chance": 0.25,
+        "amount": 1
+      }
+    ]
+  }
+]

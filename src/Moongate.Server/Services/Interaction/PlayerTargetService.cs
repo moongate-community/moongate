@@ -13,8 +13,8 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
-using Moongate.Server.Interfaces.Session;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Interfaces.Session;
 using Moongate.UO.Data.Ids;
 using Serilog;
 

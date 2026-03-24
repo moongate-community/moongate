@@ -9,13 +9,14 @@ namespace Moongate.Server.Interfaces.Services.Scripting;
 /// </summary>
 public interface IDialogueRuntimeService
 {
-    Task<DialogueSession?> StartAsync(
+    Task<DialogueSession?> ChooseAsync(
         UOMobileEntity npc,
         UOMobileEntity listener,
-        string conversationId,
-        string? topicId = null,
+        int optionIndex,
         CancellationToken cancellationToken = default
     );
+
+    bool EndSession(Serial npcId, Serial listenerId);
 
     Task<DialogueSession?> HandleTopicAsync(
         UOMobileEntity npc,
@@ -25,14 +26,13 @@ public interface IDialogueRuntimeService
         CancellationToken cancellationToken = default
     );
 
-    Task<DialogueSession?> ChooseAsync(
+    Task<DialogueSession?> StartAsync(
         UOMobileEntity npc,
         UOMobileEntity listener,
-        int optionIndex,
+        string conversationId,
+        string? topicId = null,
         CancellationToken cancellationToken = default
     );
 
     bool TryGetActiveSession(Serial npcId, Serial listenerId, out DialogueSession? session);
-
-    bool EndSession(Serial npcId, Serial listenerId);
 }

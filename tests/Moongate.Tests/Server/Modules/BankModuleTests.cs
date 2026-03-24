@@ -41,6 +41,7 @@ public sealed class BankModuleTests
         public bool TryGetByCharacterId(Serial characterId, out GameSession session)
         {
             session = _sessions.Values.FirstOrDefault(s => s.CharacterId == characterId)!;
+
             return session is not null;
         }
     }
@@ -86,7 +87,7 @@ public sealed class BankModuleTests
         var character = new UOMobileEntity { Id = (Serial)0x00000044u, Name = "banker-test" };
         character.AddEquippedItem(ItemLayerType.Bank, (Serial)0x40000099u);
         characterService.Character = character;
-        characterService.BankBox = new UOItemEntity { Id = (Serial)0x40000099u, ItemId = 0x09A8, GumpId = 0x0042 };
+        characterService.BankBox = new() { Id = (Serial)0x40000099u, ItemId = 0x09A8, GumpId = 0x0042 };
 
         var session = new GameSession(new(client))
         {

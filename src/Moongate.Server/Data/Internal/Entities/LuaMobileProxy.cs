@@ -78,7 +78,7 @@ public sealed class LuaMobileProxy
     public void ClearTarget()
     {
         _target = null;
-        Mobile.CombatantId = Moongate.UO.Data.Ids.Serial.Zero;
+        Mobile.CombatantId = UO.Data.Ids.Serial.Zero;
     }
 
     public bool DisableWar()
@@ -106,6 +106,20 @@ public sealed class LuaMobileProxy
         }
 
         return (int)Math.Round(Mobile.Location.GetDistance(new(target.LocationX, target.LocationY, target.LocationZ)));
+    }
+
+    public bool Emote(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Emote)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
     }
 
     public bool EnableWar()
@@ -206,7 +220,7 @@ public sealed class LuaMobileProxy
     }
 
     public bool HasTarget()
-        => Mobile.CombatantId != Moongate.UO.Data.Ids.Serial.Zero || _target is not null;
+        => Mobile.CombatantId != UO.Data.Ids.Serial.Zero || _target is not null;
 
     public bool IsAlive()
         => Mobile.IsAlive;
@@ -380,48 +394,6 @@ public sealed class LuaMobileProxy
         return recipients > 0;
     }
 
-    public bool Emote(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Emote)
-                                       .GetAwaiter()
-                                       .GetResult();
-
-        return recipients > 0;
-    }
-
-    public bool Yell(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Yell)
-                                       .GetAwaiter()
-                                       .GetResult();
-
-        return recipients > 0;
-    }
-
-    public bool Whisper(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-        {
-            return false;
-        }
-
-        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Whisper)
-                                       .GetAwaiter()
-                                       .GetResult();
-
-        return recipients > 0;
-    }
-
     public void SetEffect(
         int itemId,
         int speed = 10,
@@ -465,7 +437,7 @@ public sealed class LuaMobileProxy
     public void SetTarget(LuaMobileProxy? target)
     {
         _target = target;
-        Mobile.CombatantId = target?.Mobile.Id ?? Moongate.UO.Data.Ids.Serial.Zero;
+        Mobile.CombatantId = target?.Mobile.Id ?? UO.Data.Ids.Serial.Zero;
     }
 
     public bool SetWarMode(bool isEnabled)
@@ -538,6 +510,34 @@ public sealed class LuaMobileProxy
 
         // TODO: Implement wandering movement primitive for brain point 5.
         => _ = radius;
+
+    public bool Whisper(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Whisper)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
+
+    public bool Yell(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var recipients = _speechService.SpeakAsMobileAsync(Mobile, text, messageType: ChatMessageType.Yell)
+                                       .GetAwaiter()
+                                       .GetResult();
+
+        return recipients > 0;
+    }
 
     private void PublishPositionChangedAsync(MobilePositionChangedEvent gameEvent)
     {

@@ -24,8 +24,8 @@ public sealed class StartupLoadoutScriptService : IStartupLoadoutScriptService
     {
         ArgumentNullException.ThrowIfNull(scriptEngineService);
 
-        _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript
-                     ?? throw new ArgumentException(
+        _luaScript = (scriptEngineService as LuaScriptEngineService)?.LuaScript ??
+                     throw new ArgumentException(
                          "StartupLoadoutScriptService requires LuaScriptEngineService.",
                          nameof(scriptEngineService)
                      );

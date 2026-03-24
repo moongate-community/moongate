@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Commands.Player;
 using Moongate.Server.Data.Internal.Commands;
@@ -12,7 +13,6 @@ using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Types.Commands;
-using Moongate.Server.Types.World;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -97,7 +97,7 @@ public sealed class RemoveItemCommandTests
     {
         public Dictionary<Serial, UOItemEntity> Items { get; } = [];
         public Serial LastDeletedItemId { get; private set; }
-        public bool DeleteItemResult { get; set; } = true;
+        public bool DeleteItemResult { get; } = true;
 
         public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
             => Task.CompletedTask;
@@ -165,7 +165,7 @@ public sealed class RemoveItemCommandTests
     {
         public Dictionary<Serial, UOMobileEntity> Mobiles { get; } = [];
         public Serial LastDeletedMobileId { get; private set; }
-        public bool DeleteResult { get; set; } = true;
+        public bool DeleteResult { get; } = true;
 
         public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -222,7 +222,7 @@ public sealed class RemoveItemCommandTests
         public void AddRegion(JsonRegion region) { }
 
         public Task<int> BroadcastToPlayersAsync(
-            Moongate.Network.Packets.Interfaces.IGameNetworkPacket packet,
+            IGameNetworkPacket packet,
             int mapId,
             Point3D location,
             int? range = null,
@@ -231,6 +231,9 @@ public sealed class RemoveItemCommandTests
             => Task.FromResult(0);
 
         public List<MapSector> GetActiveSectors()
+            => [];
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
             => [];
 
         public int GetMusic(int mapId, Point3D location)
@@ -242,10 +245,12 @@ public sealed class RemoveItemCommandTests
         public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
             => [];
 
-        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
-            => [];
-
-        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        public List<GameSession> GetPlayersInRange(
+            Point3D location,
+            int range,
+            int mapId,
+            GameSession? excludeSession = null
+        )
             => [];
 
         public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
@@ -338,12 +343,16 @@ public sealed class RemoveItemCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        targetService.Callback!(new(new()
-        {
-            CursorTarget = TargetCursorSelectionType.SelectObject,
-            CursorType = TargetCursorType.Helpful,
-            ClickedOnId = item.Id
-        }));
+        targetService.Callback!(
+            new(
+                new()
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectObject,
+                    CursorType = TargetCursorType.Helpful,
+                    ClickedOnId = item.Id
+                }
+            )
+        );
 
         Assert.Multiple(
             () =>
@@ -389,12 +398,16 @@ public sealed class RemoveItemCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        targetService.Callback!(new(new()
-        {
-            CursorTarget = TargetCursorSelectionType.SelectObject,
-            CursorType = TargetCursorType.Helpful,
-            ClickedOnId = npc.Id
-        }));
+        targetService.Callback!(
+            new(
+                new()
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectObject,
+                    CursorType = TargetCursorType.Helpful,
+                    ClickedOnId = npc.Id
+                }
+            )
+        );
 
         Assert.Multiple(
             () =>
@@ -444,12 +457,16 @@ public sealed class RemoveItemCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        targetService.Callback!(new(new()
-        {
-            CursorTarget = TargetCursorSelectionType.SelectObject,
-            CursorType = TargetCursorType.Helpful,
-            ClickedOnId = player.Id
-        }));
+        targetService.Callback!(
+            new(
+                new()
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectObject,
+                    CursorType = TargetCursorType.Helpful,
+                    ClickedOnId = player.Id
+                }
+            )
+        );
 
         Assert.That(output[^1], Is.EqualTo("Cannot remove player characters."));
     }

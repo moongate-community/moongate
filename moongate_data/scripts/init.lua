@@ -1,3 +1,4 @@
+require("config.init")
 require("ai.init")
 require("commands.gm.init")
 require("interaction.init")

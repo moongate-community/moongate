@@ -21,6 +21,10 @@ namespace Moongate.Server.Services.Items;
 
 public class ItemManipulationService : IItemManipulationService
 {
+    private const int ArrowItemId = 0x0F3F;
+    private const int BoltItemId = 0x1BFB;
+    private const int QuiverCapacity = 500;
+
     private readonly ILogger _logger = Log.ForContext<ItemManipulationService>();
     private readonly IItemService _itemService;
     private readonly IGameEventBusService _gameEventBusService;
@@ -248,7 +252,11 @@ public class ItemManipulationService : IItemManipulationService
 
         if (_gameNetworkSessionService.TryGetByCharacterId(characterId, out var sourceSession))
         {
+            sourceSession.Character = mobile;
+            sourceSession.CharacterId = mobile.Id;
+            sourceSession.IsMounted = mobile.IsMounted;
             sessionIdsToNotify.Add(sourceSession.SessionId);
+            Enqueue(sourceSession, new PlayerStatusPacket(mobile, 1));
         }
 
         if (sector is null)
@@ -302,6 +310,22 @@ public class ItemManipulationService : IItemManipulationService
 
         if (destinationContainer is null)
         {
+            return;
+        }
+
+        if (destinationContainer.IsQuiver)
+        {
+            await HandleQuiverDropAsync(session, item, destinationContainer, new(packet.Location.X, packet.Location.Y));
+
+            return;
+        }
+
+        var parentQuiver = await TryResolveParentQuiverAsync(destinationContainer);
+
+        if (parentQuiver is not null)
+        {
+            await HandleQuiverDropAsync(session, item, parentQuiver, new(packet.Location.X, packet.Location.Y));
+
             return;
         }
 
@@ -381,6 +405,56 @@ public class ItemManipulationService : IItemManipulationService
     private void EnqueueVisibleWornItemsForSession(long sessionId, UOMobileEntity mobile)
         => WornItemPacketHelper.EnqueueVisibleWornItems(mobile, packet => _outgoingPacketQueue.Enqueue(sessionId, packet));
 
+    private async Task HandleQuiverDropAsync(
+        GameSession session,
+        UOItemEntity item,
+        UOItemEntity quiver,
+        Point2D position
+    )
+    {
+        if (!IsAmmoForQuiver(item))
+        {
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(quiver));
+
+            return;
+        }
+
+        var existingStack = quiver.Items.SingleOrDefault();
+
+        if (existingStack is null)
+        {
+            if (item.Amount > QuiverCapacity)
+            {
+                Enqueue(session, new DrawContainerAndAddItemCombinedPacket(quiver));
+
+                return;
+            }
+
+            _ = await _itemService.MoveItemToContainerAsync(item.Id, quiver.Id, position, session.SessionId);
+            var refreshedQuiver = await _itemService.GetItemAsync(quiver.Id) ?? quiver;
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(refreshedQuiver));
+
+            return;
+        }
+
+        if (existingStack.ItemId != item.ItemId || existingStack.Amount + item.Amount > QuiverCapacity)
+        {
+            Enqueue(session, new DrawContainerAndAddItemCombinedPacket(quiver));
+
+            return;
+        }
+
+        existingStack.Amount += item.Amount;
+        await _itemService.UpsertItemAsync(existingStack);
+        _ = await _itemService.DeleteItemAsync(item.Id);
+
+        var mergedQuiver = await _itemService.GetItemAsync(quiver.Id) ?? quiver;
+        Enqueue(session, new DrawContainerAndAddItemCombinedPacket(mergedQuiver));
+    }
+
+    private static bool IsAmmoForQuiver(UOItemEntity item)
+        => item.ItemId is ArrowItemId or BoltItemId;
+
     private static bool IsValidWearLayer(ItemLayerType layer)
     {
         if (layer < ItemLayerType.FirstValid || layer > ItemLayerType.LastUserValid)
@@ -389,5 +463,17 @@ public class ItemManipulationService : IItemManipulationService
         }
 
         return layer is not ItemLayerType.Backpack and not ItemLayerType.Bank;
+    }
+
+    private async Task<UOItemEntity?> TryResolveParentQuiverAsync(UOItemEntity item)
+    {
+        if (item.ParentContainerId == Serial.Zero)
+        {
+            return null;
+        }
+
+        var parent = await _itemService.GetItemAsync(item.ParentContainerId);
+
+        return parent?.IsQuiver == true ? parent : null;
     }
 }

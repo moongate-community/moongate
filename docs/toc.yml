@@ -18,6 +18,8 @@
   items:
   - name: Overview
     href: articles/architecture/overview.md
+  - name: Features vs Services
+    href: articles/architecture/features-vs-services.md
   - name: Network System
     href: articles/architecture/network.md
   - name: Game Loop
@@ -26,6 +28,10 @@
     href: articles/architecture/events.md
   - name: Session Management
     href: articles/architecture/sessions.md
+  - name: Plugin System
+    href: articles/architecture/plugins.md
+  - name: Create Your First Plugin
+    href: articles/architecture/create-your-first-plugin.md
   - name: Solution Structure
     href: articles/architecture/solution.md
   - name: Source Generators
@@ -40,6 +46,8 @@
     href: articles/architecture/spatial-system.md
   - name: HTTP API
     href: articles/architecture/http-api.md
+  - name: Factions
+    href: articles/architecture/factions.md
 
 - name: Scripting
   href: articles/scripting/

@@ -22,6 +22,24 @@ namespace Moongate.Tests.Server.Services.Characters;
 
 public class CharacterServiceTests
 {
+    private sealed class StaticStartupLoadoutScriptService : IStartupLoadoutScriptService
+    {
+        private readonly StartupLoadout _loadout;
+
+        public StaticStartupLoadoutScriptService(StartupLoadout loadout)
+        {
+            _loadout = loadout;
+        }
+
+        public StartupLoadout BuildLoadout(StarterProfileContext profileContext, string playerName)
+        {
+            _ = profileContext;
+            _ = playerName;
+
+            return _loadout;
+        }
+    }
+
     [Test]
     public async Task AddCharacterToAccountAsync_ShouldAddCharacterId_WhenAccountExists()
     {
@@ -181,15 +199,17 @@ public class CharacterServiceTests
                             TemplateId = "spellbook",
                             Amount = 1,
                             Args = JsonDocument.Parse(
-                                """
-                                {
-                                  "title": "Arcane Notes",
-                                  "author": "starter-mobile",
-                                  "pages": 32,
-                                  "writable": true
-                                }
-                                """
-                            ).RootElement.Clone()
+                                                   """
+                                                   {
+                                                     "title": "Arcane Notes",
+                                                     "author": "starter-mobile",
+                                                     "pages": 32,
+                                                     "writable": true
+                                                   }
+                                                   """
+                                               )
+                                               .RootElement
+                                               .Clone()
                         }
                     },
                     Equip =
@@ -315,13 +335,13 @@ public class CharacterServiceTests
         );
 
         var createdId = await service.CreateCharacterAsync(
-            new()
-            {
-                Name = "hue-mobile",
-                AccountId = (Serial)0x00000151,
-                IsPlayer = true
-            }
-        );
+                            new()
+                            {
+                                Name = "hue-mobile",
+                                AccountId = (Serial)0x00000151,
+                                IsPlayer = true
+                            }
+                        );
 
         await service.ApplyStarterEquipmentHuesAsync(createdId, 0x0888, 0x0999);
 
@@ -390,6 +410,68 @@ public class CharacterServiceTests
         Assert.That(backpack!.Items.Count, Is.EqualTo(1));
         Assert.That(backpack.Items[0].Id, Is.EqualTo(goldId));
         Assert.That(backpack.Items[0].Location, Is.EqualTo(new Point3D(11, 22, 0)));
+    }
+
+    [Test]
+    public async Task GetCharacterAsync_ShouldHydrateBackpackContents_ForGoldAndWeightCalculations()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = CreateCharacterService(
+            persistence,
+            new()
+        );
+        var characterId = (Serial)0x00000212;
+        var backpackId = (Serial)0x40000012;
+        var goldId = (Serial)0x40000013;
+
+        await persistence.UnitOfWork.Mobiles.UpsertAsync(
+            new()
+            {
+                Id = characterId,
+                Name = "wealthy-mobile",
+                IsPlayer = true,
+                BackpackId = backpackId,
+                EquippedItemIds =
+                {
+                    [ItemLayerType.Backpack] = backpackId
+                }
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = backpackId,
+                ItemId = 0x0E75,
+                Weight = 2,
+                EquippedMobileId = characterId,
+                EquippedLayer = ItemLayerType.Backpack
+            }
+        );
+
+        await persistence.UnitOfWork.Items.UpsertAsync(
+            new()
+            {
+                Id = goldId,
+                ItemId = 0x0EED,
+                Amount = 1000,
+                Weight = 0,
+                ParentContainerId = backpackId,
+                ContainerPosition = new(11, 22)
+            }
+        );
+
+        var character = await service.GetCharacterAsync(characterId);
+
+        Assert.That(character, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(character!.Gold, Is.EqualTo(1000));
+                Assert.That(character.EffectiveCarriedWeight, Is.EqualTo(13));
+            }
+        );
     }
 
     [Test]
@@ -787,23 +869,5 @@ public class CharacterServiceTests
         await persistence.StartAsync();
 
         return persistence;
-    }
-
-    private sealed class StaticStartupLoadoutScriptService : IStartupLoadoutScriptService
-    {
-        private readonly StartupLoadout _loadout;
-
-        public StaticStartupLoadoutScriptService(StartupLoadout loadout)
-        {
-            _loadout = loadout;
-        }
-
-        public StartupLoadout BuildLoadout(StarterProfileContext profileContext, string playerName)
-        {
-            _ = profileContext;
-            _ = playerName;
-
-            return _loadout;
-        }
     }
 }

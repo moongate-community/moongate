@@ -1,0 +1,108 @@
+[
+  {
+    "type": "loot",
+    "id": "vendor.blacksmith",
+    "name": "BlacksmithVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "vendor.weaponsmith",
+    "name": "WeaponsmithVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "vendor.armorer",
+    "name": "ArmorerVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "vendor.provisioner",
+    "name": "ProvisionerVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      },
+      {
+        "itemTemplateId": "torch",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "vendor.mage",
+    "name": "MageVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "vendor.healer",
+    "name": "HealerVendorLoot",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 5,
+        "amountMax": 15
+      },
+      {
+        "itemTemplateId": "bandage",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

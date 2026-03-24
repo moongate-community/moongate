@@ -115,6 +115,8 @@ public sealed class ItemTemplateLoader : IFileLoader
             child.ScriptId = parent.ScriptId;
         }
 
+        child.WeaponSkill ??= parent.WeaponSkill;
+
         if (string.IsNullOrWhiteSpace(child.GumpId))
         {
             child.GumpId = parent.GumpId;
@@ -216,11 +218,21 @@ public sealed class ItemTemplateLoader : IFileLoader
         );
         child.Luck = InheritInt(child.Luck, parent.Luck, Defaults.Luck);
         child.UsesRemaining = InheritInt(child.UsesRemaining, parent.UsesRemaining, Defaults.UsesRemaining);
+        child.LowerAmmoCost = InheritInt(child.LowerAmmoCost, parent.LowerAmmoCost, Defaults.LowerAmmoCost);
+        child.QuiverDamageIncrease = InheritInt(
+            child.QuiverDamageIncrease,
+            parent.QuiverDamageIncrease,
+            Defaults.QuiverDamageIncrease
+        );
+        child.WeightReduction = InheritInt(child.WeightReduction, parent.WeightReduction, Defaults.WeightReduction);
         child.Ammo = InheritInt(child.Ammo, parent.Ammo, Defaults.Ammo);
         child.AmmoFx = InheritInt(child.AmmoFx, parent.AmmoFx, Defaults.AmmoFx);
         child.MaxRange = InheritInt(child.MaxRange, parent.MaxRange, Defaults.MaxRange);
         child.BaseRange = InheritInt(child.BaseRange, parent.BaseRange, Defaults.BaseRange);
+        child.HitSound ??= parent.HitSound;
+        child.MissSound ??= parent.MissSound;
 
+        child.IsQuiver = InheritBool(child.IsQuiver, parent.IsQuiver, Defaults.IsQuiver);
         child.Dyeable = InheritBool(child.Dyeable, parent.Dyeable, Defaults.Dyeable);
         child.IsMovable = InheritBool(child.IsMovable, parent.IsMovable, Defaults.IsMovable);
         child.SpellChanneling = InheritBool(

@@ -74,6 +74,23 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
         context.Container.RegisterInstance(CreateHttpServiceOptions(context));
     }
 
+    private static void RegisterPluginPersistenceRegistry(BootstrapContext context)
+    {
+        if (context.PluginRegistrations.PersistenceDescriptorRegistrations.Count == 0)
+        {
+            return;
+        }
+
+        var registry = new PersistenceEntityRegistry();
+
+        foreach (var registration in context.PluginRegistrations.PersistenceDescriptorRegistrations)
+        {
+            registration(registry);
+        }
+
+        context.Container.RegisterInstance<IPersistenceEntityRegistry>(registry);
+    }
+
     private static void RegisterScriptModules(BootstrapContext context)
     {
         context.Container.RegisterInstance(
@@ -131,29 +148,15 @@ internal sealed class ServiceRegistrationPhase : IBootstrapPhase
         }
 
         BootstrapConsoleCommandRegistration.RegisterServices(context.Container);
-        BootstrapConsoleCommandRegistration.RegisterServices(context.Container, context.PluginRegistrations.ConsoleCommandTypes);
+        BootstrapConsoleCommandRegistration.RegisterServices(
+            context.Container,
+            context.PluginRegistrations.ConsoleCommandTypes
+        );
         BootstrapGameEventListenerRegistration.RegisterServices(context.Container);
         BootstrapGameEventListenerRegistration.RegisterServices(
             context.Container,
             context.PluginRegistrations.GameEventListenerTypes
         );
-    }
-
-    private static void RegisterPluginPersistenceRegistry(BootstrapContext context)
-    {
-        if (context.PluginRegistrations.PersistenceDescriptorRegistrations.Count == 0)
-        {
-            return;
-        }
-
-        var registry = new PersistenceEntityRegistry();
-
-        foreach (var registration in context.PluginRegistrations.PersistenceDescriptorRegistrations)
-        {
-            registration(registry);
-        }
-
-        context.Container.RegisterInstance<IPersistenceEntityRegistry>(registry);
     }
 
     private static string ResolveHttpJwtSigningKey(BootstrapContext context)

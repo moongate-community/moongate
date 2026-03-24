@@ -6,8 +6,7 @@ public class PluginContractSmokeTests
 {
     [Test]
     public void PluginAbstractions_ShouldExposeExpectedContractSurface()
-    {
-        Assert.Multiple(
+        => Assert.Multiple(
             () =>
             {
                 Assert.That(typeof(IMoongatePlugin), Is.Not.Null);
@@ -16,5 +15,4 @@ public class PluginContractSmokeTests
                 Assert.That(typeof(IMoongatePluginServiceResolver), Is.Not.Null);
             }
         );
-    }
 }

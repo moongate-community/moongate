@@ -19,10 +19,14 @@ public sealed class AddItemBackpackCommandTests
 {
     private sealed class AddItemBackpackTestItemService : IItemService
     {
+        private readonly Dictionary<Serial, UOItemEntity> _persistedItems = [];
+
         public int SpawnCalls { get; private set; }
         public int MoveToContainerCalls { get; private set; }
+        public int UpsertCalls { get; private set; }
         public string? LastSpawnTemplateId { get; private set; }
         public Serial LastMoveContainerId { get; private set; }
+        public int? PersistedAmountAtMove { get; private set; }
         public bool MoveToContainerResult { get; set; }
         public UOItemEntity SpawnedItem { get; set; } = new() { Id = (Serial)0x40000100u };
 
@@ -68,6 +72,7 @@ public sealed class AddItemBackpackCommandTests
             _ = sessionId;
             LastMoveContainerId = containerId;
             MoveToContainerCalls++;
+            PersistedAmountAtMove = _persistedItems.TryGetValue(itemId, out var persistedItem) ? persistedItem.Amount : null;
 
             return Task.FromResult(MoveToContainerResult);
         }
@@ -79,6 +84,7 @@ public sealed class AddItemBackpackCommandTests
         {
             LastSpawnTemplateId = itemTemplateId;
             SpawnCalls++;
+            _persistedItems[SpawnedItem.Id] = ClonePersistedItem(SpawnedItem);
 
             return Task.FromResult(SpawnedItem);
         }
@@ -87,10 +93,23 @@ public sealed class AddItemBackpackCommandTests
             => Task.FromResult((false, (UOItemEntity?)null));
 
         public Task UpsertItemAsync(UOItemEntity item)
-            => Task.CompletedTask;
+        {
+            UpsertCalls++;
+            _persistedItems[item.Id] = ClonePersistedItem(item);
+
+            return Task.CompletedTask;
+        }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+
+        private static UOItemEntity ClonePersistedItem(UOItemEntity item)
+            => new()
+            {
+                Id = item.Id,
+                Amount = item.Amount,
+                IsStackable = item.IsStackable
+            };
     }
 
     private sealed class AddItemBackpackTestGameNetworkSessionService : IGameNetworkSessionService
@@ -163,6 +182,28 @@ public sealed class AddItemBackpackCommandTests
     }
 
     [Test]
+    public async Task ExecuteCommandAsync_WhenAmountIsInvalid_ShouldPrintUsage()
+    {
+        var command = new AddItemBackpackCommand(
+            new AddItemBackpackTestItemService(),
+            new AddItemBackpackTestGameNetworkSessionService(),
+            new AddItemBackpackTestCharacterService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_item_backpack arrow nope",
+            ["arrow", "nope"],
+            CommandSourceType.InGame,
+            1,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Usage: .add_item_backpack <templateId> [amount]"));
+    }
+
+    [Test]
     public async Task ExecuteCommandAsync_WhenArgumentsAreInvalid_ShouldPrintUsage()
     {
         var command = new AddItemBackpackCommand(
@@ -181,7 +222,7 @@ public sealed class AddItemBackpackCommandTests
 
         await command.ExecuteCommandAsync(context);
 
-        Assert.That(output[^1], Is.EqualTo("Usage: .add_item_backpack <templateId>"));
+        Assert.That(output[^1], Is.EqualTo("Usage: .add_item_backpack <templateId> [amount]"));
     }
 
     [Test]
@@ -221,6 +262,59 @@ public sealed class AddItemBackpackCommandTests
     }
 
     [Test]
+    public async Task ExecuteCommandAsync_WhenNonStackableAmountGreaterThanOne_ShouldReject()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u
+        };
+        var characterService = new AddItemBackpackTestCharacterService
+        {
+            CharacterToReturn = new()
+            {
+                Id = session.CharacterId,
+                BackpackId = (Serial)0x40000011u
+            }
+        };
+        var itemService = new AddItemBackpackTestItemService
+        {
+            SpawnedItem = new()
+            {
+                Id = (Serial)0x40000100u,
+                IsStackable = false,
+                Amount = 1
+            },
+            MoveToContainerResult = true
+        };
+        var command = new AddItemBackpackCommand(
+            itemService,
+            new AddItemBackpackTestGameNetworkSessionService(session),
+            characterService
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_item_backpack crossbow 20",
+            ["crossbow", "20"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemService.SpawnCalls, Is.EqualTo(1));
+                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(0));
+                Assert.That(output[^1], Is.EqualTo("Failed to add item: template 'crossbow' is not stackable."));
+            }
+        );
+    }
+
+    [Test]
     public async Task ExecuteCommandAsync_WhenSessionIsMissing_ShouldPrintFailure()
     {
         var itemService = new AddItemBackpackTestItemService();
@@ -245,6 +339,63 @@ public sealed class AddItemBackpackCommandTests
             {
                 Assert.That(output[^1], Is.EqualTo("Failed to add item: no active session found."));
                 Assert.That(itemService.SpawnCalls, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenStackableAmountIsProvided_ShouldApplyAmount()
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        using var client = new MoongateTCPClient(socket);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000002u
+        };
+        var characterService = new AddItemBackpackTestCharacterService
+        {
+            CharacterToReturn = new()
+            {
+                Id = session.CharacterId,
+                BackpackId = (Serial)0x40000011u
+            }
+        };
+        var spawnedItem = new UOItemEntity
+        {
+            Id = (Serial)0x40000100u,
+            IsStackable = true,
+            Amount = 1
+        };
+        var itemService = new AddItemBackpackTestItemService
+        {
+            SpawnedItem = spawnedItem,
+            MoveToContainerResult = true
+        };
+        var command = new AddItemBackpackCommand(
+            itemService,
+            new AddItemBackpackTestGameNetworkSessionService(session),
+            characterService
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "add_item_backpack arrow 20",
+            ["arrow", "20"],
+            CommandSourceType.InGame,
+            session.SessionId,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(itemService.SpawnCalls, Is.EqualTo(1));
+                Assert.That(itemService.UpsertCalls, Is.EqualTo(1));
+                Assert.That(itemService.MoveToContainerCalls, Is.EqualTo(1));
+                Assert.That(itemService.PersistedAmountAtMove, Is.EqualTo(20));
+                Assert.That(spawnedItem.Amount, Is.EqualTo(20));
+                Assert.That(output[^1], Is.EqualTo("Added 'arrow' x20 to backpack."));
             }
         );
     }

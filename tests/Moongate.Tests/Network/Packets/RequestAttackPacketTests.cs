@@ -1,5 +1,4 @@
 using Moongate.Network.Packets.Incoming.Interaction;
-using Moongate.UO.Data.Ids;
 
 namespace Moongate.Tests.Network.Packets;
 

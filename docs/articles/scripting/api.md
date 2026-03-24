@@ -13,6 +13,10 @@ The following modules are currently wired in runtime:
 - `command`
 - `speech`
 - `help_tickets`
+- `combat`
+- `steering`
+- `perception`
+- `npc_state`
 - `mobile`
 - `item`
 - `bulletin`
@@ -29,7 +33,7 @@ The following modules are currently wired in runtime:
 - `map` (`to_id`)
 - `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-19 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+23 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
 
 Common shipped command scripts:
 
@@ -105,6 +109,45 @@ Runtime behavior:
   - `Regular` / `Emote` -> `12`
   - `Yell` -> `18`
 - NPC brain speech listeners still receive `speech_type`, so Lua can react differently to regular speech versus emotes
+
+### NPC Behavior Runtime Helpers
+
+The current NPC behavior stack uses these runtime helpers directly from Lua:
+
+```lua
+combat.set_target(npc_serial, target_serial)
+combat.clear_target(npc_serial)
+
+steering.follow(npc_serial, target_serial, 1)
+steering.evade(npc_serial, target_serial, 6)
+steering.move_to(npc_serial, x, y, z, 1)
+steering.stop(npc_serial)
+
+perception.distance(npc_serial, target_serial)
+perception.in_range(npc_serial, target_serial, 10)
+perception.find_nearest_enemy(npc_serial, 10)
+perception.find_nearest_player_enemy(npc_serial, 10)
+
+npc_state.get_hp_percent(npc_serial)
+npc_state.get_var(npc_serial, "follow_target_serial")
+npc_state.set_var(npc_serial, "follow_target_serial", target_serial)
+```
+
+Enemy lookup is viewer-relative. The helper uses the same coarse AI relation model as Lua brain payloads:
+
+- `Friendly`
+- `Neutral`
+- `Hostile`
+
+Faction hostility and same-faction friendliness therefore affect target acquisition automatically.
+
+These helpers are the core building blocks behind current guard behaviors such as:
+
+- `follow`
+- `ranged_keep_distance`
+- `leash`
+- `return_home`
+- `hold_position`
 
 ### Authored Dialogue Helpers
 
@@ -463,22 +506,50 @@ Example loot table:
   "id": "loot_test_chest_basic",
   "name": "Loot Test Chest Basic",
   "category": "Test",
+  "rolls": 2,
   "noDropWeight": 0,
   "entries": [
     { "itemTemplateId": "gold", "weight": 5, "amount": 125 },
-    { "itemTemplateId": "bandage", "weight": 3, "amount": 10 }
+    { "itemTag": "resources", "weight": 3, "amount": 25 },
+    { "itemTemplateId": "lockpick", "weight": 2, "amount": 5 }
   ]
 }
 ```
 
+Entry rules:
+
+- each entry may define exactly one of:
+  - `itemTemplateId`
+  - `itemId`
+  - `itemTag`
+- `rolls` defaults to `1`
+- `itemTag` resolves a random item template that already carries that tag
+
 Runtime behavior:
 
 - `lootTables` are rolled the first time the container is opened
+- each loot table can perform multiple weighted rolls via `rolls`
 - generated contents are then persisted like any normal container contents
 - if `loot_refillable = true`, the container can refill later
 - refill is lazy, not timer-driven:
   the container is marked ready only after it becomes empty, and loot is regenerated on a later open once `loot_refill_seconds` has elapsed
 - if the container still has items inside, no refill happens
+
+NPC mobile templates can also declare `lootTables`. When an NPC dies:
+
+- equipped items are moved to the corpse
+- backpack contents are moved to the corpse
+- configured `lootTables` are generated immediately on the corpse in additive mode
+
+Example mobile snippet:
+
+```json
+{
+  "type": "mobile",
+  "id": "zombie_npc",
+  "lootTables": ["undead.low"]
+}
+```
 
 Runtime custom metadata used internally:
 

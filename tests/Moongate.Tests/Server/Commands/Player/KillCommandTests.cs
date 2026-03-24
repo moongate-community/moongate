@@ -12,7 +12,6 @@ using Moongate.Server.Types.Commands;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Commands.Player;
 
@@ -244,12 +243,16 @@ public sealed class KillCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        targetService.Callback!(new(new()
-        {
-            CursorTarget = TargetCursorSelectionType.SelectObject,
-            CursorType = TargetCursorType.Harmful,
-            ClickedOnId = target.Id
-        }));
+        targetService.Callback!(
+            new(
+                new()
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectObject,
+                    CursorType = TargetCursorType.Harmful,
+                    ClickedOnId = target.Id
+                }
+            )
+        );
 
         Assert.Multiple(
             () =>
@@ -298,12 +301,16 @@ public sealed class KillCommandTests
         );
 
         await command.ExecuteCommandAsync(context);
-        targetService.Callback!(new(new()
-        {
-            CursorTarget = TargetCursorSelectionType.SelectObject,
-            CursorType = TargetCursorType.Harmful,
-            ClickedOnId = (Serial)0x40000022u
-        }));
+        targetService.Callback!(
+            new(
+                new()
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectObject,
+                    CursorType = TargetCursorType.Harmful,
+                    ClickedOnId = (Serial)0x40000022u
+                }
+            )
+        );
 
         Assert.Multiple(
             () =>

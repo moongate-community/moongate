@@ -23,6 +23,7 @@ using Moongate.Server.Listeners.Base;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Version;
 using Serilog;
 
 namespace Moongate.Server.Handlers;
@@ -115,7 +116,10 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         Enqueue(session, new ClientVersionPacket());
         Enqueue(session, new LoginConfirmPacket(character));
-        Enqueue(session, new SupportFeaturesPacket());
+        Enqueue(session, GeneralInformationFactory.CreateSetCursorHueSetMap(character.Map));
+        Enqueue(session, GeneralInformationFactory.CreateEnableMapDiffMapPatches());
+        Enqueue(session, new SeasonPacket(character.Map.Season));
+        Enqueue(session, new SupportFeaturesPacket(GetSupportFeatureFlags(), UseExtendedSupportFeatures(session)));
         Enqueue(session, new DrawPlayerPacket(character));
         Enqueue(session, new MovementSpeedControlPacket(MovementSpeedControlType.Disable));
         Enqueue(session, new PlayerStatusPacket(character, 1));
@@ -125,14 +129,12 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
         await EnqueueBackpackAsync(session, character);
 
         Enqueue(session, new WarModePacket(character));
-        Enqueue(session, GeneralInformationPacket.CreateSetCursorHueSetMap(character.Map));
         var globalLight = _lightService?.ComputeGlobalLightLevel(character.MapId, character.Location) ??
                           (int)LightLevelType.Day;
         var globalLightLevel = (LightLevelType)(byte)Math.Clamp(globalLight, 0, byte.MaxValue);
         var personalLightLevel = (LightLevelType)0;
         Enqueue(session, new OverallLightLevelPacket(globalLightLevel));
         Enqueue(session, new PersonalLightLevelPacket(personalLightLevel, character));
-        Enqueue(session, new SeasonPacket(character.Map.Season));
 
         Enqueue(session, new LoginCompletePacket());
 
@@ -151,6 +153,14 @@ public class CharacterHandler : BasePacketListener, IGameEventListener<Character
 
         return true;
     }
+
+    private static FeatureFlags GetSupportFeatureFlags()
+        => Moongate.UO.Data.Expansions.ExpansionInfo.Table is { Length: > 0 }
+            ? Moongate.UO.Data.Expansions.ExpansionInfo.CoreExpansion.SupportedFeatures
+            : FeatureFlags.ExpansionEJ;
+
+    private static bool UseExtendedSupportFeatures(GameSession session)
+        => session.NetworkSession.ClientVersion?.ProtocolChanges.HasFlag(ProtocolChanges.ExtendedSupportedFeatures) ?? true;
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {

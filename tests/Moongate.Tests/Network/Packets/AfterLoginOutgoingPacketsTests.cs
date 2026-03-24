@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Text;
 using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
@@ -8,6 +9,7 @@ using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Network.Spans;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -151,6 +153,42 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
+    public void GeneralInformationFactory_CreateEnableMapDiffMapPatches_ShouldSerializeModernUoShape()
+    {
+        var packet = GeneralInformationFactory.CreateEnableMapDiffMapPatches();
+
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data.Length, Is.EqualTo(41));
+                Assert.That(data[0], Is.EqualTo(0xBF));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)41));
+                Assert.That(
+                    BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(3, 2)),
+                    Is.EqualTo((ushort)GeneralInformationSubcommandType.EnableMapDiff)
+                );
+                Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(5, 4)), Is.EqualTo(4));
+            }
+        );
+
+        for (var index = 0; index < 4; index++)
+        {
+            var patch = Map.Maps[index]?.Tiles.Patch;
+            var offset = 9 + index * 8;
+
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(offset, 4)), Is.EqualTo(patch?.StaticBlocks ?? 0));
+                    Assert.That(BinaryPrimitives.ReadInt32BigEndian(data.AsSpan(offset + 4, 4)), Is.EqualTo(patch?.LandBlocks ?? 0));
+                }
+            );
+        }
+    }
+
+    [Test]
     public void GeneralInformationPacket_Write_ShouldSerializeSubcommandPayload()
     {
         var packet = GeneralInformationPacket.CreateSetCursorHueSetMap(2);
@@ -217,6 +255,52 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(data[0], Is.EqualTo(0x78));
                 Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)data.Length));
                 Assert.That(BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(data.Length - 4, 4)), Is.EqualTo(0u));
+            }
+        );
+    }
+
+    [Test]
+    public void MobileIncomingPacket_Write_ShouldProjectMountedDisplayItemOnMountLayer()
+    {
+        var beholder = CreateMobile();
+        var beheld = CreateMobile();
+        beheld.MountedDisplayItemId = 0x3E9F;
+
+        var packet = new MobileIncomingPacket(beholder, beheld);
+        var data = Write(packet);
+
+        var entryOffset = 19;
+        var mountSerial = 0u;
+        var mountItemId = 0u;
+
+        while (entryOffset + 4 <= data.Length)
+        {
+            var serial = BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(entryOffset, 4));
+
+            if (serial == 0)
+            {
+                break;
+            }
+
+            var itemId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(entryOffset + 4, 2));
+            var layer = data[entryOffset + 6];
+
+            if (layer == (byte)ItemLayerType.Mount)
+            {
+                mountSerial = serial;
+                mountItemId = itemId;
+
+                break;
+            }
+
+            entryOffset += 9;
+        }
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mountSerial, Is.Not.EqualTo(0u));
+                Assert.That(mountItemId, Is.EqualTo((ushort)0x3E9F));
             }
         );
     }
@@ -324,51 +408,6 @@ public class AfterLoginOutgoingPacketsTests
     }
 
     [Test]
-    public void MobileIncomingPacket_Write_ShouldProjectMountedDisplayItemOnMountLayer()
-    {
-        var beholder = CreateMobile();
-        var beheld = CreateMobile();
-        beheld.MountedDisplayItemId = 0x3E9F;
-
-        var packet = new MobileIncomingPacket(beholder, beheld);
-        var data = Write(packet);
-
-        var entryOffset = 19;
-        var mountSerial = 0u;
-        var mountItemId = 0u;
-
-        while (entryOffset + 4 <= data.Length)
-        {
-            var serial = BinaryPrimitives.ReadUInt32BigEndian(data.AsSpan(entryOffset, 4));
-
-            if (serial == 0)
-            {
-                break;
-            }
-
-            var itemId = BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(entryOffset + 4, 2));
-            var layer = data[entryOffset + 6];
-
-            if (layer == (byte)ItemLayerType.Mount)
-            {
-                mountSerial = serial;
-                mountItemId = itemId;
-                break;
-            }
-
-            entryOffset += 9;
-        }
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mountSerial, Is.Not.EqualTo(0u));
-                Assert.That(mountItemId, Is.EqualTo((ushort)0x3E9F));
-            }
-        );
-    }
-
-    [Test]
     public void OverallLightLevelPacket_Write_ShouldSerializeExpectedPayload()
     {
         var packet = new OverallLightLevelPacket(LightLevelType.Day);
@@ -397,6 +436,22 @@ public class AfterLoginOutgoingPacketsTests
                 Assert.That(data[65], Is.EqualTo(0x03));
             }
         );
+    }
+
+    [Test]
+    public void PaperdollPacket_Write_ShouldSerializeReputationTitleDisplayName()
+    {
+        var mobile = CreateMobile();
+        mobile.Name = "Marcus";
+        mobile.Fame = 3000;
+        mobile.Karma = 10000;
+
+        var packet = new PaperdollPacket(mobile);
+
+        var data = Write(packet);
+        var displayName = Encoding.ASCII.GetString(data, 5, 60).TrimEnd('\0');
+
+        Assert.That(displayName, Is.EqualTo("The Great Marcus"));
     }
 
     [Test]

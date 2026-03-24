@@ -8,6 +8,7 @@ using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Speech;
 using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Support;
+using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Types;
 
@@ -20,7 +21,7 @@ public class SpeechHandlerTests
         public List<GameSession> PlayersInRange { get; } = [];
 
         public override List<GameSession> GetPlayersInRange(
-            Moongate.UO.Data.Geometry.Point3D location,
+            Point3D location,
             int range,
             int mapId,
             GameSession? excludeSession = null

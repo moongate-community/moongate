@@ -26,6 +26,6 @@ public sealed class HelpTicketsModule
         }
 
         return _helpTicketService.CreateTicketAsync(sessionId, parsedCategory, message.Trim()).GetAwaiter().GetResult()
-               is not null;
+                   is not null;
     }
 }

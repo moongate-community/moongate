@@ -29,10 +29,6 @@ public sealed class DialogueModule
         _speechService = speechService;
     }
 
-    [ScriptFunction("register", "Registers a Lua-authored conversation definition.")]
-    public bool Register(string conversationId, Table? definition)
-        => _dialogueDefinitionService.Register(conversationId, definition);
-
     [ScriptFunction("init", "Binds a registered conversation id to an NPC.")]
     public bool Init(LuaMobileProxy? npc, string conversationId)
     {
@@ -61,19 +57,19 @@ public sealed class DialogueModule
         }
 
         var normalizedText = text.Trim();
-        var session = _dialogueRuntimeService.TryGetActiveSession(npc.Mobile.Id, speaker.Mobile.Id, out _)
-                          && TryParseOptionIndex(normalizedText, out var optionIndex)
-                              ? _dialogueRuntimeService.ChooseAsync(npc.Mobile, speaker.Mobile, optionIndex)
-                                                      .GetAwaiter()
-                                                      .GetResult()
-                              : _dialogueRuntimeService.HandleTopicAsync(
-                                                        npc.Mobile,
-                                                        speaker.Mobile,
-                                                        conversationId,
-                                                        normalizedText
-                                                    )
-                                                    .GetAwaiter()
-                                                    .GetResult();
+        var session = _dialogueRuntimeService.TryGetActiveSession(npc.Mobile.Id, speaker.Mobile.Id, out _) &&
+                      TryParseOptionIndex(normalizedText, out var optionIndex)
+                          ? _dialogueRuntimeService.ChooseAsync(npc.Mobile, speaker.Mobile, optionIndex)
+                                                   .GetAwaiter()
+                                                   .GetResult()
+                          : _dialogueRuntimeService.HandleTopicAsync(
+                                                       npc.Mobile,
+                                                       speaker.Mobile,
+                                                       conversationId,
+                                                       normalizedText
+                                                   )
+                                                   .GetAwaiter()
+                                                   .GetResult();
 
         if (session is null)
         {
@@ -104,6 +100,10 @@ public sealed class DialogueModule
 
         return true;
     }
+
+    [ScriptFunction("register", "Registers a Lua-authored conversation definition.")]
+    public bool Register(string conversationId, Table? definition)
+        => _dialogueDefinitionService.Register(conversationId, definition);
 
     private static bool TryParseOptionIndex(string text, out int optionIndex)
     {

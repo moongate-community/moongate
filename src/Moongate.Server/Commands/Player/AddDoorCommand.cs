@@ -123,6 +123,17 @@ public sealed class AddDoorCommand : ICommandExecutor
                ? MetalDoorTemplateId
                : WoodDoorTemplateId;
 
+    private static string ResolveDoorTypeFromCommand(string commandText)
+    {
+        var commandName = commandText.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                                     .FirstOrDefault();
+
+        return commandName is not null &&
+               commandName.Contains(MetalDoorType, StringComparison.OrdinalIgnoreCase)
+                   ? MetalDoorType
+                   : WoodDoorType;
+    }
+
     private static bool TryParseDoorType(string commandText, string[] arguments, out string doorType)
     {
         doorType = ResolveDoorTypeFromCommand(commandText);
@@ -152,17 +163,6 @@ public sealed class AddDoorCommand : ICommandExecutor
         }
 
         return false;
-    }
-
-    private static string ResolveDoorTypeFromCommand(string commandText)
-    {
-        var commandName = commandText.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                                     .FirstOrDefault();
-
-        return commandName is not null &&
-               commandName.Contains(MetalDoorType, StringComparison.OrdinalIgnoreCase)
-                   ? MetalDoorType
-                   : WoodDoorType;
     }
 
     private bool TryResolveMapId(long sessionId, out int mapId)

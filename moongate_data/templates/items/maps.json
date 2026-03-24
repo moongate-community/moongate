@@ -1,0 +1,28 @@
+[
+  {
+    "type": "item",
+    "id": "map_item",
+    "name": "Map Item",
+    "category": "Maps",
+    "description": "",
+    "itemId": "0x14EC",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "maps",
+      "flippable"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "treasure_map",
+    "base_item": "map_item",
+    "name": "Treasure Map",
+    "description": "",
+    "isMovable": true
+  }
+]

@@ -12,17 +12,20 @@ This is the main documentation portal for Moongate v2.
 ## Architecture
 
 - [Overview](articles/architecture/overview.md)
+- [Features vs Services](articles/architecture/features-vs-services.md)
 - [Network](articles/architecture/network.md)
 - [Game Loop](articles/architecture/game-loop.md)
 - [Events](articles/architecture/events.md)
 - [Sessions](articles/architecture/sessions.md)
 - [Plugin System](articles/architecture/plugins.md)
+- [Create Your First Plugin](articles/architecture/create-your-first-plugin.md)
 - [Generators](articles/architecture/generators.md)
 - [Background Jobs](articles/architecture/background-jobs.md)
 - [Bootstrap System](articles/architecture/bootstrap.md)
 - [World Generation](articles/architecture/world-generation.md)
 - [Spatial System](articles/architecture/spatial-system.md)
 - [HTTP API](articles/architecture/http-api.md)
+- [Factions](articles/architecture/factions.md)
 
 ## Scripting
 

@@ -19,7 +19,7 @@ public class ServerSelectPacket : BaseGameNetworkPacket
 
     protected override bool ParsePayload(ref SpanReader reader)
     {
-        SelectedServerIndex = reader.ReadInt16LE();
+        SelectedServerIndex = reader.ReadInt16();
 
         return true;
     }

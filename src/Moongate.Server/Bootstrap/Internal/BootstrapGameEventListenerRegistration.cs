@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using DryIoc;
 using Moongate.Abstractions.Data.Internal;
 using Moongate.Abstractions.Extensions;
@@ -17,9 +18,6 @@ internal static partial class BootstrapGameEventListenerRegistration
     public static void RegisterServices(Container container)
         => RegisterServicesGenerated(container);
 
-    public static void Subscribe(Container container)
-        => SubscribeGenerated(container);
-
     public static void RegisterServices(Container container, IEnumerable<Type> pluginListenerTypes)
     {
         ArgumentNullException.ThrowIfNull(container);
@@ -30,6 +28,9 @@ internal static partial class BootstrapGameEventListenerRegistration
             RegisterListenerService(container, listenerType);
         }
     }
+
+    public static void Subscribe(Container container)
+        => SubscribeGenerated(container);
 
     public static void Subscribe(Container container, IEnumerable<Type> pluginListenerTypes)
     {
@@ -53,6 +54,27 @@ internal static partial class BootstrapGameEventListenerRegistration
         var gameEventBusService = container.Resolve<IGameEventBusService>();
         var listener = ResolveListener<TListener>(container);
         gameEventBusService.RegisterListener(listener);
+    }
+
+    private static void RegisterListenerService(Container container, Type listenerType)
+    {
+        if (typeof(IMoongateService).IsAssignableFrom(listenerType))
+        {
+            var attribute = (RegisterGameEventListenerAttribute?)Attribute.GetCustomAttribute(
+                listenerType,
+                typeof(RegisterGameEventListenerAttribute)
+            );
+            var priority = attribute?.Priority ?? 200;
+
+            container.RegisterMoongateService(listenerType, listenerType, priority);
+
+            return;
+        }
+
+        if (!container.IsRegistered(listenerType))
+        {
+            container.Register(listenerType, Reuse.Singleton);
+        }
     }
 
     static partial void RegisterServicesGenerated(Container container);
@@ -104,27 +126,6 @@ internal static partial class BootstrapGameEventListenerRegistration
 
     static partial void SubscribeGenerated(Container container);
 
-    private static void RegisterListenerService(Container container, Type listenerType)
-    {
-        if (typeof(IMoongateService).IsAssignableFrom(listenerType))
-        {
-            var attribute = (RegisterGameEventListenerAttribute?)Attribute.GetCustomAttribute(
-                listenerType,
-                typeof(RegisterGameEventListenerAttribute)
-            );
-            var priority = attribute?.Priority ?? 200;
-
-            container.RegisterMoongateService(listenerType, listenerType, priority);
-
-            return;
-        }
-
-        if (!container.IsRegistered(listenerType))
-        {
-            container.Register(listenerType, Reuse.Singleton);
-        }
-    }
-
     private static void SubscribeListener(Container container, Type listenerType)
     {
         foreach (var interfaceType in listenerType.GetInterfaces())
@@ -139,8 +140,8 @@ internal static partial class BootstrapGameEventListenerRegistration
             var registerMethod = typeof(BootstrapGameEventListenerRegistration)
                                  .GetMethod(
                                      nameof(RegisterListener),
-                                     System.Reflection.BindingFlags.NonPublic |
-                                     System.Reflection.BindingFlags.Static
+                                     BindingFlags.NonPublic |
+                                     BindingFlags.Static
                                  )!
                                  .MakeGenericMethod(listenerType, eventType);
 

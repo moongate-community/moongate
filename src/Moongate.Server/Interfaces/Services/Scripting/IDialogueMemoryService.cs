@@ -9,14 +9,14 @@ namespace Moongate.Server.Interfaces.Services.Scripting;
 public interface IDialogueMemoryService
 {
     /// <summary>
-    /// Loads the NPC memory file or creates a default one when missing.
-    /// </summary>
-    NpcDialogueMemoryFile LoadOrCreate(Serial npcId);
-
-    /// <summary>
     /// Gets or creates the typed memory entry for the specified npc and interacting mobile.
     /// </summary>
     DialogueMemoryEntry GetOrCreateEntry(Serial npcId, Serial otherMobileId);
+
+    /// <summary>
+    /// Loads the NPC memory file or creates a default one when missing.
+    /// </summary>
+    NpcDialogueMemoryFile LoadOrCreate(Serial npcId);
 
     /// <summary>
     /// Marks the NPC memory file dirty after in-memory mutation.

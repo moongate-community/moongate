@@ -7,15 +7,6 @@ public sealed class HelpLuaAssetTests
     );
 
     [Test]
-    public void InitLua_ShouldRequireHelpBridgeScript()
-    {
-        var initLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "init.lua");
-
-        Assert.That(File.Exists(initLuaPath), Is.True, $"Missing script bootstrap: {initLuaPath}");
-        Assert.That(File.ReadAllText(initLuaPath), Does.Contain("require(\"interaction.init\")"));
-    }
-
-    [Test]
     public void HelpBridgeScript_ShouldRequireHelpGumpModule()
     {
         var helpLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "interaction", "help.lua");
@@ -30,5 +21,14 @@ public sealed class HelpLuaAssetTests
         var helpGumpPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "gumps", "help.lua");
 
         Assert.That(File.Exists(helpGumpPath), Is.True, $"Missing help gump script: {helpGumpPath}");
+    }
+
+    [Test]
+    public void InitLua_ShouldRequireHelpBridgeScript()
+    {
+        var initLuaPath = Path.Combine(_repositoryRoot, "moongate_data", "scripts", "init.lua");
+
+        Assert.That(File.Exists(initLuaPath), Is.True, $"Missing script bootstrap: {initLuaPath}");
+        Assert.That(File.ReadAllText(initLuaPath), Does.Contain("require(\"interaction.init\")"));
     }
 }

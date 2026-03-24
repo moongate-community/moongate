@@ -1,6 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
-using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Internal.Interaction;
 using Moongate.Server.Interfaces.Characters;
@@ -63,6 +62,24 @@ public sealed class MobileModule
         _outgoingPacketQueue = outgoingPacketQueue;
     }
 
+    [ScriptFunction("dismount", "Attempts to dismount the rider from the current mount.")]
+    public bool Dismount(uint riderId)
+    {
+        if (riderId == 0 || _mobileService is null)
+        {
+            return false;
+        }
+
+        var dismounted = _mobileService.DismountAsync((Serial)riderId).GetAwaiter().GetResult();
+
+        if (dismounted)
+        {
+            RefreshMountedSession((Serial)riderId, Serial.Zero, false);
+        }
+
+        return dismounted;
+    }
+
     [ScriptFunction("get", "Gets a mobile reference by character id, or nil when not found.")]
     public LuaMobileProxy? Get(uint characterId)
     {
@@ -88,6 +105,33 @@ public sealed class MobileModule
                        _gameEventBusService,
                        _backgroundJobService
                    );
+    }
+
+    [ScriptFunction("spawn", "Spawns a mobile template at world position { x, y, z, map_id }.")]
+    public LuaMobileProxy? Spawn(string mobileTemplateId, Table? position)
+    {
+        if (_mobileService is null ||
+            string.IsNullOrWhiteSpace(mobileTemplateId) ||
+            !TryParsePosition(position, out var location, out var mapId))
+        {
+            return null;
+        }
+
+        RegisterLuaTypeIfNeeded();
+        var mobile = _mobileService.SpawnFromTemplateAsync(mobileTemplateId.Trim(), location, mapId)
+                                   .GetAwaiter()
+                                   .GetResult();
+
+        return new(
+            mobile,
+            _speechService,
+            _gameNetworkSessionService,
+            _spatialWorldService,
+            _movementValidationService,
+            _pathfindingService,
+            _gameEventBusService,
+            _backgroundJobService
+        );
     }
 
     [ScriptFunction("try_mount", "Attempts to mount the rider on the target mount creature.")]
@@ -124,94 +168,6 @@ public sealed class MobileModule
         return mounted;
     }
 
-    [ScriptFunction("dismount", "Attempts to dismount the rider from the current mount.")]
-    public bool Dismount(uint riderId)
-    {
-        if (riderId == 0 || _mobileService is null)
-        {
-            return false;
-        }
-
-        var dismounted = _mobileService.DismountAsync((Serial)riderId).GetAwaiter().GetResult();
-
-        if (dismounted)
-        {
-            RefreshMountedSession((Serial)riderId, Serial.Zero, false);
-        }
-
-        return dismounted;
-    }
-
-    [ScriptFunction("spawn", "Spawns a mobile template at world position { x, y, z, map_id }.")]
-    public LuaMobileProxy? Spawn(string mobileTemplateId, Table? position)
-    {
-        if (_mobileService is null ||
-            string.IsNullOrWhiteSpace(mobileTemplateId) ||
-            !TryParsePosition(position, out var location, out var mapId))
-        {
-            return null;
-        }
-
-        RegisterLuaTypeIfNeeded();
-        var mobile = _mobileService.SpawnFromTemplateAsync(mobileTemplateId.Trim(), location, mapId)
-                                   .GetAwaiter()
-                                   .GetResult();
-
-        return new(
-            mobile,
-            _speechService,
-            _gameNetworkSessionService,
-            _spatialWorldService,
-            _movementValidationService,
-            _pathfindingService,
-            _gameEventBusService,
-            _backgroundJobService
-        );
-    }
-
-    private static void RegisterLuaTypeIfNeeded()
-    {
-        if (_isLuaMobileProxyTypeRegistered)
-        {
-            return;
-        }
-
-        var type = typeof(LuaMobileProxy);
-        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
-        _isLuaMobileProxyTypeRegistered = true;
-    }
-
-    private UOMobileEntity? TryResolveRuntimeMobile(Serial mobileId)
-    {
-        if (_spatialWorldService is null)
-        {
-            return null;
-        }
-
-        foreach (var sector in _spatialWorldService.GetActiveSectors())
-        {
-            var runtimeMobile = sector.GetEntity<UOMobileEntity>(mobileId);
-
-            if (runtimeMobile is not null)
-            {
-                return runtimeMobile;
-            }
-        }
-
-        return null;
-    }
-
-    private UOMobileEntity? ResolveRiderForMount(Serial riderId)
-    {
-        if (_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) && session.Character is not null)
-        {
-            return session.Character;
-        }
-
-        return TryResolveRuntimeMobile(riderId) ??
-               _mobileService?.GetAsync(riderId).GetAwaiter().GetResult();
-    }
-
     private void RefreshMountedSession(Serial riderId, Serial mountId, bool isMounted)
     {
         if (!_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) || session.Character is null)
@@ -233,6 +189,29 @@ public sealed class MobileModule
         }
 
         MountedSelfRefreshHelper.Refresh(session, _outgoingPacketQueue, rider, mount, isMounted);
+    }
+
+    private static void RegisterLuaTypeIfNeeded()
+    {
+        if (_isLuaMobileProxyTypeRegistered)
+        {
+            return;
+        }
+
+        var type = typeof(LuaMobileProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
+        _isLuaMobileProxyTypeRegistered = true;
+    }
+
+    private UOMobileEntity? ResolveRiderForMount(Serial riderId)
+    {
+        if (_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) && session.Character is not null)
+        {
+            return session.Character;
+        }
+
+        return TryResolveRuntimeMobile(riderId) ??
+               _mobileService?.GetAsync(riderId).GetAwaiter().GetResult();
     }
 
     private static bool TryGetRequiredInt(Table table, string key, out int value)
@@ -276,5 +255,25 @@ public sealed class MobileModule
         location = new(x, y, z);
 
         return true;
+    }
+
+    private UOMobileEntity? TryResolveRuntimeMobile(Serial mobileId)
+    {
+        if (_spatialWorldService is null)
+        {
+            return null;
+        }
+
+        foreach (var sector in _spatialWorldService.GetActiveSectors())
+        {
+            var runtimeMobile = sector.GetEntity<UOMobileEntity>(mobileId);
+
+            if (runtimeMobile is not null)
+            {
+                return runtimeMobile;
+            }
+        }
+
+        return null;
     }
 }

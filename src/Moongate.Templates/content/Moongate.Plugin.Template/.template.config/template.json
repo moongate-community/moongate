@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Moongate Community",
+  "classifications": [
+    "Moongate",
+    "Plugin",
+    "C#"
+  ],
+  "identity": "Moongate.Plugin.Template.CSharp",
+  "name": "Moongate C# Plugin",
+  "shortName": "moongate-plugin",
+  "sourceName": "PluginTemplate",
+  "preferNameDirectory": true,
+  "symbols": {
+    "pluginId": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The runtime plugin id.",
+      "defaultValue": "my-plugin",
+      "replaces": "__PLUGIN_ID__",
+      "longName": "plugin-id"
+    },
+    "authors": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The primary plugin author or author list string.",
+      "defaultValue": "Moongate Community",
+      "replaces": "__PLUGIN_AUTHORS__"
+    },
+    "description": {
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The plugin description.",
+      "defaultValue": "A Moongate plugin.",
+      "replaces": "__PLUGIN_DESCRIPTION__"
+    },
+    "withPersistence": {
+      "type": "parameter",
+      "datatype": "bool",
+      "description": "Adds Moongate.Persistence and Moongate.UO.Data package references.",
+      "defaultValue": "false",
+      "longName": "with-persistence"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "path": "PluginTemplate.csproj"
+    }
+  ]
+}

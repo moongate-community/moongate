@@ -54,6 +54,17 @@ public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
         }
     }
 
+    public void Dispose()
+    {
+        _snapshotStream.Dispose();
+        _ioLock.Dispose();
+
+        if (_fileLockEnabled)
+        {
+            LockedPaths.TryRemove(_snapshotFilePath, out _);
+        }
+    }
+
     public async ValueTask<WorldSnapshot?> LoadAsync(CancellationToken cancellationToken = default)
     {
         _logger.Verbose("Snapshot load requested Path={SnapshotPath}", _snapshotFilePath);
@@ -140,16 +151,5 @@ public sealed class MemoryPackSnapshotService : ISnapshotService, IDisposable
         }
 
         _logger.Verbose("Snapshot save completed Path={SnapshotPath}", _snapshotFilePath);
-    }
-
-    public void Dispose()
-    {
-        _snapshotStream.Dispose();
-        _ioLock.Dispose();
-
-        if (_fileLockEnabled)
-        {
-            LockedPaths.TryRemove(_snapshotFilePath, out _);
-        }
     }
 }

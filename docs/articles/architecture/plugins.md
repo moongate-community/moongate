@@ -13,6 +13,9 @@ This system is intentionally simple:
 - plugins can register runtime contributions during bootstrap
 - plugins can run lightweight initialization after the server is ready
 
+If you want the shortest path from zero to a working plugin project, start with
+[Create Your First Plugin](create-your-first-plugin.md).
+
 ## Plugin Folder Layout
 
 Each plugin lives in its own directory:
@@ -70,6 +73,52 @@ fine for day-to-day iteration:
 </ItemGroup>
 ```
 
+## Plugin Template
+
+Moongate also ships a `dotnet new` template package for plugin authors.
+
+Install the template:
+
+```bash
+dotnet new install Moongate.Templates::<version>
+```
+
+Create a plugin:
+
+```bash
+dotnet new moongate-plugin --name MyPlugin --pluginId my-plugin --authors "Squid" --description "Example plugin"
+```
+
+Create a plugin with persistence references:
+
+```bash
+dotnet new moongate-plugin --name MyPlugin --pluginId my-plugin --authors "Squid" --description "Example plugin" --withPersistence true
+```
+
+The generated project includes:
+
+- a minimal `IMoongatePlugin` implementation
+- a `manifest.json` aligned with the generated entry assembly and entry type
+- starter `data/`, `scripts/`, and `assets/` folders
+- packaging scripts that assemble a runtime-ready plugin directory and zip archive
+
+Package the generated plugin:
+
+```bash
+bash scripts/pack-plugin.sh
+```
+
+PowerShell:
+
+```powershell
+pwsh ./scripts/pack-plugin.ps1
+```
+
+The packaging scripts produce:
+
+- `artifacts/<plugin-id>/`
+- `artifacts/<plugin-id>.zip`
+
 ## NuGet Packages
 
 The plugin SDK is intentionally split into a small set of publishable packages:
@@ -78,6 +127,7 @@ The plugin SDK is intentionally split into a small set of publishable packages:
 - `Moongate.Server.Abstractions`
 - `Moongate.Persistence`
 - `Moongate.UO.Data`
+- `Moongate.Templates`
 
 These packages depend on the shared Moongate runtime libraries that are published alongside them with
 the same version:
@@ -99,6 +149,7 @@ Recommended publish order:
 6. `Moongate.Persistence`
 7. `Moongate.Plugin.Abstractions`
 8. `Moongate.Server.Abstractions`
+9. `Moongate.Templates`
 
 After build, copy the plugin output to the runtime plugin folder so the final layout matches the manifest:
 

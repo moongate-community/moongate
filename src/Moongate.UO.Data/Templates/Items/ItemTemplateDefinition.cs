@@ -96,6 +96,19 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
 
     public int UsesRemaining { get; set; }
 
+    public bool IsQuiver { get; set; }
+
+    public int LowerAmmoCost { get; set; }
+
+    public int QuiverDamageIncrease { get; set; }
+
+    public int WeightReduction { get; set; }
+
+    public UOSkillName? WeaponSkill { get; set; }
+
+    [JsonConverter(typeof(JsonStringEnumConverter<ItemLayerType>))]
+    public ItemLayerType? Layer { get; set; }
+
     [JsonConverter(typeof(Int32FlexibleJsonConverter))]
     public int Ammo { get; set; }
 
@@ -105,6 +118,10 @@ public class ItemTemplateDefinition : ItemTemplateDefinitionBase
     public int MaxRange { get; set; }
 
     public int BaseRange { get; set; }
+
+    public int? HitSound { get; set; }
+
+    public int? MissSound { get; set; }
 
     [JsonConverter(typeof(JsonStringEnumConverter<LootType>))]
     public LootType LootType { get; set; }

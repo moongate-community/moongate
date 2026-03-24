@@ -1,7 +1,6 @@
-using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Data.Scripting;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Scripting;
-using Moongate.Server.Data.Scripting;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Tests.Server.Modules;
@@ -15,18 +14,18 @@ public sealed class ScheduledEventsModuleTests
         var module = new ScheduledEventsModule(definitions);
         var script = new Script();
         var definition = script.DoString(
-                             """
-                             return {
-                                 trigger_name = "town_crier_announcement",
-                                 recurrence = "daily",
-                                 time = "09:00",
-                                 payload = {
-                                     message = "Hear ye!"
-                                 }
-                             }
-                             """
-                         )
-                         .Table;
+                                   """
+                                   return {
+                                       trigger_name = "town_crier_announcement",
+                                       recurrence = "daily",
+                                       time = "09:00",
+                                       payload = {
+                                           message = "Hear ye!"
+                                       }
+                                   }
+                                   """
+                               )
+                               .Table;
 
         var registered = module.Register("town_crier_morning", definition);
         var resolved = definitions.TryGet("town_crier_morning", out var scheduledEvent);

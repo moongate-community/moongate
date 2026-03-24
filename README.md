@@ -16,8 +16,8 @@
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=small)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_small)
 [![Docker Image](https://img.shields.io/docker/v/tgiachi/moongate?sort=semver)](https://hub.docker.com/r/tgiachi/moongate)
 
-Moongate v2 is a modern Ultima Online server built with .NET 10, deterministic game-loop processing, Lua scripting, and a chunk/sector-based spatial world model.
-
+Moongate v2 is a modern Ultima Online server built with .NET 10, deterministic game-loop processing, Lua scripting, and a
+chunk/sector-based spatial world model.
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fmoongate-community%2Fmoongate?ref=badge_large)
 
@@ -31,11 +31,15 @@ I am actively looking for contributors and reviewers.
 
 ## Release Automation
 
+- Pull requests run the `CI` workflow only, to keep feedback fast.
+- Coverage, security audit, and third-party notices run on `main`, with scheduled/manual execution for the heavier audits.
 - GitHub releases are mirrored to Discord via the `GitHub Release Assets` workflow.
 - Configure the repository secret `DISCORD_CHANGELOG_WEBHOOK_URL` to enable changelog posting.
-- Release notes are sourced from `CHANGELOG.md` and posted to Discord after the GitHub release is created.
+- Release notes are sourced from `CHANGELOG.md`, include a generated contributors section, and are posted to Discord after
+  the GitHub release is created.
 - NuGet packages are published by the `NuGet Publish` workflow.
 - Configure the repository secret `NUGET_KEY` to enable publishing to `nuget.org`.
+- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`.
 
 ## Quick Start
 
@@ -66,11 +70,17 @@ docker run --rm -it \
   moongate:local
 ```
 
-Server port: `2593`  
-UDP ping port: `12000`  
+Server port: `2593`
+UDP ping port: `12000`
 HTTP/UI API port: `8088`
 
-Default credentials: `admin` / `password`  
+Transport encryption:
+
+- Moongate supports both plain and encrypted UO clients.
+- Recommended default: `game.encryptionMode = "Both"` in `moongate.json`.
+- Operational details and handshake behavior: `docs/articles/networking/client-encryption.md`
+
+Default credentials: `admin` / `password`
 Change them immediately from the server console with `.password`.
 
 Player portal routes:
@@ -98,10 +108,12 @@ UI default URL: `http://localhost:8088/`
 - Registry-driven snapshot buckets + journal persistence over MemoryPackable runtime entities
 - Lua scripting runtime for commands, gumps, item/mobile behavior
 - Startup-loaded C# plugins from the runtime `plugins/<plugin-id>/` directory
-- Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable books (`0x93` header saves, `0x66` page saves)
+- Classic books rendered from `moongate_data/templates/books/*.txt`, with support for both read-only content and writable
+  books (`0x93` header saves, `0x66` page saves)
 - HTTP admin API + OpenAPI for tooling/UI
 - Web admin UI (`ui/`) for item templates and server/admin workflows
-- Player portal for authenticated account overview, profile editing, and password change (`/portal/login`, `/portal/profile`, `/api/portal/me`, `/api/portal/me/password`)
+- Player portal for authenticated account overview, profile editing, and password change (`/portal/login`, `/portal/profile`,
+  `/api/portal/me`, `/api/portal/me/password`)
 
 ## Project Highlights
 
@@ -109,7 +121,8 @@ UI default URL: `http://localhost:8088/`
 - World generation pipeline uses named generators (`IWorldGenerator`) and command-triggered runs (example: doors).
 - Doors support runtime open/close behavior and network updates.
 - Persistence uses MemoryPack with registry-driven snapshot buckets and generic journal entries.
-- Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base UO mobile model).
+- Mobile domain model was refactored to remove `Level` and `Experience` from `UOMobileEntity` (they are not part of the base
+  UO mobile model).
 
 ## Screenshots
 
@@ -128,7 +141,8 @@ UI default URL: `http://localhost:8088/`
   ![Character Creator at Docks](images/screenshots/screen_creator_at_docks.png)
 - **Door Open/Close Fix**: the bug is still there (damn doors).
   ![Door Open/Close Fix](images/screenshots/screen_door_bug.png)
-- **Orion Lua Brain**: scripted NPC behavior example (`orion.lua`) with speech loop (my cat is always hungry and always looking for food).
+- **Orion Lua Brain**: scripted NPC behavior example (`orion.lua`) with speech loop (my cat is always hungry and always
+  looking for food).
   ![Orion Lua Brain](images/screenshots/screen_orione_hungry_cat.png)
 - **Teleport Gump**: Lua-driven teleport UI and location workflow.
   ![Teleport Gump](images/screenshots/screen_teleport_gump.png)
@@ -141,6 +155,7 @@ UI default URL: `http://localhost:8088/`
 - Scripting: `docs/articles/scripting/`
 - Persistence: `docs/articles/persistence/`
 - Networking/protocol: `docs/articles/networking/`
+- Client encryption: `docs/articles/networking/client-encryption.md`
 - Operations/stress test: `docs/articles/operations/stress-test.md`
 
 Published docs: <https://moongate-community.github.io/moongate/>
@@ -149,7 +164,8 @@ Published docs: <https://moongate-community.github.io/moongate/>
 
 - Benchmarks project: `benchmarks/Moongate.Benchmarks`
 - Cross-map teleport cold-destination benchmark: `TeleportMapChangeBenchmark.HandleCrossMapTeleport_ColdDestination`
-- Same-map teleport cold-destination benchmark with self refresh: `TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh`
+- Same-map teleport cold-destination benchmark with self refresh:
+  `TeleportMapChangeBenchmark.HandleSameMapTeleport_ColdDestination_WithSelfRefresh`
   - Dry run on Apple M4 Max / .NET 10:
     - cross-map median `2.850 ms`, mean `4.284 ms`, first cold outlier `19.939 ms`, allocated `1.85 MB`
     - same-map median `1.947 ms`, mean `2.908 ms`, first cold outlier `13.514 ms`, allocated `1.22 MB`

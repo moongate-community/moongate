@@ -1,7 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Outgoing.Entity;
-using Moongate.Server.Data.Events.Combat;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Server.Support;
@@ -34,6 +33,28 @@ public sealed class CombatHitStatusRefreshHandlerTests
     }
 
     [Test]
+    public async Task HandleAsync_WhenDefenderIsPlayer_ShouldDoNothing()
+    {
+        var spatial = new TestSpatialWorldService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var handler = new CombatHitStatusRefreshHandler(spatial, outgoing);
+        var defender = new UOMobileEntity
+        {
+            Id = (Serial)0x300,
+            Name = "player",
+            MapId = 1,
+            Location = new(100, 100, 0),
+            Hits = 34,
+            MaxHits = 40,
+            IsPlayer = true
+        };
+
+        await handler.HandleAsync(new((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new(), defender));
+
+        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
+    }
+
+    [Test]
     public async Task HandleAsync_WhenNpcDefenderIsVisible_ShouldRefreshOnlyVisiblePlayerSessions()
     {
         var spatial = new TestSpatialWorldService();
@@ -55,7 +76,7 @@ public sealed class CombatHitStatusRefreshHandlerTests
         var nearSession = new GameSession(new(nearClient))
         {
             CharacterId = (Serial)0x100,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x100,
                 IsPlayer = true,
@@ -67,7 +88,7 @@ public sealed class CombatHitStatusRefreshHandlerTests
         var farSession = new GameSession(new(farClient))
         {
             CharacterId = (Serial)0x200,
-            Character = new UOMobileEntity
+            Character = new()
             {
                 Id = (Serial)0x200,
                 IsPlayer = true,
@@ -79,7 +100,7 @@ public sealed class CombatHitStatusRefreshHandlerTests
         spatial.SessionsInRange.Add(nearSession);
         spatial.SessionsInRange.Add(farSession);
 
-        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new UOMobileEntity(), defender));
+        await handler.HandleAsync(new((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new(), defender));
 
         Assert.Multiple(
             () =>
@@ -91,27 +112,5 @@ public sealed class CombatHitStatusRefreshHandlerTests
                 Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
             }
         );
-    }
-
-    [Test]
-    public async Task HandleAsync_WhenDefenderIsPlayer_ShouldDoNothing()
-    {
-        var spatial = new TestSpatialWorldService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-        var handler = new CombatHitStatusRefreshHandler(spatial, outgoing);
-        var defender = new UOMobileEntity
-        {
-            Id = (Serial)0x300,
-            Name = "player",
-            MapId = 1,
-            Location = new(100, 100, 0),
-            Hits = 34,
-            MaxHits = 40,
-            IsPlayer = true
-        };
-
-        await handler.HandleAsync(new CombatHitEvent((Serial)0x111, defender.Id, defender.MapId, defender.Location, 6, new UOMobileEntity(), defender));
-
-        Assert.That(outgoing.CurrentQueueDepth, Is.EqualTo(0));
     }
 }

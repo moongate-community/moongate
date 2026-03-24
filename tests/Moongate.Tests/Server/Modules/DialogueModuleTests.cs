@@ -1,3 +1,4 @@
+using Moongate.Core.Types;
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Speech;
@@ -9,7 +10,6 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Scripting;
 using Moongate.Tests.TestSupport;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -67,6 +67,7 @@ public sealed class DialogueModuleTests
         )
         {
             Calls.Add((speaker.Id, text, messageType));
+
             return Task.FromResult(1);
         }
     }
@@ -75,11 +76,29 @@ public sealed class DialogueModuleTests
     {
         public int Count => 0;
         public void Clear() { }
-        public IReadOnlyCollection<GameSession> GetAll() => [];
-        public GameSession GetOrCreate(MoongateTCPClient client) => throw new NotImplementedException();
-        public bool Remove(long sessionId) => false;
-        public bool TryGet(long sessionId, out GameSession session) { session = null!; return false; }
-        public bool TryGetByCharacterId(Serial characterId, out GameSession session) { session = null!; return false; }
+
+        public IReadOnlyCollection<GameSession> GetAll()
+            => [];
+
+        public GameSession GetOrCreate(MoongateTCPClient client)
+            => throw new NotImplementedException();
+
+        public bool Remove(long sessionId)
+            => false;
+
+        public bool TryGet(long sessionId, out GameSession session)
+        {
+            session = null!;
+
+            return false;
+        }
+
+        public bool TryGetByCharacterId(Serial characterId, out GameSession session)
+        {
+            session = null!;
+
+            return false;
+        }
     }
 
     [Test]
@@ -96,54 +115,6 @@ public sealed class DialogueModuleTests
                 Assert.That(result, Is.True);
                 Assert.That(npc.Mobile.TryGetCustomString("dialogue_id", out var conversationId), Is.True);
                 Assert.That(conversationId, Is.EqualTo("innkeeper"));
-            }
-        );
-    }
-
-    [Test]
-    public void Listener_WhenTopicMatches_ShouldStartDialogueAndSpeakNodeAndOptions()
-    {
-        using var tempDirectory = new TempDirectory();
-        var module = CreateModule(tempDirectory.Path, out var definitions, out var speech);
-        RegisterConversation(
-            definitions,
-            """
-            return {
-                start = "start",
-                topics = {
-                    room = { "room", "stanza" }
-                },
-                topic_routes = {
-                    room = "room_offer"
-                },
-                nodes = {
-                    start = { text = "Start", options = {} },
-                    room_offer = {
-                        text = "A room costs 15 gold.",
-                        options = {
-                            { text = "Accept", goto_ = "done" },
-                            { text = "No thanks", goto_ = "done" }
-                        }
-                    },
-                    done = { text = "Done", options = {} }
-                }
-            }
-            """
-        );
-
-        var npc = CreateProxy((Serial)0x100u, "Innkeeper");
-        var speaker = CreateProxy((Serial)0x200u, "Player");
-        _ = module.Init(npc, "innkeeper");
-
-        var handled = module.Listener(npc, speaker, "vorrei una stanza");
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(handled, Is.True);
-                Assert.That(speech.Calls, Has.Count.EqualTo(2));
-                Assert.That(speech.Calls[0].Text, Is.EqualTo("A room costs 15 gold."));
-                Assert.That(speech.Calls[1].Text, Is.EqualTo("1. Accept 2. No thanks"));
             }
         );
     }
@@ -196,11 +167,52 @@ public sealed class DialogueModuleTests
         );
     }
 
-    private static void RegisterConversation(IDialogueDefinitionService definitions, string body)
+    [Test]
+    public void Listener_WhenTopicMatches_ShouldStartDialogueAndSpeakNodeAndOptions()
     {
-        var script = new Script();
-        var definition = script.DoString(body).Table!;
-        _ = definitions.Register("innkeeper", definition, "scripts/dialogues/innkeeper.lua");
+        using var tempDirectory = new TempDirectory();
+        var module = CreateModule(tempDirectory.Path, out var definitions, out var speech);
+        RegisterConversation(
+            definitions,
+            """
+            return {
+                start = "start",
+                topics = {
+                    room = { "room", "stanza" }
+                },
+                topic_routes = {
+                    room = "room_offer"
+                },
+                nodes = {
+                    start = { text = "Start", options = {} },
+                    room_offer = {
+                        text = "A room costs 15 gold.",
+                        options = {
+                            { text = "Accept", goto_ = "done" },
+                            { text = "No thanks", goto_ = "done" }
+                        }
+                    },
+                    done = { text = "Done", options = {} }
+                }
+            }
+            """
+        );
+
+        var npc = CreateProxy((Serial)0x100u, "Innkeeper");
+        var speaker = CreateProxy((Serial)0x200u, "Player");
+        _ = module.Init(npc, "innkeeper");
+
+        var handled = module.Listener(npc, speaker, "vorrei una stanza");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(speech.Calls, Has.Count.EqualTo(2));
+                Assert.That(speech.Calls[0].Text, Is.EqualTo("A room costs 15 gold."));
+                Assert.That(speech.Calls[1].Text, Is.EqualTo("1. Accept 2. No thanks"));
+            }
+        );
     }
 
     private static DialogueModule CreateModule(
@@ -210,15 +222,15 @@ public sealed class DialogueModuleTests
     )
     {
         definitions = new DialogueDefinitionService();
-        speechService = new DialogueModuleSpeechServiceStub();
+        speechService = new();
         var runtime = new DialogueRuntimeService(
             definitions,
-            new DialogueMemoryService(new Moongate.Core.Data.Directories.DirectoriesConfig(root, Enum.GetNames<Moongate.Core.Types.DirectoryType>())),
+            new DialogueMemoryService(new(root, Enum.GetNames<DirectoryType>())),
             speechService,
             new DialogueModuleSessionServiceStub()
         );
 
-        return new DialogueModule(definitions, runtime, speechService);
+        return new(definitions, runtime, speechService);
     }
 
     private static LuaMobileProxy CreateProxy(Serial serial, string name)
@@ -229,9 +241,16 @@ public sealed class DialogueModuleTests
             Name = name,
             IsAlive = true,
             MapId = 1,
-            Location = new Point3D(100, 100, 0)
+            Location = new(100, 100, 0)
         };
 
-        return new LuaMobileProxy(mobile, new DialogueModuleSpeechServiceStub(), new DialogueModuleSessionServiceStub());
+        return new(mobile, new DialogueModuleSpeechServiceStub(), new DialogueModuleSessionServiceStub());
+    }
+
+    private static void RegisterConversation(IDialogueDefinitionService definitions, string body)
+    {
+        var script = new Script();
+        var definition = script.DoString(body).Table!;
+        _ = definitions.Register("innkeeper", definition, "scripts/dialogues/innkeeper.lua");
     }
 }

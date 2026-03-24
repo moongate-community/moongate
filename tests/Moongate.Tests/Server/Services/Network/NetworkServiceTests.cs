@@ -1,12 +1,18 @@
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
+using Moongate.Network.Encryption;
 using Moongate.Network.Events;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Incoming.Speech;
+using Moongate.Network.Packets.Incoming.System;
+using Moongate.Network.Spans;
+using Moongate.Network.Types.Encryption;
 using Moongate.Server.Data.Events.Connections;
+using Moongate.Server.Data.Internal.Network;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Packets;
@@ -55,6 +61,48 @@ public class NetworkServiceTests
     }
 
     [Test]
+    public void OnClientData_WhenEncryptedLoginArrivesButPolicyAllowsOnlyUnencrypted_ShouldDisconnectSession()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false,
+                Game = new()
+                {
+                    EncryptionMode = EncryptionMode.Unencrypted
+                }
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var loginSeed = BuildLoginSeedPacket(0x12345678, 7, 0, 114, 0);
+        var encryptedLogin = BuildEncryptedAccountLoginPacket(0x12345678u, 7, 0, 114);
+        var payload = loginSeed.Concat(encryptedLogin).ToArray();
+
+        InvokeOnClientData(service, client, payload);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(service.TryDequeueParsedPacket(out var firstPacket), Is.True);
+                Assert.That(firstPacket.Packet, Is.TypeOf<LoginSeedPacket>());
+                Assert.That(service.TryDequeueParsedPacket(out _), Is.False);
+                Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
+                Assert.That(session.NetworkSession.State, Is.EqualTo(NetworkSessionState.Disconnecting));
+            }
+        );
+    }
+
+    [Test]
     public void OnClientData_WhenFixedPacketArrives_ShouldEnqueueTypedGamePacket()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -89,6 +137,50 @@ public class NetworkServiceTests
                 Assert.That(packet.Packet, Is.TypeOf<LoginSeedPacket>());
                 Assert.That(messageBus.Packets.Count, Is.EqualTo(1));
                 Assert.That(messageBus.Packets[0].Packet, Is.TypeOf<LoginSeedPacket>());
+            }
+        );
+    }
+
+    [Test]
+    public void OnClientData_WhenLoginSeedAndEncryptedLoginAreInSameBuffer_ShouldDecryptAndParseAccountLogin()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var loginSeed = BuildLoginSeedPacket(0x12345678, 7, 0, 114, 0);
+        var encryptedLogin = BuildEncryptedAccountLoginPacket(0x12345678u, 7, 0, 114);
+        var payload = loginSeed.Concat(encryptedLogin).ToArray();
+
+        InvokeOnClientData(service, client, payload);
+
+        var hasSeedPacket = service.TryDequeueParsedPacket(out var seedPacket);
+        var hasLoginPacket = service.TryDequeueParsedPacket(out var loginPacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasSeedPacket, Is.True);
+                Assert.That(hasLoginPacket, Is.True);
+                Assert.That(seedPacket.Packet, Is.TypeOf<LoginSeedPacket>());
+                Assert.That(loginPacket.PacketId, Is.EqualTo(0x80));
+                Assert.That(loginPacket.Packet, Is.TypeOf<AccountLoginPacket>());
+                Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
+                Assert.That(session.NetworkSession.Encryption, Is.TypeOf<LoginEncryption>());
+                Assert.That(client.ContainsMiddleware<EncryptionMiddleware>(), Is.True);
             }
         );
     }
@@ -264,6 +356,47 @@ public class NetworkServiceTests
     }
 
     [Test]
+    public void OnClientData_WhenReconnectSeedAndEncryptedGameLoginAreInSameBuffer_ShouldDecryptAndParseGameLogin()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var seedBytes = new byte[] { 0x12, 0x34, 0x56, 0x78 };
+        var encryptedGameLogin = BuildEncryptedGameLoginPacket(0x12345678u);
+        var payload = seedBytes.Concat(encryptedGameLogin).ToArray();
+
+        InvokeOnClientData(service, client, payload);
+
+        var hasGamePacket = service.TryDequeueParsedPacket(out var gamePacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasGamePacket, Is.True);
+                Assert.That(gamePacket.PacketId, Is.EqualTo(0x91));
+                Assert.That(gamePacket.Packet, Is.TypeOf<GameLoginPacket>());
+                Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
+                Assert.That(session.NetworkSession.Encryption, Is.TypeOf<GameEncryption>());
+                Assert.That(client.ContainsMiddleware<EncryptionMiddleware>(), Is.True);
+            }
+        );
+    }
+
+    [Test]
     public void OnClientData_WhenReconnectSeedAndGameLoginAreInSameBuffer_ShouldParseGameLoginPacket()
     {
         var messageBus = new NetworkServiceTestMessageBusService();
@@ -302,6 +435,49 @@ public class NetworkServiceTests
                 Assert.That(packet.Packet, Is.TypeOf<GameLoginPacket>());
                 Assert.That(sessions.TryGet(client.SessionId, out var session), Is.True);
                 Assert.That(session.NetworkSession.Seed, Is.EqualTo(0x11223344u));
+            }
+        );
+    }
+
+    [Test]
+    public void OnClientData_WhenHardwareInfoPacketPrecedesServerSelect_ShouldParseBothPackets()
+    {
+        var messageBus = new NetworkServiceTestMessageBusService();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var sessions = new GameNetworkSessionService();
+        using var service = new NetworkService(
+            messageBus,
+            eventBus,
+            new PacketDispatchService(),
+            sessions,
+            new()
+            {
+                RootDirectory = Path.GetTempPath(),
+                LogLevel = LogLevelType.Debug,
+                LogPacketData = false
+            }
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        InvokeOnClientData(service, client, BuildLoginSeedPacket(0x12345678, 67, 0, 114, 0));
+        Assert.That(service.TryDequeueParsedPacket(out var loginSeedPacket), Is.True);
+        Assert.That(loginSeedPacket.Packet, Is.TypeOf<LoginSeedPacket>());
+
+        InvokeOnClientData(service, client, BuildHardwareInfoPacket());
+        InvokeOnClientData(service, client, [0xA0, 0x00, 0x00]);
+
+        var hasHardwarePacket = service.TryDequeueParsedPacket(out var hardwarePacket);
+        var hasServerSelectPacket = service.TryDequeueParsedPacket(out var serverSelectPacket);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(hasHardwarePacket, Is.True);
+                Assert.That(hasServerSelectPacket, Is.True);
+                Assert.That(hardwarePacket.PacketId, Is.EqualTo(0xD9));
+                Assert.That(hardwarePacket.Packet, Is.TypeOf<SpyOnClientPacket>());
+                Assert.That(serverSelectPacket.PacketId, Is.EqualTo(0xA0));
+                Assert.That(serverSelectPacket.Packet, Is.TypeOf<ServerSelectPacket>());
             }
         );
     }
@@ -560,7 +736,7 @@ public class NetworkServiceTests
         client.Client.ReceiveTimeout = 2000;
         var payload = Encoding.ASCII.GetBytes("ping");
 
-        await client.SendAsync(payload, new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, pingPort));
+        await client.SendAsync(payload, new IPEndPoint(IPAddress.Loopback, pingPort));
         var echoed = await client.ReceiveAsync();
 
         await InvokePrivateTaskAsync(service, "StopPingServersAsync");
@@ -574,6 +750,89 @@ public class NetworkServiceTests
         );
     }
 
+    private static byte[] BuildEncryptedAccountLoginPacket(uint seed, int major, int minor, int revision)
+    {
+        var payload = new byte[62];
+        payload[0] = 0x80;
+        payload[30] = 0x00;
+        payload[60] = 0x00;
+        payload[61] = 0x5D;
+
+        var encryption = new LoginEncryption(seed, LoginKeys.GetKeys(major, minor, revision));
+        encryption.ClientDecrypt(payload);
+
+        return payload;
+    }
+
+    private static byte[] BuildEncryptedGameLoginPacket(uint seed)
+    {
+        var payload = new byte[65];
+        payload[0] = 0x91;
+
+        var encryption = new GameEncryption(seed);
+        encryption.ClientDecrypt(payload);
+
+        return payload;
+    }
+
+    private static byte[] BuildLoginSeedPacket(int seed, int major, int minor, int revision, int patch)
+    {
+        var payload = new byte[21];
+        payload[0] = 0xEF;
+        WriteInt32BigEndian(payload, 1, seed);
+        WriteInt32BigEndian(payload, 5, major);
+        WriteInt32BigEndian(payload, 9, minor);
+        WriteInt32BigEndian(payload, 13, revision);
+        WriteInt32BigEndian(payload, 17, patch);
+
+        return payload;
+    }
+
+    private static byte[] BuildHardwareInfoPacket()
+    {
+        var writer = new SpanWriter(300, true);
+
+        writer.Write((byte)0xD9);
+        writer.Write((byte)0x02);
+        writer.Write(0x45AFB128u);
+        writer.Write(6u);
+        writer.Write(2u);
+        writer.Write(9200u);
+        writer.Write((byte)1);
+        writer.Write(15u);
+        writer.Write(4u);
+        writer.Write(3160u);
+        writer.Write((byte)4);
+        writer.Write(3416u);
+        writer.Write(1368u);
+        writer.Write(1365u);
+        writer.Write(32u);
+        writer.Write((ushort)9);
+        writer.Write((ushort)0);
+        writer.WriteLittleUni("Parallels Display Adapter (WDDM)", 64);
+        writer.Write(0u);
+        writer.Write(0u);
+        writer.Write(0u);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.Write((byte)0);
+        writer.WriteLittleUni("ENU", 4);
+        writer.WriteAscii(string.Empty, 64);
+
+        var payload = writer.ToArray();
+        writer.Dispose();
+
+        return payload;
+    }
+
+    private static int GetFreeUdpPort()
+    {
+        using var client = new UdpClient(new IPEndPoint(IPAddress.Loopback, 0));
+
+        return ((IPEndPoint)client.Client.LocalEndPoint!).Port;
+    }
+
     private static void InvokeOnClientData(NetworkService service, MoongateTCPClient client, byte[] payload)
     {
         var method = typeof(NetworkService).GetMethod(
@@ -583,12 +842,6 @@ public class NetworkServiceTests
 
         Assert.That(method, Is.Not.Null);
         method!.Invoke(service, [null, new MoongateTCPDataReceivedEventArgs(client, payload)]);
-    }
-
-    private static int GetFreeUdpPort()
-    {
-        using var client = new UdpClient(new System.Net.IPEndPoint(System.Net.IPAddress.Loopback, 0));
-        return ((System.Net.IPEndPoint)client.Client.LocalEndPoint!).Port;
     }
 
     private static async Task InvokePrivateTaskAsync(NetworkService service, string methodName)
@@ -603,9 +856,18 @@ public class NetworkServiceTests
         if (method!.Invoke(service, null) is Task task)
         {
             await task;
+
             return;
         }
 
         Assert.Fail($"Method '{methodName}' did not return a Task.");
+    }
+
+    private static void WriteInt32BigEndian(byte[] target, int offset, int value)
+    {
+        target[offset] = (byte)((value >> 24) & 0xFF);
+        target[offset + 1] = (byte)((value >> 16) & 0xFF);
+        target[offset + 2] = (byte)((value >> 8) & 0xFF);
+        target[offset + 3] = (byte)(value & 0xFF);
     }
 }

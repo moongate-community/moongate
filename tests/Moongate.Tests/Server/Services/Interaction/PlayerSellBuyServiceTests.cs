@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Trading;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -14,11 +15,9 @@ using Moongate.Server.Services.Interaction;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
-using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Items;
-using Moongate.UO.Data.Templates.SellProfiles;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -52,6 +51,7 @@ public sealed class PlayerSellBuyServiceTests
         public bool TryGetByCharacterId(Serial characterId, out GameSession session)
         {
             session = _sessions.Values.FirstOrDefault(s => s.CharacterId == characterId)!;
+
             return session is not null;
         }
     }
@@ -180,6 +180,7 @@ public sealed class PlayerSellBuyServiceTests
         public Task<Serial> CreateItemAsync(UOItemEntity item)
         {
             CreatedItems[item.Id] = item;
+
             return Task.FromResult(item.Id);
         }
 
@@ -187,10 +188,16 @@ public sealed class PlayerSellBuyServiceTests
         {
             DeletedItems.Add(itemId);
             _ = CreatedItems.Remove(itemId);
+
             return Task.FromResult(true);
         }
 
-        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
             => throw new NotSupportedException();
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
@@ -214,6 +221,7 @@ public sealed class PlayerSellBuyServiceTests
 
             item.ParentContainerId = containerId;
             item.ContainerPosition = position;
+
             return Task.FromResult(true);
         }
 
@@ -230,11 +238,420 @@ public sealed class PlayerSellBuyServiceTests
         {
             CreatedItems[item.Id] = item;
             UpsertedItems.Add(item.Id);
+
             return Task.CompletedTask;
         }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
             => Task.CompletedTask;
+    }
+
+    [Test]
+    public async Task HandleBuyItemsAsync_ShouldConsumeGoldAndCreateBoughtItemInBackpack()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000101u, ItemId = 0x0E75 };
+        var gold = new UOItemEntity { Id = (Serial)0x40000102u, ItemId = 0x0EED, Amount = 100, IsStackable = true };
+        backpack.AddItem(gold, new(1, 1));
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000101u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000102u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.weaponsmith", Name = "Weaponsmith",
+                VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+        var displaySerial = DrainPackets(outgoing)
+                            .OfType<AddMultipleItemsToContainerPacket>()
+                            .Single()
+                            .Container!
+                            .Items
+                            .Single()
+                            .Id;
+
+        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 2);
+
+        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
+
+        var outboundPackets = DrainPackets(outgoing);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gold.Amount, Is.EqualTo(76));
+                Assert.That(itemService.CreatedItems.Values.Any(i => i.ItemId == 0x0F51 && i.Amount == 2), Is.True);
+                Assert.That(itemService.UpsertedItems, Does.Contain(gold.Id));
+                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleBuyItemsAsync_ShouldDeleteConsumedGoldStackWhenSpentCompletely()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000121u, ItemId = 0x0E75 };
+        var gold = new UOItemEntity { Id = (Serial)0x40000122u, ItemId = 0x0EED, Amount = 24, IsStackable = true };
+        backpack.AddItem(gold, new(1, 1));
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000121u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000122u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.weaponsmith", Name = "Weaponsmith",
+                VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+        var displaySerial = DrainPackets(outgoing)
+                            .OfType<AddMultipleItemsToContainerPacket>()
+                            .Single()
+                            .Container!
+                            .Items
+                            .Single()
+                            .Id;
+        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 2);
+
+        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(backpack.Items.Any(i => i.Id == gold.Id), Is.False);
+                Assert.That(itemService.DeletedItems, Does.Contain(gold.Id));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleBuyItemsAsync_ShouldHandleBlacksmithVendorBuyFlow()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000131u, ItemId = 0x0E75 };
+        var gold = new UOItemEntity { Id = (Serial)0x40000132u, ItemId = 0x0EED, Amount = 100, IsStackable = true };
+        backpack.AddItem(gold, new(1, 1));
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000131u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000132u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["hammer"] = new() { Id = "hammer", Name = "Hammer", ItemId = "0x102A" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.blacksmith",
+                Name = "Blacksmith Vendor",
+                VendorItems = [new() { ItemTemplateId = "hammer", Price = 18, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+        var displaySerial = DrainPackets(outgoing)
+                            .OfType<AddMultipleItemsToContainerPacket>()
+                            .Single()
+                            .Container!
+                            .Items
+                            .Single()
+                            .Id;
+
+        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 1);
+
+        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
+
+        var outboundPackets = DrainPackets(outgoing);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gold.Amount, Is.EqualTo(82));
+                Assert.That(itemService.CreatedItems.Values.Any(i => i.ItemId == 0x102A && i.Amount == 1), Is.True);
+                Assert.That(itemService.UpsertedItems, Does.Contain(gold.Id));
+                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleBuyItemsAsync_ShouldNotMutateGoldOrCreateItems_WhenPurchaseExceedsBudget()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000141u, ItemId = 0x0E75 };
+        var gold = new UOItemEntity { Id = (Serial)0x40000142u, ItemId = 0x0EED, Amount = 10, IsStackable = true };
+        backpack.AddItem(gold, new(1, 1));
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000141u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000142u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["hammer"] = new() { Id = "hammer", Name = "Hammer", ItemId = "0x102A" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.blacksmith",
+                Name = "Blacksmith Vendor",
+                VendorItems = [new() { ItemTemplateId = "hammer", Price = 18, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+        var displaySerial = DrainPackets(outgoing)
+                            .OfType<AddMultipleItemsToContainerPacket>()
+                            .Single()
+                            .Container!
+                            .Items
+                            .Single()
+                            .Id;
+
+        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 1);
+
+        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(gold.Amount, Is.EqualTo(10));
+                Assert.That(itemService.CreatedItems, Is.Empty);
+                Assert.That(itemService.UpsertedItems, Is.Empty);
+                Assert.That(itemService.DeletedItems, Is.Empty);
+                Assert.That(DrainPackets(outgoing), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleSellListReplyAsync_ShouldRemoveSoldItemAndCreditGold()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000111u, ItemId = 0x0E75 };
+        var gold = new UOItemEntity { Id = (Serial)0x40000112u, ItemId = 0x0EED, Amount = 10, IsStackable = true };
+        var soldItem = new UOItemEntity { Id = (Serial)0x40000113u, ItemId = 0x0F51, Amount = 3, IsStackable = true };
+        backpack.AddItem(gold, new(1, 1));
+        backpack.AddItem(soldItem, new(2, 1));
+
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000111u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000112u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        itemFactory.Templates["gold"] = new() { Id = "gold", Name = "Gold", ItemId = "0x0EED" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.weaponsmith", Name = "Weaponsmith",
+                AcceptedItems = [new() { ItemTemplateId = "dagger", Price = 6 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorSellRequestAsync(session.SessionId, vendor.Id);
+        _ = DrainPackets(outgoing);
+        var reply = ParseSellListReplyPacket(vendor.Id, soldItem.Id, 2);
+
+        await service.HandleSellListReplyAsync(session.SessionId, reply);
+
+        var outboundPackets = DrainPackets(outgoing);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(soldItem.Amount, Is.EqualTo(1));
+                Assert.That(gold.Amount, Is.EqualTo(22));
+                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleVendorSellRequestAsync_ShouldRequireExactTemplateMatch_WhenRuntimeItemTemplateDiffers()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x40000151u, ItemId = 0x0E75 };
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        itemFactory.Templates["dagger_variant"] = new() { Id = "dagger_variant", Name = "Dagger Variant", ItemId = "0x0F51" };
+        var candidate = itemFactory.CreateItemFromTemplate("dagger_variant");
+        candidate.Id = (Serial)0x40000152u;
+        candidate.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "dagger_variant");
+        backpack.AddItem(candidate, new(1, 1));
+
+        var character = new UOMobileEntity
+            { Id = (Serial)0x00000151u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        characters.Backpack = backpack;
+
+        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity { Id = (Serial)0x00000152u, Location = new(101, 100, 0), MapId = 0 };
+        vendor.SetCustomString("sell_profile_id", "vendor.blacksmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.blacksmith",
+                Name = "Blacksmith Vendor",
+                AcceptedItems = [new() { ItemTemplateId = "dagger", Price = 6 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorSellRequestAsync(session.SessionId, vendor.Id);
+
+        Assert.That(DrainPacketTypes(outgoing), Is.Empty);
     }
 
     [Test]
@@ -259,7 +676,10 @@ public sealed class PlayerSellBuyServiceTests
             BackpackId = backpack.Id
         };
         character.AddEquippedItem(ItemLayerType.Backpack, backpack);
-        backpack.AddItem(new UOItemEntity { Id = (Serial)0x40000082u, ItemId = 0x0EED, Amount = 100, IsStackable = true }, new(1, 1));
+        backpack.AddItem(
+            new UOItemEntity { Id = (Serial)0x40000082u, ItemId = 0x0EED, Amount = 100, IsStackable = true },
+            new(1, 1)
+        );
         characters.Backpack = backpack;
 
         var session = new GameSession(new(client))
@@ -289,7 +709,15 @@ public sealed class PlayerSellBuyServiceTests
             }
         );
 
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
 
         await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
 
@@ -303,6 +731,92 @@ public sealed class PlayerSellBuyServiceTests
                 Assert.That(packetTypes, Does.Contain(typeof(VendorBuyListPacket)));
                 Assert.That(packetTypes, Does.Contain(typeof(DrawContainerPacket)));
                 Assert.That(packetTypes, Does.Contain(typeof(PlayerStatusPacket)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleVendorBuyRequestAsync_ShouldHydrateGoldBeforeSendingPlayerStatus()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var sessions = new TestSessionService();
+        var mobiles = new TestMobileService();
+        var characters = new TestCharacterService();
+        var itemFactory = new TestItemFactoryService();
+        var itemService = new TestItemService();
+        var sellProfiles = new SellProfileTemplateService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+
+        var backpack = new UOItemEntity { Id = (Serial)0x400000A1u, ItemId = 0x0E75 };
+        backpack.AddItem(
+            new UOItemEntity { Id = (Serial)0x400000A2u, ItemId = 0x0EED, Amount = 750, IsStackable = true },
+            new(1, 1)
+        );
+        var bank = new UOItemEntity { Id = (Serial)0x400000A3u, ItemId = 0x09A8 };
+        bank.AddItem(
+            new UOItemEntity { Id = (Serial)0x400000A4u, ItemId = 0x0EED, Amount = 250, IsStackable = true },
+            new(1, 1)
+        );
+
+        var character = new UOMobileEntity
+        {
+            Id = (Serial)0x000000A1u,
+            Name = "buyer",
+            Location = new(100, 100, 0),
+            MapId = 0,
+            BackpackId = backpack.Id
+        };
+        character.AddEquippedItem(ItemLayerType.Backpack, backpack.Id);
+        character.AddEquippedItem(ItemLayerType.Bank, bank.Id);
+        characters.Backpack = backpack;
+        characters.BankBox = bank;
+
+        var session = new GameSession(new(client))
+        {
+            Character = character,
+            CharacterId = character.Id
+        };
+        sessions.Add(session);
+
+        var vendor = new UOMobileEntity
+        {
+            Id = (Serial)0x000000A2u,
+            Name = "smith",
+            Location = new(101, 100, 0),
+            MapId = 0
+        };
+        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
+        mobiles.Mobiles[vendor.Id] = vendor;
+
+        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
+        sellProfiles.Upsert(
+            new()
+            {
+                Id = "vendor.weaponsmith",
+                Name = "Weaponsmith",
+                VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }]
+            }
+        );
+
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
+
+        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
+
+        var statusPacket = DrainPackets(outgoing).OfType<PlayerStatusPacket>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(statusPacket.Mobile, Is.Not.Null);
+                Assert.That(statusPacket.Mobile!.Gold, Is.EqualTo(1000));
             }
         );
     }
@@ -361,259 +875,21 @@ public sealed class PlayerSellBuyServiceTests
             }
         );
 
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
+        var service = new PlayerSellBuyService(
+            sessions,
+            mobiles,
+            characters,
+            itemFactory,
+            itemService,
+            sellProfiles,
+            outgoing
+        );
 
         await service.HandleVendorSellRequestAsync(session.SessionId, vendor.Id);
 
         var packetTypes = DrainPacketTypes(outgoing);
 
         Assert.That(packetTypes, Does.Contain(typeof(VendorSellListPacket)));
-    }
-
-    [Test]
-    public async Task HandleVendorBuyRequestAsync_ShouldHydrateGoldBeforeSendingPlayerStatus()
-    {
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var sessions = new TestSessionService();
-        var mobiles = new TestMobileService();
-        var characters = new TestCharacterService();
-        var itemFactory = new TestItemFactoryService();
-        var itemService = new TestItemService();
-        var sellProfiles = new SellProfileTemplateService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var backpack = new UOItemEntity { Id = (Serial)0x400000A1u, ItemId = 0x0E75 };
-        backpack.AddItem(new UOItemEntity { Id = (Serial)0x400000A2u, ItemId = 0x0EED, Amount = 750, IsStackable = true }, new(1, 1));
-        var bank = new UOItemEntity { Id = (Serial)0x400000A3u, ItemId = 0x09A8 };
-        bank.AddItem(new UOItemEntity { Id = (Serial)0x400000A4u, ItemId = 0x0EED, Amount = 250, IsStackable = true }, new(1, 1));
-
-        var character = new UOMobileEntity
-        {
-            Id = (Serial)0x000000A1u,
-            Name = "buyer",
-            Location = new(100, 100, 0),
-            MapId = 0,
-            BackpackId = backpack.Id
-        };
-        character.AddEquippedItem(ItemLayerType.Backpack, backpack.Id);
-        character.AddEquippedItem(ItemLayerType.Bank, bank.Id);
-        characters.Backpack = backpack;
-        characters.BankBox = bank;
-
-        var session = new GameSession(new(client))
-        {
-            Character = character,
-            CharacterId = character.Id
-        };
-        sessions.Add(session);
-
-        var vendor = new UOMobileEntity
-        {
-            Id = (Serial)0x000000A2u,
-            Name = "smith",
-            Location = new(101, 100, 0),
-            MapId = 0
-        };
-        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
-        mobiles.Mobiles[vendor.Id] = vendor;
-
-        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
-        sellProfiles.Upsert(
-            new()
-            {
-                Id = "vendor.weaponsmith",
-                Name = "Weaponsmith",
-                VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }]
-            }
-        );
-
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
-
-        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
-
-        var statusPacket = DrainPackets(outgoing).OfType<PlayerStatusPacket>().Single();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(statusPacket.Mobile, Is.Not.Null);
-                Assert.That(statusPacket.Mobile!.Gold, Is.EqualTo(1000));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleBuyItemsAsync_ShouldConsumeGoldAndCreateBoughtItemInBackpack()
-    {
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var sessions = new TestSessionService();
-        var mobiles = new TestMobileService();
-        var characters = new TestCharacterService();
-        var itemFactory = new TestItemFactoryService();
-        var itemService = new TestItemService();
-        var sellProfiles = new SellProfileTemplateService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var backpack = new UOItemEntity { Id = (Serial)0x40000101u, ItemId = 0x0E75 };
-        var gold = new UOItemEntity { Id = (Serial)0x40000102u, ItemId = 0x0EED, Amount = 100, IsStackable = true };
-        backpack.AddItem(gold, new(1, 1));
-        var character = new UOMobileEntity { Id = (Serial)0x00000101u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
-        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
-        characters.Backpack = backpack;
-
-        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
-        sessions.Add(session);
-
-        var vendor = new UOMobileEntity { Id = (Serial)0x00000102u, Location = new(101, 100, 0), MapId = 0 };
-        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
-        mobiles.Mobiles[vendor.Id] = vendor;
-
-        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
-        sellProfiles.Upsert(new() { Id = "vendor.weaponsmith", Name = "Weaponsmith", VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }] });
-
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
-
-        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
-        var displaySerial = DrainPackets(outgoing)
-                            .OfType<AddMultipleItemsToContainerPacket>()
-                            .Single()
-                            .Container!
-                            .Items
-                            .Single()
-                            .Id;
-
-        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 2);
-
-        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
-
-        var outboundPackets = DrainPackets(outgoing);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(gold.Amount, Is.EqualTo(76));
-                Assert.That(itemService.CreatedItems.Values.Any(i => i.ItemId == 0x0F51 && i.Amount == 2), Is.True);
-                Assert.That(itemService.UpsertedItems, Does.Contain(gold.Id));
-                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleBuyItemsAsync_ShouldDeleteConsumedGoldStackWhenSpentCompletely()
-    {
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var sessions = new TestSessionService();
-        var mobiles = new TestMobileService();
-        var characters = new TestCharacterService();
-        var itemFactory = new TestItemFactoryService();
-        var itemService = new TestItemService();
-        var sellProfiles = new SellProfileTemplateService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var backpack = new UOItemEntity { Id = (Serial)0x40000121u, ItemId = 0x0E75 };
-        var gold = new UOItemEntity { Id = (Serial)0x40000122u, ItemId = 0x0EED, Amount = 24, IsStackable = true };
-        backpack.AddItem(gold, new(1, 1));
-        var character = new UOMobileEntity { Id = (Serial)0x00000121u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
-        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
-        characters.Backpack = backpack;
-
-        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
-        sessions.Add(session);
-
-        var vendor = new UOMobileEntity { Id = (Serial)0x00000122u, Location = new(101, 100, 0), MapId = 0 };
-        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
-        mobiles.Mobiles[vendor.Id] = vendor;
-
-        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
-        sellProfiles.Upsert(new() { Id = "vendor.weaponsmith", Name = "Weaponsmith", VendorItems = [new() { ItemTemplateId = "dagger", Price = 12, MaxStock = 20 }] });
-
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
-
-        await service.HandleVendorBuyRequestAsync(session.SessionId, vendor.Id);
-        var displaySerial = DrainPackets(outgoing)
-                            .OfType<AddMultipleItemsToContainerPacket>()
-                            .Single()
-                            .Container!
-                            .Items
-                            .Single()
-                            .Id;
-        var buyReply = ParseBuyItemsPacket(vendor.Id, displaySerial, 2);
-
-        await service.HandleBuyItemsAsync(session.SessionId, buyReply);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(backpack.Items.Any(i => i.Id == gold.Id), Is.False);
-                Assert.That(itemService.DeletedItems, Does.Contain(gold.Id));
-            }
-        );
-    }
-
-    [Test]
-    public async Task HandleSellListReplyAsync_ShouldRemoveSoldItemAndCreditGold()
-    {
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var sessions = new TestSessionService();
-        var mobiles = new TestMobileService();
-        var characters = new TestCharacterService();
-        var itemFactory = new TestItemFactoryService();
-        var itemService = new TestItemService();
-        var sellProfiles = new SellProfileTemplateService();
-        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
-
-        var backpack = new UOItemEntity { Id = (Serial)0x40000111u, ItemId = 0x0E75 };
-        var gold = new UOItemEntity { Id = (Serial)0x40000112u, ItemId = 0x0EED, Amount = 10, IsStackable = true };
-        var soldItem = new UOItemEntity { Id = (Serial)0x40000113u, ItemId = 0x0F51, Amount = 3, IsStackable = true };
-        backpack.AddItem(gold, new(1, 1));
-        backpack.AddItem(soldItem, new(2, 1));
-
-        var character = new UOMobileEntity { Id = (Serial)0x00000111u, Location = new(100, 100, 0), MapId = 0, BackpackId = backpack.Id };
-        character.AddEquippedItem(ItemLayerType.Backpack, backpack);
-        characters.Backpack = backpack;
-
-        var session = new GameSession(new(client)) { Character = character, CharacterId = character.Id };
-        sessions.Add(session);
-
-        var vendor = new UOMobileEntity { Id = (Serial)0x00000112u, Location = new(101, 100, 0), MapId = 0 };
-        vendor.SetCustomString("sell_profile_id", "vendor.weaponsmith");
-        mobiles.Mobiles[vendor.Id] = vendor;
-
-        itemFactory.Templates["dagger"] = new() { Id = "dagger", Name = "Dagger", ItemId = "0x0F51" };
-        itemFactory.Templates["gold"] = new() { Id = "gold", Name = "Gold", ItemId = "0x0EED" };
-        sellProfiles.Upsert(new() { Id = "vendor.weaponsmith", Name = "Weaponsmith", AcceptedItems = [new() { ItemTemplateId = "dagger", Price = 6 }] });
-
-        var service = new PlayerSellBuyService(sessions, mobiles, characters, itemFactory, itemService, sellProfiles, outgoing);
-
-        await service.HandleVendorSellRequestAsync(session.SessionId, vendor.Id);
-        _ = DrainPackets(outgoing);
-        var reply = ParseSellListReplyPacket(vendor.Id, soldItem.Id, 2);
-
-        await service.HandleSellListReplyAsync(session.SessionId, reply);
-
-        var outboundPackets = DrainPackets(outgoing);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(soldItem.Amount, Is.EqualTo(1));
-                Assert.That(gold.Amount, Is.EqualTo(22));
-                Assert.That(outboundPackets.Any(packet => packet is DrawContainerAndAddItemCombinedPacket), Is.True);
-            }
-        );
-    }
-
-    private static List<Type> DrainPacketTypes(BasePacketListenerTestOutgoingPacketQueue outgoing)
-    {
-        var result = new List<Type>();
-
-        while (outgoing.TryDequeue(out var gamePacket))
-        {
-            result.Add(gamePacket.Packet.GetType());
-        }
-
-        return result;
     }
 
     private static List<object> DrainPackets(BasePacketListenerTestOutgoingPacketQueue outgoing)
@@ -623,6 +899,18 @@ public sealed class PlayerSellBuyServiceTests
         while (outgoing.TryDequeue(out var gamePacket))
         {
             result.Add(gamePacket.Packet);
+        }
+
+        return result;
+    }
+
+    private static List<Type> DrainPacketTypes(BasePacketListenerTestOutgoingPacketQueue outgoing)
+    {
+        var result = new List<Type>();
+
+        while (outgoing.TryDequeue(out var gamePacket))
+        {
+            result.Add(gamePacket.Packet.GetType());
         }
 
         return result;
@@ -644,6 +932,7 @@ public sealed class PlayerSellBuyServiceTests
 
         var packet = new BuyItemsPacket();
         Assert.That(packet.TryParse(bytes), Is.True);
+
         return packet;
     }
 
@@ -662,6 +951,7 @@ public sealed class PlayerSellBuyServiceTests
 
         var packet = new SellListReplyPacket();
         Assert.That(packet.TryParse(bytes), Is.True);
+
         return packet;
     }
 }

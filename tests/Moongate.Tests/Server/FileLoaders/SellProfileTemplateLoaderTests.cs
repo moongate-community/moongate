@@ -65,4 +65,80 @@ public class SellProfileTemplateLoaderTests
             }
         );
     }
+
+    [Test]
+    public async Task LoadAsync_WhenRepositoryContainsVendorSellProfiles_ShouldLoadVendorDefinitions()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var service = new SellProfileTemplateService();
+        var loader = new SellProfileTemplateLoader(directoriesConfig, service);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(service.TryGet("vendor.blacksmith", out var blacksmith), Is.True);
+                Assert.That(blacksmith, Is.Not.Null);
+                Assert.That(blacksmith!.VendorItems, Has.Count.EqualTo(5));
+                Assert.That(blacksmith.VendorItems[0].ItemTemplateId, Is.EqualTo("hammer"));
+                Assert.That(blacksmith.VendorItems[4].ItemTemplateId, Is.EqualTo("shovel"));
+                Assert.That(blacksmith.AcceptedItems, Has.Count.EqualTo(2));
+                Assert.That(blacksmith.AcceptedItems[0].ItemTemplateId, Is.EqualTo("iron_ingot"));
+
+                Assert.That(service.TryGet("vendor.weaponsmith", out var weaponsmith), Is.True);
+                Assert.That(weaponsmith, Is.Not.Null);
+                Assert.That(weaponsmith!.VendorItems, Has.Count.EqualTo(5));
+                Assert.That(weaponsmith.VendorItems[0].ItemTemplateId, Is.EqualTo("dagger"));
+                Assert.That(weaponsmith.VendorItems[4].ItemTemplateId, Is.EqualTo("arrow"));
+
+                Assert.That(service.TryGet("vendor.armorer", out var armorer), Is.True);
+                Assert.That(armorer, Is.Not.Null);
+                Assert.That(armorer!.VendorItems, Has.Count.EqualTo(5));
+                Assert.That(armorer.VendorItems[0].ItemTemplateId, Is.EqualTo("helmet"));
+                Assert.That(armorer.VendorItems[4].ItemTemplateId, Is.EqualTo("metal_shield"));
+                Assert.That(armorer.AcceptedItems, Has.Count.EqualTo(4));
+
+                Assert.That(service.TryGet("vendor.provisioner", out var provisioner), Is.True);
+                Assert.That(provisioner, Is.Not.Null);
+                Assert.That(provisioner!.VendorItems, Has.Count.EqualTo(5));
+                Assert.That(provisioner.VendorItems[0].ItemTemplateId, Is.EqualTo("apple"));
+                Assert.That(provisioner.VendorItems[4].ItemTemplateId, Is.EqualTo("candle"));
+                Assert.That(provisioner.AcceptedItems, Has.Count.EqualTo(4));
+
+                Assert.That(service.TryGet("vendor.mage", out var mage), Is.True);
+                Assert.That(mage, Is.Not.Null);
+                Assert.That(mage!.VendorItems, Has.Count.EqualTo(5));
+                Assert.That(mage.VendorItems[0].ItemTemplateId, Is.EqualTo("spellbook"));
+                Assert.That(mage.VendorItems[4].ItemTemplateId, Is.EqualTo("sulfurous_ash"));
+                Assert.That(mage.AcceptedItems, Has.Count.EqualTo(4));
+
+                Assert.That(service.TryGet("vendor.healer", out var healer), Is.True);
+                Assert.That(healer, Is.Not.Null);
+                Assert.That(healer!.VendorItems, Has.Count.EqualTo(4));
+                Assert.That(healer.VendorItems[0].ItemTemplateId, Is.EqualTo("bandage"));
+                Assert.That(healer.VendorItems[3].ItemTemplateId, Is.EqualTo("greater_heal_scroll"));
+                Assert.That(healer.AcceptedItems, Has.Count.EqualTo(3));
+            }
+        );
+    }
+
+    private static string ResolveRepositoryRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
+    }
 }

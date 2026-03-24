@@ -26,7 +26,15 @@
     "fame": 600,
     "karma": -600,
     "notoriety": "CanBeAttacked",
-    "brain": "None",
+    "brain": "undead_melee",
+    "sounds": {
+      "StartAttack": 471,
+      "Idle": 472,
+      "Attack": 473,
+      "Defend": 474,
+      "Die": 475
+    },
+    "lootTables": ["undead.low"],
     "fixedEquipment": [],
     "randomEquipment": [],
     "title": "a zombie"
@@ -60,6 +68,7 @@
     "karma": -3000,
     "notoriety": "CanBeAttacked",
     "brain": "None",
+    "lootTables": ["undead.knight"],
     "fixedEquipment": [
       {
         "itemTemplateId": "scimitar",

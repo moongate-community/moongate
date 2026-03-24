@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Linq;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Strings;
@@ -16,12 +15,14 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Context;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Internal;
+using Moongate.Scripting.Data.Internal.Reputation;
 using Moongate.Scripting.Data.Luarc;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Loaders;
 using Moongate.Scripting.Utils;
+using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
 using Serilog;
 using SyntaxErrorException = System.Data.SyntaxErrorException;
@@ -46,6 +47,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     private const string OnReadyFunctionName = "on_ready";
 
     private const string OnEngineRunFunctionName = "on_initialize";
+    private const string ReputationTitlesGlobalName = "reputation_titles_config";
 
     // Thread-safe collections
     private readonly ConcurrentDictionary<string, Action<object[]>> _callbacks = new();
@@ -669,6 +671,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             RegisterGlobalFunctions();
 
             ExecuteBootstrap();
+            InitializeReputationTitles();
 
             ExecuteBootFunction();
             _isInitialized = true;
@@ -1106,7 +1109,8 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             return;
         }
 
-        foreach (var pluginPath in Directory.EnumerateDirectories(pluginsDirectory).OrderBy(path => path, StringComparer.Ordinal))
+        foreach (var pluginPath in Directory.EnumerateDirectories(pluginsDirectory)
+                                            .OrderBy(path => path, StringComparer.Ordinal))
         {
             var manifestPath = Path.Combine(pluginPath, "plugin.lua");
 
@@ -1133,7 +1137,11 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
                 if (!_loadedPlugins.TryAdd(manifest.Id, manifest))
                 {
-                    _logger.Warning("Skipping Lua plugin at {PluginPath}: duplicate plugin id {PluginId}", pluginPath, manifest.Id);
+                    _logger.Warning(
+                        "Skipping Lua plugin at {PluginPath}: duplicate plugin id {PluginId}",
+                        pluginPath,
+                        manifest.Id
+                    );
 
                     continue;
                 }
@@ -1160,36 +1168,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 _logger.Error(ex, "Failed to load Lua plugin manifest from {ManifestPath}", manifestPath);
             }
         }
-    }
-
-    private LuaPluginManifest? LoadPluginManifest(string manifestPath)
-    {
-        var content = File.ReadAllText(manifestPath);
-        var manifestScript = new Script();
-        var result = manifestScript.DoString(content, null, manifestPath);
-
-        if (result.Type != DataType.Table)
-        {
-            _logger.Warning("Skipping Lua plugin manifest at {ManifestPath}: manifest did not return a table", manifestPath);
-
-            return null;
-        }
-
-        var table = result.Table;
-
-        return new(
-            GetStringField(table, "id"),
-            GetStringField(table, "name"),
-            GetStringField(table, "version"),
-            GetStringField(table, "entry")
-        );
-    }
-
-    private static string? GetStringField(Table table, string key)
-    {
-        var dyn = table.Get(key);
-
-        return dyn.Type == DataType.String ? dyn.String : null;
     }
 
     /// <summary>
@@ -1404,8 +1382,70 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         return Convert.ToBase64String(hashBytes);
     }
 
+    private static string? GetStringField(Table table, string key)
+    {
+        var dyn = table.Get(key);
+
+        return dyn.Type == DataType.String ? dyn.String : null;
+    }
+
+    private void InitializeReputationTitles()
+    {
+        var reputationTitles = LuaScript.Globals.Get(ReputationTitlesGlobalName);
+
+        if (reputationTitles.Type is DataType.Nil or DataType.Void)
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Debug("Lua reputation titles config not defined; using default runtime table.");
+
+            return;
+        }
+
+        if (reputationTitles.Type != DataType.Table || reputationTitles.Table is null)
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Warning("Lua reputation titles config is not a table; using default runtime table.");
+
+            return;
+        }
+
+        if (!ReputationTitleLuaParser.TryParse(reputationTitles.Table, out var configuration))
+        {
+            ReputationTitleRuntime.Reset();
+            _logger.Warning("Lua reputation titles config is invalid; using default runtime table.");
+
+            return;
+        }
+
+        ReputationTitleRuntime.Configure(configuration);
+        _logger.Information("Lua reputation titles config loaded successfully.");
+    }
+
     private static bool IsSimpleType(Type type)
         => type.IsPrimitive || type == typeof(string) || type.IsEnum;
+
+    private LuaPluginManifest? LoadPluginManifest(string manifestPath)
+    {
+        var content = File.ReadAllText(manifestPath);
+        var manifestScript = new Script();
+        var result = manifestScript.DoString(content, null, manifestPath);
+
+        if (result.Type != DataType.Table)
+        {
+            _logger.Warning("Skipping Lua plugin manifest at {ManifestPath}: manifest did not return a table", manifestPath);
+
+            return null;
+        }
+
+        var table = result.Table;
+
+        return new(
+            GetStringField(table, "id"),
+            GetStringField(table, "name"),
+            GetStringField(table, "version"),
+            GetStringField(table, "entry")
+        );
+    }
 
     private void LoadToUserData()
     {

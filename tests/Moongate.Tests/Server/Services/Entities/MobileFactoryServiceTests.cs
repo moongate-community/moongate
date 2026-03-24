@@ -2,6 +2,8 @@ using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.FileLoaders;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -504,6 +506,117 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesDefaultFactionId_ShouldProjectFactionIdToRuntime()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "faction_guard",
+                Name = "Faction Guard",
+                Category = "guards",
+                Description = "guard",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                DefaultFactionId = "true_britannians"
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("faction_guard");
+
+        Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenRepositoryGuardTemplateDefinesFaction_ShouldProjectFactionIdToRuntime()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var templateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, templateService);
+
+        await loader.LoadAsync();
+
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("warrior_guard_male_npc");
+
+        Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenRepositoryVendorTemplateDefinesSellProfileAndFaction_ShouldProjectBothToRuntime()
+    {
+        var repositoryRoot = ResolveRepositoryRoot();
+        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
+        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+
+        var templateService = new MobileTemplateService();
+        var mobileLoader = new MobileTemplateLoader(directoriesConfig, templateService);
+        await mobileLoader.LoadAsync();
+
+        var sellProfileService = new SellProfileTemplateService();
+        var sellProfileLoader = new SellProfileTemplateLoader(directoriesConfig, sellProfileService);
+        await sellProfileLoader.LoadAsync();
+
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var service = new MobileFactoryService(
+            templateService,
+            new TestNameService(),
+            persistence,
+            sellProfileService
+        );
+
+        var mobile = service.CreateMobileFromTemplate("blacksmith_vendor_npc");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
+                Assert.That(mobile.TryGetCustomString("sell_profile_id", out var profileId), Is.True);
+                Assert.That(profileId, Is.EqualTo("vendor.blacksmith"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesLootTables_ShouldProjectThemToRuntimeCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "loot_mobile",
+                Name = "Loot Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                HairStyle = 0,
+                LootTables = ["undead.low", "gold.small"]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("loot_mobile");
+
+        Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Loot.LootTables, out var rawLootTables), Is.True);
+        Assert.That(rawLootTables, Is.EqualTo("undead.low,gold.small"));
+    }
+
+    [Test]
     public async Task CreatePlayerMobile_ShouldMapPacketFieldsAndAllocateSerial()
     {
         using var temp = new TempDirectory();
@@ -680,5 +793,22 @@ public class MobileFactoryServiceTests
         await persistence.StartAsync();
 
         return persistence;
+    }
+
+    private static string ResolveRepositoryRoot()
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (current is not null)
+        {
+            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
+            {
+                return current.FullName;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
     }
 }

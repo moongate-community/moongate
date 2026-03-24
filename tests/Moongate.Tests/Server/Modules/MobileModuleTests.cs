@@ -1,12 +1,11 @@
-using Moongate.Network.Packets.Incoming.Speech;
-using Moongate.Network.Packets.Outgoing.Speech;
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Entities;
-using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
 using Moongate.Tests.Server.Services.Spatial;
@@ -182,6 +181,7 @@ public class MobileModuleTests
         public string? LastSpawnTemplateId { get; private set; }
         public Point3D LastSpawnLocation { get; private set; } = Point3D.Zero;
         public int LastSpawnMapId { get; private set; }
+
         public UOMobileEntity? SpawnedMobile
         {
             get => _spawnedMobile;
@@ -197,9 +197,6 @@ public class MobileModuleTests
         }
 
         private UOMobileEntity? _spawnedMobile;
-
-        public void Register(UOMobileEntity mobile)
-            => _mobiles[mobile.Id] = mobile;
 
         public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
         {
@@ -243,6 +240,9 @@ public class MobileModuleTests
         )
             => Task.FromResult(new List<UOMobileEntity>());
 
+        public void Register(UOMobileEntity mobile)
+            => _mobiles[mobile.Id] = mobile;
+
         public Task<UOMobileEntity> SpawnFromTemplateAsync(
             string templateId,
             Point3D location,
@@ -259,7 +259,8 @@ public class MobileModuleTests
             LastSpawnMapId = mapId;
 
             return Task.FromResult(
-                SpawnedMobile ?? new UOMobileEntity
+                SpawnedMobile ??
+                new UOMobileEntity
                 {
                     Id = (Serial)0x400,
                     Name = "Horse",
@@ -291,6 +292,34 @@ public class MobileModuleTests
             CancellationToken cancellationToken = default
         )
             => Task.FromResult((false, (UOMobileEntity?)null));
+    }
+
+    [Test]
+    public void Dismount_ShouldDelegateToMobileService()
+    {
+        var characterService = new MobileModuleTestCharacterService();
+        var speechService = new MobileModuleTestSpeechService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatialService = new RegionDataLoaderTestSpatialWorldService();
+        var mobileService = new MobileModuleTestMobileService();
+        var module = new MobileModule(
+            characterService,
+            speechService,
+            sessionService,
+            spatialService,
+            mobileService: mobileService
+        );
+
+        var dismounted = module.Dismount(0x200);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dismounted, Is.True);
+                Assert.That(mobileService.LastRiderId, Is.EqualTo((Serial)0x200));
+                Assert.That(mobileService.DismountCalls, Is.EqualTo(1));
+            }
+        );
     }
 
     [Test]
@@ -342,6 +371,40 @@ public class MobileModuleTests
     }
 
     [Test]
+    public void Spawn_WhenPositionIsValid_ShouldDelegateToMobileService()
+    {
+        var characterService = new MobileModuleTestCharacterService();
+        var speechService = new MobileModuleTestSpeechService();
+        var sessionService = new FakeGameNetworkSessionService();
+        var spatialService = new RegionDataLoaderTestSpatialWorldService();
+        var mobileService = new MobileModuleTestMobileService();
+        var module = new MobileModule(
+            characterService,
+            speechService,
+            sessionService,
+            spatialService,
+            mobileService: mobileService
+        );
+        var position = new Table(null);
+        position["x"] = 100;
+        position["y"] = 200;
+        position["z"] = 5;
+        position["map_id"] = 1;
+
+        var mobile = module.Spawn("ethereal_horse_mount", position);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile, Is.Not.Null);
+                Assert.That(mobileService.LastSpawnTemplateId, Is.EqualTo("ethereal_horse_mount"));
+                Assert.That(mobileService.LastSpawnLocation, Is.EqualTo(new Point3D(100, 200, 5)));
+                Assert.That(mobileService.LastSpawnMapId, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public void TryMount_ShouldDelegateToMobileService()
     {
         var characterService = new MobileModuleTestCharacterService();
@@ -349,7 +412,13 @@ public class MobileModuleTests
         var sessionService = new FakeGameNetworkSessionService();
         var spatialService = new RegionDataLoaderTestSpatialWorldService();
         var mobileService = new MobileModuleTestMobileService();
-        var module = new MobileModule(characterService, speechService, sessionService, spatialService, mobileService: mobileService);
+        var module = new MobileModule(
+            characterService,
+            speechService,
+            sessionService,
+            spatialService,
+            mobileService: mobileService
+        );
 
         var mounted = module.TryMount(0x200, 0x300);
 
@@ -359,63 +428,6 @@ public class MobileModuleTests
                 Assert.That(mounted, Is.True);
                 Assert.That(mobileService.LastRiderId, Is.EqualTo((Serial)0x200));
                 Assert.That(mobileService.LastMountId, Is.EqualTo((Serial)0x300));
-            }
-        );
-    }
-
-    [Test]
-    public void TryMount_ShouldUpdateSessionMountedState_AndEnqueueSelfRefresh()
-    {
-        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
-        var characterService = new MobileModuleTestCharacterService();
-        var speechService = new MobileModuleTestSpeechService();
-        var sessionService = new FakeGameNetworkSessionService();
-        var spatialService = new RegionDataLoaderTestSpatialWorldService();
-        var mobileService = new MobileModuleTestMobileService
-        {
-            SpawnedMobile = new UOMobileEntity
-            {
-                Id = (Serial)0x300,
-                Name = "horse",
-                MapId = 1,
-                Location = new(100, 100, 0)
-            }
-        };
-        var queue = new BasePacketListenerTestOutgoingPacketQueue();
-        var rider = new UOMobileEntity
-        {
-            Id = (Serial)0x200,
-            Name = "rider",
-            MapId = 1,
-            Location = new(100, 100, 0)
-        };
-        spatialService.AddOrUpdateMobile(rider);
-        spatialService.AddOrUpdateMobile(mobileService.SpawnedMobile);
-        var session = new GameSession(new(client))
-        {
-            CharacterId = rider.Id,
-            Character = rider
-        };
-        sessionService.Add(session);
-        var module = new MobileModule(
-            characterService,
-            speechService,
-            sessionService,
-            spatialService,
-            mobileService: mobileService,
-            outgoingPacketQueue: queue
-        );
-
-        var mounted = module.TryMount(0x200, 0x300);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mounted, Is.True);
-                Assert.That(session.IsMounted, Is.True);
-                Assert.That(session.Character!.MountedMobileId, Is.EqualTo((Serial)0x300));
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<DrawPlayerPacket>());
             }
         );
     }
@@ -476,57 +488,58 @@ public class MobileModuleTests
     }
 
     [Test]
-    public void Dismount_ShouldDelegateToMobileService()
+    public void TryMount_ShouldUpdateSessionMountedState_AndEnqueueSelfRefresh()
     {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var characterService = new MobileModuleTestCharacterService();
         var speechService = new MobileModuleTestSpeechService();
         var sessionService = new FakeGameNetworkSessionService();
         var spatialService = new RegionDataLoaderTestSpatialWorldService();
-        var mobileService = new MobileModuleTestMobileService();
-        var module = new MobileModule(characterService, speechService, sessionService, spatialService, mobileService: mobileService);
-
-        var dismounted = module.Dismount(0x200);
-
-        Assert.Multiple(
-            () =>
+        var mobileService = new MobileModuleTestMobileService
+        {
+            SpawnedMobile = new()
             {
-                Assert.That(dismounted, Is.True);
-                Assert.That(mobileService.LastRiderId, Is.EqualTo((Serial)0x200));
-                Assert.That(mobileService.DismountCalls, Is.EqualTo(1));
+                Id = (Serial)0x300,
+                Name = "horse",
+                MapId = 1,
+                Location = new(100, 100, 0)
             }
-        );
-    }
-
-    [Test]
-    public void Spawn_WhenPositionIsValid_ShouldDelegateToMobileService()
-    {
-        var characterService = new MobileModuleTestCharacterService();
-        var speechService = new MobileModuleTestSpeechService();
-        var sessionService = new FakeGameNetworkSessionService();
-        var spatialService = new RegionDataLoaderTestSpatialWorldService();
-        var mobileService = new MobileModuleTestMobileService();
+        };
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var rider = new UOMobileEntity
+        {
+            Id = (Serial)0x200,
+            Name = "rider",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatialService.AddOrUpdateMobile(rider);
+        spatialService.AddOrUpdateMobile(mobileService.SpawnedMobile);
+        var session = new GameSession(new(client))
+        {
+            CharacterId = rider.Id,
+            Character = rider
+        };
+        sessionService.Add(session);
         var module = new MobileModule(
             characterService,
             speechService,
             sessionService,
             spatialService,
-            mobileService: mobileService
+            mobileService: mobileService,
+            outgoingPacketQueue: queue
         );
-        var position = new Table(null);
-        position["x"] = 100;
-        position["y"] = 200;
-        position["z"] = 5;
-        position["map_id"] = 1;
 
-        var mobile = module.Spawn("ethereal_horse_mount", position);
+        var mounted = module.TryMount(0x200, 0x300);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(mobile, Is.Not.Null);
-                Assert.That(mobileService.LastSpawnTemplateId, Is.EqualTo("ethereal_horse_mount"));
-                Assert.That(mobileService.LastSpawnLocation, Is.EqualTo(new Point3D(100, 200, 5)));
-                Assert.That(mobileService.LastSpawnMapId, Is.EqualTo(1));
+                Assert.That(mounted, Is.True);
+                Assert.That(session.IsMounted, Is.True);
+                Assert.That(session.Character!.MountedMobileId, Is.EqualTo((Serial)0x300));
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<DrawPlayerPacket>());
             }
         );
     }

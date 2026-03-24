@@ -7,19 +7,30 @@ namespace Moongate.Tests.Server.Services.Plugins;
 public class PluginDependencyGraphServiceTests
 {
     [Test]
-    public void ResolveDependencyOrder_WhenPluginsHaveLinearDependencies_ShouldReturnTopologicalOrder()
+    public void ResolveDependencyOrder_WhenCycleExists_ShouldThrowInvalidOperationException()
     {
         var service = new PluginDependencyGraphService();
         var plugins = new[]
         {
-            CreatePlugin("alpha", dependencies: [CreateDependency("beta")]),
-            CreatePlugin("beta", dependencies: [CreateDependency("gamma")]),
-            CreatePlugin("gamma")
+            CreatePlugin("alpha", [CreateDependency("beta")]),
+            CreatePlugin("beta", [CreateDependency("alpha")])
+        };
+
+        Assert.Throws<InvalidOperationException>(() => service.ResolveDependencyOrder(plugins));
+    }
+
+    [Test]
+    public void ResolveDependencyOrder_WhenOptionalDependencyIsMissing_ShouldReturnPlugin()
+    {
+        var service = new PluginDependencyGraphService();
+        var plugins = new[]
+        {
+            CreatePlugin("alpha", [CreateDependency("beta", true)])
         };
 
         var ordered = service.ResolveDependencyOrder(plugins);
 
-        Assert.That(ordered.Select(plugin => plugin.PluginId), Is.EqualTo(["gamma", "beta", "alpha"]));
+        Assert.That(ordered.Select(plugin => plugin.PluginId), Is.EqualTo(["alpha"]));
     }
 
     [Test]
@@ -36,43 +47,39 @@ public class PluginDependencyGraphServiceTests
     }
 
     [Test]
+    public void ResolveDependencyOrder_WhenPluginsHaveLinearDependencies_ShouldReturnTopologicalOrder()
+    {
+        var service = new PluginDependencyGraphService();
+        var plugins = new[]
+        {
+            CreatePlugin("alpha", [CreateDependency("beta")]),
+            CreatePlugin("beta", [CreateDependency("gamma")]),
+            CreatePlugin("gamma")
+        };
+
+        var ordered = service.ResolveDependencyOrder(plugins);
+
+        Assert.That(ordered.Select(plugin => plugin.PluginId), Is.EqualTo(["gamma", "beta", "alpha"]));
+    }
+
+    [Test]
     public void ResolveDependencyOrder_WhenRequiredDependencyIsMissing_ShouldThrowInvalidOperationException()
     {
         var service = new PluginDependencyGraphService();
         var plugins = new[]
         {
-            CreatePlugin("alpha", dependencies: [CreateDependency("beta")])
+            CreatePlugin("alpha", [CreateDependency("beta")])
         };
 
         Assert.Throws<InvalidOperationException>(() => service.ResolveDependencyOrder(plugins));
     }
 
-    [Test]
-    public void ResolveDependencyOrder_WhenOptionalDependencyIsMissing_ShouldReturnPlugin()
-    {
-        var service = new PluginDependencyGraphService();
-        var plugins = new[]
+    private static MoongatePluginDependencyManifest CreateDependency(string id, bool optional = false)
+        => new()
         {
-            CreatePlugin("alpha", dependencies: [CreateDependency("beta", optional: true)])
+            Id = id,
+            Optional = optional
         };
-
-        var ordered = service.ResolveDependencyOrder(plugins);
-
-        Assert.That(ordered.Select(plugin => plugin.PluginId), Is.EqualTo(["alpha"]));
-    }
-
-    [Test]
-    public void ResolveDependencyOrder_WhenCycleExists_ShouldThrowInvalidOperationException()
-    {
-        var service = new PluginDependencyGraphService();
-        var plugins = new[]
-        {
-            CreatePlugin("alpha", dependencies: [CreateDependency("beta")]),
-            CreatePlugin("beta", dependencies: [CreateDependency("alpha")])
-        };
-
-        Assert.Throws<InvalidOperationException>(() => service.ResolveDependencyOrder(plugins));
-    }
 
     private static DiscoveredPlugin CreatePlugin(
         string id,
@@ -82,7 +89,7 @@ public class PluginDependencyGraphServiceTests
             id,
             $"/plugins/{id}",
             $"/plugins/{id}/manifest.json",
-            new MoongatePluginManifest
+            new()
             {
                 Id = id,
                 Name = id,
@@ -93,11 +100,4 @@ public class PluginDependencyGraphServiceTests
                 Dependencies = dependencies ?? []
             }
         );
-
-    private static MoongatePluginDependencyManifest CreateDependency(string id, bool optional = false)
-        => new()
-        {
-            Id = id,
-            Optional = optional
-        };
 }

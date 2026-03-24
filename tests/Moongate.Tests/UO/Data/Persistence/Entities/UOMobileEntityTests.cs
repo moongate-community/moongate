@@ -40,163 +40,6 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void HydrateEquipmentRuntime_WhenWeaponEquipped_ShouldSetDisplayedWeaponDamage()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000078
-        };
-        var scimitar = new UOItemEntity
-        {
-            Id = (Serial)0x40000078,
-            ItemId = 0x13B6,
-            EquippedMobileId = mobile.Id,
-            EquippedLayer = ItemLayerType.OneHanded,
-            CombatStats = new()
-            {
-                DamageMin = 13,
-                DamageMax = 15
-            }
-        };
-
-        mobile.HydrateEquipmentRuntime([scimitar]);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(13));
-                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(15));
-            }
-        );
-    }
-
-    [Test]
-    public void HydrateEquipmentRuntime_WhenNoWeaponEquipped_ShouldUseUnarmedDisplayedDamage()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000079
-        };
-        var shirt = new UOItemEntity
-        {
-            Id = (Serial)0x40000079,
-            ItemId = 0x1517,
-            EquippedMobileId = mobile.Id,
-            EquippedLayer = ItemLayerType.Shirt
-        };
-
-        mobile.HydrateEquipmentRuntime([shirt]);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
-                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
-            }
-        );
-    }
-
-    [Test]
-    public void CombatState_ShouldDefaultToNoCombatantAndEmptyAggressorLists()
-    {
-        var mobile = new UOMobileEntity();
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.CombatantId, Is.EqualTo(Serial.Zero));
-                Assert.That(mobile.Warmode, Is.False);
-                Assert.That(mobile.NextCombatAtUtc, Is.Null);
-                Assert.That(mobile.LastCombatAtUtc, Is.Null);
-                Assert.That(mobile.Aggressors, Is.Empty);
-                Assert.That(mobile.Aggressed, Is.Empty);
-            }
-        );
-    }
-
-    [Test]
-    public void WarmodeAlias_ShouldMapToIsWarMode()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Warmode = true
-        };
-
-        Assert.That(mobile.IsWarMode, Is.True);
-
-        mobile.IsWarMode = false;
-
-        Assert.That(mobile.Warmode, Is.False);
-    }
-
-    [Test]
-    public void RefreshAggressor_ShouldAddAndUpdateExistingEntries()
-    {
-        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
-        var later = now.AddSeconds(30);
-        var attackerId = (Serial)0x00000010;
-        var defenderId = (Serial)0x00000020;
-        var mobile = new UOMobileEntity();
-
-        mobile.RefreshAggressor(attackerId, defenderId, now);
-        mobile.RefreshAggressor(attackerId, defenderId, later, isCriminal: true);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
-                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
-                Assert.That(mobile.Aggressors[0].LastCombatAtUtc, Is.EqualTo(later));
-                Assert.That(mobile.Aggressors[0].IsCriminal, Is.True);
-                Assert.That(mobile.Aggressed[0].LastCombatAtUtc, Is.EqualTo(later));
-            }
-        );
-    }
-
-    [Test]
-    public void ExpireAggressors_ShouldRemoveTimedOutEntries()
-    {
-        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
-        var mobile = new UOMobileEntity();
-
-        mobile.Aggressors.Add(new((Serial)0x10, (Serial)0x20, now.AddMinutes(-3), false, false));
-        mobile.Aggressors.Add(new((Serial)0x11, (Serial)0x21, now.AddSeconds(-30), false, false));
-        mobile.Aggressed.Add(new((Serial)0x12, (Serial)0x22, now.AddMinutes(-4), false, false));
-        mobile.Aggressed.Add(new((Serial)0x13, (Serial)0x23, now.AddSeconds(-10), false, false));
-
-        mobile.ExpireAggressors(now, TimeSpan.FromMinutes(2));
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
-                Assert.That(mobile.Aggressors[0].AttackerId, Is.EqualTo((Serial)0x11));
-                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
-                Assert.That(mobile.Aggressed[0].AttackerId, Is.EqualTo((Serial)0x13));
-            }
-        );
-    }
-
-    [Test]
-    public void Sounds_ShouldDefaultEmptyAndResolveStoredEntries()
-    {
-        var mobile = new UOMobileEntity();
-
-        Assert.That(mobile.Sounds, Is.Empty);
-        Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out _), Is.False);
-
-        mobile.Sounds[MobileSoundType.Attack] = 0x023B;
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out var soundId), Is.True);
-                Assert.That(soundId, Is.EqualTo(0x023B));
-            }
-        );
-    }
-
-    [Test]
     public void ApplyAndRemoveRuntimeModifier_ShouldUpdateEffectiveValues()
     {
         var mobile = new UOMobileEntity
@@ -254,6 +97,24 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void CombatState_ShouldDefaultToNoCombatantAndEmptyAggressorLists()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.CombatantId, Is.EqualTo(Serial.Zero));
+                Assert.That(mobile.Warmode, Is.False);
+                Assert.That(mobile.NextCombatAtUtc, Is.Null);
+                Assert.That(mobile.LastCombatAtUtc, Is.Null);
+                Assert.That(mobile.Aggressors, Is.Empty);
+                Assert.That(mobile.Aggressed, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public void CustomProperties_ShouldStoreTypedValues()
     {
         var mobile = new UOMobileEntity
@@ -278,6 +139,67 @@ public class UOMobileEntityTests
                 Assert.That(mobile.TryGetCustomString("title_suffix", out var titleSuffix), Is.True);
                 Assert.That(titleSuffix, Is.EqualTo("the brave"));
                 Assert.That(mobile.CustomProperties, Has.Count.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public void EffectiveCarriedWeight_And_EffectiveMaxWeight_ShouldUseRuntimeInventoryAndModernFormula()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00001010,
+            IsPlayer = true,
+            RaceIndex = 0,
+            BaseStats = new()
+            {
+                Strength = 60
+            },
+            EquipmentModifiers = new()
+            {
+                StrengthBonus = 5
+            }
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40002010,
+            ItemId = 0x0E75,
+            Weight = 2
+        };
+        var gold = new UOItemEntity
+        {
+            Id = (Serial)0x40002011,
+            ItemId = 0x0EED,
+            Weight = 0,
+            Amount = 1000
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x40002012,
+            ItemId = 0x2FB7,
+            Weight = 2,
+            IsQuiver = true,
+            QuiverWeightReduction = 30
+        };
+        var arrows = new UOItemEntity
+        {
+            Id = (Serial)0x40002013,
+            ItemId = 0x0F3F,
+            Weight = 1,
+            Amount = 10
+        };
+
+        backpack.AddItem(gold, new(1, 1));
+        quiver.AddItem(arrows, new(2, 2));
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.BackpackId = backpack.Id;
+        mobile.AddEquippedItem(ItemLayerType.Cloak, quiver);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.EffectiveCarriedWeight, Is.EqualTo(22));
+                Assert.That(mobile.EffectiveMaxWeight, Is.EqualTo(327));
             }
         );
     }
@@ -396,6 +318,30 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void ExpireAggressors_ShouldRemoveTimedOutEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var mobile = new UOMobileEntity();
+
+        mobile.Aggressors.Add(new((Serial)0x10, (Serial)0x20, now.AddMinutes(-3), false, false));
+        mobile.Aggressors.Add(new((Serial)0x11, (Serial)0x21, now.AddSeconds(-30), false, false));
+        mobile.Aggressed.Add(new((Serial)0x12, (Serial)0x22, now.AddMinutes(-4), false, false));
+        mobile.Aggressed.Add(new((Serial)0x13, (Serial)0x23, now.AddSeconds(-10), false, false));
+
+        mobile.ExpireAggressors(now, TimeSpan.FromMinutes(2));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].AttackerId, Is.EqualTo((Serial)0x11));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed[0].AttackerId, Is.EqualTo((Serial)0x13));
+            }
+        );
+    }
+
+    [Test]
     public void GetEquippedItemsRuntime_ShouldReturnEquippedRuntimeItems()
     {
         var mobile = new UOMobileEntity
@@ -454,6 +400,50 @@ public class UOMobileEntityTests
         var flags = mobile.GetPacketFlags(true);
 
         Assert.That(flags, Is.EqualTo(0x0F));
+    }
+
+    [Test]
+    public void GetTotalSkillBaseFixedPoint_ShouldSumSkillBases()
+    {
+        SkillInfo.Table =
+        [
+            new(
+                0,
+                "Alchemy",
+                0,
+                0,
+                100,
+                "Alchemist",
+                0,
+                0,
+                0,
+                1,
+                "Alchemy",
+                Stat.Intelligence,
+                Stat.Intelligence
+            ),
+            new(
+                1,
+                "Anatomy",
+                100,
+                0,
+                0,
+                "Biologist",
+                0,
+                0,
+                0,
+                1,
+                "Anatomy",
+                Stat.Strength,
+                Stat.Intelligence
+            )
+        ];
+        var mobile = new UOMobileEntity();
+        mobile.InitializeSkills();
+        mobile.SetSkill(UOSkillName.Alchemy, 500);
+        mobile.SetSkill(UOSkillName.Anatomy, 725, 700);
+
+        Assert.That(mobile.GetTotalSkillBaseFixedPoint(), Is.EqualTo(1200));
     }
 
     [Test]
@@ -577,44 +567,6 @@ public class UOMobileEntityTests
     }
 
     [Test]
-    public void IsMounted_ShouldReflectMountedMobileRelationship()
-    {
-        var mobile = new UOMobileEntity();
-
-        Assert.That(mobile.IsMounted, Is.False);
-
-        mobile.MountedMobileId = (Serial)0x00002000;
-
-        Assert.That(mobile.IsMounted, Is.True);
-
-        mobile.MountedMobileId = Serial.Zero;
-
-        Assert.That(mobile.IsMounted, Is.False);
-    }
-
-    [Test]
-    public void TryGetMountDisplayItemReference_ShouldReturnVirtualMountLayerReference_WhenConfigured()
-    {
-        var mobile = new UOMobileEntity
-        {
-            Id = (Serial)0x00000045u,
-            MountedDisplayItemId = 0x3E9F
-        };
-
-        var found = mobile.TryGetMountDisplayItemReference(out var itemReference);
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(found, Is.True);
-                Assert.That(itemReference.ItemId, Is.EqualTo(0x3E9F));
-                Assert.That(itemReference.Id, Is.Not.EqualTo(Serial.Zero));
-                Assert.That(itemReference.Id.IsItem, Is.True);
-            }
-        );
-    }
-
-    [Test]
     public void HydrateEquipmentRuntime_ShouldBuildReferencesForOwnedEquippedItems()
     {
         var mobile = new UOMobileEntity
@@ -644,6 +596,63 @@ public class UOMobileEntityTests
                 Assert.That(reference.Id, Is.EqualTo(shirt.Id));
                 Assert.That(reference.ItemId, Is.EqualTo(shirt.ItemId));
                 Assert.That(reference.Hue, Is.EqualTo(shirt.Hue));
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_WhenNoWeaponEquipped_ShouldUseUnarmedDisplayedDamage()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000079
+        };
+        var shirt = new UOItemEntity
+        {
+            Id = (Serial)0x40000079,
+            ItemId = 0x1517,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.Shirt
+        };
+
+        mobile.HydrateEquipmentRuntime([shirt]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(1));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(4));
+            }
+        );
+    }
+
+    [Test]
+    public void HydrateEquipmentRuntime_WhenWeaponEquipped_ShouldSetDisplayedWeaponDamage()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000078
+        };
+        var scimitar = new UOItemEntity
+        {
+            Id = (Serial)0x40000078,
+            ItemId = 0x13B6,
+            EquippedMobileId = mobile.Id,
+            EquippedLayer = ItemLayerType.OneHanded,
+            CombatStats = new()
+            {
+                DamageMin = 13,
+                DamageMax = 15
+            }
+        };
+
+        mobile.HydrateEquipmentRuntime([scimitar]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.MinWeaponDamage, Is.EqualTo(13));
+                Assert.That(mobile.MaxWeaponDamage, Is.EqualTo(15));
             }
         );
     }
@@ -699,6 +708,22 @@ public class UOMobileEntityTests
                 Assert.That(mobile.Skills[UOSkillName.Anatomy].Value, Is.EqualTo(0));
             }
         );
+    }
+
+    [Test]
+    public void IsMounted_ShouldReflectMountedMobileRelationship()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.IsMounted, Is.False);
+
+        mobile.MountedMobileId = (Serial)0x00002000;
+
+        Assert.That(mobile.IsMounted, Is.True);
+
+        mobile.MountedMobileId = Serial.Zero;
+
+        Assert.That(mobile.IsMounted, Is.False);
     }
 
     [Test]
@@ -782,6 +807,30 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void RefreshAggressor_ShouldAddAndUpdateExistingEntries()
+    {
+        var now = new DateTime(2026, 3, 18, 12, 0, 0, DateTimeKind.Utc);
+        var later = now.AddSeconds(30);
+        var attackerId = (Serial)0x00000010;
+        var defenderId = (Serial)0x00000020;
+        var mobile = new UOMobileEntity();
+
+        mobile.RefreshAggressor(attackerId, defenderId, now);
+        mobile.RefreshAggressor(attackerId, defenderId, later, true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.Aggressors, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressed, Has.Count.EqualTo(1));
+                Assert.That(mobile.Aggressors[0].LastCombatAtUtc, Is.EqualTo(later));
+                Assert.That(mobile.Aggressors[0].IsCriminal, Is.True);
+                Assert.That(mobile.Aggressed[0].LastCombatAtUtc, Is.EqualTo(later));
+            }
+        );
+    }
+
+    [Test]
     public void Skills_ShouldStoreEntriesBySkillName()
     {
         SkillInfo.Table =
@@ -820,6 +869,68 @@ public class UOMobileEntityTests
                 Assert.That(mobile.Skills, Has.Count.EqualTo(1));
                 Assert.That(mobile.Skills[UOSkillName.Alchemy].Value, Is.EqualTo(500));
                 Assert.That(mobile.Skills[UOSkillName.Alchemy].Lock, Is.EqualTo(UOSkillLock.Locked));
+            }
+        );
+    }
+
+    [Test]
+    public void Sounds_ShouldDefaultEmptyAndResolveStoredEntries()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.Sounds, Is.Empty);
+        Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out _), Is.False);
+
+        mobile.Sounds[MobileSoundType.Attack] = 0x023B;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetSound(MobileSoundType.Attack, out var soundId), Is.True);
+                Assert.That(soundId, Is.EqualTo(0x023B));
+            }
+        );
+    }
+
+    [Test]
+    public void StatLocks_ShouldDefaultToUp_AndTotalBaseStatsShouldSumCoreStats()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Strength = 50,
+            Dexterity = 40,
+            Intelligence = 30
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.StrengthLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.DexterityLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.IntelligenceLock, Is.EqualTo(UOSkillLock.Up));
+                Assert.That(mobile.GetTotalBaseStats(), Is.EqualTo(120));
+            }
+        );
+    }
+
+    [Test]
+    public void TryGetMountDisplayItemReference_ShouldReturnVirtualMountLayerReference_WhenConfigured()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000045u,
+            MountedDisplayItemId = 0x3E9F
+        };
+
+        var found = mobile.TryGetMountDisplayItemReference(out var itemReference);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(found, Is.True);
+                Assert.That(itemReference.ItemId, Is.EqualTo(0x3E9F));
+                Assert.That(itemReference.Id, Is.Not.EqualTo(Serial.Zero));
+                Assert.That(itemReference.Id.IsItem, Is.True);
             }
         );
     }
@@ -868,5 +979,20 @@ public class UOMobileEntityTests
                 Assert.That(item.EquippedLayer, Is.Null);
             }
         );
+    }
+
+    [Test]
+    public void WarmodeAlias_ShouldMapToIsWarMode()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Warmode = true
+        };
+
+        Assert.That(mobile.IsWarMode, Is.True);
+
+        mobile.IsWarMode = false;
+
+        Assert.That(mobile.Warmode, Is.False);
     }
 }

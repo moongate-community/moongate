@@ -1,6 +1,5 @@
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Modules;
-using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -19,6 +18,14 @@ public sealed class HelpTicketsModuleTests
 
         public HelpTicketEntity? NextResult { get; set; }
 
+        public Task<HelpTicketEntity?> AssignToAccountAsync(
+            Serial ticketId,
+            Serial assignedToAccountId,
+            Serial? assignedToCharacterId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<HelpTicketEntity?>(null);
+
         public Task<HelpTicketEntity?> CreateTicketAsync(
             long sessionId,
             HelpTicketCategory category,
@@ -30,11 +37,21 @@ public sealed class HelpTicketsModuleTests
             LastSessionId = sessionId;
             LastCategory = category;
             LastMessage = message;
+
             return Task.FromResult(NextResult);
         }
 
         public Task<IReadOnlyList<HelpTicketEntity>> GetAllTicketsAsync(CancellationToken cancellationToken = default)
             => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
+
+        public Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
+            Serial senderAccountId,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
+
+        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
+            => Task.FromResult<HelpTicketEntity?>(null);
 
         public Task<(IReadOnlyList<HelpTicketEntity> Items, int TotalCount)> GetTicketsForAdminAsync(
             int page,
@@ -46,16 +63,11 @@ public sealed class HelpTicketsModuleTests
         )
             => Task.FromResult<(IReadOnlyList<HelpTicketEntity>, int)>(([], 0));
 
-        public Task<HelpTicketEntity?> GetTicketByIdAsync(Serial ticketId, CancellationToken cancellationToken = default)
-            => Task.FromResult<HelpTicketEntity?>(null);
+        public Task StartAsync()
+            => Task.CompletedTask;
 
-        public Task<HelpTicketEntity?> AssignToAccountAsync(
-            Serial ticketId,
-            Serial assignedToAccountId,
-            Serial? assignedToCharacterId,
-            CancellationToken cancellationToken = default
-        )
-            => Task.FromResult<HelpTicketEntity?>(null);
+        public Task StopAsync()
+            => Task.CompletedTask;
 
         public Task<HelpTicketEntity?> UpdateStatusAsync(
             Serial ticketId,
@@ -63,18 +75,16 @@ public sealed class HelpTicketsModuleTests
             CancellationToken cancellationToken = default
         )
             => Task.FromResult<HelpTicketEntity?>(null);
+    }
 
-        public Task<IReadOnlyList<HelpTicketEntity>> GetOpenTicketsForAccountAsync(
-            Serial senderAccountId,
-            CancellationToken cancellationToken = default
-        )
-            => Task.FromResult<IReadOnlyList<HelpTicketEntity>>([]);
+    [Test]
+    public void Submit_WhenCategoryNameIsInvalid_ShouldReturnFalse()
+    {
+        var module = new HelpTicketsModule(new HelpTicketsModuleServiceStub());
 
-        public Task StartAsync()
-            => Task.CompletedTask;
+        var result = module.Submit(123, "NotARealCategory", "Need help");
 
-        public Task StopAsync()
-            => Task.CompletedTask;
+        Assert.That(result, Is.False);
     }
 
     [Test]
@@ -82,13 +92,13 @@ public sealed class HelpTicketsModuleTests
     {
         var service = new HelpTicketsModuleServiceStub
         {
-            NextResult = new HelpTicketEntity
+            NextResult = new()
             {
                 Id = (Serial)(Serial.ItemOffset + 75),
                 Category = HelpTicketCategory.Question,
                 Message = "Need help",
                 MapId = 0,
-                Location = new Point3D(0, 0, 0),
+                Location = new(0, 0, 0),
                 Status = HelpTicketStatus.Open,
                 CreatedAtUtc = DateTime.UtcNow,
                 LastUpdatedAtUtc = DateTime.UtcNow
@@ -107,15 +117,5 @@ public sealed class HelpTicketsModuleTests
                 Assert.That(service.LastMessage, Is.EqualTo("Need help"));
             }
         );
-    }
-
-    [Test]
-    public void Submit_WhenCategoryNameIsInvalid_ShouldReturnFalse()
-    {
-        var module = new HelpTicketsModule(new HelpTicketsModuleServiceStub());
-
-        var result = module.Submit(123, "NotARealCategory", "Need help");
-
-        Assert.That(result, Is.False);
     }
 }

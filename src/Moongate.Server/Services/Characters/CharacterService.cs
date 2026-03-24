@@ -262,28 +262,6 @@ public class CharacterService : ICharacterService
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
     }
 
-    private static UOItemEntity CloneItem(UOItemEntity item)
-        => new()
-        {
-            Id = item.Id,
-            Location = item.Location,
-            Name = item.Name,
-            Weight = item.Weight,
-            Amount = item.Amount,
-            IsStackable = item.IsStackable,
-            Rarity = item.Rarity,
-            ItemId = item.ItemId,
-            Hue = item.Hue,
-            GumpId = item.GumpId,
-            ParentContainerId = item.ParentContainerId,
-            ContainerPosition = item.ContainerPosition,
-            EquippedMobileId = item.EquippedMobileId,
-            EquippedLayer = item.EquippedLayer
-        };
-
-    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
-        => new(character.Profession, character.Race, character.Gender);
-
     private static void ApplyItemArgument(UOItemEntity item, string key, JsonElement value)
     {
         var normalizedKey = key.Trim();
@@ -349,6 +327,28 @@ public class CharacterService : ICharacterService
         }
     }
 
+    private static UOItemEntity CloneItem(UOItemEntity item)
+        => new()
+        {
+            Id = item.Id,
+            Location = item.Location,
+            Name = item.Name,
+            Weight = item.Weight,
+            Amount = item.Amount,
+            IsStackable = item.IsStackable,
+            Rarity = item.Rarity,
+            ItemId = item.ItemId,
+            Hue = item.Hue,
+            GumpId = item.GumpId,
+            ParentContainerId = item.ParentContainerId,
+            ContainerPosition = item.ContainerPosition,
+            EquippedMobileId = item.EquippedMobileId,
+            EquippedLayer = item.EquippedLayer
+        };
+
+    private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
+        => new(character.Profession, character.Race, character.Gender);
+
     private async Task EnsureStarterBackpackAsync(UOMobileEntity character)
     {
         if (character.HasEquippedItem(ItemLayerType.Backpack))
@@ -369,6 +369,145 @@ public class CharacterService : ICharacterService
         await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
     }
 
+    private async Task EnsureStarterInventoryAsync(UOMobileEntity character)
+    {
+        var starterProfileContext = CreateStarterProfileContext(character);
+        await EnsureStarterBackpackAsync(character);
+        var backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(character.BackpackId) ??
+                       throw new InvalidOperationException(
+                           $"Starter backpack '{character.BackpackId}' was not created for character '{character.Id}'."
+                       );
+        var loadout = _startupLoadoutScriptService.BuildLoadout(
+            starterProfileContext,
+            character.Name ?? string.Empty
+        );
+        await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
+
+        for (var i = 0; i < loadout.Backpack.Count; i++)
+        {
+            await PersistBackpackItemAsync(character, backpack, loadout.Backpack[i], i);
+        }
+
+        foreach (var equippedItem in loadout.Equip)
+        {
+            await PersistEquippedItemAsync(character, equippedItem);
+        }
+    }
+
+    private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)
+    {
+        ArgumentNullException.ThrowIfNull(character);
+
+        if (character.EquippedItemIds.Count == 0)
+        {
+            character.HydrateEquipmentRuntime([]);
+
+            return;
+        }
+
+        var equippedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                item => item.EquippedMobileId == character.Id && item.EquippedLayer is not null,
+                                static item => item
+                            );
+
+        var hydratedIds = new HashSet<Serial>(equippedItems.Count);
+
+        foreach (var item in equippedItems)
+        {
+            hydratedIds.Add(item.Id);
+        }
+
+        // Collect IDs not found by the batch query
+        var missingIds = new HashSet<Serial>();
+
+        foreach (var (_, itemId) in character.EquippedItemIds)
+        {
+            if (!hydratedIds.Contains(itemId))
+            {
+                missingIds.Add(itemId);
+            }
+        }
+
+        if (missingIds.Count == 0)
+        {
+            await HydrateEquippedContainerContentsAsync(equippedItems);
+            character.HydrateEquipmentRuntime(equippedItems);
+
+            return;
+        }
+
+        // Single batch query for ALL missing items instead of N individual GetByIdAsync calls
+        var missingItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                               item => missingIds.Contains(item.Id),
+                               static item => item
+                           );
+
+        var inferredItems = new List<UOItemEntity>(missingItems.Count);
+
+        foreach (var item in missingItems)
+        {
+            foreach (var (layer, itemId) in character.EquippedItemIds)
+            {
+                if (itemId != item.Id)
+                {
+                    continue;
+                }
+
+                item.EquippedMobileId = character.Id;
+                item.EquippedLayer = layer;
+                inferredItems.Add(item);
+
+                break;
+            }
+        }
+
+        if (inferredItems.Count > 0)
+        {
+            await HydrateEquippedContainerContentsAsync(equippedItems);
+            await HydrateEquippedContainerContentsAsync(inferredItems);
+            character.HydrateEquipmentRuntime([.. equippedItems, .. inferredItems]);
+
+            return;
+        }
+
+        await HydrateEquippedContainerContentsAsync(equippedItems);
+        character.HydrateEquipmentRuntime(equippedItems);
+    }
+
+    private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
+    {
+        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
+                                 item => item.ParentContainerId == container.Id,
+                                 static item => item
+                             );
+
+        foreach (var item in containedItems)
+        {
+            var cloned = CloneItem(item);
+            container.AddItem(cloned, item.ContainerPosition);
+            await HydrateContainedItemsRecursiveAsync(cloned);
+        }
+    }
+
+    private async Task HydrateEquippedContainerContentsAsync(IEnumerable<UOItemEntity> equippedItems)
+    {
+        foreach (var equippedItem in equippedItems)
+        {
+            await HydrateContainedItemsRecursiveAsync(equippedItem);
+        }
+    }
+
+    private static string MapItemArgumentKey(string key)
+        => key.ToLowerInvariant() switch
+        {
+            "title"    => ItemCustomParamKeys.Book.Title,
+            "author"   => ItemCustomParamKeys.Book.Author,
+            "content"  => ItemCustomParamKeys.Book.Content,
+            "pages"    => ItemCustomParamKeys.Book.Pages,
+            "writable" => ItemCustomParamKeys.Book.Writable,
+            _          => key
+        };
+
     private async Task PersistBackpackItemAsync(
         UOMobileEntity character,
         UOItemEntity backpack,
@@ -379,7 +518,7 @@ public class CharacterService : ICharacterService
         var item = _entityFactoryService.CreateItemFromTemplate(itemDefinition.TemplateId);
         ApplyItemDefinition(item, itemDefinition);
 
-        var position = new Moongate.UO.Data.Geometry.Point2D(index + 1, index + 1);
+        var position = new Point2D(index + 1, index + 1);
         backpack.AddItem(item, position);
         await _persistenceService.UnitOfWork.Items.UpsertAsync(item);
         _logger.Debug(
@@ -424,132 +563,5 @@ public class CharacterService : ICharacterService
             itemDefinition.Layer.Value,
             character.Id
         );
-    }
-
-    private async Task EnsureStarterInventoryAsync(UOMobileEntity character)
-    {
-        var starterProfileContext = CreateStarterProfileContext(character);
-        await EnsureStarterBackpackAsync(character);
-        var backpack = await _persistenceService.UnitOfWork.Items.GetByIdAsync(character.BackpackId) ??
-                       throw new InvalidOperationException(
-                           $"Starter backpack '{character.BackpackId}' was not created for character '{character.Id}'."
-                       );
-        var loadout = _startupLoadoutScriptService.BuildLoadout(
-            starterProfileContext,
-            character.Name ?? string.Empty
-        );
-        await _persistenceService.UnitOfWork.Items.UpsertAsync(backpack);
-
-        for (var i = 0; i < loadout.Backpack.Count; i++)
-        {
-            await PersistBackpackItemAsync(character, backpack, loadout.Backpack[i], i);
-        }
-
-        foreach (var equippedItem in loadout.Equip)
-        {
-            await PersistEquippedItemAsync(character, equippedItem);
-        }
-    }
-
-    private static string MapItemArgumentKey(string key)
-        => key.ToLowerInvariant() switch
-        {
-            "title" => ItemCustomParamKeys.Book.Title,
-            "author" => ItemCustomParamKeys.Book.Author,
-            "content" => ItemCustomParamKeys.Book.Content,
-            "pages" => ItemCustomParamKeys.Book.Pages,
-            "writable" => ItemCustomParamKeys.Book.Writable,
-            _ => key
-        };
-
-    private async Task HydrateCharacterEquipmentRuntimeAsync(UOMobileEntity character)
-    {
-        ArgumentNullException.ThrowIfNull(character);
-
-        if (character.EquippedItemIds.Count == 0)
-        {
-            character.HydrateEquipmentRuntime([]);
-
-            return;
-        }
-
-        var equippedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                item => item.EquippedMobileId == character.Id && item.EquippedLayer is not null,
-                                static item => item
-                            );
-
-        var hydratedIds = new HashSet<Serial>(equippedItems.Count);
-
-        foreach (var item in equippedItems)
-        {
-            hydratedIds.Add(item.Id);
-        }
-
-        // Collect IDs not found by the batch query
-        var missingIds = new HashSet<Serial>();
-
-        foreach (var (_, itemId) in character.EquippedItemIds)
-        {
-            if (!hydratedIds.Contains(itemId))
-            {
-                missingIds.Add(itemId);
-            }
-        }
-
-        if (missingIds.Count == 0)
-        {
-            character.HydrateEquipmentRuntime(equippedItems);
-
-            return;
-        }
-
-        // Single batch query for ALL missing items instead of N individual GetByIdAsync calls
-        var missingItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                               item => missingIds.Contains(item.Id),
-                               static item => item
-                           );
-
-        var inferredItems = new List<UOItemEntity>(missingItems.Count);
-
-        foreach (var item in missingItems)
-        {
-            foreach (var (layer, itemId) in character.EquippedItemIds)
-            {
-                if (itemId != item.Id)
-                {
-                    continue;
-                }
-
-                item.EquippedMobileId = character.Id;
-                item.EquippedLayer = layer;
-                inferredItems.Add(item);
-
-                break;
-            }
-        }
-
-        if (inferredItems.Count > 0)
-        {
-            character.HydrateEquipmentRuntime([.. equippedItems, .. inferredItems]);
-
-            return;
-        }
-
-        character.HydrateEquipmentRuntime(equippedItems);
-    }
-
-    private async Task HydrateContainedItemsRecursiveAsync(UOItemEntity container)
-    {
-        var containedItems = await _persistenceService.UnitOfWork.Items.QueryAsync(
-                                 item => item.ParentContainerId == container.Id,
-                                 static item => item
-                             );
-
-        foreach (var item in containedItems)
-        {
-            var cloned = CloneItem(item);
-            container.AddItem(cloned, item.ContainerPosition);
-            await HydrateContainedItemsRecursiveAsync(cloned);
-        }
     }
 }
