@@ -10,6 +10,7 @@
           "exclude": [
             "**/bin/**",
             "**/obj/**",
+            "**/content/**",
             "**/*.Tests.csproj",
             "**/Moongate.Server.Metrics.Generators.csproj",
             "**/Moongate.Network.Packets.Generators.csproj",
