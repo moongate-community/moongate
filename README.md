@@ -74,6 +74,9 @@ Server port: `2593`
 UDP ping port: `12000`
 HTTP/UI API port: `8088`
 
+On multi-homed hosts or VM/lab setups, set `game.serverListingAddress` in `moongate.json` so shard redirects advertise the
+reachable server IP instead of relying on socket auto-detection.
+
 Transport encryption:
 
 - Moongate supports both plain and encrypted UO clients.

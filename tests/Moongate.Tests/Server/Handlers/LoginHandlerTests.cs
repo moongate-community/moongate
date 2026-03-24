@@ -3,6 +3,7 @@ using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Spans;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
@@ -529,6 +530,93 @@ public class LoginHandlerTests
         );
     }
 
+    [Test]
+    public async Task HandlePacketAsync_WhenAccountLoginSucceedsWithConfiguredServerListingAddress_ShouldAdvertiseConfiguredShardIp()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var accountService = new LoginHandlerTestAccountService
+        {
+            NextLoginResult = new()
+            {
+                Id = (Serial)0x00000001,
+                Username = "admin",
+                PasswordHash = "x"
+            }
+        };
+        var handler = CreateHandler(
+            queue: queue,
+            accountService: accountService,
+            config: new MoongateConfig
+            {
+                Game =
+                {
+                    ServerListingAddress = "192.168.0.153"
+                }
+            }
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+            session,
+            new AccountLoginPacket
+            {
+                Account = "admin",
+                Password = "password"
+            }
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(queue.TryDequeue(out var outgoingPacket), Is.True);
+                Assert.That(outgoingPacket.Packet, Is.TypeOf<ServerListPacket>());
+                var serverListPacket = (ServerListPacket)outgoingPacket.Packet;
+                Assert.That(serverListPacket.Shards.Single().IpAddress.ToString(), Is.EqualTo("192.168.0.153"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenServerSelectSucceedsWithConfiguredServerListingAddress_ShouldRedirectToConfiguredShardIp()
+    {
+        var sender = new GameLoopTestOutboundPacketSender();
+        var handler = CreateHandler(
+            sender: sender,
+            config: new MoongateConfig
+            {
+                Game =
+                {
+                    ServerListingAddress = "192.168.0.153"
+                }
+            }
+        );
+
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await handler.HandlePacketAsync(
+            session,
+            new ServerSelectPacket
+            {
+                SelectedServerIndex = 0
+            }
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(sender.SentPackets, Has.Count.EqualTo(1));
+                Assert.That(sender.SentPackets[0].Packet, Is.TypeOf<ServerRedirectPacket>());
+                var redirectPacket = (ServerRedirectPacket)sender.SentPackets[0].Packet;
+                Assert.That(redirectPacket.IPAddress.ToString(), Is.EqualTo("192.168.0.153"));
+            }
+        );
+    }
+
     private static byte[] BuildClientVersionPayload(string version, bool includeNullTerminator)
     {
         var writer = new SpanWriter(64, true);
@@ -548,15 +636,22 @@ public class LoginHandlerTests
         return data;
     }
 
-    private static LoginHandler CreateHandler()
+    private static LoginHandler CreateHandler(
+        BasePacketListenerTestOutgoingPacketQueue? queue = null,
+        LoginHandlerTestAccountService? accountService = null,
+        LoginHandlerTestCharacterService? characterService = null,
+        MoongateConfig? config = null,
+        FakeGameNetworkSessionService? sessionService = null,
+        GameLoopTestOutboundPacketSender? sender = null
+    )
         => new(
-            new BasePacketListenerTestOutgoingPacketQueue(),
-            new LoginHandlerTestAccountService(),
-            new LoginHandlerTestCharacterService(),
+            queue ?? new BasePacketListenerTestOutgoingPacketQueue(),
+            accountService ?? new LoginHandlerTestAccountService(),
+            characterService ?? new LoginHandlerTestCharacterService(),
             new NetworkServiceTestGameEventBusService(),
-            new(),
+            config ?? new(),
             new GameLoginHandoffService(),
-            new FakeGameNetworkSessionService(),
-            new GameLoopTestOutboundPacketSender()
+            sessionService ?? new FakeGameNetworkSessionService(),
+            sender ?? new GameLoopTestOutboundPacketSender()
         );
 }
