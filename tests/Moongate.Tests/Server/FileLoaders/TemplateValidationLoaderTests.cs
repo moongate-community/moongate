@@ -196,6 +196,43 @@ public class TemplateValidationLoaderTests
     }
 
     [Test]
+    public void LoadAsync_WhenMobileReferencesMissingLootTable_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "loot_mobile",
+                Name = "Loot Mobile",
+                Category = "test",
+                Description = "test",
+                Body = 0x0190,
+                SkinHue = HueSpec.FromValue(0),
+                HairHue = HueSpec.FromValue(0),
+                LootTables = ["missing_loot"]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
     public void LoadAsync_WhenMobileReferencesMissingDefaultFaction_ShouldThrow()
     {
         var itemService = new ItemTemplateService();

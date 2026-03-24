@@ -133,6 +133,7 @@ public sealed class GuardBrainAssetTests
         foreach (var guard in document.RootElement.EnumerateArray())
         {
             Assert.That(guard.GetProperty("brain").GetString(), Is.EqualTo("guard"));
+            Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }
     }
 
@@ -160,6 +161,35 @@ public sealed class GuardBrainAssetTests
             Assert.That(
                 archer.GetProperty("params").GetProperty("guard_role").GetProperty("value").GetString(),
                 Is.EqualTo("ranged")
+            );
+            Assert.That(archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.archer" }));
+        }
+    }
+
+    [Test]
+    public void GuardsTemplate_ShouldAssignWarriorGuardLootTables()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "guards.json");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var warriorIds = new[] { "warrior_guard_male_npc", "warrior_guard_female_npc" };
+
+        foreach (var warriorId in warriorIds)
+        {
+            var warrior = document.RootElement
+                                  .EnumerateArray()
+                                  .First(
+                                      element => string.Equals(
+                                          element.GetProperty("id").GetString(),
+                                          warriorId,
+                                          StringComparison.Ordinal
+                                      )
+                                  );
+
+            Assert.That(
+                warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
+                Is.EqualTo(new[] { "guard.warrior" })
             );
         }
     }

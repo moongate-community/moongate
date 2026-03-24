@@ -1,0 +1,238 @@
+[
+  {
+    "type": "mobile",
+    "id": "blacksmith_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town blacksmith vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "blacksmith",
+      "town"
+    ],
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.blacksmith",
+    "lootTables": [
+      "vendor.blacksmith"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "half_apron",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "tongs",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "a blacksmith"
+  },
+  {
+    "type": "mobile",
+    "id": "weaponsmith_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town weaponsmith vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "weaponsmith",
+      "town"
+    ],
+    "strength": 80,
+    "dexterity": 60,
+    "intelligence": 45,
+    "hits": 80,
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.weaponsmith",
+    "lootTables": [
+      "vendor.weaponsmith"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "half_apron",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "hatchet",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "the weaponsmith"
+  },
+  {
+    "type": "mobile",
+    "id": "armorer_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town armorer vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "armorer",
+      "town"
+    ],
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.armorer",
+    "lootTables": [
+      "vendor.armorer"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "fancy_shirt",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "half_apron",
+        "layer": "Waist"
+      },
+      {
+        "itemTemplateId": "boots",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "helmet",
+        "layer": "Helm"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "an armorer"
+  },
+  {
+    "type": "mobile",
+    "id": "provisioner_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town provisioner vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "provisioner",
+      "town"
+    ],
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.provisioner",
+    "lootTables": [
+      "vendor.provisioner"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "doublet",
+        "layer": "Shirt"
+      },
+      {
+        "itemTemplateId": "short_pants",
+        "layer": "Pants"
+      },
+      {
+        "itemTemplateId": "shoes",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "backpack",
+        "layer": "Backpack"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "the provisioner"
+  },
+  {
+    "type": "mobile",
+    "id": "mage_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town mage vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "mage",
+      "town"
+    ],
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.mage",
+    "lootTables": [
+      "vendor.mage"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "robe",
+        "layer": "OuterTorso"
+      },
+      {
+        "itemTemplateId": "sandals",
+        "layer": "Shoes"
+      },
+      {
+        "itemTemplateId": "wizards_hat",
+        "layer": "Helm"
+      },
+      {
+        "itemTemplateId": "spellbook",
+        "layer": "OneHanded"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "a mage"
+  },
+  {
+    "type": "mobile",
+    "id": "healer_vendor_npc",
+    "base_mobile": "base_human_npc",
+    "category": "npc",
+    "description": "Town healer vendor NPC.",
+    "tags": [
+      "npc",
+      "vendor",
+      "healer",
+      "town"
+    ],
+    "defaultFactionId": "true_britannians",
+    "sellProfileId": "vendor.healer",
+    "lootTables": [
+      "vendor.healer"
+    ],
+    "fixedEquipment": [
+      {
+        "itemTemplateId": "robe",
+        "layer": "OuterTorso"
+      },
+      {
+        "itemTemplateId": "sandals",
+        "layer": "Shoes"
+      }
+    ],
+    "randomEquipment": [],
+    "title": "a healer"
+  }
+]

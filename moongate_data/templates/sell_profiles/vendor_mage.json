@@ -1,0 +1,63 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.mage",
+    "name": "Mage Vendor",
+    "category": "vendors",
+    "description": "Sell profile for basic town mage vendors.",
+    "vendorItems": [
+      {
+        "itemTemplateId": "spellbook",
+        "price": 42,
+        "maxStock": 10,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "black_pearl",
+        "price": 3,
+        "maxStock": 60,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "price": 3,
+        "maxStock": 60,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "price": 3,
+        "maxStock": 60,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "price": 3,
+        "maxStock": 60,
+        "enabled": true
+      }
+    ],
+    "acceptedItems": [
+      {
+        "itemTemplateId": "black_pearl",
+        "price": 1,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "nightshade",
+        "price": 1,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "price": 1,
+        "enabled": true
+      },
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "price": 1,
+        "enabled": true
+      }
+    ]
+  }
+]

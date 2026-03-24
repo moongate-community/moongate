@@ -54,11 +54,6 @@
         "enabled": true
       },
       {
-        "itemTemplateId": "torch",
-        "price": 3,
-        "enabled": true
-      },
-      {
         "itemTemplateId": "candle",
         "price": 1,
         "enabled": true
