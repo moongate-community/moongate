@@ -120,6 +120,19 @@ Spawns an item from a template and places it in the player backpack. Supports au
 
 Resolves the backpack either from `BackpackId` or from the equipped `Backpack` layer item. Context: InGame only. Access: GameMaster.
 
+#### `gm`
+
+Opens the in-game GM sidebar menu. The menu currently exposes:
+
+- `Add`: free-search item/NPC templates, item tile-art preview, quantity input, `Add To Backpack`, `Target Ground`, and repeat `Brush`
+- `Travel`: embedded curated teleport browser grouped by map and category
+
+```
+.gm
+```
+
+Context: InGame only. Access: GameMaster.
+
 #### `add_item`
 
 Spawns a hardcoded "brick" test item and adds it to the player backpack at position (1,1). Primarily a development/test command.

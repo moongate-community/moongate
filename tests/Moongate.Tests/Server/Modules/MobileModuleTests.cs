@@ -17,7 +17,9 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Skills;
+using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
@@ -522,6 +524,39 @@ public class MobileModuleTests
     }
 
     [Test]
+    public void Teleport_WhenCharacterExists_ShouldUpdateMapAndLocation()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x220,
+            Name = "Traveler",
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var teleported = module.Teleport(0x220, 0, 1496, 1628, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(0));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(1496, 1628, 20)));
+            }
+        );
+    }
+
+    [Test]
     public void Get_WhenCharacterIsMounted_ShouldExposeMountedState()
     {
         var characterService = new MobileModuleTestCharacterService
@@ -1013,4 +1048,119 @@ public class MobileModuleTests
             }
         );
     }
+
+    [Test]
+    public void SearchTemplates_WhenQueryMatchesTemplateIdPrefix_ShouldReturnStableMobileMetadata()
+    {
+        var templateService = new MobileTemplateService();
+        templateService.UpsertRange(
+        [
+            CreateTemplate("zombie_archer", "Zombie Archer"),
+            CreateTemplate("zombie_warrior", "Zombie Warrior"),
+            CreateTemplate("town_guard", "Town Guard")
+        ]
+        );
+        var module = new MobileModule(
+            new MobileModuleTestCharacterService(),
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            mobileTemplateService: templateService
+        );
+
+        var results = module.SearchTemplates("zom");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(2));
+                AssertResult(results, 1, "zombie_archer", "Zombie Archer");
+                AssertResult(results, 2, "zombie_warrior", "Zombie Warrior");
+            }
+        );
+    }
+
+    [Test]
+    public void SearchTemplates_WhenQueryMatchesDisplayNameSubstring_ShouldReturnSubstringMatches()
+    {
+        var templateService = new MobileTemplateService();
+        templateService.UpsertRange(
+        [
+            CreateTemplate("docks_escort", "Docks Escort"),
+            CreateTemplate("harbor_mage", "Harbor Spellbinder"),
+            CreateTemplate("forest_wolf", "Forest Wolf")
+        ]
+        );
+        var module = new MobileModule(
+            new MobileModuleTestCharacterService(),
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            mobileTemplateService: templateService
+        );
+
+        var results = module.SearchTemplates("spell");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(1));
+                AssertResult(results, 1, "harbor_mage", "Harbor Spellbinder");
+            }
+        );
+    }
+
+    [Test]
+    public void SearchTemplates_WhenPageSizeExceedsMax_ShouldClampResultCount()
+    {
+        var templateService = new MobileTemplateService();
+
+        for (var index = 1; index <= 60; index++)
+        {
+            templateService.Upsert(CreateTemplate($"search_mobile_{index:00}", $"Search Mobile {index:00}"));
+        }
+
+        var module = new MobileModule(
+            new MobileModuleTestCharacterService(),
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            mobileTemplateService: templateService
+        );
+
+        var results = module.SearchTemplates("search_mobile", pageSize: 999);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(50));
+                AssertResult(results, 1, "search_mobile_01", "Search Mobile 01");
+                AssertResult(results, 50, "search_mobile_50", "Search Mobile 50");
+            }
+        );
+    }
+
+    private static void AssertResult(Table results, int index, string templateId, string displayName)
+    {
+        var entry = results.Get(index).Table;
+
+        Assert.That(entry, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(entry!.Get("template_id").String, Is.EqualTo(templateId));
+                Assert.That(entry.Get("display_name").String, Is.EqualTo(displayName));
+            }
+        );
+    }
+
+    private static MobileTemplateDefinition CreateTemplate(string id, string name)
+        => new()
+        {
+            Id = id,
+            Name = name,
+            Category = "Test",
+            Description = name,
+            Title = string.Empty
+        };
 }

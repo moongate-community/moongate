@@ -8,28 +8,60 @@ end
 
 ui.push = push
 
-function ui.add_frame(layout_ui)
-  push(layout_ui, { type = "background", x = 0, y = 0, gump_id = 5054, width = c.GUMP_WIDTH, height = c.GUMP_HEIGHT })
-  push(layout_ui, { type = "alpha_region", x = 10, y = 10, width = 500, height = 400 })
+function ui.create_view(options)
+  local resolved = options or {}
 
-  push(layout_ui, { type = "image_tiled", x = 10, y = 10, width = 500, height = 22, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = 10, y = 10, width = 500, height = 22 })
-  push(layout_ui, { type = "label", x = 20, y = 14, hue = c.TITLE_HUE, text = "Teleport Browser" })
-
-  push(layout_ui, { type = "button", id = c.BUTTON_REFRESH, x = 420, y = 12, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 450, y = 14, hue = c.LABEL_HUE, text = "Refresh" })
-
-  push(layout_ui, { type = "image_tiled", x = 10, y = 40, width = 500, height = 300, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = 10, y = 40, width = 500, height = 300 })
-
-  push(layout_ui, { type = "image_tiled", x = 10, y = 350, width = 500, height = 60, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = 10, y = 350, width = 500, height = 60 })
+  return {
+    origin_x = tonumber(resolved.origin_x) or 0,
+    origin_y = tonumber(resolved.origin_y) or 0,
+    show_outer_frame = resolved.show_outer_frame ~= false,
+    show_refresh = resolved.show_refresh ~= false,
+    use_alpha_regions = resolved.use_alpha_regions ~= false,
+    title = tostring(resolved.title or "Teleport Browser")
+  }
 end
 
-function ui.add_page_nav(layout_ui, page, pages)
-  push(layout_ui, { type = "button", id = c.BUTTON_PREV_PAGE, x = 20, y = 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
-  push(layout_ui, { type = "button", id = c.BUTTON_NEXT_PAGE, x = 60, y = 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 95, y = 364, hue = c.LABEL_HUE, text = "Page " .. tostring(page) .. "/" .. tostring(pages) })
+function ui.add_frame(layout_ui, view)
+  local ox = view.origin_x or 0
+  local oy = view.origin_y or 0
+  local use_alpha_regions = view.use_alpha_regions ~= false
+
+  if view.show_outer_frame then
+    push(layout_ui, { type = "background", x = ox, y = oy, gump_id = 5054, width = c.GUMP_WIDTH, height = c.GUMP_HEIGHT })
+    if use_alpha_regions then
+      push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 400 })
+    end
+  end
+
+  push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 10, width = 500, height = 22, gump_id = 2624 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 22 })
+  end
+  push(layout_ui, { type = "label", x = ox + 20, y = oy + 14, hue = c.TITLE_HUE, text = view.title })
+
+  if view.show_refresh then
+    push(layout_ui, { type = "button", id = c.BUTTON_REFRESH, x = ox + 420, y = oy + 12, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    push(layout_ui, { type = "label", x = ox + 450, y = oy + 14, hue = c.LABEL_HUE, text = "Refresh" })
+  end
+
+  push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 40, width = 500, height = 300, gump_id = 2624 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 40, width = 500, height = 300 })
+  end
+
+  push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 350, width = 500, height = 60, gump_id = 2624 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 350, width = 500, height = 60 })
+  end
+end
+
+function ui.add_page_nav(layout_ui, page, pages, view)
+  local ox = view.origin_x or 0
+  local oy = view.origin_y or 0
+
+  push(layout_ui, { type = "button", id = c.BUTTON_PREV_PAGE, x = ox + 20, y = oy + 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
+  push(layout_ui, { type = "button", id = c.BUTTON_NEXT_PAGE, x = ox + 60, y = oy + 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = ox + 95, y = oy + 364, hue = c.LABEL_HUE, text = "Page " .. tostring(page) .. "/" .. tostring(pages) })
 end
 
 return ui

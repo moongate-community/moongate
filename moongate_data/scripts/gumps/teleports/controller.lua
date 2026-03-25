@@ -7,7 +7,7 @@ local actions = require("gumps.teleports.actions")
 
 local controller = {}
 
-function controller.build_layout(session_id, character_id, reopen_callback)
+function controller.build_layout(session_id, character_id, reopen_callback, options)
   local sender_serial = tonumber(character_id) or 0
   if sender_serial <= 0 then
     sender_serial = tonumber(session_id) or 1
@@ -16,25 +16,26 @@ function controller.build_layout(session_id, character_id, reopen_callback)
   local state = s.get(session_id)
   local all_locations = d.load_locations()
   local maps = d.distinct_maps(all_locations)
+  local view = ui.create_view(options)
 
   local layout = { ui = {}, handlers = {} }
   local layout_ui = layout.ui
 
-  ui.add_frame(layout_ui)
+  ui.add_frame(layout_ui, view)
 
   if #maps == 0 then
-    ui.push(layout_ui, { type = "label", x = 24, y = 54, hue = c.LABEL_HUE, text = "No locations loaded." })
+    ui.push(layout_ui, { type = "label", x = (view.origin_x or 0) + 24, y = (view.origin_y or 0) + 54, hue = c.LABEL_HUE, text = "No locations loaded." })
     return layout, sender_serial
   end
 
   render.ensure_valid_map(state, maps)
 
   if state.view == "map" then
-    render.map_step(layout_ui, state, maps)
+    render.map_step(layout_ui, state, maps, view)
   elseif state.view == "category" then
-    render.category_step(layout_ui, state, all_locations)
+    render.category_step(layout_ui, state, all_locations, view)
   else
-    render.location_step(layout_ui, state, all_locations)
+    render.location_step(layout_ui, state, all_locations, view)
   end
 
   layout.handlers.on_click = function(ctx)

@@ -4,6 +4,18 @@ local ui = require("gumps.teleports.ui")
 
 local render = {}
 
+local function resolve_origin(view)
+  local ox = 0
+  local oy = 0
+
+  if view ~= nil then
+    ox = tonumber(view.origin_x) or 0
+    oy = tonumber(view.origin_y) or 0
+  end
+
+  return ox, oy
+end
+
 function render.ensure_valid_map(state, maps)
   if state.map_id == nil then
     state.map_id = maps[1].map_id
@@ -26,7 +38,8 @@ function render.ensure_valid_map(state, maps)
   end
 end
 
-function render.map_step(layout_ui, state, maps)
+function render.map_step(layout_ui, state, maps, view)
+  local ox, oy = resolve_origin(view)
   local total_pages
   state.page, total_pages = d.clamp_page(state.page, #maps, c.MAP_ROWS)
 
@@ -34,19 +47,19 @@ function render.map_step(layout_ui, state, maps)
   local end_idx = math.min(#maps, start_idx + c.MAP_ROWS - 1)
   state.visible_maps = {}
 
-  ui.push(layout_ui, { type = "label", x = 24, y = 48, hue = c.TITLE_HUE, text = "Step 1/3 - Select map" })
+  ui.push(layout_ui, { type = "label", x = ox + 24, y = oy + 48, hue = c.TITLE_HUE, text = "Step 1/3 - Select map" })
 
   local row = 1
-  local y = 72
+  local y = oy + 72
   for i = start_idx, end_idx do
     local map_entry = maps[i]
     state.visible_maps[row] = map_entry
     local prefix = (map_entry.map_id == state.map_id) and "* " or "  "
 
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_MAP_BASE + row, x = 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_MAP_BASE + row, x = ox + 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
     ui.push(layout_ui, {
       type = "label_cropped",
-      x = 50,
+      x = ox + 50,
       y = y + 2,
       width = 430,
       height = 20,
@@ -58,12 +71,13 @@ function render.map_step(layout_ui, state, maps)
     row = row + 1
   end
 
-  ui.add_page_nav(layout_ui, state.page, total_pages)
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_TO_CATEGORY, x = 420, y = 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 450, y = 364, hue = c.LABEL_HUE, text = "Next" })
+  ui.add_page_nav(layout_ui, state.page, total_pages, view)
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_TO_CATEGORY, x = ox + 420, y = oy + 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = ox + 450, y = oy + 364, hue = c.LABEL_HUE, text = "Next" })
 end
 
-function render.category_step(layout_ui, state, all_locations)
+function render.category_step(layout_ui, state, all_locations, view)
+  local ox, oy = resolve_origin(view)
   local categories = d.categories_for_map(all_locations, state.map_id)
 
   if #categories == 0 then
@@ -79,20 +93,20 @@ function render.category_step(layout_ui, state, all_locations)
   local end_idx = math.min(#categories, start_idx + c.CATEGORY_ROWS - 1)
   state.visible_categories = {}
 
-  ui.push(layout_ui, { type = "label", x = 24, y = 48, hue = c.TITLE_HUE, text = "Step 2/3 - Select category" })
-  ui.push(layout_ui, { type = "label", x = 24, y = 64, hue = c.LABEL_HUE, text = "Map: " .. tostring(state.map_id) })
+  ui.push(layout_ui, { type = "label", x = ox + 24, y = oy + 48, hue = c.TITLE_HUE, text = "Step 2/3 - Select category" })
+  ui.push(layout_ui, { type = "label", x = ox + 24, y = oy + 64, hue = c.LABEL_HUE, text = "Map: " .. tostring(state.map_id) })
 
   local row = 1
-  local y = 86
+  local y = oy + 86
   for i = start_idx, end_idx do
     local category = categories[i]
     state.visible_categories[row] = category
     local prefix = (category == state.category) and "* " or "  "
 
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_CATEGORY_BASE + row, x = 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_CATEGORY_BASE + row, x = ox + 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
     ui.push(layout_ui, {
       type = "label_cropped",
-      x = 50,
+      x = ox + 50,
       y = y + 2,
       width = 430,
       height = 20,
@@ -104,15 +118,16 @@ function render.category_step(layout_ui, state, all_locations)
     row = row + 1
   end
 
-  ui.add_page_nav(layout_ui, state.page, total_pages)
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_BACK_TO_MAP, x = 330, y = 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 360, y = 364, hue = c.LABEL_HUE, text = "Back" })
+  ui.add_page_nav(layout_ui, state.page, total_pages, view)
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_BACK_TO_MAP, x = ox + 330, y = oy + 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = ox + 360, y = oy + 364, hue = c.LABEL_HUE, text = "Back" })
 
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_TO_LOCATION, x = 420, y = 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 450, y = 364, hue = c.LABEL_HUE, text = "Next" })
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_TO_LOCATION, x = ox + 420, y = oy + 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = ox + 450, y = oy + 364, hue = c.LABEL_HUE, text = "Next" })
 end
 
-function render.location_step(layout_ui, state, all_locations)
+function render.location_step(layout_ui, state, all_locations, view)
+  local ox, oy = resolve_origin(view)
   local categories = d.categories_for_map(all_locations, state.map_id)
 
   if #categories == 0 then
@@ -135,11 +150,11 @@ function render.location_step(layout_ui, state, all_locations)
   local end_idx = math.min(#locations, start_idx + c.LOCATION_ROWS - 1)
   state.visible_locations = {}
 
-  ui.push(layout_ui, { type = "label", x = 24, y = 48, hue = c.TITLE_HUE, text = "Step 3/3 - Select location" })
+  ui.push(layout_ui, { type = "label", x = ox + 24, y = oy + 48, hue = c.TITLE_HUE, text = "Step 3/3 - Select location" })
   ui.push(layout_ui, {
     type = "label_cropped",
-    x = 24,
-    y = 64,
+    x = ox + 24,
+    y = oy + 64,
     width = 460,
     height = 20,
     hue = c.LABEL_HUE,
@@ -147,16 +162,16 @@ function render.location_step(layout_ui, state, all_locations)
   })
 
   local row = 1
-  local y = 86
+  local y = oy + 86
   for i = start_idx, end_idx do
     local location_entry = locations[i]
     state.visible_locations[row] = location_entry
     local prefix = d.selected_equals(state.selected, location_entry) and "* " or "  "
 
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_LOCATION_BASE + row, x = 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_LOCATION_BASE + row, x = ox + 22, y = y, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
     ui.push(layout_ui, {
       type = "label_cropped",
-      x = 50,
+      x = ox + 50,
       y = y + 2,
       width = 430,
       height = 20,
@@ -168,18 +183,18 @@ function render.location_step(layout_ui, state, all_locations)
     row = row + 1
   end
 
-  ui.add_page_nav(layout_ui, state.page, total_pages)
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_BACK_TO_CATEGORY, x = 300, y = 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 330, y = 364, hue = c.LABEL_HUE, text = "Back" })
+  ui.add_page_nav(layout_ui, state.page, total_pages, view)
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_BACK_TO_CATEGORY, x = ox + 300, y = oy + 362, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = ox + 330, y = oy + 364, hue = c.LABEL_HUE, text = "Back" })
 
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_GO, x = 420, y = 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 450, y = 364, hue = c.LABEL_HUE, text = "Go" })
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_GO, x = ox + 420, y = oy + 362, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = ox + 450, y = oy + 364, hue = c.LABEL_HUE, text = "Go" })
 
   if state.selected ~= nil then
     ui.push(layout_ui, {
       type = "label_cropped",
-      x = 150,
-      y = 364,
+      x = ox + 150,
+      y = oy + 364,
       width = 140,
       height = 20,
       hue = c.LABEL_HUE,
