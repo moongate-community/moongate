@@ -1,0 +1,110 @@
+[
+  {
+    "type": "item",
+    "id": "training_dummy_east",
+    "name": "Training Dummy",
+    "category": "Training Items",
+    "description": "Practice target for melee weapon training.",
+    "itemId": "0x1074",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.training_dummy",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "melee"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "training_dummy_south",
+    "name": "Training Dummy",
+    "category": "Training Items",
+    "description": "Practice target for melee weapon training.",
+    "itemId": "0x1070",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.training_dummy",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "melee"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "archery_butte_east",
+    "name": "Archery Butte",
+    "category": "Training Items",
+    "description": "Practice target for bows and crossbows.",
+    "itemId": "0x100A",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.archery_butte",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "archery"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "archery_butte_south",
+    "name": "Archery Butte",
+    "category": "Training Items",
+    "description": "Practice target for bows and crossbows.",
+    "itemId": "0x100B",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.archery_butte",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "archery"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pickpocket_dip_east",
+    "name": "Pickpocket Dip",
+    "category": "Training Items",
+    "description": "Practice target for stealing training.",
+    "itemId": "0x1EC3",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.pickpocket_dip",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "stealing"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "pickpocket_dip_south",
+    "name": "Pickpocket Dip",
+    "category": "Training Items",
+    "description": "Practice target for stealing training.",
+    "itemId": "0x1EC0",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 0,
+    "scriptId": "items.pickpocket_dip",
+    "isMovable": false,
+    "tags": [
+      "modernuo",
+      "training",
+      "stealing"
+    ]
+  }
+]
