@@ -124,26 +124,6 @@ public sealed class MobileTemplateLoader : IFileLoader
             child.Tags = [..parent.Tags];
         }
 
-        if (child.Body == Defaults.Body)
-        {
-            child.Body = parent.Body;
-        }
-
-        if (child.SkinHue.Equals(default))
-        {
-            child.SkinHue = parent.SkinHue;
-        }
-
-        if (child.HairHue.Equals(default))
-        {
-            child.HairHue = parent.HairHue;
-        }
-
-        if (child.HairStyle == Defaults.HairStyle)
-        {
-            child.HairStyle = parent.HairStyle;
-        }
-
         child.Strength = InheritInt(child.Strength, parent.Strength, Defaults.Strength);
         child.Dexterity = InheritInt(child.Dexterity, parent.Dexterity, Defaults.Dexterity);
         child.Intelligence = InheritInt(child.Intelligence, parent.Intelligence, Defaults.Intelligence);
@@ -264,43 +244,9 @@ public sealed class MobileTemplateLoader : IFileLoader
             Defaults.SpellAttackDelay
         );
 
-        if (child.FixedEquipment.Count == 0 && parent.FixedEquipment.Count > 0)
+        if (child.Variants.Count == 0 && parent.Variants.Count > 0)
         {
-            child.FixedEquipment = parent
-                                   .FixedEquipment
-                                   .Select(
-                                       static equipment => new MobileEquipmentItemTemplate
-                                       {
-                                           ItemTemplateId = equipment.ItemTemplateId,
-                                           Layer = equipment.Layer
-                                       }
-                                   )
-                                   .ToList();
-        }
-
-        if (child.RandomEquipment.Count == 0 && parent.RandomEquipment.Count > 0)
-        {
-            child.RandomEquipment = parent
-                                    .RandomEquipment
-                                    .Select(
-                                        static pool => new MobileRandomEquipmentPoolTemplate
-                                        {
-                                            Name = pool.Name,
-                                            Layer = pool.Layer,
-                                            SpawnChance = pool.SpawnChance,
-                                            Items = pool
-                                                    .Items
-                                                    .Select(
-                                                        static item => new MobileWeightedEquipmentItemTemplate
-                                                        {
-                                                            ItemTemplateId = item.ItemTemplateId,
-                                                            Weight = item.Weight
-                                                        }
-                                                    )
-                                                    .ToList()
-                                        }
-                                    )
-                                    .ToList();
+            child.Variants = parent.Variants.Select(CloneVariant).ToList();
         }
 
         child.Params = MergeParams(parent.Params, child.Params);
@@ -338,6 +284,60 @@ public sealed class MobileTemplateLoader : IFileLoader
 
         return merged;
     }
+
+    private static Dictionary<string, ItemTemplateParamDefinition> CloneParams(
+        Dictionary<string, ItemTemplateParamDefinition> source
+    )
+    {
+        var cloned = new Dictionary<string, ItemTemplateParamDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, param) in source)
+        {
+            cloned[key] = CloneParam(param);
+        }
+
+        return cloned;
+    }
+
+    private static MobileAppearanceTemplate CloneAppearance(MobileAppearanceTemplate appearance)
+        => new()
+        {
+            Body = appearance.Body,
+            SkinHue = appearance.SkinHue,
+            HairHue = appearance.HairHue,
+            HairStyle = appearance.HairStyle,
+            FacialHairHue = appearance.FacialHairHue,
+            FacialHairStyle = appearance.FacialHairStyle
+        };
+
+    private static MobileEquipmentEntryTemplate CloneEquipmentEntry(MobileEquipmentEntryTemplate equipment)
+        => new()
+        {
+            Layer = equipment.Layer,
+            ItemTemplateId = equipment.ItemTemplateId,
+            Chance = equipment.Chance,
+            Hue = equipment.Hue,
+            Params = CloneParams(equipment.Params),
+            Items = equipment.Items.Select(CloneWeightedEquipmentItem).ToList()
+        };
+
+    private static MobileVariantTemplate CloneVariant(MobileVariantTemplate variant)
+        => new()
+        {
+            Name = variant.Name,
+            Weight = variant.Weight,
+            Appearance = CloneAppearance(variant.Appearance),
+            Equipment = variant.Equipment.Select(CloneEquipmentEntry).ToList()
+        };
+
+    private static MobileWeightedEquipmentItemTemplate CloneWeightedEquipmentItem(MobileWeightedEquipmentItemTemplate item)
+        => new()
+        {
+            ItemTemplateId = item.ItemTemplateId,
+            Weight = item.Weight,
+            Hue = item.Hue,
+            Params = CloneParams(item.Params)
+        };
 
     private static void NormalizeTitleAndName(MobileTemplateDefinition template)
     {

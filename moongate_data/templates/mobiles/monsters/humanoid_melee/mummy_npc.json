@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x009A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 358,
     "dexterity": 80,
     "intelligence": 33,
@@ -51,8 +48,16 @@
       "physical": 40,
       "cold": 60
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a mummy"
+    "title": "a mummy",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x009A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

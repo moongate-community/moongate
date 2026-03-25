@@ -13,6 +13,207 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class TemplateValidationLoaderTests
 {
     [Test]
+    public void LoadAsync_WhenMobileHasNoVariants_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "variantless_mobile",
+                Name = "Variantless Mobile",
+                Category = "test",
+                Description = "test"
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenVariantHasNoBody_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "bodyless_mobile",
+                Name = "Bodyless Mobile",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default"
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileParamsContainInvalidHue_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_mobile_params",
+                Name = "Invalid Mobile Params",
+                Category = "test",
+                Description = "test",
+                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                {
+                    ["marker_hue"] = new()
+                    {
+                        Type = ItemTemplateParamType.Hue,
+                        Value = "not-a-hue"
+                    }
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenVariantEquipmentParamsContainInvalidSerial_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        itemService.Upsert(
+            new()
+            {
+                Id = "robe",
+                Name = "Robe",
+                Category = "clothing",
+                Description = "robe",
+                ItemId = "0x1F03",
+                Hue = HueSpec.FromValue(0),
+                GoldValue = GoldValueSpec.FromValue(0),
+                LootType = LootType.Regular,
+                ScriptId = "items.robe",
+                Weight = 1
+            }
+        );
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_equipment_params",
+                Name = "Invalid Equipment Params",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                Layer = ItemLayerType.OuterTorso,
+                                ItemTemplateId = "robe",
+                                Params = new Dictionary<string, ItemTemplateParamDefinition>
+                                {
+                                    ["owner_id"] = new()
+                                    {
+                                        Type = ItemTemplateParamType.Serial,
+                                        Value = "not-a-serial"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
     public void LoadAsync_WhenAdditiveLootUsesWeight_ShouldThrow()
     {
         var itemService = new ItemTemplateService();
@@ -213,10 +414,20 @@ public class TemplateValidationLoaderTests
                 Name = "Loot Mobile",
                 Category = "test",
                 Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                LootTables = ["missing_loot"]
+                LootTables = ["missing_loot"],
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0)
+                        }
+                    }
+                ]
             }
         );
 
@@ -250,10 +461,20 @@ public class TemplateValidationLoaderTests
                 Name = "Faction Guard",
                 Category = "guards",
                 Description = "guard",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
-                DefaultFactionId = "missing_faction"
+                DefaultFactionId = "missing_faction",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(779),
+                            HairHue = HueSpec.FromValue(0)
+                        }
+                    }
+                ]
             }
         );
 
@@ -287,15 +508,25 @@ public class TemplateValidationLoaderTests
                 Name = "Orc",
                 Category = "monsters",
                 Description = "orc",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
-                FixedEquipment =
+                Variants =
                 [
                     new()
                     {
-                        ItemTemplateId = "item.missing",
-                        Layer = ItemLayerType.Shirt
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(779),
+                            HairHue = HueSpec.FromValue(0)
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                ItemTemplateId = "item.missing",
+                                Layer = ItemLayerType.Shirt
+                            }
+                        ]
                     }
                 ]
             }
@@ -331,10 +562,20 @@ public class TemplateValidationLoaderTests
                 Name = "Vendor",
                 Category = "vendors",
                 Description = "vendor",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
-                SellProfileId = "missing_profile"
+                SellProfileId = "missing_profile",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(779),
+                            HairHue = HueSpec.FromValue(0)
+                        }
+                    }
+                ]
             }
         );
 
@@ -413,16 +654,26 @@ public class TemplateValidationLoaderTests
                 Name = "Orc",
                 Category = "monsters",
                 Description = "orc",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
                 DefaultFactionId = "true_britannians",
-                FixedEquipment =
+                Variants =
                 [
                     new()
                     {
-                        ItemTemplateId = "item.shirt",
-                        Layer = ItemLayerType.Shirt
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(779),
+                            HairHue = HueSpec.FromValue(0)
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                ItemTemplateId = "item.shirt",
+                                Layer = ItemLayerType.Shirt
+                            }
+                        ]
                     }
                 ]
             }
@@ -453,10 +704,20 @@ public class TemplateValidationLoaderTests
                 Name = "Vendor Orc",
                 Category = "vendors",
                 Description = "vendor",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(779),
-                HairHue = HueSpec.FromValue(0),
-                SellProfileId = "basic_vendor"
+                SellProfileId = "basic_vendor",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(779),
+                            HairHue = HueSpec.FromValue(0)
+                        }
+                    }
+                ]
             }
         );
 

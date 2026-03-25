@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00BA",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 160,
     "dexterity": 111,
     "intelligence": 58,
@@ -35,7 +32,49 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": []
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00BA"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tribal_spear"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "bone_arms"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "bone_legs"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00B9"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tribal_spear"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "bone_arms"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "bone_legs"
+          }
+        ]
+      }
+    ]
   }
 ]

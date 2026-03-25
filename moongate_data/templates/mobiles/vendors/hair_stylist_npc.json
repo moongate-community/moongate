@@ -8,16 +8,32 @@
       "vendor",
       "npc"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "vendor",
     "skills": {
       "Alchemy": 900,
       "Magery": 1000,
       "TasteID": 925
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "the hair stylist"
+    "title": "the hair stylist",
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

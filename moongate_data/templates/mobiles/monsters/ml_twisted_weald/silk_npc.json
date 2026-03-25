@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 105,
     "dexterity": 141,
     "intelligence": 82,
@@ -43,8 +41,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Silk"
+    "title": "Silk",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x009D",
+          "skinHue": "0x047E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

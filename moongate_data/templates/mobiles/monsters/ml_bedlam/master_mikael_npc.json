@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 107,
     "dexterity": 95,
     "intelligence": 261,
@@ -44,8 +42,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Master Mikael"
+    "title": "Master Mikael",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0094",
+          "skinHue": "0x08FD"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

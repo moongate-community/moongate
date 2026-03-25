@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x010F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 186,
     "dexterity": 260,
     "intelligence": 161,
@@ -47,8 +44,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a satyr"
+    "title": "a satyr",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

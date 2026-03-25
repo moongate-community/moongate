@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0047",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 50,
     "dexterity": 120,
     "intelligence": 33,
@@ -50,8 +47,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a terathan drone"
+    "title": "a terathan drone",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0047"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

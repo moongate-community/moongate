@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00A3",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 340,
     "dexterity": 175,
     "intelligence": 83,
@@ -49,8 +46,16 @@
       "physical": 20,
       "cold": 80
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a snow elemental"
+    "title": "a snow elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A3"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

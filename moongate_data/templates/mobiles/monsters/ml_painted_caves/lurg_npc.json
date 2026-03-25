@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 604,
     "dexterity": 169,
     "intelligence": 98,
@@ -43,8 +41,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Lurg"
+    "title": "Lurg",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010B",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

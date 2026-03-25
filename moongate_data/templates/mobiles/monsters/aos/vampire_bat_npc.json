@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013D",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 100,
     "dexterity": 103,
     "intelligence": 38,
@@ -48,8 +45,16 @@
       "physical": 80,
       "poison": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a vampire bat"
+    "title": "a vampire bat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013D"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

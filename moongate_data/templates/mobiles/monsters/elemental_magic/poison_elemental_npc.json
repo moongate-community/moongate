@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00A2",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 470,
     "dexterity": 175,
     "intelligence": 398,
@@ -55,8 +52,16 @@
       "physical": 10,
       "poison": 90
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a poison elemental"
+    "title": "a poison elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A2"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

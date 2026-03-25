@@ -8,8 +8,6 @@
       "animal",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 79,
     "dexterity": 65,
     "intelligence": 23,
@@ -44,8 +42,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a savage ridgeback"
+    "title": "a savage ridgeback",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00BC"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

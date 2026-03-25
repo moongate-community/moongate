@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 608,
     "dexterity": 455,
     "intelligence": 743,
@@ -44,8 +42,17 @@
       "physical": 50,
       "fire": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Pyre"
+    "title": "Pyre",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0005",
+          "skinHue": "0x0674"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

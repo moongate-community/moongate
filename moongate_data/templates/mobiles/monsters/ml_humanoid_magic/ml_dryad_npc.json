@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x010A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 140,
     "dexterity": 160,
     "intelligence": 265,
@@ -50,8 +47,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a dryad"
+    "title": "a dryad",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

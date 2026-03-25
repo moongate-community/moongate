@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x012C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 148,
     "dexterity": 58,
     "intelligence": 98,
@@ -52,8 +49,16 @@
       "physical": 80,
       "energy": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a crystal elemental"
+    "title": "a crystal elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x012C"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

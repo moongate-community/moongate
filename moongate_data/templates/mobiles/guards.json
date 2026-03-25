@@ -12,7 +12,6 @@
       "town",
       "male"
     ],
-    "body": "0x0190",
     "strength": 100,
     "dexterity": 125,
     "intelligence": 25,
@@ -22,29 +21,6 @@
     "lootTables": [
       "guard.warrior"
     ],
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "plate_chest",
-        "layer": "InnerTorso"
-      },
-      {
-        "itemTemplateId": "plate_arms",
-        "layer": "Arms"
-      },
-      {
-        "itemTemplateId": "plate_legs",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "body_sash",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "halberd",
-        "layer": "TwoHanded"
-      }
-    ],
-    "randomEquipment": [],
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -52,7 +28,39 @@
       "MagicResist": 1200,
       "DetectHidden": 1000
     },
-    "title": "the guard"
+    "title": "the guard",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "plate_chest",
+            "layer": "InnerTorso"
+          },
+          {
+            "itemTemplateId": "plate_arms",
+            "layer": "Arms"
+          },
+          {
+            "itemTemplateId": "plate_legs",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "body_sash",
+            "layer": "Waist"
+          },
+          {
+            "itemTemplateId": "halberd",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   },
   {
     "type": "mobile",
@@ -67,7 +75,6 @@
       "town",
       "female"
     ],
-    "body": "0x0191",
     "strength": 100,
     "dexterity": 125,
     "intelligence": 25,
@@ -77,21 +84,6 @@
     "lootTables": [
       "guard.warrior"
     ],
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "leather_skirt",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "female_plate_chest",
-        "layer": "InnerTorso"
-      },
-      {
-        "itemTemplateId": "halberd",
-        "layer": "TwoHanded"
-      }
-    ],
-    "randomEquipment": [],
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -99,7 +91,31 @@
       "MagicResist": 1200,
       "DetectHidden": 1000
     },
-    "title": "the guard"
+    "title": "the guard",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "leather_skirt",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "female_plate_chest",
+            "layer": "InnerTorso"
+          },
+          {
+            "itemTemplateId": "halberd",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   },
   {
     "type": "mobile",
@@ -114,7 +130,6 @@
       "town",
       "male"
     ],
-    "body": "0x0190",
     "strength": 100,
     "dexterity": 125,
     "intelligence": 25,
@@ -130,41 +145,6 @@
         "value": "ranged"
       }
     },
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "studded_chest",
-        "layer": "InnerTorso"
-      },
-      {
-        "itemTemplateId": "studded_arms",
-        "layer": "Arms"
-      },
-      {
-        "itemTemplateId": "studded_gloves",
-        "layer": "Gloves"
-      },
-      {
-        "itemTemplateId": "studded_gorget",
-        "layer": "Neck"
-      },
-      {
-        "itemTemplateId": "studded_legs",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "skull_cap",
-        "layer": "Helm"
-      },
-      {
-        "itemTemplateId": "bow",
-        "layer": "TwoHanded"
-      }
-    ],
-    "randomEquipment": [],
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -172,7 +152,51 @@
       "MagicResist": 1200,
       "DetectHidden": 1000
     },
-    "title": "the guard"
+    "title": "the guard",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "studded_chest",
+            "layer": "InnerTorso"
+          },
+          {
+            "itemTemplateId": "studded_arms",
+            "layer": "Arms"
+          },
+          {
+            "itemTemplateId": "studded_gloves",
+            "layer": "Gloves"
+          },
+          {
+            "itemTemplateId": "studded_gorget",
+            "layer": "Neck"
+          },
+          {
+            "itemTemplateId": "studded_legs",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "boots",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "skull_cap",
+            "layer": "Helm"
+          },
+          {
+            "itemTemplateId": "bow",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   },
   {
     "type": "mobile",
@@ -187,7 +211,6 @@
       "town",
       "female"
     ],
-    "body": "0x0191",
     "strength": 100,
     "dexterity": 125,
     "intelligence": 25,
@@ -203,41 +226,6 @@
         "value": "ranged"
       }
     },
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "studded_chest",
-        "layer": "InnerTorso"
-      },
-      {
-        "itemTemplateId": "studded_arms",
-        "layer": "Arms"
-      },
-      {
-        "itemTemplateId": "studded_gloves",
-        "layer": "Gloves"
-      },
-      {
-        "itemTemplateId": "studded_gorget",
-        "layer": "Neck"
-      },
-      {
-        "itemTemplateId": "studded_legs",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "skull_cap",
-        "layer": "Helm"
-      },
-      {
-        "itemTemplateId": "bow",
-        "layer": "TwoHanded"
-      }
-    ],
-    "randomEquipment": [],
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -245,6 +233,50 @@
       "MagicResist": 1200,
       "DetectHidden": 1000
     },
-    "title": "the guard"
+    "title": "the guard",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "studded_chest",
+            "layer": "InnerTorso"
+          },
+          {
+            "itemTemplateId": "studded_arms",
+            "layer": "Arms"
+          },
+          {
+            "itemTemplateId": "studded_gloves",
+            "layer": "Gloves"
+          },
+          {
+            "itemTemplateId": "studded_gorget",
+            "layer": "Neck"
+          },
+          {
+            "itemTemplateId": "studded_legs",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "boots",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "skull_cap",
+            "layer": "Helm"
+          },
+          {
+            "itemTemplateId": "bow",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   }
 ]

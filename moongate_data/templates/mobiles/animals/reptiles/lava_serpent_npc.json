@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x005A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 400,
     "dexterity": 68,
     "intelligence": 75,
@@ -49,8 +46,16 @@
       "physical": 20,
       "fire": 80
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a lava serpent"
+    "title": "a lava serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x005A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

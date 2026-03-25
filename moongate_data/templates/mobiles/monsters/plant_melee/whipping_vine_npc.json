@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0008",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 275,
     "dexterity": 88,
     "intelligence": 33,
@@ -42,8 +39,17 @@
       "physical": 70,
       "poison": 30
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a whipping vine"
+    "title": "a whipping vine",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0008",
+          "skinHue": "0x0851"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

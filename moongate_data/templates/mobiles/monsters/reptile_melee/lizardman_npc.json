@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0023",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 108,
     "dexterity": 95,
     "intelligence": 48,
@@ -46,8 +43,24 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "lizardman"
+    "title": "lizardman",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0023"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0024"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

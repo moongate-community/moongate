@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 33,
     "dexterity": 33,
     "intelligence": 33,
@@ -41,8 +38,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a restless soul"
+    "title": "a restless soul",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x03CA",
+          "skinHue": "0x0453"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

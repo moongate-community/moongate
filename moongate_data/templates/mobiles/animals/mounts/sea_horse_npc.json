@@ -7,16 +7,22 @@
     "tags": [
       "animal"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "melee_combat",
     "skills": {
       "MagicResist": 250,
       "Wrestling": 350,
       "Tactics": 300
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a sea horse"
+    "title": "a sea horse",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0090"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

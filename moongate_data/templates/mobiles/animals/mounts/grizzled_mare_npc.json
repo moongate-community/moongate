@@ -7,11 +7,17 @@
     "tags": [
       "animal"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "melee_combat",
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a grizzled mare"
+    "title": "a grizzled mare",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0319"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

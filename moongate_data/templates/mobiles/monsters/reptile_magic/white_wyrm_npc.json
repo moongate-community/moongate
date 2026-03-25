@@ -8,8 +8,6 @@
       "monster",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 740,
     "dexterity": 115,
     "intelligence": 405,
@@ -52,8 +50,24 @@
       "physical": 50,
       "cold": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a white wyrm"
+    "title": "a white wyrm",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00B4"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0031"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

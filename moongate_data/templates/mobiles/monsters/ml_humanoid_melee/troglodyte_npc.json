@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x010B",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 182,
     "dexterity": 105,
     "intelligence": 60,
@@ -50,8 +47,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a troglodyte"
+    "title": "a troglodyte",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010B"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

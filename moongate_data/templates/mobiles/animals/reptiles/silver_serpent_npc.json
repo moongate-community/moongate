@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x005C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 260,
     "dexterity": 225,
     "intelligence": 30,
@@ -51,8 +48,16 @@
       "physical": 50,
       "poison": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a silver serpent"
+    "title": "a silver serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x005C"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

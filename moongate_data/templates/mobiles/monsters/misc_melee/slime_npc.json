@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x0033",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 28,
     "dexterity": 18,
     "intelligence": 18,
@@ -47,8 +44,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a slime"
+    "title": "a slime",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0033"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

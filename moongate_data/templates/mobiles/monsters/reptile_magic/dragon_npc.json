@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x000C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 810,
     "dexterity": 95,
     "intelligence": 455,
@@ -59,8 +56,24 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a dragon"
+    "title": "a dragon",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000C"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x003B"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

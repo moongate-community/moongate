@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 229,
     "dexterity": 175,
     "intelligence": 372,
@@ -45,8 +43,17 @@
       "physical": 20,
       "poison": 80
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Virulent"
+    "title": "Virulent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000B",
+          "skinHue": "0x08FD"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

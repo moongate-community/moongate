@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0055",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 193,
     "dexterity": 203,
     "intelligence": 108,
@@ -53,7 +50,15 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": []
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0055"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

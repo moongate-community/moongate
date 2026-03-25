@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0315",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 115,
     "dexterity": 75,
     "intelligence": 43,
@@ -48,8 +45,16 @@
       "physical": 60,
       "poison": 40
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a quagmire"
+    "title": "a quagmire",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0315"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

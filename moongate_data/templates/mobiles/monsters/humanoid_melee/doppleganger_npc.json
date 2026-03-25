@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 95,
     "dexterity": 65,
     "intelligence": 93,
@@ -44,8 +41,16 @@
       "poison": 55,
       "energy": 35
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a doppleganger"
+    "title": "a doppleganger",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0309"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

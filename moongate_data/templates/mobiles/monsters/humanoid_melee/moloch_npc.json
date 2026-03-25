@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 345,
     "dexterity": 75,
     "intelligence": 53,
@@ -44,8 +41,16 @@
       "poison": 25,
       "energy": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a moloch"
+    "title": "a moloch",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0311"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

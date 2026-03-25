@@ -13,17 +13,6 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     [JsonPropertyName("base_mobile")]
     public string? BaseMobile { get; set; }
 
-    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
-    public int Body { get; set; }
-
-    [JsonConverter(typeof(HueSpecJsonConverter))]
-    public HueSpec SkinHue { get; set; }
-
-    [JsonConverter(typeof(HueSpecJsonConverter))]
-    public HueSpec HairHue { get; set; }
-
-    public int HairStyle { get; set; }
-
     public int Strength { get; set; } = 50;
 
     public int Dexterity { get; set; } = 50;
@@ -86,9 +75,7 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public int SpellAttackDelay { get; set; }
 
-    public List<MobileEquipmentItemTemplate> FixedEquipment { get; set; } = [];
-
-    public List<MobileRandomEquipmentPoolTemplate> RandomEquipment { get; set; } = [];
+    public List<MobileVariantTemplate> Variants { get; set; } = [];
 
     public Dictionary<string, ItemTemplateParamDefinition> Params { get; set; } = [];
 }

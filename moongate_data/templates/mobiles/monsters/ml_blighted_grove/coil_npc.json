@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 274,
     "dexterity": 242,
     "intelligence": 115,
@@ -41,8 +39,17 @@
       "physical": 50,
       "poison": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Coil"
+    "title": "Coil",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x005C",
+          "skinHue": "0x003F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

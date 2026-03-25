@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00A5",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 28,
     "dexterity": 30,
     "intelligence": 18,
@@ -40,8 +37,21 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a shadow wisp"
+    "title": "a shadow wisp",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A5"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "light_source"
+          }
+        ]
+      }
+    ]
   }
 ]

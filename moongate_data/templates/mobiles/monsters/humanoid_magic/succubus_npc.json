@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0095",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 554,
     "dexterity": 145,
     "intelligence": 577,
@@ -54,8 +51,16 @@
       "physical": 75,
       "energy": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a succubus"
+    "title": "a succubus",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0095"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

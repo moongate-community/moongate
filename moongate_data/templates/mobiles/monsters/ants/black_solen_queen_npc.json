@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0327",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 308,
     "dexterity": 133,
     "intelligence": 88,
@@ -44,8 +41,17 @@
       "physical": 70,
       "poison": 30
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a black solen queen"
+    "title": "a black solen queen",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0327",
+          "skinHue": "0x0453"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

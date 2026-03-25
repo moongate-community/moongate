@@ -8,8 +8,6 @@
       "vendor",
       "npc"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "vendor",
     "skills": {
       "AnimalLore": 820,
@@ -24,8 +22,26 @@
       "Herding": 520,
       "Swords": 565
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "ranger"
+    "title": "ranger",
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

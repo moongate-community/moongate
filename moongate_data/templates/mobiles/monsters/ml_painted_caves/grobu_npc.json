@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 201,
     "dexterity": 141,
     "intelligence": 51,
@@ -41,8 +39,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Grobu"
+    "title": "Grobu",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00D3",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

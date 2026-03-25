@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 200,
     "dexterity": 68,
     "intelligence": 75,
@@ -51,8 +48,16 @@
       "physical": 40,
       "poison": 60
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a giant snake"
+    "title": "a giant snake",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0015"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

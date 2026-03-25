@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0107",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 1428,
     "dexterity": 361,
     "intelligence": 130,
@@ -48,8 +45,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Meraktus"
+    "title": "Meraktus",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0107",
+          "skinHue": "0x0835"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

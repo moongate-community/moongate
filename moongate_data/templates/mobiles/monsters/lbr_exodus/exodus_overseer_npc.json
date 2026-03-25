@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 605,
     "dexterity": 85,
     "intelligence": 75,
@@ -42,8 +39,16 @@
       "physical": 50,
       "energy": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an exodus overseer"
+    "title": "an exodus overseer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02F4"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

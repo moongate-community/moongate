@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0067",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 125,
     "dexterity": 210,
     "intelligence": 1020,
@@ -52,8 +49,16 @@
       "physical": 75,
       "poison": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a serpentine dragon"
+    "title": "a serpentine dragon",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0067"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

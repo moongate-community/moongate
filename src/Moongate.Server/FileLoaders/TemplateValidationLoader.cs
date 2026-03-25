@@ -2,6 +2,7 @@ using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
+using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
@@ -102,26 +103,6 @@ public sealed class TemplateValidationLoader : IFileLoader
                 {
                     errors.Add($"Faction template '{faction.Id}' references missing enemy faction '{enemyFactionId}'.");
                 }
-            }
-        }
-    }
-
-    private void ValidateFixedEquipment(MobileTemplateDefinition mobile, List<string> errors)
-    {
-        foreach (var fixedEquipment in mobile.FixedEquipment)
-        {
-            if (string.IsNullOrWhiteSpace(fixedEquipment.ItemTemplateId))
-            {
-                errors.Add($"Mobile template '{mobile.Id}' has fixed equipment with empty itemTemplateId.");
-
-                continue;
-            }
-
-            if (!_itemTemplateService.TryGet(fixedEquipment.ItemTemplateId, out _))
-            {
-                errors.Add(
-                    $"Mobile template '{mobile.Id}' references missing fixed item template '{fixedEquipment.ItemTemplateId}'."
-                );
             }
         }
     }
@@ -354,11 +335,6 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add("Mobile template has empty id.");
             }
 
-            if (mobile.Body < 0)
-            {
-                errors.Add($"Mobile template '{mobile.Id}' has invalid body: {mobile.Body}.");
-            }
-
             if (!string.IsNullOrWhiteSpace(mobile.SellProfileId) &&
                 !_sellProfileTemplateService.TryGet(mobile.SellProfileId, out _))
             {
@@ -373,8 +349,8 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' references missing default faction '{mobile.DefaultFactionId}'.");
             }
 
-            ValidateFixedEquipment(mobile, errors);
-            ValidateRandomEquipment(mobile, errors);
+            ValidateTemplateParams($"Mobile template '{mobile.Id}'", mobile.Params, errors);
+            ValidateVariants(mobile, errors);
         }
     }
 
@@ -396,44 +372,154 @@ public sealed class TemplateValidationLoader : IFileLoader
         }
     }
 
-    private void ValidateRandomEquipment(MobileTemplateDefinition mobile, List<string> errors)
+    private void ValidateEquipmentEntry(
+        MobileTemplateDefinition mobile,
+        MobileVariantTemplate variant,
+        MobileEquipmentEntryTemplate equipment,
+        int equipmentIndex,
+        List<string> errors
+    )
     {
-        foreach (var randomPool in mobile.RandomEquipment)
+        var hasItemTemplateId = !string.IsNullOrWhiteSpace(equipment.ItemTemplateId);
+        var hasWeightedItems = equipment.Items.Count > 0;
+        var equipmentLabel = $"Mobile template '{mobile.Id}' variant '{variant.Name}' equipment {equipmentIndex}";
+
+        if (equipment.Layer == ItemLayerType.Invalid)
         {
-            if (randomPool.SpawnChance is < 0f or > 1f)
+            errors.Add($"{equipmentLabel} has invalid layer.");
+        }
+
+        if (equipment.Chance is < 0d or > 1d)
+        {
+            errors.Add($"{equipmentLabel} has invalid chance {equipment.Chance}.");
+        }
+
+        if (hasItemTemplateId == hasWeightedItems)
+        {
+            errors.Add($"{equipmentLabel} must define exactly one of itemTemplateId or items.");
+        }
+
+        if (hasItemTemplateId)
+        {
+            var itemTemplateId = equipment.ItemTemplateId!.Trim();
+
+            if (!_itemTemplateService.TryGet(itemTemplateId, out _))
             {
                 errors.Add(
-                    $"Mobile template '{mobile.Id}' random pool '{randomPool.Name}' has invalid spawnChance {randomPool.SpawnChance}."
+                    $"Mobile template '{mobile.Id}' variant '{variant.Name}' equipment {equipmentIndex} references missing item template '{equipment.ItemTemplateId}'."
+                );
+            }
+        }
+
+        ValidateTemplateParams(equipmentLabel, equipment.Params, errors);
+
+        if (!hasWeightedItems)
+        {
+            return;
+        }
+
+        for (var index = 0; index < equipment.Items.Count; index++)
+        {
+            var weightedItem = equipment.Items[index];
+            var weightedItemLabel = $"{equipmentLabel} item {index}";
+
+            if (string.IsNullOrWhiteSpace(weightedItem.ItemTemplateId))
+            {
+                errors.Add($"{weightedItemLabel} has empty itemTemplateId.");
+
+                continue;
+            }
+
+            if (weightedItem.Weight <= 0)
+            {
+                errors.Add($"{weightedItemLabel} has non-positive weight {weightedItem.Weight}.");
+            }
+
+            if (!_itemTemplateService.TryGet(weightedItem.ItemTemplateId.Trim(), out _))
+            {
+                errors.Add(
+                    $"Mobile template '{mobile.Id}' variant '{variant.Name}' equipment {equipmentIndex} references missing item template '{weightedItem.ItemTemplateId}'."
                 );
             }
 
-            if (randomPool.Items.Count == 0)
+            ValidateTemplateParams(weightedItemLabel, weightedItem.Params, errors);
+        }
+    }
+
+    private void ValidateVariants(MobileTemplateDefinition mobile, List<string> errors)
+    {
+        if (mobile.Variants.Count == 0)
+        {
+            errors.Add($"Mobile template '{mobile.Id}' has no variants.");
+
+            return;
+        }
+
+        for (var index = 0; index < mobile.Variants.Count; index++)
+        {
+            var variant = mobile.Variants[index];
+            var variantLabel = $"Mobile template '{mobile.Id}' variant {index}";
+
+            if (variant.Weight <= 0)
             {
-                errors.Add($"Mobile template '{mobile.Id}' random pool '{randomPool.Name}' has no items.");
+                errors.Add($"{variantLabel} has non-positive weight {variant.Weight}.");
             }
 
-            foreach (var weightedItem in randomPool.Items)
+            if (variant.Appearance.Body <= 0)
             {
-                if (string.IsNullOrWhiteSpace(weightedItem.ItemTemplateId))
-                {
-                    errors.Add($"Mobile template '{mobile.Id}' random pool '{randomPool.Name}' has empty itemTemplateId.");
+                errors.Add($"{variantLabel} has invalid or missing appearance.body.");
+            }
 
-                    continue;
-                }
+            for (var equipmentIndex = 0; equipmentIndex < variant.Equipment.Count; equipmentIndex++)
+            {
+                ValidateEquipmentEntry(mobile, variant, variant.Equipment[equipmentIndex], equipmentIndex, errors);
+            }
+        }
+    }
 
-                if (weightedItem.Weight <= 0)
-                {
-                    errors.Add(
-                        $"Mobile template '{mobile.Id}' random pool '{randomPool.Name}' has non-positive weight for item '{weightedItem.ItemTemplateId}': {weightedItem.Weight}."
-                    );
-                }
+    private static void ValidateTemplateParams(
+        string ownerLabel,
+        IReadOnlyDictionary<string, ItemTemplateParamDefinition> parameters,
+        List<string> errors
+    )
+    {
+        foreach (var (key, param) in parameters)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                errors.Add($"{ownerLabel} has an invalid params entry with an empty key.");
 
-                if (!_itemTemplateService.TryGet(weightedItem.ItemTemplateId, out _))
-                {
-                    errors.Add(
-                        $"Mobile template '{mobile.Id}' random pool '{randomPool.Name}' references missing item template '{weightedItem.ItemTemplateId}'."
-                    );
-                }
+                continue;
+            }
+
+            var normalizedKey = key.Trim();
+
+            switch (param.Type)
+            {
+                case ItemTemplateParamType.String:
+                    break;
+                case ItemTemplateParamType.Serial:
+                    if (!Serial.TryParse(param.Value, null, out _))
+                    {
+                        errors.Add($"{ownerLabel} has invalid serial param '{normalizedKey}' = '{param.Value}'.");
+                    }
+
+                    break;
+                case ItemTemplateParamType.Hue:
+                    try
+                    {
+                        HueSpec.ParseFromString(param.Value).Resolve();
+                    }
+                    catch (FormatException)
+                    {
+                        errors.Add($"{ownerLabel} has invalid hue param '{normalizedKey}' = '{param.Value}'.");
+                    }
+
+                    break;
+                default:
+                    errors.Add($"{ownerLabel} has unsupported param type '{param.Type}' for key '{normalizedKey}'.");
+
+                    break;
             }
         }
     }

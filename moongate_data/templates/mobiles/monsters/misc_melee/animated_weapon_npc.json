@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x02B4",
-    "skinHue": 0,
-    "hairHue": 0,
     "intelligence": 10,
     "mana": 0,
     "minDamage": 14,
@@ -30,8 +27,16 @@
       "poison": 20,
       "energy": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an animated weapon"
+    "title": "an animated weapon",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02B4"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

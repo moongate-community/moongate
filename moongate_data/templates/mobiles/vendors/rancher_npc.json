@@ -8,8 +8,6 @@
       "vendor",
       "npc"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "vendor",
     "skills": {
       "AnimalLore": 665,
@@ -17,8 +15,26 @@
       "Herding": 820,
       "Veterinary": 715
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "the rancher"
+    "title": "the rancher",
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

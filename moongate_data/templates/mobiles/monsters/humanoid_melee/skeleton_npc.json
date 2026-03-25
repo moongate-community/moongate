@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0032",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 68,
     "dexterity": 65,
     "intelligence": 28,
@@ -48,8 +45,24 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a skeleton"
+    "title": "a skeleton",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0032"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0038"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

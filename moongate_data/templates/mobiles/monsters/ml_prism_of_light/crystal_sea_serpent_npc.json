@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 350,
     "dexterity": 125,
     "intelligence": 140,
@@ -29,8 +27,16 @@
       "cold": 45,
       "energy": 45
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a crystal sea serpent"
+    "title": "a crystal sea serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0096"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

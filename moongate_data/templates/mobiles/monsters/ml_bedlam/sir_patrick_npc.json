@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 263,
     "dexterity": 115,
     "intelligence": 68,
@@ -41,8 +39,17 @@
       "physical": 40,
       "cold": 60
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Sir Patrick"
+    "title": "Sir Patrick",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0093",
+          "skinHue": "0x047E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

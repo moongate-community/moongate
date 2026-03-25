@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x000E",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 140,
     "dexterity": 75,
     "intelligence": 81,
@@ -50,8 +47,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an earth elemental"
+    "title": "an earth elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

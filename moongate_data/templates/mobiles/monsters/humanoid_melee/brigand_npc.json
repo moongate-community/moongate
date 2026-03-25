@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 93,
     "dexterity": 88,
     "intelligence": 68,
@@ -30,8 +27,455 @@
     "lootTables": [
       "loot_pack.average"
     ],
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "female"
+    "variants": [
+      {
+        "name": "female_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "cutlass"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "axe"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "club"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "dagger"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "female_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "spear"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "cutlass"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "axe"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "club"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "dagger"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      },
+      {
+        "name": "male_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "bandana"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "spear"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 210,
     "dexterity": 104,
     "intelligence": 41,
@@ -38,8 +36,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Thrasher"
+    "title": "Thrasher",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00CA",
+          "skinHue": "0x0497"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

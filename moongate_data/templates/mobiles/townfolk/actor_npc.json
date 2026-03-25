@@ -8,12 +8,51 @@
       "townfolk",
       "npc"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "animal",
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "female"
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "fancy_dress"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "long_pants",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          }
+        ]
+      }
+    ]
   }
 ]

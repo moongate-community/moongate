@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 258,
     "dexterity": 104,
     "intelligence": 72,
@@ -42,8 +40,17 @@
       "physical": 40,
       "cold": 60
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Lady Jennifyr"
+    "title": "Lady Jennifyr",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0093",
+          "skinHue": "0x076D"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

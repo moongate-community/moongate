@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x00FE",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 30,
     "dexterity": 20,
     "intelligence": 13,
@@ -41,8 +38,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a crane"
+    "title": "a crane",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00FE"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

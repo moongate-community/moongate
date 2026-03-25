@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x00F6",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 195,
     "dexterity": 135,
     "intelligence": 400,
@@ -46,8 +43,16 @@
       "physical": 70,
       "energy": 30
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a bake kitsune"
+    "title": "a bake kitsune",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F6"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

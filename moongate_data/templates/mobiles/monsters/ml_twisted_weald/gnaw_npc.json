@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 161,
     "dexterity": 134,
     "intelligence": 73,
@@ -41,8 +39,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Gnaw"
+    "title": "Gnaw",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0017",
+          "skinHue": "0x0130"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

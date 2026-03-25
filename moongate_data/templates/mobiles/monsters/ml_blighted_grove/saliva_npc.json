@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 158,
     "dexterity": 172,
     "intelligence": 103,
@@ -36,8 +34,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Saliva"
+    "title": "Saliva",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x001E",
+          "skinHue": "0x011E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

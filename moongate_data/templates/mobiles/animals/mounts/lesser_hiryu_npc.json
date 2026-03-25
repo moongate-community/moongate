@@ -8,8 +8,6 @@
       "animal",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 355,
     "dexterity": 220,
     "intelligence": 313,
@@ -46,8 +44,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a lesser hiryu"
+    "title": "a lesser hiryu",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F3"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

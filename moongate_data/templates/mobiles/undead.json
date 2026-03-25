@@ -10,10 +10,6 @@
       "zombie",
       "test"
     ],
-    "body": "0x0003",
-    "skinHue": 0,
-    "hairHue": 0,
-    "hairStyle": 0,
     "strength": 58,
     "dexterity": 40,
     "intelligence": 33,
@@ -34,10 +30,21 @@
       "Defend": 474,
       "Die": 475
     },
-    "lootTables": ["undead.low"],
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a zombie"
+    "lootTables": [
+      "undead.low"
+    ],
+    "title": "a zombie",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0003",
+          "skinHue": 0,
+          "hairHue": 0,
+          "hairStyle": 0
+        },
+        "equipment": []
+      }
+    ]
   },
   {
     "type": "mobile",
@@ -51,10 +58,6 @@
       "knight",
       "test"
     ],
-    "body": "0x0093",
-    "skinHue": 0,
-    "hairHue": 0,
-    "hairStyle": 0,
     "strength": 220,
     "dexterity": 85,
     "intelligence": 48,
@@ -68,18 +71,29 @@
     "karma": -3000,
     "notoriety": "CanBeAttacked",
     "brain": "None",
-    "lootTables": ["undead.knight"],
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "scimitar",
-        "layer": "OneHanded"
-      },
-      {
-        "itemTemplateId": "wooden_shield",
-        "layer": "TwoHanded"
-      }
+    "lootTables": [
+      "undead.knight"
     ],
-    "randomEquipment": [],
-    "title": "a skeletal knight"
+    "title": "a skeletal knight",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0093",
+          "skinHue": 0,
+          "hairHue": 0,
+          "hairStyle": 0
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "scimitar",
+            "layer": "OneHanded"
+          },
+          {
+            "itemTemplateId": "wooden_shield",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   }
 ]

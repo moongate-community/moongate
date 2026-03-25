@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 700,
     "dexterity": 220,
     "intelligence": 400,
@@ -48,8 +45,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Crystal Lattice Seeker"
+    "title": "Crystal Lattice Seeker",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x007B",
+          "skinHue": "0x047E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x02FD",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 250,
     "dexterity": 80,
     "intelligence": 475,
@@ -48,8 +45,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a juka mage"
+    "title": "a juka mage",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02FD"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

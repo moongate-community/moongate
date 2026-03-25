@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x030E",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 208,
     "dexterity": 113,
     "intelligence": 48,
@@ -44,8 +41,16 @@
       "physical": 80,
       "poison": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a red solen warrior"
+    "title": "a red solen warrior",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

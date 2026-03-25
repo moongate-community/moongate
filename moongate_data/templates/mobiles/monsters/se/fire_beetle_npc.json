@@ -8,8 +8,6 @@
       "monster",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 300,
     "dexterity": 82,
     "intelligence": 500,
@@ -36,8 +34,17 @@
       "physical": 0,
       "fire": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a fire beetle"
+    "title": "a fire beetle",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A9",
+          "skinHue": "0x0489"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

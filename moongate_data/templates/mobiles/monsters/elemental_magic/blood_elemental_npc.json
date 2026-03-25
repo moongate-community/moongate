@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x009F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 570,
     "dexterity": 75,
     "intelligence": 288,
@@ -53,8 +50,16 @@
       "poison": 50,
       "energy": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a blood elemental"
+    "title": "a blood elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x009F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

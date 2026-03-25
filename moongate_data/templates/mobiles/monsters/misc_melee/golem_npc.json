@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x02F0",
-    "skinHue": 0,
-    "hairHue": 0,
     "fame": 10,
     "karma": 10,
     "notoriety": "Innocent",
@@ -20,8 +17,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a golem"
+    "title": "a golem",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02F0",
+          "skinHue": "0x0835"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

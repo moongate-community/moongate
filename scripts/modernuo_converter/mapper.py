@@ -1,8 +1,15 @@
 """Transform parsed ModernUO NPC data into Moongate template format."""
 
+import json
 import re
+from pathlib import Path
+from typing import Optional, Union
 
 from .constants import AI_TYPE_TO_BRAIN, LOOT_PACK_MAP, RESISTANCE_TYPE_MAP
+
+TEMPLATE_BRAIN_OVERRIDES = {
+    "banker_npc": "town_banker",
+}
 
 
 def _pascal_to_snake(name: str) -> str:
@@ -25,6 +32,320 @@ def _avg_float(min_val: float, max_val: float) -> float:
 def _body_hex(body_int: int) -> str:
     """Format body ID as hex string 0xNNNN."""
     return f"0x{body_int:04X}"
+
+
+def _canonicalize_fixed_hue_value(value):
+    if value is None:
+        return None
+
+    if isinstance(value, int):
+        return f"0x{value:04X}"
+
+    if not isinstance(value, str):
+        return None
+
+    stripped = value.strip()
+    if not stripped:
+        return None
+
+    if stripped.startswith("hue("):
+        return stripped
+
+    if re.fullmatch(r"0x[0-9A-Fa-f]+", stripped):
+        return f"0x{int(stripped, 16):04X}"
+
+    if re.fullmatch(r"\d+", stripped):
+        return f"0x{int(stripped):04X}"
+
+    return None
+
+
+def _canonicalize_skin_hue_value(value):
+    """Normalize supported skin hue helpers to canonical template values."""
+    fixed_value = _canonicalize_fixed_hue_value(value)
+    if fixed_value is not None:
+        return fixed_value
+
+    if not isinstance(value, str):
+        return None
+
+    stripped = value.strip()
+
+    if stripped == "Race.Human.RandomSkinHue()":
+        return "hue(1002:1058)"
+
+    return None
+
+
+def _canonicalize_appearance_hue_value(value):
+    return _canonicalize_fixed_hue_value(value)
+
+
+def _canonicalize_item_hue_value(value):
+    """Normalize supported item hue helpers to canonical template values."""
+    fixed_value = _canonicalize_fixed_hue_value(value)
+    if fixed_value is not None:
+        return fixed_value
+
+    if not isinstance(value, str):
+        return None
+
+    stripped = value.strip()
+
+    if stripped == "Utility.RandomNeutralHue()":
+        return "hue(1801:1908)"
+
+    return None
+
+
+def _normalize_item_catalog_key(item_class_name: str) -> str:
+    return _pascal_to_snake(item_class_name)
+
+
+def _lookup_item_metadata(item_catalog: dict, item_class_name: str) -> Optional[dict]:
+    if not item_catalog:
+        return None
+
+    catalog_key = _normalize_item_catalog_key(item_class_name)
+    metadata = item_catalog.get(catalog_key)
+    if isinstance(metadata, dict):
+        return metadata
+
+    for key, value in item_catalog.items():
+        if isinstance(key, str) and key.lower() == catalog_key and isinstance(value, dict):
+            return value
+
+    return None
+
+
+def _resolve_equipment_option(option: dict, item_catalog: dict) -> Optional[dict]:
+    class_name = option.get("class_name")
+    if not isinstance(class_name, str) or not class_name:
+        return None
+
+    metadata = _lookup_item_metadata(item_catalog, class_name)
+    if metadata is None:
+        return None
+
+    layer = metadata.get("layer")
+    if not isinstance(layer, str) or not layer:
+        return None
+
+    option_data = {
+        "itemTemplateId": _normalize_item_catalog_key(class_name),
+        "layer": layer,
+        "weight": option.get("weight", 1),
+    }
+
+    hue = _canonicalize_item_hue_value(option.get("hue"))
+    if hue is not None:
+        option_data["hue"] = hue
+
+    return option_data
+
+
+def _build_equipment_entry(group: list, item_catalog: dict) -> Optional[dict]:
+    resolved = []
+    for option in group:
+        resolved_option = _resolve_equipment_option(option, item_catalog)
+        if resolved_option is None:
+            return None
+        resolved.append(resolved_option)
+
+    if not resolved:
+        return None
+
+    layers = {option["layer"] for option in resolved}
+    if len(layers) != 1:
+        return None
+
+    layer = resolved[0]["layer"]
+    if len(resolved) == 1:
+        entry = {"layer": layer, "itemTemplateId": resolved[0]["itemTemplateId"]}
+        if "hue" in resolved[0]:
+            entry["hue"] = resolved[0]["hue"]
+        return entry
+
+    items = []
+    for option in resolved:
+        item_entry = {
+            "itemTemplateId": option["itemTemplateId"],
+            "weight": option.get("weight", 1),
+        }
+        if "hue" in option:
+            item_entry["hue"] = option["hue"]
+        items.append(item_entry)
+
+    return {"layer": layer, "items": items}
+
+
+def _resolve_equipment_group(group: list, item_catalog: dict) -> Optional[list[dict]]:
+    resolved = []
+    for option in group:
+        resolved_option = _resolve_equipment_option(option, item_catalog)
+        if resolved_option is None:
+            return None
+        resolved.append(resolved_option)
+
+    return resolved or None
+
+
+def _collapse_equipment_entries(entries: list[dict]) -> list[dict]:
+    last_index_by_layer = {}
+    for index, entry in enumerate(entries):
+        last_index_by_layer[entry["layer"]] = index
+
+    return [
+        entry
+        for index, entry in enumerate(entries)
+        if last_index_by_layer.get(entry["layer"]) == index
+    ]
+
+
+def _build_equipment_variants(groups: list, item_catalog: dict) -> list[list[dict]]:
+    variants = [[]]
+    for group in groups or []:
+        if not isinstance(group, list):
+            continue
+
+        resolved_group = _resolve_equipment_group(group, item_catalog)
+        if resolved_group is None:
+            continue
+
+        layers = {option["layer"] for option in resolved_group}
+        if len(layers) == 1:
+            entry = _build_equipment_entry(group, item_catalog)
+            if entry is None:
+                continue
+
+            for variant_entries in variants:
+                variant_entries.append(entry)
+
+            continue
+
+        next_variants = []
+        for variant_entries in variants:
+            for option in resolved_group:
+                entry = {
+                    "layer": option["layer"],
+                    "itemTemplateId": option["itemTemplateId"],
+                }
+                if "hue" in option:
+                    entry["hue"] = option["hue"]
+                next_variants.append([*variant_entries, entry])
+
+        variants = next_variants
+
+    if not variants:
+        return [[]]
+
+    return [_collapse_equipment_entries(entries) for entries in variants]
+
+
+def _variant_appearance(parsed: dict, variant: dict) -> dict:
+    appearance_data = dict(variant.get("appearance", {}))
+    appearance = {}
+
+    body_value = appearance_data.get("body")
+    if body_value is None:
+        body_value = parsed.get("body")
+    if body_value is not None:
+        appearance["body"] = _body_hex(int(body_value))
+
+    skin_hue_value = appearance_data.get("skinHue")
+    if skin_hue_value is None:
+        skin_hue_value = appearance_data.get("skin_hue")
+    if skin_hue_value is None:
+        skin_hue_value = parsed.get("skin_hue")
+
+    canonical_skin_hue = _canonicalize_skin_hue_value(skin_hue_value)
+    if canonical_skin_hue is not None:
+        appearance["skinHue"] = canonical_skin_hue
+
+    appearance_hue_field_map = {
+        "hairHue": "hair_hue",
+        "facialHairHue": "facial_hair_hue",
+    }
+    for field_name, parsed_key in appearance_hue_field_map.items():
+        value = appearance_data.get(field_name)
+        if value is None:
+            value = appearance_data.get(parsed_key)
+        if value is None:
+            value = parsed.get(parsed_key)
+
+        canonical_value = _canonicalize_appearance_hue_value(value)
+        if canonical_value is not None:
+            appearance[field_name] = canonical_value
+
+    style_field_map = {
+        "hairStyle": "hair_style",
+        "facialHairStyle": "facial_hair_style",
+    }
+    for field_name, parsed_key in style_field_map.items():
+        value = appearance_data.get(field_name)
+        if value is None:
+            value = appearance_data.get(parsed_key)
+        if value is None:
+            value = parsed.get(parsed_key)
+
+        if value is not None:
+            appearance[field_name] = int(value)
+
+    return appearance
+
+
+def _extract_body_choices(parsed: dict, variant: dict) -> list[Optional[int]]:
+    appearance_data = dict(variant.get("appearance", {}))
+
+    body_value = appearance_data.get("body")
+    if body_value is None:
+        body_value = parsed.get("body")
+    if body_value is not None:
+        return [int(body_value)]
+
+    body_options = appearance_data.get("body_options")
+    if body_options is None:
+        body_options = parsed.get("body_options")
+    if body_options:
+        return [int(value) for value in body_options]
+
+    return [None]
+
+
+def _build_variants(parsed: dict, variant: dict, item_catalog: dict, shared_groups: list) -> list[dict]:
+    groups = []
+    groups.extend(shared_groups or [])
+    groups.extend(variant.get("equipment_groups", []))
+
+    equipment_variants = _build_equipment_variants(groups, item_catalog)
+    body_choices = _extract_body_choices(parsed, variant)
+    suffix_required = len(body_choices) > 1 or len(equipment_variants) > 1
+
+    built_variants = []
+    variant_index = 1
+    for body_choice in body_choices:
+        variant_data = {
+            "name": variant.get("name", "default"),
+            "weight": variant.get("weight", 1),
+            "appearance": dict(variant.get("appearance", {})),
+        }
+        if body_choice is not None:
+            variant_data["appearance"]["body"] = body_choice
+            variant_data["appearance"].pop("body_options", None)
+
+        for equipment in equipment_variants:
+            built_variant = {
+                "name": variant_data["name"],
+                "weight": variant_data["weight"],
+                "appearance": _variant_appearance(parsed, variant_data),
+                "equipment": equipment,
+            }
+            if suffix_required:
+                built_variant["name"] = f"{built_variant['name']}_{variant_index}"
+                variant_index += 1
+            built_variants.append(built_variant)
+
+    return built_variants
 
 
 def _notoriety_from_karma(karma: int) -> str:
@@ -137,8 +458,11 @@ def _derive_category_label(parsed: dict) -> str:
     return "mobile"
 
 
-def map_to_template(parsed: dict) -> dict:
+def map_to_template(parsed: dict, item_catalog: Optional[dict] = None) -> dict:
     """Convert a parsed NPC dict to a Moongate mobile template dict."""
+    if item_catalog is None:
+        item_catalog = {}
+
     class_name = parsed["class_name"]
     template_id = _pascal_to_snake(class_name) + "_npc"
 
@@ -149,14 +473,6 @@ def map_to_template(parsed: dict) -> dict:
         "description": f"Converted from ModernUO {class_name}.",
         "tags": _build_tags(parsed),
     }
-
-    # Body
-    if "body" in parsed:
-        template["body"] = _body_hex(parsed["body"])
-
-    # Default hue values
-    template["skinHue"] = 0
-    template["hairHue"] = 0
 
     # Stats
     if "str_min" in parsed:
@@ -195,7 +511,9 @@ def map_to_template(parsed: dict) -> dict:
     # Brain – use category-aware fallback for NPCs without a mapped AI type
     ai_type = parsed.get("ai_type", "")
     category = parsed.get("category", "")
-    if ai_type and ai_type in AI_TYPE_TO_BRAIN:
+    if template_id in TEMPLATE_BRAIN_OVERRIDES:
+        brain = TEMPLATE_BRAIN_OVERRIDES[template_id]
+    elif ai_type and ai_type in AI_TYPE_TO_BRAIN:
         brain = AI_TYPE_TO_BRAIN[ai_type]
     elif category in ("vendors", "town_npcs"):
         brain = "vendor"
@@ -224,20 +542,59 @@ def map_to_template(parsed: dict) -> dict:
     if "damage_types" in parsed:
         template["damageTypes"] = _build_damage_types(parsed["damage_types"])
 
-    # Equipment placeholders
-    template["fixedEquipment"] = []
-    template["randomEquipment"] = []
-
     # Title / Name
     if "title" in parsed:
         template["title"] = parsed["title"]
     elif "name" in parsed:
         template["title"] = parsed["name"]
 
+    shared_groups = parsed.get("shared_equipment_groups", [])
+    parsed_variants = parsed.get("variants") or [
+        {"name": "default", "weight": 1, "appearance": {}, "equipment_groups": []}
+    ]
+    built_variants = []
+    for variant in parsed_variants:
+        built_variants.extend(_build_variants(parsed, variant, item_catalog, shared_groups))
+    template["variants"] = built_variants
+
     return template
 
 
-def map_pack_items_to_loot(parsed: dict) -> dict | None:
+def load_item_template_catalog(items_root: Union[Path, str]) -> dict:
+    """Load item template metadata keyed by template id."""
+    root = Path(items_root)
+    catalog = {}
+
+    if not root.exists():
+        return catalog
+
+    for path in sorted(root.rglob("*.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+
+        if isinstance(data, dict):
+            entries = [data]
+        elif isinstance(data, list):
+            entries = data
+        else:
+            continue
+
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+
+            template_id = entry.get("id") or entry.get("itemId")
+            if not isinstance(template_id, str) or not template_id:
+                continue
+
+            catalog[template_id.lower()] = entry
+
+    return catalog
+
+
+def map_pack_items_to_loot(parsed: dict) -> Optional[dict]:
     """Create a creature-specific loot template from PackItem calls.
 
     Returns None if no pack items exist.
@@ -270,7 +627,7 @@ def map_pack_items_to_loot(parsed: dict) -> dict | None:
     }
 
 
-def map_vendor_to_sell_profile(parsed: dict) -> dict | None:
+def map_vendor_to_sell_profile(parsed: dict) -> Optional[dict]:
     """Create a placeholder sell profile from vendor SBInfo references.
 
     Returns None if no SBInfo data exists.
