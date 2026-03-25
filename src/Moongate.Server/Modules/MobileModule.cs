@@ -48,7 +48,9 @@ public sealed class MobileModule
     private readonly IItemService? _itemService;
     private readonly ISkillGainService? _skillGainService;
     private readonly IMobileTemplateService? _mobileTemplateService;
-    private readonly Func<double> _skillCheckRollProvider;
+    private readonly MobileCombatModule _combatModule;
+    private readonly MobileInventoryModule _inventoryModule;
+    private readonly MobileMovementModule _movementModule;
 
     public MobileModule(
         ICharacterService characterService,
@@ -80,7 +82,24 @@ public sealed class MobileModule
         _itemService = itemService;
         _skillGainService = skillGainService;
         _mobileTemplateService = mobileTemplateService;
-        _skillCheckRollProvider = skillCheckRollProvider ?? Random.Shared.NextDouble;
+        _movementModule = new(
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService,
+            pathfindingService,
+            gameEventBusService,
+            backgroundJobService
+        );
+        _combatModule = new(
+            mobileService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            outgoingPacketQueue,
+            skillGainService,
+            skillCheckRollProvider
+        );
+        _inventoryModule = new(itemService);
     }
 
     [ScriptFunction("dismount", "Attempts to dismount the rider from the current mount.")]
@@ -91,11 +110,11 @@ public sealed class MobileModule
             return false;
         }
 
-        var dismounted = _mobileService.DismountAsync((Serial)riderId).GetAwaiter().GetResult();
+        var dismounted = _combatModule.Dismount((Serial)riderId);
 
         if (dismounted)
         {
-            RefreshMountedSession((Serial)riderId, Serial.Zero, false);
+            _combatModule.RefreshMountedSession((Serial)riderId, Serial.Zero, false);
         }
 
         return dismounted;
@@ -163,56 +182,20 @@ public sealed class MobileModule
             return false;
         }
 
-        var proxy = CreateLuaMobileProxy(mobile);
-
-        return proxy is not null && proxy.Teleport(mapId, x, y, z);
+        return _movementModule.Teleport(mobile, mapId, x, y, z);
     }
 
     [ScriptFunction("check_skill", "Checks a skill against a min/max range and applies gain rules.")]
     public bool CheckSkill(uint characterId, string skillName, double minSkill, double maxSkill, uint targetId = 0)
     {
-        if (_skillGainService is null)
-        {
-            return false;
-        }
-
         var mobile = ResolveMobile((Serial)characterId);
 
-        if (mobile is null || !TryResolveSkillName(skillName, out var resolvedSkill))
+        if (mobile is null)
         {
             return false;
         }
 
-        var skill = mobile.GetSkill(resolvedSkill);
-
-        if (skill is null)
-        {
-            return false;
-        }
-
-        var currentValue = skill.Value / 10.0;
-
-        if (currentValue < minSkill)
-        {
-            return false;
-        }
-
-        if (currentValue >= maxSkill || minSkill >= maxSkill)
-        {
-            return true;
-        }
-
-        var successChance = Math.Clamp((currentValue - minSkill) / (maxSkill - minSkill), 0.0, 1.0);
-        var wasSuccessful = successChance >= _skillCheckRollProvider();
-        _ = _skillGainService.TryGain(
-            mobile,
-            resolvedSkill,
-            successChance,
-            wasSuccessful,
-            new SkillGainContext(mobile.Location, targetId == 0 ? null : (Serial)targetId)
-        );
-
-        return wasSuccessful;
+        return _combatModule.CheckSkill(mobile, skillName, minSkill, maxSkill, targetId);
     }
 
     [ScriptFunction("consume_item", "Consumes a matching item id from equipped quivers first, then backpack.")]
@@ -230,22 +213,7 @@ public sealed class MobileModule
             return false;
         }
 
-        var sources = GetConsumableSources(mobile);
-
-        if (CountMatchingItems(sources, itemId) < amount)
-        {
-            return false;
-        }
-
-        for (var i = 0; i < amount; i++)
-        {
-            if (!TryConsumeFromSources(sources, itemId))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return _inventoryModule.ConsumeItem(mobile, itemId, amount);
     }
 
     [ScriptFunction("add_item_to_backpack", "Spawns an item template and places it in the target backpack.")]
@@ -263,29 +231,7 @@ public sealed class MobileModule
             return null;
         }
 
-        var backpackId = ResolveBackpackId(mobile);
-
-        if (backpackId == Serial.Zero)
-        {
-            return null;
-        }
-
-        var item = _itemService.SpawnFromTemplateAsync(itemTemplateId.Trim()).GetAwaiter().GetResult();
-
-        if (amount > 1)
-        {
-            if (!item.IsStackable)
-            {
-                return null;
-            }
-
-            item.Amount = amount;
-            _itemService.UpsertItemAsync(item).GetAwaiter().GetResult();
-        }
-
-        var moved = _itemService.MoveItemToContainerAsync(item.Id, backpackId, new(1, 1)).GetAwaiter().GetResult();
-
-        return moved ? CreateLuaItemProxy(item) : null;
+        return CreateLuaItemProxy(_inventoryModule.AddItemToBackpack(mobile, itemTemplateId, amount));
     }
 
     [ScriptFunction("spawn", "Spawns a mobile template at world position { x, y, z, map_id }.")]
@@ -360,47 +306,14 @@ public sealed class MobileModule
         var mount = TryResolveRuntimeMobile(mountSerial) ??
                     _mobileService.GetAsync(mountSerial).GetAwaiter().GetResult();
 
-        if (rider is not null)
-        {
-            _mobileService.CreateOrUpdateAsync(rider).GetAwaiter().GetResult();
-        }
-
-        if (mount is not null)
-        {
-            _mobileService.CreateOrUpdateAsync(mount).GetAwaiter().GetResult();
-        }
-
-        var mounted = _mobileService.TryMountAsync(riderSerial, mountSerial).GetAwaiter().GetResult();
+        var mounted = _combatModule.TryMount(riderSerial, mountSerial, rider, mount);
 
         if (mounted)
         {
-            RefreshMountedSession(riderSerial, mountSerial, true);
+            _combatModule.RefreshMountedSession(riderSerial, mountSerial, true);
         }
 
         return mounted;
-    }
-
-    private void RefreshMountedSession(Serial riderId, Serial mountId, bool isMounted)
-    {
-        if (!_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) || session.Character is null)
-        {
-            return;
-        }
-
-        var rider = TryResolveRuntimeMobile(riderId) ??
-                    _mobileService?.GetAsync(riderId).GetAwaiter().GetResult() ??
-                    session.Character;
-        var mount = mountId == Serial.Zero
-                        ? null
-                        : TryResolveRuntimeMobile(mountId) ??
-                          _mobileService?.GetAsync(mountId).GetAwaiter().GetResult();
-
-        if (_outgoingPacketQueue is null)
-        {
-            return;
-        }
-
-        MountedSelfRefreshHelper.Refresh(session, _outgoingPacketQueue, rider, mount, isMounted);
     }
 
     private static void RegisterLuaTypeIfNeeded()
@@ -522,58 +435,6 @@ public sealed class MobileModule
         );
     }
 
-    private static int CountMatchingItems(IEnumerable<UOItemEntity> containers, int itemId)
-        => containers.Sum(container => CountMatchingItems(container, itemId));
-
-    private static int CountMatchingItems(UOItemEntity container, int itemId)
-    {
-        var count = 0;
-
-        foreach (var child in container.Items)
-        {
-            if (child.ItemId == itemId)
-            {
-                count += Math.Max(0, child.Amount);
-            }
-
-            if (child.Items.Count > 0)
-            {
-                count += CountMatchingItems(child, itemId);
-            }
-        }
-
-        return count;
-    }
-
-    private IEnumerable<UOItemEntity> GetConsumableSources(UOMobileEntity mobile)
-    {
-        var quiver = mobile.GetEquippedItemsRuntime().FirstOrDefault(static item => item.IsQuiver);
-
-        if (quiver is not null)
-        {
-            yield return quiver;
-        }
-
-        var backpack = TryResolveBackpack(mobile);
-
-        if (backpack is not null)
-        {
-            yield return backpack;
-        }
-    }
-
-    private static Serial ResolveBackpackId(UOMobileEntity mobile)
-    {
-        if (mobile.BackpackId != Serial.Zero)
-        {
-            return mobile.BackpackId;
-        }
-
-        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
-                   ? equippedBackpackId
-                   : Serial.Zero;
-    }
-
     private UOMobileEntity? ResolveMobile(Serial mobileId)
     {
         if (mobileId == Serial.Zero)
@@ -606,71 +467,16 @@ public sealed class MobileModule
                              (item.WeaponSkill is not null || item.CombatStats is not null)
                  );
 
-    private bool TryConsumeFromSources(IEnumerable<UOItemEntity> sources, int itemId)
+    private static Serial ResolveBackpackId(UOMobileEntity mobile)
     {
-        foreach (var source in sources)
+        if (mobile.BackpackId != Serial.Zero)
         {
-            if (!TryConsumeItemRecursive(source, itemId, out var changedStack, out var deletedStack))
-            {
-                continue;
-            }
-
-            if (changedStack is not null)
-            {
-                _itemService!.UpsertItemAsync(changedStack).GetAwaiter().GetResult();
-            }
-
-            if (deletedStack is not null)
-            {
-                _ = _itemService!.DeleteItemAsync(deletedStack.Id).GetAwaiter().GetResult();
-            }
-
-            _itemService!.UpsertItemAsync(source).GetAwaiter().GetResult();
-
-            return true;
+            return mobile.BackpackId;
         }
 
-        return false;
-    }
-
-    private static bool TryConsumeItemRecursive(
-        UOItemEntity container,
-        int itemId,
-        out UOItemEntity? changedStack,
-        out UOItemEntity? deletedStack
-    )
-    {
-        changedStack = null;
-        deletedStack = null;
-
-        for (var index = container.Items.Count - 1; index >= 0; index--)
-        {
-            var child = container.Items[index];
-
-            if (child.ItemId == itemId)
-            {
-                child.Amount--;
-
-                if (child.Amount <= 0)
-                {
-                    container.RemoveItem(child.Id);
-                    deletedStack = child;
-                }
-                else
-                {
-                    changedStack = child;
-                }
-
-                return true;
-            }
-
-            if (TryConsumeItemRecursive(child, itemId, out changedStack, out deletedStack))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
+                   ? equippedBackpackId
+                   : Serial.Zero;
     }
 
     private static bool TryResolveSkillName(string skillName, out UOSkillName resolvedSkill)
