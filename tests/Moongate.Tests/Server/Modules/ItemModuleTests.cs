@@ -4,6 +4,8 @@ using Moongate.Server.Modules;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 
@@ -289,6 +291,115 @@ public class ItemModuleTests
             }
         );
     }
+
+    [Test]
+    public void SearchTemplates_WhenQueryMatchesTemplateIdPrefix_ShouldReturnStableItemMetadata()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var templateService = new ItemTemplateService();
+        templateService.UpsertRange(
+        [
+            CreateTemplate("arrow", "Arrow", "0x0F3F"),
+            CreateTemplate("arrow_bundle", "Arrow Bundle", "0x1BFB"),
+            CreateTemplate("bone_armor", "Bone Armor", "0x144F")
+        ]
+        );
+        var module = new ItemModule(itemService, itemTemplateService: templateService);
+
+        var results = module.SearchTemplates("arr");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(2));
+                AssertResult(results, 1, "arrow", "Arrow", 0x0F3F);
+                AssertResult(results, 2, "arrow_bundle", "Arrow Bundle", 0x1BFB);
+            }
+        );
+    }
+
+    [Test]
+    public void SearchTemplates_WhenQueryMatchesDisplayNameSubstring_ShouldReturnSubstringMatches()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var templateService = new ItemTemplateService();
+        templateService.UpsertRange(
+        [
+            CreateTemplate("ceremonial_dagger", "Ceremonial Blade", "0x0F52"),
+            CreateTemplate("training_sword", "Training Blade", "0x13B9"),
+            CreateTemplate("war_mace", "War Mace", "0x1407")
+        ]
+        );
+        var module = new ItemModule(itemService, itemTemplateService: templateService);
+
+        var results = module.SearchTemplates("blade");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(2));
+                AssertResult(results, 1, "ceremonial_dagger", "Ceremonial Blade", 0x0F52);
+                AssertResult(results, 2, "training_sword", "Training Blade", 0x13B9);
+            }
+        );
+    }
+
+    [Test]
+    public void SearchTemplates_WhenPageSizeExceedsMax_ShouldClampResultCount()
+    {
+        var itemService = new ItemModuleTestItemService();
+        var templateService = new ItemTemplateService();
+
+        for (var index = 1; index <= 60; index++)
+        {
+            templateService.Upsert(
+                CreateTemplate(
+                    $"search_item_{index:00}",
+                    $"Search Item {index:00}",
+                    "0x0EED"
+                )
+            );
+        }
+
+        var module = new ItemModule(itemService, itemTemplateService: templateService);
+
+        var results = module.SearchTemplates("search_item", pageSize: 999);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(results.Length, Is.EqualTo(50));
+                AssertResult(results, 1, "search_item_01", "Search Item 01", 0x0EED);
+                AssertResult(results, 50, "search_item_50", "Search Item 50", 0x0EED);
+            }
+        );
+    }
+
+    private static void AssertResult(Table results, int index, string templateId, string displayName, int itemId)
+    {
+        var entry = results.Get(index).Table;
+
+        Assert.That(entry, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(entry!.Get("template_id").String, Is.EqualTo(templateId));
+                Assert.That(entry.Get("display_name").String, Is.EqualTo(displayName));
+                Assert.That((int)entry.Get("item_id").Number, Is.EqualTo(itemId));
+            }
+        );
+    }
+
+    private static ItemTemplateDefinition CreateTemplate(string id, string name, string itemId)
+        => new()
+        {
+            Id = id,
+            Name = name,
+            Category = "Test",
+            Description = name,
+            ItemId = itemId,
+            ScriptId = string.Empty
+        };
 
     private static Table CreatePositionTable(int x, int y, int z, int mapId)
     {

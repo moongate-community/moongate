@@ -3,6 +3,7 @@ using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Internal.Templates;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -16,7 +17,9 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 
@@ -29,6 +32,7 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class MobileModule
 {
+    private const int MaxTemplateSearchPageSize = 50;
     private static bool _isLuaMobileProxyTypeRegistered;
     private static bool _isLuaItemProxyTypeRegistered;
     private readonly ICharacterService _characterService;
@@ -43,6 +47,7 @@ public sealed class MobileModule
     private readonly IOutgoingPacketQueue? _outgoingPacketQueue;
     private readonly IItemService? _itemService;
     private readonly ISkillGainService? _skillGainService;
+    private readonly IMobileTemplateService? _mobileTemplateService;
     private readonly Func<double> _skillCheckRollProvider;
 
     public MobileModule(
@@ -58,6 +63,7 @@ public sealed class MobileModule
         IOutgoingPacketQueue? outgoingPacketQueue = null,
         IItemService? itemService = null,
         ISkillGainService? skillGainService = null,
+        IMobileTemplateService? mobileTemplateService = null,
         Func<double>? skillCheckRollProvider = null
     )
     {
@@ -73,6 +79,7 @@ public sealed class MobileModule
         _outgoingPacketQueue = outgoingPacketQueue;
         _itemService = itemService;
         _skillGainService = skillGainService;
+        _mobileTemplateService = mobileTemplateService;
         _skillCheckRollProvider = skillCheckRollProvider ?? Random.Shared.NextDouble;
     }
 
@@ -293,6 +300,36 @@ public sealed class MobileModule
         );
     }
 
+    [ScriptFunction("search_templates", "Searches mobile templates for GM tools and returns paged results.")]
+    public Table SearchTemplates(string query, int page = 1, int pageSize = 20)
+    {
+        var results = new Table(null);
+
+        if (_mobileTemplateService is null)
+        {
+            return results;
+        }
+
+        var normalizedQuery = query?.Trim() ?? string.Empty;
+        var normalizedPage = Math.Max(1, page);
+        var normalizedPageSize = Math.Clamp(pageSize, 1, MaxTemplateSearchPageSize);
+        var matches = SearchTemplateDefinitions(_mobileTemplateService.GetAll(), normalizedQuery);
+        var paged = matches.Skip((normalizedPage - 1) * normalizedPageSize).Take(normalizedPageSize);
+        var index = 1;
+
+        foreach (var match in paged)
+        {
+            var entry = new Table(null)
+            {
+                ["template_id"] = match.TemplateId,
+                ["display_name"] = match.DisplayName
+            };
+            results[index++] = entry;
+        }
+
+        return results;
+    }
+
     [ScriptFunction("try_mount", "Attempts to mount the rider on the target mount creature.")]
     public bool TryMount(uint riderId, uint mountId)
     {
@@ -376,6 +413,54 @@ public sealed class MobileModule
         UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaItemProxyTypeRegistered = true;
     }
+
+    private static string ResolveDisplayName(MobileTemplateDefinition template)
+        => !string.IsNullOrWhiteSpace(template.Name)
+               ? template.Name.Trim()
+               : !string.IsNullOrWhiteSpace(template.Title)
+                   ? template.Title.Trim()
+                   : template.Id;
+
+    private static IReadOnlyList<LuaMobileTemplateSearchResult> SearchTemplateDefinitions(
+        IReadOnlyList<MobileTemplateDefinition> templates,
+        string query
+    )
+    {
+        var orderedTemplates = templates.OrderBy(static template => template.Id, StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return orderedTemplates.Select(MapSearchResult).ToList();
+        }
+
+        var prefixMatches = new List<LuaMobileTemplateSearchResult>();
+        var substringMatches = new List<LuaMobileTemplateSearchResult>();
+
+        foreach (var template in orderedTemplates)
+        {
+            var displayName = ResolveDisplayName(template);
+            var matchesPrefix = template.Id.StartsWith(query, StringComparison.OrdinalIgnoreCase) ||
+                                displayName.StartsWith(query, StringComparison.OrdinalIgnoreCase);
+
+            if (matchesPrefix)
+            {
+                prefixMatches.Add(MapSearchResult(template));
+
+                continue;
+            }
+
+            if (template.Id.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                displayName.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                substringMatches.Add(MapSearchResult(template));
+            }
+        }
+
+        return [..prefixMatches, ..substringMatches];
+    }
+
+    private static LuaMobileTemplateSearchResult MapSearchResult(MobileTemplateDefinition template)
+        => new(template.Id, ResolveDisplayName(template));
 
     private UOMobileEntity? ResolveRiderForMount(Serial riderId)
     {

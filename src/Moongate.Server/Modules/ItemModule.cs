@@ -1,11 +1,15 @@
+using System.Globalization;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Internal.Entities;
+using Moongate.Server.Data.Internal.Templates;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Templates.Items;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
@@ -17,20 +21,24 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class ItemModule
 {
+    private const int MaxTemplateSearchPageSize = 50;
     private static bool _isLuaItemProxyTypeRegistered;
     private readonly IItemService _itemService;
     private readonly ISpatialWorldService? _spatialWorldService;
     private readonly ISpeechService? _speechService;
+    private readonly IItemTemplateService? _itemTemplateService;
 
     public ItemModule(
         IItemService itemService,
         ISpatialWorldService? spatialWorldService = null,
-        ISpeechService? speechService = null
+        ISpeechService? speechService = null,
+        IItemTemplateService? itemTemplateService = null
     )
     {
         _itemService = itemService;
         _spatialWorldService = spatialWorldService;
         _speechService = speechService;
+        _itemTemplateService = itemTemplateService;
     }
 
     [ScriptFunction("get", "Gets an item reference by item id, or nil when not found.")]
@@ -76,6 +84,37 @@ public sealed class ItemModule
         var resolved = _itemService.GetItemAsync(item.Id).GetAwaiter().GetResult() ?? item;
 
         return new(resolved, _itemService, _spatialWorldService, _speechService);
+    }
+
+    [ScriptFunction("search_templates", "Searches item templates for GM tools and returns paged results.")]
+    public Table SearchTemplates(string query, int page = 1, int pageSize = 20)
+    {
+        var results = new Table(null);
+
+        if (_itemTemplateService is null)
+        {
+            return results;
+        }
+
+        var normalizedQuery = query?.Trim() ?? string.Empty;
+        var normalizedPage = Math.Max(1, page);
+        var normalizedPageSize = Math.Clamp(pageSize, 1, MaxTemplateSearchPageSize);
+        var matches = SearchTemplateDefinitions(_itemTemplateService.GetAll(), normalizedQuery);
+        var paged = matches.Skip((normalizedPage - 1) * normalizedPageSize).Take(normalizedPageSize);
+        var index = 1;
+
+        foreach (var match in paged)
+        {
+            var entry = new Table(null)
+            {
+                ["template_id"] = match.TemplateId,
+                ["display_name"] = match.DisplayName,
+                ["item_id"] = match.ItemId
+            };
+            results[index++] = entry;
+        }
+
+        return results;
     }
 
     private static void RegisterLuaTypeIfNeeded()
@@ -132,4 +171,74 @@ public sealed class ItemModule
 
         return true;
     }
+
+    private static IReadOnlyList<LuaItemTemplateSearchResult> SearchTemplateDefinitions(
+        IReadOnlyList<ItemTemplateDefinition> templates,
+        string query
+    )
+    {
+        var orderedTemplates = templates.OrderBy(static template => template.Id, StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return orderedTemplates.Select(MapSearchResult).ToList();
+        }
+
+        var prefixMatches = new List<LuaItemTemplateSearchResult>();
+        var substringMatches = new List<LuaItemTemplateSearchResult>();
+
+        foreach (var template in orderedTemplates)
+        {
+            var displayName = ResolveDisplayName(template);
+            var matchesPrefix = template.Id.StartsWith(query, StringComparison.OrdinalIgnoreCase) ||
+                                displayName.StartsWith(query, StringComparison.OrdinalIgnoreCase);
+
+            if (matchesPrefix)
+            {
+                prefixMatches.Add(MapSearchResult(template));
+
+                continue;
+            }
+
+            if (template.Id.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                displayName.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                substringMatches.Add(MapSearchResult(template));
+            }
+        }
+
+        return [..prefixMatches, ..substringMatches];
+    }
+
+    private static LuaItemTemplateSearchResult MapSearchResult(ItemTemplateDefinition template)
+        => new(template.Id, ResolveDisplayName(template), ParseItemId(template.ItemId));
+
+    private static int ParseItemId(string itemIdText)
+    {
+        if (string.IsNullOrWhiteSpace(itemIdText))
+        {
+            return 0;
+        }
+
+        var value = itemIdText.Trim();
+
+        if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+        {
+            return int.TryParse(
+                value.AsSpan(2),
+                NumberStyles.AllowHexSpecifier,
+                CultureInfo.InvariantCulture,
+                out var itemId
+            )
+                       ? itemId
+                       : 0;
+        }
+
+        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedItemId)
+                   ? parsedItemId
+                   : 0;
+    }
+
+    private static string ResolveDisplayName(ItemTemplateDefinition template)
+        => string.IsNullOrWhiteSpace(template.Name) ? template.Id : template.Name.Trim();
 }
