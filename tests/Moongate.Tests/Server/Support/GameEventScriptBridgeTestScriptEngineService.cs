@@ -28,6 +28,9 @@ public sealed class GameEventScriptBridgeTestScriptEngineService : IScriptEngine
 
     public void ClearScriptCache() { }
 
+    public void InvalidateScript(string filePath)
+        => _ = filePath;
+
     public void ExecuteCallback(string name, params object[] args)
     {
         LastCallbackName = name;
@@ -65,7 +68,6 @@ public sealed class GameEventScriptBridgeTestScriptEngineService : IScriptEngine
         => true;
 
 #pragma warning disable CS0067
-    public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
     public event EventHandler<ScriptErrorInfo>? OnScriptError;
 #pragma warning restore CS0067
 }

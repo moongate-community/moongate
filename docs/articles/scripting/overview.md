@@ -11,6 +11,24 @@ The scripting system is built on **MoonSharp**, a lightweight Lua interpreter fo
 - Automatic `.luarc` generation for editor tooling
 - Callback system for game events
 - Lua plugin packaging under `plugins/`
+- File-path-based hot reload invalidation for Lua scripts
+
+## Hot Reload
+
+When `Scripting.EnableFileWatcher` is enabled, Moongate watches:
+
+- `scripts/**/*.lua`
+- `templates/**/*.json`
+- `data/spawns/**/*.json`
+
+Lua hot reload is lazy: when a watched `.lua` file changes, the compiled chunk for that file is invalidated and the next
+execution recompiles it. JSON template and spawn files are reloaded one file at a time through the registered file loader.
+
+For manual reload, use:
+
+```text
+reload_template <filePath>
+```
 
 ## Architecture
 

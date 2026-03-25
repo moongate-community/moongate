@@ -87,6 +87,7 @@ public static class AddBootstrapHostedServicesExtension
         container.RegisterMoongateService<INetworkService, NetworkService>(ServicePriority.Network);
         container.RegisterMoongateService<IScriptEngineService, LuaScriptEngineService>(ServicePriority.ScriptEngine);
         container.RegisterMoongateService<ILuaBrainRunner, LuaBrainRunner>(ServicePriority.ScriptEngine);
+        container.RegisterMoongateService<IFileWatcherService, FileWatcherService>(ServicePriority.FileWatcher);
         container.RegisterMoongateService<IScheduledEventService, ScheduledEventService>(ServicePriority.EventListener);
         container.RegisterMoongateService<ISpawnService, SpawnService>(ServicePriority.EventListener);
 

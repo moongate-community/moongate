@@ -11,7 +11,9 @@ namespace Moongate.Scripting.Internal;
 /// </summary>
 internal sealed class LuaScriptCache
 {
-    private readonly ConcurrentDictionary<string, DynValue> _compiledScripts = new();
+    private readonly ConcurrentDictionary<string, DynValue> _compiledScriptsByContentHash = new();
+    private readonly ConcurrentDictionary<string, (string ScriptHash, DynValue Chunk)> _compiledScriptsByFilePath =
+        new(StringComparer.OrdinalIgnoreCase);
 
     private int _cacheHits;
     private int _cacheMisses;
@@ -19,14 +21,33 @@ internal sealed class LuaScriptCache
     /// <summary>
     /// Returns a cached compiled chunk or compiles and stores it on miss.
     /// </summary>
-    public DynValue GetOrAddCompiledChunk(string script, Func<DynValue> compiler)
+    public DynValue GetOrAddCompiledChunk(string script, string? filePath, Func<DynValue> compiler)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(script);
         ArgumentNullException.ThrowIfNull(compiler);
 
         var scriptHash = GetScriptHash(script);
 
-        if (_compiledScripts.TryGetValue(scriptHash, out var compiledChunk))
+        if (!string.IsNullOrWhiteSpace(filePath))
+        {
+            var normalizedFilePath = NormalizePath(filePath);
+
+            if (_compiledScriptsByFilePath.TryGetValue(normalizedFilePath, out var cachedFileEntry)
+                && cachedFileEntry.ScriptHash == scriptHash)
+            {
+                Interlocked.Increment(ref _cacheHits);
+
+                return cachedFileEntry.Chunk;
+            }
+
+            Interlocked.Increment(ref _cacheMisses);
+            var compiledFileChunk = compiler();
+            _compiledScriptsByFilePath[normalizedFilePath] = (scriptHash, compiledFileChunk);
+
+            return compiledFileChunk;
+        }
+
+        if (_compiledScriptsByContentHash.TryGetValue(scriptHash, out var compiledChunk))
         {
             Interlocked.Increment(ref _cacheHits);
 
@@ -36,14 +57,24 @@ internal sealed class LuaScriptCache
         Interlocked.Increment(ref _cacheMisses);
         var compiled = compiler();
 
-        if (_compiledScripts.TryAdd(scriptHash, compiled))
+        if (_compiledScriptsByContentHash.TryAdd(scriptHash, compiled))
         {
             return compiled;
         }
 
         Interlocked.Increment(ref _cacheHits);
 
-        return _compiledScripts[scriptHash];
+        return _compiledScriptsByContentHash[scriptHash];
+    }
+
+    /// <summary>
+    /// Invalidates one cached compiled chunk for a script file.
+    /// </summary>
+    public bool Invalidate(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        return _compiledScriptsByFilePath.TryRemove(NormalizePath(filePath), out _);
     }
 
     /// <summary>
@@ -51,7 +82,8 @@ internal sealed class LuaScriptCache
     /// </summary>
     public void Clear()
     {
-        _compiledScripts.Clear();
+        _compiledScriptsByContentHash.Clear();
+        _compiledScriptsByFilePath.Clear();
         _cacheHits = 0;
         _cacheMisses = 0;
     }
@@ -64,7 +96,7 @@ internal sealed class LuaScriptCache
         {
             CacheHits = _cacheHits,
             CacheMisses = _cacheMisses,
-            TotalScriptsCached = _compiledScripts.Count
+            TotalScriptsCached = _compiledScriptsByContentHash.Count + _compiledScriptsByFilePath.Count
         };
 
     private static string GetScriptHash(string script)
@@ -73,4 +105,7 @@ internal sealed class LuaScriptCache
 
         return Convert.ToBase64String(hashBytes);
     }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }

@@ -13,8 +13,11 @@ public sealed class ReloadTemplateCommandTests
     private sealed class ReloadTemplateTestFileLoaderService : IFileLoaderService
     {
         public int ExecuteCalls { get; private set; }
+        public int LoadSingleCalls { get; private set; }
+        public string? LastSingleFilePath { get; private set; }
 
         public bool ThrowOnExecute { get; set; }
+        public bool ThrowOnLoadSingle { get; set; }
 
         public void AddFileLoader<T>() where T : IFileLoader { }
 
@@ -31,6 +34,29 @@ public sealed class ReloadTemplateCommandTests
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task LoadSingleAsync(string filePath)
+        {
+            LoadSingleCalls++;
+            LastSingleFilePath = filePath;
+
+            if (ThrowOnLoadSingle)
+            {
+                throw new InvalidOperationException("single boom");
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task LoadSingleAsync<T>(string filePath) where T : IFileLoader
+            => LoadSingleAsync(filePath);
+
+        public Task LoadSingleAsync(Type loaderType, string filePath)
+        {
+            _ = loaderType;
+
+            return LoadSingleAsync(filePath);
         }
 
         public Task StartAsync()
@@ -89,7 +115,7 @@ public sealed class ReloadTemplateCommandTests
     }
 
     [Test]
-    public async Task ExecuteCommandAsync_WhenArgumentsProvided_ShouldPrintUsage()
+    public async Task ExecuteCommandAsync_WhenMoreThanOneArgumentIsProvided_ShouldPrintUsage()
     {
         var command = new ReloadTemplateCommand(
             new ReloadTemplateTestFileLoaderService(),
@@ -98,8 +124,8 @@ public sealed class ReloadTemplateCommandTests
         );
         var output = new List<string>();
         var context = new CommandSystemContext(
-            "reload_template now",
-            ["now"],
+            "reload_template one two",
+            ["one", "two"],
             CommandSourceType.Console,
             0,
             (message, _) => output.Add(message)
@@ -107,7 +133,7 @@ public sealed class ReloadTemplateCommandTests
 
         await command.ExecuteCommandAsync(context);
 
-        Assert.That(output[^1], Is.EqualTo("Usage: reload_template"));
+        Assert.That(output[^1], Is.EqualTo("Usage: reload_template [filePath]"));
     }
 
     [Test]
@@ -161,5 +187,57 @@ public sealed class ReloadTemplateCommandTests
                 );
             }
         );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenSingleFilePathIsProvided_ShouldReloadOnlyThatFile()
+    {
+        var fileLoaderService = new ReloadTemplateTestFileLoaderService();
+        var itemTemplateService = new ReloadTemplateTestItemTemplateService { Count = 123 };
+        var mobileTemplateService = new ReloadTemplateTestMobileTemplateService { Count = 45 };
+        var command = new ReloadTemplateCommand(fileLoaderService, itemTemplateService, mobileTemplateService);
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "reload_template templates/items/weapon.json",
+            ["templates/items/weapon.json"],
+            CommandSourceType.Console,
+            0,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(fileLoaderService.ExecuteCalls, Is.EqualTo(0));
+                Assert.That(fileLoaderService.LoadSingleCalls, Is.EqualTo(1));
+                Assert.That(fileLoaderService.LastSingleFilePath, Is.EqualTo("templates/items/weapon.json"));
+                Assert.That(output[^1], Is.EqualTo("Template reloaded successfully: templates/items/weapon.json."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task ExecuteCommandAsync_WhenSingleFileReloadFails_ShouldPrintError()
+    {
+        var fileLoaderService = new ReloadTemplateTestFileLoaderService { ThrowOnLoadSingle = true };
+        var command = new ReloadTemplateCommand(
+            fileLoaderService,
+            new ReloadTemplateTestItemTemplateService(),
+            new ReloadTemplateTestMobileTemplateService()
+        );
+        var output = new List<string>();
+        var context = new CommandSystemContext(
+            "reload_template templates/items/weapon.json",
+            ["templates/items/weapon.json"],
+            CommandSourceType.Console,
+            0,
+            (message, _) => output.Add(message)
+        );
+
+        await command.ExecuteCommandAsync(context);
+
+        Assert.That(output[^1], Is.EqualTo("Failed to reload template templates/items/weapon.json: single boom"));
     }
 }

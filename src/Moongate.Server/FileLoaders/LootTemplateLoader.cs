@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
@@ -19,6 +20,7 @@ public sealed class LootTemplateLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<LootTemplateLoader>();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly ILootTemplateService _lootTemplateService;
+    private readonly Dictionary<string, string> _templateFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public LootTemplateLoader(
         DirectoriesConfig directoriesConfig,
@@ -49,29 +51,16 @@ public sealed class LootTemplateLoader : IFileLoader
             return Task.CompletedTask;
         }
 
-        _lootTemplateService.Clear();
-        var allLootTemplates = new List<LootTemplateDefinition>();
+        _templateFileContents.Clear();
 
         foreach (var templateFile in templateFiles)
         {
-            LootTemplateDefinitionBase[] templates;
-
-            try
-            {
-                templates = JsonUtils.DeserializeFromFile<LootTemplateDefinitionBase[]>(
-                    templateFile,
-                    MoongateUOTemplateJsonContext.Default
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Failed to load loot template file {TemplateFile}", templateFile);
-
-                throw;
-            }
-
-            allLootTemplates.AddRange(templates.OfType<LootTemplateDefinition>());
+            _templateFileContents[NormalizePath(templateFile)] = File.ReadAllText(templateFile);
         }
+
+        var allLootTemplates = RebuildTemplatesFromCache();
+
+        _lootTemplateService.Clear();
 
         _lootTemplateService.UpsertRange(allLootTemplates);
 
@@ -83,4 +72,57 @@ public sealed class LootTemplateLoader : IFileLoader
 
         return Task.CompletedTask;
     }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        _templateFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+        var allLootTemplates = RebuildTemplatesFromCache();
+
+        _lootTemplateService.Clear();
+        _lootTemplateService.UpsertRange(allLootTemplates);
+
+        _logger.Information("Reloaded loot template file {TemplateFile}", normalizedPath);
+
+        return Task.CompletedTask;
+    }
+
+    private List<LootTemplateDefinition> RebuildTemplatesFromCache()
+    {
+        var allLootTemplates = new List<LootTemplateDefinition>();
+
+        foreach (var (templateFile, json) in _templateFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            LootTemplateDefinitionBase[] templates;
+
+            try
+            {
+                templates = Deserialize<LootTemplateDefinitionBase[]>(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load loot template file {TemplateFile}", templateFile);
+
+                throw;
+            }
+
+            allLootTemplates.AddRange(templates.OfType<LootTemplateDefinition>());
+        }
+
+        return allLootTemplates;
+    }
+
+    private static T Deserialize<T>(string json)
+    {
+        var result = JsonSerializer.Deserialize(json, MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(T)));
+
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
+    }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }

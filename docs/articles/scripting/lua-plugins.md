@@ -119,4 +119,5 @@ Not supported in v1:
 
 ## Operational Note
 
-The core script file watcher still focuses on the scripting bootstrap flow. For now, treat plugins as part of the normal script reload cycle instead of expecting hot unload/reload per plugin.
+Lua plugins live under the same centralized script watcher as the core script tree. Changing a plugin Lua file invalidates
+that file's compiled chunk, but there is still no single-plugin unload lifecycle or dependency-aware plugin reload.

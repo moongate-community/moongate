@@ -18,6 +18,7 @@ public static class ServicePriority
     public const int GameEventScriptBridge = 140;
     public const int Network = 150;
     public const int ScriptEngine = 150;
+    public const int FileWatcher = 151;
     public const int EventListener = 200;
     public const int HttpServer = 200;
 }

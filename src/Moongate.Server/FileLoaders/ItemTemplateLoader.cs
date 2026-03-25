@@ -1,5 +1,5 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
-using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Files;
@@ -24,6 +24,7 @@ public sealed class ItemTemplateLoader : IFileLoader
     private static readonly ItemTemplateDefinition Defaults = new();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IItemTemplateService _itemTemplateService;
+    private readonly Dictionary<string, string> _templateFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public ItemTemplateLoader(DirectoriesConfig directoriesConfig, IItemTemplateService itemTemplateService)
     {
@@ -51,32 +52,16 @@ public sealed class ItemTemplateLoader : IFileLoader
             return Task.CompletedTask;
         }
 
-        _itemTemplateService.Clear();
-        var allItemTemplates = new List<ItemTemplateDefinition>();
+        _templateFileContents.Clear();
 
         foreach (var templateFile in templateFiles)
         {
-            ItemTemplateDefinitionBase[] templates;
-
-            try
-            {
-                templates = JsonUtils.DeserializeFromFile<ItemTemplateDefinitionBase[]>(
-                    templateFile,
-                    MoongateUOTemplateJsonContext.Default
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Failed to load item template file {TemplateFile}", templateFile);
-
-                throw;
-            }
-
-            var itemTemplates = templates.OfType<ItemTemplateDefinition>().ToList();
-            allItemTemplates.AddRange(itemTemplates);
+            _templateFileContents[NormalizePath(templateFile)] = File.ReadAllText(templateFile);
         }
 
-        ResolveBaseItems(allItemTemplates);
+        var allItemTemplates = RebuildTemplatesFromCache();
+
+        _itemTemplateService.Clear();
         _itemTemplateService.UpsertRange(allItemTemplates);
 
         _logger.Information(
@@ -84,6 +69,23 @@ public sealed class ItemTemplateLoader : IFileLoader
             allItemTemplates.Count,
             templateFiles.Length
         );
+
+        return Task.CompletedTask;
+    }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        _templateFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+
+        var allItemTemplates = RebuildTemplatesFromCache();
+
+        _itemTemplateService.Clear();
+        _itemTemplateService.UpsertRange(allItemTemplates);
+
+        _logger.Information("Reloaded item template file {TemplateFile}", normalizedPath);
 
         return Task.CompletedTask;
     }
@@ -340,4 +342,43 @@ public sealed class ItemTemplateLoader : IFileLoader
 
         states[template.Id] = ResolveState.Done;
     }
+
+    private List<ItemTemplateDefinition> RebuildTemplatesFromCache()
+    {
+        var allItemTemplates = new List<ItemTemplateDefinition>();
+
+        foreach (var (templateFile, json) in _templateFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            ItemTemplateDefinitionBase[] templates;
+
+            try
+            {
+                templates = Deserialize<ItemTemplateDefinitionBase[]>(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load item template file {TemplateFile}", templateFile);
+
+                throw;
+            }
+
+            allItemTemplates.AddRange(templates.OfType<ItemTemplateDefinition>());
+        }
+
+        ResolveBaseItems(allItemTemplates);
+
+        return allItemTemplates;
+    }
+
+    private static T Deserialize<T>(string json)
+    {
+        var result = JsonSerializer.Deserialize(json, MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(T)));
+
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
+    }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }
