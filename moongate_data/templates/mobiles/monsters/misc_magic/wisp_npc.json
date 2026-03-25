@@ -21,7 +21,8 @@
     "brain": "mage_combat",
     "lootTables": [
       "loot_pack.rich",
-      "loot_pack.average"
+      "loot_pack.average",
+      "creature.wisp"
     ],
     "sounds": {
       "Idle": 466,

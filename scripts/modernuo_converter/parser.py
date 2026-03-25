@@ -1246,10 +1246,12 @@ def _parse_class_definition(
     if control_slots_match:
         data["control_slots"] = int(control_slots_match.group(1))
 
+    loot_content = _strip_comments(class_content)
+
     loot_entries = []
     for match in re.finditer(
         r"AddLoot\s*\(\s*LootPack\.(\w+)(?:\s*,\s*(\d+))?\s*\)",
-        class_content,
+        loot_content,
     ):
         loot_entries.append(
             {
@@ -1263,7 +1265,7 @@ def _parse_class_definition(
     pack_items = []
     for match in re.finditer(
         r"PackItem\s*\(\s*new\s+(\w+)\s*\(\s*(\d+)?\s*\)\s*\)",
-        class_content,
+        loot_content,
     ):
         pack_items.append(
             {
@@ -1271,11 +1273,23 @@ def _parse_class_definition(
                 "amount": int(match.group(2)) if match.group(2) else 1,
             }
         )
-    for match in re.finditer(r"PackReg\s*\(\s*(\d+)\s*\)", class_content):
+    for match in re.finditer(
+        r"PackItem\s*\(\s*Seed\.(?:RandomPeculiarSeed|RandomBonsaiSeed)\s*\([^)]*\)\s*\)",
+        loot_content,
+    ):
+        pack_items.append({"item": "Seed", "amount": 1})
+
+    for match in re.finditer(
+        r"PackItem\s*\(\s*Loot\.Random(?:Possible|Necromancy)?Reagent\s*\(\s*\)\s*\)",
+        loot_content,
+    ):
+        pack_items.append({"item": "Reagent", "amount": 1})
+
+    for match in re.finditer(r"PackReg\s*\(\s*(\d+)\s*\)", loot_content):
         pack_items.append({"item": "Reagent", "amount": int(match.group(1))})
     for match in re.finditer(
         r"PackGold\s*\(\s*(\d+)\s*(?:,\s*(\d+))?\s*\)",
-        class_content,
+        loot_content,
     ):
         min_gold = int(match.group(1))
         max_gold = int(match.group(2)) if match.group(2) else min_gold

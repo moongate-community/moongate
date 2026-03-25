@@ -30,7 +30,8 @@
     "lootTables": [
       "loot_pack.filthy_rich",
       "loot_pack.filthy_rich",
-      "loot_pack.med_scrolls"
+      "loot_pack.med_scrolls",
+      "creature.rune_beetle"
     ],
     "resistances": {
       "physical": 52,

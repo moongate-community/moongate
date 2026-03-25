@@ -26,7 +26,8 @@
     },
     "lootTables": [
       "loot_pack.meager",
-      "loot_pack.meager"
+      "loot_pack.meager",
+      "creature.orc_captain"
     ],
     "sounds": {
       "Idle": 0,

@@ -30,8 +30,7 @@
     "lootTables": [
       "loot_pack.ultra_rich",
       "loot_pack.ultra_rich",
-      "loot_pack.ultra_rich",
-      "creature.malefic"
+      "loot_pack.ultra_rich"
     ],
     "resistances": {
       "physical": 65,

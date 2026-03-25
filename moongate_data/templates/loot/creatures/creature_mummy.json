@@ -16,6 +16,11 @@
         "itemTemplateId": "bandage",
         "chance": 1.0,
         "amount": 10
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
       }
     ]
   }

@@ -28,8 +28,7 @@
       "Tactics": 825
     },
     "lootTables": [
-      "loot_pack.rich",
-      "loot_pack.gems"
+      "loot_pack.rich"
     ],
     "resistances": {
       "physical": 31,

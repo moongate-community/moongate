@@ -1,14 +1,14 @@
 [
   {
     "type": "loot",
-    "id": "creature.malefic",
-    "name": "Malefic",
+    "id": "creature.rune_beetle",
+    "name": "RuneBeetle",
     "category": "loot",
-    "description": "Creature-specific loot for Malefic.",
+    "description": "Creature-specific loot for RuneBeetle.",
     "mode": "additive",
     "entries": [
       {
-        "itemTemplateId": "parrot_item",
+        "itemTemplateId": "seed",
         "chance": 1.0,
         "amount": 1
       }

@@ -29,7 +29,8 @@
     "lootTables": [
       "loot_pack.filthy_rich",
       "loot_pack.average",
-      "loot_pack.med_scrolls"
+      "loot_pack.med_scrolls",
+      "creature.titan"
     ],
     "sounds": {
       "Idle": 609,

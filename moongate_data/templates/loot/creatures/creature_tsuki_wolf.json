@@ -1,14 +1,14 @@
 [
   {
     "type": "loot",
-    "id": "creature.meraktus",
-    "name": "Meraktus",
+    "id": "creature.tsuki_wolf",
+    "name": "TsukiWolf",
     "category": "loot",
-    "description": "Creature-specific loot for Meraktus.",
+    "description": "Creature-specific loot for TsukiWolf.",
     "mode": "additive",
     "entries": [
       {
-        "itemTag": "talismans",
+        "itemTemplateId": "seed",
         "chance": 1.0,
         "amount": 1
       }

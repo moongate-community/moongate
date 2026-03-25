@@ -8,17 +8,17 @@
     "mode": "additive",
     "entries": [
       {
-        "itemTemplateId": "reagent",
+        "itemTag": "reagents",
         "chance": 1.0,
         "amount": 7
       },
       {
-        "itemTemplateId": "reagent",
+        "itemTag": "reagents",
         "chance": 1.0,
         "amount": 7
       },
       {
-        "itemTemplateId": "reagent",
+        "itemTag": "reagents",
         "chance": 1.0,
         "amount": 8
       }

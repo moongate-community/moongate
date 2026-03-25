@@ -28,7 +28,8 @@
       "Wrestling": 750
     },
     "lootTables": [
-      "loot_pack.ml_rich"
+      "loot_pack.ml_rich",
+      "creature.ml_dryad"
     ],
     "sounds": {
       "Idle": 0,

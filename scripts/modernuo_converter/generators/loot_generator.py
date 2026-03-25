@@ -45,4 +45,21 @@ def generate_all_loot(
         path = generate_creature_loot_file(loot, output_dir, dry_run)
         if path:
             paths.append(path)
+
+    if dry_run:
+        return paths
+
+    out_dir = os.path.join(output_dir, "templates", "loot", "creatures")
+    if not os.path.isdir(out_dir):
+        return paths
+
+    expected_paths = {os.path.normpath(path) for path in paths}
+    for filename in os.listdir(out_dir):
+        if not filename.endswith(".json"):
+            continue
+
+        file_path = os.path.normpath(os.path.join(out_dir, filename))
+        if file_path not in expected_paths:
+            os.remove(file_path)
+
     return paths

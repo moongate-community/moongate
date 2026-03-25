@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.terathan_warrior",
+    "name": "TerathanWarrior",
+    "category": "loot",
+    "description": "Creature-specific loot for TerathanWarrior.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

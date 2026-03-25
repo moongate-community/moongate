@@ -30,7 +30,8 @@
       "loot_pack.filthy_rich",
       "loot_pack.rich",
       "loot_pack.med_scrolls",
-      "loot_pack.med_scrolls"
+      "loot_pack.med_scrolls",
+      "creature.bake_kitsune"
     ],
     "resistances": {
       "physical": 50,

@@ -11,6 +11,11 @@
         "itemTemplateId": "bone",
         "chance": 1.0,
         "amount": 3
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
       }
     ]
   }

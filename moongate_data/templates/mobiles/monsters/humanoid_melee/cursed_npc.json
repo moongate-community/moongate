@@ -27,8 +27,7 @@
       "Poisoning": 712
     },
     "lootTables": [
-      "loot_pack.meager",
-      "loot_pack.miscellaneous"
+      "loot_pack.meager"
     ],
     "sounds": {
       "Idle": 471,

@@ -27,7 +27,8 @@
       "Wrestling": 850
     },
     "lootTables": [
-      "loot_pack.average"
+      "loot_pack.average",
+      "creature.terathan_warrior"
     ],
     "sounds": {
       "Idle": 589,

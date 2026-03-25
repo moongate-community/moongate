@@ -36,6 +36,11 @@
         "itemTemplateId": "leather_chest",
         "chance": 1.0,
         "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
       }
     ]
   }

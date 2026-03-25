@@ -32,7 +32,8 @@
       "loot_pack.gems",
       "loot_pack.gems",
       "loot_pack.gems",
-      "loot_pack.gems"
+      "loot_pack.gems",
+      "creature.lesser_hiryu"
     ],
     "resistances": {
       "physical": 57,
