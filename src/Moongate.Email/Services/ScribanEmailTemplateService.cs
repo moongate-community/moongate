@@ -96,19 +96,42 @@ public sealed class ScribanEmailTemplateService : BaseMoongateService, IEmailTem
 
     private string ResolveTemplatePath(string templateId, string locale, string suffix)
     {
-        if (string.IsNullOrWhiteSpace(templateId))
+        if (string.IsNullOrWhiteSpace(templateId) ||
+            templateId.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 ||
+            templateId.Contains(".."))
         {
-            throw new ArgumentException("Template id is required.", nameof(templateId));
+            throw new ArgumentException("Invalid template id.", nameof(templateId));
         }
 
-        var localePath = Path.Combine(_options.TemplatesRootPath, templateId, $"{locale}.{suffix}");
+        if (string.IsNullOrWhiteSpace(locale) ||
+            locale.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+        {
+            locale = _options.FallbackLocale;
+        }
+
+        var canonicalRoot = Path.GetFullPath(_options.TemplatesRootPath)
+                                .TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+
+        var localePath = Path.GetFullPath(Path.Combine(_options.TemplatesRootPath, templateId, $"{locale}.{suffix}"));
+
+        if (!localePath.StartsWith(canonicalRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedAccessException("Resolved template path is outside the configured root.");
+        }
 
         if (File.Exists(localePath))
         {
             return localePath;
         }
 
-        var fallbackPath = Path.Combine(_options.TemplatesRootPath, templateId, $"{_options.FallbackLocale}.{suffix}");
+        var fallbackPath = Path.GetFullPath(
+            Path.Combine(_options.TemplatesRootPath, templateId, $"{_options.FallbackLocale}.{suffix}")
+        );
+
+        if (!fallbackPath.StartsWith(canonicalRoot, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new UnauthorizedAccessException("Resolved template path is outside the configured root.");
+        }
 
         if (File.Exists(fallbackPath))
         {
