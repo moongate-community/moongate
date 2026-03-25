@@ -1,0 +1,32 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.kappa",
+    "name": "Kappa",
+    "category": "loot",
+    "description": "Creature-specific loot for Kappa.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "raw_fish_steak",
+        "chance": 1.0,
+        "amount": 3
+      },
+      {
+        "itemTemplateId": "gears",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "hinge",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "axle",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

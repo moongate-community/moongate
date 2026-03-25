@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "reaper_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Reaper.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x002F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 70,
+    "intelligence": 175,
+    "hits": 84,
+    "maxHits": 84,
+    "stamina": 0,
+    "minDamage": 9,
+    "maxDamage": 11,
+    "armorRating": 40,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 950,
+      "MagicResist": 1125,
+      "Tactics": 525,
+      "Wrestling": 550
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.reaper"
+    ],
+    "sounds": {
+      "Idle": 442,
+      "StartAttack": 443,
+      "Attack": 444,
+      "Defend": 445,
+      "Die": 446
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 20,
+      "cold": 15,
+      "poison": 45,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 80,
+      "poison": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a reaper"
+  }
+]

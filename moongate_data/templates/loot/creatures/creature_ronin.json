@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ronin",
+    "name": "Ronin",
+    "category": "loot",
+    "description": "Creature-specific loot for Ronin.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "wakizashi",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "longsword",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

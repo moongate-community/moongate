@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "virulent_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Virulent.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 229,
+    "dexterity": 175,
+    "intelligence": 372,
+    "hits": 678,
+    "maxHits": 678,
+    "mana": 372,
+    "stamina": 175,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1022,
+      "Tactics": 995,
+      "MagicResist": 856,
+      "Magery": 1120,
+      "EvalInt": 1103
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 64,
+      "fire": 44,
+      "cold": 45,
+      "poison": 100,
+      "energy": 44
+    },
+    "damageTypes": {
+      "physical": 20,
+      "poison": 80
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Virulent"
+  }
+]

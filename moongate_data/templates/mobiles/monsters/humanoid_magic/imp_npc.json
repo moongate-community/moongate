@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "imp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Imp.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x004A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 103,
+    "dexterity": 70,
+    "intelligence": 95,
+    "hits": 62,
+    "maxHits": 62,
+    "minDamage": 10,
+    "maxDamage": 14,
+    "armorRating": 30,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 250,
+      "Magery": 950,
+      "MagicResist": 400,
+      "Tactics": 460,
+      "Wrestling": 420
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 422,
+      "StartAttack": 423,
+      "Attack": 424,
+      "Defend": 425,
+      "Die": 426
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 45,
+      "cold": 25,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 0,
+      "fire": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an imp"
+  }
+]

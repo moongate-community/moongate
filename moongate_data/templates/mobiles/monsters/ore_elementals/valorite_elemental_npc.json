@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "valorite_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ValoriteElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0070",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 240,
+    "dexterity": 135,
+    "intelligence": 81,
+    "hits": 144,
+    "maxHits": 144,
+    "minDamage": 28,
+    "maxDamage": 28,
+    "armorRating": 38,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 800,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 70,
+      "fire": 55,
+      "cold": 55,
+      "poison": 55,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 25,
+      "cold": 25,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a valorite elemental"
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "lich_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO LichLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x004F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 460,
+    "dexterity": 155,
+    "intelligence": 610,
+    "hits": 276,
+    "maxHits": 276,
+    "minDamage": 11,
+    "maxDamage": 13,
+    "armorRating": 50,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Necromancy": 1000,
+      "SpiritSpeak": 1000,
+      "EvalInt": 950,
+      "Magery": 950,
+      "MagicResist": 1752,
+      "Tactics": 600,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.lich_lord"
+    ],
+    "sounds": {
+      "Idle": 412,
+      "StartAttack": 413,
+      "Attack": 414,
+      "Defend": 415,
+      "Die": 416
+    },
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 55,
+      "poison": 55,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 0,
+      "cold": 60,
+      "energy": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a lich lord"
+  }
+]

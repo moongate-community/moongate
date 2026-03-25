@@ -40,35 +40,6 @@
   },
   {
     "type": "mobile",
-    "id": "banker_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Town banker NPC.",
-    "tags": [
-      "npc",
-      "banker",
-      "town"
-    ],
-    "brain": "town_banker",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "shoes",
-        "layer": "Shoes"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a banker"
-  },
-  {
-    "type": "mobile",
     "id": "generic_npc",
     "base_mobile": "base_human_npc",
     "category": "npc",
@@ -98,47 +69,6 @@
   },
   {
     "type": "mobile",
-    "id": "blacksmith_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Town blacksmith NPC.",
-    "tags": [
-      "npc",
-      "blacksmith",
-      "town"
-    ],
-    "strength": 80,
-    "dexterity": 60,
-    "intelligence": 45,
-    "hits": 80,
-    "brain": "town_blacksmith",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "half_apron",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "hatchet",
-        "layer": "OneHanded"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a blacksmith"
-  },
-  {
-    "type": "mobile",
     "id": "healer_npc",
     "base_mobile": "base_human_npc",
     "category": "npc",
@@ -163,41 +93,6 @@
     ],
     "randomEquipment": [],
     "title": "a healer"
-  },
-  {
-    "type": "mobile",
-    "id": "thief_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Urban rogue NPC for guards/crime tests.",
-    "tags": [
-      "npc",
-      "thief",
-      "urban"
-    ],
-    "dexterity": 75,
-    "notoriety": "Criminal",
-    "brain": "town_thief",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "doublet",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "short_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "dagger",
-        "layer": "OneHanded"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a suspicious man"
   },
   {
     "type": "mobile",

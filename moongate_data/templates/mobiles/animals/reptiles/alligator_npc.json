@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "alligator_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Alligator.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 15,
+    "intelligence": 15,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "stamina": 55,
+    "minDamage": 5,
+    "maxDamage": 15,
+    "armorRating": 30,
+    "fame": 600,
+    "karma": -600,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 325,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "sounds": {
+      "Idle": 660,
+      "StartAttack": 661,
+      "Attack": 662,
+      "Defend": 663,
+      "Die": 664
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 7,
+      "poison": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an alligator"
+  }
+]

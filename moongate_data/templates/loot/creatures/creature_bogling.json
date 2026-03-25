@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.bogling",
+    "name": "Bogling",
+    "category": "loot",
+    "description": "Creature-specific loot for Bogling.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "log",
+        "chance": 1.0,
+        "amount": 4
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

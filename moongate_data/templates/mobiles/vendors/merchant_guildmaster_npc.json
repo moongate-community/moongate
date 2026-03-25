@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "merchant_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO MerchantGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ItemID": 925,
+      "ArmsLore": 925
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "merchant"
+  }
+]

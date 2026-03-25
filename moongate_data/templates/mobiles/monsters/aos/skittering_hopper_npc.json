@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "skittering_hopper_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SkitteringHopper.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x012E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 53,
+    "dexterity": 103,
+    "intelligence": 38,
+    "hits": 38,
+    "maxHits": 38,
+    "minDamage": 3,
+    "maxDamage": 5,
+    "armorRating": 12,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 375,
+      "Tactics": 575,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 7,
+      "cold": 15,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a skittering hopper"
+  }
+]

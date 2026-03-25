@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "desert_ostard_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO DesertOstard.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 132,
+    "dexterity": 65,
+    "intelligence": 8,
+    "hits": 79,
+    "maxHits": 79,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 11,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 326,
+      "Wrestling": 366
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 10
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a desert ostard"
+  }
+]

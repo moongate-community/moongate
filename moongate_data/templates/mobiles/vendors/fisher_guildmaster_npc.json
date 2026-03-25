@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "fisher_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO FisherGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Fishing": 900
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "fisher"
+  }
+]

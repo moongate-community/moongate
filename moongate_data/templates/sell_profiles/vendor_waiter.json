@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.waiter",
+    "name": "Waiter Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Waiter. SBInfo sources: SBWaiter.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "type": "mobile",
+    "id": "hair_stylist_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO HairStylist.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Alchemy": 900,
+      "Magery": 1000,
+      "TasteID": 925
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the hair stylist"
+  }
+]

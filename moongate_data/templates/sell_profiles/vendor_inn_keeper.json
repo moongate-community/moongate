@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.inn_keeper",
+    "name": "InnKeeper Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for InnKeeper. SBInfo sources: SBInnKeeper, SBSEFood.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

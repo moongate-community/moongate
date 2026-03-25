@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "oni_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Oni.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00F1",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 855,
+    "dexterity": 225,
+    "intelligence": 183,
+    "hits": 465,
+    "maxHits": 465,
+    "minDamage": 14,
+    "maxDamage": 20,
+    "fame": 12000,
+    "karma": -12000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1125,
+      "Magery": 1010,
+      "Anatomy": 900,
+      "MagicResist": 925,
+      "Tactics": 935,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 72,
+      "fire": 60,
+      "cold": 42,
+      "poison": 57,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 70,
+      "fire": 10,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an oni"
+  }
+]

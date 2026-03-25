@@ -1,0 +1,47 @@
+[
+  {
+    "type": "mobile",
+    "id": "minotaur_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Minotaur.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0107",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 320,
+    "dexterity": 100,
+    "intelligence": 40,
+    "hits": 320,
+    "maxHits": 320,
+    "minDamage": 11,
+    "maxDamage": 20,
+    "armorRating": 28,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 600,
+      "Tactics": 955,
+      "Wrestling": 912
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "resistances": {
+      "physical": 60,
+      "fire": 30,
+      "cold": 35,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a minotaur"
+  }
+]

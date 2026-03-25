@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "plague_beast_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO PlagueBeastLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0307",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 500,
+    "dexterity": 100,
+    "intelligence": 30,
+    "hits": 1800,
+    "maxHits": 1800,
+    "minDamage": 20,
+    "maxDamage": 25,
+    "armorRating": 50,
+    "fame": 2000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "sounds": {
+      "Idle": 679,
+      "StartAttack": 680,
+      "Attack": 681,
+      "Defend": 682,
+      "Die": 683
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 45,
+      "cold": 30,
+      "poison": 80,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 25,
+      "poison": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a plague beast lord"
+  }
+]

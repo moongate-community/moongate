@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "black_bear_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO BlackBear.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x00D3",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 65,
+    "intelligence": 12,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 10,
+    "armorRating": 24,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 300,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "cold": 12,
+      "poison": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a black bear"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.reaper",
+    "name": "Reaper",
+    "category": "loot",
+    "description": "Creature-specific loot for Reaper.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "log",
+        "chance": 1.0,
+        "amount": 10
+      },
+      {
+        "itemTemplateId": "mandrake_root",
+        "chance": 1.0,
+        "amount": 5
+      }
+    ]
+  }
+]

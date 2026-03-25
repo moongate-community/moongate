@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "stone_crafter_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO StoneCrafter.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Carpentry": 925
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the stone crafter"
+  }
+]

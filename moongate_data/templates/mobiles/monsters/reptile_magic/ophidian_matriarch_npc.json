@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "ophidian_matriarch_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OphidianMatriarch.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0057",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 460,
+    "dexterity": 105,
+    "intelligence": 410,
+    "hits": 276,
+    "maxHits": 276,
+    "minDamage": 11,
+    "maxDamage": 13,
+    "armorRating": 50,
+    "fame": 16000,
+    "karma": -16000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 950,
+      "Meditation": 152,
+      "MagicResist": 950,
+      "Tactics": 600,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average",
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 644,
+      "StartAttack": 645,
+      "Attack": 646,
+      "Defend": 647,
+      "Die": 648
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 35,
+      "cold": 40,
+      "poison": 45,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an ophidian matriarch"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "mobile",
+    "id": "thief_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO ThiefGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "DetectHidden": 865,
+      "Hiding": 765,
+      "Lockpicking": 925,
+      "Snooping": 950,
+      "Poisoning": 715,
+      "Stealing": 950,
+      "Fencing": 865,
+      "Stealth": 925,
+      "RemoveTrap": 925
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "thief"
+  }
+]

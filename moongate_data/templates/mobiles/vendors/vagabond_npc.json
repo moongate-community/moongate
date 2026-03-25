@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "vagabond_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Vagabond.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ItemID": 715
+    },
+    "lootTables": [
+      "creature.vagabond"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the vagabond"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "variety_dealer_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO VarietyDealer.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the variety dealer"
+  }
+]

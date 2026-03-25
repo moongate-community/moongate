@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "troglodyte_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Troglodyte.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x010B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 182,
+    "dexterity": 105,
+    "intelligence": 60,
+    "hits": 321,
+    "maxHits": 321,
+    "minDamage": 11,
+    "maxDamage": 14,
+    "armorRating": 28,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 826,
+      "MagicResist": 584,
+      "Tactics": 875,
+      "Wrestling": 818,
+      "Healing": 825
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.troglodyte"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 25,
+      "cold": 37,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a troglodyte"
+  }
+]

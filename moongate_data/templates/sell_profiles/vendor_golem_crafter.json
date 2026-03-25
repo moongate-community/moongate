@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.golem_crafter",
+    "name": "GolemCrafter Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for GolemCrafter. SBInfo sources: SBTinker, SBVagabond.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

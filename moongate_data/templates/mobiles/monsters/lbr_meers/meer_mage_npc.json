@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "meer_mage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MeerMage.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0302",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 185,
+    "dexterity": 135,
+    "intelligence": 290,
+    "hits": 111,
+    "maxHits": 111,
+    "minDamage": 24,
+    "maxDamage": 26,
+    "armorRating": 16,
+    "fame": 8000,
+    "karma": 8000,
+    "notoriety": "Innocent",
+    "brain": "mage_combat",
+    "skills": {
+      "Magery": 750,
+      "Meditation": 900,
+      "MagicResist": 900,
+      "Tactics": 800,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 20,
+      "cold": 50,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a meer mage"
+  }
+]

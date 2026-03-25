@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "juka_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO JukaWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x02FC",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 300,
+    "dexterity": 70,
+    "intelligence": 125,
+    "hits": 180,
+    "maxHits": 180,
+    "minDamage": 7,
+    "maxDamage": 9,
+    "armorRating": 22,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 850,
+      "Fencing": 850,
+      "Macing": 850,
+      "MagicResist": 1250,
+      "Swords": 850,
+      "Tactics": 850,
+      "Wrestling": 850
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.gems",
+      "creature.juka_warrior"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 30,
+      "poison": 15,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a juka warrior"
+  }
+]

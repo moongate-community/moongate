@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.whipping_vine",
+    "name": "WhippingVine",
+    "category": "loot",
+    "description": "Creature-specific loot for WhippingVine.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "executioners_cap",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "vines",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "reagent",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

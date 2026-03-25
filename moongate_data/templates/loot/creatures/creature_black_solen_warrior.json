@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.black_solen_warrior",
+    "name": "BlackSolenWarrior",
+    "category": "loot",
+    "description": "Creature-specific loot for BlackSolenWarrior.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bracelet_of_binding",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

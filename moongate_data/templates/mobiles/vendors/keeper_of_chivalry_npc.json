@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mobile",
+    "id": "keeper_of_chivalry_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO KeeperOfChivalry.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Fencing": 800,
+      "Macing": 800,
+      "Swords": 800
+    },
+    "lootTables": [
+      "creature.keeper_of_chivalry"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the Keeper of Chivalry"
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "type": "mobile",
+    "id": "noble_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Noble.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Parry": 900,
+      "Swords": 900,
+      "Tactics": 900
+    },
+    "lootTables": [
+      "creature.noble"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

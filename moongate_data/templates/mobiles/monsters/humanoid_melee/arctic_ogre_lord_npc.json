@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "arctic_ogre_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ArcticOgreLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0087",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 856,
+    "dexterity": 70,
+    "intelligence": 58,
+    "hits": 514,
+    "maxHits": 514,
+    "minDamage": 20,
+    "maxDamage": 25,
+    "armorRating": 50,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 1325,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "creature.arctic_ogre_lord"
+    ],
+    "sounds": {
+      "Idle": 427,
+      "StartAttack": 428,
+      "Attack": 429,
+      "Defend": 430,
+      "Die": 431
+    },
+    "resistances": {
+      "physical": 50,
+      "cold": 65,
+      "poison": 100,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 30,
+      "cold": 70
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an arctic ogre lord"
+  }
+]

@@ -1,0 +1,29 @@
+[
+  {
+    "type": "mobile",
+    "id": "holy_mage_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO HolyMage.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "EvalInt": 765,
+      "Inscribe": 715,
+      "Magery": 820,
+      "Meditation": 715,
+      "MagicResist": 765,
+      "Wrestling": 520
+    },
+    "lootTables": [
+      "creature.holy_mage"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the Holy Mage"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.deathwatch_beetle_hatchling",
+    "name": "DeathwatchBeetleHatchling",
+    "category": "loot",
+    "description": "Creature-specific loot for DeathwatchBeetleHatchling.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "leather_gorget",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_gloves",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_arms",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_legs",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_cap",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "leather_chest",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

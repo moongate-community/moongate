@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mobile",
+    "id": "bard_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO BardGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Archery": 900,
+      "Discordance": 900,
+      "Musicianship": 900,
+      "Peacemaking": 900,
+      "Provocation": 900,
+      "Swords": 900
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "bard"
+  }
+]

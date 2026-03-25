@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.keeper_of_chivalry",
+    "name": "KeeperOfChivalry",
+    "category": "loot",
+    "description": "Creature-specific loot for KeeperOfChivalry.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 150
+      }
+    ]
+  }
+]

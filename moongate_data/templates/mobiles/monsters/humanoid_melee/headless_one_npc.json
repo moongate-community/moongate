@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "headless_one_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO HeadlessOne.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x001F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 38,
+    "dexterity": 45,
+    "intelligence": 23,
+    "hits": 23,
+    "maxHits": 23,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 18,
+    "fame": 450,
+    "karma": -450,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 325,
+      "Wrestling": 325
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a headless one"
+  }
+]

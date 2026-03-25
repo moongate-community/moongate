@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "white_wyrm_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO WhiteWyrm.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 740,
+    "dexterity": 115,
+    "intelligence": 405,
+    "hits": 444,
+    "maxHits": 444,
+    "minDamage": 17,
+    "maxDamage": 25,
+    "armorRating": 64,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 995,
+      "Magery": 995,
+      "MagicResist": 995,
+      "Tactics": 988,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 62,
+      "fire": 20,
+      "cold": 85,
+      "poison": 45,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 50,
+      "cold": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a white wyrm"
+  }
+]

@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "grey_wolf_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GreyWolf.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0019",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 68,
+    "dexterity": 65,
+    "intelligence": 43,
+    "hits": 41,
+    "maxHits": 41,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 16,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 525,
+      "Wrestling": 525
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 12,
+      "cold": 22,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a grey wolf"
+  }
+]

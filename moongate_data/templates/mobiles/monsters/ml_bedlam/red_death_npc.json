@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "red_death_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RedDeath.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 321,
+    "dexterity": 242,
+    "intelligence": 248,
+    "hits": 1572,
+    "maxHits": 1572,
+    "minDamage": 25,
+    "maxDamage": 29,
+    "fame": 28000,
+    "karma": -28000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1325,
+      "Tactics": 1315,
+      "MagicResist": 1312,
+      "Anatomy": 1321
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 65,
+      "fire": 90,
+      "cold": 0,
+      "poison": 100,
+      "energy": 0
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 75,
+      "cold": 0
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Red Death"
+  }
+]

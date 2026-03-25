@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "swamp_tentacle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SwampTentacle.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0042",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 108,
+    "dexterity": 75,
+    "intelligence": 23,
+    "hits": 65,
+    "maxHits": 65,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "armorRating": 28,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 725,
+      "Wrestling": 725
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.swamp_tentacle"
+    ],
+    "sounds": {
+      "Idle": 352,
+      "StartAttack": 353,
+      "Attack": 354,
+      "Defend": 355,
+      "Die": 356
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 15,
+      "cold": 15,
+      "poison": 70,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 40,
+      "poison": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a swamp tentacle"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "ilhenir_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ilhenir.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1227,
+    "dexterity": 121,
+    "intelligence": 627,
+    "hits": 9000,
+    "maxHits": 9000,
+    "minDamage": 21,
+    "maxDamage": 28,
+    "armorRating": 44,
+    "fame": 50000,
+    "karma": -50000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "creature.ilhenir"
+    ],
+    "sounds": {
+      "Idle": 589,
+      "StartAttack": 590,
+      "Attack": 591,
+      "Defend": 592,
+      "Die": 593
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 55,
+      "cold": 60,
+      "poison": 80,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 60,
+      "fire": 20,
+      "poison": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Ilhenir"
+  }
+]

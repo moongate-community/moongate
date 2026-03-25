@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.orc_bomber",
+    "name": "OrcBomber",
+    "category": "loot",
+    "description": "Creature-specific loot for OrcBomber.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "mortar_pestle",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_explosion_potion",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

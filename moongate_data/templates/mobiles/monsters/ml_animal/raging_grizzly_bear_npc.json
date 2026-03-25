@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "raging_grizzly_bear_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RagingGrizzlyBear.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00D4",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1400,
+    "dexterity": 925,
+    "intelligence": 275,
+    "hits": 840,
+    "maxHits": 840,
+    "mana": 0,
+    "minDamage": 18,
+    "maxDamage": 23,
+    "armorRating": 24,
+    "fame": 10000,
+    "karma": 10000,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "Wrestling": 807,
+      "Tactics": 920,
+      "MagicResist": 437,
+      "Anatomy": 0
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 60,
+      "cold": 40,
+      "poison": 15,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a raging grizzly bear"
+  }
+]

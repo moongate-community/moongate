@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "mapmaker_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Mapmaker.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Cartography": 950
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the mapmaker"
+  }
+]

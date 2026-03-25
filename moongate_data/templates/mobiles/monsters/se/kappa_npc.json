@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "kappa_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Kappa.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00F0",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 208,
+    "dexterity": 63,
+    "intelligence": 48,
+    "hits": 165,
+    "maxHits": 165,
+    "mana": 30,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "fame": 1700,
+    "karma": -1700,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 650,
+      "Tactics": 840,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.average",
+      "creature.kappa"
+    ],
+    "resistances": {
+      "physical": 42,
+      "fire": 42,
+      "cold": 37,
+      "poison": 42,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a kappa"
+  }
+]

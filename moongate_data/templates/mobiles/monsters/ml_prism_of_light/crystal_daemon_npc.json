@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_daemon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalDaemon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 170,
+    "dexterity": 135,
+    "intelligence": 825,
+    "hits": 210,
+    "maxHits": 210,
+    "minDamage": 16,
+    "maxDamage": 20,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Wrestling": 700,
+      "Tactics": 750,
+      "MagicResist": 1050,
+      "Magery": 1250,
+      "EvalInt": 1050,
+      "Meditation": 1050
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 10,
+      "cold": 70,
+      "poison": 30,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 0,
+      "cold": 40,
+      "energy": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a crystal daemon"
+  }
+]

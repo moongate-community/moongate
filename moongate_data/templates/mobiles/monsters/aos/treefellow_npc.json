@@ -1,0 +1,46 @@
+[
+  {
+    "type": "mobile",
+    "id": "treefellow_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Treefellow.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x012D",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 208,
+    "dexterity": 43,
+    "intelligence": 78,
+    "hits": 125,
+    "maxHits": 125,
+    "minDamage": 12,
+    "maxDamage": 16,
+    "armorRating": 24,
+    "fame": 500,
+    "karma": 1500,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 475,
+      "Tactics": 775,
+      "Wrestling": 750
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "resistances": {
+      "physical": 22,
+      "cold": 55,
+      "poison": 32,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a treefellow"
+  }
+]

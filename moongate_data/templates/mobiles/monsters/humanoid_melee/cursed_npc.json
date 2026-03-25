@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "cursed_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Cursed.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 95,
+    "dexterity": 90,
+    "intelligence": 65,
+    "hits": 105,
+    "maxHits": 105,
+    "minDamage": 5,
+    "maxDamage": 13,
+    "fame": 1000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 617,
+      "Macing": 462,
+      "MagicResist": 580,
+      "Swords": 662,
+      "Tactics": 712,
+      "Poisoning": 712
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.miscellaneous"
+    ],
+    "sounds": {
+      "Idle": 471,
+      "StartAttack": 472,
+      "Attack": 473,
+      "Defend": 474,
+      "Die": 475
+    },
+    "resistances": {
+      "physical": 20,
+      "fire": 7,
+      "cold": 30,
+      "poison": 7,
+      "energy": 7
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "male"
+  }
+]

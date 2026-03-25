@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "pack_llama_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO PackLlama.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0124",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 66,
+    "dexterity": 45,
+    "intelligence": 23,
+    "hits": 50,
+    "maxHits": 50,
+    "mana": 0,
+    "stamina": 95,
+    "minDamage": 2,
+    "maxDamage": 6,
+    "armorRating": 16,
+    "fame": 0,
+    "karma": 200,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 241,
+      "Wrestling": 241
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 12,
+      "cold": 12,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a pack llama"
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.cobbler",
+    "name": "Cobbler Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Cobbler. SBInfo sources: SBCobbler.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

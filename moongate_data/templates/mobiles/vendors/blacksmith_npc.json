@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "blacksmith_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Blacksmith.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ArmsLore": 520,
+      "Blacksmith": 765,
+      "Fencing": 715,
+      "Macing": 770,
+      "Swords": 715,
+      "Tactics": 715,
+      "Parry": 770
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the blacksmith"
+  }
+]

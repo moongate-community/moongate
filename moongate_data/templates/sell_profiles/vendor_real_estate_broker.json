@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.real_estate_broker",
+    "name": "RealEstateBroker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for RealEstateBroker. SBInfo sources: SBRealEstateBroker.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

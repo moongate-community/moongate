@@ -1,0 +1,41 @@
+[
+  {
+    "type": "mobile",
+    "id": "blade_spirits_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BladeSpirits.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x023E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 150,
+    "dexterity": 150,
+    "intelligence": 100,
+    "mana": 0,
+    "stamina": 250,
+    "minDamage": 10,
+    "maxDamage": 14,
+    "armorRating": 40,
+    "fame": 0,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "resistances": {
+      "physical": 35,
+      "fire": 45,
+      "cold": 35,
+      "poison": 100,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 20,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a blade spirit"
+  }
+]

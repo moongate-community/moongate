@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "shade_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Shade.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x001A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 85,
+    "intelligence": 48,
+    "hits": 53,
+    "maxHits": 53,
+    "minDamage": 7,
+    "maxDamage": 11,
+    "armorRating": 28,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 625,
+      "Magery": 625,
+      "MagicResist": 625,
+      "Tactics": 525,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.shade"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 27,
+      "cold": 20,
+      "poison": 15
+    },
+    "damageTypes": {
+      "physical": 50,
+      "cold": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a shade"
+  }
+]

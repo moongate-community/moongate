@@ -1,0 +1,47 @@
+[
+  {
+    "type": "mobile",
+    "id": "swoop_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Swoop.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 125,
+    "dexterity": 450,
+    "intelligence": 85,
+    "hits": 1750,
+    "maxHits": 1750,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "fame": 18000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1300,
+      "Tactics": 1300,
+      "MagicResist": 1000
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.swoop"
+    ],
+    "resistances": {
+      "physical": 82,
+      "fire": 68,
+      "cold": 77,
+      "poison": 70,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Swoop"
+  }
+]

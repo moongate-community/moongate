@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.butcher",
+    "name": "Butcher Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Butcher. SBInfo sources: SBButcher.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "golem_controller_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GolemController.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0190",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 138,
+    "dexterity": 108,
+    "intelligence": 163,
+    "hits": 83,
+    "maxHits": 83,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "armorRating": 16,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 975,
+      "Magery": 975,
+      "Meditation": 975,
+      "MagicResist": 1137,
+      "Tactics": 762,
+      "Wrestling": 762
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.golem_controller"
+    ],
+    "resistances": {
+      "physical": 35,
+      "fire": 30,
+      "cold": 40,
+      "poison": 10,
+      "energy": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

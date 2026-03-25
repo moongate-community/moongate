@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.savage",
+    "name": "Savage",
+    "category": "loot",
+    "description": "Creature-specific loot for Savage.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "tribal_berry",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "merchant_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Merchant.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ItemID": 665,
+      "ArmsLore": 665
+    },
+    "lootTables": [
+      "creature.merchant"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

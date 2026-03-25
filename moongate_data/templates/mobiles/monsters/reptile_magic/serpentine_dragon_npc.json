@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "serpentine_dragon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SerpentineDragon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0067",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 125,
+    "dexterity": 210,
+    "intelligence": 1020,
+    "hits": 480,
+    "maxHits": 480,
+    "minDamage": 5,
+    "maxDamage": 12,
+    "armorRating": 36,
+    "fame": 15000,
+    "karma": 15000,
+    "notoriety": "Innocent",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1050,
+      "Magery": 1150,
+      "Tactics": 550,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 30,
+      "cold": 30,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 75,
+      "poison": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a serpentine dragon"
+  }
+]

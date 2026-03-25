@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "provisioner_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Provisioner.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Camping": 565,
+      "Tactics": 565
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the provisioner"
+  }
+]

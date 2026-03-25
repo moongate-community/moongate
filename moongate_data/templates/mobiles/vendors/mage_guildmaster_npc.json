@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "mage_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO MageGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "EvalInt": 925,
+      "Inscribe": 765,
+      "MagicResist": 820,
+      "Magery": 950,
+      "Wrestling": 715,
+      "Meditation": 925,
+      "Macing": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "mage"
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.banker",
+    "name": "Banker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Banker. SBInfo sources: SBBanker.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,36 @@
+[
+  {
+    "type": "mobile",
+    "id": "ferret_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ferret.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 44,
+    "dexterity": 55,
+    "intelligence": 75,
+    "hits": 47,
+    "maxHits": 47,
+    "minDamage": 7,
+    "maxDamage": 9,
+    "brain": "animal",
+    "resistances": {
+      "physical": 47,
+      "fire": 12,
+      "cold": 35,
+      "poison": 23,
+      "energy": 22
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a ferret"
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "panther_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Panther.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 73,
+    "dexterity": 95,
+    "intelligence": 38,
+    "hits": 44,
+    "maxHits": 44,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 12,
+    "armorRating": 16,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 225,
+      "Tactics": 575,
+      "Wrestling": 575
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 7,
+      "cold": 12,
+      "poison": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a panther"
+  }
+]

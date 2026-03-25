@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "meraktus_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Meraktus.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0107",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1428,
+    "dexterity": 361,
+    "intelligence": 130,
+    "hits": 4150,
+    "maxHits": 4150,
+    "minDamage": 16,
+    "maxDamage": 30,
+    "armorRating": 28,
+    "fame": 70000,
+    "karma": -70000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 1091,
+      "Tactics": 1120,
+      "Wrestling": 1025
+    },
+    "lootTables": [
+      "loot_pack.aos_super_boss",
+      "creature.meraktus"
+    ],
+    "sounds": {
+      "Idle": 680,
+      "StartAttack": 681,
+      "Attack": 682,
+      "Defend": 683,
+      "Die": 684
+    },
+    "resistances": {
+      "physical": 77,
+      "fire": 67,
+      "cold": 55,
+      "poison": 50,
+      "energy": 52
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Meraktus"
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "banker_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Banker.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "town_banker",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the banker"
+  }
+]

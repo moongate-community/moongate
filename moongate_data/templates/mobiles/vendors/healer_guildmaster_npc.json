@@ -1,0 +1,25 @@
+[
+  {
+    "type": "mobile",
+    "id": "healer_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO HealerGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Anatomy": 925,
+      "Healing": 950,
+      "Forensics": 865,
+      "MagicResist": 865,
+      "SpiritSpeak": 765
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "healer"
+  }
+]

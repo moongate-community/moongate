@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "mongbat_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Mongbat.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x0027",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 8,
+    "dexterity": 32,
+    "intelligence": 10,
+    "hits": 5,
+    "maxHits": 5,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 2,
+    "armorRating": 10,
+    "fame": 150,
+    "karma": -150,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 95,
+      "Tactics": 75,
+      "Wrestling": 75
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 422,
+      "StartAttack": 423,
+      "Attack": 424,
+      "Defend": 425,
+      "Die": 426
+    },
+    "resistances": {
+      "physical": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a mongbat"
+  }
+]

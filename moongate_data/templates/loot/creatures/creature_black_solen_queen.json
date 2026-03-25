@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.black_solen_queen",
+    "name": "BlackSolenQueen",
+    "category": "loot",
+    "description": "Creature-specific loot for BlackSolenQueen.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "ball_of_summoning",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

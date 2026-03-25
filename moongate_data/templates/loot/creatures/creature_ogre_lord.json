@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ogre_lord",
+    "name": "OgreLord",
+    "category": "loot",
+    "description": "Creature-specific loot for OgreLord.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "club",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

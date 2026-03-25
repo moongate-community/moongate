@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "lady_sabrix_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO LadySabrix.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 106,
+    "dexterity": 131,
+    "intelligence": 74,
+    "hits": 297,
+    "maxHits": 297,
+    "mana": 74,
+    "stamina": 131,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 18900,
+    "karma": -18900,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1163,
+      "Tactics": 1114,
+      "MagicResist": 872,
+      "Anatomy": 869,
+      "Poisoning": 1072
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 34,
+      "poison": 75,
+      "energy": 39
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Lady Sabrix"
+  }
+]

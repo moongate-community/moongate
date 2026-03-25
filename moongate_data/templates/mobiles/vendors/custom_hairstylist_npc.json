@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "custom_hairstylist_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO CustomHairstylist.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the hairstylist"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.coil",
+    "name": "Coil",
+    "category": "loot",
+    "description": "Creature-specific loot for Coil.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

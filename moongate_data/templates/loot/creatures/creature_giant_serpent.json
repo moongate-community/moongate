@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.giant_serpent",
+    "name": "GiantSerpent",
+    "category": "loot",
+    "description": "Creature-specific loot for GiantSerpent.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

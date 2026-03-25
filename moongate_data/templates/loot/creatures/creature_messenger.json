@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.messenger",
+    "name": "Messenger",
+    "category": "loot",
+    "description": "Creature-specific loot for Messenger.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 225
+      }
+    ]
+  }
+]

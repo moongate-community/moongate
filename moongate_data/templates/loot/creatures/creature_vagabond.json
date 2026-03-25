@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.vagabond",
+    "name": "Vagabond",
+    "category": "loot",
+    "description": "Creature-specific loot for Vagabond.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 150
+      }
+    ]
+  }
+]

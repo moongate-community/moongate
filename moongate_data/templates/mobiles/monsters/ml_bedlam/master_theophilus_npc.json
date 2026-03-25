@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "master_theophilus_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MasterTheophilus.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 162,
+    "dexterity": 277,
+    "intelligence": 418,
+    "hits": 769,
+    "maxHits": 769,
+    "minDamage": 15,
+    "maxDamage": 20,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 876,
+      "Tactics": 1154,
+      "MagicResist": 1299,
+      "Magery": 1408,
+      "EvalInt": 1297,
+      "Necromancy": 1297,
+      "SpiritSpeak": 1297,
+      "Meditation": 1308
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.master_theophilus"
+    ],
+    "resistances": {
+      "physical": 57,
+      "fire": 54,
+      "cold": 55,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Master Theophilus"
+  }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "type": "mobile",
+    "id": "actor_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Actor.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "animal",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "hell_cat_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO HellCat.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 75,
+    "dexterity": 101,
+    "intelligence": 49,
+    "hits": 57,
+    "maxHits": 57,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "armorRating": 30,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 525,
+      "Tactics": 475,
+      "Wrestling": 350
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 85,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 40,
+      "fire": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a hell cat"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.yamandon",
+    "name": "Yamandon",
+    "category": "loot",
+    "description": "Creature-specific loot for Yamandon.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "eggs",
+        "chance": 1.0,
+        "amount": 2
+      }
+    ]
+  }
+]

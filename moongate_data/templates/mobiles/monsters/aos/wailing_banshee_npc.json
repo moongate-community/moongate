@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "wailing_banshee_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO WailingBanshee.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0136",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 138,
+    "dexterity": 88,
+    "intelligence": 98,
+    "hits": 83,
+    "maxHits": 83,
+    "minDamage": 10,
+    "maxDamage": 14,
+    "armorRating": 19,
+    "fame": 1500,
+    "karma": -1500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 825,
+      "Tactics": 575,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 27,
+      "cold": 75,
+      "poison": 35,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 20,
+      "cold": 60,
+      "poison": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a wailing banshee"
+  }
+]

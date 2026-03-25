@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "succubus_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Succubus.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0095",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 554,
+    "dexterity": 145,
+    "intelligence": 577,
+    "hits": 332,
+    "maxHits": 332,
+    "minDamage": 18,
+    "maxDamage": 28,
+    "armorRating": 80,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 995,
+      "Meditation": 950,
+      "MagicResist": 1252,
+      "Tactics": 850,
+      "Wrestling": 850
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 85,
+      "fire": 75,
+      "cold": 45,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 75,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a succubus"
+  }
+]

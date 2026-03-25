@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "lava_serpent_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO LavaSerpent.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x005A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 400,
+    "dexterity": 68,
+    "intelligence": 75,
+    "hits": 240,
+    "maxHits": 240,
+    "mana": 0,
+    "minDamage": 10,
+    "maxDamage": 22,
+    "armorRating": 40,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 476,
+      "Tactics": 675,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.lava_serpent"
+    ],
+    "sounds": {
+      "Idle": 219,
+      "StartAttack": 220,
+      "Attack": 221,
+      "Defend": 222,
+      "Die": 223
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 75,
+      "poison": 35,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 20,
+      "fire": 80
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a lava serpent"
+  }
+]

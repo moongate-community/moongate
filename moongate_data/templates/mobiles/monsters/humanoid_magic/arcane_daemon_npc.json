@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "arcane_daemon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ArcaneDaemon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 135,
+    "intelligence": 325,
+    "hits": 108,
+    "maxHits": 108,
+    "minDamage": 12,
+    "maxDamage": 16,
+    "armorRating": 55,
+    "fame": 7000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "MagicResist": 900,
+      "Tactics": 750,
+      "Wrestling": 700,
+      "Magery": 850,
+      "EvalInt": 750,
+      "Meditation": 750
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 75,
+      "cold": 15,
+      "poison": 55,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 80,
+      "fire": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an arcane daemon"
+  }
+]

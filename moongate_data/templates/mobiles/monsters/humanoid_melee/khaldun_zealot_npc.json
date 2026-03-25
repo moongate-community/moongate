@@ -1,0 +1,47 @@
+[
+  {
+    "type": "mobile",
+    "id": "khaldun_zealot_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO KhaldunZealot.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 375,
+    "dexterity": 158,
+    "intelligence": 88,
+    "hits": 459,
+    "maxHits": 459,
+    "minDamage": 15,
+    "maxDamage": 25,
+    "armorRating": 40,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 750,
+      "Swords": 1250,
+      "Anatomy": 1250,
+      "MagicResist": 950,
+      "Tactics": 950
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 27,
+      "cold": 55,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 75,
+      "cold": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Zealot of Khaldun"
+  }
+]

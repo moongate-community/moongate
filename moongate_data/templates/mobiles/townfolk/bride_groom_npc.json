@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mobile",
+    "id": "bride_groom_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO BrideGroom.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "lootTables": [
+      "creature.bride_groom"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

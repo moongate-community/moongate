@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "black_solen_queen_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BlackSolenQueen.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0327",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 308,
+    "dexterity": 133,
+    "intelligence": 88,
+    "hits": 156,
+    "maxHits": 156,
+    "minDamage": 10,
+    "maxDamage": 15,
+    "armorRating": 45,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.black_solen_queen"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 32,
+      "cold": 30,
+      "poison": 37,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 70,
+      "poison": 30
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a black solen queen"
+  }
+]

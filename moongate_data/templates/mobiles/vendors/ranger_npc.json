@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mobile",
+    "id": "ranger_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Ranger.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Camping": 665,
+      "DetectHidden": 765,
+      "Hiding": 565,
+      "Archery": 765,
+      "Tracking": 765,
+      "Veterinary": 715
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the ranger"
+  }
+]

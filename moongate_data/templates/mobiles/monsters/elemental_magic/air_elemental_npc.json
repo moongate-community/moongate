@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "air_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AirElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x000D",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 175,
+    "intelligence": 113,
+    "hits": 84,
+    "maxHits": 84,
+    "minDamage": 8,
+    "maxDamage": 10,
+    "armorRating": 40,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 675,
+      "Magery": 675,
+      "MagicResist": 675,
+      "Tactics": 700,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.low_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 655,
+      "StartAttack": 656,
+      "Attack": 657,
+      "Defend": 658,
+      "Die": 659
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 20,
+      "cold": 15,
+      "poison": 15,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 20,
+      "cold": 40,
+      "energy": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an air elemental"
+  }
+]

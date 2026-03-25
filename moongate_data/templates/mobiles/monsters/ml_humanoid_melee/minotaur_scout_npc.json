@@ -1,0 +1,47 @@
+[
+  {
+    "type": "mobile",
+    "id": "minotaur_scout_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MinotaurScout.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0119",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 364,
+    "dexterity": 120,
+    "intelligence": 42,
+    "hits": 368,
+    "maxHits": 368,
+    "minDamage": 11,
+    "maxDamage": 20,
+    "armorRating": 28,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 640,
+      "Tactics": 952,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "resistances": {
+      "physical": 60,
+      "fire": 30,
+      "cold": 35,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a minotaur scout"
+  }
+]

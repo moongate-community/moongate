@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "exodus_overseer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ExodusOverseer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 605,
+    "dexterity": 85,
+    "intelligence": 75,
+    "hits": 360,
+    "maxHits": 360,
+    "minDamage": 13,
+    "maxDamage": 19,
+    "armorRating": 50,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 891,
+      "Tactics": 891,
+      "Wrestling": 891
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.exodus_overseer"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 50,
+      "cold": 30,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an exodus overseer"
+  }
+]

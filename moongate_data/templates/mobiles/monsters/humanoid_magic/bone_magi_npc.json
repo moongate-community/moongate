@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "bone_magi_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BoneMagi.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0094",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 65,
+    "intelligence": 198,
+    "hits": 53,
+    "maxHits": 53,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 38,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 650,
+      "Magery": 650,
+      "MagicResist": 625,
+      "Tactics": 525,
+      "Wrestling": 500,
+      "Necromancy": 940,
+      "SpiritSpeak": 945
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.low_scrolls",
+      "loot_pack.potions",
+      "creature.bone_magi"
+    ],
+    "sounds": {
+      "Idle": 451,
+      "StartAttack": 452,
+      "Attack": 453,
+      "Defend": 454,
+      "Die": 455
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 25,
+      "cold": 55,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a bone mage"
+  }
+]

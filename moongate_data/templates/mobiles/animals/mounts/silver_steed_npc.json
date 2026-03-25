@@ -1,0 +1,23 @@
+[
+  {
+    "type": "mobile",
+    "id": "silver_steed_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SilverSteed.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 250,
+      "Wrestling": 350,
+      "Tactics": 300
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a silver steed"
+  }
+]

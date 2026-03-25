@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.dread_spider",
+    "name": "DreadSpider",
+    "category": "loot",
+    "description": "Creature-specific loot for DreadSpider.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "spiders_silk",
+        "chance": 1.0,
+        "amount": 8
+      }
+    ]
+  }
+]

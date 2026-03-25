@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "lizardman_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Lizardman.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0023",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 108,
+    "dexterity": 95,
+    "intelligence": 48,
+    "hits": 65,
+    "maxHits": 65,
+    "minDamage": 5,
+    "maxDamage": 7,
+    "armorRating": 28,
+    "fame": 1500,
+    "karma": -1500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 475,
+      "Tactics": 675,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 417,
+      "StartAttack": 418,
+      "Attack": 419,
+      "Defend": 420,
+      "Die": 421
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 7,
+      "cold": 7,
+      "poison": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "lizardman"
+  }
+]

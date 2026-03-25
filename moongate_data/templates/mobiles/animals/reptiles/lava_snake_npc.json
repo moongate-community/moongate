@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "lava_snake_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO LavaSnake.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x0034",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 49,
+    "dexterity": 20,
+    "intelligence": 8,
+    "hits": 30,
+    "maxHits": 30,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 8,
+    "armorRating": 24,
+    "fame": 600,
+    "karma": -600,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 266,
+      "Wrestling": 266
+    },
+    "lootTables": [
+      "loot_pack.poor",
+      "creature.lava_snake"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 35,
+      "poison": 25,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a lava snake"
+  }
+]

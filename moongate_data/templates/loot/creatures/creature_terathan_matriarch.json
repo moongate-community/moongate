@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.terathan_matriarch",
+    "name": "TerathanMatriarch",
+    "category": "loot",
+    "description": "Creature-specific loot for TerathanMatriarch.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "spiders_silk",
+        "chance": 1.0,
+        "amount": 5
+      }
+    ]
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "devourer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Devourer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x012F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 875,
+    "dexterity": 150,
+    "intelligence": 225,
+    "hits": 650,
+    "maxHits": 650,
+    "minDamage": 22,
+    "maxDamage": 26,
+    "armorRating": 44,
+    "fame": 9500,
+    "karma": -9500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 950,
+      "Meditation": 950,
+      "MagicResist": 975,
+      "Tactics": 800,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 30,
+      "cold": 20,
+      "poison": 65,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 60,
+      "cold": 20,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a devourer of souls"
+  }
+]

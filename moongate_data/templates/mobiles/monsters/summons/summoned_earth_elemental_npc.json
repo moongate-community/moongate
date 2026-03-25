@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "summoned_earth_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SummonedEarthElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x000E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 200,
+    "dexterity": 70,
+    "intelligence": 70,
+    "hits": 180,
+    "maxHits": 180,
+    "minDamage": 14,
+    "maxDamage": 21,
+    "armorRating": 34,
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 800,
+      "Wrestling": 800
+    },
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 15,
+      "cold": 15,
+      "poison": 20,
+      "energy": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an earth elemental"
+  }
+]

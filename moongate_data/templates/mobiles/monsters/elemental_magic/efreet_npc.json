@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "efreet_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Efreet.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0083",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 340,
+    "dexterity": 275,
+    "intelligence": 183,
+    "hits": 204,
+    "maxHits": 204,
+    "minDamage": 11,
+    "maxDamage": 13,
+    "armorRating": 56,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 675,
+      "Magery": 675,
+      "MagicResist": 675,
+      "Tactics": 700,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average",
+      "loot_pack.gems",
+      "creature.efreet"
+    ],
+    "sounds": {
+      "Idle": 768,
+      "StartAttack": 769,
+      "Attack": 770,
+      "Defend": 771,
+      "Die": 772
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 65,
+      "poison": 35,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 0,
+      "fire": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an efreet"
+  }
+]

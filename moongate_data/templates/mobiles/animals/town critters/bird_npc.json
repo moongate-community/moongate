@@ -1,0 +1,42 @@
+[
+  {
+    "type": "mobile",
+    "id": "bird_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Bird.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0006",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 10,
+    "dexterity": 30,
+    "intelligence": 10,
+    "minDamage": 0,
+    "maxDamage": 0,
+    "fame": 150,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "Wrestling": 53,
+      "Tactics": 50,
+      "MagicResist": 45
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a tropical bird"
+  }
+]

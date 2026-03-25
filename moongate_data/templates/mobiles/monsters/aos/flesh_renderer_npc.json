@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "flesh_renderer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FleshRenderer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x013B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 430,
+    "dexterity": 205,
+    "intelligence": 240,
+    "hits": 4500,
+    "maxHits": 4500,
+    "minDamage": 16,
+    "maxDamage": 20,
+    "armorRating": 24,
+    "fame": 23000,
+    "karma": -23000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 1575,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 85,
+      "fire": 55,
+      "cold": 55,
+      "poison": 100,
+      "energy": 75
+    },
+    "damageTypes": {
+      "physical": 80,
+      "poison": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a fleshrenderer"
+  }
+]

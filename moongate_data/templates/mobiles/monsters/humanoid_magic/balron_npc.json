@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "balron_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Balron.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0028",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1085,
+    "dexterity": 216,
+    "intelligence": 200,
+    "hits": 651,
+    "maxHits": 651,
+    "minDamage": 22,
+    "maxDamage": 29,
+    "armorRating": 90,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Anatomy": 375,
+      "EvalInt": 950,
+      "Magery": 977,
+      "Meditation": 375,
+      "MagicResist": 1252,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.balron"
+    ],
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 72,
+      "fire": 70,
+      "cold": 55,
+      "poison": 100,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 25,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "balron"
+  }
+]

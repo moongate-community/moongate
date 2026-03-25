@@ -1,0 +1,40 @@
+[
+  {
+    "type": "mobile",
+    "id": "energy_vortex_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EnergyVortex.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 200,
+    "dexterity": 200,
+    "intelligence": 100,
+    "mana": 0,
+    "stamina": 250,
+    "minDamage": 14,
+    "maxDamage": 17,
+    "armorRating": 40,
+    "fame": 0,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "resistances": {
+      "physical": 65,
+      "fire": 45,
+      "cold": 45,
+      "poison": 45,
+      "energy": 95
+    },
+    "damageTypes": {
+      "physical": 0,
+      "energy": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an energy vortex"
+  }
+]

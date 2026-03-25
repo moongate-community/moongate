@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.ranger",
+    "name": "Ranger Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Ranger. SBInfo sources: SBRanger.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

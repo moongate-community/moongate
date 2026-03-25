@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "mound_of_maggots_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MoundOfMaggots.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x013F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 65,
+    "dexterity": 65,
+    "intelligence": 10,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 9,
+    "armorRating": 24,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 550
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 898,
+      "StartAttack": 899,
+      "Attack": 900,
+      "Defend": 901,
+      "Die": 902
+    },
+    "resistances": {
+      "physical": 90,
+      "poison": 100
+    },
+    "damageTypes": {
+      "physical": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a mound of maggots"
+  }
+]

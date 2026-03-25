@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.lady_of_the_snow",
+    "name": "LadyOfTheSnow",
+    "category": "loot",
+    "description": "Creature-specific loot for LadyOfTheSnow.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "necklace",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "reagent",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "ravager_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ravager.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x013A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 263,
+    "dexterity": 113,
+    "intelligence": 78,
+    "hits": 168,
+    "maxHits": 168,
+    "minDamage": 15,
+    "maxDamage": 20,
+    "armorRating": 54,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 625,
+      "Tactics": 875,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 55,
+      "cold": 65,
+      "poison": 35,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a ravager"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "ratman_mage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RatmanMage.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 163,
+    "dexterity": 115,
+    "intelligence": 198,
+    "hits": 98,
+    "maxHits": 98,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 44,
+    "fame": 7500,
+    "karma": -7500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 750,
+      "Magery": 750,
+      "MagicResist": 775,
+      "Tactics": 625,
+      "Wrestling": 625
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.low_scrolls",
+      "creature.ratman_mage"
+    ],
+    "sounds": {
+      "Idle": 437,
+      "StartAttack": 438,
+      "Attack": 439,
+      "Defend": 440,
+      "Die": 441
+    },
+    "resistances": {
+      "physical": 42,
+      "fire": 15,
+      "cold": 15,
+      "poison": 15,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "ratman"
+  }
+]

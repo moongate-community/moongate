@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "ice_fiend_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO IceFiend.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x002B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 390,
+    "dexterity": 185,
+    "intelligence": 213,
+    "hits": 234,
+    "maxHits": 234,
+    "minDamage": 8,
+    "maxDamage": 19,
+    "armorRating": 60,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 850,
+      "Magery": 850,
+      "MagicResist": 800,
+      "Tactics": 850,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 15,
+      "cold": 65,
+      "poison": 25,
+      "energy": 35
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an ice fiend"
+  }
+]

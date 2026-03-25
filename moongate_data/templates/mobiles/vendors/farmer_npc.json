@@ -1,0 +1,23 @@
+[
+  {
+    "type": "mobile",
+    "id": "farmer_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Farmer.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Lumberjacking": 520,
+      "TasteID": 520,
+      "Cooking": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the farmer"
+  }
+]

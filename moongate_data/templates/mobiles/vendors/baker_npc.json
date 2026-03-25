@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "baker_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Baker.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Cooking": 865,
+      "TasteID": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the baker"
+  }
+]

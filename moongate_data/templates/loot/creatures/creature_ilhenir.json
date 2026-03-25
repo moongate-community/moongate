@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ilhenir",
+    "name": "Ilhenir",
+    "category": "loot",
+    "description": "Creature-specific loot for Ilhenir.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "random_talisman",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

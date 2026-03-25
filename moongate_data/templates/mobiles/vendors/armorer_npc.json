@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "armorer_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Armorer.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ArmsLore": 820,
+      "Blacksmith": 715
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the armorer"
+  }
+]

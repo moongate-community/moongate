@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.stone_crafter",
+    "name": "StoneCrafter Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for StoneCrafter. SBInfo sources: SBStoneCrafter, SBStavesWeapon, SBCarpenter, SBWoodenShields.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

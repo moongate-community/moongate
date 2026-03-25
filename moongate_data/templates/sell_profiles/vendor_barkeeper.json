@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.barkeeper",
+    "name": "Barkeeper Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Barkeeper. SBInfo sources: SBBarkeeper.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "twaulo_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Twaulo.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0065",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1850,
+    "dexterity": 350,
+    "intelligence": 900,
+    "hits": 7500,
+    "maxHits": 7500,
+    "minDamage": 19,
+    "maxDamage": 24,
+    "armorRating": 50,
+    "fame": 50000,
+    "karma": 50000,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 1050,
+      "Archery": 975,
+      "MagicResist": 651,
+      "Tactics": 950,
+      "Wrestling": 975
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.average",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 679,
+      "StartAttack": 680,
+      "Attack": 681,
+      "Defend": 682,
+      "Die": 683
+    },
+    "resistances": {
+      "physical": 70,
+      "fire": 50,
+      "cold": 55,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Twaulo"
+  }
+]

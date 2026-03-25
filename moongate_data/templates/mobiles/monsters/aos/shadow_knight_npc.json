@@ -1,0 +1,43 @@
+[
+  {
+    "type": "mobile",
+    "id": "shadow_knight_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ShadowKnight.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0137",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 250,
+    "dexterity": 100,
+    "intelligence": 100,
+    "hits": 2000,
+    "maxHits": 2000,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "armorRating": 54,
+    "fame": 25000,
+    "karma": -25000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 90,
+      "fire": 65,
+      "cold": 75,
+      "poison": 75,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 60,
+      "cold": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

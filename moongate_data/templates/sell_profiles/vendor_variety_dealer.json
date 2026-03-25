@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.variety_dealer",
+    "name": "VarietyDealer Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for VarietyDealer. SBInfo sources: SBVarietyDealer.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

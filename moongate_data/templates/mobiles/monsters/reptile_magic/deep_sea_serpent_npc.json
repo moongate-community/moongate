@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "deep_sea_serpent_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DeepSeaSerpent.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0096",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 338,
+    "dexterity": 111,
+    "intelligence": 121,
+    "hits": 203,
+    "maxHits": 203,
+    "minDamage": 6,
+    "maxDamage": 14,
+    "armorRating": 60,
+    "fame": 6000,
+    "karma": -6000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "MagicResist": 675,
+      "Tactics": 650,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.deep_sea_serpent"
+    ],
+    "sounds": {
+      "Idle": 447,
+      "StartAttack": 448,
+      "Attack": 449,
+      "Defend": 450,
+      "Die": 451
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 75,
+      "cold": 45,
+      "poison": 35,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a deep sea serpent"
+  }
+]

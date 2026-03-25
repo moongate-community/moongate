@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_vortex_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalVortex.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 850,
+    "dexterity": 550,
+    "intelligence": 200,
+    "hits": 375,
+    "maxHits": 375,
+    "mana": 0,
+    "minDamage": 15,
+    "maxDamage": 20,
+    "fame": 17000,
+    "karma": -17000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.parrot"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 70,
+      "fire": 5,
+      "cold": 75,
+      "poison": 45,
+      "energy": 75
+    },
+    "damageTypes": {
+      "physical": 0,
+      "cold": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a crystal vortex"
+  }
+]

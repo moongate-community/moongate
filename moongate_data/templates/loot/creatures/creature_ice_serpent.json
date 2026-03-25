@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ice_serpent",
+    "name": "IceSerpent",
+    "category": "loot",
+    "description": "Creature-specific loot for IceSerpent.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "glacial_staff",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

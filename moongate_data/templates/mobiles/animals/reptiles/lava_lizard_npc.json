@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "lava_lizard_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO LavaLizard.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 138,
+    "dexterity": 65,
+    "intelligence": 15,
+    "hits": 83,
+    "maxHits": 83,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 24,
+    "armorRating": 40,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 625,
+      "Tactics": 700,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 37,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a lava lizard"
+  }
+]

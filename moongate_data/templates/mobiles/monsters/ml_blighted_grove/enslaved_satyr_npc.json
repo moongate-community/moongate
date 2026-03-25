@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "enslaved_satyr_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EnslavedSatyr.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an enslaved satyr"
+  }
+]

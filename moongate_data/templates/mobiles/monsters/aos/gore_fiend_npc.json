@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "gore_fiend_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GoreFiend.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0131",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 173,
+    "dexterity": 53,
+    "intelligence": 58,
+    "hits": 104,
+    "maxHits": 104,
+    "minDamage": 15,
+    "maxDamage": 21,
+    "armorRating": 24,
+    "fame": 1500,
+    "karma": -1500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 475,
+      "Tactics": 575,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 224,
+      "StartAttack": 225,
+      "Attack": 226,
+      "Defend": 227,
+      "Die": 228
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 30,
+      "cold": 20,
+      "poison": 10,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 85,
+      "poison": 15
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a gore fiend"
+  }
+]

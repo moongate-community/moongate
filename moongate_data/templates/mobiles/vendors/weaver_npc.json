@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "weaver_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Weaver.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "Tailoring": 765
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the weaver"
+  }
+]

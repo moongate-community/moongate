@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "prisoner_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Prisoner.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

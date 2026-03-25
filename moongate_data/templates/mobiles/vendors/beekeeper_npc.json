@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "beekeeper_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Beekeeper.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the beekeeper"
+  }
+]

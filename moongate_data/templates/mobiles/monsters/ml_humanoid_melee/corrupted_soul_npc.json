@@ -1,0 +1,44 @@
+[
+  {
+    "type": "mobile",
+    "id": "corrupted_soul_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CorruptedSoul.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 108,
+    "dexterity": 108,
+    "intelligence": 209,
+    "hits": 65,
+    "maxHits": 65,
+    "minDamage": 4,
+    "maxDamage": 40,
+    "armorRating": 6,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 848,
+      "Tactics": 856,
+      "Wrestling": 844
+    },
+    "resistances": {
+      "physical": 67,
+      "fire": 35,
+      "cold": 86,
+      "poison": 0,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a corrupted soul"
+  }
+]

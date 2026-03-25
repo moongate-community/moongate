@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "gypsy_banker_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO GypsyBanker.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

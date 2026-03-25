@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "gypsy_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Gypsy.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "animal",
+    "skills": {
+      "Cooking": 765,
+      "Snooping": 765,
+      "Stealing": 765
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "type": "mobile",
+    "id": "chiikkaha_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Chiikkaha.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 463,
+    "dexterity": 168,
+    "intelligence": 263,
+    "hits": 412,
+    "maxHits": 412,
+    "minDamage": 10,
+    "maxDamage": 17,
+    "fame": 7500,
+    "karma": -7500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "EvalInt": 750,
+      "Magery": 800,
+      "MagicResist": 805,
+      "Tactics": 625,
+      "Wrestling": 625
+    },
+    "resistances": {
+      "physical": 42,
+      "fire": 15,
+      "cold": 15,
+      "poison": 15,
+      "energy": 100
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Chiikkaha the Toothed"
+  }
+]

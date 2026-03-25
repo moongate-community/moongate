@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_wisp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalWisp.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a crystal wisp"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.red_solen_worker",
+    "name": "RedSolenWorker",
+    "category": "loot",
+    "description": "Creature-specific loot for RedSolenWorker.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "zoogi_fungus",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.veterinarian",
+    "name": "Veterinarian Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Veterinarian. SBInfo sources: SBVeterinarian.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

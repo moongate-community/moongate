@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.miner",
+    "name": "Miner Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Miner. SBInfo sources: SBMiner.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

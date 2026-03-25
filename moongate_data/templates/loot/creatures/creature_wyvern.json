@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.wyvern",
+    "name": "Wyvern",
+    "category": "loot",
+    "description": "Creature-specific loot for Wyvern.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

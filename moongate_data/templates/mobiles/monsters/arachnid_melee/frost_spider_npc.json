@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "frost_spider_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FrostSpider.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x0014",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 135,
+    "intelligence": 48,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 16,
+    "armorRating": 28,
+    "fame": 775,
+    "karma": -775,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 325,
+      "Tactics": 425,
+      "Wrestling": 575
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.poor",
+      "creature.frost_spider"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 7,
+      "cold": 45,
+      "poison": 25,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 20,
+      "cold": 80
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a frost spider"
+  }
+]

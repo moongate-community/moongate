@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "nightmare_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Nightmare.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0074",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 305,
+    "dexterity": 95,
+    "intelligence": 105,
+    "hits": 306,
+    "maxHits": 306,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "armorRating": 60,
+    "fame": 14000,
+    "karma": -14000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "EvalInt": 302,
+      "Magery": 302,
+      "MagicResist": 926,
+      "Tactics": 988,
+      "Wrestling": 865
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average",
+      "loot_pack.low_scrolls",
+      "loot_pack.potions"
+    ],
+    "resistances": {
+      "physical": 60,
+      "fire": 35,
+      "cold": 35,
+      "poison": 35,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 40,
+      "fire": 40,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a nightmare"
+  }
+]

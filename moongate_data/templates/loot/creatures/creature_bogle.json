@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.bogle",
+    "name": "Bogle",
+    "category": "loot",
+    "description": "Creature-specific loot for Bogle.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

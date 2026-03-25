@@ -1,0 +1,37 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.efreet",
+    "name": "Efreet",
+    "category": "loot",
+    "description": "Creature-specific loot for Efreet.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "daemon_arms",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "daemon_chest",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "daemon_gloves",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "daemon_legs",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "daemon_helm",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

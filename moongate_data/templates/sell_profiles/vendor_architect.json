@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.architect",
+    "name": "Architect Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Architect. SBInfo sources: SBHouseDeed, SBArchitect.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

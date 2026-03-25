@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "warrior_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO WarriorGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "skills": {
+      "ArmsLore": 865,
+      "Parry": 925,
+      "MagicResist": 715,
+      "Tactics": 925,
+      "Swords": 950,
+      "Macing": 715,
+      "Fencing": 715
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "warrior"
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_rider_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SavageRider.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00BA",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 160,
+    "dexterity": 111,
+    "intelligence": 58,
+    "minDamage": 29,
+    "maxDamage": 34,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 837,
+      "Healing": 751,
+      "Macing": 837,
+      "Poisoning": 712,
+      "MagicResist": 837,
+      "Swords": 837,
+      "Tactics": 837
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.savage_rider"
+    ],
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "gypsy_animal_trainer_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO GypsyAnimalTrainer.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "vendor",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

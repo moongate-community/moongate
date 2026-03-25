@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "mummy_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Mummy.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x009A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 358,
+    "dexterity": 80,
+    "intelligence": 33,
+    "hits": 215,
+    "maxHits": 215,
+    "minDamage": 13,
+    "maxDamage": 23,
+    "armorRating": 50,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 425,
+      "Wrestling": 425
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.potions",
+      "creature.mummy"
+    ],
+    "sounds": {
+      "Idle": 471,
+      "StartAttack": 472,
+      "Attack": 473,
+      "Defend": 474,
+      "Die": 475
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 15,
+      "cold": 55,
+      "poison": 25,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 40,
+      "cold": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a mummy"
+  }
+]

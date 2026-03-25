@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "ancient_wyrm_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AncientWyrm.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x002E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1140,
+    "dexterity": 130,
+    "intelligence": 730,
+    "hits": 684,
+    "maxHits": 684,
+    "minDamage": 29,
+    "maxDamage": 35,
+    "armorRating": 70,
+    "fame": 22500,
+    "karma": -22500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 900,
+      "Magery": 900,
+      "Meditation": 637,
+      "MagicResist": 1252,
+      "Tactics": 988,
+      "Wrestling": 988
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 70,
+      "fire": 85,
+      "cold": 75,
+      "poison": 65,
+      "energy": 65
+    },
+    "damageTypes": {
+      "physical": 75,
+      "fire": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an ancient wyrm"
+  }
+]

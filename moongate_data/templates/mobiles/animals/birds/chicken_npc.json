@@ -1,0 +1,44 @@
+[
+  {
+    "type": "mobile",
+    "id": "chicken_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Chicken.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 5,
+    "dexterity": 15,
+    "intelligence": 5,
+    "hits": 3,
+    "maxHits": 3,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 1,
+    "armorRating": 2,
+    "fame": 150,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 3
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a chicken"
+  }
+]

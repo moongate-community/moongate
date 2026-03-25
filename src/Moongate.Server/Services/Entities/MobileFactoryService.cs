@@ -101,6 +101,9 @@ public sealed class MobileFactoryService : IMobileFactoryService
         InitializeTemplateSkills(mobile, template);
         mobile.Sounds = new(template.Sounds);
 
+        ApplyResistances(mobile, template);
+        ApplyDamageTypes(mobile, template);
+
         if (template.LootTables.Count > 0)
         {
             mobile.SetCustomString(MobileCustomParamKeys.Loot.LootTables, string.Join(',', template.LootTables));
@@ -176,6 +179,55 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         return mobile;
+    }
+
+    private static void ApplyResistances(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (template.Resistances.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var (key, value) in template.Resistances)
+        {
+            if (string.Equals(key, "physical", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Physical = value;
+            }
+            else if (string.Equals(key, "fire", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Fire = value;
+            }
+            else if (string.Equals(key, "cold", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Cold = value;
+            }
+            else if (string.Equals(key, "poison", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Poison = value;
+            }
+            else if (string.Equals(key, "energy", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Energy = value;
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Mobile template '{template.Id}' has unknown resistance key '{key}'."
+                );
+            }
+        }
+    }
+
+    private static void ApplyDamageTypes(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (template.DamageTypes.Count == 0)
+        {
+            return;
+        }
+
+        var parts = template.DamageTypes.Select(kvp => $"{kvp.Key}:{kvp.Value}");
+        mobile.SetCustomString(MobileCustomParamKeys.Combat.DamageTypes, string.Join(',', parts));
     }
 
     private static void ApplyTemplateParams(UOMobileEntity mobile, MobileTemplateDefinition template)

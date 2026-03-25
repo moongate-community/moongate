@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.changeling",
+    "name": "Changeling",
+    "category": "loot",
+    "description": "Creature-specific loot for Changeling.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arrow",
+        "chance": 1.0,
+        "amount": 35
+      },
+      {
+        "itemTemplateId": "bolt",
+        "chance": 1.0,
+        "amount": 25
+      }
+    ]
+  }
+]

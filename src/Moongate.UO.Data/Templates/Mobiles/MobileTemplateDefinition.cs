@@ -66,6 +66,10 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public Dictionary<string, int> Skills { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
+    public Dictionary<string, int> Resistances { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public Dictionary<string, int> DamageTypes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
     public int TamingDifficulty { get; set; }
 
     public int ProvocationDifficulty { get; set; }

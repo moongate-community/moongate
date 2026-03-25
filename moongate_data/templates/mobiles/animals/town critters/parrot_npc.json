@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "parrot_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Parrot.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x033F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "animal",
+    "skills": {
+      "Wrestling": 60,
+      "Tactics": 60,
+      "MagicResist": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a parrot"
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "snow_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SnowElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00A3",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 340,
+    "dexterity": 175,
+    "intelligence": 83,
+    "hits": 204,
+    "maxHits": 204,
+    "minDamage": 11,
+    "maxDamage": 17,
+    "armorRating": 50,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 575,
+      "Tactics": 900,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.snow_elemental"
+    ],
+    "sounds": {
+      "Idle": 263,
+      "StartAttack": 264,
+      "Attack": 265,
+      "Defend": 266,
+      "Die": 267
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 12,
+      "cold": 65,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 20,
+      "cold": 80
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a snow elemental"
+  }
+]

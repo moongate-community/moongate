@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "rai_ju_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RaiJu.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00C7",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 188,
+    "dexterity": 108,
+    "intelligence": 178,
+    "hits": 240,
+    "maxHits": 240,
+    "minDamage": 12,
+    "maxDamage": 15,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 900,
+      "Tactics": 600,
+      "MagicResist": 1175,
+      "Anatomy": 300
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 77,
+      "cold": 45,
+      "poison": 60,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 10,
+      "fire": 10,
+      "cold": 10,
+      "poison": 10,
+      "energy": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a Rai-Ju"
+  }
+]

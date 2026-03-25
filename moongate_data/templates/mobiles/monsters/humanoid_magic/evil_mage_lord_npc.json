@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "evil_mage_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EvilMageLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 93,
+    "dexterity": 203,
+    "intelligence": 138,
+    "hits": 56,
+    "maxHits": 56,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 16,
+    "fame": 10500,
+    "karma": -10500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 901,
+      "Magery": 975,
+      "Meditation": 387,
+      "MagicResist": 887,
+      "Tactics": 762,
+      "Wrestling": 501
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.evil_mage_lord"
+    ],
+    "resistances": {
+      "physical": 37,
+      "fire": 35,
+      "cold": 35,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

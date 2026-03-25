@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.holy_mage",
+    "name": "HolyMage",
+    "category": "loot",
+    "description": "Creature-specific loot for HolyMage.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 150
+      }
+    ]
+  }
+]
