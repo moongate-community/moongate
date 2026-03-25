@@ -1,12 +1,8 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Extensions.Strings;
@@ -20,12 +16,12 @@ using Moongate.Scripting.Data.Luarc;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Descriptors;
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Internal;
 using Moongate.Scripting.Loaders;
 using Moongate.Scripting.Utils;
 using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
 using Serilog;
-using SyntaxErrorException = System.Data.SyntaxErrorException;
 
 #pragma warning disable IL2026 // RequiresUnreferencedCode - Lua scripting uses reflection for dynamic functionality
 #pragma warning disable IL2072 // DynamicallyAccessedMemberTypes - Reflection access is necessary for scripting
@@ -60,15 +56,13 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     private readonly ConcurrentDictionary<string, object> _loadedModules = new();
     private readonly ILogger _logger = Log.ForContext<LuaScriptEngineService>();
 
-    // Cache compiled script chunks by content hash to avoid re-compiling identical scripts.
-    private readonly ConcurrentDictionary<string, DynValue> _scriptCache = new();
+    private readonly LuaModuleLoader _moduleLoader;
+    private readonly LuaScriptCache _scriptCache;
     private readonly Lock _scriptExecutionSync = new();
     private readonly List<ScriptModuleData> _scriptModules;
     private readonly List<ScriptUserData> _loadedUserData;
 
     private readonly IContainer _serviceProvider;
-    private int _cacheHits;
-    private int _cacheMisses;
 
     private bool _disposed;
     private bool _isInitialized;
@@ -108,6 +102,8 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         CreateNameResolver();
 
         LuaScript = CreateOptimizedEngine();
+        _scriptCache = new();
+        _moduleLoader = new(LuaScript, _serviceProvider, name => _nameResolver(name), _logger);
 
         LoadToUserData();
     }
@@ -165,7 +161,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
         if (value != null && !IsSimpleType(value.GetType()))
         {
-            valueToSet = ObjectToTable(value);
+            valueToSet = LuaReflectionHelper.ObjectToTable(LuaScript, value);
         }
 
         LuaScript.Globals[normalizedName] = valueToSet;
@@ -203,7 +199,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             {
                 try
                 {
-                    var parameters = ConvertArgumentsToArray(args);
+                    var parameters = LuaReflectionHelper.ConvertArgumentsToArray(args);
                     callback(parameters);
 
                     return DynValue.Nil;
@@ -245,10 +241,10 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             {
                 try
                 {
-                    var input = PrepareManualInput<TInput>(args);
+                    var input = LuaReflectionHelper.PrepareManualInput<TInput>(args);
                     var result = callback(input);
 
-                    return ConvertToLua(result);
+                    return LuaReflectionHelper.ConvertToLua(LuaScript, result);
                 }
                 catch (Exception ex)
                 {
@@ -291,7 +287,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
                 for (var i = 0; i < args.Length; i++)
                 {
-                    dynArgs[i] = ConvertToLua(args[i]);
+                    dynArgs[i] = LuaReflectionHelper.ConvertToLua(LuaScript, args[i]);
                 }
 
                 LuaScript.Call(luaFunction, dynArgs);
@@ -315,8 +311,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     public void ClearScriptCache()
     {
         _scriptCache.Clear();
-        _cacheHits = 0;
-        _cacheMisses = 0;
         _logger.Information("Script cache cleared");
     }
 
@@ -402,7 +396,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
         catch (ScriptRuntimeException luaEx)
         {
-            var errorInfo = CreateErrorInfo(luaEx, command);
+            var errorInfo = LuaReflectionHelper.CreateErrorInfo(luaEx, command);
             OnScriptError?.Invoke(this, errorInfo);
 
             _logger.Error(
@@ -421,7 +415,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
         catch (InterpreterException luaEx)
         {
-            var errorInfo = CreateErrorInfo(luaEx, command);
+            var errorInfo = LuaReflectionHelper.CreateErrorInfo(luaEx, command);
             OnScriptError?.Invoke(this, errorInfo);
 
             _logger.Error(
@@ -555,12 +549,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     /// Gets execution metrics for performance monitoring
     /// </summary>
     public ScriptExecutionMetrics GetExecutionMetrics()
-        => new()
-        {
-            CacheHits = _cacheHits,
-            CacheMisses = _cacheMisses,
-            TotalScriptsCached = _scriptCache.Count
-        };
+        => _scriptCache.GetMetrics();
 
     /// <summary>
     /// Gets the statistics of the script engine.
@@ -660,7 +649,8 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
         try
         {
-            await RegisterScriptModulesAsync(CancellationToken.None);
+            _moduleLoader.RegisterScriptModules(_scriptModules, _loadedModules, CancellationToken.None);
+            _moduleLoader.RegisterEnums(LuaDocumentationGenerator.FoundEnums);
 
             AddConstant("version", _engineConfig.EngineVersion);
             AddConstant("engine", "Moongate");
@@ -668,7 +658,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
             await GenerateLuaMetaFileAsync(CancellationToken.None);
 
-            RegisterGlobalFunctions();
+            _moduleLoader.RegisterGlobalFunctions();
 
             ExecuteBootstrap();
             InitializeReputationTitles();
@@ -750,307 +740,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         _logger.Warning("Attempted to unregister non-existent global: {Name}", name);
 
         return false;
-    }
-
-    private static object?[] ConvertArgumentsToArray(CallbackArguments args)
-    {
-        if (args.Count == 0)
-        {
-            return Array.Empty<object?>();
-        }
-
-        var converted = new object?[args.Count];
-
-        for (var i = 0; i < args.Count; i++)
-        {
-            converted[i] = args[i].ToObject();
-        }
-
-        return converted;
-    }
-
-    private static object? ConvertFromLua(DynValue dynValue, Type targetType)
-        => dynValue.Type switch
-        {
-            DataType.Nil     => null,
-            DataType.Boolean => dynValue.Boolean,
-            DataType.Number  => Convert.ChangeType(dynValue.Number, targetType, CultureInfo.InvariantCulture),
-            DataType.String  => dynValue.String,
-            DataType.Table   => dynValue.ToObject(),
-            _                => dynValue.ToObject()
-        };
-
-    private DynValue ConvertToLua(object? value)
-        => value == null ? DynValue.Nil : DynValue.FromObject(LuaScript, value);
-
-    /// <summary>
-    /// Creates a factory function that dynamically invokes the correct constructor.
-    /// Uses reflection to find the constructor matching the number of arguments passed from Lua.
-    /// </summary>
-    private Func<object?, object?, object?, object?, object?> CreateConstructorWrapper(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type type
-    )
-    {
-        // Cache constructors by parameter count for performance
-        var constructorsByParamCount = new Dictionary<int, ConstructorInfo>();
-        var constructors = type.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-
-        foreach (var ctor in constructors)
-        {
-            var paramCount = ctor.GetParameters().Length;
-            constructorsByParamCount.TryAdd(paramCount, ctor);
-        }
-
-        return (arg1, arg2, arg3, arg4) =>
-               {
-                   // Collect arguments
-                   var rawArgs = new List<object?>();
-
-                   if (arg1 != null)
-                   {
-                       rawArgs.Add(arg1);
-                   }
-
-                   if (arg2 != null)
-                   {
-                       rawArgs.Add(arg2);
-                   }
-
-                   if (arg3 != null)
-                   {
-                       rawArgs.Add(arg3);
-                   }
-
-                   if (arg4 != null)
-                   {
-                       rawArgs.Add(arg4);
-                   }
-
-                   var argCount = rawArgs.Count;
-
-                   // Find constructor with matching parameter count
-                   if (constructorsByParamCount.TryGetValue(argCount, out var ctor))
-                   {
-                       try
-                       {
-                           // Convert arguments to match constructor parameter types
-                           var parameters = ctor.GetParameters();
-                           var convertedArgs = new object?[argCount];
-
-                           for (var i = 0; i < argCount; i++)
-                           {
-                               var paramType = parameters[i].ParameterType;
-                               var argValue = rawArgs[i];
-
-                               // Convert argument to the expected parameter type
-                               if (argValue == null)
-                               {
-                                   convertedArgs[i] = null;
-                               }
-                               else if (paramType.IsInstanceOfType(argValue))
-                               {
-                                   // No conversion needed
-                                   convertedArgs[i] = argValue;
-                               }
-                               else
-                               {
-                                   // Convert using Convert.ChangeType (handles double -> float, etc.)
-                                   try
-                                   {
-                                       convertedArgs[i] = Convert.ChangeType(
-                                           argValue,
-                                           paramType,
-                                           CultureInfo.InvariantCulture
-                                       );
-                                   }
-                                   catch
-                                   {
-                                       convertedArgs[i] = argValue; // Fallback to original value
-                                   }
-                               }
-                           }
-
-                           // Create instance with converted arguments
-                           return Activator.CreateInstance(type, convertedArgs);
-                       }
-                       catch (Exception ex)
-                       {
-                           throw new ScriptRuntimeException(
-                               $"Constructor of {type.Name} with {argCount} arguments failed: {ex.Message}",
-                               ex
-                           );
-                       }
-                   }
-
-                   // No matching constructor found
-                   var availableCtors = string.Join(", ", constructorsByParamCount.Keys.OrderBy(k => k));
-
-                   throw new ScriptRuntimeException(
-                       $"No constructor found for {type.Name} with {argCount} arguments. Available: {availableCtors}"
-                   );
-               };
-    }
-
-    /// <summary>
-    /// Creates detailed error information from a Lua exception
-    /// </summary>
-    private static ScriptErrorInfo CreateErrorInfo(ScriptRuntimeException luaEx, string sourceCode, string? fileName = null)
-    {
-        var errorInfo = new ScriptErrorInfo
-        {
-            Message = luaEx.DecoratedMessage ?? luaEx.Message,
-            StackTrace = luaEx.StackTrace,
-            LineNumber = 0,
-            ColumnNumber = 0,
-            ErrorType = "LuaError",
-            SourceCode = sourceCode,
-            FileName = fileName ?? "script.lua"
-        };
-
-        return errorInfo;
-    }
-
-    /// <summary>
-    /// Creates detailed error information from a Lua interpreter exception (syntax errors, etc.)
-    /// </summary>
-    private static ScriptErrorInfo CreateErrorInfo(InterpreterException luaEx, string sourceCode, string? fileName = null)
-    {
-        // Extract line and column info from the exception message if available
-        // SyntaxErrorException typically has format like "chunk_1:(1,5-10): unexpected symbol near '?'"
-        int? lineNumber = null;
-        int? columnNumber = null;
-        var errorType = "LuaError";
-
-        if (luaEx is SyntaxErrorException)
-        {
-            errorType = "SyntaxError";
-        }
-
-        // Try to extract line and column from the message
-        var message = luaEx.Message;
-
-        if (message.Contains('('))
-        {
-            var match = Regex.Match(message, @"\((\d+),(\d+)");
-
-            if (match.Success)
-            {
-                lineNumber = int.Parse(match.Groups[1].Value, CultureInfo.CurrentCulture);
-                columnNumber = int.Parse(match.Groups[2].Value, CultureInfo.CurrentCulture);
-            }
-        }
-
-        var errorInfo = new ScriptErrorInfo
-        {
-            Message = luaEx.DecoratedMessage ?? luaEx.Message,
-            StackTrace = luaEx.StackTrace,
-            LineNumber = lineNumber,
-            ColumnNumber = columnNumber,
-            ErrorType = errorType,
-            SourceCode = sourceCode,
-            FileName = fileName ?? "script.lua"
-        };
-
-        return errorInfo;
-    }
-
-    [UnconditionalSuppressMessage(
-        "Aot",
-        "IL3050",
-        Justification = "Lua params-array conversion requires runtime element type resolution by reflection."
-    )]
-    private DynValue CreateMethodClosure(object instance, MethodInfo method)
-        => DynValue.NewCallback(
-            (context, args) =>
-            {
-                try
-                {
-                    var parameters = method.GetParameters();
-
-                    // Check if the last parameter is a params array
-                    var hasParamsArray = parameters.Length > 0 &&
-                                         parameters[^1].IsDefined(typeof(ParamArrayAttribute), false);
-
-                    object?[] convertedArgs;
-
-                    if (hasParamsArray)
-                    {
-                        var regularParamsCount = parameters.Length - 1;
-                        convertedArgs = new object?[parameters.Length];
-
-                        // Convert regular parameters
-                        for (var i = 0; i < regularParamsCount && i < args.Count; i++)
-                        {
-                            convertedArgs[i] = ConvertFromLua(args[i], parameters[i].ParameterType);
-                        }
-
-                        // Collect remaining arguments into params array
-                        var paramsArrayType = parameters[^1].ParameterType.GetElementType()!;
-                        var paramsCount = Math.Max(0, args.Count - regularParamsCount);
-                        var paramsArray = Array.CreateInstance(paramsArrayType, paramsCount);
-
-                        for (var i = 0; i < paramsCount; i++)
-                        {
-                            var argIndex = regularParamsCount + i;
-                            paramsArray.SetValue(ConvertFromLua(args[argIndex], paramsArrayType), i);
-                        }
-
-                        convertedArgs[^1] = paramsArray;
-                    }
-                    else
-                    {
-                        // Normal parameter handling
-                        convertedArgs = new object?[parameters.Length];
-
-                        for (var i = 0; i < parameters.Length && i < args.Count; i++)
-                        {
-                            convertedArgs[i] = ConvertFromLua(args[i], parameters[i].ParameterType);
-                        }
-                    }
-
-                    var result = method.Invoke(instance, convertedArgs);
-
-                    return method.ReturnType == typeof(void) ? DynValue.Nil : ConvertToLua(result);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error(ex, "Error calling method {MethodName}", method.Name);
-
-                    throw new ScriptRuntimeException(ex.Message);
-                }
-            }
-        );
-
-    private Table CreateModuleTable(
-        object instance,
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
-        Type moduleType
-    )
-    {
-        var moduleTable = new Table(LuaScript);
-
-        var methods = moduleType.GetMethods(BindingFlags.Public | BindingFlags.Instance)
-                                .Where(m => m.GetCustomAttribute<ScriptFunctionAttribute>() is not null);
-
-        foreach (var method in methods)
-        {
-            var scriptFunctionAttr = method.GetCustomAttribute<ScriptFunctionAttribute>();
-
-            if (scriptFunctionAttr is null)
-            {
-                continue;
-            }
-
-            var functionName = string.IsNullOrWhiteSpace(scriptFunctionAttr.FunctionName)
-                                   ? _nameResolver(method.Name)
-                                   : scriptFunctionAttr.FunctionName;
-
-            // Create a closure that captures the instance and method
-            var closure = CreateMethodClosure(instance, method);
-            moduleTable[functionName] = closure;
-        }
-
-        return moduleTable;
     }
 
     private void CreateNameResolver()
@@ -1183,31 +872,10 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
         try
         {
-            var scriptHash = GetScriptHash(script);
-            DynValue compiledScriptChunk;
-
-            if (_scriptCache.TryGetValue(scriptHash, out compiledScriptChunk))
-            {
-                Interlocked.Increment(ref _cacheHits);
-                _logger.Debug("Script found in cache");
-            }
-            else
-            {
-                Interlocked.Increment(ref _cacheMisses);
-
-                // Compile first: invalid scripts must not pollute cache entries.
-                var compiled = LuaScript.LoadString(script, null, fileName ?? "runtime_chunk");
-
-                if (!_scriptCache.TryAdd(scriptHash, compiled))
-                {
-                    Interlocked.Increment(ref _cacheHits);
-                    _scriptCache.TryGetValue(scriptHash, out compiledScriptChunk);
-                }
-                else
-                {
-                    compiledScriptChunk = compiled;
-                }
-            }
+            var compiledScriptChunk = _scriptCache.GetOrAddCompiledChunk(
+                script,
+                () => LuaScript.LoadString(script, null, fileName ?? "runtime_chunk")
+            );
 
             lock (_scriptExecutionSync)
             {
@@ -1218,7 +886,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
         catch (ScriptRuntimeException luaEx)
         {
-            var errorInfo = CreateErrorInfo(luaEx, script, fileName);
+            var errorInfo = LuaReflectionHelper.CreateErrorInfo(luaEx, script, fileName);
             OnScriptError?.Invoke(this, errorInfo);
 
             _logger.Error(
@@ -1233,7 +901,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
         catch (InterpreterException luaEx)
         {
-            var errorInfo = CreateErrorInfo(luaEx, script, fileName);
+            var errorInfo = LuaReflectionHelper.CreateErrorInfo(luaEx, script, fileName);
             OnScriptError?.Invoke(this, errorInfo);
 
             _logger.Error(
@@ -1372,16 +1040,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         return JsonSerializer.Serialize(luarcConfig, MoongateLuaScriptJsonContext.Default.LuarcConfig);
     }
 
-    /// <summary>
-    /// Generates a hash for script caching
-    /// </summary>
-    private static string GetScriptHash(string script)
-    {
-        var hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(script));
-
-        return Convert.ToBase64String(hashBytes);
-    }
-
     private static string? GetStringField(Table table, string key)
     {
         var dyn = table.Get(key);
@@ -1467,7 +1125,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             if (publicConstructors.Length > 0)
             {
                 // Instantiable type - use constructor wrapper for easier instance creation
-                var constructorWrapper = CreateConstructorWrapper(scriptUserData.UserType);
+                var constructorWrapper = LuaReflectionHelper.CreateConstructorWrapper(scriptUserData.UserType);
                 LuaScript.Globals[scriptUserData.UserType.Name] = constructorWrapper;
             }
             else
@@ -1480,22 +1138,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
             LuaDocumentationGenerator.AddClassToGenerate(scriptUserData.UserType);
         }
-    }
-
-    private Table ObjectToTable(object obj)
-    {
-        var table = new Table(LuaScript);
-    #pragma warning disable IL2075 // Suppress AOT warning for script proxy
-        var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-    #pragma warning restore IL2075
-
-        foreach (var prop in properties)
-        {
-            var value = prop.GetValue(obj);
-            table[prop.Name] = value;
-        }
-
-        return table;
     }
 
     private void OnLuaFilesChanged(object sender, FileSystemEventArgs e)
@@ -1517,24 +1159,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
                 }
             }
         }
-    }
-
-    private TInput? PrepareManualInput<TInput>(CallbackArguments args)
-    {
-        if (typeof(TInput) == typeof(object[]))
-        {
-            return (TInput?)(object?)ConvertArgumentsToArray(args);
-        }
-
-        if (args.Count == 0)
-        {
-            return default;
-        }
-
-        var firstArg = args[0];
-        var converted = ConvertFromLua(firstArg, typeof(TInput));
-
-        return converted is null ? default : (TInput?)converted;
     }
 
     private (string ModuleName, string FunctionName, Table ModuleTable) PrepareManualModule(
@@ -1563,200 +1187,9 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         return (normalizedModuleName, normalizedFunctionName, moduleTable);
     }
 
-    [RequiresUnreferencedCode("Enum registration uses reflection to access enum metadata.")]
-    private void RegisterEnum(Type enumType)
-    {
-        ArgumentNullException.ThrowIfNull(enumType);
-
-        if (!enumType.IsEnum)
-        {
-            _logger.Warning("Type {TypeName} is not an enum, skipping registration", enumType.Name);
-
-            return;
-        }
-
-        var enumName = _nameResolver(enumType.Name);
-        var enumTable = new Table(LuaScript);
-        var enumValuesByName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
-        // Populate enum values
-        var names = Enum.GetNames(enumType);
-        var underlyingValues = Enum.GetValuesAsUnderlyingType(enumType);
-
-        for (var i = 0; i < names.Length; i++)
-        {
-            var name = names[i];
-            var rawValue = underlyingValues.GetValue(i);
-
-            if (rawValue is null)
-            {
-                continue;
-            }
-
-            var coercedValue = Convert.ToInt32(rawValue, CultureInfo.InvariantCulture);
-            enumTable[name] = coercedValue;
-            enumValuesByName[name] = coercedValue;
-        }
-
-        // Create metatable for read-only and case-insensitive access
-        var metatable = new Table(LuaScript);
-
-        // __index: allows case-insensitive access
-        metatable["__index"] = DynValue.NewCallback(
-            (ctx, args) =>
-            {
-                var key = args[1].String;
-
-                if (string.IsNullOrEmpty(key))
-                {
-                    return DynValue.Nil;
-                }
-
-                // Try exact match first
-                var value = enumTable.Get(key);
-
-                if (value.Type != DataType.Nil)
-                {
-                    return value;
-                }
-
-                // Try case-insensitive match
-                if (enumValuesByName.TryGetValue(key, out var intValue))
-                {
-                    return DynValue.NewNumber(intValue);
-                }
-
-                _logger.Warning(
-                    "Attempt to access undefined enum value {EnumName}.{ValueName}",
-                    enumName,
-                    key
-                );
-
-                return DynValue.Nil;
-            }
-        );
-
-        // __newindex: prevents modifications (read-only)
-        metatable["__newindex"] = DynValue.NewCallback(
-            (ctx, args) =>
-            {
-                var key = args[1].String;
-
-                throw new ScriptRuntimeException($"Cannot modify enum {enumName}.{key}: enums are read-only");
-            }
-        );
-
-        // __tostring: pretty print
-        metatable["__tostring"] = DynValue.NewCallback(
-            (ctx, args) =>
-            {
-                return DynValue.NewString($"enum<{enumName}>");
-            }
-        );
-
-        // Set the enum table first
-        var enumTableDynValue = DynValue.NewTable(enumTable);
-
-        // Try to apply metatable (may not work perfectly in all MoonSharp versions)
-        try
-        {
-            // Create a reference for the metatable
-            var metatableValue = DynValue.NewTable(metatable);
-            enumTable.MetaTable = metatable;
-        }
-        catch
-        {
-            _logger.Warning("Could not apply metatable to enum {EnumName}, using fallback", enumName);
-        }
-
-        // Register the enum table in globals
-        LuaScript.Globals[enumName] = enumTableDynValue;
-
-        _logger.Debug(
-            "Registered enum {EnumName} with {ValueCount} values (read-only, case-insensitive)",
-            enumName,
-            enumValuesByName.Count
-        );
-    }
-
-    [RequiresUnreferencedCode("Enum metadata is discovered dynamically when building Lua documentation.")]
-    private void RegisterEnums()
-    {
-        var enumsFound = LuaDocumentationGenerator.FoundEnums;
-
-        foreach (var enumType in enumsFound)
-        {
-            RegisterEnum(enumType);
-        }
-    }
-
-    private void RegisterGlobalFunctions()
-    {
-        LuaScript.Globals["delay"] = (Func<int, Task>)(async milliseconds =>
-                                                       {
-                                                           await Task.Delay(Math.Min(milliseconds, 5000));
-                                                       });
-
-        var existingLog = LuaScript.Globals.Get("log");
-
-        if (existingLog.Type == DataType.Nil)
-        {
-            LuaScript.Globals["log"] = (Action<object>)(message => { _logger.Information("Lua: {Message}", message); });
-        }
-        else
-        {
-            // Keep script module "log" intact (e.g. log.info/log.error) and provide a fallback function alias.
-            LuaScript.Globals["log_message"] =
-                (Action<object>)(message => { _logger.Information("Lua: {Message}", message); });
-        }
-
-        LuaScript.Globals["toString"] = (Func<object, string>)(obj => obj?.ToString() ?? "nil");
-    }
-
     private void RegisterManualModuleFunction(string moduleName, string functionName)
     {
         var functions = _manualModuleFunctions.GetOrAdd(moduleName, _ => new());
         functions.TryAdd(functionName, 0);
-    }
-
-    private async Task RegisterScriptModulesAsync(CancellationToken cancellationToken)
-    {
-        foreach (var module in _scriptModules)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            var scriptModuleAttribute = module.ModuleType.GetCustomAttribute<ScriptModuleAttribute>();
-
-            if (scriptModuleAttribute is null)
-            {
-                continue;
-            }
-
-            if (!_serviceProvider.IsRegistered(module.ModuleType))
-            {
-                _serviceProvider.Register(module.ModuleType, Reuse.Singleton);
-            }
-
-            var instance = _serviceProvider.GetService(module.ModuleType);
-
-            if (instance is null)
-            {
-                throw new InvalidOperationException($"Unable to create instance of script module {module.ModuleType.Name}");
-            }
-
-            var moduleName = scriptModuleAttribute.Name;
-            _logger.Debug("Registering script module {Name}", moduleName);
-
-            // Register the type with MoonSharp
-            UserData.RegisterType(module.ModuleType, InteropAccessMode.Reflection);
-
-            // Create a table for the module
-            var moduleTable = CreateModuleTable(instance, module.ModuleType);
-            LuaScript.Globals[moduleName] = moduleTable;
-
-            _loadedModules[moduleName] = instance;
-        }
-
-        RegisterEnums();
     }
 }
