@@ -56,6 +56,20 @@ cd moongate
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
 
+### Validate Templates
+
+Run this every time you change shard template data under your Moongate root, especially `~/moongate/templates/items`,
+`~/moongate/templates/mobiles`, `~/moongate/templates/loot`, `~/moongate/templates/factions`,
+`~/moongate/templates/sell_profiles`, or `~/moongate/data/containers`.
+
+```bash
+dotnet pack tools/Moongate.TemplateValidator/Moongate.TemplateValidator.csproj -o ./tools/Moongate.TemplateValidator/nupkg
+dotnet tool install --tool-path ./artifacts/template-tool --add-source ./tools/Moongate.TemplateValidator/nupkg Moongate.TemplateValidator
+./artifacts/template-tool/moongate-template validate --root-directory ~/moongate
+```
+
+Published docs: `docs/articles/operations/template-validation.md`
+
 ### Run Server (Docker quick start)
 
 ```bash

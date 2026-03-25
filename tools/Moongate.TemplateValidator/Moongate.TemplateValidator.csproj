@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>moongate-template</ToolCommandName>
+        <PackageId>Moongate.TemplateValidator</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Description>Installable .NET tool for validating Moongate shard templates with runtime-equivalent loader rules.</Description>
+        <PackageTags>moongate;ultima-online;templates;validator;dotnet-tool</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="ConsoleAppFramework" Version="5.7.13" />
+        <PackageReference Include="Spectre.Console" Version="0.54.0" />
+        <PackageReference Include="Serilog" Version="4.3.1" />
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.201">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" Visible="false" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
+        <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj" />
+        <ProjectReference Include="..\..\src\Moongate.UO.Data\Moongate.UO.Data.csproj" />
+    </ItemGroup>
+
+</Project>
