@@ -211,6 +211,30 @@ public sealed class MobileTemplateLoader : IFileLoader
             }
         }
 
+        if (child.Resistances.Count == 0 && parent.Resistances.Count > 0)
+        {
+            child.Resistances = new(parent.Resistances, StringComparer.OrdinalIgnoreCase);
+        }
+        else if (parent.Resistances.Count > 0)
+        {
+            foreach (var kvp in parent.Resistances)
+            {
+                child.Resistances.TryAdd(kvp.Key, kvp.Value);
+            }
+        }
+
+        if (child.DamageTypes.Count == 0 && parent.DamageTypes.Count > 0)
+        {
+            child.DamageTypes = new(parent.DamageTypes, StringComparer.OrdinalIgnoreCase);
+        }
+        else if (parent.DamageTypes.Count > 0)
+        {
+            foreach (var kvp in parent.DamageTypes)
+            {
+                child.DamageTypes.TryAdd(kvp.Key, kvp.Value);
+            }
+        }
+
         child.TamingDifficulty = InheritInt(
             child.TamingDifficulty,
             parent.TamingDifficulty,

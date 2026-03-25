@@ -542,6 +542,109 @@ public class MobileTemplateLoaderTests
         );
     }
 
+    [Test]
+    public async Task LoadAsync_WhenBaseMobileHasResistancesAndDamageTypes_ShouldInheritAndOverride()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "resistances.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_elemental",
+                "name": "Base Elemental",
+                "body": "0x000E",
+                "resistances": {
+                  "Physical": 50,
+                  "Fire": 30,
+                  "Cold": 20,
+                  "Poison": 10,
+                  "Energy": 15
+                },
+                "damageTypes": {
+                  "Physical": 100
+                }
+              },
+              {
+                "type": "mobile",
+                "id": "fire_elemental",
+                "base_mobile": "base_elemental",
+                "name": "a fire elemental",
+                "resistances": {
+                  "Fire": 70
+                },
+                "damageTypes": {
+                  "Physical": 25,
+                  "Fire": 75
+                }
+              },
+              {
+                "type": "mobile",
+                "id": "lesser_fire_elemental",
+                "base_mobile": "base_elemental",
+                "name": "a lesser fire elemental"
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("fire_elemental", out var fireElemental), Is.True);
+        Assert.That(fireElemental, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                // Child overrides Fire resistance but inherits others from parent via TryAdd
+                Assert.That(fireElemental!.Resistances["Fire"], Is.EqualTo(70));
+                Assert.That(fireElemental.Resistances["Physical"], Is.EqualTo(50));
+                Assert.That(fireElemental.Resistances["Cold"], Is.EqualTo(20));
+                Assert.That(fireElemental.Resistances["Poison"], Is.EqualTo(10));
+                Assert.That(fireElemental.Resistances["Energy"], Is.EqualTo(15));
+                Assert.That(fireElemental.Resistances, Has.Count.EqualTo(5));
+
+                // Child fully overrides damageTypes
+                Assert.That(fireElemental.DamageTypes["Physical"], Is.EqualTo(25));
+                Assert.That(fireElemental.DamageTypes["Fire"], Is.EqualTo(75));
+                Assert.That(fireElemental.DamageTypes, Has.Count.EqualTo(2));
+            }
+        );
+
+        // Lesser fire elemental inherits everything from parent
+        Assert.That(mobileTemplateService.TryGet("lesser_fire_elemental", out var lesserFire), Is.True);
+        Assert.That(lesserFire, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lesserFire!.Resistances["Physical"], Is.EqualTo(50));
+                Assert.That(lesserFire.Resistances["Fire"], Is.EqualTo(30));
+                Assert.That(lesserFire.Resistances, Has.Count.EqualTo(5));
+                Assert.That(lesserFire.DamageTypes["Physical"], Is.EqualTo(100));
+                Assert.That(lesserFire.DamageTypes, Has.Count.EqualTo(1));
+            }
+        );
+    }
+
     private static string ResolveRepositoryRoot()
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
