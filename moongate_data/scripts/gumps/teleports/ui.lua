@@ -16,6 +16,7 @@ function ui.create_view(options)
     origin_y = tonumber(resolved.origin_y) or 0,
     show_outer_frame = resolved.show_outer_frame ~= false,
     show_refresh = resolved.show_refresh ~= false,
+    use_alpha_regions = resolved.use_alpha_regions ~= false,
     title = tostring(resolved.title or "Teleport Browser")
   }
 end
@@ -23,14 +24,19 @@ end
 function ui.add_frame(layout_ui, view)
   local ox = view.origin_x or 0
   local oy = view.origin_y or 0
+  local use_alpha_regions = view.use_alpha_regions ~= false
 
   if view.show_outer_frame then
     push(layout_ui, { type = "background", x = ox, y = oy, gump_id = 5054, width = c.GUMP_WIDTH, height = c.GUMP_HEIGHT })
-    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 400 })
+    if use_alpha_regions then
+      push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 400 })
+    end
   end
 
   push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 10, width = 500, height = 22, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 22 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 10, width = 500, height = 22 })
+  end
   push(layout_ui, { type = "label", x = ox + 20, y = oy + 14, hue = c.TITLE_HUE, text = view.title })
 
   if view.show_refresh then
@@ -39,10 +45,14 @@ function ui.add_frame(layout_ui, view)
   end
 
   push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 40, width = 500, height = 300, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 40, width = 500, height = 300 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 40, width = 500, height = 300 })
+  end
 
   push(layout_ui, { type = "image_tiled", x = ox + 10, y = oy + 350, width = 500, height = 60, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 350, width = 500, height = 60 })
+  if use_alpha_regions then
+    push(layout_ui, { type = "alpha_region", x = ox + 10, y = oy + 350, width = 500, height = 60 })
+  end
 end
 
 function ui.add_page_nav(layout_ui, page, pages, view)

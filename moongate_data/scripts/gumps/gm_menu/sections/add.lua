@@ -168,6 +168,11 @@ end
 
 local function request_spawn_target(session_id, character_id, selection, quantity, reopen_callback)
   return target.request_location(session_id, function(target_ctx)
+    if target_ctx.cancelled then
+      reopen_callback(session_id, character_id)
+      return
+    end
+
     spawn_selection(
       selection,
       {
@@ -194,6 +199,12 @@ request_brush_target = function(session_id, character_id, nonce, reopen_callback
     local latest_state = gm_state.get(session_id)
     local latest_add_state = ensure_add_state(latest_state)
     local latest_brush = latest_add_state.brush
+
+    if target_ctx.cancelled then
+      clear_brush(latest_add_state, session_id)
+      reopen_callback(session_id, character_id)
+      return
+    end
 
     if latest_brush == nil or not latest_brush.active or latest_brush.nonce ~= nonce or latest_brush.template_id == nil then
       return
@@ -257,8 +268,7 @@ local function render_filter_buttons(layout_ui, add_state)
 end
 
 local function render_results(layout_ui, add_state, results)
-  ui.push(layout_ui, { type = "image_tiled", x = 196, y = 150, width = 260, height = 250, gump_id = 2624 })
-  ui.push(layout_ui, { type = "alpha_region", x = 196, y = 150, width = 260, height = 250 })
+  ui.push(layout_ui, { type = "image_tiled", x = 196, y = 150, width = 260, height = 286, gump_id = 2624 })
   ui.push(layout_ui, { type = "label", x = 208, y = 160, hue = c.TITLE_HUE, text = "Results" })
 
   local row_y = 188
@@ -312,8 +322,7 @@ end
 local function render_preview(layout_ui, add_state)
   local selected = add_state.selected
 
-  ui.push(layout_ui, { type = "image_tiled", x = 470, y = 150, width = 224, height = 250, gump_id = 2624 })
-  ui.push(layout_ui, { type = "alpha_region", x = 470, y = 150, width = 224, height = 250 })
+  ui.push(layout_ui, { type = "image_tiled", x = 470, y = 150, width = 224, height = 286, gump_id = 2624 })
   ui.push(layout_ui, { type = "label", x = 482, y = 160, hue = c.TITLE_HUE, text = "Preview" })
 
   if selected == nil then
@@ -383,7 +392,7 @@ local function render_actions(layout_ui, add_state)
     y = 112,
     width = 190,
     height = 20,
-    hue = 0,
+    hue = c.LABEL_HUE,
     entry_id = c.TEXT_ENTRY_SEARCH,
     text = add_state.query or "",
     size = 60
@@ -398,40 +407,40 @@ local function render_actions(layout_ui, add_state)
     y = 112,
     width = 48,
     height = 20,
-    hue = 0,
+    hue = c.LABEL_HUE,
     entry_id = c.TEXT_ENTRY_QUANTITY,
     text = tostring(add_state.quantity or 1),
     size = 3
   })
 
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_PREV_PAGE, x = 196, y = 410, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 226, y = 412, hue = c.LABEL_HUE, text = "Prev" })
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_NEXT_PAGE, x = 290, y = 410, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 320, y = 412, hue = c.LABEL_HUE, text = "Next" })
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_PREV_PAGE, x = 196, y = 446, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = 226, y = 448, hue = c.LABEL_HUE, text = "Prev" })
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_NEXT_PAGE, x = 290, y = 446, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = 320, y = 448, hue = c.LABEL_HUE, text = "Next" })
 
-  ui.push(layout_ui, { type = "button", id = c.BUTTON_TARGET_GROUND, x = 470, y = 410, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  ui.push(layout_ui, { type = "label", x = 500, y = 412, hue = c.LABEL_HUE, text = "Target Ground" })
+  ui.push(layout_ui, { type = "button", id = c.BUTTON_TARGET_GROUND, x = 470, y = 446, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  ui.push(layout_ui, { type = "label", x = 500, y = 448, hue = c.LABEL_HUE, text = "Target Ground" })
 
   if add_state.selected ~= nil and add_state.selected.kind == "item" then
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_ADD_TO_BACKPACK, x = 470, y = 382, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-    ui.push(layout_ui, { type = "label", x = 500, y = 384, hue = c.LABEL_HUE, text = "Add To Backpack" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_ADD_TO_BACKPACK, x = 470, y = 418, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    ui.push(layout_ui, { type = "label", x = 500, y = 420, hue = c.LABEL_HUE, text = "Add To Backpack" })
   end
 
   if add_state.brush.active then
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_STOP_BRUSH, x = 610, y = 410, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
-    ui.push(layout_ui, { type = "label", x = 640, y = 412, hue = c.ACCENT_HUE, text = "Stop Brush" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_STOP_BRUSH, x = 610, y = 446, normal_id = 4014, pressed_id = 4016, onclick = "on_click" })
+    ui.push(layout_ui, { type = "label", x = 640, y = 448, hue = c.ACCENT_HUE, text = "Stop Brush" })
     ui.push(layout_ui, {
       type = "label_cropped",
       x = 470,
-      y = 356,
+      y = 392,
       width = 204,
       height = 20,
       hue = c.ACCENT_HUE,
       text = "Brush Active: " .. tostring(add_state.brush.display_name or add_state.brush.template_id or "")
     })
   else
-    ui.push(layout_ui, { type = "button", id = c.BUTTON_BRUSH, x = 610, y = 410, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-    ui.push(layout_ui, { type = "label", x = 640, y = 412, hue = c.LABEL_HUE, text = "Brush" })
+    ui.push(layout_ui, { type = "button", id = c.BUTTON_BRUSH, x = 610, y = 446, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+    ui.push(layout_ui, { type = "label", x = 640, y = 448, hue = c.LABEL_HUE, text = "Brush" })
   end
 end
 
@@ -440,8 +449,7 @@ function add_section.add_content(layout, session_id, character_id, current_state
   local add_state = ensure_add_state(current_state)
   local results = load_results(add_state)
 
-  ui.push(layout_ui, { type = "image_tiled", x = 188, y = 48, width = 520, height = 392, gump_id = 2624 })
-  ui.push(layout_ui, { type = "alpha_region", x = 188, y = 48, width = 520, height = 392 })
+  ui.push(layout_ui, { type = "image_tiled", x = 188, y = 48, width = 520, height = 428, gump_id = 2624 })
   ui.push(layout_ui, { type = "label", x = 196, y = 62, hue = c.TITLE_HUE, text = "Search Items and NPCs" })
   ui.push(layout_ui, {
     type = "label_cropped",

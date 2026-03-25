@@ -8,6 +8,7 @@ using Moongate.Network.Client;
 using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Incoming.Targeting;
 using Moongate.Network.Packets.Incoming.UI;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Types.Targeting;
@@ -23,6 +24,7 @@ using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Modules;
@@ -33,6 +35,8 @@ using Moongate.Tests.TestSupport;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Mobiles;
@@ -113,6 +117,142 @@ public sealed class GmMenuLuaRuntimeTests
 
         public void SetLocations(IReadOnlyList<WorldLocationEntry> locations)
             => Locations = locations;
+    }
+
+    private sealed class GmMenuLuaRuntimeSpatialWorldService : ISpatialWorldService
+    {
+        public List<UOMobileEntity> AddedOrUpdatedMobiles { get; } = [];
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+        {
+            _ = item;
+            _ = mapId;
+        }
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+            => AddedOrUpdatedMobiles.Add(mobile);
+
+        public void AddRegion(JsonRegion region)
+            => _ = region;
+
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+        {
+            _ = packet;
+            _ = mapId;
+            _ = location;
+            _ = range;
+            _ = excludeSessionId;
+
+            return Task.FromResult(0);
+        }
+
+        public List<MapSector> GetActiveSectors()
+            => [];
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+        {
+            _ = mapId;
+            _ = centerSectorX;
+            _ = centerSectorY;
+            _ = radius;
+
+            return [];
+        }
+
+        public int GetMusic(int mapId, Point3D location)
+        {
+            _ = mapId;
+            _ = location;
+
+            return 0;
+        }
+
+        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return [];
+        }
+
+        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return [];
+        }
+
+        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+            _ = excludeSession;
+
+            return [];
+        }
+
+        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+        {
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+
+            return [];
+        }
+
+        public JsonRegion? GetRegionById(int regionId)
+        {
+            _ = regionId;
+
+            return null;
+        }
+
+        public MapSector? GetSectorByLocation(int mapId, Point3D location)
+        {
+            _ = mapId;
+            _ = location;
+
+            return null;
+        }
+
+        public SectorSystemStats GetStats()
+            => new();
+
+        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+        {
+            _ = item;
+            _ = mapId;
+            _ = oldLocation;
+            _ = newLocation;
+        }
+
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+        {
+            _ = mobile;
+            _ = oldLocation;
+            _ = newLocation;
+        }
+
+        public void RemoveEntity(Serial serial)
+            => _ = serial;
+
+        public JsonRegion? ResolveRegion(int mapId, Point3D location)
+        {
+            _ = mapId;
+            _ = location;
+
+            return null;
+        }
     }
 
     private sealed class GmMenuLuaRuntimeSpeechService : ISpeechService
@@ -531,6 +671,21 @@ public sealed class GmMenuLuaRuntimeTests
             );
         }
 
+        public void ResolveCancel()
+        {
+            LastCallback?.Invoke(
+                new(
+                    new TargetCursorCommandsPacket
+                    {
+                        CursorTarget = TargetCursorSelectionType.SelectLocation,
+                        CursorId = LastCursorId,
+                        CursorType = TargetCursorType.CancelCurrentTargeting,
+                        Location = Point3D.Zero
+                    }
+                )
+            );
+        }
+
         public Task<Serial> SendTargetCursorAsync(
             long sessionId,
             Action<PendingCursorCallback> callback,
@@ -563,8 +718,10 @@ public sealed class GmMenuLuaRuntimeTests
             BasePacketListenerTestOutgoingPacketQueue queue,
             FakeGameNetworkSessionService sessionService,
             GumpScriptDispatcherService gumpDispatcher,
+            GmMenuLuaRuntimeItemTemplateService itemTemplateService,
             GmMenuLuaRuntimeItemService itemService,
             GmMenuLuaRuntimeMobileService mobileService,
+            GmMenuLuaRuntimeSpatialWorldService spatialWorldService,
             GmMenuLuaRuntimePlayerTargetService targetService,
             GameSession session,
             MoongateTCPClient client
@@ -575,8 +732,10 @@ public sealed class GmMenuLuaRuntimeTests
             Queue = queue;
             SessionService = sessionService;
             GumpDispatcher = gumpDispatcher;
+            ItemTemplateService = itemTemplateService;
             ItemService = itemService;
             MobileService = mobileService;
+            SpatialWorldService = spatialWorldService;
             TargetService = targetService;
             Session = session;
             Client = client;
@@ -592,9 +751,13 @@ public sealed class GmMenuLuaRuntimeTests
 
         public GumpScriptDispatcherService GumpDispatcher { get; }
 
+        public GmMenuLuaRuntimeItemTemplateService ItemTemplateService { get; }
+
         public GmMenuLuaRuntimeItemService ItemService { get; }
 
         public GmMenuLuaRuntimeMobileService MobileService { get; }
+
+        public GmMenuLuaRuntimeSpatialWorldService SpatialWorldService { get; }
 
         public GmMenuLuaRuntimePlayerTargetService TargetService { get; }
 
@@ -629,10 +792,62 @@ public sealed class GmMenuLuaRuntimeTests
                 var gump = (CompressedGumpPacket)outbound.Packet;
                 Assert.That(gump.GumpId, Is.EqualTo(0xB930u));
                 Assert.That(gump.Layout, Does.Contain("{ resizepic 0 0 5054"));
+                Assert.That(gump.Layout, Does.Not.Contain("{ checkertrans"));
+                Assert.That(gump.Layout, Does.Not.Contain("{ text 64 128 0 "));
+                Assert.That(gump.Layout, Does.Not.Contain("{ text 478 114 0 "));
+                Assert.That(gump.Layout, Does.Not.Contain("{ textentrylimited 248 112 190 20 0 "));
                 Assert.That(gump.TextLines, Does.Contain("GM Menu"));
                 Assert.That(gump.TextLines, Does.Contain("Add"));
                 Assert.That(gump.TextLines, Does.Contain("Travel"));
                 Assert.That(gump.TextLines, Does.Contain("Search Items and NPCs"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenSearchingManyItems_ShouldRenderCompactResultPage()
+    {
+        using var context = await CreateRuntimeContextAsync();
+        context.ItemTemplateService.UpsertRange(
+            Enumerable.Range(1, 8).Select(
+                static index => new ItemTemplateDefinition
+                {
+                    Id = $"test_item_{index:00}",
+                    Name = $"Test Item {index:00}",
+                    ItemId = "0x0EED",
+                    IsMovable = true,
+                    Weight = 1.0m,
+                    ScriptId = string.Empty
+                }
+            )
+        );
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            102,
+            new Dictionary<ushort, string>
+            {
+                [1] = "Test Item",
+                [2] = "1"
+            }
+        );
+
+        Assert.That(context.Queue.TryDequeue(out var searchOutbound), Is.True);
+        Assert.That(searchOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+        var searchGump = (CompressedGumpPacket)searchOutbound.Packet;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(searchGump.TextLines, Has.Some.Contains("Test Item 01"));
+                Assert.That(searchGump.TextLines, Has.Some.Contains("Test Item 07"));
+                Assert.That(searchGump.TextLines, Has.None.Contains("Test Item 08"));
             }
         );
     }
@@ -855,6 +1070,153 @@ public sealed class GmMenuLuaRuntimeTests
     }
 
     [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenBrushTargetIsCancelled_ShouldStopBrushWithoutReRequestingCursor()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            101,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "2"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            102,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "2"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            200,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "2"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            302,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "2"
+            }
+        );
+
+        Assert.That(context.TargetService.RequestCount, Is.EqualTo(1));
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        context.TargetService.ResolveCancel();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.MobileService.SpawnCalls, Is.Empty);
+                Assert.That(context.TargetService.RequestCount, Is.EqualTo(1));
+                Assert.That(context.Queue.TryDequeue(out var cancelOutbound), Is.True);
+                Assert.That(cancelOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+                var cancelGump = (CompressedGumpPacket)cancelOutbound.Packet;
+                Assert.That(cancelGump.TextLines, Has.None.Contains("Brush Active: Zombie"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenTargetingGroundForNpc_ShouldAddSpawnedMobileToSpatialWorld()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            101,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "1"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            102,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "1"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            200,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "1"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            300,
+            new Dictionary<ushort, string>
+            {
+                [1] = "zombie",
+                [2] = "1"
+            }
+        );
+
+        Assert.That(context.TargetService.RequestCount, Is.EqualTo(1));
+        context.TargetService.ResolveLocation(150, 250, 0);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.MobileService.SpawnCalls.Count, Is.EqualTo(1));
+                Assert.That(context.SpatialWorldService.AddedOrUpdatedMobiles.Count, Is.EqualTo(1));
+                Assert.That(context.SpatialWorldService.AddedOrUpdatedMobiles[0].Name, Is.EqualTo("zombie"));
+                Assert.That(context.SpatialWorldService.AddedOrUpdatedMobiles[0].Location, Is.EqualTo(new Point3D(150, 250, 0)));
+                Assert.That(context.SpatialWorldService.AddedOrUpdatedMobiles[0].MapId, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public async Task StartAsync_WithGmMenuScripts_WhenSwitchingToTravel_ShouldRenderTeleportBrowserAndTeleport()
     {
         using var context = await CreateRuntimeContextAsync();
@@ -873,6 +1235,7 @@ public sealed class GmMenuLuaRuntimeTests
         Assert.That(context.Queue.TryDequeue(out var travelOutbound), Is.True);
         Assert.That(travelOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
         var travelGump = (CompressedGumpPacket)travelOutbound.Packet;
+        Assert.That(travelGump.Layout, Does.Not.Contain("{ checkertrans"));
         Assert.That(travelGump.TextLines, Does.Contain("Step 1/3 - Select map"));
         Assert.That(travelGump.TextLines, Has.Some.Contains("Felucca"));
 
@@ -1000,6 +1363,7 @@ public sealed class GmMenuLuaRuntimeTests
         );
         var itemService = new GmMenuLuaRuntimeItemService();
         var mobileService = new GmMenuLuaRuntimeMobileService();
+        var spatialWorldService = new GmMenuLuaRuntimeSpatialWorldService();
         var targetService = new GmMenuLuaRuntimePlayerTargetService();
         var locationCatalogService = new GmMenuLuaRuntimeLocationCatalogService
         {
@@ -1045,6 +1409,7 @@ public sealed class GmMenuLuaRuntimeTests
         container.RegisterInstance<IMobileTemplateService>(mobileTemplateService);
         container.RegisterInstance<IItemService>(itemService);
         container.RegisterInstance<IMobileService>(mobileService);
+        container.RegisterInstance<ISpatialWorldService>(spatialWorldService);
         container.RegisterInstance<IPlayerTargetService>(targetService);
         container.RegisterInstance<ILocationCatalogService>(locationCatalogService);
 
@@ -1064,7 +1429,20 @@ public sealed class GmMenuLuaRuntimeTests
 
         await service.StartAsync();
 
-        return new(temp, service, queue, sessionService, gumpDispatcher, itemService, mobileService, targetService, session, client);
+        return new(
+            temp,
+            service,
+            queue,
+            sessionService,
+            gumpDispatcher,
+            itemTemplateService,
+            itemService,
+            mobileService,
+            spatialWorldService,
+            targetService,
+            session,
+            client
+        );
     }
 
     private static byte[] BuildGumpResponsePacket(

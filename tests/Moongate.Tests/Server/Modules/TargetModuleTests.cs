@@ -154,4 +154,51 @@ public sealed class TargetModuleTests
             }
         );
     }
+
+    [Test]
+    public void RequestLocation_CallbackShouldExposeCancelledFlagWhenClientCancelsTargeting()
+    {
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00001111u,
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00001111u,
+                MapId = 4,
+                Location = new(25, 35, 0)
+            }
+        };
+        var targetService = new TargetModuleTestPlayerTargetService();
+        var sessionService = new FakeGameNetworkSessionService();
+        sessionService.Add(session);
+        var module = new TargetModule(targetService, sessionService);
+        var script = new Script();
+        script.DoString("called = false; cancelled = false; result_cursor_id = 0");
+        var callback = script.DoString(
+            "return function(ctx) called = true; cancelled = ctx.cancelled; result_cursor_id = ctx.cursor_id end"
+        ).Function;
+
+        _ = module.RequestLocation(session.SessionId, callback);
+        targetService.LastCallback!.Invoke(
+            new(
+                new TargetCursorCommandsPacket
+                {
+                    CursorTarget = TargetCursorSelectionType.SelectLocation,
+                    CursorId = (Serial)0x4000100Du,
+                    CursorType = TargetCursorType.CancelCurrentTargeting,
+                    Location = Point3D.Zero
+                }
+            )
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script.Globals.Get("called").Boolean, Is.True);
+                Assert.That(script.Globals.Get("cancelled").Boolean, Is.True);
+                Assert.That(script.Globals.Get("result_cursor_id").Number, Is.EqualTo(0x4000100Du));
+            }
+        );
+    }
 }

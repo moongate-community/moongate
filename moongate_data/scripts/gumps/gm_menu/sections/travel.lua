@@ -11,6 +11,7 @@ function travel_section.add_content(layout, session_id, character_id, reopen_cal
       origin_x = 188,
       origin_y = 20,
       show_outer_frame = false,
+      use_alpha_regions = false,
       title = "Travel Browser"
     }
   )

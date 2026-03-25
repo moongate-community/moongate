@@ -302,6 +302,7 @@ public sealed class MobileModule
         var mobile = _mobileService.SpawnFromTemplateAsync(mobileTemplateId.Trim(), location, mapId)
                                    .GetAwaiter()
                                    .GetResult();
+        _spatialWorldService?.AddOrUpdateMobile(mobile);
 
         return new(
             mobile,

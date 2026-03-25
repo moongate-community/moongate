@@ -70,7 +70,8 @@ public sealed class TargetModule
             ["x"] = callback.Packet.Location.X,
             ["y"] = callback.Packet.Location.Y,
             ["z"] = callback.Packet.Location.Z,
-            ["cursor_id"] = (uint)callback.Packet.CursorId
+            ["cursor_id"] = (uint)callback.Packet.CursorId,
+            ["cancelled"] = callback.Packet.CursorType == TargetCursorType.CancelCurrentTargeting
         };
 
         if (_gameNetworkSessionService.TryGet(sessionId, out var session) && session.Character is not null)

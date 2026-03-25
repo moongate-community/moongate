@@ -4,11 +4,11 @@ constants.GUMP_ID = 0xB930
 constants.GUMP_X = 60
 constants.GUMP_Y = 40
 constants.GUMP_WIDTH = 720
-constants.GUMP_HEIGHT = 460
+constants.GUMP_HEIGHT = 500
 constants.SIDEBAR_WIDTH = 150
 
 constants.TITLE_HUE = 1152
-constants.LABEL_HUE = 0
+constants.LABEL_HUE = 33
 constants.ACCENT_HUE = 1153
 constants.MUTED_HUE = 1102
 
@@ -25,14 +25,14 @@ constants.BUTTON_PREV_PAGE = 103
 constants.BUTTON_NEXT_PAGE = 104
 
 constants.BUTTON_RESULT_BASE = 200
-constants.RESULT_ROWS = 10
+constants.RESULT_ROWS = 7
 
 constants.BUTTON_TARGET_GROUND = 300
 constants.BUTTON_ADD_TO_BACKPACK = 301
 constants.BUTTON_BRUSH = 302
 constants.BUTTON_STOP_BRUSH = 303
 
-constants.PAGE_SIZE = 10
+constants.PAGE_SIZE = 7
 constants.MAX_ITEM_QUANTITY = 100
 constants.MAX_NPC_QUANTITY = 20
 

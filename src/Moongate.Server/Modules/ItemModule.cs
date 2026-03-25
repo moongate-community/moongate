@@ -82,6 +82,7 @@ public sealed class ItemModule
         }
 
         var resolved = _itemService.GetItemAsync(item.Id).GetAwaiter().GetResult() ?? item;
+        _spatialWorldService?.AddOrUpdateItem(resolved, mapId);
 
         return new(resolved, _itemService, _spatialWorldService, _speechService);
     }
