@@ -13,11 +13,11 @@ def _subfolder_name(parsed: dict) -> str:
     if category == "monsters":
         if subcategory:
             # Flatten path separators to underscores for cleaner folder names
-            return os.path.join("monsters", subcategory.replace(os.sep, "/").replace("/", "_").lower())
+            return os.path.join("monsters", subcategory.replace(os.sep, "/").replace("/", "_").replace(" ", "_").lower())
         return "monsters"
     elif category == "animals":
         if subcategory:
-            return os.path.join("animals", subcategory.replace(os.sep, "/").replace("/", "_").lower())
+            return os.path.join("animals", subcategory.replace(os.sep, "/").replace("/", "_").replace(" ", "_").lower())
         return "animals"
     elif category == "vendors":
         return "vendors"

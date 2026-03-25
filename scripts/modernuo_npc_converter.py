@@ -33,8 +33,8 @@ def main():
     )
     parser.add_argument(
         "--source",
-        default="/Users/squid/projects/others/ModernUO",
-        help="Path to the ModernUO repository root.",
+        default=None,
+        help="Path to the ModernUO repository root (required).",
     )
     parser.add_argument(
         "--output",
@@ -87,6 +87,10 @@ def main():
             categories.append("vendors")
         if args.town_npcs:
             categories.append("town_npcs")
+
+    if not args.source:
+        print("Error: --source is required. Provide the path to the ModernUO repository root.")
+        sys.exit(1)
 
     if not categories:
         print("Error: specify at least one category (--monsters, --animals, --vendors, --town-npcs) or --all.")

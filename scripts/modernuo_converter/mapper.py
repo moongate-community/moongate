@@ -192,9 +192,15 @@ def map_to_template(parsed: dict) -> dict:
         template["karma"] = parsed["karma"]
         template["notoriety"] = _notoriety_from_karma(parsed["karma"])
 
-    # Brain
+    # Brain – use category-aware fallback for NPCs without a mapped AI type
     ai_type = parsed.get("ai_type", "")
-    brain = AI_TYPE_TO_BRAIN.get(ai_type, "melee_combat")
+    category = parsed.get("category", "")
+    if ai_type and ai_type in AI_TYPE_TO_BRAIN:
+        brain = AI_TYPE_TO_BRAIN[ai_type]
+    elif category in ("vendors", "town_npcs"):
+        brain = "vendor"
+    else:
+        brain = "melee_combat"
     template["brain"] = brain
 
     # Skills

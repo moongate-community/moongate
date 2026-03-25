@@ -1,9 +1,9 @@
 [
   {
     "type": "mobile",
-    "id": "miner_guildmaster_npc",
+    "id": "thief_npc",
     "category": "npc",
-    "description": "Converted from ModernUO MinerGuildmaster.",
+    "description": "Converted from ModernUO Thief.",
     "tags": [
       "vendor",
       "npc"
@@ -12,11 +12,15 @@
     "hairHue": 0,
     "brain": "vendor",
     "skills": {
-      "ItemID": 715,
-      "Mining": 950
+      "Camping": 665,
+      "DetectHidden": 765,
+      "Hiding": 565,
+      "Archery": 765,
+      "Tracking": 765,
+      "Veterinary": 715
     },
     "fixedEquipment": [],
     "randomEquipment": [],
-    "title": "miner"
+    "title": "the thief"
   }
 ]

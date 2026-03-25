@@ -18,7 +18,7 @@ public sealed class TownBankerBrainAssetTests
     public void NpcsHumansTemplate_ShouldAssignTownBankerBrainToBankerNpc()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "townfolk", "banker_npc.json");
 
         using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
         var banker = document.RootElement

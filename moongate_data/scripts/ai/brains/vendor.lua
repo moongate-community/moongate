@@ -1,3 +1,4 @@
+-- Placeholder: vendor brain stub. Implement trade/shop interaction logic.
 vendor = {}
 
 local TICK_DELAY_MS = 5000

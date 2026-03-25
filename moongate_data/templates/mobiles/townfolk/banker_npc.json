@@ -1,18 +1,18 @@
 [
   {
     "type": "mobile",
-    "id": "tavern_keeper_npc",
+    "id": "banker_npc",
     "category": "npc",
-    "description": "Converted from ModernUO TavernKeeper.",
+    "description": "Converted from ModernUO Banker.",
     "tags": [
-      "vendor",
+      "townfolk",
       "npc"
     ],
     "skinHue": 0,
     "hairHue": 0,
-    "brain": "vendor",
+    "brain": "town_banker",
     "fixedEquipment": [],
     "randomEquipment": [],
-    "title": "the tavern keeper"
+    "title": "the banker"
   }
 ]

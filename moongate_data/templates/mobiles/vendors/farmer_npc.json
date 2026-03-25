@@ -10,7 +10,7 @@
     ],
     "skinHue": 0,
     "hairHue": 0,
-    "brain": "melee_combat",
+    "brain": "vendor",
     "skills": {
       "Lumberjacking": 520,
       "TasteID": 520,

@@ -1,3 +1,4 @@
+-- Placeholder: predator brain stub. Implement aggressive hunting behaviour for wild creatures.
 predator = {}
 
 local SEARCH_RANGE = 10
