@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "crane_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Crane.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x00FE",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 30,
+    "dexterity": 20,
+    "intelligence": 13,
+    "hits": 30,
+    "maxHits": 30,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 1,
+    "armorRating": 5,
+    "fame": 0,
+    "karma": 200,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 45,
+      "Tactics": 105,
+      "Wrestling": 105
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 5
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a crane"
+  }
+]

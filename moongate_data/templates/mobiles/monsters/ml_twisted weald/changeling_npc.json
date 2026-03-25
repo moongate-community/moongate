@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "changeling_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Changeling.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0108",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 70,
+    "dexterity": 237,
+    "intelligence": 358,
+    "hits": 206,
+    "maxHits": 206,
+    "mana": 358,
+    "stamina": 237,
+    "minDamage": 9,
+    "maxDamage": 15,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Wrestling": 114,
+      "Tactics": 1047,
+      "MagicResist": 1269,
+      "Magery": 955,
+      "EvalInt": 951,
+      "Meditation": 951
+    },
+    "lootTables": [
+      "loot_pack.aos_rich",
+      "creature.changeling"
+    ],
+    "resistances": {
+      "physical": 85,
+      "fire": 45,
+      "cold": 44,
+      "poison": 45,
+      "energy": 46
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a changeling"
+  }
+]

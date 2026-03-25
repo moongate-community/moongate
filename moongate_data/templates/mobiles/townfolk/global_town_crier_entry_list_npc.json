@@ -1,0 +1,19 @@
+[
+  {
+    "type": "mobile",
+    "id": "global_town_crier_entry_list_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO GlobalTownCrierEntryList.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

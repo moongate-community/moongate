@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "shadow_iron_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ShadowIronElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x006F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 240,
+    "dexterity": 135,
+    "intelligence": 81,
+    "hits": 144,
+    "maxHits": 144,
+    "minDamage": 9,
+    "maxDamage": 16,
+    "armorRating": 23,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 800,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 35,
+      "cold": 25,
+      "poison": 15,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a shadow iron elemental"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "dread_spider_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DreadSpider.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x000B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 208,
+    "dexterity": 135,
+    "intelligence": 298,
+    "hits": 125,
+    "maxHits": 125,
+    "minDamage": 5,
+    "maxDamage": 17,
+    "armorRating": 36,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 725,
+      "Magery": 725,
+      "Meditation": 725,
+      "MagicResist": 525,
+      "Tactics": 625,
+      "Wrestling": 675
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "creature.dread_spider"
+    ],
+    "sounds": {
+      "Idle": 1170,
+      "StartAttack": 1171,
+      "Attack": 1172,
+      "Defend": 1173,
+      "Die": 1174
+    },
+    "resistances": {
+      "physical": 45,
+      "fire": 25,
+      "cold": 25,
+      "poison": 95,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 20,
+      "poison": 80
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a dread spider"
+  }
+]

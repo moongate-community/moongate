@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "verite_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO VeriteElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0071",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 240,
+    "dexterity": 135,
+    "intelligence": 81,
+    "hits": 144,
+    "maxHits": 144,
+    "minDamage": 9,
+    "maxDamage": 16,
+    "armorRating": 35,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 800,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 15,
+      "cold": 55,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a verite elemental"
+  }
+]

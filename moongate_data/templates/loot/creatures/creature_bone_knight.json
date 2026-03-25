@@ -1,0 +1,52 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.bone_knight",
+    "name": "BoneKnight",
+    "category": "loot",
+    "description": "Creature-specific loot for BoneKnight.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "plate_arms",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_chest",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_gloves",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_gorget",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_legs",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "plate_helm",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "scimitar",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "wooden_shield",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

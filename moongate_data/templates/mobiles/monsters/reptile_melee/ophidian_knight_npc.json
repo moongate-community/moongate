@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "ophidian_knight_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OphidianKnight.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0056",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 506,
+    "dexterity": 170,
+    "intelligence": 58,
+    "hits": 304,
+    "maxHits": 304,
+    "mana": 0,
+    "minDamage": 16,
+    "maxDamage": 19,
+    "armorRating": 40,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Poisoning": 700,
+      "MagicResist": 725,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "creature.ophidian_knight"
+    ],
+    "sounds": {
+      "Idle": 634,
+      "StartAttack": 635,
+      "Attack": 636,
+      "Defend": 637,
+      "Die": 638
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 35,
+      "cold": 40,
+      "poison": 95,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

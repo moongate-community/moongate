@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mobile",
+    "id": "weaponsmith_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Weaponsmith.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "ArmsLore": 820,
+      "Blacksmith": 765,
+      "Fencing": 565,
+      "Macing": 565,
+      "Swords": 565,
+      "Tactics": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the weaponsmith"
+  }
+]

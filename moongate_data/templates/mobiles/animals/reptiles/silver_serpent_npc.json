@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "silver_serpent_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SilverSerpent.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x005C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 260,
+    "dexterity": 225,
+    "intelligence": 30,
+    "hits": 156,
+    "maxHits": 156,
+    "minDamage": 5,
+    "maxDamage": 21,
+    "armorRating": 40,
+    "fame": 7000,
+    "karma": -7000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Poisoning": 950,
+      "MagicResist": 975,
+      "Tactics": 875,
+      "Wrestling": 925
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 219,
+      "StartAttack": 220,
+      "Attack": 221,
+      "Defend": 222,
+      "Die": 223
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 7,
+      "cold": 7,
+      "poison": 100,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a silver serpent"
+  }
+]

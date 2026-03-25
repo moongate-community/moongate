@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "golem_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Golem.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x02F0",
+    "skinHue": 0,
+    "hairHue": 0,
+    "fame": 10,
+    "karma": 10,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.golem"
+    ],
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a golem"
+  }
+]

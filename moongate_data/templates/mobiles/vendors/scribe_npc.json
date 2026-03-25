@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "scribe_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Scribe.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "EvalInt": 715,
+      "Inscribe": 950
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the scribe"
+  }
+]

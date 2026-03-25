@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mobile",
+    "id": "peasant_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Peasant.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.peasant"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

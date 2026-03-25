@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "tormented_minotaur_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO TormentedMinotaur.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0106",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 876,
+    "dexterity": 408,
+    "intelligence": 133,
+    "hits": 4100,
+    "maxHits": 4100,
+    "minDamage": 16,
+    "maxDamage": 30,
+    "fame": 20000,
+    "karma": -20000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1105,
+      "Tactics": 1017,
+      "MagicResist": 1103
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 62,
+      "fire": 74,
+      "cold": 54,
+      "poison": 56,
+      "energy": 54
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Tormented Minotaur"
+  }
+]

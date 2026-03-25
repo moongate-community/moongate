@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mobile",
+    "id": "messenger_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Messenger.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.messenger"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

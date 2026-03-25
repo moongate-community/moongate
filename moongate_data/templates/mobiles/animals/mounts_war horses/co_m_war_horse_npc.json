@@ -1,0 +1,16 @@
+[
+  {
+    "type": "mobile",
+    "id": "co_m_war_horse_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO CoMWarHorse.",
+    "tags": [
+      "animal"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

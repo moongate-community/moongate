@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "sea_horse_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SeaHorse.",
+    "tags": [
+      "animal"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 250,
+      "Wrestling": 350,
+      "Tactics": 300
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a sea horse"
+  }
+]

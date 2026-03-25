@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "rotting_corpse_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RottingCorpse.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x009B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 325,
+    "dexterity": 75,
+    "intelligence": 175,
+    "hits": 1200,
+    "maxHits": 1200,
+    "mana": 0,
+    "stamina": 150,
+    "minDamage": 8,
+    "maxDamage": 10,
+    "armorRating": 40,
+    "fame": 6000,
+    "karma": -6000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "sounds": {
+      "Idle": 471,
+      "StartAttack": 472,
+      "Attack": 473,
+      "Defend": 474,
+      "Die": 475
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 25,
+      "cold": 60,
+      "poison": 45,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 0,
+      "cold": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a rotting corpse"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "yamandon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Yamandon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00F9",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 858,
+    "dexterity": 308,
+    "intelligence": 108,
+    "hits": 1700,
+    "maxHits": 1700,
+    "minDamage": 19,
+    "maxDamage": 35,
+    "fame": 22000,
+    "karma": -22000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 1225,
+      "MagicResist": 1250,
+      "Poisoning": 1300,
+      "Tactics": 1245,
+      "Wrestling": 1225
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.yamandon"
+    ],
+    "resistances": {
+      "physical": 75,
+      "fire": 80,
+      "cold": 60,
+      "poison": 60,
+      "energy": 60
+    },
+    "damageTypes": {
+      "physical": 70,
+      "poison": 20,
+      "energy": 10
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a yamandon"
+  }
+]

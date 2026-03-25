@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "llama_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Llama.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 35,
+    "dexterity": 45,
+    "intelligence": 23,
+    "hits": 21,
+    "maxHits": 21,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 5,
+    "armorRating": 16,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 241,
+      "Wrestling": 241
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a llama"
+  }
+]

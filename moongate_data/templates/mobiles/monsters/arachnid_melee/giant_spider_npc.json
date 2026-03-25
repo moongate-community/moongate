@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "giant_spider_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GiantSpider.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x001C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 85,
+    "intelligence": 48,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 13,
+    "armorRating": 16,
+    "fame": 600,
+    "karma": -600,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Poisoning": 700,
+      "MagicResist": 325,
+      "Tactics": 425,
+      "Wrestling": 575
+    },
+    "lootTables": [
+      "loot_pack.poor",
+      "creature.giant_spider"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "poison": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a giant spider"
+  }
+]

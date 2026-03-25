@@ -1,0 +1,20 @@
+[
+  {
+    "type": "mobile",
+    "id": "seeker_of_adventure_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO SeekerOfAdventure.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.seeker_of_adventure"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

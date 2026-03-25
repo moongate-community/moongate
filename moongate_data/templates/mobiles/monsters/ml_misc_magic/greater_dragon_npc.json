@@ -1,0 +1,69 @@
+[
+  {
+    "type": "mobile",
+    "id": "greater_dragon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GreaterDragon.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x000C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1225,
+    "dexterity": 114,
+    "intelligence": 575,
+    "hits": 1500,
+    "maxHits": 1500,
+    "stamina": 127,
+    "minDamage": 24,
+    "maxDamage": 33,
+    "armorRating": 60,
+    "fame": 22000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1250,
+      "Magery": 1250,
+      "MagicResist": 1250,
+      "Tactics": 1250,
+      "Wrestling": 1300
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 72,
+      "fire": 77,
+      "cold": 47,
+      "poison": 50,
+      "energy": 62
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a greater dragon"
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "coil_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Coil.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 274,
+    "dexterity": 242,
+    "intelligence": 115,
+    "hits": 959,
+    "maxHits": 959,
+    "minDamage": 19,
+    "maxDamage": 28,
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1329,
+      "Tactics": 1361,
+      "MagicResist": 1076,
+      "Anatomy": 1294,
+      "Poisoning": 1217
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.coil"
+    ],
+    "resistances": {
+      "physical": 59,
+      "fire": 27,
+      "cold": 27,
+      "poison": 100,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Coil"
+  }
+]

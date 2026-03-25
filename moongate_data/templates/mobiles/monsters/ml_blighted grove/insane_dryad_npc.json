@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "insane_dryad_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO InsaneDryad.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an insane dryad"
+  }
+]

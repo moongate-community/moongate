@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.water_elemental",
+    "name": "WaterElemental",
+    "category": "loot",
+    "description": "Creature-specific loot for WaterElemental.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

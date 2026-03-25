@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "fetid_essence_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FetidEssence.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0111",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 125,
+    "dexterity": 230,
+    "intelligence": 500,
+    "hits": 600,
+    "maxHits": 600,
+    "minDamage": 21,
+    "maxDamage": 25,
+    "fame": 3700,
+    "karma": -3700,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Meditation": 954,
+      "EvalInt": 904,
+      "Magery": 998,
+      "Anatomy": 22,
+      "MagicResist": 1061,
+      "Tactics": 828,
+      "Wrestling": 826
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 45,
+      "cold": 45,
+      "poison": 80,
+      "energy": 77
+    },
+    "damageTypes": {
+      "physical": 30,
+      "poison": 70
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a fetid essence"
+  }
+]

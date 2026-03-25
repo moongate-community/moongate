@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "gargoyle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Gargoyle.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0004",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 160,
+    "dexterity": 85,
+    "intelligence": 93,
+    "hits": 96,
+    "maxHits": 96,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 32,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 775,
+      "Magery": 775,
+      "MagicResist": 775,
+      "Tactics": 600,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "creature.gargoyle"
+    ],
+    "sounds": {
+      "Idle": 372,
+      "StartAttack": 373,
+      "Attack": 374,
+      "Defend": 375,
+      "Die": 376
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 30,
+      "cold": 7,
+      "poison": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a gargoyle"
+  }
+]

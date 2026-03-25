@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "hiryu_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Hiryu.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1305,
+    "dexterity": 220,
+    "intelligence": 313,
+    "hits": 1000,
+    "maxHits": 1000,
+    "mana": 60,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 775,
+      "MagicResist": 925,
+      "Tactics": 1050,
+      "Wrestling": 1100
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "resistances": {
+      "physical": 62,
+      "fire": 80,
+      "cold": 20,
+      "poison": 45,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a hiryu"
+  }
+]

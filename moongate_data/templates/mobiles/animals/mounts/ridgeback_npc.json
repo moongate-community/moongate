@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "ridgeback_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Ridgeback.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 79,
+    "dexterity": 65,
+    "intelligence": 23,
+    "hits": 47,
+    "maxHits": 47,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 5,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 326,
+      "Tactics": 366,
+      "Wrestling": 400
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 20,
+      "fire": 7,
+      "cold": 7,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a ridgeback"
+  }
+]

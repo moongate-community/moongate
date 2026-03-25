@@ -1,0 +1,31 @@
+[
+  {
+    "type": "mobile",
+    "id": "ranger_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO RangerGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "AnimalLore": 820,
+      "Camping": 865,
+      "Hiding": 865,
+      "MagicResist": 865,
+      "Tactics": 765,
+      "Archery": 950,
+      "Tracking": 950,
+      "Stealth": 715,
+      "Fencing": 520,
+      "Herding": 520,
+      "Swords": 565
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "ranger"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "wanderer_of_the_void_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO WandererOfTheVoid.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x013C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 155,
+    "dexterity": 113,
+    "intelligence": 345,
+    "hits": 375,
+    "maxHits": 375,
+    "minDamage": 11,
+    "maxDamage": 13,
+    "armorRating": 44,
+    "fame": 20000,
+    "karma": -20000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 650,
+      "Magery": 650,
+      "Meditation": 650,
+      "MagicResist": 625,
+      "Tactics": 650,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich"
+    ],
+    "sounds": {
+      "Idle": 377,
+      "StartAttack": 378,
+      "Attack": 379,
+      "Defend": 380,
+      "Die": 381
+    },
+    "resistances": {
+      "physical": 45,
+      "fire": 20,
+      "cold": 45,
+      "poison": 62,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 0,
+      "cold": 15,
+      "energy": 85
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a wanderer of the void"
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "water_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO WaterElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0010",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 75,
+    "intelligence": 113,
+    "hits": 84,
+    "maxHits": 84,
+    "minDamage": 7,
+    "maxDamage": 9,
+    "armorRating": 40,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 675,
+      "Magery": 675,
+      "MagicResist": 1075,
+      "Tactics": 600,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.potions",
+      "creature.water_elemental"
+    ],
+    "sounds": {
+      "Idle": 278,
+      "StartAttack": 279,
+      "Attack": 280,
+      "Defend": 281,
+      "Die": 282
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 17,
+      "cold": 17,
+      "poison": 65,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a water elemental"
+  }
+]

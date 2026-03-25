@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "blacksmith_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO BlacksmithGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "ArmsLore": 765,
+      "Blacksmith": 950,
+      "Macing": 520,
+      "Parry": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "blacksmith"
+  }
+]

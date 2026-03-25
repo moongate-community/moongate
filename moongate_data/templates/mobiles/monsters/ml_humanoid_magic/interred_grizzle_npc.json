@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "interred_grizzle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO InterredGrizzle.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0103",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 475,
+    "dexterity": 225,
+    "intelligence": 825,
+    "hits": 1500,
+    "maxHits": 1500,
+    "stamina": 150,
+    "minDamage": 16,
+    "maxDamage": 19,
+    "fame": 3700,
+    "karma": -3700,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Meditation": 808,
+      "EvalInt": 759,
+      "Magery": 866,
+      "MagicResist": 837,
+      "Tactics": 1048,
+      "Wrestling": 1072
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 42,
+      "cold": 67,
+      "poison": 27,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 30,
+      "fire": 70
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a interred grizzle"
+  }
+]

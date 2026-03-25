@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.mapmaker",
+    "name": "Mapmaker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Mapmaker. SBInfo sources: SBMapmaker.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.red_solen_warrior",
+    "name": "RedSolenWarrior",
+    "category": "loot",
+    "description": "Creature-specific loot for RedSolenWarrior.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bracelet_of_binding",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

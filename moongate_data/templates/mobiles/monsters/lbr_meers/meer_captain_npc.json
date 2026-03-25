@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "meer_captain_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MeerCaptain.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0305",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 103,
+    "dexterity": 193,
+    "intelligence": 103,
+    "hits": 62,
+    "maxHits": 62,
+    "minDamage": 5,
+    "maxDamage": 15,
+    "armorRating": 28,
+    "fame": 2000,
+    "karma": 5000,
+    "notoriety": "Innocent",
+    "brain": "ranged_combat",
+    "skills": {
+      "Archery": 950,
+      "MagicResist": 955,
+      "Swords": 950,
+      "Tactics": 955,
+      "Wrestling": 854
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 15,
+      "cold": 45,
+      "poison": 40,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a meer captain"
+  }
+]

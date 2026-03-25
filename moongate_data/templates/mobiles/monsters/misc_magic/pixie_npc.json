@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "pixie_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Pixie.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0080",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 25,
+    "dexterity": 350,
+    "intelligence": 225,
+    "hits": 15,
+    "maxHits": 15,
+    "minDamage": 9,
+    "maxDamage": 15,
+    "armorRating": 100,
+    "fame": 7000,
+    "karma": 7000,
+    "notoriety": "Innocent",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 950,
+      "Meditation": 950,
+      "MagicResist": 1252,
+      "Tactics": 150,
+      "Wrestling": 113
+    },
+    "lootTables": [
+      "loot_pack.low_scrolls",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 85,
+      "fire": 45,
+      "cold": 45,
+      "poison": 45,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "pixie"
+  }
+]

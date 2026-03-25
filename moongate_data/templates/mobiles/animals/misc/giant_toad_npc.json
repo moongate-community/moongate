@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "giant_toad_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GiantToad.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0050",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 15,
+    "intelligence": 15,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 17,
+    "armorRating": 24,
+    "fame": 750,
+    "karma": -750,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 325,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a giant toad"
+  }
+]

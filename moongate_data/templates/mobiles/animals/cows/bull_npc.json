@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "bull_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Bull.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 94,
+    "dexterity": 65,
+    "intelligence": 61,
+    "hits": 57,
+    "maxHits": 57,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 9,
+    "armorRating": 28,
+    "fame": 600,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 213,
+      "Tactics": 763,
+      "Wrestling": 488
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 27,
+      "cold": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a bull"
+  }
+]

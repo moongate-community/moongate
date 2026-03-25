@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "enslaved_gargoyle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EnslavedGargoyle.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 331,
+    "dexterity": 85,
+    "intelligence": 93,
+    "hits": 199,
+    "maxHits": 199,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 35,
+    "fame": 3500,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 775,
+      "Tactics": 600,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average",
+      "loot_pack.gems",
+      "creature.enslaved_gargoyle"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 60,
+      "cold": 20,
+      "poison": 27,
+      "energy": 27
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an enslaved gargoyle"
+  }
+]

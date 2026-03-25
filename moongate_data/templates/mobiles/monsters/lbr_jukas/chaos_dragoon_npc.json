@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "chaos_dragoon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ChaosDragoon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 200,
+    "dexterity": 88,
+    "intelligence": 73,
+    "hits": 200,
+    "maxHits": 200,
+    "minDamage": 24,
+    "maxDamage": 26,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 850,
+      "Healing": 751,
+      "Macing": 850,
+      "Anatomy": 825,
+      "MagicResist": 875,
+      "Swords": 850,
+      "Tactics": 825
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.gems"
+    ],
+    "resistances": {
+      "physical": 31,
+      "fire": 31,
+      "cold": 31,
+      "poison": 31,
+      "energy": 31
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 25,
+      "cold": 25,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a chaos dragoon"
+  }
+]

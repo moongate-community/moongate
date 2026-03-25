@@ -1,0 +1,32 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.sea_serpent",
+    "name": "SeaSerpent",
+    "category": "loot",
+    "description": "Creature-specific loot for SeaSerpent.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "chance": 1.0,
+        "amount": 4
+      },
+      {
+        "itemTemplateId": "black_pearl",
+        "chance": 1.0,
+        "amount": 4
+      },
+      {
+        "itemTemplateId": "raw_fish_steak",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "special_fishing_net",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

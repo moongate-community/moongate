@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "daemon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Daemon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0009",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 490,
+    "dexterity": 85,
+    "intelligence": 313,
+    "hits": 294,
+    "maxHits": 294,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 58,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 750,
+      "Magery": 750,
+      "MagicResist": 900,
+      "Tactics": 750,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average",
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 52,
+      "fire": 55,
+      "cold": 35,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "daemon"
+  }
+]

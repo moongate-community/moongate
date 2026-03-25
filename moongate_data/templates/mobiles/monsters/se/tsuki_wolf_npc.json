@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "tsuki_wolf_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO TsukiWolf.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00FA",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 425,
+    "dexterity": 175,
+    "intelligence": 71,
+    "hits": 413,
+    "maxHits": 413,
+    "mana": 40,
+    "minDamage": 14,
+    "maxDamage": 18,
+    "fame": 8500,
+    "karma": -8500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 685,
+      "MagicResist": 675,
+      "Tactics": 1025,
+      "Wrestling": 1025
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.rich"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 60,
+      "cold": 60,
+      "poison": 60,
+      "energy": 60
+    },
+    "damageTypes": {
+      "physical": 90,
+      "cold": 5,
+      "energy": 5
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a tsuki wolf"
+  }
+]

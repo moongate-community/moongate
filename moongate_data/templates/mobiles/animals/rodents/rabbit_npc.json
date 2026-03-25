@@ -1,0 +1,37 @@
+[
+  {
+    "type": "mobile",
+    "id": "rabbit_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Rabbit.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x00CD",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 8,
+    "dexterity": 32,
+    "intelligence": 10,
+    "hits": 5,
+    "maxHits": 5,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 1,
+    "armorRating": 6,
+    "fame": 150,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "resistances": {
+      "physical": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a rabbit"
+  }
+]

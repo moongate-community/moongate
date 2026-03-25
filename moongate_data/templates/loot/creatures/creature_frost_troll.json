@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.frost_troll",
+    "name": "FrostTroll",
+    "category": "loot",
+    "description": "Creature-specific loot for FrostTroll.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "double_axe",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

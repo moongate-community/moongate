@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "leviathan_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Leviathan.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x004D",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1000,
+    "dexterity": 510,
+    "intelligence": 508,
+    "hits": 1500,
+    "maxHits": 1500,
+    "minDamage": 25,
+    "maxDamage": 33,
+    "armorRating": 50,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1025,
+      "Magery": 1025,
+      "MagicResist": 1025,
+      "Meditation": 1025,
+      "Tactics": 1025,
+      "Wrestling": 1025
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "creature.leviathan"
+    ],
+    "sounds": {
+      "Idle": 353,
+      "StartAttack": 354,
+      "Attack": 355,
+      "Defend": 356,
+      "Die": 357
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 50,
+      "cold": 50,
+      "poison": 40,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 70,
+      "cold": 30
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a leviathan"
+  }
+]

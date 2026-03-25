@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "orcish_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OrcishLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x008A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 181,
+    "dexterity": 103,
+    "intelligence": 73,
+    "hits": 109,
+    "maxHits": 109,
+    "minDamage": 4,
+    "maxDamage": 14,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 775,
+      "Swords": 725,
+      "Tactics": 825,
+      "Wrestling": 725
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.average",
+      "creature.orcish_lord"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 35,
+      "cold": 25,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an orcish lord"
+  }
+]

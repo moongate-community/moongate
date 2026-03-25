@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "acid_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AcidElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 340,
+    "dexterity": 75,
+    "intelligence": 283,
+    "hits": 204,
+    "maxHits": 204,
+    "minDamage": 9,
+    "maxDamage": 15,
+    "armorRating": 40,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Anatomy": 451,
+      "EvalInt": 775,
+      "Magery": 775,
+      "MagicResist": 675,
+      "Tactics": 850,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 278,
+      "StartAttack": 279,
+      "Attack": 280,
+      "Defend": 281,
+      "Die": 282
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 45,
+      "cold": 25,
+      "poison": 15,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 50,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an acid elemental"
+  }
+]

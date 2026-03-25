@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "ronin_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ronin.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 350,
+    "dexterity": 38,
+    "intelligence": 105,
+    "hits": 350,
+    "maxHits": 350,
+    "mana": 105,
+    "minDamage": 17,
+    "maxDamage": 25,
+    "fame": 8500,
+    "karma": -8500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 500,
+      "Tactics": 1225,
+      "Wrestling": 1000,
+      "Anatomy": 1175,
+      "Fencing": 1000,
+      "Macing": 1000,
+      "Swords": 1000
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.ronin"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 50,
+      "cold": 45,
+      "poison": 60,
+      "energy": 65
+    },
+    "damageTypes": {
+      "physical": 90,
+      "poison": 10
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a ronin"
+  }
+]

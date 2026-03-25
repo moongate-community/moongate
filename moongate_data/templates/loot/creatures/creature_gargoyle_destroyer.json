@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.gargoyle_destroyer",
+    "name": "GargoyleDestroyer",
+    "category": "loot",
+    "description": "Creature-specific loot for GargoyleDestroyer.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gargoyles_pickaxe",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

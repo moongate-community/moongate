@@ -1,0 +1,41 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Savage.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00B8",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 105,
+    "dexterity": 95,
+    "intelligence": 58,
+    "minDamage": 23,
+    "maxDamage": 27,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 712,
+      "Macing": 712,
+      "Poisoning": 712,
+      "MagicResist": 687,
+      "Swords": 712,
+      "Tactics": 712
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.savage"
+    ],
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "savage"
+  }
+]

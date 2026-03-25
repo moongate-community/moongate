@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "barkeeper_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Barkeeper.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the barkeeper"
+  }
+]

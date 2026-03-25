@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "ogre_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ogre.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0001",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 180,
+    "dexterity": 55,
+    "intelligence": 58,
+    "hits": 108,
+    "maxHits": 108,
+    "mana": 0,
+    "minDamage": 9,
+    "maxDamage": 11,
+    "armorRating": 32,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 625,
+      "Tactics": 650,
+      "Wrestling": 750
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.potions",
+      "creature.ogre"
+    ],
+    "sounds": {
+      "Idle": 427,
+      "StartAttack": 428,
+      "Attack": 429,
+      "Defend": 430,
+      "Die": 431
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 20,
+      "cold": 20,
+      "poison": 20,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an ogre"
+  }
+]

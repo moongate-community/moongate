@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.jeweler",
+    "name": "Jeweler Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Jeweler. SBInfo sources: SBJewel.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

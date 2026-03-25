@@ -1,0 +1,38 @@
+[
+  {
+    "type": "mobile",
+    "id": "beetle_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Beetle.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 300,
+    "dexterity": 100,
+    "intelligence": 500,
+    "hits": 200,
+    "maxHits": 200,
+    "minDamage": 7,
+    "maxDamage": 20,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "resistances": {
+      "physical": 35,
+      "fire": 25,
+      "cold": 25,
+      "poison": 25,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a giant beetle"
+  }
+]

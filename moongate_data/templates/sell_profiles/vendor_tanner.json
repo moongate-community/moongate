@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.tanner",
+    "name": "Tanner Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Tanner. SBInfo sources: SBTanner.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

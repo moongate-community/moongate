@@ -1,0 +1,30 @@
+[
+  {
+    "type": "mobile",
+    "id": "ninja_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Ninja.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 720,
+      "Macing": 720,
+      "Ninjitsu": 700,
+      "Parry": 720,
+      "Tactics": 745,
+      "Swords": 745
+    },
+    "lootTables": [
+      "creature.ninja"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

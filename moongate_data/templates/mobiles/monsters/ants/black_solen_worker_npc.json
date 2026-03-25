@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "black_solen_worker_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BlackSolenWorker.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0325",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 108,
+    "dexterity": 93,
+    "intelligence": 48,
+    "hits": 65,
+    "maxHits": 65,
+    "minDamage": 5,
+    "maxDamage": 7,
+    "armorRating": 28,
+    "fame": 1500,
+    "karma": -1500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.black_solen_worker"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 25,
+      "cold": 15,
+      "poison": 15,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a black solen worker"
+  }
+]

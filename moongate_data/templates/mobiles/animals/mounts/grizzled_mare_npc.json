@@ -1,0 +1,17 @@
+[
+  {
+    "type": "mobile",
+    "id": "grizzled_mare_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GrizzledMare.",
+    "tags": [
+      "animal"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a grizzled mare"
+  }
+]

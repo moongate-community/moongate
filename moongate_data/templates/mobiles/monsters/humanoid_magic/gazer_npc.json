@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "gazer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Gazer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0016",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 110,
+    "dexterity": 95,
+    "intelligence": 153,
+    "hits": 66,
+    "maxHits": 66,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 36,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 575,
+      "Magery": 575,
+      "MagicResist": 675,
+      "Tactics": 600,
+      "Wrestling": 600
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.potions",
+      "creature.gazer"
+    ],
+    "sounds": {
+      "Idle": 377,
+      "StartAttack": 378,
+      "Attack": 379,
+      "Defend": 380,
+      "Die": 381
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 45,
+      "cold": 25,
+      "poison": 15,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a gazer"
+  }
+]

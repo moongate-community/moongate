@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_shaman_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SavageShaman.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00B8",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 135,
+    "dexterity": 100,
+    "intelligence": 173,
+    "minDamage": 4,
+    "maxDamage": 10,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 887,
+      "Fencing": 737,
+      "Macing": 737,
+      "Magery": 837,
+      "Meditation": 887,
+      "MagicResist": 887,
+      "Swords": 737,
+      "Tactics": 737,
+      "Wrestling": 737
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.savage_shaman"
+    ],
+    "resistances": {
+      "physical": 35,
+      "fire": 25,
+      "cold": 25,
+      "poison": 25,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

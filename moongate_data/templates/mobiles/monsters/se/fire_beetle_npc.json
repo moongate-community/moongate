@@ -1,0 +1,43 @@
+[
+  {
+    "type": "mobile",
+    "id": "fire_beetle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FireBeetle.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 300,
+    "dexterity": 82,
+    "intelligence": 500,
+    "hits": 200,
+    "maxHits": 200,
+    "stamina": 100,
+    "minDamage": 7,
+    "maxDamage": 20,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.fire_beetle"
+    ],
+    "resistances": {
+      "physical": 40,
+      "fire": 72,
+      "cold": 10,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 0,
+      "fire": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a fire beetle"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "poison_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO PoisonElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00A2",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 470,
+    "dexterity": 175,
+    "intelligence": 398,
+    "hits": 282,
+    "maxHits": 282,
+    "minDamage": 12,
+    "maxDamage": 18,
+    "armorRating": 70,
+    "fame": 12500,
+    "karma": -12500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 875,
+      "Magery": 875,
+      "Meditation": 1001,
+      "Poisoning": 950,
+      "MagicResist": 1001,
+      "Tactics": 900,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "creature.poison_elemental"
+    ],
+    "sounds": {
+      "Idle": 263,
+      "StartAttack": 264,
+      "Attack": 265,
+      "Defend": 266,
+      "Die": 267
+    },
+    "resistances": {
+      "physical": 65,
+      "fire": 25,
+      "cold": 25,
+      "poison": 100,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 10,
+      "poison": 90
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a poison elemental"
+  }
+]

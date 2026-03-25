@@ -1,0 +1,36 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_sea_serpent_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalSeaSerpent.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 350,
+    "dexterity": 125,
+    "intelligence": 140,
+    "hits": 280,
+    "maxHits": 280,
+    "minDamage": 10,
+    "maxDamage": 18,
+    "brain": "melee_combat",
+    "resistances": {
+      "physical": 60,
+      "fire": 0,
+      "cold": 80,
+      "poison": 25,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 10,
+      "cold": 45,
+      "energy": 45
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a crystal sea serpent"
+  }
+]

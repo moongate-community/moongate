@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "summoned_fire_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SummonedFireElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x000F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 200,
+    "dexterity": 200,
+    "intelligence": 100,
+    "hits": 84,
+    "maxHits": 84,
+    "minDamage": 9,
+    "maxDamage": 14,
+    "armorRating": 40,
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 675,
+      "Magery": 675,
+      "MagicResist": 901,
+      "Tactics": 900,
+      "Wrestling": 850
+    },
+    "sounds": {
+      "Idle": 838,
+      "StartAttack": 839,
+      "Attack": 840,
+      "Defend": 841,
+      "Die": 842
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 70,
+      "cold": 7,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 75
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a fire elemental"
+  }
+]

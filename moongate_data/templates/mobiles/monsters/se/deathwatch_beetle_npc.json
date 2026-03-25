@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "deathwatch_beetle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DeathwatchBeetle.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x00F2",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 148,
+    "dexterity": 46,
+    "intelligence": 35,
+    "hits": 133,
+    "maxHits": 133,
+    "mana": 20,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "fame": 1400,
+    "karma": -1400,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 540,
+      "Tactics": 720,
+      "Wrestling": 550,
+      "Anatomy": 320
+    },
+    "lootTables": [
+      "loot_pack.low_scrolls",
+      "loot_pack.potions",
+      "creature.deathwatch_beetle"
+    ],
+    "resistances": {
+      "physical": 37,
+      "fire": 22,
+      "cold": 22,
+      "poison": 65,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a deathwatch beetle"
+  }
+]

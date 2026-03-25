@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "artist_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Artist.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "animal",
+    "skills": {
+      "Healing": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

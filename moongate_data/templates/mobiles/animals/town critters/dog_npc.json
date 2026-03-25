@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "dog_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Dog.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 32,
+    "dexterity": 35,
+    "intelligence": 33,
+    "hits": 19,
+    "maxHits": 19,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 7,
+    "armorRating": 12,
+    "fame": 0,
+    "karma": 300,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 345,
+      "Tactics": 251,
+      "Wrestling": 251
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a dog"
+  }
+]

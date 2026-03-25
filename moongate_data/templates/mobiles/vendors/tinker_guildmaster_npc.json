@@ -1,0 +1,23 @@
+[
+  {
+    "type": "mobile",
+    "id": "tinker_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO TinkerGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Lockpicking": 765,
+      "Tinkering": 950,
+      "RemoveTrap": 925
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "tinker"
+  }
+]

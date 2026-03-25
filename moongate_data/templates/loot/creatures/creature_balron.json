@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.balron",
+    "name": "Balron",
+    "category": "loot",
+    "description": "Creature-specific loot for Balron.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "longsword",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

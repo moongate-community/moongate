@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.betrayer",
+    "name": "Betrayer",
+    "category": "loot",
+    "description": "Creature-specific loot for Betrayer.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "power_crystal",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "blackthorn_welcome_book",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

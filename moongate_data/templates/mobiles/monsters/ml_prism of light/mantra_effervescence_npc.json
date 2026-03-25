@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "mantra_effervescence_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MantraEffervescence.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 125,
+    "intelligence": 190,
+    "hits": 200,
+    "maxHits": 200,
+    "minDamage": 21,
+    "maxDamage": 25,
+    "fame": 6500,
+    "karma": -6500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Wrestling": 825,
+      "Tactics": 825,
+      "MagicResist": 1100,
+      "Magery": 1000,
+      "EvalInt": 850,
+      "Meditation": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 62,
+      "fire": 45,
+      "cold": 45,
+      "poison": 55,
+      "energy": 100
+    },
+    "damageTypes": {
+      "physical": 30,
+      "energy": 70
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a mantra effervescence"
+  }
+]

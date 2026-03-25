@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "orc_bomber_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OrcBomber.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00B6",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 181,
+    "dexterity": 103,
+    "intelligence": 73,
+    "hits": 109,
+    "maxHits": 109,
+    "minDamage": 1,
+    "maxDamage": 8,
+    "armorRating": 30,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 775,
+      "Swords": 725,
+      "Tactics": 825,
+      "Wrestling": 725
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "creature.orc_bomber"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 35,
+      "cold": 20,
+      "poison": 17,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 75,
+      "fire": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an orc bomber"
+  }
+]

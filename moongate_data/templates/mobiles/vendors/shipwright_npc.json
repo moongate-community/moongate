@@ -1,0 +1,22 @@
+[
+  {
+    "type": "mobile",
+    "id": "shipwright_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Shipwright.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Carpentry": 715,
+      "Macing": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the shipwright"
+  }
+]

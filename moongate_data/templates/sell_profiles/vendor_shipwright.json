@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.shipwright",
+    "name": "Shipwright Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Shipwright. SBInfo sources: SBShipwright.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

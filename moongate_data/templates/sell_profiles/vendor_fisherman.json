@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.fisherman",
+    "name": "Fisherman Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Fisherman. SBInfo sources: SBFisherman.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

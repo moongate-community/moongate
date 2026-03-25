@@ -1,0 +1,19 @@
+[
+  {
+    "type": "mobile",
+    "id": "jwilson_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Jwilson.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "armorRating": 8,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a jwilson"
+  }
+]

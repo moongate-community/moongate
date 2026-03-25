@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "wisp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Wisp.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x003A",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 210,
+    "dexterity": 210,
+    "intelligence": 210,
+    "hits": 126,
+    "maxHits": 126,
+    "minDamage": 17,
+    "maxDamage": 18,
+    "armorRating": 40,
+    "fame": 4000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "mage_combat",
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 466,
+      "StartAttack": 467,
+      "Attack": 468,
+      "Defend": 469,
+      "Die": 470
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 30,
+      "cold": 20,
+      "poison": 7,
+      "energy": 60
+    },
+    "damageTypes": {
+      "physical": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a wisp"
+  }
+]

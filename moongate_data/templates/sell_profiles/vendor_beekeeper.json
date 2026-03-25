@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.beekeeper",
+    "name": "Beekeeper Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Beekeeper. SBInfo sources: SBBeekeeper.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

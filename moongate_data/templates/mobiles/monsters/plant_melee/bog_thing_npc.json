@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "bog_thing_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BogThing.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x030C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 850,
+    "dexterity": 55,
+    "intelligence": 43,
+    "hits": 510,
+    "maxHits": 510,
+    "mana": 0,
+    "minDamage": 10,
+    "maxDamage": 23,
+    "armorRating": 28,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 925,
+      "Tactics": 775,
+      "Wrestling": 725
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average",
+      "creature.bog_thing"
+    ],
+    "resistances": {
+      "physical": 35,
+      "fire": 22,
+      "cold": 12,
+      "poison": 45,
+      "energy": 22
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a bog thing"
+  }
+]

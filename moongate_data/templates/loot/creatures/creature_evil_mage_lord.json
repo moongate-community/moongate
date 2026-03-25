@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.evil_mage_lord",
+    "name": "EvilMageLord",
+    "category": "loot",
+    "description": "Creature-specific loot for EvilMageLord.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "reagent",
+        "chance": 1.0,
+        "amount": 23
+      }
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "sir_patrick_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SirPatrick.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 263,
+    "dexterity": 115,
+    "intelligence": 68,
+    "hits": 750,
+    "maxHits": 750,
+    "minDamage": 15,
+    "maxDamage": 25,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1314,
+      "Tactics": 1361,
+      "MagicResist": 1103,
+      "Anatomy": 1323
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 58,
+      "fire": 44,
+      "cold": 75,
+      "poison": 45,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 40,
+      "cold": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Sir Patrick"
+  }
+]

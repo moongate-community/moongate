@@ -1,0 +1,18 @@
+[
+  {
+    "type": "mobile",
+    "id": "inn_keeper_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO InnKeeper.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the innkeeper"
+  }
+]

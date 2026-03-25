@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "reptalon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Reptalon.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 1013,
+    "dexterity": 158,
+    "intelligence": 270,
+    "hits": 882,
+    "maxHits": 882,
+    "minDamage": 21,
+    "maxDamage": 28,
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1098,
+      "Tactics": 1049,
+      "MagicResist": 831,
+      "Anatomy": 580
+    },
+    "lootTables": [
+      "loot_pack.aos_ultra_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 58,
+      "fire": 40,
+      "cold": 40,
+      "poison": 57,
+      "energy": 77
+    },
+    "damageTypes": {
+      "physical": 0,
+      "poison": 25,
+      "energy": 75
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a reptalon"
+  }
+]

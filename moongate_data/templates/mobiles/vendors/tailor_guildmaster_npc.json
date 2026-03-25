@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "tailor_guildmaster_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO TailorGuildmaster.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Tailoring": 950
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "tailor"
+  }
+]

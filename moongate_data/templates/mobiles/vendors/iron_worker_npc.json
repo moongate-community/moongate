@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "iron_worker_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO IronWorker.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "ArmsLore": 520,
+      "Blacksmith": 765,
+      "Fencing": 715,
+      "Macing": 770,
+      "Swords": 715,
+      "Tactics": 715,
+      "Parry": 770
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the iron worker"
+  }
+]

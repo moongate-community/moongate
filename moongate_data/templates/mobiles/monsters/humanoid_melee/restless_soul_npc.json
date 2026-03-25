@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "restless_soul_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RestlessSoul.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 33,
+    "dexterity": 33,
+    "intelligence": 33,
+    "hits": 20,
+    "maxHits": 20,
+    "minDamage": 1,
+    "maxDamage": 10,
+    "armorRating": 6,
+    "fame": 500,
+    "karma": -500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 250,
+      "Swords": 250,
+      "Tactics": 250,
+      "Wrestling": 250
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "resistances": {
+      "physical": 20,
+      "fire": 10,
+      "cold": 32,
+      "poison": 7,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a restless soul"
+  }
+]

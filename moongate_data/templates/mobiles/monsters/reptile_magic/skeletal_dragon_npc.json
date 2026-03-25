@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "skeletal_dragon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SkeletalDragon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0068",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 964,
+    "dexterity": 134,
+    "intelligence": 554,
+    "hits": 578,
+    "maxHits": 578,
+    "minDamage": 29,
+    "maxDamage": 35,
+    "armorRating": 80,
+    "fame": 22500,
+    "karma": -22500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 900,
+      "Magery": 900,
+      "MagicResist": 1151,
+      "Tactics": 988,
+      "Wrestling": 988,
+      "Necromancy": 1250,
+      "SpiritSpeak": 1250
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 77,
+      "fire": 50,
+      "cold": 50,
+      "poison": 75,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 75,
+      "fire": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a skeletal dragon"
+  }
+]

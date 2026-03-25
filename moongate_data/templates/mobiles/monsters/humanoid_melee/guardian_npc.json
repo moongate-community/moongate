@@ -1,0 +1,28 @@
+[
+  {
+    "type": "mobile",
+    "id": "guardian_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Guardian.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "ranged_combat",
+    "skills": {
+      "Anatomy": 1200,
+      "Tactics": 1200,
+      "Archery": 1200,
+      "MagicResist": 1200,
+      "DetectHidden": 1000
+    },
+    "lootTables": [
+      "creature.guardian"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

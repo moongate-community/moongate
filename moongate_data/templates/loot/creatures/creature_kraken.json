@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.kraken",
+    "name": "Kraken",
+    "category": "loot",
+    "description": "Creature-specific loot for Kraken.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "message_in_a_bottle",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "special_fishing_net",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

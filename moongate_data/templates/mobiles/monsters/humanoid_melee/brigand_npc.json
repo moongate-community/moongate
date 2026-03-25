@@ -1,0 +1,37 @@
+[
+  {
+    "type": "mobile",
+    "id": "brigand_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Brigand.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 93,
+    "dexterity": 88,
+    "intelligence": 68,
+    "minDamage": 10,
+    "maxDamage": 23,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Fencing": 817,
+      "Macing": 762,
+      "MagicResist": 362,
+      "Swords": 762,
+      "Tactics": 762,
+      "Wrestling": 262
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "evil_mage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EvilMage.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x007C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 93,
+    "dexterity": 103,
+    "intelligence": 108,
+    "hits": 56,
+    "maxHits": 56,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 16,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 875,
+      "Magery": 875,
+      "MagicResist": 862,
+      "Tactics": 762,
+      "Wrestling": 401
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "creature.evil_mage"
+    ],
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

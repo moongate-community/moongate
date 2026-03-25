@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "gargoyle_enforcer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GargoyleEnforcer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 805,
+    "dexterity": 126,
+    "intelligence": 176,
+    "hits": 483,
+    "maxHits": 483,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 50,
+    "fame": 5000,
+    "karma": -5000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "MagicResist": 1250,
+      "Tactics": 750,
+      "Wrestling": 850,
+      "Swords": 850,
+      "Anatomy": 750,
+      "Magery": 850,
+      "EvalInt": 851,
+      "Meditation": 851
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "creature.gargoyle_enforcer"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 55,
+      "cold": 25,
+      "poison": 30,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a gargoyle enforcer"
+  }
+]

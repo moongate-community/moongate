@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "elite_ninja_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EliteNinja.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 175,
+    "dexterity": 225,
+    "intelligence": 158,
+    "hits": 300,
+    "maxHits": 300,
+    "minDamage": 12,
+    "maxDamage": 20,
+    "fame": 8500,
+    "karma": -8500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 1125,
+      "MagicResist": 900,
+      "Tactics": 1225,
+      "Wrestling": 1075,
+      "Fencing": 1075,
+      "Macing": 1075,
+      "Swords": 1075,
+      "Ninjitsu": 1075
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 50,
+      "cold": 35,
+      "poison": 50,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 65,
+      "fire": 15,
+      "poison": 15,
+      "energy": 5
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an elite ninja"
+  }
+]

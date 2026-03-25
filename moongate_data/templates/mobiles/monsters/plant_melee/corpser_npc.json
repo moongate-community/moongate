@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "corpser_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Corpser.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0008",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 168,
+    "dexterity": 35,
+    "intelligence": 33,
+    "hits": 101,
+    "maxHits": 101,
+    "mana": 0,
+    "minDamage": 10,
+    "maxDamage": 23,
+    "armorRating": 18,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 525,
+      "Wrestling": 525
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.corpser"
+    ],
+    "sounds": {
+      "Idle": 684,
+      "StartAttack": 685,
+      "Attack": 686,
+      "Defend": 687,
+      "Die": 688
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 20,
+      "cold": 15,
+      "poison": 25
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a corpser"
+  }
+]

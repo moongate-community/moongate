@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "red_solen_infiltrator_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RedSolenInfiltratorWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x030E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 218,
+    "dexterity": 133,
+    "intelligence": 78,
+    "hits": 101,
+    "maxHits": 101,
+    "minDamage": 5,
+    "maxDamage": 15,
+    "armorRating": 40,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 27,
+      "cold": 17,
+      "poison": 27,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 80,
+      "poison": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a red solen infiltrator"
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "type": "mobile",
+    "id": "thrasher_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Thrasher.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 210,
+    "dexterity": 104,
+    "intelligence": 41,
+    "hits": 622,
+    "maxHits": 622,
+    "mana": 27,
+    "stamina": 65,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1097,
+      "Tactics": 1068,
+      "MagicResist": 1105
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 52,
+      "fire": 27,
+      "poison": 26
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Thrasher"
+  }
+]

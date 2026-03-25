@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.lich_lord",
+    "name": "LichLord",
+    "category": "loot",
+    "description": "Creature-specific loot for LichLord.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gnarled_staff",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

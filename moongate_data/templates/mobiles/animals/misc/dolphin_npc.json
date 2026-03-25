@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "dolphin_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Dolphin.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 35,
+    "dexterity": 75,
+    "intelligence": 103,
+    "hits": 21,
+    "maxHits": 21,
+    "minDamage": 3,
+    "maxDamage": 6,
+    "armorRating": 16,
+    "fame": 500,
+    "karma": 2000,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 241,
+      "Wrestling": 241
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 75,
+      "cold": 27,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a dolphin"
+  }
+]

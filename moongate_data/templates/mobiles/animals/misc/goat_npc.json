@@ -1,0 +1,44 @@
+[
+  {
+    "type": "mobile",
+    "id": "goat_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Goat.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 19,
+    "dexterity": 15,
+    "intelligence": 5,
+    "hits": 12,
+    "maxHits": 12,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 4,
+    "armorRating": 10,
+    "fame": 150,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 10
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a goat"
+  }
+]

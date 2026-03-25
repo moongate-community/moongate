@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "quagmire_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Quagmire.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0315",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 115,
+    "dexterity": 75,
+    "intelligence": 43,
+    "hits": 98,
+    "maxHits": 98,
+    "minDamage": 10,
+    "maxDamage": 14,
+    "armorRating": 32,
+    "fame": 1500,
+    "karma": -1500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 700,
+      "Tactics": 550,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 352,
+      "StartAttack": 353,
+      "Attack": 354,
+      "Defend": 355,
+      "Die": 356
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 15,
+      "cold": 15,
+      "poison": 100,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a quagmire"
+  }
+]

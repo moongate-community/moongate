@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "grizzly_bear_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GrizzlyBear.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x00D4",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 93,
+    "intelligence": 28,
+    "hits": 84,
+    "maxHits": 84,
+    "mana": 0,
+    "minDamage": 8,
+    "maxDamage": 13,
+    "armorRating": 24,
+    "fame": 1000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "animal",
+    "skills": {
+      "MagicResist": 325,
+      "Tactics": 850,
+      "Wrestling": 575
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "cold": 20,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a grizzly bear"
+  }
+]

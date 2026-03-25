@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.animal_trainer",
+    "name": "AnimalTrainer Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for AnimalTrainer. SBInfo sources: SBAnimalTrainer.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

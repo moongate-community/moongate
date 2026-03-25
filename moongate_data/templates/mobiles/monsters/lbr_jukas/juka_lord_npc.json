@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "juka_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO JukaLord.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x02FE",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 450,
+    "dexterity": 90,
+    "intelligence": 175,
+    "hits": 270,
+    "maxHits": 270,
+    "minDamage": 10,
+    "maxDamage": 12,
+    "armorRating": 28,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "ranged_combat",
+    "skills": {
+      "Anatomy": 950,
+      "Archery": 975,
+      "Healing": 900,
+      "MagicResist": 1250,
+      "Swords": 950,
+      "Tactics": 975,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 47,
+      "cold": 45,
+      "poison": 22,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a juka lord"
+  }
+]

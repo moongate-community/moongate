@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "blood_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BloodElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x009F",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 570,
+    "dexterity": 75,
+    "intelligence": 288,
+    "hits": 342,
+    "maxHits": 342,
+    "minDamage": 17,
+    "maxDamage": 27,
+    "armorRating": 60,
+    "fame": 12500,
+    "karma": -12500,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 925,
+      "Magery": 925,
+      "Meditation": 302,
+      "MagicResist": 875,
+      "Tactics": 900,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 278,
+      "StartAttack": 279,
+      "Attack": 280,
+      "Defend": 281,
+      "Die": 282
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 25,
+      "cold": 45,
+      "poison": 55,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 0,
+      "poison": 50,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a blood elemental"
+  }
+]

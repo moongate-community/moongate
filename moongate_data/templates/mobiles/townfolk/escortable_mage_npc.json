@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "escortable_mage_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO EscortableMage.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "EvalInt": 900,
+      "Inscribe": 900,
+      "Magery": 900,
+      "Meditation": 900,
+      "MagicResist": 900
+    },
+    "lootTables": [
+      "creature.escortable_mage"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

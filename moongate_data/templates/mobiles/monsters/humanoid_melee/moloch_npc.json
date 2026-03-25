@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "moloch_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Moloch.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 345,
+    "dexterity": 75,
+    "intelligence": 53,
+    "hits": 185,
+    "maxHits": 185,
+    "minDamage": 15,
+    "maxDamage": 23,
+    "armorRating": 32,
+    "fame": 7500,
+    "karma": -7500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 700,
+      "Tactics": 825,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 65,
+      "fire": 65,
+      "cold": 45,
+      "poison": 25,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a moloch"
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "ophidian_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OphidianWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0056",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 235,
+    "dexterity": 142,
+    "intelligence": 112,
+    "hits": 141,
+    "maxHits": 141,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 11,
+    "armorRating": 36,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 775,
+      "Swords": 725,
+      "Tactics": 825
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.average",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 634,
+      "StartAttack": 635,
+      "Attack": 636,
+      "Defend": 637,
+      "Die": 638
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 25,
+      "cold": 30,
+      "poison": 35,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

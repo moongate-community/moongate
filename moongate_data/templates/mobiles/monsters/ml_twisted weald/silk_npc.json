@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "silk_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Silk.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 105,
+    "dexterity": 141,
+    "intelligence": 82,
+    "hits": 328,
+    "maxHits": 328,
+    "mana": 82,
+    "stamina": 141,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 18900,
+    "karma": -18900,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1189,
+      "Tactics": 1104,
+      "MagicResist": 866,
+      "Anatomy": 935,
+      "Poisoning": 1126
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 34,
+      "cold": 35,
+      "poison": 73,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Silk"
+  }
+]

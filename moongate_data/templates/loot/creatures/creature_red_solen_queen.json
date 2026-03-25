@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.red_solen_queen",
+    "name": "RedSolenQueen",
+    "category": "loot",
+    "description": "Creature-specific loot for RedSolenQueen.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "ball_of_summoning",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

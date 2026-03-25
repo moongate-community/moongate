@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "ancient_lich_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AncientLich.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x004E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 260,
+    "dexterity": 105,
+    "intelligence": 1005,
+    "hits": 577,
+    "maxHits": 577,
+    "minDamage": 15,
+    "maxDamage": 27,
+    "armorRating": 60,
+    "fame": 23000,
+    "karma": -23000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1250,
+      "Magery": 1250,
+      "Meditation": 1005,
+      "Poisoning": 1005,
+      "MagicResist": 1876,
+      "Tactics": 950,
+      "Wrestling": 875,
+      "Necromancy": 1250,
+      "SpiritSpeak": 1250
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 412,
+      "StartAttack": 413,
+      "Attack": 414,
+      "Defend": 415,
+      "Die": 416
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 27,
+      "cold": 55,
+      "poison": 55,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 20,
+      "cold": 40,
+      "energy": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

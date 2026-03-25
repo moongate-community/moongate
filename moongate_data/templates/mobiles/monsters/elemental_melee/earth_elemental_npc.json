@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "earth_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EarthElemental.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x000E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 140,
+    "dexterity": 75,
+    "intelligence": 81,
+    "hits": 84,
+    "maxHits": 84,
+    "minDamage": 9,
+    "maxDamage": 16,
+    "armorRating": 34,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 800,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.gems",
+      "creature.earth_elemental"
+    ],
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 15,
+      "cold": 15,
+      "poison": 20,
+      "energy": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an earth elemental"
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "darknight_creeper_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DarknightCreeper.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0139",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 315,
+    "dexterity": 105,
+    "intelligence": 315,
+    "hits": 4000,
+    "maxHits": 4000,
+    "minDamage": 22,
+    "maxDamage": 26,
+    "armorRating": 34,
+    "fame": 22000,
+    "karma": -22000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 1190,
+      "Magery": 1163,
+      "MagicResist": 905,
+      "Wrestling": 905,
+      "Necromancy": 1250,
+      "SpiritSpeak": 1250
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 60,
+      "cold": 100,
+      "poison": 90,
+      "energy": 75
+    },
+    "damageTypes": {
+      "physical": 85,
+      "poison": 15
+    },
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

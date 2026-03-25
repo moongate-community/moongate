@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "whipping_vine_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO WhippingVine.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0008",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 275,
+    "dexterity": 88,
+    "intelligence": 33,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 25,
+    "armorRating": 45,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "creature.whipping_vine"
+    ],
+    "sounds": {
+      "Idle": 352,
+      "StartAttack": 353,
+      "Attack": 354,
+      "Defend": 355,
+      "Die": 356
+    },
+    "resistances": {
+      "physical": 80,
+      "fire": 20,
+      "cold": 20,
+      "poison": 80,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 70,
+      "poison": 30
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a whipping vine"
+  }
+]

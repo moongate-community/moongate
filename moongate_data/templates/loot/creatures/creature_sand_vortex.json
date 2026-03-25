@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.sand_vortex",
+    "name": "SandVortex",
+    "category": "loot",
+    "description": "Creature-specific loot for SandVortex.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

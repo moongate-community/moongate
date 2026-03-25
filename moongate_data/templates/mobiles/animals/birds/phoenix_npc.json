@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "phoenix_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Phoenix.",
+    "tags": [
+      "animal"
+    ],
+    "body": "0x0005",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 602,
+    "dexterity": 251,
+    "intelligence": 602,
+    "hits": 361,
+    "maxHits": 361,
+    "minDamage": 25,
+    "maxDamage": 25,
+    "armorRating": 60,
+    "fame": 15000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 951,
+      "Magery": 951,
+      "Meditation": 875,
+      "MagicResist": 1105,
+      "Tactics": 850,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 65,
+      "poison": 30,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a phoenix"
+  }
+]

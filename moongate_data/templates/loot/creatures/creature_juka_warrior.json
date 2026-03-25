@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.juka_warrior",
+    "name": "JukaWarrior",
+    "category": "loot",
+    "description": "Creature-specific loot for JukaWarrior.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arcane_gem",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

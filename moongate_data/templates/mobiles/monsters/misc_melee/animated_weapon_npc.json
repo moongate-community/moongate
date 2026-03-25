@@ -1,0 +1,37 @@
+[
+  {
+    "type": "mobile",
+    "id": "animated_weapon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AnimatedWeapon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x02B4",
+    "skinHue": 0,
+    "hairHue": 0,
+    "intelligence": 10,
+    "mana": 0,
+    "minDamage": 14,
+    "maxDamage": 18,
+    "fame": 0,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 35,
+      "poison": 100,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 20,
+      "energy": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "an animated weapon"
+  }
+]

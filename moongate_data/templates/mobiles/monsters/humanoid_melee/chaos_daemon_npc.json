@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "chaos_daemon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ChaosDaemon.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0318",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 118,
+    "dexterity": 185,
+    "intelligence": 68,
+    "hits": 100,
+    "maxHits": 100,
+    "minDamage": 12,
+    "maxDamage": 17,
+    "armorRating": 15,
+    "fame": 3000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 900,
+      "Tactics": 750,
+      "Wrestling": 975
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 65,
+      "cold": 45,
+      "poison": 25,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 85,
+      "fire": 15
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a chaos daemon"
+  }
+]

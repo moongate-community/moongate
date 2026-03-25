@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.cook",
+    "name": "Cook Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Cook. SBInfo sources: SBCook, SBSECook.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "cyclops_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Cyclops.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x004B",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 360,
+    "dexterity": 105,
+    "intelligence": 43,
+    "hits": 216,
+    "maxHits": 216,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 23,
+    "armorRating": 48,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 826,
+      "Tactics": 900,
+      "Wrestling": 850
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 604,
+      "StartAttack": 605,
+      "Attack": 606,
+      "Defend": 607,
+      "Die": 608
+    },
+    "resistances": {
+      "physical": 47,
+      "fire": 35,
+      "cold": 30,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a cyclopean warrior"
+  }
+]

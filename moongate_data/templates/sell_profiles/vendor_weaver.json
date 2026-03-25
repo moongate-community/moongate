@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.weaver",
+    "name": "Weaver Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Weaver. SBInfo sources: SBWeaver.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

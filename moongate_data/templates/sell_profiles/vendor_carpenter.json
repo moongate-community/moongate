@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.carpenter",
+    "name": "Carpenter Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Carpenter. SBInfo sources: SBStavesWeapon, SBCarpenter, SBWoodenShields, SBSECarpenter.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

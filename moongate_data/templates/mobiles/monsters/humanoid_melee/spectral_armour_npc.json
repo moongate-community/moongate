@@ -1,0 +1,46 @@
+[
+  {
+    "type": "mobile",
+    "id": "spectral_armour_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SpectralArmour.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x027D",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 105,
+    "dexterity": 105,
+    "intelligence": 105,
+    "hits": 189,
+    "maxHits": 189,
+    "stamina": 195,
+    "minDamage": 10,
+    "maxDamage": 22,
+    "armorRating": 40,
+    "fame": 7000,
+    "karma": -7000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 875,
+      "Tactics": 950,
+      "MagicResist": 950
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 25,
+      "cold": 35,
+      "poison": 25,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 75,
+      "cold": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a spectral armour"
+  }
+]

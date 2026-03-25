@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.holy_mage",
+    "name": "HolyMage Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for HolyMage. SBInfo sources: SBHolyMage.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

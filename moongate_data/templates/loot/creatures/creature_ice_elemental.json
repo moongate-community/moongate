@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ice_elemental",
+    "name": "IceElemental",
+    "category": "loot",
+    "description": "Creature-specific loot for IceElemental.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "reagent",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

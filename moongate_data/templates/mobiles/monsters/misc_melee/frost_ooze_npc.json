@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "frost_ooze_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FrostOoze.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x005E",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 24,
+    "dexterity": 18,
+    "intelligence": 18,
+    "hits": 15,
+    "maxHits": 15,
+    "minDamage": 3,
+    "maxDamage": 9,
+    "armorRating": 38,
+    "fame": 450,
+    "karma": -450,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 75,
+      "Tactics": 266,
+      "Wrestling": 326
+    },
+    "sounds": {
+      "Idle": 456,
+      "StartAttack": 457,
+      "Attack": 458,
+      "Defend": 459,
+      "Die": 460
+    },
+    "resistances": {
+      "physical": 17,
+      "cold": 45,
+      "poison": 25,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a frost ooze"
+  }
+]

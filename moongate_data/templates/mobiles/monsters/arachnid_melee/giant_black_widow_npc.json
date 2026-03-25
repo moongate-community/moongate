@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "giant_black_widow_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GiantBlackWidow.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 88,
+    "dexterity": 105,
+    "intelligence": 48,
+    "hits": 53,
+    "maxHits": 53,
+    "minDamage": 5,
+    "maxDamage": 17,
+    "armorRating": 24,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 526,
+      "Poisoning": 700,
+      "MagicResist": 525,
+      "Tactics": 725,
+      "Wrestling": 775
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.giant_black_widow"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 25,
+      "fire": 15,
+      "cold": 15,
+      "poison": 55,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a giant black wide"
+  }
+]

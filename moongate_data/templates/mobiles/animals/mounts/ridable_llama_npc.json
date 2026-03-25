@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "ridable_llama_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO RidableLlama.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 35,
+    "dexterity": 65,
+    "intelligence": 23,
+    "hits": 21,
+    "maxHits": 21,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 5,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 241,
+      "Wrestling": 241
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 12,
+      "fire": 7,
+      "cold": 7,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a ridable llama"
+  }
+]

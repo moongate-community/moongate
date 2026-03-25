@@ -1,0 +1,25 @@
+[
+  {
+    "type": "mobile",
+    "id": "furtrader_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Furtrader.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Camping": 665,
+      "Alchemy": 715,
+      "AnimalLore": 925,
+      "Cooking": 565,
+      "Tracking": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the furtrader"
+  }
+]

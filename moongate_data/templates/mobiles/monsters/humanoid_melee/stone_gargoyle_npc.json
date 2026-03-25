@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "stone_gargoyle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO StoneGargoyle.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0043",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 260,
+    "dexterity": 85,
+    "intelligence": 93,
+    "hits": 156,
+    "maxHits": 156,
+    "minDamage": 11,
+    "maxDamage": 17,
+    "armorRating": 50,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 925,
+      "Tactics": 900,
+      "Wrestling": 800
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average",
+      "loot_pack.gems",
+      "loot_pack.potions",
+      "creature.stone_gargoyle"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 25,
+      "cold": 15,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a stone gargoyle"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "abscess_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Abscess.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 858,
+    "dexterity": 127,
+    "intelligence": 133,
+    "hits": 7505,
+    "maxHits": 7505,
+    "minDamage": 26,
+    "maxDamage": 31,
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1380,
+      "Tactics": 1257,
+      "MagicResist": 1109,
+      "Anatomy": 930
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 70,
+      "fire": 75,
+      "cold": 30,
+      "poison": 40,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 60,
+      "fire": 10,
+      "cold": 10,
+      "poison": 10,
+      "energy": 10
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Abscess"
+  }
+]

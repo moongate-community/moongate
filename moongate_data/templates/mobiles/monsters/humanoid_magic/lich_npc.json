@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "lich_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Lich.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0018",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 185,
+    "dexterity": 135,
+    "intelligence": 290,
+    "hits": 111,
+    "maxHits": 111,
+    "minDamage": 24,
+    "maxDamage": 26,
+    "armorRating": 50,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Necromancy": 940,
+      "SpiritSpeak": 945,
+      "Magery": 750,
+      "Meditation": 900,
+      "MagicResist": 900,
+      "Tactics": 800
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.lich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 25,
+      "cold": 55,
+      "poison": 60,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 10,
+      "cold": 40,
+      "energy": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a lich"
+  }
+]

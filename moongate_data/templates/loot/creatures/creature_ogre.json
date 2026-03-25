@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ogre",
+    "name": "Ogre",
+    "category": "loot",
+    "description": "Creature-specific loot for Ogre.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "club",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

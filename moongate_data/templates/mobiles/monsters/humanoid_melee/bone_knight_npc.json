@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "bone_knight_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BoneKnight.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0039",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 223,
+    "dexterity": 85,
+    "intelligence": 48,
+    "hits": 134,
+    "maxHits": 134,
+    "minDamage": 8,
+    "maxDamage": 18,
+    "armorRating": 40,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 925,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "creature.bone_knight"
+    ],
+    "sounds": {
+      "Idle": 451,
+      "StartAttack": 452,
+      "Attack": 453,
+      "Defend": 454,
+      "Die": 455
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 25,
+      "cold": 55,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 40,
+      "cold": 60
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a bone knight"
+  }
+]

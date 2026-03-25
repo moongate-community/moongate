@@ -1,0 +1,49 @@
+[
+  {
+    "type": "mobile",
+    "id": "sewer_rat_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SewerRat.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x00EE",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 9,
+    "dexterity": 25,
+    "intelligence": 8,
+    "hits": 6,
+    "maxHits": 6,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 2,
+    "armorRating": 6,
+    "fame": 300,
+    "karma": -300,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 7,
+      "poison": 20,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a sewer rat"
+  }
+]

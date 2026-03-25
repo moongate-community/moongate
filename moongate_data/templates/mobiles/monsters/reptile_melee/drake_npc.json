@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "drake_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Drake.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x003C",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 415,
+    "dexterity": 142,
+    "intelligence": 120,
+    "hits": 249,
+    "maxHits": 249,
+    "minDamage": 11,
+    "maxDamage": 17,
+    "armorRating": 46,
+    "fame": 5500,
+    "karma": -5500,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 775,
+      "Wrestling": 725
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.drake"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 47,
+      "fire": 55,
+      "cold": 45,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 80,
+      "fire": 20
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a drake"
+  }
+]

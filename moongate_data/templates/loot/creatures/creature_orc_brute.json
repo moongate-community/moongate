@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.orc_brute",
+    "name": "OrcBrute",
+    "category": "loot",
+    "description": "Creature-specific loot for OrcBrute.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "iron_ingot",
+        "chance": 1.0,
+        "amount": 10
+      },
+      {
+        "itemTemplateId": "orcish_kin_mask",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

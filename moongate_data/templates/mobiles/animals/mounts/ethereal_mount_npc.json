@@ -1,0 +1,16 @@
+[
+  {
+    "type": "mobile",
+    "id": "ethereal_mount_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO EtherealMount.",
+    "tags": [
+      "animal"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "fixedEquipment": [],
+    "randomEquipment": []
+  }
+]

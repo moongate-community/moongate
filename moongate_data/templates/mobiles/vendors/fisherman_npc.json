@@ -1,0 +1,21 @@
+[
+  {
+    "type": "mobile",
+    "id": "fisherman_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Fisherman.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Fishing": 865
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the fisher"
+  }
+]

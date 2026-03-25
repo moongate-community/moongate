@@ -1,0 +1,28 @@
+[
+  {
+    "type": "mobile",
+    "id": "samurai_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Samurai.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "ArmsLore": 720,
+      "Bushido": 745,
+      "Parry": 720,
+      "Swords": 745
+    },
+    "lootTables": [
+      "creature.samurai"
+    ],
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "female"
+  }
+]

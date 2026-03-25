@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "kaze_kemono_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO KazeKemono.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00C4",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 238,
+    "dexterity": 128,
+    "intelligence": 103,
+    "hits": 290,
+    "maxHits": 290,
+    "minDamage": 15,
+    "maxDamage": 20,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "MagicResist": 1175,
+      "Tactics": 600,
+      "Wrestling": 900,
+      "Anatomy": 300,
+      "Magery": 1000
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 655,
+      "StartAttack": 656,
+      "Attack": 657,
+      "Defend": 658,
+      "Die": 659
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 45,
+      "cold": 45,
+      "poison": 60,
+      "energy": 70
+    },
+    "damageTypes": {
+      "physical": 70,
+      "fire": 10,
+      "cold": 10,
+      "poison": 10
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a kaze kemono"
+  }
+]

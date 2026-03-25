@@ -1,0 +1,50 @@
+[
+  {
+    "type": "mobile",
+    "id": "lady_lissith_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO LadyLissith.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 105,
+    "dexterity": 134,
+    "intelligence": 72,
+    "hits": 310,
+    "maxHits": 310,
+    "mana": 72,
+    "stamina": 134,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 18900,
+    "karma": -18900,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1158,
+      "Tactics": 1108,
+      "MagicResist": 871,
+      "Anatomy": 876,
+      "Poisoning": 1047
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 35,
+      "poison": 75,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Lady Lissith"
+  }
+]

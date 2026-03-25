@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.lava_snake",
+    "name": "LavaSnake",
+    "category": "loot",
+    "description": "Creature-specific loot for LavaSnake.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "pyre_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Pyre.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 608,
+    "dexterity": 455,
+    "intelligence": 743,
+    "hits": 1861,
+    "maxHits": 1861,
+    "minDamage": 30,
+    "maxDamage": 30,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1262,
+      "Tactics": 1159,
+      "MagicResist": 1503,
+      "Poisoning": 1234,
+      "Magery": 1248,
+      "EvalInt": 1103,
+      "Meditation": 1050
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 73,
+      "poison": 38,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Pyre"
+  }
+]

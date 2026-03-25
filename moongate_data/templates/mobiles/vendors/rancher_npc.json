@@ -1,0 +1,24 @@
+[
+  {
+    "type": "mobile",
+    "id": "rancher_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Rancher.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "AnimalLore": 665,
+      "AnimalTaming": 665,
+      "Herding": 820,
+      "Veterinary": 715
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the rancher"
+  }
+]

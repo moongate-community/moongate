@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "corporeal_brume_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CorporealBrume.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0000",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 425,
+    "dexterity": 125,
+    "intelligence": 55,
+    "hits": 1200,
+    "maxHits": 1200,
+    "minDamage": 21,
+    "maxDamage": 25,
+    "fame": 12000,
+    "karma": -12000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1125,
+      "Tactics": 1125,
+      "MagicResist": 875,
+      "Anatomy": 1050
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 100,
+      "fire": 45,
+      "cold": 45,
+      "poison": 55,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a corporeal brume"
+  }
+]

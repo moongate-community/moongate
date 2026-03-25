@@ -1,0 +1,54 @@
+[
+  {
+    "type": "mobile",
+    "id": "betrayer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Betrayer.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x02FF",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 450,
+    "dexterity": 90,
+    "intelligence": 175,
+    "hits": 270,
+    "maxHits": 270,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "armorRating": 65,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "Anatomy": 950,
+      "EvalInt": 950,
+      "Magery": 750,
+      "Meditation": 950,
+      "MagicResist": 1250,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "creature.betrayer"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 65,
+      "cold": 65,
+      "poison": 35,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a betrayer"
+  }
+]

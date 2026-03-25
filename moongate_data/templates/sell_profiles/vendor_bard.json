@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.bard",
+    "name": "Bard Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Bard. SBInfo sources: SBBard.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

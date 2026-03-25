@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.iron_worker",
+    "name": "IronWorker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for IronWorker. SBInfo sources: SBAxeWeapon, SBKnifeWeapon, SBMaceWeapon, SBSmithTools, SBPoleArmWeapon, SBSpearForkWeapon, SBSwordWeapon, SBMetalShields, SBHelmetArmor, SBPlateArmor, SBChainmailArmor, SBRingmailArmor, SBStuddedArmor, SBLeatherArmor.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

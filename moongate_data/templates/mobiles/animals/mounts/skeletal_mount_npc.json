@@ -1,0 +1,41 @@
+[
+  {
+    "type": "mobile",
+    "id": "skeletal_mount_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SkeletalMount.",
+    "tags": [
+      "animal"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 95,
+    "dexterity": 50,
+    "intelligence": 53,
+    "hits": 45,
+    "maxHits": 45,
+    "minDamage": 5,
+    "maxDamage": 12,
+    "fame": 0,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "MagicResist": 975,
+      "Wrestling": 750
+    },
+    "resistances": {
+      "physical": 55,
+      "cold": 92,
+      "poison": 100,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 50,
+      "cold": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a skeletal steed"
+  }
+]

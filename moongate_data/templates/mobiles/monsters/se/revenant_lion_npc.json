@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "revenant_lion_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RevenantLion.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x00FB",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 300,
+    "dexterity": 165,
+    "intelligence": 90,
+    "hits": 265,
+    "maxHits": 265,
+    "minDamage": 18,
+    "maxDamage": 24,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 850,
+      "Magery": 850,
+      "Poisoning": 1250,
+      "MagicResist": 800,
+      "Tactics": 700,
+      "Wrestling": 840
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 25,
+      "cold": 55,
+      "poison": 60,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 30,
+      "cold": 30,
+      "poison": 10,
+      "energy": 30
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a Revenant Lion"
+  }
+]

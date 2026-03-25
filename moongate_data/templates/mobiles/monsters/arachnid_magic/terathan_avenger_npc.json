@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "terathan_avenger_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO TerathanAvenger.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0098",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 556,
+    "dexterity": 86,
+    "intelligence": 138,
+    "hits": 334,
+    "maxHits": 334,
+    "mana": 58,
+    "minDamage": 18,
+    "maxDamage": 22,
+    "armorRating": 50,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 851,
+      "Magery": 851,
+      "Poisoning": 700,
+      "MagicResist": 725,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 45,
+      "fire": 35,
+      "cold": 40,
+      "poison": 95,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 50,
+      "poison": 50
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a terathan avenger"
+  }
+]

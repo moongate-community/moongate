@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "bake_kitsune_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BakeKitsune.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "body": "0x00F6",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 195,
+    "dexterity": 135,
+    "intelligence": 400,
+    "hits": 325,
+    "maxHits": 325,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "brain": "mage_combat",
+    "skills": {
+      "EvalInt": 850,
+      "Magery": 850,
+      "MagicResist": 900,
+      "Tactics": 800,
+      "Wrestling": 525
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 80,
+      "cold": 50,
+      "poison": 50,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 70,
+      "energy": 30
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a bake kitsune"
+  }
+]

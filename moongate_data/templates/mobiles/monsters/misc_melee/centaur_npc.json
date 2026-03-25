@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "centaur_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Centaur.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0065",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 251,
+    "dexterity": 182,
+    "intelligence": 95,
+    "hits": 151,
+    "maxHits": 151,
+    "minDamage": 13,
+    "maxDamage": 24,
+    "armorRating": 50,
+    "fame": 6500,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "Anatomy": 1050,
+      "Archery": 975,
+      "MagicResist": 651,
+      "Tactics": 950,
+      "Wrestling": 975
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 679,
+      "StartAttack": 680,
+      "Attack": 681,
+      "Defend": 682,
+      "Die": 683
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 40,
+      "cold": 30,
+      "poison": 50,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "centaur"
+  }
+]

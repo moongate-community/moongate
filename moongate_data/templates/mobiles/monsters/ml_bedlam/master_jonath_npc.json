@@ -1,0 +1,52 @@
+[
+  {
+    "type": "mobile",
+    "id": "master_jonath_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MasterJonath.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 120,
+    "dexterity": 104,
+    "intelligence": 245,
+    "hits": 843,
+    "maxHits": 843,
+    "minDamage": 10,
+    "maxDamage": 15,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 845,
+      "Tactics": 918,
+      "MagicResist": 1028,
+      "Magery": 1033,
+      "EvalInt": 1032,
+      "Necromancy": 1033,
+      "SpiritSpeak": 1032
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.master_jonath"
+    ],
+    "resistances": {
+      "physical": 57,
+      "fire": 46,
+      "cold": 62,
+      "poison": 43,
+      "energy": 54
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Master Jonath"
+  }
+]

@@ -1,0 +1,44 @@
+[
+  {
+    "type": "mobile",
+    "id": "plague_beast_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO PlagueBeast.",
+    "tags": [
+      "monster"
+    ],
+    "body": "0x0307",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 401,
+    "dexterity": 80,
+    "intelligence": 18,
+    "hits": 361,
+    "maxHits": 361,
+    "minDamage": 20,
+    "maxDamage": 24,
+    "armorRating": 30,
+    "fame": 13000,
+    "karma": -13000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "creature.plague_beast"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 45,
+      "cold": 30,
+      "poison": 70,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a plague beast"
+  }
+]

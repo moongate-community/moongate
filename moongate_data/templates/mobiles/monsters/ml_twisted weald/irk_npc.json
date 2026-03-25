@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "irk_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Irk.",
+    "tags": [
+      "monster"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 103,
+    "dexterity": 309,
+    "intelligence": 487,
+    "hits": 1035,
+    "maxHits": 1035,
+    "mana": 487,
+    "stamina": 309,
+    "minDamage": 14,
+    "maxDamage": 20,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Wrestling": 1216,
+      "Tactics": 1259,
+      "MagicResist": 1490,
+      "Magery": 1143,
+      "EvalInt": 1142,
+      "Meditation": 1140
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 85,
+      "fire": 45,
+      "cold": 45,
+      "poison": 45,
+      "energy": 44
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "Irk"
+  }
+]

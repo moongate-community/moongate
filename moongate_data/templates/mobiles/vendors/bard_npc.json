@@ -1,0 +1,26 @@
+[
+  {
+    "type": "mobile",
+    "id": "bard_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Bard.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "brain": "melee_combat",
+    "skills": {
+      "Discordance": 820,
+      "Musicianship": 820,
+      "Peacemaking": 765,
+      "Provocation": 715,
+      "Archery": 520,
+      "Swords": 520
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "the bard"
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "snake_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Snake.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "body": "0x0034",
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 28,
+    "dexterity": 20,
+    "intelligence": 8,
+    "hits": 17,
+    "maxHits": 17,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 4,
+    "armorRating": 16,
+    "fame": 300,
+    "karma": -300,
+    "notoriety": "CanBeAttacked",
+    "brain": "melee_combat",
+    "skills": {
+      "Poisoning": 600,
+      "MagicResist": 175,
+      "Tactics": 266,
+      "Wrestling": 266
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "poison": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a snake"
+  }
+]

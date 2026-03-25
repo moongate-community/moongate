@@ -1,0 +1,37 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.skeleton",
+    "name": "Skeleton",
+    "category": "loot",
+    "description": "Creature-specific loot for Skeleton.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone_arms",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone_chest",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone_gloves",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone_legs",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bone_helm",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

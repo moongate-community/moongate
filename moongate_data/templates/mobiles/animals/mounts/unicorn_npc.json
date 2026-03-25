@@ -1,0 +1,59 @@
+[
+  {
+    "type": "mobile",
+    "id": "unicorn_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Unicorn.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "skinHue": 0,
+    "hairHue": 0,
+    "strength": 310,
+    "dexterity": 105,
+    "intelligence": 205,
+    "hits": 200,
+    "maxHits": 200,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "fame": 9000,
+    "karma": 9000,
+    "notoriety": "Innocent",
+    "brain": "melee_combat",
+    "skills": {
+      "EvalInt": 850,
+      "Magery": 701,
+      "Meditation": 550,
+      "MagicResist": 826,
+      "Tactics": 213,
+      "Wrestling": 865
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.low_scrolls",
+      "loot_pack.potions"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 32,
+      "cold": 32,
+      "poison": 60,
+      "energy": 32
+    },
+    "damageTypes": {
+      "physical": 75,
+      "energy": 25
+    },
+    "fixedEquipment": [],
+    "randomEquipment": [],
+    "title": "a unicorn"
+  }
+]
