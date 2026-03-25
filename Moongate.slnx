@@ -23,6 +23,7 @@
         <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj"/>
     </Folder>
     <Folder Name="/tools/">
+        <Project Path="tools/Moongate.TemplateValidator/Moongate.TemplateValidator.csproj"/>
         <Project Path="tools/Moongate.Stress/Moongate.Stress.csproj"/>
     </Folder>
 </Solution>
