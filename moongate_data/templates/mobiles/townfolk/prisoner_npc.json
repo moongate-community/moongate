@@ -17,7 +17,25 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "fancy_dress"
+          }
+        ]
       },
       {
         "name": "male",
@@ -26,7 +44,29 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "long_pants"
+          }
+        ]
       }
     ]
   }

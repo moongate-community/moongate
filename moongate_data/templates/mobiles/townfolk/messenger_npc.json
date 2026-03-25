@@ -20,7 +20,20 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "plain_dress"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots"
+          }
+        ]
       },
       {
         "name": "male",
@@ -29,7 +42,20 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "shoes"
+          }
+        ]
       }
     ]
   }

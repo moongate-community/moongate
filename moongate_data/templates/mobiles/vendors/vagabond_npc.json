@@ -24,7 +24,39 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "shoes"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "long_pants"
+          },
+          {
+            "layer": "Cloak",
+            "itemTemplateId": "cloak"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "skull_cap",
+                "weight": 1,
+                "hue": "hue(1801:1908)"
+              },
+              {
+                "itemTemplateId": "bandana",
+                "weight": 1,
+                "hue": "hue(1801:1908)"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "male",
@@ -33,7 +65,39 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "shoes"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "long_pants"
+          },
+          {
+            "layer": "Cloak",
+            "itemTemplateId": "cloak"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "skull_cap",
+                "weight": 1,
+                "hue": "hue(1801:1908)"
+              },
+              {
+                "itemTemplateId": "bandana",
+                "weight": 1,
+                "hue": "hue(1801:1908)"
+              }
+            ]
+          }
+        ]
       }
     ]
   }

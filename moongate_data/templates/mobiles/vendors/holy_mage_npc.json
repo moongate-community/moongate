@@ -27,18 +27,72 @@
         "weight": 1,
         "appearance": {
           "body": "0x0191",
-          "skinHue": "hue(1002:1058)"
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "0x047E"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "robe",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "thigh_boots",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "black_staff",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_gloves",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "gold_necklace",
+            "hue": "0x047E"
+          }
+        ]
       },
       {
         "name": "male",
         "weight": 1,
         "appearance": {
           "body": "0x0190",
-          "skinHue": "hue(1002:1058)"
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "0x047E"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "robe",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "thigh_boots",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "black_staff",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "plate_gloves",
+            "hue": "0x047E"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "plate_gorget",
+            "hue": "0x047E"
+          }
+        ]
       }
     ]
   }

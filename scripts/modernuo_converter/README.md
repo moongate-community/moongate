@@ -35,3 +35,4 @@ Generated templates need manual review for:
 - Sound IDs (estimated from `BaseSoundID` offset pattern)
 
 The converter now emits canonical mobile `variants[]` entries with `appearance` and spawn-time `equipment` for the supported ModernUO patterns it can parse automatically.
+This includes inherited `InitOutfit()` chains, gender-specific `if (Female)` branches, and simple wrapper calls such as `ApplyHue(new Robe(), 0x47E)` when the underlying item constructor can be resolved.

@@ -26,7 +26,90 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "plate_arms"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "plate_chest"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "plate_gloves"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "studded_gorget"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "plate_legs"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "plate_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "norse_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "close_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "helmet",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "MiddleTorso",
+            "items": [
+              {
+                "itemTemplateId": "body_sash",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "doublet",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "tunic",
+                "weight": 1,
+                "hue": "0x0482"
+              }
+            ]
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "metal_kite_shield"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "male",
@@ -35,7 +118,90 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "plate_arms"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "plate_chest"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "plate_gloves"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "studded_gorget"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "plate_legs"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "plate_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "norse_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "close_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "helmet",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "MiddleTorso",
+            "items": [
+              {
+                "itemTemplateId": "body_sash",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "doublet",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "tunic",
+                "weight": 1,
+                "hue": "0x0482"
+              }
+            ]
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "metal_kite_shield"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          }
+        ]
       }
     ]
   }

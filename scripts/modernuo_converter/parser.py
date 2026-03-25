@@ -7,7 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 
 CLASS_PATTERN = re.compile(
-    r"public\s+(?:partial\s+)?class\s+(\w+)\s*:\s*(\w+)"
+    r"public\s+(?:(?:abstract|partial)\s+)*class\s+(\w+)\s*:\s*(\w+)"
 )
 _PARENT_SOURCE_CACHE: Dict[Tuple[str, str], Optional[str]] = {}
 
@@ -98,6 +98,42 @@ def _extract_constructible_base_arguments(
         return None
 
     return content[open_paren_index + 1 : close_paren_index]
+
+
+def _extract_method_body(content: str, method_name: str) -> Optional[str]:
+    content = _strip_comments(content)
+    pattern = re.compile(
+        rf"(?:public|protected|private|internal)\s+(?:(?:override|virtual|sealed|new|static|partial)\s+)*[\w<>,\[\]?]+\s+{re.escape(method_name)}\s*\([^)]*\)\s*"
+    )
+    match = pattern.search(content)
+    if match is None:
+        return None
+
+    position = match.end()
+    while position < len(content) and content[position].isspace():
+        position += 1
+
+    if content.startswith("=>", position):
+        statement_start = position + 2
+        statement_end = content.find(";", statement_start)
+        if statement_end < 0:
+            return None
+
+        expression = content[statement_start:statement_end].strip()
+        if not expression:
+            return ""
+
+        return expression + ";"
+
+    if position >= len(content) or content[position] != "{":
+        return None
+
+    open_brace_index = position
+    close_brace_index = _find_matching_delimiter(content, open_brace_index, "{", "}")
+    if close_brace_index < 0:
+        return None
+
+    return content[open_brace_index + 1 : close_brace_index]
 
 
 def _extract_simple_variables(text: str) -> Dict[str, str]:
@@ -453,6 +489,25 @@ def _resolve_supported_item_hue_expression(
     return None
 
 
+def _extract_wrapped_item_hue_expression(
+    expression: str,
+    variables: Dict[str, str],
+) -> Optional[str]:
+    call_match = re.fullmatch(r"\w+\s*\((.*)\)", expression.strip(), re.S)
+    if call_match is None:
+        return None
+
+    for argument in _split_top_level_arguments(call_match.group(1)):
+        if re.search(r"\bnew\s+\w+", argument):
+            continue
+
+        hue_expression = _resolve_supported_item_hue_expression(argument, variables)
+        if hue_expression is not None:
+            return hue_expression
+
+    return None
+
+
 def _extract_new_expression_segment(text: str, start: int) -> Optional[Tuple[str, int]]:
     match = re.match(r"new\s+\w+", text[start:])
     if match is None:
@@ -570,6 +625,16 @@ def _parse_add_item_expression(
     option = _parse_new_expression(stripped, variables)
     if option:
         options.append(option)
+        return options
+
+    wrapped_expressions = _extract_new_expressions(stripped)
+    if len(wrapped_expressions) == 1:
+        wrapped_option = _parse_new_expression(wrapped_expressions[0], variables)
+        if wrapped_option is not None:
+            wrapped_hue = _extract_wrapped_item_hue_expression(stripped, variables)
+            if wrapped_hue is not None:
+                wrapped_option["hue"] = wrapped_hue
+            options.append(wrapped_option)
 
     return options
 
@@ -721,6 +786,154 @@ def _extract_gender_variants(
         )
 
     return variants, shared_body
+
+
+def _new_init_outfit_data() -> dict:
+    return {
+        "shared_equipment_groups": [],
+        "shared_appearance": {},
+        "variant_overrides": {},
+    }
+
+
+def _merge_init_outfit_data(target: dict, source: dict) -> None:
+    target["shared_equipment_groups"].extend(source.get("shared_equipment_groups", []))
+    target["shared_appearance"].update(source.get("shared_appearance", {}))
+
+    for name, override in source.get("variant_overrides", {}).items():
+        if not isinstance(name, str):
+            continue
+
+        target_override = target["variant_overrides"].setdefault(
+            name,
+            {"equipment_groups": [], "appearance": {}},
+        )
+        target_override["equipment_groups"].extend(override.get("equipment_groups", []))
+        target_override["appearance"].update(override.get("appearance", {}))
+
+
+def _extract_gender_conditional_blocks(statement: str) -> Optional[dict]:
+    stripped = statement.lstrip()
+    if not re.match(r"^if\b", stripped):
+        return None
+
+    start = len(statement) - len(stripped)
+    condition_open_index = statement.find("(", start)
+    if condition_open_index < 0:
+        return None
+
+    condition_close_index = _find_matching_delimiter(statement, condition_open_index, "(", ")")
+    if condition_close_index < 0:
+        return None
+
+    condition = re.sub(r"\s+", "", statement[condition_open_index + 1 : condition_close_index])
+    if condition in {"Female", "this.Female"}:
+        truthy_name = "female"
+        falsy_name = "male"
+    elif condition in {"!Female", "!this.Female"}:
+        truthy_name = "male"
+        falsy_name = "female"
+    else:
+        return None
+
+    if_open_brace = statement.find("{", condition_close_index)
+    if if_open_brace < 0:
+        return None
+
+    if_close_brace = _find_matching_delimiter(statement, if_open_brace, "{", "}")
+    if if_close_brace < 0:
+        return None
+
+    truthy_block = statement[if_open_brace + 1 : if_close_brace]
+    falsy_block = None
+
+    tail = statement[if_close_brace + 1 :]
+    else_match = re.search(r"\belse\b", tail)
+    if else_match is not None:
+        else_start = if_close_brace + 1 + else_match.start()
+        else_open_brace = statement.find("{", else_start)
+        if else_open_brace >= 0:
+            else_close_brace = _find_matching_delimiter(statement, else_open_brace, "{", "}")
+            if else_close_brace >= 0:
+                falsy_block = statement[else_open_brace + 1 : else_close_brace]
+
+    return {
+        truthy_name: truthy_block,
+        falsy_name: falsy_block,
+    }
+
+
+def _extract_parent_init_outfit_data(
+    filepath: str,
+    base_class: str,
+    visited: set[str],
+) -> dict:
+    parent_definition = _resolve_class_definition(filepath, base_class)
+    if parent_definition is None:
+        return _new_init_outfit_data()
+
+    parent_source, resolved_class_name, parent_base_class, parent_content = parent_definition
+    return _extract_init_outfit_data(
+        parent_source,
+        resolved_class_name,
+        parent_base_class,
+        parent_content,
+        visited,
+    )
+
+
+def _extract_init_outfit_data(
+    filepath: str,
+    class_name: str,
+    base_class: str,
+    class_content: str,
+    visited: set[str],
+) -> dict:
+    visit_key = f"{Path(filepath).resolve()}::{class_name}::InitOutfit"
+    if visit_key in visited:
+        return _new_init_outfit_data()
+
+    visited.add(visit_key)
+
+    method_body = _extract_method_body(class_content, "InitOutfit")
+    if method_body is None:
+        return _extract_parent_init_outfit_data(filepath, base_class, visited)
+
+    data = _new_init_outfit_data()
+    variables = _extract_simple_variables(method_body)
+
+    for statement in _extract_top_level_statements(method_body):
+        if re.fullmatch(r"\s*base\.InitOutfit\s*\(\s*\)\s*;", statement):
+            parent_data = _extract_parent_init_outfit_data(filepath, base_class, visited)
+            _merge_init_outfit_data(data, parent_data)
+            continue
+
+        gender_blocks = _extract_gender_conditional_blocks(statement)
+        if gender_blocks is not None:
+            for variant_name, block in gender_blocks.items():
+                if not block:
+                    continue
+
+                block_variables = dict(variables)
+                block_variables.update(_extract_simple_variables(block))
+                override = data["variant_overrides"].setdefault(
+                    variant_name,
+                    {"equipment_groups": [], "appearance": {}},
+                )
+                override["equipment_groups"].extend(
+                    _extract_add_item_groups(block, block_variables)
+                )
+                override["appearance"].update(
+                    _extract_appearance_assignments(block, block_variables)
+                )
+            continue
+
+        data["shared_equipment_groups"].extend(_extract_add_item_groups(statement, variables))
+        data["shared_appearance"].update(
+            _extract_appearance_assignments(statement, variables)
+        )
+
+    return data
 
 
 def _build_base_class_variants(base_class: str) -> List[dict]:
@@ -1102,6 +1315,38 @@ def _parse_class_definition(
         default_variants = _build_base_class_variants(base_class)
         if default_variants:
             data["variants"] = default_variants
+
+    init_outfit_data = _extract_init_outfit_data(
+        filepath,
+        class_name,
+        base_class,
+        class_content,
+        set(),
+    )
+
+    if init_outfit_data["shared_equipment_groups"]:
+        data["shared_equipment_groups"].extend(init_outfit_data["shared_equipment_groups"])
+
+    if init_outfit_data["shared_appearance"]:
+        data.update(init_outfit_data["shared_appearance"])
+
+    variants_data = data.get("variants")
+    if variants_data:
+        variants_by_name = {}
+        for variant in variants_data:
+            variant_name = variant.get("name")
+            if isinstance(variant_name, str):
+                variants_by_name[variant_name] = variant
+
+        for variant_name, override in init_outfit_data["variant_overrides"].items():
+            variant = variants_by_name.get(variant_name)
+            if variant is None:
+                continue
+
+            variant.setdefault("equipment_groups", [])
+            variant["equipment_groups"].extend(override.get("equipment_groups", []))
+            variant.setdefault("appearance", {})
+            variant["appearance"].update(override.get("appearance", {}))
 
     return data
 

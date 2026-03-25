@@ -24,7 +24,16 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "monk_robe"
+          }
+        ]
       },
       {
         "name": "male",
@@ -33,7 +42,16 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "monk_robe"
+          }
+        ]
       }
     ]
   }
