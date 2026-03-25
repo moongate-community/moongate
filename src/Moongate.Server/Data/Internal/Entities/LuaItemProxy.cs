@@ -55,6 +55,18 @@ public sealed class LuaItemProxy
 
     public string ScriptId => _item.ScriptId;
 
+    public string WeaponSkill => _item.WeaponSkill?.ToString() ?? string.Empty;
+
+    public int AmmoItemId => _item.AmmoItemId ?? 0;
+
+    public int RangeMin => _item.CombatStats?.RangeMin ?? 0;
+
+    public int RangeMax => _item.CombatStats?.RangeMax ?? 0;
+
+    public bool IsQuiver => _item.IsQuiver;
+
+    public int EquippedLayer => _item.EquippedLayer is null ? -1 : (int)_item.EquippedLayer.Value;
+
     public uint ParentContainerId => (uint)_item.ParentContainerId;
 
     public int ContainerX => _item.ContainerPosition.X;

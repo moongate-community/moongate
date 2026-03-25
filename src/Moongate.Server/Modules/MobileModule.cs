@@ -1,11 +1,14 @@
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Descriptors;
+using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Internal.Interaction;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.EvenLoop;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -14,6 +17,7 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 
 namespace Moongate.Server.Modules;
@@ -26,6 +30,7 @@ namespace Moongate.Server.Modules;
 public sealed class MobileModule
 {
     private static bool _isLuaMobileProxyTypeRegistered;
+    private static bool _isLuaItemProxyTypeRegistered;
     private readonly ICharacterService _characterService;
     private readonly ISpeechService _speechService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -36,6 +41,9 @@ public sealed class MobileModule
     private readonly IBackgroundJobService? _backgroundJobService;
     private readonly IMobileService? _mobileService;
     private readonly IOutgoingPacketQueue? _outgoingPacketQueue;
+    private readonly IItemService? _itemService;
+    private readonly ISkillGainService? _skillGainService;
+    private readonly Func<double> _skillCheckRollProvider;
 
     public MobileModule(
         ICharacterService characterService,
@@ -47,7 +55,10 @@ public sealed class MobileModule
         IGameEventBusService? gameEventBusService = null,
         IBackgroundJobService? backgroundJobService = null,
         IMobileService? mobileService = null,
-        IOutgoingPacketQueue? outgoingPacketQueue = null
+        IOutgoingPacketQueue? outgoingPacketQueue = null,
+        IItemService? itemService = null,
+        ISkillGainService? skillGainService = null,
+        Func<double>? skillCheckRollProvider = null
     )
     {
         _characterService = characterService;
@@ -60,6 +71,9 @@ public sealed class MobileModule
         _backgroundJobService = backgroundJobService;
         _mobileService = mobileService;
         _outgoingPacketQueue = outgoingPacketQueue;
+        _itemService = itemService;
+        _skillGainService = skillGainService;
+        _skillCheckRollProvider = skillCheckRollProvider ?? Random.Shared.NextDouble;
     }
 
     [ScriptFunction("dismount", "Attempts to dismount the rider from the current mount.")]
@@ -88,23 +102,168 @@ public sealed class MobileModule
             return null;
         }
 
-        RegisterLuaTypeIfNeeded();
-        var mobileId = (Serial)characterId;
-        var mobile = TryResolveRuntimeMobile(mobileId) ??
-                     _characterService.GetCharacterAsync(mobileId).GetAwaiter().GetResult();
+        return CreateLuaMobileProxy(ResolveMobile((Serial)characterId));
+    }
 
-        return mobile is null
-                   ? null
-                   : new(
-                       mobile,
-                       _speechService,
-                       _gameNetworkSessionService,
-                       _spatialWorldService,
-                       _movementValidationService,
-                       _pathfindingService,
-                       _gameEventBusService,
-                       _backgroundJobService
-                   );
+    [ScriptFunction("get_backpack", "Gets the backpack item reference for a character id, or nil when unavailable.")]
+    public LuaItemProxy? GetBackpack(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        return CreateLuaItemProxy(TryResolveBackpack(mobile));
+    }
+
+    [ScriptFunction("get_skill", "Gets the displayed base skill value for a character id.")]
+    public double GetSkill(uint characterId, string skillName)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null || !TryResolveSkillName(skillName, out var resolvedSkill))
+        {
+            return 0;
+        }
+
+        var skill = mobile.GetSkill(resolvedSkill);
+
+        return skill is null ? 0 : skill.Base / 10.0;
+    }
+
+    [ScriptFunction("get_weapon", "Gets the equipped weapon reference for a character id, or nil when unavailable.")]
+    public LuaItemProxy? GetWeapon(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        return CreateLuaItemProxy(TryResolveWeapon(mobile));
+    }
+
+    [ScriptFunction("check_skill", "Checks a skill against a min/max range and applies gain rules.")]
+    public bool CheckSkill(uint characterId, string skillName, double minSkill, double maxSkill, uint targetId = 0)
+    {
+        if (_skillGainService is null)
+        {
+            return false;
+        }
+
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null || !TryResolveSkillName(skillName, out var resolvedSkill))
+        {
+            return false;
+        }
+
+        var skill = mobile.GetSkill(resolvedSkill);
+
+        if (skill is null)
+        {
+            return false;
+        }
+
+        var currentValue = skill.Value / 10.0;
+
+        if (currentValue < minSkill)
+        {
+            return false;
+        }
+
+        if (currentValue >= maxSkill || minSkill >= maxSkill)
+        {
+            return true;
+        }
+
+        var successChance = Math.Clamp((currentValue - minSkill) / (maxSkill - minSkill), 0.0, 1.0);
+        var wasSuccessful = successChance >= _skillCheckRollProvider();
+        _ = _skillGainService.TryGain(
+            mobile,
+            resolvedSkill,
+            successChance,
+            wasSuccessful,
+            new SkillGainContext(mobile.Location, targetId == 0 ? null : (Serial)targetId)
+        );
+
+        return wasSuccessful;
+    }
+
+    [ScriptFunction("consume_item", "Consumes a matching item id from equipped quivers first, then backpack.")]
+    public bool ConsumeItem(uint characterId, int itemId, int amount = 1)
+    {
+        if (_itemService is null || characterId == 0 || itemId <= 0 || amount <= 0)
+        {
+            return false;
+        }
+
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        var sources = GetConsumableSources(mobile);
+
+        if (CountMatchingItems(sources, itemId) < amount)
+        {
+            return false;
+        }
+
+        for (var i = 0; i < amount; i++)
+        {
+            if (!TryConsumeFromSources(sources, itemId))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    [ScriptFunction("add_item_to_backpack", "Spawns an item template and places it in the target backpack.")]
+    public LuaItemProxy? AddItemToBackpack(uint characterId, string itemTemplateId, int amount = 1)
+    {
+        if (_itemService is null || characterId == 0 || string.IsNullOrWhiteSpace(itemTemplateId) || amount <= 0)
+        {
+            return null;
+        }
+
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        var backpackId = ResolveBackpackId(mobile);
+
+        if (backpackId == Serial.Zero)
+        {
+            return null;
+        }
+
+        var item = _itemService.SpawnFromTemplateAsync(itemTemplateId.Trim()).GetAwaiter().GetResult();
+
+        if (amount > 1)
+        {
+            if (!item.IsStackable)
+            {
+                return null;
+            }
+
+            item.Amount = amount;
+            _itemService.UpsertItemAsync(item).GetAwaiter().GetResult();
+        }
+
+        var moved = _itemService.MoveItemToContainerAsync(item.Id, backpackId, new(1, 1)).GetAwaiter().GetResult();
+
+        return moved ? CreateLuaItemProxy(item) : null;
     }
 
     [ScriptFunction("spawn", "Spawns a mobile template at world position { x, y, z, map_id }.")]
@@ -195,12 +354,27 @@ public sealed class MobileModule
     {
         if (_isLuaMobileProxyTypeRegistered)
         {
+            RegisterLuaItemTypeIfNeeded();
+
             return;
         }
 
         var type = typeof(LuaMobileProxy);
         UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaMobileProxyTypeRegistered = true;
+        RegisterLuaItemTypeIfNeeded();
+    }
+
+    private static void RegisterLuaItemTypeIfNeeded()
+    {
+        if (_isLuaItemProxyTypeRegistered)
+        {
+            return;
+        }
+
+        var type = typeof(LuaItemProxy);
+        UserData.RegisterType(type, new GenericUserDataDescriptor(type));
+        _isLuaItemProxyTypeRegistered = true;
     }
 
     private UOMobileEntity? ResolveRiderForMount(Serial riderId)
@@ -212,6 +386,216 @@ public sealed class MobileModule
 
         return TryResolveRuntimeMobile(riderId) ??
                _mobileService?.GetAsync(riderId).GetAwaiter().GetResult();
+    }
+
+    private LuaItemProxy? CreateLuaItemProxy(UOItemEntity? item)
+    {
+        if (item is null)
+        {
+            return null;
+        }
+
+        RegisterLuaTypeIfNeeded();
+
+        return new(item, _itemService, _spatialWorldService, _speechService);
+    }
+
+    private LuaMobileProxy? CreateLuaMobileProxy(UOMobileEntity? mobile)
+    {
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        RegisterLuaTypeIfNeeded();
+
+        return new(
+            mobile,
+            _speechService,
+            _gameNetworkSessionService,
+            _spatialWorldService,
+            _movementValidationService,
+            _pathfindingService,
+            _gameEventBusService,
+            _backgroundJobService
+        );
+    }
+
+    private static int CountMatchingItems(IEnumerable<UOItemEntity> containers, int itemId)
+        => containers.Sum(container => CountMatchingItems(container, itemId));
+
+    private static int CountMatchingItems(UOItemEntity container, int itemId)
+    {
+        var count = 0;
+
+        foreach (var child in container.Items)
+        {
+            if (child.ItemId == itemId)
+            {
+                count += Math.Max(0, child.Amount);
+            }
+
+            if (child.Items.Count > 0)
+            {
+                count += CountMatchingItems(child, itemId);
+            }
+        }
+
+        return count;
+    }
+
+    private IEnumerable<UOItemEntity> GetConsumableSources(UOMobileEntity mobile)
+    {
+        var quiver = mobile.GetEquippedItemsRuntime().FirstOrDefault(static item => item.IsQuiver);
+
+        if (quiver is not null)
+        {
+            yield return quiver;
+        }
+
+        var backpack = TryResolveBackpack(mobile);
+
+        if (backpack is not null)
+        {
+            yield return backpack;
+        }
+    }
+
+    private static Serial ResolveBackpackId(UOMobileEntity mobile)
+    {
+        if (mobile.BackpackId != Serial.Zero)
+        {
+            return mobile.BackpackId;
+        }
+
+        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
+                   ? equippedBackpackId
+                   : Serial.Zero;
+    }
+
+    private UOMobileEntity? ResolveMobile(Serial mobileId)
+    {
+        if (mobileId == Serial.Zero)
+        {
+            return null;
+        }
+
+        if (_gameNetworkSessionService.TryGetByCharacterId(mobileId, out var session) && session.Character is not null)
+        {
+            return session.Character;
+        }
+
+        return TryResolveRuntimeMobile(mobileId) ??
+               _mobileService?.GetAsync(mobileId).GetAwaiter().GetResult() ??
+               _characterService.GetCharacterAsync(mobileId).GetAwaiter().GetResult();
+    }
+
+    private static UOItemEntity? TryResolveBackpack(UOMobileEntity mobile)
+    {
+        var backpackId = ResolveBackpackId(mobile);
+
+        return mobile.GetEquippedItemsRuntime()
+                     .FirstOrDefault(item => item.Id == backpackId || item.EquippedLayer == ItemLayerType.Backpack);
+    }
+
+    private static UOItemEntity? TryResolveWeapon(UOMobileEntity mobile)
+        => mobile.GetEquippedItemsRuntime()
+                 .FirstOrDefault(
+                     item => item.EquippedLayer is ItemLayerType.OneHanded or ItemLayerType.TwoHanded &&
+                             (item.WeaponSkill is not null || item.CombatStats is not null)
+                 );
+
+    private bool TryConsumeFromSources(IEnumerable<UOItemEntity> sources, int itemId)
+    {
+        foreach (var source in sources)
+        {
+            if (!TryConsumeItemRecursive(source, itemId, out var changedStack, out var deletedStack))
+            {
+                continue;
+            }
+
+            if (changedStack is not null)
+            {
+                _itemService!.UpsertItemAsync(changedStack).GetAwaiter().GetResult();
+            }
+
+            if (deletedStack is not null)
+            {
+                _ = _itemService!.DeleteItemAsync(deletedStack.Id).GetAwaiter().GetResult();
+            }
+
+            _itemService!.UpsertItemAsync(source).GetAwaiter().GetResult();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryConsumeItemRecursive(
+        UOItemEntity container,
+        int itemId,
+        out UOItemEntity? changedStack,
+        out UOItemEntity? deletedStack
+    )
+    {
+        changedStack = null;
+        deletedStack = null;
+
+        for (var index = container.Items.Count - 1; index >= 0; index--)
+        {
+            var child = container.Items[index];
+
+            if (child.ItemId == itemId)
+            {
+                child.Amount--;
+
+                if (child.Amount <= 0)
+                {
+                    container.RemoveItem(child.Id);
+                    deletedStack = child;
+                }
+                else
+                {
+                    changedStack = child;
+                }
+
+                return true;
+            }
+
+            if (TryConsumeItemRecursive(child, itemId, out changedStack, out deletedStack))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveSkillName(string skillName, out UOSkillName resolvedSkill)
+    {
+        resolvedSkill = default;
+
+        if (string.IsNullOrWhiteSpace(skillName))
+        {
+            return false;
+        }
+
+        var normalized = new string(skillName.Where(char.IsLetterOrDigit).ToArray());
+
+        foreach (var candidate in Enum.GetValues<UOSkillName>())
+        {
+            var candidateName = new string(candidate.ToString().Where(char.IsLetterOrDigit).ToArray());
+
+            if (string.Equals(candidateName, normalized, StringComparison.OrdinalIgnoreCase))
+            {
+                resolvedSkill = candidate;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryGetRequiredInt(Table table, string key, out int value)

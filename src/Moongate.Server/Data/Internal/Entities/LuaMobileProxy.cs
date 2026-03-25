@@ -70,6 +70,8 @@ public sealed class LuaMobileProxy
 
     public bool IsMountable => Mobile.IsMountable;
 
+    public bool IsMounted => Mobile.IsMounted;
+
     public void CastSpell(int spellId)
 
         // TODO: Implement spell casting primitive for brain point 5.

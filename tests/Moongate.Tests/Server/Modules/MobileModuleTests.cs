@@ -4,23 +4,80 @@ using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Data.Items;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Speech;
+using Moongate.Server.Services.Interaction;
 using Moongate.Server.Modules;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
+using Stat = Moongate.UO.Data.Types.Stat;
 
 namespace Moongate.Tests.Server.Modules;
 
 public class MobileModuleTests
 {
+    [SetUp]
+    public void SetUp()
+        => SkillInfo.Table =
+        [
+            new(
+                (int)UOSkillName.Archery,
+                "Archery",
+                0,
+                100,
+                0,
+                "Archer",
+                0,
+                0,
+                0,
+                1,
+                "Archery",
+                Stat.Dexterity,
+                Stat.Strength
+            ),
+            new(
+                (int)UOSkillName.Stealing,
+                "Stealing",
+                0,
+                100,
+                0,
+                "Thief",
+                0,
+                0,
+                0,
+                1,
+                "Stealing",
+                Stat.Dexterity,
+                Stat.Intelligence
+            ),
+            new(
+                (int)UOSkillName.Swords,
+                "Swords",
+                100,
+                0,
+                0,
+                "Swordsman",
+                0,
+                0,
+                0,
+                1,
+                "Swords",
+                Stat.Strength,
+                Stat.Dexterity
+            )
+        ];
+
     private sealed class MobileModuleTestSpeechService : ISpeechService
     {
         public Task<int> BroadcastFromServerAsync(
@@ -294,6 +351,100 @@ public class MobileModuleTests
             => Task.FromResult((false, (UOMobileEntity?)null));
     }
 
+    private sealed class MobileModuleTestItemService : IItemService
+    {
+        public UOItemEntity? SpawnedItem { get; set; }
+
+        public UOItemEntity? LastUpsertedItem { get; private set; }
+
+        public Serial LastDeletedItemId { get; private set; } = Serial.Zero;
+
+        public Serial LastMoveItemId { get; private set; } = Serial.Zero;
+
+        public Serial LastContainerId { get; private set; } = Serial.Zero;
+
+        public Point2D LastContainerPosition { get; private set; } = Point2D.Zero;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => Task.CompletedTask;
+
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => item;
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => Task.FromResult<UOItemEntity?>(null);
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => Task.FromResult(item.Id);
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+        {
+            LastDeletedItemId = itemId;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(
+            Serial itemId,
+            Point3D location,
+            int mapId,
+            long sessionId = 0
+        )
+            => Task.FromResult<DropItemToGroundResult?>(null);
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+            => Task.FromResult(true);
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+            => Task.FromResult(new List<UOItemEntity>());
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+            => Task.FromResult(SpawnedItem?.Id == itemId ? SpawnedItem : null);
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => Task.FromResult(new List<UOItemEntity>());
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
+        {
+            LastMoveItemId = itemId;
+            LastContainerId = containerId;
+            LastContainerPosition = position;
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => Task.FromResult(true);
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => Task.FromResult(
+                SpawnedItem ??=
+                    new UOItemEntity
+                    {
+                        Id = (Serial)0x800,
+                        Name = itemTemplateId,
+                        ItemId = 0x0F3F,
+                        Amount = 1,
+                        IsStackable = true,
+                        MapId = 0,
+                        Location = Point3D.Zero
+                    }
+            );
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((SpawnedItem?.Id == itemId, SpawnedItem));
+
+        public Task UpsertItemAsync(UOItemEntity item)
+        {
+            LastUpsertedItem = item;
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => Task.CompletedTask;
+    }
+
     [Test]
     public void Dismount_ShouldDelegateToMobileService()
     {
@@ -371,6 +522,32 @@ public class MobileModuleTests
     }
 
     [Test]
+    public void Get_WhenCharacterIsMounted_ShouldExposeMountedState()
+    {
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = new()
+            {
+                Id = (Serial)0x201,
+                Name = "Mounted",
+                MapId = 1,
+                Location = new(100, 200, 0),
+                MountedMobileId = (Serial)0x555
+            }
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var reference = module.Get(0x201);
+
+        Assert.That(reference!.IsMounted, Is.True);
+    }
+
+    [Test]
     public void Spawn_WhenPositionIsValid_ShouldDelegateToMobileService()
     {
         var characterService = new MobileModuleTestCharacterService();
@@ -400,6 +577,299 @@ public class MobileModuleTests
                 Assert.That(mobileService.LastSpawnTemplateId, Is.EqualTo("ethereal_horse_mount"));
                 Assert.That(mobileService.LastSpawnLocation, Is.EqualTo(new Point3D(100, 200, 5)));
                 Assert.That(mobileService.LastSpawnMapId, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void GetSkill_WhenCharacterHasSkill_ShouldReturnDisplayedSkillValue()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x210,
+            Name = "Skilled",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mobile.InitializeSkills();
+        mobile.SetSkill(UOSkillName.Archery, 625);
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var skillValue = module.GetSkill(0x210, "archery");
+
+        Assert.That(skillValue, Is.EqualTo(62.5).Within(0.001));
+    }
+
+    [Test]
+    public void CheckSkill_WhenSkillIsWithinRange_ShouldReturnSuccessAndApplyGain()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x211,
+            Name = "Archer",
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        mobile.InitializeSkills();
+        mobile.SetSkill(UOSkillName.Archery, 500);
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        ISkillGainService skillGainService = new SkillGainService(() => 0.0);
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            skillGainService: skillGainService,
+            skillCheckRollProvider: () => 0.0
+        );
+
+        var succeeded = module.CheckSkill(0x211, "archery", 0.0, 100.0, 0x999);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(succeeded, Is.True);
+                Assert.That(mobile.GetSkill(UOSkillName.Archery)!.Base, Is.EqualTo(501));
+            }
+        );
+    }
+
+    [Test]
+    public void GetWeapon_WhenCharacterHasEquippedWeapon_ShouldReturnWeaponProxy()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x212,
+            Name = "Warrior",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var sword = new UOItemEntity
+        {
+            Id = (Serial)0x500,
+            Name = "Longsword",
+            ItemId = 0x0F61,
+            WeaponSkill = UOSkillName.Swords,
+            MapId = 1,
+            Location = mobile.Location,
+            CombatStats = new()
+            {
+                DamageMin = 10,
+                DamageMax = 15,
+                RangeMin = 0,
+                RangeMax = 1
+            }
+        };
+        mobile.AddEquippedItem(ItemLayerType.OneHanded, sword);
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var weapon = module.GetWeapon(0x212);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(weapon, Is.Not.Null);
+                Assert.That(weapon!.WeaponSkill, Is.EqualTo("Swords"));
+                Assert.That(weapon.RangeMax, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void GetBackpack_WhenCharacterHasBackpack_ShouldReturnBackpackProxy()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x213,
+            Name = "Packy",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x600,
+            Name = "Backpack",
+            ItemId = 0x0E75,
+            MapId = 1,
+            Location = mobile.Location
+        };
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.BackpackId = backpack.Id;
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var resolvedBackpack = module.GetBackpack(0x213);
+
+        Assert.That(resolvedBackpack!.Serial, Is.EqualTo(0x600));
+    }
+
+    [Test]
+    public void ConsumeItem_WhenMatchingItemExistsInQuiver_ShouldConsumeQuiverBeforeBackpack()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x214,
+            Name = "Ranger",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x610,
+            Name = "Backpack",
+            ItemId = 0x0E75,
+            MapId = 1,
+            Location = mobile.Location
+        };
+        var quiver = new UOItemEntity
+        {
+            Id = (Serial)0x611,
+            Name = "Quiver",
+            ItemId = 0x1B02,
+            MapId = 1,
+            Location = mobile.Location,
+            IsQuiver = true
+        };
+        var quiverArrow = new UOItemEntity
+        {
+            Id = (Serial)0x612,
+            Name = "Arrow",
+            ItemId = 0x0F3F,
+            Amount = 3,
+            IsStackable = true,
+            MapId = 1,
+            Location = mobile.Location
+        };
+        var backpackArrow = new UOItemEntity
+        {
+            Id = (Serial)0x613,
+            Name = "Arrow",
+            ItemId = 0x0F3F,
+            Amount = 8,
+            IsStackable = true,
+            MapId = 1,
+            Location = mobile.Location
+        };
+        quiver.AddItem(quiverArrow, new(1, 1));
+        backpack.AddItem(backpackArrow, new(1, 1));
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.AddEquippedItem(ItemLayerType.Cloak, quiver);
+        mobile.BackpackId = backpack.Id;
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var itemService = new MobileModuleTestItemService();
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            itemService: itemService
+        );
+
+        var consumed = module.ConsumeItem(0x214, 0x0F3F, 1);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(consumed, Is.True);
+                Assert.That(quiverArrow.Amount, Is.EqualTo(2));
+                Assert.That(backpackArrow.Amount, Is.EqualTo(8));
+            }
+        );
+    }
+
+    [Test]
+    public void AddItemToBackpack_WhenCharacterHasBackpack_ShouldSpawnAndMoveItem()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x215,
+            Name = "Gatherer",
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x620,
+            Name = "Backpack",
+            ItemId = 0x0E75,
+            MapId = 1,
+            Location = mobile.Location
+        };
+        mobile.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        mobile.BackpackId = backpack.Id;
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var itemService = new MobileModuleTestItemService
+        {
+            SpawnedItem = new()
+            {
+                Id = (Serial)0x621,
+                Name = "Arrow",
+                ItemId = 0x0F3F,
+                Amount = 1,
+                IsStackable = true,
+                MapId = 1,
+                Location = Point3D.Zero
+            }
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService(),
+            itemService: itemService
+        );
+
+        var addedItem = module.AddItemToBackpack(0x215, "arrow", 5);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(addedItem, Is.Not.Null);
+                Assert.That(itemService.LastMoveItemId, Is.EqualTo((Serial)0x621));
+                Assert.That(itemService.LastContainerId, Is.EqualTo((Serial)0x620));
+                Assert.That(itemService.SpawnedItem!.Amount, Is.EqualTo(5));
             }
         );
     }

@@ -1076,6 +1076,32 @@ Hook aliases:
 - `single_click` -> `on_click`, `OnClick`, `on_single_click`, `OnSingleClick`
 - `double_click` -> `on_double_click`, `OnDoubleClick`
 
+### Mobile Helper APIs For Item Scripts
+
+Item scripts can use the `mobile` module to bridge skill checks and inventory operations without moving item behavior into C#:
+
+```lua
+local mob = mobile.get(character_id)
+local weapon = mobile.get_weapon(character_id)
+local backpack = mobile.get_backpack(character_id)
+local displayed = mobile.get_skill(character_id, "archery")
+local success = mobile.check_skill(character_id, "archery", -25.0, 25.0, target_serial)
+local consumed = mobile.consume_item(character_id, 0x0F3F, 1)
+local added = mobile.add_item_to_backpack(character_id, "arrow", 5)
+```
+
+Available helpers:
+
+- `mobile.get(serial)` -> returns a mobile proxy or `nil`
+- `mobile.get_skill(serial, skill_name)` -> displayed base skill value as `number`
+- `mobile.check_skill(serial, skill_name, min_skill, max_skill, target_serial?)` -> runs a skill check and applies normal gain rules
+- `mobile.get_weapon(serial)` -> equipped weapon proxy or `nil`
+- `mobile.get_backpack(serial)` -> backpack proxy or `nil`
+- `mobile.consume_item(serial, item_id, amount?)` -> consumes from quivers first, then backpack
+- `mobile.add_item_to_backpack(serial, template_id, amount?)` -> spawns a template item and moves it into the backpack
+
+These helpers are used by training-style item scripts such as melee dummies, archery buttes, and pickpocket dips.
+
 ### Text API
 
 `text.render(...)` loads a Scriban template from `moongate_data/scripts/texts/**` and returns the rendered string.
