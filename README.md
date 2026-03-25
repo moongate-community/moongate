@@ -39,7 +39,8 @@ I am actively looking for contributors and reviewers.
   the GitHub release is created.
 - NuGet packages are published by the `NuGet Publish` workflow.
 - Configure the repository secret `NUGET_KEY` to enable publishing to `nuget.org`.
-- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`.
+- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`, and
+  `Moongate.TemplateValidator`, which provides `moongate-template`.
 
 ## Quick Start
 
@@ -62,9 +63,34 @@ Run this every time you change shard template data under your Moongate root, esp
 `~/moongate/templates/mobiles`, `~/moongate/templates/loot`, `~/moongate/templates/factions`,
 `~/moongate/templates/sell_profiles`, or `~/moongate/data/containers`.
 
+Install the validator tool from `nuget.org`:
+
+```bash
+dotnet tool install --global Moongate.TemplateValidator
+```
+
+Run the validator:
+
+```bash
+moongate-template validate --root-directory ~/moongate
+```
+
+Update an existing global installation:
+
+```bash
+dotnet tool update --global Moongate.TemplateValidator
+```
+
+If you are developing inside this repository and want to install from a locally packed artifact instead:
+
 ```bash
 dotnet pack tools/Moongate.TemplateValidator/Moongate.TemplateValidator.csproj -o ./tools/Moongate.TemplateValidator/nupkg
 dotnet tool install --tool-path ./artifacts/template-tool --add-source ./tools/Moongate.TemplateValidator/nupkg Moongate.TemplateValidator
+```
+
+Run the local installation:
+
+```bash
 ./artifacts/template-tool/moongate-template validate --root-directory ~/moongate
 ```
 

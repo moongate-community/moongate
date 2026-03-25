@@ -19,6 +19,19 @@ moongate-template validate --root-directory ~/moongate
 
 `--root-directory` must point at the shard root, not directly at `templates/`. The validator reads both `templates/**` and `data/**`.
 
+## Install From NuGet
+
+```bash
+dotnet tool install --global Moongate.TemplateValidator
+moongate-template validate --root-directory ~/moongate
+```
+
+Update an existing global installation:
+
+```bash
+dotnet tool update --global Moongate.TemplateValidator
+```
+
 ## Install From Local Package
 
 ```bash

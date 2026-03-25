@@ -11,6 +11,13 @@ moongate-template validate --root-directory ~/moongate
 Run the validator after changing shard templates in your Moongate root, especially `templates/items`, `templates/mobiles`,
 `templates/loot`, `templates/factions`, `templates/sell_profiles`, and `data/containers`.
 
+## Install From NuGet
+
+```bash
+dotnet tool install --global Moongate.TemplateValidator
+moongate-template validate --root-directory ~/moongate
+```
+
 ## Install From Local Package
 
 ```bash

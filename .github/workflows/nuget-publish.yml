@@ -57,6 +57,7 @@ jobs:
             "src/Moongate.Plugin.Abstractions/Moongate.Plugin.Abstractions.csproj"
             "src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj"
             "src/Moongate.Templates/Moongate.Templates.csproj"
+            "tools/Moongate.TemplateValidator/Moongate.TemplateValidator.csproj"
           )
 
           for project in "${packages[@]}"; do
@@ -69,8 +70,8 @@ jobs:
         run: |
           set -euo pipefail
 
-          mapfile -t packages < <(find src -path '*/bin/Release/*.nupkg' ! -name '*.snupkg' | sort)
-          mapfile -t symbols < <(find src -path '*/bin/Release/*.snupkg' | sort)
+          mapfile -t packages < <(find src tools -path '*/bin/Release/*.nupkg' ! -name '*.snupkg' | sort)
+          mapfile -t symbols < <(find src tools -path '*/bin/Release/*.snupkg' | sort)
 
           for package in "${packages[@]}"; do
             echo "Publishing ${package}"
