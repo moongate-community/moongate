@@ -607,14 +607,20 @@ def map_pack_items_to_loot(parsed: dict) -> Optional[dict]:
 
     entries = []
     for item in parsed["pack_items"]:
-        item_snake = _pascal_to_snake(item["item"])
-        entries.append(
-            {
-                "itemTemplateId": item_snake,
+        item_name = item["item"]
+
+        if item_name == "Reagent":
+            entry = {"itemTag": "reagents", "chance": 1.0, "amount": item["amount"]}
+        elif item_name == "RandomTalisman":
+            entry = {"itemTag": "talismans", "chance": 1.0, "amount": item["amount"]}
+        else:
+            entry = {
+                "itemTemplateId": _pascal_to_snake(item_name),
                 "chance": 1.0,
                 "amount": item["amount"],
             }
-        )
+
+        entries.append(entry)
 
     return {
         "type": "loot",

@@ -8,7 +8,7 @@
     "mode": "additive",
     "entries": [
       {
-        "itemTemplateId": "reagent",
+        "itemTag": "reagents",
         "chance": 1.0,
         "amount": 3
       }

@@ -21,8 +21,7 @@
     "brain": "melee_combat",
     "lootTables": [
       "loot_pack.filthy_rich",
-      "loot_pack.filthy_rich",
-      "loot_pack.parrot"
+      "loot_pack.filthy_rich"
     ],
     "sounds": {
       "Idle": 0,

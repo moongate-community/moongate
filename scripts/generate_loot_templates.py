@@ -11,6 +11,7 @@ from typing import Dict, Iterable, List, Sequence
 try:
     from scripts.modernuo_loot_tooling import (
         build_loot_id,
+        ensure_loot_support_items,
         build_output_paths,
         extract_balanced_block,
         load_item_template_index,
@@ -18,11 +19,13 @@ try:
         parse_dice_range,
         resolve_item_reference,
         split_top_level_arguments,
+        strip_comments,
         write_json_array,
     )
 except ModuleNotFoundError:  # pragma: no cover - direct CLI execution
     from modernuo_loot_tooling import (
         build_loot_id,
+        ensure_loot_support_items,
         build_output_paths,
         extract_balanced_block,
         load_item_template_index,
@@ -30,6 +33,7 @@ except ModuleNotFoundError:  # pragma: no cover - direct CLI execution
         parse_dice_range,
         resolve_item_reference,
         split_top_level_arguments,
+        strip_comments,
         write_json_array,
     )
 
@@ -41,6 +45,15 @@ CREATURE_CLASS_PATTERN = re.compile(r"public partial class\s+(\w+)\s*:\s*BaseCre
 GENERATE_LOOT_PATTERN = re.compile(r"public override void GenerateLoot\(\)\s*\{", re.MULTILINE)
 FILLABLE_CONTENT_PATTERN = re.compile(
     r"private static readonly FillableContent\s+(\w+)\s*=\s*new\(",
+    re.MULTILINE,
+)
+PACK_ITEM_CONSTRUCTOR_PATTERN = re.compile(r"PackItem\s*\(\s*new\s+(\w+)\s*\(\s*(\d+)?\s*\)\s*\);", re.MULTILINE)
+PACK_ITEM_SEED_FACTORY_PATTERN = re.compile(
+    r"PackItem\s*\(\s*Seed\.(?:RandomPeculiarSeed|RandomBonsaiSeed)\s*\([^)]*\)\s*\);",
+    re.MULTILINE,
+)
+PACK_ITEM_RANDOM_REAGENT_PATTERN = re.compile(
+    r"PackItem\s*\(\s*Loot\.Random(?:Possible|Necromancy)?Reagent\s*\(\s*\)\s*\);",
     re.MULTILINE,
 )
 
@@ -76,6 +89,7 @@ def try_resolve_reference(
 
 
 def parse_loot_pack_arrays(text: str) -> Dict[str, List[Dict[str, object]]]:
+    text = strip_comments(text)
     arrays: Dict[str, List[Dict[str, object]]] = {}
 
     for match in LOOTPACK_ARRAY_PATTERN.finditer(text):
@@ -91,6 +105,7 @@ def parse_loot_pack_arrays(text: str) -> Dict[str, List[Dict[str, object]]]:
 
 
 def parse_type_arrays(text: str) -> Dict[str, List[str]]:
+    text = strip_comments(text)
     arrays: Dict[str, List[str]] = {}
 
     for match in TYPE_ARRAY_PATTERN.finditer(text):
@@ -102,6 +117,7 @@ def parse_type_arrays(text: str) -> Dict[str, List[str]]:
 
 
 def parse_loot_packs(text: str) -> Dict[str, List[Dict[str, object]]]:
+    text = strip_comments(text)
     packs: Dict[str, List[Dict[str, object]]] = {}
 
     for match in LOOTPACK_PATTERN.finditer(text):
@@ -136,6 +152,7 @@ def parse_loot_packs(text: str) -> Dict[str, List[Dict[str, object]]]:
 
 
 def parse_loot_pack_aliases(text: str, pack_names: Sequence[str]) -> Dict[str, str]:
+    text = strip_comments(text)
     aliases: Dict[str, str] = {}
 
     for match in LOOTPACK_ALIAS_PATTERN.finditer(text):
@@ -191,13 +208,83 @@ def build_entry(reference: Dict[str, object], chance: float, quantity: str) -> D
     entry["chance"] = round(chance, 4)
 
     quantity_range = parse_dice_range(quantity)
+    apply_quantity_range(entry, quantity_range)
+
+    return entry
+
+
+def apply_quantity_range(entry: Dict[str, object], quantity_range) -> None:
     if quantity_range.minimum == quantity_range.maximum:
         entry["amount"] = quantity_range.minimum
     else:
         entry["amountMin"] = quantity_range.minimum
         entry["amountMax"] = quantity_range.maximum
 
-    return entry
+
+def try_build_weighted_loot_pack_table(
+    pack_name: str,
+    pack_entries: Sequence[Dict[str, object]],
+    arrays: Dict[str, List[Dict[str, object]]],
+    item_index: Dict[str, Dict[str, object]],
+    tag_index: Dict[str, List[str]],
+    report: Dict[str, object],
+) -> Dict[str, object] | None:
+    if len(pack_entries) != 1:
+        return None
+
+    pack_entry = pack_entries[0]
+    if pack_entry["atSpawn"] or float(pack_entry["chancePercent"]) != 100.0:
+        return None
+
+    quantity_range = parse_dice_range(str(pack_entry["quantity"]))
+    if quantity_range.minimum != quantity_range.maximum:
+        return None
+
+    array_name = str(pack_entry["arrayName"])
+    item_array = arrays.get(array_name)
+    if not item_array or len(item_array) <= 1:
+        return None
+
+    weighted_entries: List[Dict[str, object]] = []
+    seen = set()
+    context = f"loot_pack.{normalize_identifier(pack_name)}"
+
+    for item in item_array:
+        reference = try_resolve_reference(
+            str(item["typeName"]),
+            item_index,
+            tag_index,
+            report,
+            f"{context} via {array_name}",
+        )
+        if reference is None:
+            continue
+
+        frozen = tuple(sorted(reference.items()))
+        if frozen in seen:
+            continue
+
+        seen.add(frozen)
+        entry = dict(reference)
+        entry["weight"] = int(item["weight"])
+        apply_quantity_range(entry, quantity_range)
+        weighted_entries.append(entry)
+
+    if not weighted_entries:
+        append_warning(report, "skipped", f"{context}: unresolved weighted array {array_name}")
+        return None
+
+    return {
+        "type": "loot",
+        "id": context,
+        "name": pack_name,
+        "category": "loot",
+        "description": "",
+        "mode": "weighted",
+        "rolls": 1,
+        "noDropWeight": 0,
+        "entries": weighted_entries,
+    }
 
 
 def expand_loot_pack_entries(
@@ -209,6 +296,7 @@ def expand_loot_pack_entries(
     tag_index: Dict[str, List[str]],
     report: Dict[str, object],
     context: str,
+    include_at_spawn: bool = False,
 ) -> List[Dict[str, object]]:
     resolved_pack_name = aliases.get(pack_name, pack_name)
     pack_entries = packs.get(resolved_pack_name)
@@ -218,7 +306,7 @@ def expand_loot_pack_entries(
 
     generated: List[Dict[str, object]] = []
     for pack_entry in pack_entries:
-        if pack_entry["atSpawn"]:
+        if pack_entry["atSpawn"] and not include_at_spawn:
             continue
 
         array_name = str(pack_entry["arrayName"])
@@ -259,6 +347,68 @@ def expand_loot_pack_entries(
     return generated
 
 
+def build_loot_pack_tables(
+    packs: Dict[str, List[Dict[str, object]]],
+    arrays: Dict[str, List[Dict[str, object]]],
+    aliases: Dict[str, str],
+    item_index: Dict[str, Dict[str, object]],
+    tag_index: Dict[str, List[str]],
+    report: Dict[str, object],
+) -> List[Dict[str, object]]:
+    tables: List[Dict[str, object]] = []
+
+    for pack_name in sorted({*packs.keys(), *aliases.keys()}):
+        resolved_pack_name = aliases.get(pack_name, pack_name)
+        pack_entries = packs.get(resolved_pack_name)
+        if not pack_entries:
+            append_warning(report, "unmappedPatterns", f"loot_pack.{normalize_identifier(pack_name)}: missing pack")
+            continue
+
+        weighted_table = try_build_weighted_loot_pack_table(
+            pack_name,
+            pack_entries,
+            arrays,
+            item_index,
+            tag_index,
+            report,
+        )
+        if weighted_table is not None:
+            tables.append(weighted_table)
+            append_warning(report, "generated", weighted_table["id"])
+            continue
+
+        entries = expand_loot_pack_entries(
+            pack_name,
+            packs,
+            arrays,
+            aliases,
+            item_index,
+            tag_index,
+            report,
+            f"loot_pack.{normalize_identifier(pack_name)}",
+            include_at_spawn=True,
+        )
+        if not entries:
+            append_warning(report, "skipped", f"loot_pack.{normalize_identifier(pack_name)}: no supported entries")
+            continue
+
+        table_id = build_loot_id(pack_name, "loot_pack")
+        tables.append(
+            {
+                "type": "loot",
+                "id": table_id,
+                "name": pack_name,
+                "category": "loot",
+                "description": "",
+                "mode": "additive",
+                "entries": entries,
+            }
+        )
+        append_warning(report, "generated", table_id)
+
+    return tables
+
+
 def parse_generate_loot_tables(
     mobiles_root: Path,
     packs: Dict[str, List[Dict[str, object]]],
@@ -271,7 +421,7 @@ def parse_generate_loot_tables(
     tables: List[Dict[str, object]] = []
 
     for path in sorted(mobiles_root.rglob("*.cs")):
-        text = path.read_text(encoding="utf-8")
+        text = strip_comments(path.read_text(encoding="utf-8"))
         class_match = CREATURE_CLASS_PATTERN.search(text)
         generate_match = GENERATE_LOOT_PATTERN.search(text)
         if class_match is None or generate_match is None:
@@ -322,7 +472,30 @@ def parse_generate_loot_tables(
                 }
             )
 
-        for pack_item_match in re.finditer(r"PackItem\(new (\w+)(?:\((\d+)\))?\);", body):
+        for pack_reg_range in re.finditer(r"PackReg\((\d+),\s*(\d+)\);", body):
+            reference = try_resolve_reference("Reagent", item_index, tag_index, report, context)
+            if reference is None:
+                append_warning(report, "skipped", f"{context}: unresolved PackReg range")
+                continue
+
+            entry = dict(reference)
+            entry["chance"] = 1.0
+            entry["amountMin"] = int(pack_reg_range.group(1))
+            entry["amountMax"] = int(pack_reg_range.group(2))
+            entries.append(entry)
+
+        for pack_reg_fixed in re.finditer(r"PackReg\((\d+)\);", body):
+            reference = try_resolve_reference("Reagent", item_index, tag_index, report, context)
+            if reference is None:
+                append_warning(report, "skipped", f"{context}: unresolved PackReg")
+                continue
+
+            entry = dict(reference)
+            entry["chance"] = 1.0
+            entry["amount"] = int(pack_reg_fixed.group(1))
+            entries.append(entry)
+
+        for pack_item_match in PACK_ITEM_CONSTRUCTOR_PATTERN.finditer(body):
             type_name = pack_item_match.group(1)
             amount = int(pack_item_match.group(2) or "1")
             reference = try_resolve_reference(type_name, item_index, tag_index, report, context)
@@ -333,6 +506,28 @@ def parse_generate_loot_tables(
             entry = dict(reference)
             entry["chance"] = 1.0
             entry["amount"] = amount
+            entries.append(entry)
+
+        for pack_item_match in PACK_ITEM_SEED_FACTORY_PATTERN.finditer(body):
+            reference = try_resolve_reference("Seed", item_index, tag_index, report, context)
+            if reference is None:
+                append_warning(report, "skipped", f"{context}: unresolved PackItem Seed")
+                continue
+
+            entry = dict(reference)
+            entry["chance"] = 1.0
+            entry["amount"] = 1
+            entries.append(entry)
+
+        for pack_item_match in PACK_ITEM_RANDOM_REAGENT_PATTERN.finditer(body):
+            reference = try_resolve_reference("Reagent", item_index, tag_index, report, context)
+            if reference is None:
+                append_warning(report, "skipped", f"{context}: unresolved PackItem reagent")
+                continue
+
+            entry = dict(reference)
+            entry["chance"] = 1.0
+            entry["amount"] = 1
             entries.append(entry)
 
         if not entries:
@@ -703,6 +898,7 @@ def write_report(path: Path, report: Dict[str, object]) -> None:
 
 
 def generate_from_paths(modernuo_root: Path, repo_root: Path) -> Dict[str, object]:
+    ensure_loot_support_items(repo_root)
     item_index, tag_index = load_item_template_index(repo_root)
     report = build_report()
 
@@ -731,6 +927,7 @@ def generate_from_paths(modernuo_root: Path, repo_root: Path) -> Dict[str, objec
             report,
         )
     )
+    loot_packs = sort_tables(build_loot_pack_tables(packs, pack_arrays, pack_aliases, item_index, tag_index, report))
     fillable = sort_tables(
         parse_fillable_content_tables(
             fillable_path,
@@ -746,6 +943,7 @@ def generate_from_paths(modernuo_root: Path, repo_root: Path) -> Dict[str, objec
     write_json_array(output_paths["creatures"], creatures)
     write_json_array(output_paths["treasure_chests"], treasure_chests)
     write_json_array(output_paths["fillable_containers"], fillable)
+    write_json_array(output_paths["loot_packs"], loot_packs)
     write_report(repo_root / "artifacts/loot-import-report.json", report)
 
     return report

@@ -1,0 +1,69 @@
+[
+  {
+    "type": "item",
+    "id": "seed",
+    "name": "Seed",
+    "category": "Loot Support",
+    "description": "Imported support item for ModernUO loot conversion.",
+    "itemId": "0x0DCF",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 1.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "loot_support",
+      "seeds"
+    ]
+  },
+  {
+    "type": "item",
+    "id": "metal_chest",
+    "name": "Metal Chest",
+    "category": "Containers",
+    "description": "Imported support item for ModernUO loot conversion.",
+    "itemId": "0x09AB",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 2.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "containers",
+      "loot_support"
+    ],
+    "weightMax": 40000,
+    "maxItems": 125,
+    "containerLayoutId": "metal_chest",
+    "gumpId": "0x0048"
+  },
+  {
+    "type": "item",
+    "id": "gargoyles_pickaxe",
+    "name": "Gargoyle's Pickaxe",
+    "category": "Skill Items",
+    "description": "Imported support item for ModernUO loot conversion.",
+    "itemId": "0x0E85",
+    "hue": "0",
+    "goldValue": "0",
+    "weight": 11.0,
+    "scriptId": "none",
+    "isMovable": true,
+    "tags": [
+      "modernuo",
+      "skill items",
+      "loot_support",
+      "flippable"
+    ],
+    "flippableItemIds": [
+      "0x0E85",
+      "0x0E86"
+    ],
+    "lowDamage": 1,
+    "highDamage": 15,
+    "speed": 35,
+    "strength": 25
+  }
+]

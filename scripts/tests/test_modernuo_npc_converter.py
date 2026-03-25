@@ -4,8 +4,13 @@ import textwrap
 import unittest
 from pathlib import Path
 
-from scripts.modernuo_converter.mapper import load_item_template_catalog, map_to_template
+from scripts.modernuo_converter.mapper import (
+    load_item_template_catalog,
+    map_pack_items_to_loot,
+    map_to_template,
+)
 from scripts.modernuo_converter.parser import parse_directory, parse_file
+from scripts.modernuo_converter.generators.loot_generator import generate_all_loot
 
 
 class LoadItemTemplateCatalogTests(unittest.TestCase):
@@ -1362,6 +1367,69 @@ class ParseFileTests(unittest.TestCase):
 
             self.assertIsNone(parsed)
 
+    def test_ignores_commented_loot_pack_references(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "UnfrozenMummy.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class UnfrozenMummy : BaseCreature
+                        {
+                            [Constructible]
+                            public UnfrozenMummy() : base(AIType.AI_Mage)
+                            {
+                            }
+
+                            public override void GenerateLoot()
+                            {
+                                AddLoot(LootPack.UltraRich, 2);
+                                // AddLoot( LootPack.Parrot );
+                                /*
+                                AddLoot(LootPack.Miscellaneous);
+                                */
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual([{"pack": "UltraRich", "count": 2}], parsed["loot"])
+
+
+class MapPackItemsToLootTests(unittest.TestCase):
+    def test_maps_special_pack_items_to_supported_item_references(self) -> None:
+        parsed = {
+            "class_name": "StoneGargoyle",
+            "pack_items": [
+                {"item": "Reagent", "amount": 3},
+                {"item": "RandomTalisman", "amount": 1},
+                {"item": "Seed", "amount": 1},
+                {"item": "MetalChest", "amount": 1},
+                {"item": "GargoylesPickaxe", "amount": 1},
+            ],
+        }
+
+        loot = map_pack_items_to_loot(parsed)
+
+        self.assertIsNotNone(loot)
+        self.assertEqual(
+            [
+                {"itemTag": "reagents", "chance": 1.0, "amount": 3},
+                {"itemTag": "talismans", "chance": 1.0, "amount": 1},
+                {"itemTemplateId": "seed", "chance": 1.0, "amount": 1},
+                {"itemTemplateId": "metal_chest", "chance": 1.0, "amount": 1},
+                {"itemTemplateId": "gargoyles_pickaxe", "chance": 1.0, "amount": 1},
+            ],
+            loot["entries"],
+        )
+
 
 class ParseDirectoryTests(unittest.TestCase):
     def test_parse_directory_emits_each_mobile_class_from_multi_class_file(self) -> None:
@@ -1440,6 +1508,36 @@ class ParseDirectoryTests(unittest.TestCase):
             parsed = parse_directory(tmp_dir, "animals", ".")
 
             self.assertEqual([], parsed)
+
+
+class LootGeneratorTests(unittest.TestCase):
+    def test_generate_all_loot_removes_stale_creature_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            output_dir = Path(tmp_dir)
+            stale_path = output_dir / "templates" / "loot" / "creatures" / "creature_malefic.json"
+            stale_path.parent.mkdir(parents=True, exist_ok=True)
+            stale_path.write_text("[]\n", encoding="utf-8")
+
+            generated_paths = generate_all_loot(
+                [
+                    {
+                        "type": "loot",
+                        "id": "creature.bone_magi",
+                        "name": "BoneMagi",
+                        "category": "loot",
+                        "description": "",
+                        "mode": "additive",
+                        "entries": [{"itemTemplateId": "bone", "chance": 1.0, "amount": 1}],
+                    }
+                ],
+                str(output_dir),
+            )
+
+            self.assertEqual(
+                [str(output_dir / "templates" / "loot" / "creatures" / "creature_bone_magi.json")],
+                generated_paths,
+            )
+            self.assertFalse(stale_path.exists())
 
 
 if __name__ == "__main__":

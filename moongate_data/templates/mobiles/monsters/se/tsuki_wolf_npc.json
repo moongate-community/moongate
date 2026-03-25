@@ -27,7 +27,8 @@
     },
     "lootTables": [
       "loot_pack.average",
-      "loot_pack.rich"
+      "loot_pack.rich",
+      "creature.tsuki_wolf"
     ],
     "resistances": {
       "physical": 50,

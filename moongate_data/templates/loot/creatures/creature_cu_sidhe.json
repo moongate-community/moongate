@@ -8,11 +8,6 @@
     "mode": "additive",
     "entries": [
       {
-        "itemTemplateId": "parrot_item",
-        "chance": 1.0,
-        "amount": 1
-      },
-      {
         "itemTemplateId": "gold",
         "chance": 1.0,
         "amount": 650

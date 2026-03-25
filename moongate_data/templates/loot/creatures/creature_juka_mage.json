@@ -11,6 +11,11 @@
         "itemTemplateId": "arcane_gem",
         "chance": 1.0,
         "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
       }
     ]
   }

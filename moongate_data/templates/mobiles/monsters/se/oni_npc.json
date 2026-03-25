@@ -29,7 +29,8 @@
     "lootTables": [
       "loot_pack.filthy_rich",
       "loot_pack.filthy_rich",
-      "loot_pack.filthy_rich"
+      "loot_pack.filthy_rich",
+      "creature.oni"
     ],
     "resistances": {
       "physical": 72,

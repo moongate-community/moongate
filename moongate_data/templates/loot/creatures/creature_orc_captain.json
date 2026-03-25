@@ -1,16 +1,16 @@
 [
   {
     "type": "loot",
-    "id": "creature.spectre",
-    "name": "Spectre",
+    "id": "creature.orc_captain",
+    "name": "OrcCaptain",
     "category": "loot",
-    "description": "Creature-specific loot for Spectre.",
+    "description": "Creature-specific loot for OrcCaptain.",
     "mode": "additive",
     "entries": [
       {
         "itemTag": "reagents",
         "chance": 1.0,
-        "amount": 10
+        "amount": 1
       }
     ]
   }
