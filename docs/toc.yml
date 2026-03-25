@@ -96,6 +96,8 @@
   items:
   - name: Stress Test
     href: articles/operations/stress-test.md
+  - name: Template Validation
+    href: articles/operations/template-validation.md
   - name: Console Commands
     href: articles/operations/console-commands.md
 

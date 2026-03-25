@@ -56,6 +56,7 @@ This is the main documentation portal for Moongate v2.
 ## Operations
 
 - [Stress Test](articles/operations/stress-test.md)
+- [Template Validation](articles/operations/template-validation.md)
 - [Console Commands](articles/operations/console-commands.md)
 
 ## Development
