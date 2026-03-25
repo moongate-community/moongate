@@ -546,6 +546,302 @@ class MapToTemplateTests(unittest.TestCase):
                 {next(layer for layer in layers if layer != "Shoes") for layers in equipment_layers},
             )
 
+    def test_maps_base_vendor_init_outfit_and_override_into_variant_equipment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseVendor.cs").write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public abstract class BaseVendor : BaseCreature
+                        {
+                            public virtual void InitOutfit()
+                            {
+                                AddItem(
+                                    Utility.Random(3) switch
+                                    {
+                                        0 => new FancyShirt(),
+                                        1 => new Doublet(),
+                                        _ => new Shirt()
+                                    }
+                                );
+
+                                AddItem(Utility.RandomBool() ? new Shoes() : new Sandals());
+
+                                if (Female)
+                                {
+                                    AddItem(Utility.RandomBool() ? new ShortPants() : new Kilt());
+                                }
+                                else
+                                {
+                                    AddItem(Utility.RandomBool() ? new LongPants() : new ShortPants());
+                                }
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            source_path = tmp_path / "Alchemist.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class Alchemist : BaseVendor
+                        {
+                            [Constructible]
+                            public Alchemist() : base("the alchemist")
+                            {
+                            }
+
+                            public override void InitOutfit()
+                            {
+                                base.InitOutfit();
+                                AddItem(new Robe());
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "fancy_shirt": {"layer": "Shirt"},
+                "doublet": {"layer": "Shirt"},
+                "shirt": {"layer": "Shirt"},
+                "shoes": {"layer": "Shoes"},
+                "sandals": {"layer": "Shoes"},
+                "short_pants": {"layer": "Pants"},
+                "kilt": {"layer": "Pants"},
+                "long_pants": {"layer": "Pants"},
+                "robe": {"layer": "OuterTorso"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(2, len(template["variants"]))
+            variants = {variant["name"]: variant for variant in template["variants"]}
+
+            female_equipment = variants["female"]["equipment"]
+            male_equipment = variants["male"]["equipment"]
+
+            female_torso = next(entry for entry in female_equipment if entry["layer"] == "Shirt")
+            female_shoes = next(entry for entry in female_equipment if entry["layer"] == "Shoes")
+            female_pants = next(entry for entry in female_equipment if entry["layer"] == "Pants")
+            female_robe = next(entry for entry in female_equipment if entry["layer"] == "OuterTorso")
+
+            self.assertEqual(
+                {"fancy_shirt", "doublet", "shirt"},
+                {item["itemTemplateId"] for item in female_torso["items"]},
+            )
+            self.assertEqual(
+                {"shoes", "sandals"},
+                {item["itemTemplateId"] for item in female_shoes["items"]},
+            )
+            self.assertEqual(
+                {"short_pants", "kilt"},
+                {item["itemTemplateId"] for item in female_pants["items"]},
+            )
+            self.assertEqual("robe", female_robe["itemTemplateId"])
+
+            male_pants = next(entry for entry in male_equipment if entry["layer"] == "Pants")
+            male_robe = next(entry for entry in male_equipment if entry["layer"] == "OuterTorso")
+
+            self.assertEqual(
+                {"long_pants", "short_pants"},
+                {item["itemTemplateId"] for item in male_pants["items"]},
+            )
+            self.assertEqual("robe", male_robe["itemTemplateId"])
+
+    def test_maps_init_outfit_gender_branches_without_constructor_equipment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseEscortable.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public abstract class BaseEscortable : BaseCreature
+                        {
+                            public virtual void InitOutfit()
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            source_path = tmp_path / "Peasant.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class Peasant : BaseEscortable
+                        {
+                            [Constructible]
+                            public Peasant() => Title = "the peasant";
+
+                            public override void InitOutfit()
+                            {
+                                if (Female)
+                                {
+                                    AddItem(new PlainDress());
+                                }
+                                else
+                                {
+                                    AddItem(new Shirt());
+                                }
+
+                                AddItem(new ShortPants());
+
+                                if (Female)
+                                {
+                                    AddItem(new Boots());
+                                }
+                                else
+                                {
+                                    AddItem(new Shoes());
+                                }
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "plain_dress": {"layer": "OuterTorso"},
+                "shirt": {"layer": "Shirt"},
+                "short_pants": {"layer": "Pants"},
+                "boots": {"layer": "Shoes"},
+                "shoes": {"layer": "Shoes"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(2, len(template["variants"]))
+            variants = {variant["name"]: variant for variant in template["variants"]}
+
+            female_layers = {entry["layer"] for entry in variants["female"]["equipment"]}
+            male_layers = {entry["layer"] for entry in variants["male"]["equipment"]}
+
+            self.assertEqual({"OuterTorso", "Pants", "Shoes"}, female_layers)
+            self.assertEqual({"Shirt", "Pants", "Shoes"}, male_layers)
+
+            female_torso = next(entry for entry in variants["female"]["equipment"] if entry["layer"] == "OuterTorso")
+            male_torso = next(entry for entry in variants["male"]["equipment"] if entry["layer"] == "Shirt")
+
+            self.assertEqual("plain_dress", female_torso["itemTemplateId"])
+            self.assertEqual("shirt", male_torso["itemTemplateId"])
+
+    def test_maps_wrapped_apply_hue_items_inside_init_outfit(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseVendor.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public abstract class BaseVendor : BaseCreature
+                        {
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            source_path = tmp_path / "HolyMage.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class HolyMage : BaseVendor
+                        {
+                            [Constructible]
+                            public HolyMage() : base("the Holy Mage")
+                            {
+                            }
+
+                            public Item ApplyHue(Item item, int hue)
+                            {
+                                item.Hue = hue;
+                                return item;
+                            }
+
+                            public override void InitOutfit()
+                            {
+                                AddItem(ApplyHue(new Robe(), 0x47E));
+                                AddItem(ApplyHue(new ThighBoots(), 0x47E));
+
+                                if (Female)
+                                {
+                                    AddItem(ApplyHue(new LeatherGloves(), 0x47E));
+                                }
+                                else
+                                {
+                                    AddItem(ApplyHue(new PlateGloves(), 0x47E));
+                                }
+
+                                HairHue = 0x47E;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "robe": {"layer": "OuterTorso"},
+                "thigh_boots": {"layer": "Shoes"},
+                "leather_gloves": {"layer": "Gloves"},
+                "plate_gloves": {"layer": "Gloves"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(2, len(template["variants"]))
+            variants = {variant["name"]: variant for variant in template["variants"]}
+
+            for variant in variants.values():
+                robe = next(entry for entry in variant["equipment"] if entry["layer"] == "OuterTorso")
+                boots = next(entry for entry in variant["equipment"] if entry["layer"] == "Shoes")
+                self.assertEqual("0x047E", robe["hue"])
+                self.assertEqual("0x047E", boots["hue"])
+
+            female_gloves = next(entry for entry in variants["female"]["equipment"] if entry["layer"] == "Gloves")
+            male_gloves = next(entry for entry in variants["male"]["equipment"] if entry["layer"] == "Gloves")
+
+            self.assertEqual("leather_gloves", female_gloves["itemTemplateId"])
+            self.assertEqual("plate_gloves", male_gloves["itemTemplateId"])
+            self.assertEqual("0x047E", variants["female"]["appearance"]["hairHue"])
+            self.assertEqual("0x047E", variants["male"]["appearance"]["hairHue"])
+
 
 class ParseFileTests(unittest.TestCase):
     def test_scopes_parse_file_to_the_selected_class_in_multi_class_file(self) -> None:

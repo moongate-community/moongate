@@ -12,22 +12,676 @@
     "title": "the gypsy maiden",
     "variants": [
       {
-        "name": "female",
+        "name": "female_1",
         "weight": 1,
         "appearance": {
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
       },
       {
-        "name": "male",
+        "name": "female_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt"
+          }
+        ]
+      },
+      {
+        "name": "female_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "female_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_8",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt"
+          }
+        ]
+      },
+      {
+        "name": "female_9",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "female_10",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_11",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "kilt"
+          }
+        ]
+      },
+      {
+        "name": "female_12",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "OuterLegs",
+            "itemTemplateId": "skirt"
+          }
+        ]
+      },
+      {
+        "name": "male_1",
         "weight": 1,
         "appearance": {
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "items": [
+              {
+                "itemTemplateId": "long_pants",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "short_pants",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "male_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "items": [
+              {
+                "itemTemplateId": "long_pants",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "short_pants",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "male_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          },
+          {
+            "layer": "Pants",
+            "items": [
+              {
+                "itemTemplateId": "long_pants",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "short_pants",
+                "weight": 1
+              }
+            ]
+          }
+        ]
       }
     ]
   }

@@ -20,7 +20,28 @@
           "body": "0x0191",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "Cloak",
+            "itemTemplateId": "cloak"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "fancy_dress"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "thigh_boots"
+          }
+        ]
       },
       {
         "name": "male",
@@ -29,7 +50,32 @@
           "body": "0x0190",
           "skinHue": "hue(1002:1058)"
         },
-        "equipment": []
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "Cloak",
+            "itemTemplateId": "cloak"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots"
+          },
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "body_sash"
+          }
+        ]
       }
     ]
   }
