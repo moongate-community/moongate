@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 125,
     "dexterity": 450,
     "intelligence": 85,
@@ -40,8 +38,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Swoop"
+    "title": "Swoop",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0005",
+          "skinHue": "0x00E0"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 200,
     "dexterity": 110,
     "intelligence": 150,
@@ -44,8 +42,24 @@
       "physical": 100,
       "poison": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "daemon"
+    "title": "daemon",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000A"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0009"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

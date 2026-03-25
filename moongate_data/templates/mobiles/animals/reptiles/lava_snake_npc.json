@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x0034",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 49,
     "dexterity": 20,
     "intelligence": 8,
@@ -48,8 +45,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a lava snake"
+    "title": "a lava snake",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0034"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

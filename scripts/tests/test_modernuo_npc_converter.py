@@ -1,0 +1,1150 @@
+import json
+import tempfile
+import textwrap
+import unittest
+from pathlib import Path
+
+from scripts.modernuo_converter.mapper import load_item_template_catalog, map_to_template
+from scripts.modernuo_converter.parser import parse_directory, parse_file
+
+
+class LoadItemTemplateCatalogTests(unittest.TestCase):
+    def test_reads_template_layers_from_json_files(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            items_root = Path(tmp_dir)
+            (items_root / "wearables.json").write_text(
+                json.dumps(
+                    [
+                        {"id": "shirt", "layer": "Shirt"},
+                        {"id": "boots", "layer": "Shoes"},
+                    ],
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            catalog = load_item_template_catalog(items_root)
+
+            self.assertEqual("Shirt", catalog["shirt"]["layer"])
+            self.assertEqual("Shoes", catalog["boots"]["layer"])
+
+
+class MapToTemplateTests(unittest.TestCase):
+    def test_maps_simple_mobile_to_default_variant(self) -> None:
+        parsed = {
+            "class_name": "Zombie",
+            "category": "monsters",
+            "body": 0x0003,
+            "str_min": 40,
+            "str_max": 40,
+        }
+
+        template = map_to_template(parsed, item_catalog={})
+
+        self.assertNotIn("body", template)
+        self.assertNotIn("skinHue", template)
+        self.assertNotIn("hairHue", template)
+        self.assertNotIn("fixedEquipment", template)
+        self.assertNotIn("randomEquipment", template)
+        self.assertEqual(1, len(template["variants"]))
+        self.assertEqual("0x0003", template["variants"][0]["appearance"]["body"])
+        self.assertEqual([], template["variants"][0]["equipment"])
+
+    def test_expands_root_body_options_into_multiple_variants(self) -> None:
+        parsed = {
+            "class_name": "GreyWolf",
+            "category": "animals",
+            "body_options": [25, 27],
+        }
+
+        template = map_to_template(parsed, item_catalog={})
+
+        self.assertEqual(2, len(template["variants"]))
+        bodies = {variant["appearance"]["body"] for variant in template["variants"]}
+        self.assertEqual({"0x0019", "0x001B"}, bodies)
+
+    def test_maps_skin_hue_and_item_hue_helpers_to_variant_appearance_and_equipment(self) -> None:
+        parsed = {
+            "class_name": "Artist",
+            "category": "town_npcs",
+            "skin_hue": "Race.Human.RandomSkinHue()",
+            "shared_equipment_groups": [
+                [
+                    {
+                        "class_name": "Boots",
+                        "hue": "Utility.RandomNeutralHue()",
+                        "weight": 1,
+                    }
+                ]
+            ],
+        }
+        catalog = {"boots": {"layer": "Shoes"}}
+
+        template = map_to_template(parsed, item_catalog=catalog)
+        variant = template["variants"][0]
+
+        self.assertEqual("hue(1002:1058)", variant["appearance"]["skinHue"])
+        self.assertEqual("hue(1801:1908)", variant["equipment"][0]["hue"])
+
+    def test_maps_fixed_appearance_and_item_hues(self) -> None:
+        parsed = {
+            "class_name": "Artist",
+            "category": "town_npcs",
+            "body": 0x0190,
+            "skin_hue": "33770",
+            "hair_hue": "1150",
+            "hair_style": 0x203B,
+            "shared_equipment_groups": [
+                [
+                    {
+                        "class_name": "Boots",
+                        "hue": "0x047E",
+                        "weight": 1,
+                    }
+                ]
+            ],
+        }
+        catalog = {"boots": {"layer": "Shoes"}}
+
+        template = map_to_template(parsed, item_catalog=catalog)
+        variant = template["variants"][0]
+
+        self.assertEqual("0x0190", variant["appearance"]["body"])
+        self.assertEqual("0x83EA", variant["appearance"]["skinHue"])
+        self.assertEqual("0x047E", variant["appearance"]["hairHue"])
+        self.assertEqual(0x203B, variant["appearance"]["hairStyle"])
+        self.assertEqual("0x047E", variant["equipment"][0]["hue"])
+
+    def test_preserves_moongate_brain_overrides_for_special_townfolk(self) -> None:
+        parsed = {
+            "class_name": "Banker",
+            "category": "town_npcs",
+        }
+
+        template = map_to_template(parsed, item_catalog={})
+
+        self.assertEqual("banker_npc", template["id"])
+        self.assertEqual("town_banker", template["brain"])
+
+    def test_skips_unsupported_item_hair_and_facial_hues(self) -> None:
+        parsed = {
+            "class_name": "Artist",
+            "category": "town_npcs",
+            "skin_hue": "Race.Human.RandomSkinHue()",
+            "hair_hue": "Race.Human.RandomHairHue()",
+            "facial_hair_hue": "Race.Human.RandomHairHue()",
+            "shared_equipment_groups": [
+                [
+                    {
+                        "class_name": "Boots",
+                        "hue": "Utility.RandomDyedHue()",
+                        "weight": 1,
+                    }
+                ]
+            ],
+        }
+        catalog = {"boots": {"layer": "Shoes"}}
+
+        template = map_to_template(parsed, item_catalog=catalog)
+        variant = template["variants"][0]
+
+        self.assertNotIn("body", variant["appearance"])
+        self.assertEqual("hue(1002:1058)", variant["appearance"]["skinHue"])
+        self.assertNotIn("hairHue", variant["appearance"])
+        self.assertNotIn("facialHairHue", variant["appearance"])
+        self.assertNotIn("hue", variant["equipment"][0])
+
+    def test_maps_gender_branch_shared_equipment_and_same_layer_weapon_choice_into_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Brigand.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class Brigand : BaseCreature
+                        {
+                            [Constructible]
+                            public Brigand() : base(AIType.AI_Melee)
+                            {
+                                Title = "the brigand";
+                                Hue = Race.Human.RandomSkinHue();
+
+                                if (Female = Utility.RandomBool())
+                                {
+                                    Body = 0x191;
+                                    AddItem(new Skirt(Utility.RandomNeutralHue()));
+                                }
+                                else
+                                {
+                                    Body = 0x190;
+                                    AddItem(new ShortPants(Utility.RandomNeutralHue()));
+                                }
+
+                                AddItem(new Boots(Utility.RandomNeutralHue()));
+                                AddItem(new FancyShirt());
+                                AddItem(new Bandana());
+
+                                AddItem(
+                                    Utility.Random(3) switch
+                                    {
+                                        0 => new Longsword(),
+                                        1 => new Cutlass(),
+                                        _ => new Broadsword()
+                                    }
+                                );
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "skirt": {"layer": "Pants"},
+                "short_pants": {"layer": "Pants"},
+                "boots": {"layer": "Shoes"},
+                "fancy_shirt": {"layer": "Shirt"},
+                "bandana": {"layer": "Helm"},
+                "longsword": {"layer": "OneHanded"},
+                "cutlass": {"layer": "OneHanded"},
+                "broadsword": {"layer": "OneHanded"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(2, len(template["variants"]))
+            bodies = {variant["appearance"]["body"] for variant in template["variants"]}
+            self.assertEqual({"0x0190", "0x0191"}, bodies)
+
+            female_variants = [
+                variant for variant in template["variants"] if variant["appearance"]["body"] == "0x0191"
+            ]
+            male_variants = [
+                variant for variant in template["variants"] if variant["appearance"]["body"] == "0x0190"
+            ]
+
+            self.assertEqual(1, len(female_variants))
+            self.assertEqual(1, len(male_variants))
+
+            for variant in template["variants"]:
+                layers = {entry["layer"] for entry in variant["equipment"]}
+                self.assertIn("Pants", layers)
+                self.assertIn("Shoes", layers)
+                self.assertIn("Shirt", layers)
+                self.assertIn("Helm", layers)
+                self.assertIn("OneHanded", layers)
+
+                weapon_entry = next(entry for entry in variant["equipment"] if entry["layer"] == "OneHanded")
+                self.assertIn("items", weapon_entry)
+                self.assertEqual(3, len(weapon_entry["items"]))
+
+    def test_maps_two_step_female_random_bool_branch_into_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "EscortableMage.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class EscortableMage : BaseCreature
+                        {
+                            [Constructible]
+                            public EscortableMage() : base(AIType.AI_Mage)
+                            {
+                                Female = Utility.RandomBool();
+
+                                if (Female)
+                                {
+                                    Body = 0x191;
+                                    AddItem(new Skirt());
+                                }
+                                else
+                                {
+                                    Body = 0x190;
+                                    AddItem(new ShortPants());
+                                }
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "skirt": {"layer": "Pants"},
+                "short_pants": {"layer": "Pants"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(2, len(template["variants"]))
+            bodies = {variant["appearance"]["body"] for variant in template["variants"]}
+            self.assertEqual({"0x0190", "0x0191"}, bodies)
+
+    def test_maps_switch_items_with_nested_constructor_calls(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "ShoeSwitcher.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class ShoeSwitcher : BaseCreature
+                        {
+                            [Constructible]
+                            public ShoeSwitcher() : base(AIType.AI_Melee)
+                            {
+                                Body = 0x190;
+                                AddItem(
+                                    Utility.Random(2) switch
+                                    {
+                                        0 => new Boots(Utility.RandomNeutralHue()),
+                                        _ => new Shoes(Utility.RandomNeutralHue())
+                                    }
+                                );
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "boots": {"layer": "Shoes"},
+                "shoes": {"layer": "Shoes"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+            equipment = template["variants"][0]["equipment"]
+
+            self.assertEqual(1, len(equipment))
+            self.assertEqual("Shoes", equipment[0]["layer"])
+            self.assertEqual(2, len(equipment[0]["items"]))
+            self.assertEqual("hue(1801:1908)", equipment[0]["items"][0]["hue"])
+            self.assertEqual("hue(1801:1908)", equipment[0]["items"][1]["hue"])
+
+    def test_maps_object_initializer_hue_with_other_properties(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "InitializerShoes.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class InitializerShoes : BaseCreature
+                        {
+                            [Constructible]
+                            public InitializerShoes() : base(AIType.AI_Melee)
+                            {
+                                Body = 0x190;
+                                Hue = Race.Human.RandomSkinHue();
+                                AddItem(new Boots { Hue = Utility.RandomNeutralHue(), Name = "boots" });
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {"boots": {"layer": "Shoes"}}
+
+            template = map_to_template(parsed, item_catalog=catalog)
+            appearance = template["variants"][0]["appearance"]
+            equipment = template["variants"][0]["equipment"]
+
+            self.assertNotIn("title", template)
+            self.assertEqual("hue(1002:1058)", appearance["skinHue"])
+            self.assertEqual(1, len(equipment))
+            self.assertEqual("hue(1801:1908)", equipment[0]["hue"])
+
+    def test_skips_switch_pool_when_any_arm_is_unsupported(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "PartialSwitcher.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class PartialSwitcher : BaseCreature
+                        {
+                            [Constructible]
+                            public PartialSwitcher() : base(AIType.AI_Melee)
+                            {
+                                Body = 0x190;
+                                AddItem(
+                                    Utility.Random(3) switch
+                                    {
+                                        0 => new Boots(Utility.RandomNeutralHue()),
+                                        1 => MakeShoes(),
+                                        _ => new Shoes(Utility.RandomNeutralHue())
+                                    }
+                                );
+                            }
+
+                            private static Item MakeShoes()
+                            {
+                                return new Shoes();
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "boots": {"layer": "Shoes"},
+                "shoes": {"layer": "Shoes"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual([], template["variants"][0]["equipment"])
+
+    def test_maps_variant_specific_hair_hue_and_style(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "StyledEscort.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class StyledEscort : BaseCreature
+                        {
+                            [Constructible]
+                            public StyledEscort() : base(AIType.AI_Mage)
+                            {
+                                if (Female = Utility.RandomBool())
+                                {
+                                    Body = 0x191;
+                                    HairHue = 1150;
+                                    HairItemID = 0x203B;
+                                }
+                                else
+                                {
+                                    Body = 0x190;
+                                    HairHue = 1151;
+                                    HairItemID = 0x203C;
+                                }
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            template = map_to_template(parsed, item_catalog={})
+
+            self.assertEqual(2, len(template["variants"]))
+            appearance_by_body = {
+                variant["appearance"]["body"]: variant["appearance"] for variant in template["variants"]
+            }
+            self.assertEqual("0x047E", appearance_by_body["0x0191"]["hairHue"])
+            self.assertEqual(0x203B, appearance_by_body["0x0191"]["hairStyle"])
+            self.assertEqual("0x047F", appearance_by_body["0x0190"]["hairHue"])
+            self.assertEqual(0x203C, appearance_by_body["0x0190"]["hairStyle"])
+
+    def test_expands_classic_switch_add_item_group_into_distinct_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "SamuraiWeaponSwitcher.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    using Server.Items;
+
+                    namespace Server.Mobiles
+                    {
+                        public class SamuraiWeaponSwitcher : BaseCreature
+                        {
+                            [Constructible]
+                            public SamuraiWeaponSwitcher() : base(AIType.AI_Melee)
+                            {
+                                Body = 0x190;
+
+                                switch (Utility.Random(3))
+                                {
+                                    case 0:
+                                        {
+                                            AddItem(new Lajatang());
+                                            break;
+                                        }
+                                    case 1:
+                                        {
+                                            AddItem(new Wakizashi());
+                                            break;
+                                        }
+                                    case 2:
+                                        {
+                                            AddItem(new NoDachi());
+                                            break;
+                                        }
+                                }
+
+                                AddItem(new Boots());
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+            self.assertIsNotNone(parsed)
+
+            catalog = {
+                "lajatang": {"layer": "TwoHanded"},
+                "wakizashi": {"layer": "OneHanded"},
+                "no_dachi": {"layer": "TwoHanded"},
+                "boots": {"layer": "Shoes"},
+            }
+
+            template = map_to_template(parsed, item_catalog=catalog)
+
+            self.assertEqual(3, len(template["variants"]))
+            equipment_layers = [
+                {entry["layer"] for entry in variant["equipment"]}
+                for variant in template["variants"]
+            ]
+            self.assertTrue(all("Shoes" in layers for layers in equipment_layers))
+            self.assertEqual(
+                {"OneHanded", "TwoHanded"},
+                {next(layer for layer in layers if layer != "Shoes") for layers in equipment_layers},
+            )
+
+
+class ParseFileTests(unittest.TestCase):
+    def test_scopes_parse_file_to_the_selected_class_in_multi_class_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Bird.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Bird : BaseCreature
+                        {
+                            [Constructible]
+                            public Bird() : base(AIType.AI_Animal)
+                            {
+                                Body = 6;
+                            }
+
+                            public override string DefaultName => "a bird";
+                        }
+
+                        public class TropicalBird : BaseCreature
+                        {
+                            [Constructible]
+                            public TropicalBird() : base(AIType.AI_Animal)
+                            {
+                                Body = 7;
+                            }
+
+                            public override string DefaultName => "a tropical bird";
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("Bird", parsed["class_name"])
+            self.assertEqual("a bird", parsed["name"])
+            self.assertEqual(6, parsed["body"])
+
+    def test_parse_file_does_not_leak_default_name_from_later_class_in_same_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Bird.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Bird : BaseCreature
+                        {
+                            [Constructible]
+                            public Bird() : base(AIType.AI_Animal)
+                            {
+                                Body = 6;
+                            }
+                        }
+
+                        public class TropicalBird : BaseCreature
+                        {
+                            [Constructible]
+                            public TropicalBird() : base(AIType.AI_Animal)
+                            {
+                                Body = 7;
+                            }
+
+                            public override string DefaultName => "a tropical bird";
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("Bird", parsed["class_name"])
+            self.assertNotIn("name", parsed)
+            self.assertEqual(6, parsed["body"])
+
+    def test_extracts_expression_bodied_constructor_and_inherits_parent_variants(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "Banker.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Banker : BaseVendor
+                        {
+                            [Constructible]
+                            public Banker() : base("the banker")
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "Minter.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles;
+
+                    public partial class Minter : Banker
+                    {
+                        [Constructible]
+                        public Minter() => Title = "the minter";
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(child_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(2, len(parsed["variants"]))
+            appearances = {
+                variant["appearance"]["body"]: variant["appearance"]
+                for variant in parsed["variants"]
+            }
+            self.assertEqual({400, 401}, set(appearances))
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[400]["skin_hue"])
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[401]["skin_hue"])
+
+    def test_extracts_default_human_variants_for_base_guildmaster(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "BardGuildmaster.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class BardGuildmaster : BaseGuildmaster
+                        {
+                            [Constructible]
+                            public BardGuildmaster() : base("bard")
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(2, len(parsed["variants"]))
+            appearances = {
+                variant["appearance"]["body"]: variant["appearance"]
+                for variant in parsed["variants"]
+            }
+            self.assertEqual({400, 401}, set(appearances))
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[400]["skin_hue"])
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[401]["skin_hue"])
+
+    def test_extracts_random_list_body_options(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "RandomBodyMage.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class RandomBodyMage : BaseCreature
+                        {
+                            [Constructible]
+                            public RandomBodyMage() : base(AIType.AI_Mage)
+                            {
+                                Body = Utility.RandomList(0x190, 0x191);
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual([0x190, 0x191], parsed["body_options"])
+
+    def test_extracts_body_options_from_ternary_body_assignment(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "WhiteWyrm.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class WhiteWyrm : BaseCreature
+                        {
+                            [Constructible]
+                            public WhiteWyrm() : base(AIType.AI_Mage)
+                            {
+                                Body = Utility.RandomBool() ? 180 : 49;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual([180, 49], parsed["body_options"])
+
+    def test_extracts_body_after_if_else_control_block(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Bird.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Bird : BaseCreature
+                        {
+                            [Constructible]
+                            public Bird() : base(AIType.AI_Animal)
+                            {
+                                if (Utility.RandomBool())
+                                {
+                                    Hue = 0x901;
+                                }
+                                else
+                                {
+                                    Hue = 0x902;
+                                }
+
+                                Body = 6;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(6, parsed["body"])
+
+    def test_extracts_last_body_assignment_from_if_else_branches(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "EvilMage.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class EvilMage : BaseCreature
+                        {
+                            [Constructible]
+                            public EvilMage() : base(AIType.AI_Mage)
+                            {
+                                if (Core.UOR)
+                                {
+                                    Body = 124;
+                                }
+                                else
+                                {
+                                    Body = 0x190;
+                                    Hue = Race.Human.RandomSkinHue();
+                                }
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(0x190, parsed["body"])
+            self.assertEqual("Race.Human.RandomSkinHue()", parsed["skin_hue"])
+
+    def test_extracts_base_mount_body_from_constructor_arguments(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "DesertOstard.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class DesertOstard : BaseMount
+                        {
+                            [Constructible]
+                            public DesertOstard() : base(0xD2, 0x3EA3, AIType.AI_Animal, FightMode.Aggressor)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(0xD2, parsed["body"])
+
+    def test_extracts_body_from_custom_mount_base_constructor_arguments(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "CoMWarHorse.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class CoMWarHorse : BaseWarHorse
+                        {
+                            [Constructible]
+                            public CoMWarHorse() : base(0x77, 0x3EB1)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(0x77, parsed["body"])
+
+    def test_extracts_body_from_named_parent_class(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "OrcishLord.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class OrcishLord : BaseCreature
+                        {
+                            [Constructible]
+                            public OrcishLord() : base(AIType.AI_Melee)
+                            {
+                                Body = 138;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "SpawnedOrcishLord.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class SpawnedOrcishLord : OrcishLord
+                        {
+                            [Constructible]
+                            public SpawnedOrcishLord()
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(child_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(138, parsed["body"])
+
+    def test_extracts_body_with_comments_in_constructor_and_inherited_parent(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "Troglodyte.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Troglodyte : BaseCreature
+                        {
+                            [Constructible]
+                            public Troglodyte() : base(AIType.AI_Melee) // comment after base
+                            {
+                                // parser used to split on this semicolon;
+                                Body = 267;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "Lurg.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Lurg : Troglodyte
+                        {
+                            [Constructible]
+                            public Lurg()
+                            {
+                                Hue = 0x455;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            leviathan_path = tmp_path / "Leviathan.cs"
+            leviathan_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Leviathan : BaseCreature
+                        {
+                            [Constructible]
+                            public Leviathan() : base(AIType.AI_Mage)
+                            {
+                                // copied from krakens;
+                                Body = 77;
+                                Hue = 0x481;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            inherited = parse_file(str(child_path))
+            direct = parse_file(str(leviathan_path))
+
+            self.assertIsNotNone(inherited)
+            self.assertEqual(267, inherited["body"])
+            self.assertEqual("0x455", inherited["skin_hue"])
+
+            self.assertIsNotNone(direct)
+            self.assertEqual(77, direct["body"])
+            self.assertEqual("0x481", direct["skin_hue"])
+
+    def test_extracts_default_human_variants_for_base_vendor(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Banker.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Banker : BaseVendor
+                        {
+                            [Constructible]
+                            public Banker() : base("the banker")
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual(2, len(parsed["variants"]))
+            appearances = {
+                variant["appearance"]["body"]: variant["appearance"]
+                for variant in parsed["variants"]
+            }
+            self.assertEqual({0x190, 0x191}, set(appearances))
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[0x190]["skin_hue"])
+            self.assertEqual("Race.Human.RandomSkinHue()", appearances[0x191]["skin_hue"])
+
+    def test_skips_item_derived_constructibles(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "EtherealMount.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class EtherealMount : Item
+                        {
+                            [Constructible]
+                            public EtherealMount(int itemID, int mountID) : base(itemID)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNone(parsed)
+
+
+class ParseDirectoryTests(unittest.TestCase):
+    def test_parse_directory_emits_each_mobile_class_from_multi_class_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Bird.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Bird : BaseCreature
+                        {
+                            [Constructible]
+                            public Bird() : base(AIType.AI_Animal)
+                            {
+                                Body = 6;
+                            }
+
+                            public override string DefaultName => "a bird";
+                        }
+
+                        public class TropicalBird : BaseCreature
+                        {
+                            [Constructible]
+                            public TropicalBird() : base(AIType.AI_Animal)
+                            {
+                                Body = 7;
+                            }
+
+                            public override string DefaultName => "a tropical bird";
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_directory(tmp_dir, "animals", ".")
+
+            self.assertEqual(2, len(parsed))
+            parsed_by_class = {entry["class_name"]: entry for entry in parsed}
+            self.assertEqual("a bird", parsed_by_class["Bird"]["name"])
+            self.assertEqual(6, parsed_by_class["Bird"]["body"])
+            self.assertEqual("a tropical bird", parsed_by_class["TropicalBird"]["name"])
+            self.assertEqual(7, parsed_by_class["TropicalBird"]["body"])
+
+    def test_parse_directory_skips_item_derived_classes_from_multi_class_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Ethereals.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class EtherealMount : Item
+                        {
+                            [Constructible]
+                            public EtherealMount(int itemID, int mountID) : base(itemID)
+                            {
+                            }
+                        }
+
+                        public class EtherealHorse : EtherealMount
+                        {
+                            [Constructible]
+                            public EtherealHorse() : base(0x20DD, 0x3EAA)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_directory(tmp_dir, "animals", ".")
+
+            self.assertEqual([], parsed)
+
+
+if __name__ == "__main__":
+    unittest.main()

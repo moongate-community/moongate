@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013E",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 500,
     "dexterity": 100,
     "intelligence": 1000,
@@ -52,8 +49,15 @@
       "poison": 20,
       "energy": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "unholy bones"
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013E"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

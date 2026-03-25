@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 247,
     "dexterity": 175,
     "intelligence": 369,
@@ -46,8 +44,17 @@
       "physical": 20,
       "poison": 80
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Malefic"
+    "title": "Malefic",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000B",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

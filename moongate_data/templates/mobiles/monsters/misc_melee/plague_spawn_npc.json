@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x000E",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 250,
     "dexterity": 80,
     "intelligence": 18,
@@ -43,8 +40,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a plague spawn"
+    "title": "a plague spawn",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0033"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

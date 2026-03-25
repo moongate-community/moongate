@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x030C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 850,
     "dexterity": 55,
     "intelligence": 43,
@@ -44,8 +41,16 @@
       "physical": 60,
       "poison": 40
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a bog thing"
+    "title": "a bog thing",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030C"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 805,
     "dexterity": 126,
     "intelligence": 176,
@@ -56,8 +53,16 @@
       "poison": 20,
       "energy": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a gargoyle destroyer"
+    "title": "a gargoyle destroyer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02F3"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

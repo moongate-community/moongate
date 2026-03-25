@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 105,
     "dexterity": 134,
     "intelligence": 72,
@@ -43,8 +41,17 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Lady Lissith"
+    "title": "Lady Lissith",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x009D",
+          "skinHue": "0x0452"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

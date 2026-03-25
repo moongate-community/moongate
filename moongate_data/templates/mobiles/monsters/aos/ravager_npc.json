@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 263,
     "dexterity": 113,
     "intelligence": 78,
@@ -47,8 +44,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a ravager"
+    "title": "a ravager",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

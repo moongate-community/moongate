@@ -410,15 +410,25 @@ NPC templates can bind a Lua brain through `brain`:
 {
   "type": "mobile",
   "id": "orione",
-  "body": "0x00C9",
-  "skinHue": 779,
   "brain": "orion",
   "name": "Orione",
-  "title": "a beautiful cat"
+  "title": "a beautiful cat",
+  "variants": [
+    {
+      "name": "default",
+      "weight": 1,
+      "appearance": {
+        "body": "0x00C9",
+        "skinHue": 779
+      },
+      "equipment": []
+    }
+  ]
 }
 ```
 
 The value `brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
+Appearance and spawn-time equipment are selected from `variants`; simple NPCs typically declare one default variant.
 
 Real brain script (Orion the cat NPC):
 

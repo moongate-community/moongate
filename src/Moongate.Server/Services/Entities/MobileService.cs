@@ -22,6 +22,7 @@ namespace Moongate.Server.Services.Entities;
 public sealed class MobileService : IMobileService
 {
     private const string MountedDisplayItemIdKey = "mounted_display_item_id";
+    private const string VariantIndexKey = "mobile_variant_index";
     private const int MountInteractionRange = 2;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private readonly IPersistenceService _persistenceService;
@@ -325,26 +326,16 @@ public sealed class MobileService : IMobileService
             return;
         }
 
-        foreach (var fixedEquipment in definition.FixedEquipment)
+        if (definition.Variants.Count == 0)
         {
-            await TryEquipTemplateItemAsync(mobile, fixedEquipment.Layer, fixedEquipment.ItemTemplateId, cancellationToken);
+            throw new InvalidOperationException($"Mobile template '{templateId}' has no variants.");
         }
 
-        foreach (var randomPool in definition.RandomEquipment)
+        var selectedVariant = SelectVariant(definition, mobile);
+
+        foreach (var equipmentEntry in selectedVariant.Equipment)
         {
-            if (randomPool.SpawnChance < 1.0f && Random.Shared.NextDouble() > randomPool.SpawnChance)
-            {
-                continue;
-            }
-
-            var selected = SelectRandomEquipment(randomPool);
-
-            if (selected is null)
-            {
-                continue;
-            }
-
-            await TryEquipTemplateItemAsync(mobile, randomPool.Layer, selected.ItemTemplateId, cancellationToken);
+            await TryEquipTemplateItemAsync(mobile, equipmentEntry, cancellationToken);
         }
 
         await _persistenceService.UnitOfWork.Mobiles.UpsertAsync(mobile, cancellationToken);
@@ -566,14 +557,29 @@ public sealed class MobileService : IMobileService
         return mount.Body;
     }
 
-    private static MobileWeightedEquipmentItemTemplate? SelectRandomEquipment(MobileRandomEquipmentPoolTemplate pool)
+    private static MobileVariantTemplate SelectVariant(MobileTemplateDefinition definition, UOMobileEntity mobile)
     {
-        if (pool.Items.Count == 0)
+        if (!mobile.TryGetCustomInteger(VariantIndexKey, out var variantIndex) ||
+            variantIndex < 0 ||
+            variantIndex >= definition.Variants.Count ||
+            definition.Variants[(int)variantIndex] is null)
+        {
+            throw new InvalidOperationException(
+                $"Mobile '{mobile.Id}' has an invalid or missing variant index for template '{definition.Id}'."
+            );
+        }
+
+        return definition.Variants[(int)variantIndex];
+    }
+
+    private static MobileWeightedEquipmentItemTemplate? SelectRandomEquipment(MobileEquipmentEntryTemplate entry)
+    {
+        if (entry.Items.Count == 0)
         {
             return null;
         }
 
-        var validItems = pool.Items.Where(static item => item.Weight > 0).ToArray();
+        var validItems = entry.Items.Where(static item => item.Weight > 0).ToArray();
 
         if (validItems.Length == 0)
         {
@@ -602,11 +608,25 @@ public sealed class MobileService : IMobileService
 
     private async Task TryEquipTemplateItemAsync(
         UOMobileEntity mobile,
-        ItemLayerType layer,
-        string itemTemplateId,
+        MobileEquipmentEntryTemplate equipmentEntry,
         CancellationToken cancellationToken
     )
     {
+        if (equipmentEntry.Chance <= 0d)
+        {
+            return;
+        }
+
+        if (equipmentEntry.Chance < 1d && Random.Shared.NextDouble() > equipmentEntry.Chance)
+        {
+            return;
+        }
+
+        var selectedItem = string.IsNullOrWhiteSpace(equipmentEntry.ItemTemplateId)
+                               ? SelectRandomEquipment(equipmentEntry)
+                               : null;
+        var itemTemplateId = selectedItem?.ItemTemplateId ?? equipmentEntry.ItemTemplateId;
+
         if (string.IsNullOrWhiteSpace(itemTemplateId))
         {
             return;
@@ -616,9 +636,16 @@ public sealed class MobileService : IMobileService
         {
             var item = _itemFactoryService.CreateItemFromTemplate(itemTemplateId);
             item.MapId = mobile.MapId;
-            mobile.AddEquippedItem(layer, item);
+            ApplyItemOverrides(item, equipmentEntry.Hue, equipmentEntry.Params);
 
-            if (layer == ItemLayerType.Backpack)
+            if (selectedItem is not null)
+            {
+                ApplyItemOverrides(item, selectedItem.Hue, selectedItem.Params);
+            }
+
+            mobile.AddEquippedItem(equipmentEntry.Layer, item);
+
+            if (equipmentEntry.Layer == ItemLayerType.Backpack)
             {
                 mobile.BackpackId = item.Id;
             }
@@ -632,8 +659,67 @@ public sealed class MobileService : IMobileService
                 "Failed to equip template item {ItemTemplateId} on mobile {MobileId} (layer={Layer})",
                 itemTemplateId,
                 mobile.Id,
-                layer
+                equipmentEntry.Layer
             );
+        }
+    }
+
+    private static void ApplyItemOverrides(
+        UOItemEntity item,
+        HueSpec? hue,
+        IReadOnlyDictionary<string, ItemTemplateParamDefinition> parameters
+    )
+    {
+        if (hue.HasValue)
+        {
+            item.Hue = hue.Value.Resolve();
+        }
+
+        foreach (var (key, param) in parameters)
+        {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                throw new InvalidOperationException("Equipment entry has an invalid params entry with an empty key.");
+            }
+
+            var normalizedKey = key.Trim();
+
+            switch (param.Type)
+            {
+                case ItemTemplateParamType.String:
+                    item.SetCustomString(normalizedKey, param.Value);
+
+                    break;
+                case ItemTemplateParamType.Serial:
+                    if (!Serial.TryParse(param.Value, null, out var serial))
+                    {
+                        throw new InvalidOperationException(
+                            $"Equipment entry has invalid serial param '{normalizedKey}' = '{param.Value}'."
+                        );
+                    }
+
+                    item.SetCustomInteger(normalizedKey, serial.Value);
+
+                    break;
+                case ItemTemplateParamType.Hue:
+                    try
+                    {
+                        item.SetCustomInteger(normalizedKey, HueSpec.ParseFromString(param.Value).Resolve());
+                    }
+                    catch (FormatException exception)
+                    {
+                        throw new InvalidOperationException(
+                            $"Equipment entry has invalid hue param '{normalizedKey}' = '{param.Value}'.",
+                            exception
+                        );
+                    }
+
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"Equipment entry has unsupported param type '{param.Type}' for key '{normalizedKey}'."
+                    );
+            }
         }
     }
 

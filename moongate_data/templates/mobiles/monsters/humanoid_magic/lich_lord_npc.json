@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x004F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 460,
     "dexterity": 155,
     "intelligence": 610,
@@ -56,8 +53,16 @@
       "cold": 60,
       "energy": 40
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a lich lord"
+    "title": "a lich lord",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x004F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

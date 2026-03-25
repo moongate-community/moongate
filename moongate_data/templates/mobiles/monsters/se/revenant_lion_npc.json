@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00FB",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 300,
     "dexterity": 165,
     "intelligence": 90,
@@ -48,8 +45,16 @@
       "poison": 10,
       "energy": 30
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a Revenant Lion"
+    "title": "a Revenant Lion",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00FB"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

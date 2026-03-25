@@ -8,8 +8,6 @@
       "animal",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 132,
     "dexterity": 65,
     "intelligence": 8,
@@ -41,8 +39,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a desert ostard"
+    "title": "a desert ostard",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00D2"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

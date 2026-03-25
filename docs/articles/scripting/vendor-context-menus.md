@@ -60,9 +60,18 @@ Use `sellProfileId` in the mobile template:
     "type": "mobile",
     "id": "vendor_test",
     "title": "Vendor",
-    "body": "0x0190",
     "sellProfileId": "vendor.basic",
-    "brain": "vendor_brain"
+    "brain": "vendor_brain",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]
 ```

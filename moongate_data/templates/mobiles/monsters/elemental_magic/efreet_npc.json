@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0083",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 340,
     "dexterity": 275,
     "intelligence": 183,
@@ -53,8 +50,16 @@
       "fire": 50,
       "energy": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an efreet"
+    "title": "an efreet",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0083"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 814,
     "dexterity": 110,
     "intelligence": 111,
@@ -50,8 +47,16 @@
       "poison": 10,
       "energy": 10
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a hydra"
+    "title": "a hydra",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0109"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

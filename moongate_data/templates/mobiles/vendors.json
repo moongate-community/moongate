@@ -16,30 +16,39 @@
     "lootTables": [
       "vendor.blacksmith"
     ],
-    "fixedEquipment": [
+    "title": "a blacksmith",
+    "variants": [
       {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "half_apron",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "tongs",
-        "layer": "OneHanded"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "fancy_shirt",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "long_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "half_apron",
+            "layer": "Waist"
+          },
+          {
+            "itemTemplateId": "boots",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "tongs",
+            "layer": "OneHanded"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a blacksmith"
+    ]
   },
   {
     "type": "mobile",
@@ -62,30 +71,39 @@
     "lootTables": [
       "vendor.weaponsmith"
     ],
-    "fixedEquipment": [
+    "title": "the weaponsmith",
+    "variants": [
       {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "half_apron",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "hatchet",
-        "layer": "OneHanded"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "fancy_shirt",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "long_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "half_apron",
+            "layer": "Waist"
+          },
+          {
+            "itemTemplateId": "boots",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "hatchet",
+            "layer": "OneHanded"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "the weaponsmith"
+    ]
   },
   {
     "type": "mobile",
@@ -104,30 +122,39 @@
     "lootTables": [
       "vendor.armorer"
     ],
-    "fixedEquipment": [
+    "title": "an armorer",
+    "variants": [
       {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "half_apron",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "helmet",
-        "layer": "Helm"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "fancy_shirt",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "long_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "half_apron",
+            "layer": "Waist"
+          },
+          {
+            "itemTemplateId": "boots",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "helmet",
+            "layer": "Helm"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "an armorer"
+    ]
   },
   {
     "type": "mobile",
@@ -146,26 +173,35 @@
     "lootTables": [
       "vendor.provisioner"
     ],
-    "fixedEquipment": [
+    "title": "the provisioner",
+    "variants": [
       {
-        "itemTemplateId": "doublet",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "short_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "shoes",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "backpack",
-        "layer": "Backpack"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "doublet",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "short_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "shoes",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "backpack",
+            "layer": "Backpack"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "the provisioner"
+    ]
   },
   {
     "type": "mobile",
@@ -184,26 +220,35 @@
     "lootTables": [
       "vendor.mage"
     ],
-    "fixedEquipment": [
+    "title": "a mage",
+    "variants": [
       {
-        "itemTemplateId": "robe",
-        "layer": "OuterTorso"
-      },
-      {
-        "itemTemplateId": "sandals",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "wizards_hat",
-        "layer": "Helm"
-      },
-      {
-        "itemTemplateId": "spellbook",
-        "layer": "OneHanded"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "robe",
+            "layer": "OuterTorso"
+          },
+          {
+            "itemTemplateId": "sandals",
+            "layer": "Shoes"
+          },
+          {
+            "itemTemplateId": "wizards_hat",
+            "layer": "Helm"
+          },
+          {
+            "itemTemplateId": "spellbook",
+            "layer": "OneHanded"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a mage"
+    ]
   },
   {
     "type": "mobile",
@@ -222,17 +267,26 @@
     "lootTables": [
       "vendor.healer"
     ],
-    "fixedEquipment": [
+    "title": "a healer",
+    "variants": [
       {
-        "itemTemplateId": "robe",
-        "layer": "OuterTorso"
-      },
-      {
-        "itemTemplateId": "sandals",
-        "layer": "Shoes"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "robe",
+            "layer": "OuterTorso"
+          },
+          {
+            "itemTemplateId": "sandals",
+            "layer": "Shoes"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a healer"
+    ]
   }
 ]

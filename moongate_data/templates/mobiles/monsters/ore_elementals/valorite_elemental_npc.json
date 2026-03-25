@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0070",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 240,
     "dexterity": 135,
     "intelligence": 81,
@@ -54,8 +51,16 @@
       "cold": 25,
       "energy": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a valorite elemental"
+    "title": "a valorite elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0070"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

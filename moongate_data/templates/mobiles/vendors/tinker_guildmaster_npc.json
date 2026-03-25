@@ -8,16 +8,32 @@
       "vendor",
       "npc"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "vendor",
     "skills": {
       "Lockpicking": 765,
       "Tinkering": 950,
       "RemoveTrap": 925
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "tinker"
+    "title": "tinker",
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

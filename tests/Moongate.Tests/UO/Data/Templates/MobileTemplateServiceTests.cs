@@ -54,9 +54,19 @@ public class MobileTemplateServiceTests
             Name = name,
             Category = "monsters",
             Description = name,
-            Body = 0x11,
-            SkinHue = HueSpec.FromRange(779, 790),
-            HairHue = HueSpec.FromValue(0),
-            Brain = "test"
+            Brain = "test",
+            Variants =
+            [
+                new()
+                {
+                    Name = "default",
+                    Appearance = new()
+                    {
+                        Body = 0x11,
+                        SkinHue = HueSpec.FromRange(779, 790),
+                        HairHue = HueSpec.FromValue(0)
+                    }
+                }
+            ]
         };
 }

@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 35,
     "dexterity": 75,
     "intelligence": 103,
@@ -44,8 +41,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a dolphin"
+    "title": "a dolphin",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0097"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 463,
     "dexterity": 168,
     "intelligence": 263,
@@ -37,8 +35,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Chiikkaha the Toothed"
+    "title": "Chiikkaha the Toothed",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x008F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

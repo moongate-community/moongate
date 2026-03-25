@@ -1358,7 +1358,16 @@ public sealed class GmMenuLuaRuntimeTests
             {
                 Id = "zombie",
                 Name = "Zombie",
-                Body = 3
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance =
+                        {
+                            Body = 3
+                        }
+                    }
+                ]
             }
         );
         var itemService = new GmMenuLuaRuntimeItemService();

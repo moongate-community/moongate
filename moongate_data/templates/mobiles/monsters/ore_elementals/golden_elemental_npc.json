@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00A6",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 240,
     "dexterity": 135,
     "intelligence": 81,
@@ -49,8 +46,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a golden elemental"
+    "title": "a golden elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A6"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

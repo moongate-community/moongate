@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0098",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 556,
     "dexterity": 86,
     "intelligence": 138,
@@ -53,8 +50,16 @@
       "physical": 50,
       "poison": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a terathan avenger"
+    "title": "a terathan avenger",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0098"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

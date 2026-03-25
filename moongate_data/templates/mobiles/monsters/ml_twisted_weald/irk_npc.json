@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 103,
     "dexterity": 309,
     "intelligence": 487,
@@ -41,8 +39,16 @@
       "poison": 45,
       "energy": 44
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Irk"
+    "title": "Irk",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0108"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

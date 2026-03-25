@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0035",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 190,
     "dexterity": 55,
     "intelligence": 58,
@@ -47,8 +44,24 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a troll"
+    "title": "a troll",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0035"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0036"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

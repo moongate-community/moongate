@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 641,
     "dexterity": 178,
     "intelligence": 580,
@@ -39,8 +37,16 @@
       "physical": 75,
       "energy": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Szavetra"
+    "title": "Szavetra",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0095"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

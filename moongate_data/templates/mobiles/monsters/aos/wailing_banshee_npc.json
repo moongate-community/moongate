@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0136",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 138,
     "dexterity": 88,
     "intelligence": 98,
@@ -49,8 +46,16 @@
       "cold": 60,
       "poison": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a wailing banshee"
+    "title": "a wailing banshee",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0136"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

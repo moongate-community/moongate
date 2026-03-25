@@ -30,6 +30,8 @@ python3 scripts/modernuo_npc_converter.py --all \
 ## Post-conversion review
 
 Generated templates need manual review for:
-- Equipment (not auto-extracted from C# source)
+- Complex outfit logic that falls outside the supported ModernUO constructor and `InitOutfit` patterns
 - Sell profile items (placeholders only, need manual population)
-- Sound IDs (estimated from BaseSoundID offset pattern)
+- Sound IDs (estimated from `BaseSoundID` offset pattern)
+
+The converter now emits canonical mobile `variants[]` entries with `appearance` and spawn-time `equipment` for the supported ModernUO patterns it can parse automatically.

@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x00F8",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 160,
     "dexterity": 130,
     "intelligence": 53,
@@ -38,8 +35,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a gaman"
+    "title": "a gaman",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F8"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

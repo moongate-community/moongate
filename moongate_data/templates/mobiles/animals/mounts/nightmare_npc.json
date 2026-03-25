@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x0074",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 305,
     "dexterity": 95,
     "intelligence": 105,
@@ -48,8 +45,16 @@
       "fire": 40,
       "energy": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a nightmare"
+    "title": "a nightmare",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00B3"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

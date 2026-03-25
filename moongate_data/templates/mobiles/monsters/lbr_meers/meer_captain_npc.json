@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0305",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 103,
     "dexterity": 193,
     "intelligence": 103,
@@ -42,8 +39,50 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a meer captain"
+    "title": "a meer captain",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0305"
+        },
+        "equipment": [
+          {
+            "layer": "OneHanded",
+            "items": [
+              {
+                "itemTemplateId": "longsword",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "cutlass",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "broadsword",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "katana",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "scimitar",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "viking_sword",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "crossbow"
+          }
+        ]
+      }
+    ]
   }
 ]

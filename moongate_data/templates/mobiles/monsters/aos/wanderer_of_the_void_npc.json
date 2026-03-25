@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 155,
     "dexterity": 113,
     "intelligence": 345,
@@ -52,8 +49,16 @@
       "cold": 15,
       "energy": 85
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a wanderer of the void"
+    "title": "a wanderer of the void",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013C"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

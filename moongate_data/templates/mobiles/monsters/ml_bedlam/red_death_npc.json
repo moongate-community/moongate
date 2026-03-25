@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 321,
     "dexterity": 242,
     "intelligence": 248,
@@ -50,8 +48,17 @@
       "fire": 75,
       "cold": 0
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Red Death"
+    "title": "Red Death",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0319",
+          "skinHue": "0x0021"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x003F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 68,
     "dexterity": 75,
     "intelligence": 38,
@@ -45,8 +42,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a cougar"
+    "title": "a cougar",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x003F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

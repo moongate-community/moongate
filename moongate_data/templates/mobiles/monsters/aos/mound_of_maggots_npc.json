@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 65,
     "dexterity": 65,
     "intelligence": 10,
@@ -43,8 +40,16 @@
       "physical": 50,
       "poison": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a mound of maggots"
+    "title": "a mound of maggots",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

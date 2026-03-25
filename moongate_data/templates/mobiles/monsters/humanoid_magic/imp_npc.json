@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x004A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 103,
     "dexterity": 70,
     "intelligence": 95,
@@ -54,8 +51,16 @@
       "fire": 50,
       "poison": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an imp"
+    "title": "an imp",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x004A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -879,12 +879,73 @@ public class MobileServiceTests
             {
                 Id = "orc",
                 Brain = "orc_warrior",
-                FixedEquipment =
+                Variants =
                 [
                     new()
                     {
-                        ItemTemplateId = "shirt",
-                        Layer = ItemLayerType.Shirt
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                Layer = ItemLayerType.Shirt,
+                                ItemTemplateId = "shirt",
+                                Chance = 1.0,
+                                Hue = HueSpec.FromValue(0x0455),
+                                Params = new()
+                                {
+                                    ["quality"] = new() { Type = ItemTemplateParamType.String, Value = "exceptional" }
+                                }
+                            },
+                            new()
+                            {
+                                Layer = ItemLayerType.TwoHanded,
+                                Chance = 1.0,
+                                Items =
+                                [
+                                    new()
+                                    {
+                                        ItemTemplateId = "dagger_variant",
+                                        Weight = 1,
+                                        Hue = HueSpec.FromValue(0x0123),
+                                        Params = new()
+                                        {
+                                            ["style"] = new() { Type = ItemTemplateParamType.String, Value = "2" }
+                                        }
+                                    },
+                                    new()
+                                    {
+                                        ItemTemplateId = "dagger_unused",
+                                        Weight = 0
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    new()
+                    {
+                        Appearance = new()
+                        {
+                            Body = 0x0191,
+                            SkinHue = HueSpec.FromValue(0x0111),
+                            HairHue = HueSpec.FromValue(0x0222),
+                            HairStyle = 0
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                Layer = ItemLayerType.Shirt,
+                                ItemTemplateId = "robe",
+                                Chance = 1.0
+                            }
+                        ]
                     }
                 ]
             }
@@ -902,12 +963,23 @@ public class MobileServiceTests
         var factory = new TestMobileFactoryService
         {
             CreateFromTemplateImpl = (templateId, accountId) =>
-                                         new()
-                                         {
-                                             Id = expectedId,
-                                             Name = $"template:{templateId}",
-                                             AccountId = accountId ?? Serial.Zero
-                                         }
+                {
+                    var mobile = new UOMobileEntity
+                    {
+                        Id = expectedId,
+                        Name = $"template:{templateId}",
+                        AccountId = accountId ?? Serial.Zero,
+                        BaseBody = 0x0191,
+                        SkinHue = 0x0111,
+                        HairHue = 0x0222,
+                        HairStyle = 0,
+                        FacialHairStyle = 0,
+                        FacialHairHue = 0
+                    };
+                    mobile.SetCustomInteger("mobile_variant_index", 1);
+
+                    return mobile;
+                }
         };
         IMobileService service = new MobileService(
             persistence,
@@ -925,6 +997,8 @@ public class MobileServiceTests
                           (Serial)25
                       );
         var saved = await persistence.UnitOfWork.Mobiles.GetByIdAsync(expectedId);
+        var equippedItems = spawned.GetEquippedItemsRuntime().ToList();
+        var shirt = equippedItems.Single(item => item.EquippedLayer == ItemLayerType.Shirt);
 
         Assert.Multiple(
             () =>
@@ -933,14 +1007,196 @@ public class MobileServiceTests
                 Assert.That(spawned.Location, Is.EqualTo(new Point3D(100, 200, 7)));
                 Assert.That(spawned.MapId, Is.EqualTo(1));
                 Assert.That(spawned.AccountId, Is.EqualTo((Serial)25));
+                Assert.That(spawned.TryGetCustomInteger("mobile_variant_index", out var selectedIndex), Is.True);
+                Assert.That(selectedIndex, Is.EqualTo(1));
+                Assert.That((int)spawned.Body, Is.EqualTo(0x0191));
+                Assert.That(spawned.SkinHue, Is.EqualTo(0x0111));
+                Assert.That(spawned.HairHue, Is.EqualTo(0x0222));
                 Assert.That(saved, Is.Not.Null);
                 Assert.That(saved!.Name, Is.EqualTo("template:orc"));
                 Assert.That(saved.Location, Is.EqualTo(new Point3D(100, 200, 7)));
                 Assert.That(saved.MapId, Is.EqualTo(1));
                 Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.Shirt), Is.True);
+                Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.TwoHanded), Is.False);
+                Assert.That(shirt.Name, Is.EqualTo("robe"));
                 Assert.That(spawned.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(saved.BrainId, Is.EqualTo("orc_warrior"));
                 Assert.That(luaBrainRunner.Registered, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task SpawnFromTemplateAsync_ShouldThrow_WhenStoredVariantIndexIsInvalid()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new TestMobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "orc",
+                Brain = "orc_warrior",
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                Layer = ItemLayerType.Shirt,
+                                ItemTemplateId = "shirt",
+                                Chance = 1.0
+                            }
+                        ]
+                    }
+                ]
+            }
+        );
+        var factory = new TestMobileFactoryService
+        {
+            CreateFromTemplateImpl = (templateId, accountId) =>
+                {
+                    var mobile = new UOMobileEntity
+                    {
+                        Id = persistence.UnitOfWork.AllocateNextMobileId(),
+                        Name = $"template:{templateId}",
+                        AccountId = accountId ?? Serial.Zero
+                    };
+                    mobile.SetCustomInteger("mobile_variant_index", 99);
+
+                    return mobile;
+                }
+        };
+        var itemFactory = new TestItemFactoryService();
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(
+            async () => await service.SpawnFromTemplateAsync("orc", new(100, 200, 7), 1, (Serial)25)
+        );
+    }
+
+    [Test]
+    public async Task SpawnFromTemplateAsync_ShouldRespectEquipmentChanceAndWeightedItemPools()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new TestMobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "chance_orc",
+                Brain = "orc_warrior",
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        },
+                        Equipment =
+                        [
+                            new()
+                            {
+                                Layer = ItemLayerType.Helm,
+                                ItemTemplateId = "ignored_helm",
+                                Chance = 0d
+                            },
+                            new()
+                            {
+                                Layer = ItemLayerType.TwoHanded,
+                                Chance = 1d,
+                                Items =
+                                [
+                                    new()
+                                    {
+                                        ItemTemplateId = "weighted_spear",
+                                        Weight = 0
+                                    },
+                                    new()
+                                    {
+                                        ItemTemplateId = "weighted_halberd",
+                                        Weight = 3,
+                                        Hue = HueSpec.FromValue(0x0123),
+                                        Params = new()
+                                        {
+                                            ["quality"] = new() { Type = ItemTemplateParamType.String, Value = "exceptional" }
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        );
+        var factory = new TestMobileFactoryService
+        {
+            CreateFromTemplateImpl = (_, _) =>
+                {
+                    var mobile = new UOMobileEntity
+                    {
+                        Id = persistence.UnitOfWork.AllocateNextMobileId(),
+                        Name = "chance_orc"
+                    };
+                    mobile.SetCustomInteger("mobile_variant_index", 0);
+
+                    return mobile;
+                }
+        };
+        var itemFactory = new TestItemFactoryService
+        {
+            CreateItemFromTemplateImpl = itemTemplateId => new()
+            {
+                Id = persistence.UnitOfWork.AllocateNextItemId(),
+                Name = itemTemplateId,
+                ItemId = 1
+            }
+        };
+        var luaBrainRunner = new TestLuaBrainRunner();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+
+        var spawned = await service.SpawnFromTemplateAsync("chance_orc", new(100, 200, 7), 1, (Serial)25);
+        var equippedItems = spawned.GetEquippedItemsRuntime().ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(equippedItems, Has.Count.EqualTo(1));
+                Assert.That(equippedItems.Single().EquippedLayer, Is.EqualTo(ItemLayerType.TwoHanded));
+                Assert.That(equippedItems.Single().Name, Is.EqualTo("weighted_halberd"));
+                Assert.That(equippedItems.Single().Hue, Is.EqualTo(0x0123));
+                Assert.That(equippedItems.Single().TryGetCustomString("quality", out var quality), Is.True);
+                Assert.That(quality, Is.EqualTo("exceptional"));
+                Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.Helm), Is.False);
+                Assert.That(spawned.EquippedItemIds.ContainsKey(ItemLayerType.TwoHanded), Is.True);
             }
         );
     }
@@ -1248,19 +1504,37 @@ public class MobileServiceTests
             new()
             {
                 Id = "orc",
-                Brain = "orc_warrior"
+                Brain = "orc_warrior",
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        }
+                    }
+                ]
             }
         );
         var luaBrainRunner = new TestLuaBrainRunner();
         var factory = new TestMobileFactoryService
         {
             CreateFromTemplateImpl = (templateId, accountId) =>
-                                         new()
-                                         {
-                                             Id = expectedId,
-                                             Name = $"template:{templateId}",
-                                             AccountId = accountId ?? Serial.Zero
-                                         }
+                {
+                    var mobile = new UOMobileEntity
+                    {
+                        Id = expectedId,
+                        Name = $"template:{templateId}",
+                        AccountId = accountId ?? Serial.Zero
+                    };
+                    mobile.SetCustomInteger("mobile_variant_index", 0);
+
+                    return mobile;
+                }
         };
         var itemFactory = new TestItemFactoryService();
         IMobileService service = new MobileService(

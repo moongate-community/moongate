@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x013B",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 430,
     "dexterity": 205,
     "intelligence": 240,
@@ -41,8 +38,16 @@
       "physical": 80,
       "poison": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a fleshrenderer"
+    "title": "a fleshrenderer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013B"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

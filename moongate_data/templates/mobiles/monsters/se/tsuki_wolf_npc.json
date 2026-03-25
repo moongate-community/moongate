@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x00FA",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 425,
     "dexterity": 175,
     "intelligence": 71,
@@ -44,8 +41,16 @@
       "cold": 5,
       "energy": 5
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a tsuki wolf"
+    "title": "a tsuki wolf",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00FA"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

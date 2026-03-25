@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0107",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 320,
     "dexterity": 100,
     "intelligence": 40,
@@ -40,8 +37,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a minotaur"
+    "title": "a minotaur",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0107"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

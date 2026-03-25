@@ -8,8 +8,6 @@
       "animal",
       "tamable"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 300,
     "dexterity": 100,
     "intelligence": 500,
@@ -31,8 +29,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a giant beetle"
+    "title": "a giant beetle",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0317"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

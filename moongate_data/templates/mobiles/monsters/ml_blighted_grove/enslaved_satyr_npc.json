@@ -7,11 +7,17 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "brain": "melee_combat",
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an enslaved satyr"
+    "title": "an enslaved satyr",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

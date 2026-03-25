@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0016",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 110,
     "dexterity": 95,
     "intelligence": 153,
@@ -51,8 +48,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a gazer"
+    "title": "a gazer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0016"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

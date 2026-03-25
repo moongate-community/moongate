@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 565,
     "dexterity": 89,
     "intelligence": 66,
@@ -35,8 +33,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Moug-Guur"
+    "title": "Moug-Guur",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0012"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

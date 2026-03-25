@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x007F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 173,
     "dexterity": 105,
     "intelligence": 88,
@@ -47,8 +44,16 @@
       "physical": 75,
       "fire": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a hell cat"
+    "title": "a hell cat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x007F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

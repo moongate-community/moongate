@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x008A",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 181,
     "dexterity": 103,
     "intelligence": 73,
@@ -49,8 +46,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an orcish lord"
+    "title": "an orcish lord",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x008A"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

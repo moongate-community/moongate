@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x00E1",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 68,
     "dexterity": 65,
     "intelligence": 18,
@@ -46,8 +43,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a timber wolf"
+    "title": "a timber wolf",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00E1"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

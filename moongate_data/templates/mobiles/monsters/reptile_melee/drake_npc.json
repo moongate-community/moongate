@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x003C",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 415,
     "dexterity": 142,
     "intelligence": 120,
@@ -52,8 +49,24 @@
       "physical": 80,
       "fire": 20
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a drake"
+    "title": "a drake",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x003C"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x003D"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

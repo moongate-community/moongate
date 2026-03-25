@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 30,
     "dexterity": 15,
     "intelligence": 5,
@@ -37,8 +34,24 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a cow"
+    "title": "a cow",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00D8"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00E7"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

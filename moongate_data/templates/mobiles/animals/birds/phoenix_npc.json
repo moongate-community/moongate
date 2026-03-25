@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x0005",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 602,
     "dexterity": 251,
     "intelligence": 602,
@@ -51,8 +48,17 @@
       "physical": 50,
       "fire": 50
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a phoenix"
+    "title": "a phoenix",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0005",
+          "skinHue": "0x0674"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

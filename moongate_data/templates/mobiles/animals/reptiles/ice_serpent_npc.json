@@ -7,9 +7,6 @@
     "tags": [
       "animal"
     ],
-    "body": "0x0059",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 230,
     "dexterity": 38,
     "intelligence": 75,
@@ -50,8 +47,16 @@
       "physical": 10,
       "cold": 90
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a giant ice serpent"
+    "title": "a giant ice serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0059"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

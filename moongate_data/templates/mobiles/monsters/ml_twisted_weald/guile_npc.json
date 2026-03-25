@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 133,
     "dexterity": 305,
     "intelligence": 477,
@@ -44,8 +42,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "Guile"
+    "title": "Guile",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0108"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

@@ -8,9 +8,6 @@
       "animal",
       "tamable"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 56,
     "dexterity": 62,
     "intelligence": 42,
@@ -36,8 +33,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a great hart"
+    "title": "a great hart",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00EA"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

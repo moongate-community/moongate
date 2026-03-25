@@ -8,9 +8,6 @@
       "monster",
       "tamable"
     ],
-    "body": "0x0062",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 126,
     "dexterity": 93,
     "intelligence": 48,
@@ -45,8 +42,16 @@
       "physical": 20,
       "fire": 80
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a hell hound"
+    "title": "a hell hound",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0062"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

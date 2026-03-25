@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0037",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 246,
     "dexterity": 75,
     "intelligence": 58,
@@ -49,8 +46,16 @@
       "physical": 75,
       "cold": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a frost troll"
+    "title": "a frost troll",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0037"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

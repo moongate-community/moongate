@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0087",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 856,
     "dexterity": 70,
     "intelligence": 58,
@@ -49,8 +46,16 @@
       "physical": 30,
       "cold": 70
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an arctic ogre lord"
+    "title": "an arctic ogre lord",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0087"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

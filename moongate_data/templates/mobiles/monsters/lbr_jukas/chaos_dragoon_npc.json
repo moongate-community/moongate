@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x0000",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 200,
     "dexterity": 88,
     "intelligence": 73,
@@ -47,8 +44,50 @@
       "cold": 25,
       "energy": 25
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a chaos dragoon"
+    "title": "a chaos dragoon",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Helm",
+            "itemTemplateId": "dragon_helm"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "dragon_chest"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "dragon_arms"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "dragon_gloves"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "dragon_legs"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "chaos_shield"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots"
+          }
+        ]
+      }
+    ]
   }
 ]

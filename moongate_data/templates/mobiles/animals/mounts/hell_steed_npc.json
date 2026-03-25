@@ -7,8 +7,6 @@
     "tags": [
       "animal"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 205,
     "dexterity": 105,
     "intelligence": 108,
@@ -33,8 +31,16 @@
       "physical": 25,
       "fire": 75
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a hellsteed"
+    "title": "a hellsteed",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0319"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

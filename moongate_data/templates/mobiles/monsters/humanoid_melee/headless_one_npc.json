@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x001F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 38,
     "dexterity": 45,
     "intelligence": 23,
@@ -43,8 +40,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a headless one"
+    "title": "a headless one",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x001F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

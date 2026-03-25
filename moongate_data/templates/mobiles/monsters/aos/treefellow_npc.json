@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x012D",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 208,
     "dexterity": 43,
     "intelligence": 78,
@@ -39,8 +36,16 @@
     "damageTypes": {
       "physical": 100
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a treefellow"
+    "title": "a treefellow",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x012D"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

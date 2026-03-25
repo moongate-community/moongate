@@ -7,8 +7,6 @@
     "tags": [
       "monster"
     ],
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 175,
     "dexterity": 225,
     "intelligence": 158,
@@ -49,8 +47,552 @@
       "poison": 15,
       "energy": 5
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "an elite ninja"
+    "title": "an elite ninja",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tessen"
+          }
+        ]
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "wakizashi"
+          }
+        ]
+      },
+      {
+        "name": "default_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "nunchaku"
+          }
+        ]
+      },
+      {
+        "name": "default_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "daisho"
+          }
+        ]
+      },
+      {
+        "name": "default_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "sai"
+          }
+        ]
+      },
+      {
+        "name": "default_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tekagi"
+          }
+        ]
+      },
+      {
+        "name": "default_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "kama"
+          }
+        ]
+      },
+      {
+        "name": "default_8",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "katana"
+          }
+        ]
+      },
+      {
+        "name": "default_9",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tessen"
+          }
+        ]
+      },
+      {
+        "name": "default_10",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "wakizashi"
+          }
+        ]
+      },
+      {
+        "name": "default_11",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "nunchaku"
+          }
+        ]
+      },
+      {
+        "name": "default_12",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "daisho"
+          }
+        ]
+      },
+      {
+        "name": "default_13",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "sai"
+          }
+        ]
+      },
+      {
+        "name": "default_14",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tekagi"
+          }
+        ]
+      },
+      {
+        "name": "default_15",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "kama"
+          }
+        ]
+      },
+      {
+        "name": "default_16",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "leather_ninja_mitts"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "katana"
+          }
+        ]
+      }
+    ]
   }
 ]

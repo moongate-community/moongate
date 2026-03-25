@@ -7,9 +7,6 @@
     "tags": [
       "monster"
     ],
-    "body": "0x030F",
-    "skinHue": 0,
-    "hairHue": 0,
     "strength": 308,
     "dexterity": 133,
     "intelligence": 88,
@@ -44,8 +41,16 @@
       "physical": 70,
       "poison": 30
     },
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a red solen queen"
+    "title": "a red solen queen",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030F"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]

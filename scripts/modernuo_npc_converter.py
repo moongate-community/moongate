@@ -12,10 +12,12 @@ Usage:
 
 import argparse
 import sys
+from pathlib import Path
 
 from modernuo_converter.constants import CATEGORY_PATHS
 from modernuo_converter.mapper import (
     map_pack_items_to_loot,
+    load_item_template_catalog,
     map_to_template,
     map_vendor_to_sell_profile,
 )
@@ -25,6 +27,11 @@ from modernuo_converter.generators.loot_generator import generate_all_loot
 from modernuo_converter.generators.sell_profile_generator import (
     generate_all_sell_profiles,
 )
+
+MANUALLY_MANAGED_MOBILE_TEMPLATE_IDS = {
+    "skeletal_knight_npc",
+    "zombie_npc",
+}
 
 
 def main():
@@ -114,13 +121,15 @@ def main():
     print(f"\nTotal parsed: {len(all_parsed)} NPCs")
 
     # Phase 2: Map
+    item_catalog = load_item_template_catalog(Path(args.output) / "templates" / "items")
     mobile_templates = []  # (template, parsed) tuples
     loot_templates = []
     sell_profiles = []
 
     for parsed in all_parsed:
-        template = map_to_template(parsed)
-        mobile_templates.append((template, parsed))
+        template = map_to_template(parsed, item_catalog=item_catalog)
+        if template["id"] not in MANUALLY_MANAGED_MOBILE_TEMPLATE_IDS:
+            mobile_templates.append((template, parsed))
 
         loot = map_pack_items_to_loot(parsed)
         if loot:
