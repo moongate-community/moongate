@@ -153,6 +153,21 @@ public sealed class MobileModule
         return CreateLuaItemProxy(TryResolveWeapon(mobile));
     }
 
+    [ScriptFunction("teleport", "Teleports a character id to the provided map and world coordinates.")]
+    public bool Teleport(uint characterId, int mapId, int x, int y, int z)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        var proxy = CreateLuaMobileProxy(mobile);
+
+        return proxy is not null && proxy.Teleport(mapId, x, y, z);
+    }
+
     [ScriptFunction("check_skill", "Checks a skill against a min/max range and applies gain rules.")]
     public bool CheckSkill(uint characterId, string skillName, double minSkill, double maxSkill, uint targetId = 0)
     {

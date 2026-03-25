@@ -3,8 +3,13 @@ local c = require("gumps.teleports.constants")
 local actions = {}
 
 local function info(msg)
-  if log ~= nil and log.info ~= nil then
+  if type(log) == "table" and log.info ~= nil then
     log.info(msg)
+    return
+  end
+
+  if type(log) == "function" then
+    log(msg)
   end
 end
 
@@ -49,9 +54,9 @@ function actions.apply_button_action(state, button_id, character)
   elseif button_id == c.BUTTON_REFRESH then
     state.page = 1
   elseif button_id == c.BUTTON_GO then
-    if state.selected ~= nil and character ~= nil then
-      local m = mobile.get(character)
-      if m ~= nil then
+    local character_id = tonumber(character) or 0
+    if state.selected ~= nil and character_id > 0 then
+      if mobile.teleport(character_id, state.selected.map_id, state.selected.x, state.selected.y, state.selected.z) then
         info(
           "teleports go map="
             .. tostring(state.selected.map_id)
@@ -62,7 +67,6 @@ function actions.apply_button_action(state, button_id, character)
             .. " z="
             .. tostring(state.selected.z)
         )
-        m:teleport(state.selected.map_id, state.selected.x, state.selected.y, state.selected.z)
       end
     end
   end

@@ -17,18 +17,26 @@ function controller.build_layout(session_id, character_id, reopen_callback)
 
   ui.add_frame(layout_ui)
   ui.add_sidebar(layout_ui, current_state)
-  render.add_content(layout_ui, current_state)
+  local section_handler = render.add_content(layout, session_id, character_id, current_state, reopen_callback)
 
   layout.handlers.on_click = function(ctx)
     local button_id = tonumber(ctx.button_id) or 0
 
     if button_id == c.BUTTON_TAB_TRAVEL then
       state.set_active_tab(ctx.session_id, "travel")
-    else
-      state.set_active_tab(ctx.session_id, "add")
+      reopen_callback(ctx.session_id, ctx.character_id)
+      return
     end
 
-    reopen_callback(ctx.session_id, ctx.character_id)
+    if button_id == c.BUTTON_TAB_ADD then
+      state.set_active_tab(ctx.session_id, "add")
+      reopen_callback(ctx.session_id, ctx.character_id)
+      return
+    end
+
+    if section_handler ~= nil then
+      section_handler(ctx)
+    end
   end
 
   return layout, sender_serial

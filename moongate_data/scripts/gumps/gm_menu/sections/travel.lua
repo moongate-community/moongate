@@ -1,19 +1,25 @@
-local c = require("gumps.gm_menu.constants")
-local ui = require("gumps.gm_menu.ui")
+local teleports_controller = require("gumps.teleports.controller")
 
 local travel_section = {}
 
-function travel_section.add_content(layout_ui)
-  ui.push(layout_ui, { type = "label", x = 196, y = 62, hue = c.TITLE_HUE, text = "Travel" })
-  ui.push(layout_ui, {
-    type = "label_cropped",
-    x = 196,
-    y = 88,
-    width = 324,
-    height = 20,
-    hue = c.MUTED_HUE,
-    text = "Curated travel destinations will appear here."
-  })
+function travel_section.add_content(layout, session_id, character_id, reopen_callback)
+  local embedded_layout = teleports_controller.build_layout(
+    session_id,
+    character_id,
+    reopen_callback,
+    {
+      origin_x = 188,
+      origin_y = 20,
+      show_outer_frame = false,
+      title = "Travel Browser"
+    }
+  )
+
+  for _, entry in ipairs(embedded_layout.ui) do
+    layout.ui[#layout.ui + 1] = entry
+  end
+
+  return embedded_layout.handlers.on_click
 end
 
 return travel_section

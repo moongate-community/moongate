@@ -15,11 +15,8 @@ function ui.add_frame(layout_ui)
   push(layout_ui, { type = "alpha_region", x = 12, y = 12, width = c.GUMP_WIDTH - 24, height = 24 })
   push(layout_ui, { type = "label", x = 24, y = 16, hue = c.TITLE_HUE, text = "GM Menu" })
 
-  push(layout_ui, { type = "image_tiled", x = 20, y = 48, width = c.SIDEBAR_WIDTH, height = 344, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = 20, y = 48, width = c.SIDEBAR_WIDTH, height = 344 })
-
-  push(layout_ui, { type = "image_tiled", x = 180, y = 48, width = 360, height = 344, gump_id = 2624 })
-  push(layout_ui, { type = "alpha_region", x = 180, y = 48, width = 360, height = 344 })
+  push(layout_ui, { type = "image_tiled", x = 20, y = 48, width = c.SIDEBAR_WIDTH, height = c.GUMP_HEIGHT - 68, gump_id = 2624 })
+  push(layout_ui, { type = "alpha_region", x = 20, y = 48, width = c.SIDEBAR_WIDTH, height = c.GUMP_HEIGHT - 68 })
 end
 
 function ui.add_sidebar(layout_ui, current_state)

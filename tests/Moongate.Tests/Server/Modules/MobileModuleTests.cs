@@ -524,6 +524,39 @@ public class MobileModuleTests
     }
 
     [Test]
+    public void Teleport_WhenCharacterExists_ShouldUpdateMapAndLocation()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x220,
+            Name = "Traveler",
+            MapId = 1,
+            Location = new(100, 200, 5)
+        };
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var teleported = module.Teleport(0x220, 0, 1496, 1628, 20);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(teleported, Is.True);
+                Assert.That(mobile.MapId, Is.EqualTo(0));
+                Assert.That(mobile.Location, Is.EqualTo(new Point3D(1496, 1628, 20)));
+            }
+        );
+    }
+
+    [Test]
     public void Get_WhenCharacterIsMounted_ShouldExposeMountedState()
     {
         var characterService = new MobileModuleTestCharacterService

@@ -2,9 +2,30 @@ local state = {}
 
 local session_state = {}
 
+local function create_default_add_state()
+  return {
+    filter = "items",
+    query = "",
+    page = 1,
+    quantity = 1,
+    selected = nil,
+    brush = {
+      active = false,
+      kind = nil,
+      template_id = nil,
+      display_name = nil,
+      item_id = 0,
+      quantity = 1,
+      cursor_id = 0,
+      nonce = 0
+    }
+  }
+end
+
 local function create_default_state()
   return {
-    active_tab = "add"
+    active_tab = "add",
+    add = create_default_add_state()
   }
 end
 
