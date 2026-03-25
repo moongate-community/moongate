@@ -38,8 +38,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
     private readonly LuaEngineConfig _engineConfig;
 
-    public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
-
     private const string OnReadyFunctionName = "on_ready";
 
     private const string OnEngineRunFunctionName = "on_initialize";
@@ -67,8 +65,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     private bool _disposed;
     private bool _isInitialized;
     private Func<string, string> _nameResolver;
-
-    private FileSystemWatcher? _watcher;
 
     /// <summary>
     /// Initializes a new instance of the LuaScriptEngineService class.
@@ -312,6 +308,24 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
     {
         _scriptCache.Clear();
         _logger.Information("Script cache cleared");
+    }
+
+    /// <summary>
+    /// Invalidates one cached script file.
+    /// </summary>
+    /// <param name="filePath">The script file path.</param>
+    public void InvalidateScript(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        if (_scriptCache.Invalidate(filePath))
+        {
+            _logger.Debug("Script cache invalidated: {FilePath}", filePath);
+
+            return;
+        }
+
+        _logger.Debug("No cached script entry found to invalidate: {FilePath}", filePath);
     }
 
     /// <summary>
@@ -666,23 +680,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             ExecuteBootFunction();
             _isInitialized = true;
             _logger.Information("Lua engine initialized successfully");
-
-            if (_engineConfig.EnableFileWatcher && _watcher == null)
-            {
-                _watcher = new(_engineConfig.ScriptsDirectory, "*.lua")
-                {
-                    NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
-                    IncludeSubdirectories = true,
-                    EnableRaisingEvents = true
-                };
-
-                _watcher.Changed += OnLuaFilesChanged;
-            }
-
-            if (!_engineConfig.EnableFileWatcher)
-            {
-                _logger.Information("Lua file watcher disabled by configuration.");
-            }
         }
         catch (Exception ex)
         {
@@ -694,13 +691,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
 
     public Task StopAsync()
     {
-        if (_watcher != null)
-        {
-            _watcher.EnableRaisingEvents = false;
-            _watcher.Dispose();
-            _watcher = null;
-        }
-
         _logger.Information("Lua engine stopped");
 
         return Task.CompletedTask;
@@ -874,6 +864,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         {
             var compiledScriptChunk = _scriptCache.GetOrAddCompiledChunk(
                 script,
+                fileName,
                 () => LuaScript.LoadString(script, null, fileName ?? "runtime_chunk")
             );
 
@@ -1137,27 +1128,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             _logger.Debug("User data type registered: {TypeName}", scriptUserData.UserType.Name);
 
             LuaDocumentationGenerator.AddClassToGenerate(scriptUserData.UserType);
-        }
-    }
-
-    private void OnLuaFilesChanged(object sender, FileSystemEventArgs e)
-    {
-        if (_initScripts.Contains(e.Name))
-        {
-            _logger.Information("Lua script file changed: {FileName}. Clearing script cache.", e.Name);
-
-            if (FileChanged != null)
-            {
-                ClearScriptCache();
-
-                if (FileChanged(e.FullPath))
-                {
-                    _logger.Information("File change handled successfully: {FileName}", e.Name);
-
-                    ExecuteBootstrap();
-                    ExecuteBootFunction();
-                }
-            }
         }
     }
 

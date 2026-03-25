@@ -33,15 +33,24 @@ public sealed class ReloadTemplateCommand : ICommandExecutor
 
     public async Task ExecuteCommandAsync(CommandSystemContext context)
     {
-        if (context.Arguments.Length > 0)
+        if (context.Arguments.Length > 1)
         {
-            context.Print("Usage: reload_template");
+            context.Print("Usage: reload_template [filePath]");
 
             return;
         }
 
         try
         {
+            if (context.Arguments.Length == 1)
+            {
+                var filePath = context.Arguments[0];
+                await _fileLoaderService.LoadSingleAsync(filePath);
+                context.Print("Template reloaded successfully: {0}.", filePath);
+
+                return;
+            }
+
             await _fileLoaderService.ExecuteLoadersAsync();
             context.Print(
                 "Templates reloaded successfully. ItemTemplates={0}, MobileTemplates={1}.",
@@ -51,6 +60,13 @@ public sealed class ReloadTemplateCommand : ICommandExecutor
         }
         catch (Exception ex)
         {
+            if (context.Arguments.Length == 1)
+            {
+                context.PrintError("Failed to reload template {0}: {1}", context.Arguments[0], ex.Message);
+
+                return;
+            }
+
             context.PrintError("Failed to reload templates: {0}", ex.Message);
         }
     }

@@ -646,6 +646,40 @@ public class LuaScriptEngineServiceTests
     }
 
     [Test]
+    public void InvalidateScript_WhenCalled_ShouldEvictOnlyRequestedScriptFromCache()
+    {
+        using var temp = new TempDirectory();
+        var service = CreateService(temp.Path);
+        var firstScriptPath = Path.Combine(temp.Path, "scripts", "first.lua");
+        var secondScriptPath = Path.Combine(temp.Path, "scripts", "second.lua");
+
+        Directory.CreateDirectory(Path.GetDirectoryName(firstScriptPath)!);
+        File.WriteAllText(firstScriptPath, "FIRST_COUNTER = (FIRST_COUNTER or 0) + 1");
+        File.WriteAllText(secondScriptPath, "SECOND_COUNTER = (SECOND_COUNTER or 0) + 1");
+
+        service.ExecuteScriptFile(firstScriptPath);
+        service.ExecuteScriptFile(secondScriptPath);
+
+        var metricsAfterWarmup = service.GetExecutionMetrics();
+
+        service.InvalidateScript(firstScriptPath);
+        service.ExecuteScriptFile(firstScriptPath);
+        service.ExecuteScriptFile(secondScriptPath);
+
+        var metricsAfterInvalidate = service.GetExecutionMetrics();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(metricsAfterWarmup.TotalScriptsCached, Is.EqualTo(2));
+                Assert.That(metricsAfterInvalidate.TotalScriptsCached, Is.EqualTo(2));
+                Assert.That(metricsAfterInvalidate.CacheMisses, Is.EqualTo(metricsAfterWarmup.CacheMisses + 1));
+                Assert.That(metricsAfterInvalidate.CacheHits, Is.EqualTo(metricsAfterWarmup.CacheHits + 1));
+            }
+        );
+    }
+
+    [Test]
     public async Task StartAsync_WhenLuaPluginExists_ShouldLoadPluginEntryScript()
     {
         using var temp = new TempDirectory();

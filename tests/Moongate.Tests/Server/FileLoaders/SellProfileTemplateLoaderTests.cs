@@ -125,6 +125,100 @@ public class SellProfileTemplateLoaderTests
         );
     }
 
+    [Test]
+    public async Task LoadSingleAsync_WhenOtherFileWasRemoved_ShouldPreserveExistingProfiles()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var profilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "sell_profiles");
+        Directory.CreateDirectory(profilesDirectory);
+
+        var blacksmithPath = Path.Combine(profilesDirectory, "blacksmith.json");
+        var healerPath = Path.Combine(profilesDirectory, "healer.json");
+
+        await File.WriteAllTextAsync(
+            blacksmithPath,
+            """
+            [
+              {
+                "type": "sell_profile",
+                "id": "vendor.blacksmith",
+                "name": "Blacksmith Vendor",
+                "category": "vendors",
+                "description": "Blacksmith profile",
+                "vendorItems": [
+                  { "itemTemplateId": "longsword", "price": 55, "maxStock": 20 }
+                ]
+              }
+            ]
+            """
+        );
+        await File.WriteAllTextAsync(
+            healerPath,
+            """
+            [
+              {
+                "type": "sell_profile",
+                "id": "vendor.healer",
+                "name": "Healer Vendor",
+                "category": "vendors",
+                "description": "Healer profile",
+                "vendorItems": [
+                  { "itemTemplateId": "bandage", "price": 5, "maxStock": 50 }
+                ]
+              }
+            ]
+            """
+        );
+
+        var service = new SellProfileTemplateService();
+        var loader = new SellProfileTemplateLoader(directoriesConfig, service);
+
+        await loader.LoadAsync();
+        File.Delete(healerPath);
+        await File.WriteAllTextAsync(
+            blacksmithPath,
+            """
+            [
+              {
+                "type": "sell_profile",
+                "id": "vendor.blacksmith",
+                "name": "Updated Blacksmith Vendor",
+                "category": "vendors",
+                "description": "Updated blacksmith profile",
+                "vendorItems": [
+                  { "itemTemplateId": "war_axe", "price": 80, "maxStock": 10 }
+                ]
+              }
+            ]
+            """
+        );
+
+        await loader.LoadSingleAsync(blacksmithPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(service.TryGet("vendor.blacksmith", out var blacksmith), Is.True);
+                Assert.That(blacksmith, Is.Not.Null);
+                Assert.That(blacksmith!.Name, Is.EqualTo("Updated Blacksmith Vendor"));
+                Assert.That(blacksmith.VendorItems[0].ItemTemplateId, Is.EqualTo("war_axe"));
+                Assert.That(service.TryGet("vendor.healer", out var healer), Is.True);
+                Assert.That(healer, Is.Not.Null);
+                Assert.That(service.Count, Is.EqualTo(2));
+            }
+        );
+    }
+
     private static string ResolveRepositoryRoot()
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);

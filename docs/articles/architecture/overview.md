@@ -15,6 +15,7 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
 
 - `Moongate.Server`
   - Bootstrap, game loop, packet listeners/handlers, session services, file loaders.
+  - Includes `FileWatcherService`, which observes reloadable runtime files and marshals hot-reload work back to the game loop.
 - `Moongate.Network`
   - TCP client/server primitives, span-based readers/writers, transport middleware.
 - `Moongate.Network.Packets`
@@ -46,6 +47,7 @@ Moongate v2 is organized around a single game-loop thread with explicit queues b
 - Cross-thread handoff is explicit:
   - inbound: `IMessageBusService`
   - outbound: `IOutgoingPacketQueue`
+  - hot reload callbacks: `IBackgroundJobService.PostToGameLoop()`
 - `IGameEventBusService` is used for decoupled in-process event publication.
 
 ## Session Model

@@ -9,18 +9,6 @@ namespace Moongate.Scripting.Interfaces;
 public interface IScriptEngineService : IMoongateService
 {
     /// <summary>
-    /// Delegate for handling script file change events.
-    /// </summary>
-    /// <param name="filePath">The path to the changed file.</param>
-    /// <returns>True if the file change was handled successfully, false otherwise.</returns>
-    delegate bool LuaFileChangedHandler(string filePath);
-
-    /// <summary>
-    /// Event raised when a script file is modified.
-    /// </summary>
-    event LuaFileChangedHandler? FileChanged;
-
-    /// <summary>
     /// Event raised when a script error occurs
     /// </summary>
     event EventHandler<ScriptErrorInfo>? OnScriptError;
@@ -84,6 +72,12 @@ public interface IScriptEngineService : IMoongateService
     /// Clears the script cache
     /// </summary>
     void ClearScriptCache();
+
+    /// <summary>
+    /// Invalidates one cached script file so the next execution recompiles it.
+    /// </summary>
+    /// <param name="filePath">The script file path.</param>
+    void InvalidateScript(string filePath);
 
     /// <summary>
     /// Executes a previously registered callback function.

@@ -148,7 +148,10 @@ Top-level shape:
 Current scripting runtime option:
 
 - `Scripting.EnableFileWatcher` (`bool`, default `true`)
-  - `true`: enables `FileSystemWatcher` on `scripts/**/*.lua` for live reload notifications
+  - `true`: enables the centralized runtime watcher for `scripts/**/*.lua`, `templates/**/*.json`, and `data/spawns/**/*.json`
+  - Lua files are invalidated by path and recompiled on next execution
+  - reloadable JSON files are reloaded one file at a time on the game loop thread
+  - manual single-file reload is also available with `reload_template <filePath>`
   - `false`: disables watcher creation entirely
 - `Scripting.LuaBrainMaxBrainsPerTick` (`int`, default `0`)
   - `<= 0`: no explicit per-tick cap

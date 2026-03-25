@@ -1,5 +1,5 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
-using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Files;
@@ -28,6 +28,7 @@ public sealed class MobileTemplateLoader : IFileLoader
     private static readonly MobileTemplateDefinition Defaults = new();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly Dictionary<string, string> _templateFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public MobileTemplateLoader(DirectoriesConfig directoriesConfig, IMobileTemplateService mobileTemplateService)
     {
@@ -55,37 +56,16 @@ public sealed class MobileTemplateLoader : IFileLoader
             return Task.CompletedTask;
         }
 
-        _mobileTemplateService.Clear();
-        var allMobileTemplates = new List<MobileTemplateDefinition>();
+        _templateFileContents.Clear();
 
         foreach (var templateFile in templateFiles)
         {
-            MobileTemplateDefinitionBase[] templates;
-
-            try
-            {
-                templates = JsonUtils.DeserializeFromFile<MobileTemplateDefinitionBase[]>(
-                    templateFile,
-                    MoongateUOTemplateJsonContext.Default
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Failed to load mobile template file {TemplateFile}", templateFile);
-
-                throw;
-            }
-
-            var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
-
-            foreach (var mobileTemplate in mobileTemplates)
-            {
-                NormalizeTitleAndName(mobileTemplate);
-            }
-            allMobileTemplates.AddRange(mobileTemplates);
+            _templateFileContents[NormalizePath(templateFile)] = File.ReadAllText(templateFile);
         }
 
-        ResolveBaseMobiles(allMobileTemplates);
+        var allMobileTemplates = RebuildTemplatesFromCache();
+
+        _mobileTemplateService.Clear();
         _mobileTemplateService.UpsertRange(allMobileTemplates);
 
         _logger.Information(
@@ -93,6 +73,23 @@ public sealed class MobileTemplateLoader : IFileLoader
             allMobileTemplates.Count,
             templateFiles.Length
         );
+
+        return Task.CompletedTask;
+    }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        _templateFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+
+        var allMobileTemplates = RebuildTemplatesFromCache();
+
+        _mobileTemplateService.Clear();
+        _mobileTemplateService.UpsertRange(allMobileTemplates);
+
+        _logger.Information("Reloaded mobile template file {TemplateFile}", normalizedPath);
 
         return Task.CompletedTask;
     }
@@ -375,4 +372,50 @@ public sealed class MobileTemplateLoader : IFileLoader
 
         states[template.Id] = ResolveState.Done;
     }
+
+    private List<MobileTemplateDefinition> RebuildTemplatesFromCache()
+    {
+        var allMobileTemplates = new List<MobileTemplateDefinition>();
+
+        foreach (var (templateFile, json) in _templateFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            MobileTemplateDefinitionBase[] templates;
+
+            try
+            {
+                templates = Deserialize<MobileTemplateDefinitionBase[]>(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load mobile template file {TemplateFile}", templateFile);
+
+                throw;
+            }
+
+            var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
+
+            foreach (var mobileTemplate in mobileTemplates)
+            {
+                NormalizeTitleAndName(mobileTemplate);
+            }
+
+            allMobileTemplates.AddRange(mobileTemplates);
+        }
+
+        ResolveBaseMobiles(allMobileTemplates);
+
+        return allMobileTemplates;
+    }
+
+    private static T Deserialize<T>(string json)
+    {
+        var result = JsonSerializer.Deserialize(json, MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(T)));
+
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
+    }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }
