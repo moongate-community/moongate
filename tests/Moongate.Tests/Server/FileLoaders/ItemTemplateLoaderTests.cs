@@ -1156,6 +1156,72 @@ public class ItemTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenRootTrainingItemsTemplateContainsTrainingDummy_ShouldExposeFlippableBaseAndAliases()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var targetItemsDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "items");
+        Directory.CreateDirectory(targetItemsDirectory);
+        File.Copy(
+            Path.GetFullPath(
+                Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "..",
+                    "moongate_data",
+                    "templates",
+                    "items",
+                    "training_items.json"
+                )
+            ),
+            Path.Combine(targetItemsDirectory, "training_items.json"),
+            true
+        );
+
+        var itemTemplateService = new ItemTemplateService();
+        var loader = new ItemTemplateLoader(directoriesConfig, itemTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(itemTemplateService.TryGet("training_dummy", out var baseTemplate), Is.True);
+        Assert.That(itemTemplateService.TryGet("training_dummy_east", out var eastTemplate), Is.True);
+        Assert.That(itemTemplateService.TryGet("training_dummy_south", out var southTemplate), Is.True);
+        Assert.That(baseTemplate, Is.Not.Null);
+        Assert.That(eastTemplate, Is.Not.Null);
+        Assert.That(southTemplate, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(baseTemplate!.ItemId, Is.EqualTo("0x1074"));
+                Assert.That(baseTemplate.ScriptId, Is.EqualTo("items.training_dummy"));
+                Assert.That(baseTemplate.Tags, Does.Contain("flippable"));
+                Assert.That(baseTemplate.FlippableItemIds, Is.EqualTo(new[] { "0x1074", "0x1070" }));
+
+                Assert.That(eastTemplate!.ItemId, Is.EqualTo("0x1074"));
+                Assert.That(eastTemplate.ScriptId, Is.EqualTo("items.training_dummy"));
+                Assert.That(eastTemplate.FlippableItemIds, Is.EqualTo(new[] { "0x1074", "0x1070" }));
+
+                Assert.That(southTemplate!.ItemId, Is.EqualTo("0x1070"));
+                Assert.That(southTemplate.ScriptId, Is.EqualTo("items.training_dummy"));
+                Assert.That(southTemplate.FlippableItemIds, Is.EqualTo(new[] { "0x1074", "0x1070" }));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenRootMapsTemplateContainsTreasureMap_ShouldExposeDerivedTemplate()
     {
         using var tempDirectory = new TempDirectory();

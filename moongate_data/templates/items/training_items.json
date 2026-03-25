@@ -1,7 +1,7 @@
 [
   {
     "type": "item",
-    "id": "training_dummy_east",
+    "id": "training_dummy",
     "name": "Training Dummy",
     "category": "Training Items",
     "description": "Practice target for melee weapon training.",
@@ -14,26 +14,32 @@
     "tags": [
       "modernuo",
       "training",
-      "melee"
+      "melee",
+      "flippable"
+    ],
+    "flippableItemIds": [
+      "0x1074",
+      "0x1070"
     ]
   },
   {
     "type": "item",
+    "base_item": "training_dummy",
+    "id": "training_dummy_east",
+    "itemId": "0x1074",
+    "name": "Training Dummy",
+    "category": "Training Items",
+    "description": "Practice target for melee weapon training."
+  },
+  {
+    "type": "item",
+    "base_item": "training_dummy",
     "id": "training_dummy_south",
     "name": "Training Dummy",
     "category": "Training Items",
     "description": "Practice target for melee weapon training.",
     "itemId": "0x1070",
-    "hue": "0",
-    "goldValue": "0",
-    "weight": 0,
-    "scriptId": "items.training_dummy",
-    "isMovable": false,
-    "tags": [
-      "modernuo",
-      "training",
-      "melee"
-    ]
+    "scriptId": "items.training_dummy"
   },
   {
     "type": "item",
