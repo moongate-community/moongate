@@ -436,6 +436,40 @@ public sealed class GuardsModuleTests
     }
 
     [Test]
+    public void SetFocus_WhenTargetSerialIsZero_ShouldReturnFalse()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x403u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(guard);
+        mobileService.Seed(guard);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var result = InvokeBool(moduleType, module, "SetFocus", (uint)guard.Id, (uint?)0u);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.False);
+                Assert.That(guard.CustomProperties.ContainsKey(GuardFocusKey), Is.False);
+            }
+        );
+    }
+
+    [Test]
     public void TeleportToTarget_WhenTargetExists_ShouldMoveGuardToTargetLocation()
     {
         var moduleType = ResolveModuleType();
