@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -643,6 +644,48 @@ public class MobileModuleTests
         var skillValue = module.GetSkill(0x210, "archery");
 
         Assert.That(skillValue, Is.EqualTo(62.5).Within(0.001));
+    }
+
+    [Test]
+    public void GetAiAccessors_WhenCharacterHasResolvedRuntimeAi_ShouldReturnPersistedValues()
+    {
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x21Au,
+            Name = "Modern Orc",
+            MapId = 1,
+            Location = new(100, 100, 0),
+            BrainId = "orc_warrior"
+        };
+        mobile.SetCustomString(MobileCustomParamKeys.Ai.FightMode, "strongest");
+        mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, 12);
+        mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, 0);
+
+        var characterService = new MobileModuleTestCharacterService
+        {
+            CharacterToReturn = mobile
+        };
+        var module = new MobileModule(
+            characterService,
+            new MobileModuleTestSpeechService(),
+            new FakeGameNetworkSessionService(),
+            new RegionDataLoaderTestSpatialWorldService()
+        );
+
+        var brainId = module.GetBrainId((uint)mobile.Id);
+        var fightMode = module.GetAiFightMode((uint)mobile.Id);
+        var rangePerception = module.GetAiRangePerception((uint)mobile.Id);
+        var rangeFight = module.GetAiRangeFight((uint)mobile.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(brainId, Is.EqualTo("orc_warrior"));
+                Assert.That(fightMode, Is.EqualTo("strongest"));
+                Assert.That(rangePerception, Is.EqualTo(12));
+                Assert.That(rangeFight, Is.EqualTo(0));
+            }
+        );
     }
 
     [Test]

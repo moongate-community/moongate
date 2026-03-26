@@ -193,4 +193,54 @@ public sealed class CombatModuleTests
             }
         );
     }
+
+    [Test]
+    public void GetAttackRange_WhenWeaponHasRangeMetadata_ShouldReturnWeaponMaxRange()
+    {
+        var spatial = new CombatTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x421u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        npc.AddEquippedItem(
+            ItemLayerType.TwoHanded,
+            new UOItemEntity
+            {
+                Id = (Serial)0x422u,
+                ItemId = 0x13B2,
+                WeaponSkill = UOSkillName.Archery,
+                CombatStats = new()
+                {
+                    RangeMin = 1,
+                    RangeMax = 10
+                }
+            }
+        );
+        spatial.AddMobile(npc);
+        var module = new CombatModule(spatial, new CombatTestGameEventBusService(), new RecordingCombatService());
+
+        var attackRange = module.GetAttackRange((uint)npc.Id);
+
+        Assert.That(attackRange, Is.EqualTo(10));
+    }
+
+    [Test]
+    public void GetAttackRange_WhenNoWeaponIsEquipped_ShouldReturnMeleeFallback()
+    {
+        var spatial = new CombatTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x431u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        var module = new CombatModule(spatial, new CombatTestGameEventBusService(), new RecordingCombatService());
+
+        var attackRange = module.GetAttackRange((uint)npc.Id);
+
+        Assert.That(attackRange, Is.EqualTo(1));
+    }
 }
