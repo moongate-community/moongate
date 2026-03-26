@@ -2,6 +2,19 @@
 
 Moongate v2 includes a powerful Lua scripting subsystem for gameplay customization.
 
+If you are starting from zero, begin with the hands-on tutorial path:
+
+- [Create Your First Content](create-your-first-content.md)
+- [Create Your First Systems](create-your-first-systems.md)
+- [Create Your First Item Template](create-your-first-item-template.md)
+- [Create Your First Item Script](create-your-first-item-script.md)
+- [Create Your First NPC Brain](create-your-first-npc-brain.md)
+- [Create Your First NPC Template](create-your-first-npc-template.md)
+- [Create Your First Loot Container](create-your-first-loot-container.md)
+- [Create Your First Scheduled Event](create-your-first-scheduled-event.md)
+- [Create Your First Gump](create-your-first-gump.md)
+- [Create Your First Lua Admin Command](create-your-first-lua-admin-command.md)
+
 ## Overview
 
 The scripting system is built on **MoonSharp**, a lightweight Lua interpreter for .NET. It provides:
@@ -137,8 +150,11 @@ For OpenAI-backed NPC speech and deterministic-to-generative fallback patterns, 
 [Intelligent NPC Dialogue](intelligent-npcs.md).
 For shard-level timed callbacks and recurring Lua-driven calendar behavior, see
 [Scheduled Events](scheduled-events.md).
+For first-open chest loot and refillable container behavior driven by item and loot templates, see
+[Loot Containers](loot-containers.md).
 For in-game help tickets opened from the client help button and persisted for staff review, see the
-`help_tickets` module and global `on_ticket_opened(event)` callback in the scripting API reference.
+[`help_tickets` module and callback docs](api.md#help-ticketing) plus the operator-facing
+[Help Ticket Workflow](../operations/help-ticket-workflow.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
@@ -178,8 +194,17 @@ function orion.on_think(npc_id)
     end
 end
 
-function orion.on_speech(ctx)
-    -- ctx.source_serial, ctx.text, ctx.range...
+function orion.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y, _z)
+    if text == nil then
+        return
+    end
+
+    if string.find(string.lower(text), "hello", 1, true) then
+        local npc = mobile.get(npc_id)
+        if npc ~= nil then
+            npc:say("Meow!")
+        end
+    end
 end
 ```
 

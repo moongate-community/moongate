@@ -5,6 +5,15 @@ Reference for the Moongate v2 Lua scripting API.
 > `definitions.lua` generated at startup is the source of truth for currently exported modules and signatures.
 > This page contains legacy/planned examples too. Always validate signatures against `moongate_data/scripts/definitions.lua`.
 
+If you are new to Moongate authoring, do not start here. Start with:
+
+- [Create Your First Content](create-your-first-content.md)
+- [Create Your First Systems](create-your-first-systems.md)
+- [Create Your First Item Template](create-your-first-item-template.md)
+- [Create Your First Item Script](create-your-first-item-script.md)
+- [Create Your First NPC Brain](create-your-first-npc-brain.md)
+- [Create Your First NPC Template](create-your-first-npc-template.md)
+
 ## Current Runtime Baseline (Verified)
 
 The following modules are currently wired in runtime:
@@ -292,6 +301,20 @@ Persisted tickets store:
 - map id and location
 - status (`Open`, `Assigned`, `Closed`)
 - timestamps for creation, assignment, closing, and last update
+
+For staff-facing triage, dashboard usage, and endpoint mapping, see
+[Help Ticket Workflow](../operations/help-ticket-workflow.md).
+
+### Loot Containers
+
+Loot containers are data-driven through item templates and loot templates rather than a dedicated Lua module.
+
+- container item templates declare `lootTables`
+- loot templates define the weighted entries that can be generated
+- first-open generation and optional refill behavior are handled by the server when the container is opened
+
+For first-open generation, refillable containers, validation caveats, and real template examples, see
+[Loot Containers](loot-containers.md).
 
 ### Item Script: Apple
 

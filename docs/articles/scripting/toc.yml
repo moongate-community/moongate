@@ -1,4 +1,24 @@
 items:
+  - name: Create Your First Content
+    href: create-your-first-content.md
+  - name: Create Your First Systems
+    href: create-your-first-systems.md
+  - name: Create Your First Item Template
+    href: create-your-first-item-template.md
+  - name: Create Your First Item Script
+    href: create-your-first-item-script.md
+  - name: Create Your First NPC Brain
+    href: create-your-first-npc-brain.md
+  - name: Create Your First NPC Template
+    href: create-your-first-npc-template.md
+  - name: Create Your First Loot Container
+    href: create-your-first-loot-container.md
+  - name: Create Your First Scheduled Event
+    href: create-your-first-scheduled-event.md
+  - name: Create Your First Gump
+    href: create-your-first-gump.md
+  - name: Create Your First Lua Admin Command
+    href: create-your-first-lua-admin-command.md
   - name: Overview
     href: overview.md
   - name: NPC Behaviors
@@ -7,8 +27,12 @@ items:
     href: authored-dialogues.md
   - name: Intelligent NPC Dialogue
     href: intelligent-npcs.md
+  - name: Lua Plugins
+    href: lua-plugins.md
   - name: Scheduled Events
     href: scheduled-events.md
+  - name: Loot Containers
+    href: loot-containers.md
   - name: Vendor and Context Menus
     href: vendor-context-menus.md
   - name: Starting Loadout
@@ -17,6 +41,12 @@ items:
     href: reputation-titles.md
   - name: Quivers
     href: quivers.md
+  - name: Async Jobs
+    href: async-jobs.md
+  - name: Tick Helper
+    href: tick.md
+  - name: Gump Tutorial
+    href: gump-tutorial.md
   - name: Modules
     href: modules.md
   - name: API Reference

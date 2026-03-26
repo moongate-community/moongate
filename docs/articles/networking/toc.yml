@@ -1,6 +1,8 @@
 items:
   - name: Client Encryption
     href: client-encryption.md
+  - name: UDP Ping Server
+    href: udp-ping-server.md
   - name: Packet System
     href: packets.md
   - name: POL Packet Coverage
@@ -9,3 +11,7 @@ items:
     href: packet-handler-performance.md
   - name: Protocol Reference
     href: protocol.md
+  - name: Packet Reference
+    href: packet-reference/index.md
+  - name: Cliloc Notes
+    href: cliloc-notes.md

@@ -194,11 +194,12 @@ UI default URL: `http://localhost:8088/`
 - Docs home: `docs/index.md`
 - Getting started: `docs/articles/getting-started/`
 - Architecture: `docs/articles/architecture/`
-- Scripting: `docs/articles/scripting/`
+- Beginner content authoring: `docs/articles/scripting/create-your-first-content.md`
+- Beginner systems path: `docs/articles/scripting/create-your-first-systems.md`
+- Scripting: `docs/articles/scripting/` including authored dialogues, scheduled events, starting loadout, and loot containers
 - Persistence: `docs/articles/persistence/`
-- Networking/protocol: `docs/articles/networking/`
-- Client encryption: `docs/articles/networking/client-encryption.md`
-- Operations/stress test: `docs/articles/operations/stress-test.md`
+- Networking/protocol: `docs/articles/networking/` including client encryption and the UDP ping server
+- Operations: `docs/articles/operations/` including template validation, in-game item admin commands, and help ticket workflow
 
 Published docs: <https://moongate-community.github.io/moongate/>
 

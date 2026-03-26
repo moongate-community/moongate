@@ -6,6 +6,14 @@ Creating custom script modules in Moongate v2.
 
 Script modules allow you to expose .NET functionality to Lua scripts. This enables powerful customization without recompiling the server.
 
+If you are starting from zero, do not begin with this reference page. Use:
+
+- [Create Your First Systems](create-your-first-systems.md)
+- [Create Your First Item Script](create-your-first-item-script.md)
+- [Create Your First Scheduled Event](create-your-first-scheduled-event.md)
+- [Create Your First Gump](create-your-first-gump.md)
+- [Create Your First Lua Admin Command](create-your-first-lua-admin-command.md)
+
 ## Built-In Runtime Modules (Current)
 
 The following modules are available in the default server runtime:

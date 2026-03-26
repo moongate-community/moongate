@@ -2,6 +2,11 @@
 
 This page explains the behavior-oriented Lua AI model used by Moongate v2 NPC brains.
 
+If you have never authored an NPC before, start with the tutorial path first:
+
+- [Create Your First NPC Brain](create-your-first-npc-brain.md)
+- [Create Your First NPC Template](create-your-first-npc-template.md)
+
 ## Goal
 
 Keep NPC AI maintainable by separating:
