@@ -32,12 +32,21 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(script, Does.Contain("patrol_mode"));
-                Assert.That(script, Does.Contain("patrol_radius"));
-                Assert.That(script, Does.Match(@"patrol_mode\s*==\s*""random_roam"""));
-                Assert.That(script, Does.Match(@"elseif[\s\S]*?patrol_mode\s*==\s*""random_roam""[\s\S]*?patrol_radius[\s\S]*(?:movement|steering)\.wander\("));
-                Assert.That(script, Does.Match(@"if should_return_home\(npc_serial, npc\) then[\s\S]*?move_home\(npc_serial, npc\)[\s\S]*?else[\s\S]*?movement\.guard\(npc_serial\)"));
-                Assert.That(script, Does.Match(@"local function handle_combat_hook\(npc_serial, source_serial, event_obj\)[\s\S]*?guards\.try_reveal\(npc_serial, source_serial\)[\s\S]*?set_focus\(npc_serial, source_serial\)[\s\S]*?combat\.set_target\(npc_serial, source_serial\)"));
+                Assert.That(
+                    script,
+                    Does.Match(
+                        @"function guard\.on_think\(npc_serial\)[\s\S]*?elseif[\s\S]*?patrol_mode\s*==\s*""random_roam""[\s\S]*?patrol_radius[\s\S]*(?:movement|steering)\.wander\("
+                    )
+                );
+                Assert.That(
+                    script,
+                    Does.Match(
+                        @"function guard\.on_think\(npc_serial\)[\s\S]*?if should_return_home\(npc_serial, npc\) then[\s\S]*?move_home\(npc_serial, npc\)[\s\S]*?else[\s\S]*?movement\.guard\(npc_serial\)"
+                    )
+                );
+                Assert.That(script, Does.Match(@"local function handle_combat_hook\(npc_serial, source_serial, event_obj\)[\s\S]*?guards\.try_reveal\(npc_serial, source_serial\)"));
+                Assert.That(script, Does.Match(@"local function handle_combat_hook\(npc_serial, source_serial, event_obj\)[\s\S]*?set_focus\(npc_serial, source_serial\)"));
+                Assert.That(script, Does.Match(@"local function handle_combat_hook\(npc_serial, source_serial, event_obj\)[\s\S]*?combat\.set_target\(npc_serial, source_serial\)"));
             }
         );
     }
