@@ -67,7 +67,7 @@ function ai_vendor.on_event(event_type, from_serial, event_obj)
         return
     end
 
-    if event_type == "attacked" or event_type == "combat" then
+    if event_type == "attacked" or event_type == "missed_by_attack" or event_type == "combat" then
         handle_threat(npc_serial, from_serial)
     end
 end
@@ -79,6 +79,14 @@ function ai_vendor.on_in_range(npc_serial, source_serial, event_obj)
 end
 
 function ai_vendor.on_attacked(source_serial, event_obj)
+    local npc_serial = resolve_npc_serial(event_obj)
+
+    if npc_serial > 0 then
+        handle_threat(npc_serial, source_serial)
+    end
+end
+
+function ai_vendor.on_missed_by_attack(source_serial, event_obj)
     local npc_serial = resolve_npc_serial(event_obj)
 
     if npc_serial > 0 then

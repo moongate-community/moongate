@@ -142,6 +142,7 @@ public sealed class StandardAiBrainAssetTests
                 Assert.That(script, Does.Contain("interact"));
                 Assert.That(script, Does.Contain("Guards!"));
                 Assert.That(script, Does.Contain("movement.flee("));
+                Assert.That(script, Does.Contain("on_missed_by_attack"));
             }
         );
     }
