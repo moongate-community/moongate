@@ -195,9 +195,36 @@ public sealed class NpcStateModuleTests
     }
 
     [Test]
-    public void GetVar_LegacyAiActionKey_ShouldMigrateToCanonicalKey()
+    public void GetVar_CanonicalAiKeys_WithLegacyAliases_ShouldReturnCanonicalValuesAndRemoveLegacyAliases()
     {
         var (module, npc) = CreateModuleWithNpc(0x103u);
+        npc.SetCustomString("ai_action", "combat");
+        npc.SetCustomString("modernuo_action", "wander");
+        npc.SetCustomInteger("ai_target_serial", 0x333u);
+        npc.SetCustomInteger("modernuo_target_serial", 0x444u);
+
+        var action = module.GetVar((uint)npc.Id, "ai_action");
+        var target = module.GetVar((uint)npc.Id, "ai_target_serial");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(action, Is.EqualTo("combat"));
+                Assert.That(target, Is.EqualTo(0x333L));
+                Assert.That(npc.CustomProperties.ContainsKey("ai_action"), Is.True);
+                Assert.That(npc.CustomProperties.ContainsKey("ai_target_serial"), Is.True);
+                Assert.That(npc.CustomProperties["ai_action"].StringValue, Is.EqualTo("combat"));
+                Assert.That(npc.CustomProperties["ai_target_serial"].IntegerValue, Is.EqualTo(0x333L));
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_action"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_target_serial"), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void GetVar_LegacyAiActionKey_ShouldMigrateToCanonicalKey()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x104u);
         npc.SetCustomString("modernuo_action", "guard");
 
         var action = module.GetVar((uint)npc.Id, "ai_action");
@@ -217,7 +244,7 @@ public sealed class NpcStateModuleTests
     [Test]
     public void GetVar_LegacyAiTargetSerialKey_ShouldMigrateToCanonicalKey()
     {
-        var (module, npc) = CreateModuleWithNpc(0x104u);
+        var (module, npc) = CreateModuleWithNpc(0x105u);
         npc.SetCustomInteger("modernuo_target_serial", 0x444u);
 
         var target = module.GetVar((uint)npc.Id, "ai_target_serial");
@@ -237,7 +264,7 @@ public sealed class NpcStateModuleTests
     [Test]
     public void SetVar_CanonicalAiKeysWithNil_ShouldClearCanonicalAndLegacyAliases()
     {
-        var (module, npc) = CreateModuleWithNpc(0x105u);
+        var (module, npc) = CreateModuleWithNpc(0x106u);
         npc.SetCustomString("ai_action", "combat");
         npc.SetCustomString("modernuo_action", "guard");
         npc.SetCustomInteger("ai_target_serial", 0x555u);

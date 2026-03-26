@@ -132,6 +132,8 @@ public sealed class NpcStateModule
     {
         if (TryReadBlackboardValue(npc, key, out value))
         {
+            ClearLegacyAlias(npc, key);
+
             return true;
         }
 

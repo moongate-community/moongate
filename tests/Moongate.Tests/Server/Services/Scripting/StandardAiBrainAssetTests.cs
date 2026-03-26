@@ -124,6 +124,26 @@ public sealed class StandardAiBrainAssetTests
     }
 
     [Test]
+    public void RuntimeScripts_ShouldNotReferenceModernUoRuntimeNamespace()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var runtimeDirectory = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "runtime");
+        var runtimePaths = Directory.GetFiles(runtimeDirectory, "*.lua", SearchOption.TopDirectoryOnly);
+
+        Assert.Multiple(
+            () =>
+            {
+                foreach (var scriptPath in runtimePaths)
+                {
+                    var script = File.ReadAllText(scriptPath);
+
+                    Assert.That(script, Does.Not.Contain("modernuo_"), Path.GetFileName(scriptPath));
+                }
+            }
+        );
+    }
+
+    [Test]
     public void AiMelee_ShouldUseBestTargetAndFightRangeContracts()
     {
         var repositoryRoot = GetRepositoryRoot();
