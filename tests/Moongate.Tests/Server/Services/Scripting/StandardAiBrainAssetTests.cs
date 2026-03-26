@@ -3,15 +3,15 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class StandardAiBrainAssetTests
 {
     [Test]
-    public void ModernUoPhaseOneAssets_ShouldExistAndBeRegisteredFromAiInit()
+    public void RuntimeNamespaceAssets_ShouldExistAndBeRegisteredFromAiInit()
     {
         var repositoryRoot = GetRepositoryRoot();
         var initPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "init.lua");
         var requiredAssets = new[]
         {
-            "moongate_data/scripts/ai/modernuo/fsm.lua",
-            "moongate_data/scripts/ai/modernuo/targeting.lua",
-            "moongate_data/scripts/ai/modernuo/movement.lua",
+            "moongate_data/scripts/ai/runtime/fsm.lua",
+            "moongate_data/scripts/ai/runtime/targeting.lua",
+            "moongate_data/scripts/ai/runtime/movement.lua",
             "moongate_data/scripts/ai/brains/ai_melee.lua",
             "moongate_data/scripts/ai/brains/ai_archer.lua",
             "moongate_data/scripts/ai/brains/ai_animal.lua",
@@ -23,9 +23,9 @@ public sealed class StandardAiBrainAssetTests
         };
         var requiredInitRequires = new[]
         {
-            "require(\"ai.modernuo.fsm\")",
-            "require(\"ai.modernuo.targeting\")",
-            "require(\"ai.modernuo.movement\")",
+            "require(\"ai.runtime.fsm\")",
+            "require(\"ai.runtime.targeting\")",
+            "require(\"ai.runtime.movement\")",
             "require(\"ai.brains.ai_melee\")",
             "require(\"ai.brains.ai_archer\")",
             "require(\"ai.brains.ai_animal\")",
@@ -51,6 +51,33 @@ public sealed class StandardAiBrainAssetTests
                 foreach (var requiredInitRequire in requiredInitRequires)
                 {
                     Assert.That(init, Does.Contain(requiredInitRequire));
+                }
+            }
+        );
+    }
+
+    [Test]
+    public void StandardAiBrains_ShouldNotReferenceModernUoRuntimeNamespace()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var brainPaths = new[]
+        {
+            "moongate_data/scripts/ai/brains/ai_animal.lua",
+            "moongate_data/scripts/ai/brains/ai_archer.lua",
+            "moongate_data/scripts/ai/brains/ai_berserk.lua",
+            "moongate_data/scripts/ai/brains/ai_melee.lua",
+            "moongate_data/scripts/ai/brains/ai_vendor.lua",
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                foreach (var relativePath in brainPaths)
+                {
+                    var scriptPath = Path.Combine(repositoryRoot, relativePath);
+                    var script = File.ReadAllText(scriptPath);
+
+                    Assert.That(script, Does.Not.Contain("ai.modernuo."), relativePath);
                 }
             }
         );
