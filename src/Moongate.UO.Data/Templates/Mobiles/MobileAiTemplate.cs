@@ -5,11 +5,11 @@ namespace Moongate.UO.Data.Templates.Mobiles;
 /// </summary>
 public class MobileAiTemplate
 {
-    public string Brain { get; set; } = "none";
+    public string? Brain { get; set; }
 
-    public string FightMode { get; set; } = "closest";
+    public string? FightMode { get; set; }
 
-    public int RangePerception { get; set; } = 16;
+    public int? RangePerception { get; set; }
 
-    public int RangeFight { get; set; } = 1;
+    public int? RangeFight { get; set; }
 }

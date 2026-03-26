@@ -379,12 +379,12 @@ public sealed class TemplateValidationLoader : IFileLoader
             errors.Add($"Mobile template '{mobile.Id}' has invalid ai.fightMode '{mobile.Ai.FightMode}'.");
         }
 
-        if (mobile.Ai.RangePerception <= 0)
+        if (mobile.Ai.RangePerception is null || mobile.Ai.RangePerception <= 0)
         {
             errors.Add($"Mobile template '{mobile.Id}' has non-positive ai.rangePerception {mobile.Ai.RangePerception}.");
         }
 
-        if (mobile.Ai.RangeFight < 0)
+        if (mobile.Ai.RangeFight is null || mobile.Ai.RangeFight < 0)
         {
             errors.Add($"Mobile template '{mobile.Id}' has negative ai.rangeFight {mobile.Ai.RangeFight}.");
         }

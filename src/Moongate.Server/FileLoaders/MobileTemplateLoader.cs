@@ -255,22 +255,22 @@ public sealed class MobileTemplateLoader : IFileLoader
 
     private static void ApplyAiInheritance(MobileTemplateDefinition parent, MobileTemplateDefinition child)
     {
-        if (string.Equals(child.Ai.Brain, Defaults.Ai.Brain, StringComparison.OrdinalIgnoreCase))
+        if (child.Ai.Brain is null)
         {
             child.Ai.Brain = parent.Ai.Brain;
         }
 
-        if (string.Equals(child.Ai.FightMode, Defaults.Ai.FightMode, StringComparison.OrdinalIgnoreCase))
+        if (child.Ai.FightMode is null)
         {
             child.Ai.FightMode = parent.Ai.FightMode;
         }
 
-        if (child.Ai.RangePerception == Defaults.Ai.RangePerception)
+        if (!child.Ai.RangePerception.HasValue)
         {
             child.Ai.RangePerception = parent.Ai.RangePerception;
         }
 
-        if (child.Ai.RangeFight == Defaults.Ai.RangeFight)
+        if (!child.Ai.RangeFight.HasValue)
         {
             child.Ai.RangeFight = parent.Ai.RangeFight;
         }

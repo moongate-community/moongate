@@ -722,7 +722,10 @@ public class MobileTemplateLoaderTests
                 "base_mobile": "base_ai_guard",
                 "name": "Guard Cadet",
                 "ai": {
-                  "rangeFight": 0
+                  "brain": "none",
+                  "fightMode": "closest",
+                  "rangePerception": 16,
+                  "rangeFight": 1
                 }
               }
             ]
@@ -740,10 +743,10 @@ public class MobileTemplateLoaderTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(template!.Ai.Brain, Is.EqualTo("ai_guard"));
-                Assert.That(template.Ai.FightMode, Is.EqualTo("strongest"));
-                Assert.That(template.Ai.RangePerception, Is.EqualTo(18));
-                Assert.That(template.Ai.RangeFight, Is.EqualTo(0));
+                Assert.That(template!.Ai.Brain, Is.EqualTo("none"));
+                Assert.That(template.Ai.FightMode, Is.EqualTo("closest"));
+                Assert.That(template.Ai.RangePerception, Is.EqualTo(16));
+                Assert.That(template.Ai.RangeFight, Is.EqualTo(1));
             }
         );
     }

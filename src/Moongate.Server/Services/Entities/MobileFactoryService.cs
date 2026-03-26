@@ -236,9 +236,20 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
     private static void ApplyAi(UOMobileEntity mobile, MobileTemplateDefinition template)
     {
-        mobile.SetCustomString(MobileCustomParamKeys.Ai.FightMode, template.Ai.FightMode.Trim());
-        mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, template.Ai.RangePerception);
-        mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, template.Ai.RangeFight);
+        if (!string.IsNullOrWhiteSpace(template.Ai.FightMode))
+        {
+            mobile.SetCustomString(MobileCustomParamKeys.Ai.FightMode, template.Ai.FightMode.Trim());
+        }
+
+        if (template.Ai.RangePerception.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, template.Ai.RangePerception.Value);
+        }
+
+        if (template.Ai.RangeFight.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, template.Ai.RangeFight.Value);
+        }
     }
 
     private static void ApplyVariantAppearance(UOMobileEntity mobile, MobileTemplateDefinition template)

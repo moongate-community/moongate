@@ -950,6 +950,13 @@ public class TemplateValidationLoaderTests
                 Category = "monsters",
                 Description = "orc",
                 DefaultFactionId = "true_britannians",
+                Ai = new()
+                {
+                    Brain = "none",
+                    FightMode = "closest",
+                    RangePerception = 16,
+                    RangeFight = 1
+                },
                 Variants =
                 [
                     new()
@@ -1000,6 +1007,13 @@ public class TemplateValidationLoaderTests
                 Category = "vendors",
                 Description = "vendor",
                 SellProfileId = "basic_vendor",
+                Ai = new()
+                {
+                    Brain = "none",
+                    FightMode = "closest",
+                    RangePerception = 16,
+                    RangeFight = 1
+                },
                 Variants =
                 [
                     new()
