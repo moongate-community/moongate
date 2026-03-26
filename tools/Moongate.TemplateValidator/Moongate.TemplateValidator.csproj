@@ -8,6 +8,8 @@
         <PackAsTool>true</PackAsTool>
         <ToolCommandName>moongate-template</ToolCommandName>
         <PackageId>Moongate.TemplateValidator</PackageId>
+        <InformationalVersion>$(Version)</InformationalVersion>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Description>Installable .NET tool for validating Moongate shard templates with runtime-equivalent loader rules.</Description>
         <PackageTags>moongate;ultima-online;templates;validator;dotnet-tool</PackageTags>

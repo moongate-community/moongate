@@ -16,7 +16,7 @@ Keep NPC AI maintainable by separating:
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
 ├── modernuo/
-│   ├── fsm.lua                  # shared phase-1 ModernUO state helpers
+│   ├── fsm.lua                  # shared phase-1 FSM helpers
 │   ├── movement.lua             # shared movement intentions
 │   └── targeting.lua            # shared fight-mode and targeting helpers
 ├── runners/
@@ -126,27 +126,28 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 
 ## Guard Brain Example
 
-`guard.lua` uses these isolated behaviors:
+`guard.lua` is a custom Lua brain with explicit guard policy, not a standard `ai_archer` wrapper and not a generic utility-runner behavior set.
 
-- `leash`
-- `self_bandage`
-- `leash`
-- `evade`
-- `follow` for melee guards
-- `ranged_keep_distance` for archer guards
-- `return_home`
-- `hold_position`
+The brain owns:
+
+- focus lifecycle through `guards.set_focus(...)` and `guards.get_focus(...)`
+- melee vs ranged branching through `guard_role`
+- guard recovery / return-home behavior
+- teleport and reveal decisions through the `guards` module
+- combat-hook recovery when guards are attacked
 
 At each tick:
 
-1. build context (`now_ms`, `min_hold_ms`)
-2. ask `utility_runner` for the best behavior
-3. execute behavior
-4. `coroutine.yield(delay_ms)`
+1. read `ai.rangePerception` and `ai.rangeFight` from the template/runtime data
+2. resolve or refresh the current focus target
+3. fall back to `guard_role`-specific policy inside Lua
+4. decide whether to engage, back off, teleport, or return home
+5. `coroutine.yield(TICK_DELAY_MS)`
 
-Speech events are ignored by the guard brain for targeting decisions.
-On in-range events, the guard can greet a player once per source mobile and start combat only when a hostile target enters range.
-On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior and a longer hostile-acquisition radius.
+Speech events are still handled separately from combat. In-range events greet players once per source mobile and can arm combat when a hostile target enters range.
+Combat hooks (`attack`, `missed_attack`, `attacked`, `missed_by_attack`, `combat`) refresh focus directly from the aggressor serial.
+
+Archer guards use `guard_role = "ranged"` and keep a 4-6 tile spacing band. Melee guards use the same brain but prefer direct closure and home recovery.
 
 `undead_melee.lua` is a simpler fixed-loop brain:
 
@@ -251,13 +252,24 @@ There are three different ranges involved in guard combat:
 
 1. Acquisition range
    - This is the distance at which the Lua brain receives `in_range` for a hostile target.
-   - Melee guards use `3` tiles.
-   - Guards with `params.guard_role = "ranged"` use `10` tiles.
+   - The runner now reads `ai.rangePerception` from the template data instead of special-casing guards.
+   - Guards still use explicit template values so melee and ranged guards can differ without runner heuristics.
 2. Preferred movement band
    - Archer guards try to stay between `4` and `6` tiles from the target.
-   - Melee guards use `follow_stop_range = 1`.
+   - Melee guards close directly and recover to home when the target escapes.
 3. Actual weapon attack range
    - This is resolved by `CombatService` from the equipped weapon profile.
+
+## Guard Runtime Boundary
+
+The guard brain currently depends on:
+
+- `guards.set_focus(...)`
+- `guards.get_focus(...)`
+- `guards.teleport_to_target(...)`
+- `guards.try_reveal(...)`
+
+The generic runner is intentionally not guard-aware anymore. Guard policy lives in Lua, while C# provides thin primitives for focus, teleport, and reveal.
    - The current bow template uses `maxRange = 10`.
    - Melee weapons without explicit range metadata fall back to `1`.
 

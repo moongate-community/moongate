@@ -11,14 +11,18 @@ public class TemplateValidateCommandTests
     public async Task RunAsync_WhenRootDirectoryIsMissing_ShouldReturnFailure()
     {
         using var writer = new StringWriter();
+        var rootDirectory = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
         var command = CreateCommand(writer);
 
-        var exitCode = await command.RunAsync(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N")));
+        var exitCode = await command.RunAsync(rootDirectory);
+        var normalizedOutput = writer.ToString().Replace(Environment.NewLine, string.Empty);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(exitCode, Is.EqualTo(1));
+                Assert.That(writer.ToString(), Does.Contain("Moongate Template Validator 1.1.0"));
+                Assert.That(normalizedOutput, Does.Contain(rootDirectory));
                 Assert.That(writer.ToString(), Does.Contain("Template validation failed"));
             }
         );
@@ -33,11 +37,14 @@ public class TemplateValidateCommandTests
         var command = CreateCommand(writer);
 
         var exitCode = await command.RunAsync(rootDirectory);
+        var normalizedOutput = writer.ToString().Replace(Environment.NewLine, string.Empty);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(exitCode, Is.EqualTo(0));
+                Assert.That(writer.ToString(), Does.Contain("Moongate Template Validator 1.1.0"));
+                Assert.That(normalizedOutput, Does.Contain(rootDirectory));
                 Assert.That(writer.ToString(), Does.Contain("Template validation completed successfully"));
             }
         );

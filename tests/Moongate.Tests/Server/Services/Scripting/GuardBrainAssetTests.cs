@@ -14,110 +14,158 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
+                Assert.That(script, Does.Contain("local guards = require(\"guards\")"));
+                Assert.That(script, Does.Contain("function guard.on_think"));
                 Assert.That(script, Does.Contain("function guard.on_in_range"));
+                Assert.That(script, Does.Contain("function guard.on_out_range"));
+                Assert.That(script, Does.Contain("function guard.on_death"));
                 Assert.That(script, Does.Contain("Hello, \" .. source_name .. \", How do you feel today?"));
                 Assert.That(script, Does.Contain("source_is_enemy"));
                 Assert.That(script, Does.Contain("npc:set_target(source)"));
                 Assert.That(script, Does.Contain("npc:set_war_mode(true)"));
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
-                Assert.That(script, Does.Contain("local function set_default(key, value)"));
-                Assert.That(script, Does.Contain("set_default(\"evade_desired_range\", 0)"));
-                Assert.That(script, Does.Contain("set_default(HOME_X_KEY, npc.location_x)"));
-                Assert.That(script, Does.Contain("set_default(\"hold_radius\", 1)"));
-                Assert.That(script, Does.Contain("set_default(\"leash_radius\", 8)"));
-                Assert.That(script, Does.Contain("\"self_bandage\""));
-                Assert.That(script, Does.Contain("set_default(\"self_bandage_hp_threshold\", 0.45)"));
-                Assert.That(script, Does.Contain("set_default(\"self_bandage_score_bonus\", 70)"));
-                Assert.That(script, Does.Not.Contain("npc_state.set_var(npc_serial, get_seen_key(source_serial), nil)"));
-                Assert.That(script, Does.Contain("if source_is_enemy then"));
-                Assert.That(script, Does.Not.Contain("event_type == \"speech_heard\""));
+                Assert.That(script, Does.Contain("guards.set_focus"));
+                Assert.That(script, Does.Contain("guards.get_focus"));
+                Assert.That(script, Does.Contain("guards.teleport_to_target"));
+                Assert.That(script, Does.Contain("guards.try_reveal"));
+                Assert.That(script, Does.Contain("guard_role"));
+                Assert.That(script, Does.Contain("guard_mode"));
+                Assert.That(script, Does.Contain("mobile.get_ai_range_perception"));
+                Assert.That(script, Does.Contain("mobile.get_ai_range_fight"));
+                Assert.That(script, Does.Contain("targeting.find_hostile_target"));
+                Assert.That(script, Does.Contain("fsm.set_target"));
+                Assert.That(script, Does.Contain("fsm.clear_target"));
+                Assert.That(script, Does.Not.Contain("utility_runner"));
             }
         );
     }
 
     [Test]
-    public void GuardBrainScript_ShouldUseRangedKeepDistanceForRangedGuards()
+    public void GuardBrainScript_ShouldBranchOnGuardRoleAndRoleSpecificRanges()
     {
         var repositoryRoot = GetRepositoryRoot();
         var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
         var script = File.ReadAllText(scriptPath);
-        var behaviorInitPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "init.lua");
-        var behaviorInit = File.ReadAllText(behaviorInitPath);
-        var behaviorPath = Path.Combine(
-            repositoryRoot,
-            "moongate_data",
-            "scripts",
-            "ai",
-            "behaviors",
-            "ranged_keep_distance.lua"
-        );
-        var followBehaviorPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "follow.lua");
-        var holdPositionPath = Path.Combine(
-            repositoryRoot,
-            "moongate_data",
-            "scripts",
-            "ai",
-            "behaviors",
-            "hold_position.lua"
-        );
-        var returnHomePath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "return_home.lua");
-        var leashPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "behaviors", "leash.lua");
-        var selfBandageBehaviorPath = Path.Combine(
-            repositoryRoot,
-            "moongate_data",
-            "scripts",
-            "ai",
-            "behaviors",
-            "self_bandage.lua"
-        );
-        var rangedKeepDistance = File.ReadAllText(behaviorPath);
-        var followBehavior = File.ReadAllText(followBehaviorPath);
-        var holdPosition = File.ReadAllText(holdPositionPath);
-        var returnHome = File.ReadAllText(returnHomePath);
-        var leash = File.ReadAllText(leashPath);
-        var selfBandageBehavior = File.ReadAllText(selfBandageBehaviorPath);
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(File.Exists(behaviorPath), Is.True);
-                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.hold_position\")"));
-                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.return_home\")"));
-                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.leash\")"));
-                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.ranged_keep_distance\")"));
-                Assert.That(script, Does.Contain("\"leash\""));
-                Assert.That(script, Does.Contain("\"return_home\""));
-                Assert.That(script, Does.Contain("\"hold_position\""));
-                Assert.That(behaviorInit, Does.Contain("require(\"ai.behaviors.self_bandage\")"));
-                Assert.That(script, Does.Contain("\"ranged_keep_distance\""));
-                Assert.That(script, Does.Contain("\"leash\""));
-                Assert.That(script, Does.Contain("\"return_home\""));
-                Assert.That(script, Does.Contain("\"hold_position\""));
+                Assert.That(script, Does.Contain("local function is_ranged_guard(npc_serial)"));
                 Assert.That(script, Does.Contain("guard_role"));
+                Assert.That(script, Does.Contain("local function handle_melee_guard"));
+                Assert.That(script, Does.Contain("local function handle_ranged_guard"));
                 Assert.That(script, Does.Contain("preferred_min_range"));
                 Assert.That(script, Does.Contain("preferred_max_range"));
-                Assert.That(script, Does.Contain("local function set_default(key, value)"));
-                Assert.That(script, Does.Contain("combat.clear_target(npc_serial)"));
-                Assert.That(rangedKeepDistance, Does.Contain("combat.set_target(npc_serial, target_serial)"));
-                Assert.That(
-                    rangedKeepDistance,
-                    Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then")
-                );
-                Assert.That(rangedKeepDistance, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
-                Assert.That(followBehavior, Does.Contain("combat.set_target(npc_serial, target_serial)"));
-                Assert.That(followBehavior, Does.Contain("if combat.set_target(npc_serial, target_serial) ~= true then"));
-                Assert.That(followBehavior, Does.Contain("npc_state.set_var(npc_serial, FOLLOW_TARGET_KEY, nil)"));
-                Assert.That(rangedKeepDistance, Does.Not.Contain("require(\"combat\")"));
-                Assert.That(followBehavior, Does.Not.Contain("require(\"combat\")"));
-                Assert.That(holdPosition, Does.Contain("behavior.register(\"hold_position\", M)"));
-                Assert.That(returnHome, Does.Contain("steering.move_to(npc_serial"));
-                Assert.That(returnHome, Does.Contain("behavior.register(\"return_home\", M)"));
-                Assert.That(leash, Does.Contain("combat.clear_target(npc_serial)"));
-                Assert.That(leash, Does.Contain("behavior.register(\"leash\", M)"));
-                Assert.That(selfBandageBehavior, Does.Contain("healing.begin_self_bandage(npc_serial)"));
-                Assert.That(selfBandageBehavior, Does.Contain("healing.has_bandage(npc_serial)"));
-                Assert.That(selfBandageBehavior, Does.Contain("healing.is_bandaging(npc_serial)"));
-                Assert.That(selfBandageBehavior, Does.Contain("behavior.register(\"self_bandage\", M)"));
+                Assert.That(script, Does.Contain("set_default(npc_serial, PREFERRED_MIN_RANGE_KEY, ranged_guard and 4 or 1)"));
+                Assert.That(script, Does.Contain("set_default(npc_serial, PREFERRED_MAX_RANGE_KEY, ranged_guard and 6 or 1)"));
+                Assert.That(script, Does.Contain("set_default(npc_serial, GUARD_MODE_KEY, ranged_guard and \"ranged\" or \"melee\")"));
+                Assert.That(script, Does.Contain("should_return_home"));
+                Assert.That(script, Does.Contain("move_home(npc_serial, npc)"));
+                Assert.That(script, Does.Contain("guards.try_reveal"));
+                Assert.That(script, Does.Contain("guards.teleport_to_target"));
+                Assert.That(script, Does.Contain("set_focus(npc_serial, target_serial)"));
+                Assert.That(script, Does.Contain("clear_focus(npc_serial, npc)"));
+                Assert.That(script, Does.Not.Contain("utility_runner"));
+                Assert.That(script, Does.Not.Contain("behavior.register(\"hold_position\""));
+                Assert.That(script, Does.Not.Contain("\"ranged_keep_distance\""));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardBrainScript_ShouldPreserveFocusCleanupOnOutRange()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var onOutRangeStart = script.IndexOf("function guard.on_out_range", StringComparison.Ordinal);
+        var onDeathStart = script.IndexOf("function guard.on_death", StringComparison.Ordinal);
+
+        Assert.That(onOutRangeStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(onDeathStart, Is.GreaterThan(onOutRangeStart));
+
+        var onOutRangeScript = script.Substring(onOutRangeStart, onDeathStart - onOutRangeStart);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(onOutRangeScript, Does.Contain("npc_state.set_var(npc_serial, get_engaged_key(source_serial), nil)"));
+                Assert.That(onOutRangeScript, Does.Not.Contain("clear_focus(npc_serial, npc)"));
+                Assert.That(onOutRangeScript, Does.Not.Contain("guards.set_focus(npc_serial, nil)"));
+                Assert.That(onOutRangeScript, Does.Not.Contain("fsm.clear_target(npc_serial)"));
+                Assert.That(onOutRangeScript, Does.Not.Contain("combat.clear_target(npc_serial)"));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardBrainScript_ShouldRefreshFocusFromCombatHooksWithoutInRangePayloadFields()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var combatHelperStart = script.IndexOf("local function handle_combat_hook", StringComparison.Ordinal);
+        var combatHelperEnd = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
+        var eventHandlerStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
+        var inRangeStart = script.IndexOf("function guard.on_in_range", StringComparison.Ordinal);
+
+        Assert.That(combatHelperStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(combatHelperEnd, Is.GreaterThan(combatHelperStart));
+        Assert.That(eventHandlerStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(inRangeStart, Is.GreaterThan(eventHandlerStart));
+
+        var combatHelperScript = script.Substring(combatHelperStart, combatHelperEnd - combatHelperStart);
+        var eventHandlerScript = script.Substring(eventHandlerStart, inRangeStart - eventHandlerStart);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(combatHelperScript, Does.Contain("guards.try_reveal(npc_serial, source_serial)"));
+                Assert.That(combatHelperScript, Does.Contain("set_focus(npc_serial, source_serial)"));
+                Assert.That(combatHelperScript, Does.Contain("npc:set_target(source)"));
+                Assert.That(combatHelperScript, Does.Contain("combat.set_target(npc_serial, source_serial)"));
+                Assert.That(combatHelperScript, Does.Not.Contain("source_is_enemy"));
+                Assert.That(combatHelperScript, Does.Not.Contain("source_name"));
+                Assert.That(eventHandlerScript, Does.Contain("event_type == \"attack\""));
+                Assert.That(eventHandlerScript, Does.Contain("event_type == \"missed_attack\""));
+                Assert.That(eventHandlerScript, Does.Contain("event_type == \"attacked\""));
+                Assert.That(eventHandlerScript, Does.Contain("event_type == \"missed_by_attack\""));
+                Assert.That(eventHandlerScript, Does.Contain("handle_combat_hook(npc_serial, from_serial, event_obj)"));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardBrainScript_ShouldUseHomeMapForRecoveryAndBlockCrossMapTargets()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var moveHomeStart = script.IndexOf("local function move_home", StringComparison.Ordinal);
+        var shouldReturnHomeStart = script.IndexOf("local function should_return_home", StringComparison.Ordinal);
+        var handleTargetStart = script.IndexOf("local function handle_target", StringComparison.Ordinal);
+        var combatHelperStart = script.IndexOf("local function handle_combat_hook", StringComparison.Ordinal);
+
+        Assert.That(moveHomeStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(shouldReturnHomeStart, Is.GreaterThan(moveHomeStart));
+        Assert.That(handleTargetStart, Is.GreaterThan(shouldReturnHomeStart));
+        Assert.That(combatHelperStart, Is.GreaterThan(handleTargetStart));
+
+        var moveHomeScript = script.Substring(moveHomeStart, shouldReturnHomeStart - moveHomeStart);
+        var handleTargetScript = script.Substring(handleTargetStart, combatHelperStart - handleTargetStart);
+        var shouldReturnHomeScript = script.Substring(shouldReturnHomeStart, handleTargetStart - shouldReturnHomeStart);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(moveHomeScript, Does.Contain("home_map_id"));
+                Assert.That(moveHomeScript, Does.Contain("mobile.teleport(npc_serial, home_map_id"));
+                Assert.That(moveHomeScript, Does.Contain("steering.move_to(npc_serial"));
+                Assert.That(shouldReturnHomeScript, Does.Contain("home_map_id ~= nil and npc.map_id ~= home_map_id"));
+                Assert.That(shouldReturnHomeScript, Does.Contain("return true"));
+                Assert.That(handleTargetScript, Does.Contain("target.map_id ~= npc.map_id"));
+                Assert.That(handleTargetScript, Does.Contain("clear_focus(npc_serial, npc)"));
+                Assert.That(handleTargetScript, Does.Contain("return move_home(npc_serial, npc)"));
             }
         );
     }
@@ -136,8 +184,6 @@ public sealed class GuardBrainAssetTests
 
             Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("guard"));
             Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("aggressor"));
-            Assert.That(ai.TryGetProperty("rangePerception", out _), Is.False);
-            Assert.That(ai.TryGetProperty("rangeFight", out _), Is.False);
             Assert.That(guard.TryGetProperty("brain", out _), Is.False);
             Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }
@@ -163,12 +209,28 @@ public sealed class GuardBrainAssetTests
                                          StringComparison.Ordinal
                                      )
                                  );
+            var ai = archer.GetProperty("ai");
 
-            Assert.That(
-                archer.GetProperty("params").GetProperty("guard_role").GetProperty("value").GetString(),
-                Is.EqualTo("ranged")
+            Assert.Multiple(
+                () =>
+                {
+                    if (ai.TryGetProperty("rangePerception", out var rangePerception))
+                    {
+                        Assert.That(rangePerception.GetInt32(), Is.EqualTo(10));
+                    }
+                    else
+                    {
+                        Assert.Fail("Expected ai.rangePerception to exist for archer guards.");
+                    }
+
+                    Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+
+                    Assert.That(
+                        archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
+                        Is.EqualTo(new[] { "guard.archer" })
+                    );
+                }
             );
-            Assert.That(archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.archer" }));
         }
     }
 
@@ -188,14 +250,31 @@ public sealed class GuardBrainAssetTests
                                   .First(
                                       element => string.Equals(
                                           element.GetProperty("id").GetString(),
-                                          warriorId,
-                                          StringComparison.Ordinal
-                                      )
-                                  );
+                                         warriorId,
+                                         StringComparison.Ordinal
+                                     )
+                                 );
+            var ai = warrior.GetProperty("ai");
 
-            Assert.That(
-                warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
-                Is.EqualTo(new[] { "guard.warrior" })
+            Assert.Multiple(
+                () =>
+                {
+                    if (ai.TryGetProperty("rangePerception", out var rangePerception))
+                    {
+                        Assert.That(rangePerception.GetInt32(), Is.EqualTo(3));
+                    }
+                    else
+                    {
+                        Assert.Fail("Expected ai.rangePerception to exist for warrior guards.");
+                    }
+
+                    Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+
+                    Assert.That(
+                        warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
+                        Is.EqualTo(new[] { "guard.warrior" })
+                    );
+                }
             );
         }
     }

@@ -147,7 +147,7 @@ public sealed class LuaBrainRunnerTests
 
     [Test]
     public async Task
-        HandleAsync_WhenEnemyMobileIsWithinRangedGuardAcquisitionRange_ShouldNotifyRangedGuardButNotMeleeGuard()
+        HandleAsync_WhenEnemyMobileUsesTemplateRangePerception_ShouldNotifyRangedGuardButNotMeleeGuard()
     {
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
@@ -180,7 +180,8 @@ public sealed class LuaBrainRunnerTests
             Notoriety = Notoriety.CanBeAttacked
         };
 
-        archerGuard.SetCustomString("guard_role", "ranged");
+        archerGuard.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, 10);
+        warriorGuard.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, 3);
 
         runner.Register(archerGuard, archerGuard.BrainId);
         runner.Register(warriorGuard, warriorGuard.BrainId);
@@ -204,8 +205,28 @@ public sealed class LuaBrainRunnerTests
                 if (inRangeEvents.Count == 1)
                 {
                     Assert.That(inRangeEvents[0].Args[1], Is.EqualTo((uint)zombie.Id));
+                    var payload = (Dictionary<string, object>)inRangeEvents[0].Args[2]!;
+                    Assert.That(payload["listener_npc_id"], Is.EqualTo((uint)archerGuard.Id));
+                    Assert.That(payload["listener_npc_id"], Is.Not.EqualTo((uint)warriorGuard.Id));
                 }
             }
+        );
+    }
+
+    [Test]
+    public void ResolveAcquisitionRange_ShouldUseExplicitAiRangePerception()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var runnerPath = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Services", "Scripting", "LuaBrainRunner.cs");
+        var source = File.ReadAllText(runnerPath);
+
+        Assert.That(
+            source,
+            Does.Contain("MobileCustomParamKeys.Ai.RangePerception")
+        );
+        Assert.That(
+            source,
+            Does.Not.Contain("guard_role")
         );
     }
 
@@ -947,4 +968,7 @@ public sealed class LuaBrainRunnerTests
             }
         );
     }
+
+    private static string GetRepositoryRoot()
+        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }
