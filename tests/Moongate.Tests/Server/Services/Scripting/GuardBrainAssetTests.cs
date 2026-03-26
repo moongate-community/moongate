@@ -41,7 +41,7 @@ public sealed class GuardBrainAssetTests
             {
                 Assert.That(onThinkScript, Does.Contain("patrol_mode"));
                 Assert.That(onThinkScript, Does.Contain("patrol_radius"));
-                Assert.That(onThinkScript, Does.Contain("random_roam"));
+                Assert.That(onThinkScript, Does.Contain("patrol_mode == \"random_roam\""));
                 Assert.That(
                     onThinkScript.Contains("movement.wander(", StringComparison.Ordinal)
                         || onThinkScript.Contains("steering.wander(", StringComparison.Ordinal),
