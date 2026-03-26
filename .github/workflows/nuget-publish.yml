@@ -13,6 +13,11 @@ jobs:
   publish:
     runs-on:
       group: Default
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    defaults:
+      run:
+        shell: bash
 
     env:
       NUGET_SOURCE: https://api.nuget.org/v3/index.json

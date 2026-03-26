@@ -12,6 +12,11 @@ jobs:
   release:
     runs-on:
       group: Default
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +33,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - name: Install git
+        run: |
+          apt-get update
+          apt-get install -y git
 
       - name: Check for release label
         id: release_check

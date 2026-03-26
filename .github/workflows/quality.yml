@@ -16,8 +16,13 @@ jobs:
   quality:
     runs-on:
       group: Default
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
     permissions:
       contents: write
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v4
