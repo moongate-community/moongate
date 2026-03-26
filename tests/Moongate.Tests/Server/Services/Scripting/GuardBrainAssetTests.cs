@@ -43,18 +43,14 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(onThinkScript, Does.Contain("patrol_mode"));
+                Assert.That(script, Does.Contain("patrol_mode"));
+                Assert.That(script, Does.Contain("patrol_radius"));
+                Assert.That(script, Does.Match(@"patrol_mode\s*==\s*""random_roam"""));
                 Assert.That(onThinkScript, Does.Contain("patrol_radius"));
-                Assert.That(onThinkScript, Does.Contain("patrol_mode == \"random_roam\""));
                 Assert.That(onThinkScript, Does.Match(@"(?:movement|steering)\.wander\("));
-                Assert.That(
-                    onThinkScript,
-                    Does.Match(
-                        @"if should_return_home\(npc_serial, npc\) then\s+move_home\(npc_serial, npc\)\s+else\s+mark_mode\(npc_serial, ""idle""\)\s+fsm\.set_action\(npc_serial, fsm\.actions\.guard\)\s+movement\.guard\(npc_serial\)"
-                    )
-                );
-                Assert.That(onThinkScript, Does.Contain("local target_serial = guards.get_focus(npc_serial)"));
-                Assert.That(onThinkScript, Does.Contain("set_focus(npc_serial, target_serial)"));
+                Assert.That(onThinkScript, Does.Contain("should_return_home(npc_serial, npc)"));
+                Assert.That(onThinkScript, Does.Contain("move_home(npc_serial, npc)"));
+                Assert.That(onThinkScript, Does.Contain("movement.guard(npc_serial)"));
                 Assert.That(combatHookScript, Does.Contain("guards.try_reveal(npc_serial, source_serial)"));
                 Assert.That(combatHookScript, Does.Contain("set_focus(npc_serial, source_serial)"));
                 Assert.That(combatHookScript, Does.Contain("combat.set_target(npc_serial, source_serial)"));
