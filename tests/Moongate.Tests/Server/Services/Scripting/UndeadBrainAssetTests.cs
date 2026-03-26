@@ -62,6 +62,7 @@ public sealed class UndeadBrainAssetTests
                 Assert.That(zombieAi.GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
                 Assert.That(zombieAi.GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
                 Assert.That(zombieAi.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(zombie.TryGetProperty("brain", out _), Is.False);
                 Assert.That(zombie.GetProperty("sounds").GetProperty("StartAttack").GetInt32(), Is.EqualTo(471));
                 Assert.That(zombie.GetProperty("sounds").GetProperty("Idle").GetInt32(), Is.EqualTo(472));
                 Assert.That(zombie.GetProperty("sounds").GetProperty("Attack").GetInt32(), Is.EqualTo(473));

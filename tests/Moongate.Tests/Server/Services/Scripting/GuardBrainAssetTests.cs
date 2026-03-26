@@ -138,6 +138,7 @@ public sealed class GuardBrainAssetTests
             Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("aggressor"));
             Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
             Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+            Assert.That(guard.TryGetProperty("brain", out _), Is.False);
             Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }
     }

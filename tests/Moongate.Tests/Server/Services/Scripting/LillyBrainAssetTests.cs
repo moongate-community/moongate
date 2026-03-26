@@ -116,21 +116,25 @@ public sealed class LillyBrainAssetTests
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(baseHuman.TryGetProperty("brain", out _), Is.False);
 
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("none"));
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(genericNpc.TryGetProperty("brain", out _), Is.False);
 
                 Assert.That(healer.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("town_healer"));
                 Assert.That(healer.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(healer.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(healer.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(healer.TryGetProperty("brain", out _), Is.False);
 
                 Assert.That(lilly.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("lilly"));
                 Assert.That(lilly.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(lilly.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(lilly.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(lilly.TryGetProperty("brain", out _), Is.False);
             }
         );
     }
