@@ -8,7 +8,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "gm|.gm",
+    "gm",
     "Open the GM menu. Usage: .gm",
     CommandSourceType.InGame,
     AccountType.GameMaster

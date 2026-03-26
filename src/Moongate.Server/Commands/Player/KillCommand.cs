@@ -14,7 +14,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "kill|.kill",
+    "kill",
     "Target a mobile and kill it. Usage: .kill",
     CommandSourceType.InGame,
     AccountType.GameMaster

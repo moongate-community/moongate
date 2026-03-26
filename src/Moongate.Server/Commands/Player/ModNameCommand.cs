@@ -23,7 +23,7 @@ namespace Moongate.Server.Commands.Player;
 /// Renames a targeted item or mobile and refreshes nearby clients.
 /// </summary>
 [RegisterConsoleCommand(
-    "mod_name|.mod_name",
+    "mod_name",
     "Target an item or mobile and replace its display name.",
     CommandSourceType.InGame,
     AccountType.GameMaster

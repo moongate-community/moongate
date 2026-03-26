@@ -10,7 +10,7 @@ namespace Moongate.Server.Commands;
 /// Builds all item images from art assets.
 /// </summary>
 [RegisterConsoleCommand(
-    "build_item_images|.build_item_images",
+    "build_item_images",
     "Generate item art images into images/items. Usage: .build_item_images",
     CommandSourceType.Console | CommandSourceType.InGame
 )]

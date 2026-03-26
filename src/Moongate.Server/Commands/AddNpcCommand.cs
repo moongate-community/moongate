@@ -18,7 +18,7 @@ namespace Moongate.Server.Commands;
 /// Spawns an NPC from template at target location.
 /// </summary>
 [RegisterConsoleCommand(
-    "add_npc|.add_npc",
+    "add_npc",
     "Spawn an NPC from template at target location. Usage: .add_npc <templateId>",
     CommandSourceType.InGame,
     AccountType.Regular

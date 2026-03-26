@@ -15,7 +15,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "lock_door|.lock_door",
+    "lock_door",
     "Target a door, assign a lock id, and create a matching key in your backpack.",
     CommandSourceType.InGame,
     AccountType.GameMaster

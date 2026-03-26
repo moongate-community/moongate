@@ -18,7 +18,7 @@ namespace Moongate.Server.Commands.Player;
 /// Spawns an item template at a targeted world location.
 /// </summary>
 [RegisterConsoleCommand(
-    "spawn_item|.spawn_item",
+    "spawn_item",
     "Spawn an item template at target location. Usage: .spawn_item <templateId>",
     CommandSourceType.InGame,
     AccountType.GameMaster

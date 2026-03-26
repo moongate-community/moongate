@@ -15,7 +15,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "gm_body|.gm_body",
+    "gm_body",
     "Create GM body bag and add GM tools. Usage: .gm_body",
     CommandSourceType.InGame,
     AccountType.GameMaster

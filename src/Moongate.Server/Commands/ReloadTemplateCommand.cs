@@ -9,7 +9,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands;
 
 [RegisterConsoleCommand(
-    "reload_template|reload_templates|.reload_template|.reload_templates",
+    "reload_template|reload_templates",
     "Reload all templates from disk.",
     CommandSourceType.InGame | CommandSourceType.Console,
     AccountType.GameMaster
