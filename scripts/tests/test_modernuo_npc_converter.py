@@ -1227,6 +1227,141 @@ class ParseFileTests(unittest.TestCase):
             self.assertEqual(22, parsed["range_perception"])
             self.assertEqual(4, parsed["range_fight"])
 
+    def test_extracts_ai_metadata_from_this_chained_constructible_constructor(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "ChainMob.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class ChainMob : BaseCreature
+                        {
+                            [Constructible]
+                            public ChainMob() : this(22)
+                            {
+                            }
+
+                            public ChainMob(int perception) : base(AIType.AI_Mage, FightMode.Closest, perception, 4)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Mage", parsed["ai_type"])
+            self.assertEqual("Closest", parsed["fight_mode"])
+            self.assertEqual(22, parsed["range_perception"])
+            self.assertEqual(4, parsed["range_fight"])
+
+    def test_inherits_ai_metadata_through_parent_this_constructor_chain(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseMob.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class BaseMob : BaseCreature
+                        {
+                            public BaseMob() : this(22)
+                            {
+                            }
+
+                            public BaseMob(int perception) : base(AIType.AI_Mage, FightMode.Evil, perception, 4)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "ChildMob.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class ChildMob : BaseMob
+                        {
+                            [Constructible]
+                            public ChildMob() : base()
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(child_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Mage", parsed["ai_type"])
+            self.assertEqual("Evil", parsed["fight_mode"])
+            self.assertEqual(22, parsed["range_perception"])
+            self.assertEqual(4, parsed["range_fight"])
+
+    def test_keeps_positional_parent_constructor_binding_when_argument_contains_equality_expression(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseMob.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class BaseMob : BaseCreature
+                        {
+                            public BaseMob(int perception, int fightRange = 4) : base(AIType.AI_Mage, FightMode.Closest, perception, fightRange)
+                            {
+                            }
+
+                            public BaseMob(string ignored, int ignoredFightRange)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "ChildMob.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class ChildMob : BaseMob
+                        {
+                            const int FightRange = 5;
+
+                            [Constructible]
+                            public ChildMob() : base(FightRange == 5 ? 10 : 22)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(child_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Mage", parsed["ai_type"])
+            self.assertEqual("Closest", parsed["fight_mode"])
+            self.assertEqual(16, parsed["range_perception"])
+            self.assertEqual(4, parsed["range_fight"])
+
     def test_extracts_base_mount_body_and_ai_from_mixed_signature_constructor_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             source_path = Path(tmp_dir) / "DesertOstard.cs"

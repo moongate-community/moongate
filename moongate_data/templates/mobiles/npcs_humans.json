@@ -59,12 +59,6 @@
       "generic",
       "human"
     ],
-    "ai": {
-      "brain": "none",
-      "fightMode": "none",
-      "rangePerception": 16,
-      "rangeFight": 1
-    },
     "title": "a generic npc",
     "variants": [
       {
@@ -105,10 +99,7 @@
     "intelligence": 80,
     "mana": 80,
     "ai": {
-      "brain": "town_healer",
-      "fightMode": "none",
-      "rangePerception": 16,
-      "rangeFight": 1
+      "brain": "town_healer"
     },
     "title": "a healer",
     "variants": [
@@ -145,10 +136,7 @@
       "human"
     ],
     "ai": {
-      "brain": "lilly",
-      "fightMode": "none",
-      "rangePerception": 16,
-      "rangeFight": 1
+      "brain": "lilly"
     },
     "title": "the Noble",
     "name": "Lilly",

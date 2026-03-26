@@ -136,54 +136,6 @@ def _extract_constructor_definitions(
     return constructors
 
 
-def _extract_constructor_body(
-    content: str,
-    class_name: str,
-    require_constructible: bool = True,
-) -> Optional[str]:
-    constructors = _extract_constructor_definitions(
-        content,
-        class_name,
-        require_constructible=require_constructible,
-    )
-    if not constructors:
-        return None
-
-    return constructors[0]["body"]
-
-
-def _extract_base_arguments(
-    content: str,
-    class_name: str,
-    require_constructible: bool = True,
-) -> Optional[str]:
-    constructors = _extract_constructor_definitions(
-        content,
-        class_name,
-        require_constructible=require_constructible,
-    )
-    if not constructors:
-        return None
-
-    constructor = constructors[0]
-    if constructor["initializer_kind"] != "base":
-        return None
-
-    return constructor["initializer_arguments"]
-
-
-def _extract_constructible_constructor_body(
-    content: str, class_name: str
-) -> Optional[str]:
-    return _extract_constructor_body(content, class_name, require_constructible=True)
-
-
-def _extract_constructible_base_arguments(
-    content: str, class_name: str
-) -> Optional[str]:
-    return _extract_base_arguments(content, class_name, require_constructible=True)
-
-
 def _extract_method_body(content: str, method_name: str) -> Optional[str]:
     content = _strip_comments(content)
     pattern = re.compile(
@@ -436,7 +388,7 @@ def _extract_assignment_expression(
 
 def _strip_named_argument(expression: str) -> str:
     stripped = expression.strip()
-    named_match = re.match(r"(?:\w+\s*:|\w+\s*=)\s*(.+)$", stripped, re.S)
+    named_match = re.match(r"(?:\w+\s*:)\s*(.+)$", stripped, re.S)
     if named_match is not None:
         return named_match.group(1).strip()
 
@@ -796,10 +748,6 @@ def _parse_named_call_argument(argument: str) -> Tuple[Optional[str], str]:
     if named_match is not None:
         return named_match.group(1).lstrip("@"), named_match.group(2).strip()
 
-    named_match = re.match(r"^(@?\w+)\s*=\s*(.+)$", stripped, re.S)
-    if named_match is not None:
-        return named_match.group(1).lstrip("@"), named_match.group(2).strip()
-
     return None, stripped
 
 
@@ -879,6 +827,99 @@ def _select_constructor_overload(
             best_score = score
 
     return best_match
+
+
+def _select_constructor_with_fallback(
+    constructors: List[dict],
+    invocation_arguments: Optional[str],
+    caller_variables: Dict[str, str],
+) -> Optional[Tuple[dict, Dict[str, str]]]:
+    selected_constructor = _select_constructor_overload(
+        constructors,
+        invocation_arguments,
+        caller_variables,
+    )
+    if selected_constructor is not None:
+        return selected_constructor
+
+    if len(constructors) != 1:
+        return None
+
+    return constructors[0], {}
+
+
+def _resolve_constructor_chain(
+    class_content: str,
+    constructors: List[dict],
+    initial_constructor: dict,
+    initial_bindings: Optional[Dict[str, str]] = None,
+) -> List[Tuple[dict, Dict[str, str]]]:
+    chain: List[Tuple[dict, Dict[str, str]]] = []
+    class_variables = _extract_class_simple_variables(class_content)
+    current_constructor = initial_constructor
+    current_bindings = dict(initial_bindings or {})
+    visited: set[int] = set()
+
+    while True:
+        constructor_id = id(current_constructor)
+        if constructor_id in visited:
+            break
+
+        visited.add(constructor_id)
+        chain.append((current_constructor, current_bindings))
+
+        if current_constructor["initializer_kind"] != "this":
+            break
+
+        invocation_variables = dict(class_variables)
+        invocation_variables.update(current_bindings)
+        next_constructor = _select_constructor_with_fallback(
+            constructors,
+            current_constructor["initializer_arguments"],
+            invocation_variables,
+        )
+        if next_constructor is None:
+            break
+
+        current_constructor, current_bindings = next_constructor
+
+    return chain
+
+
+def _extract_constructor_chain_ai_metadata(
+    class_content: str,
+    constructor_chain: List[Tuple[dict, Dict[str, str]]],
+) -> Tuple[dict, Optional[str], Dict[str, str]]:
+    metadata = {}
+    terminal_base_arguments = None
+    terminal_variables: Dict[str, str] = {}
+
+    for index, (constructor, parameter_bindings) in enumerate(reversed(constructor_chain)):
+        constructor_body = constructor["body"] or ""
+        variables = _build_ai_metadata_variables(
+            class_content,
+            constructor_body,
+            parameter_bindings,
+        )
+        if index == 0:
+            terminal_base_arguments = (
+                constructor["initializer_arguments"]
+                if constructor["initializer_kind"] == "base"
+                else None
+            )
+            terminal_variables = variables
+
+        metadata.update(
+            _extract_ai_metadata(
+                constructor["initializer_arguments"]
+                if constructor["initializer_kind"] == "base"
+                else None,
+                constructor_body,
+                variables,
+            )
+        )
+
+    return metadata, terminal_base_arguments, terminal_variables
 
 
 def _split_top_level_ternary(expression: str) -> Optional[Tuple[str, str, str]]:
@@ -1575,32 +1616,24 @@ def _parse_inheritable_ai_metadata(
     if not constructors:
         return {}
 
-    selected_constructor = _select_constructor_overload(
+    selected_constructor = _select_constructor_with_fallback(
         constructors,
         invocation_arguments,
         caller_variables,
     )
     if selected_constructor is None:
-        if len(constructors) != 1:
-            return {}
+        return {}
 
-        constructor = constructors[0]
-        parameter_bindings: Dict[str, str] = {}
-    else:
-        constructor, parameter_bindings = selected_constructor
-
-    constructor_body = constructor["body"] or ""
-    variables = _build_ai_metadata_variables(
+    constructor, parameter_bindings = selected_constructor
+    constructor_chain = _resolve_constructor_chain(
         class_content,
-        constructor_body,
+        constructors,
+        constructor,
         parameter_bindings,
     )
-    metadata = _extract_ai_metadata(
-        constructor["initializer_arguments"]
-        if constructor["initializer_kind"] == "base"
-        else None,
-        constructor_body,
-        variables,
+    metadata, terminal_base_arguments, terminal_variables = _extract_constructor_chain_ai_metadata(
+        class_content,
+        constructor_chain,
     )
 
     missing_keys = {
@@ -1614,10 +1647,8 @@ def _parse_inheritable_ai_metadata(
     inherited = _inherit_parent_ai_metadata(
         filepath,
         base_class,
-        constructor["initializer_arguments"]
-        if constructor["initializer_kind"] == "base"
-        else None,
-        variables,
+        terminal_base_arguments,
+        terminal_variables,
         visited,
     )
     inherited.update(metadata)
@@ -1672,11 +1703,30 @@ def _parse_class_definition(
     if "[Constructible]" not in class_content and "[Constructable]" not in class_content:
         return None
 
-    constructor_body = _extract_constructible_constructor_body(class_content, class_name)
-    if constructor_body is None:
+    constructible_constructors = _extract_constructor_definitions(
+        class_content,
+        class_name,
+        require_constructible=True,
+    )
+    if not constructible_constructors:
         return None
 
-    base_arguments = _extract_constructible_base_arguments(class_content, class_name)
+    all_constructors = _extract_constructor_definitions(
+        class_content,
+        class_name,
+        require_constructible=False,
+    )
+    constructible_constructor = constructible_constructors[0]
+    constructor_body = constructible_constructor["body"] or ""
+    constructor_chain = _resolve_constructor_chain(
+        class_content,
+        all_constructors,
+        constructible_constructor,
+    )
+    ai_metadata, terminal_base_arguments, terminal_ai_variables = _extract_constructor_chain_ai_metadata(
+        class_content,
+        constructor_chain,
+    )
 
     variables = _build_ai_metadata_variables(class_content, constructor_body)
     variants, shared_body = _extract_gender_variants(constructor_body)
@@ -1691,7 +1741,7 @@ def _parse_class_definition(
     if variants:
         data["variants"] = variants
 
-    data.update(_extract_ai_metadata(base_arguments, constructor_body, variables))
+    data.update(ai_metadata)
 
     name_match = re.search(r'DefaultName\s*=>\s*"([^"]+)"', class_content)
     if name_match:
@@ -1848,10 +1898,10 @@ def _parse_class_definition(
     appearance = _extract_appearance_assignments(appearance_source, appearance_variables)
     data.update(appearance)
 
-    if "body" not in data and "body_options" not in data and base_arguments:
-        base_parts = _split_top_level_arguments(base_arguments)
+    if "body" not in data and "body_options" not in data and terminal_base_arguments:
+        base_parts = _split_top_level_arguments(terminal_base_arguments)
         if base_parts:
-            body_choices = _parse_body_choices_expression(base_parts[0], variables)
+            body_choices = _parse_body_choices_expression(base_parts[0], terminal_ai_variables)
             if body_choices:
                 if len(body_choices) == 1:
                     data["body"] = body_choices[0]
@@ -1871,8 +1921,8 @@ def _parse_class_definition(
         inherited_ai = _inherit_parent_ai_metadata(
             filepath,
             base_class,
-            base_arguments,
-            variables,
+            terminal_base_arguments,
+            terminal_ai_variables,
             set(visited),
         )
         for key in ("ai_type", "fight_mode", "range_perception", "range_fight"):
