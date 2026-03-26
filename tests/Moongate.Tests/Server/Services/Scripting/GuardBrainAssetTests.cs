@@ -23,6 +23,42 @@ public sealed class GuardBrainAssetTests
     }
 
     [Test]
+    public void GuardBrainScript_ShouldSupportOptionalRandomRoamPatrolMode()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var onThinkStart = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
+        var onEventStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
+
+        Assert.That(onThinkStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
+
+        var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(onThinkScript, Does.Contain("patrol_mode"));
+                Assert.That(onThinkScript, Does.Contain("patrol_radius"));
+                Assert.That(onThinkScript, Does.Contain("random_roam"));
+                Assert.That(
+                    onThinkScript.Contains("movement.wander(", StringComparison.Ordinal)
+                        || onThinkScript.Contains("steering.wander(", StringComparison.Ordinal),
+                    Is.True
+                );
+                Assert.That(onThinkScript, Does.Contain("movement.guard(npc_serial)"));
+                Assert.That(onThinkScript, Does.Contain("should_return_home"));
+                Assert.That(script, Does.Contain("guards.get_focus"));
+                Assert.That(script, Does.Contain("guards.set_focus"));
+                Assert.That(script, Does.Contain("handle_combat_hook"));
+                Assert.That(script, Does.Contain("combat.set_target"));
+                Assert.That(script, Does.Contain("set_focus(npc_serial, target_serial)"));
+            }
+        );
+    }
+
+    [Test]
     public void GuardBrainScript_ShouldGreetPlayersOnceAndAttackEnemiesOnInRange()
     {
         var repositoryRoot = GetRepositoryRoot();
