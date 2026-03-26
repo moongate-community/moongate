@@ -18,7 +18,7 @@
     "notoriety": "Innocent",
     "ai": {
       "brain": "none",
-      "fightMode": "closest",
+      "fightMode": "none",
       "rangePerception": 16,
       "rangeFight": 1
     },
@@ -61,7 +61,7 @@
     ],
     "ai": {
       "brain": "none",
-      "fightMode": "closest",
+      "fightMode": "none",
       "rangePerception": 16,
       "rangeFight": 1
     },

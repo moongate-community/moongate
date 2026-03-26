@@ -86,7 +86,7 @@ public sealed class UndeadBrainAssetTests
                 var skeletalKnightAi = skeletalKnight.GetProperty("ai");
 
                 Assert.That(skeletalKnightAi.GetProperty("brain").GetString(), Is.EqualTo("none"));
-                Assert.That(skeletalKnightAi.GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(skeletalKnightAi.GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(skeletalKnightAi.GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(skeletalKnightAi.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
             }

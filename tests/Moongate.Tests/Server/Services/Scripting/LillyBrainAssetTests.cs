@@ -113,12 +113,12 @@ public sealed class LillyBrainAssetTests
             () =>
             {
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("none"));
-                Assert.That(baseHuman.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(baseHuman.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(baseHuman.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
 
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("none"));
-                Assert.That(genericNpc.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(genericNpc.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
                 Assert.That(genericNpc.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
 
