@@ -15,6 +15,10 @@ Keep NPC AI maintainable by separating:
 ```text
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
+├── modernuo/
+│   ├── fsm.lua                  # shared phase-1 ModernUO state helpers
+│   ├── movement.lua             # shared movement intentions
+│   └── targeting.lua            # shared fight-mode and targeting helpers
 ├── runners/
 │   └── utility_runner.lua       # utility/priority behavior runner
 ├── behaviors/
@@ -28,6 +32,11 @@ moongate_data/scripts/ai/
 │   ├── self_bandage.lua
 │   └── return_home.lua
 └── brains/
+    ├── ai_melee.lua
+    ├── ai_archer.lua
+    ├── ai_animal.lua
+    ├── ai_vendor.lua
+    ├── ai_berserk.lua
     ├── guard.lua
     ├── undead_melee.lua
     └── utility_npc.lua
@@ -35,7 +44,34 @@ moongate_data/scripts/ai/
 
 ## Brain Contract
 
-Each brain table can expose:
+Mobile templates bind brains through the canonical `ai` object:
+
+```json
+{
+  "id": "city_guard",
+  "ai": {
+    "brain": "guard"
+  }
+}
+```
+
+ModernUO-aligned standard brains use the same shape with extra AI parameters:
+
+```json
+{
+  "id": "juka_lord_npc",
+  "ai": {
+    "brain": "ai_archer",
+    "fightMode": "closest",
+    "rangePerception": 10,
+    "rangeFight": 3
+  }
+}
+```
+
+Custom shard-authored brains continue to use the same field, for example `ai.brain = "orion"`.
+
+Each Lua brain table can expose:
 
 - `brain_loop(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
@@ -44,16 +80,38 @@ Each brain table can expose:
 - `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
-In templates:
+`ai.brain = "guard"` resolves to Lua table `guard`.
 
-```json
-{
-  "id": "city_guard",
-  "brain": "guard"
-}
-```
+## Canonical AI Fields
 
-`"brain": "guard"` resolves to Lua table `guard`.
+The canonical mobile AI contract is:
+
+- `ai.brain`
+- `ai.fightMode`
+- `ai.rangePerception`
+- `ai.rangeFight`
+
+Standard normalized brain ids currently used by ModernUO-derived templates are:
+
+- `ai_melee`
+- `ai_archer`
+- `ai_animal`
+- `ai_vendor`
+- `ai_berserk`
+- `ai_mage`
+- `ai_healer`
+- `ai_thief`
+
+Phase 1 ships full shared support for:
+
+- `ai_melee`
+- `ai_archer`
+- `ai_animal`
+- `ai_vendor`
+- `ai_berserk`
+
+`ai_mage`, `ai_healer`, and `ai_thief` are currently compatibility aliases to legacy brains while the engine primitives
+for full parity are still incomplete.
 
 ## Behavior Pattern
 

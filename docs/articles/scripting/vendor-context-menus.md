@@ -61,7 +61,12 @@ Use `sellProfileId` in the mobile template:
     "id": "vendor_test",
     "title": "Vendor",
     "sellProfileId": "vendor.basic",
-    "brain": "vendor_brain",
+    "ai": {
+      "brain": "ai_vendor",
+      "fightMode": "none",
+      "rangePerception": 2,
+      "rangeFight": 1
+    },
     "variants": [
       {
         "name": "default",
