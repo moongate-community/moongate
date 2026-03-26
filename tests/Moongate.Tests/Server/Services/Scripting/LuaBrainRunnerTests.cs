@@ -214,6 +214,19 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
+    public void ResolveAcquisitionRange_ShouldNotSpecialCaseGuardRole()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var runnerPath = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Services", "Scripting", "LuaBrainRunner.cs");
+        var source = File.ReadAllText(runnerPath);
+
+        Assert.That(
+            source,
+            Does.Not.Contain("guard_role")
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_WhenEnemyMobileWithoutBrainIsAdded_ShouldPreserveEnemyPayload()
     {
         using var temp = new TempDirectory();
@@ -951,4 +964,7 @@ public sealed class LuaBrainRunnerTests
             }
         );
     }
+
+    private static string GetRepositoryRoot()
+        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }

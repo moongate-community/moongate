@@ -163,9 +163,19 @@ public sealed class GuardBrainAssetTests
                                          StringComparison.Ordinal
                                      )
                                  );
+            var ai = archer.GetProperty("ai");
 
-            Assert.That(archer.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
-            Assert.That(archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.archer" }));
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(ai.TryGetProperty("rangePerception", out var rangePerception), Is.True);
+                    Assert.That(rangePerception.GetInt32(), Is.EqualTo(10));
+                    Assert.That(
+                        archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
+                        Is.EqualTo(new[] { "guard.archer" })
+                    );
+                }
+            );
         }
     }
 
@@ -185,13 +195,23 @@ public sealed class GuardBrainAssetTests
                                   .First(
                                       element => string.Equals(
                                           element.GetProperty("id").GetString(),
-                                          warriorId,
-                                          StringComparison.Ordinal
-                                      )
-                                  );
+                                         warriorId,
+                                         StringComparison.Ordinal
+                                     )
+                                 );
+            var ai = warrior.GetProperty("ai");
 
-            Assert.That(warrior.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(3));
-            Assert.That(warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.warrior" }));
+            Assert.Multiple(
+                () =>
+                {
+                    Assert.That(ai.TryGetProperty("rangePerception", out var rangePerception), Is.True);
+                    Assert.That(rangePerception.GetInt32(), Is.EqualTo(3));
+                    Assert.That(
+                        warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
+                        Is.EqualTo(new[] { "guard.warrior" })
+                    );
+                }
+            );
         }
     }
 
