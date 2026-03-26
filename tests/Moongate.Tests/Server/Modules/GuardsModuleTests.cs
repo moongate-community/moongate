@@ -1,5 +1,6 @@
 using Moongate.Network.Client;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -391,6 +392,37 @@ public sealed class GuardsModuleTests
     }
 
     [Test]
+    public void GuardsModule_ShouldExposeExpectedLuaModuleAndFunctionNames()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var moduleAttribute = moduleType.GetCustomAttributes(typeof(ScriptModuleAttribute), inherit: false)
+                                        .Cast<ScriptModuleAttribute>()
+                                        .SingleOrDefault();
+
+        Assert.That(moduleAttribute, Is.Not.Null, "Expected GuardsModule to declare ScriptModuleAttribute.");
+        Assert.That(moduleAttribute!.Name, Is.EqualTo("guards"));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(GetScriptFunctionName(moduleType, "SetFocus"), Is.EqualTo("set_focus"));
+                Assert.That(GetScriptFunctionName(moduleType, "GetFocus"), Is.EqualTo("get_focus"));
+                Assert.That(
+                    GetScriptFunctionName(moduleType, "TeleportToTarget"),
+                    Is.EqualTo("teleport_to_target")
+                );
+            }
+        );
+    }
+
+    [Test]
     public void SetFocus_WhenGuardAndTargetExist_ShouldPersistFocus()
     {
         var moduleType = ResolveModuleType();
@@ -436,6 +468,80 @@ public sealed class GuardsModuleTests
     }
 
     [Test]
+    public void GetFocus_WhenUnset_ShouldReturnNull()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x402u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(guard);
+        mobileService.Seed(guard);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var focus = InvokeNullableUInt(moduleType, module, "GetFocus", (uint)guard.Id);
+
+        Assert.That(focus, Is.Null);
+    }
+
+    [Test]
+    public void SetFocus_WhenTargetIsNil_ShouldClearExistingFocus()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x4021u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x4022u,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        spatial.AddMobile(guard);
+        spatial.AddMobile(target);
+        mobileService.Seed(guard);
+        mobileService.Seed(target);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var setResult = InvokeBool(moduleType, module, "SetFocus", (uint)guard.Id, (uint?)target.Id);
+        var clearResult = InvokeBool(moduleType, module, "SetFocus", (uint)guard.Id, null);
+        var focus = InvokeNullableUInt(moduleType, module, "GetFocus", (uint)guard.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(setResult, Is.True);
+                Assert.That(clearResult, Is.True);
+                Assert.That(focus, Is.Null);
+                Assert.That(guard.CustomProperties.ContainsKey(GuardFocusKey), Is.False);
+            }
+        );
+    }
+
+    [Test]
     public void SetFocus_WhenTargetSerialIsZero_ShouldReturnFalse()
     {
         var moduleType = ResolveModuleType();
@@ -467,6 +573,35 @@ public sealed class GuardsModuleTests
                 Assert.That(guard.CustomProperties.ContainsKey(GuardFocusKey), Is.False);
             }
         );
+    }
+
+    [Test]
+    public void GetFocus_WhenFocusPointsToMissingTarget_ShouldReturnNull()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x404u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        guard.SetCustomInteger(GuardFocusKey, 0x499u);
+        spatial.AddMobile(guard);
+        mobileService.Seed(guard);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var focus = InvokeNullableUInt(moduleType, module, "GetFocus", (uint)guard.Id);
+
+        Assert.That(focus, Is.Null);
     }
 
     [Test]
@@ -510,6 +645,62 @@ public sealed class GuardsModuleTests
                 Assert.That(guard.MapId, Is.EqualTo(target.MapId));
             }
         );
+    }
+
+    [Test]
+    public void TeleportToTarget_WhenGuardSerialIsInvalid_ShouldReturnFalse()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x421u,
+            MapId = 1,
+            Location = new(111, 122, 5)
+        };
+        spatial.AddMobile(target);
+        mobileService.Seed(target);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var result = InvokeBool(moduleType, module, "TeleportToTarget", 0u, (uint)target.Id);
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void TeleportToTarget_WhenTargetSerialIsInvalid_ShouldReturnFalse()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x422u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(guard);
+        mobileService.Seed(guard);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var result = InvokeBool(moduleType, module, "TeleportToTarget", (uint)guard.Id, 0u);
+
+        Assert.That(result, Is.False);
     }
 
     private static object CreateModule(
@@ -592,6 +783,17 @@ public sealed class GuardsModuleTests
         Assert.That(method, Is.Not.Null, $"Expected {methodName} to exist on GuardsModule.");
 
         return method!.Invoke(module, arguments) is uint value ? value : null;
+    }
+
+    private static string? GetScriptFunctionName(Type moduleType, string methodName)
+    {
+        var method = moduleType.GetMethod(methodName);
+        Assert.That(method, Is.Not.Null, $"Expected {methodName} to exist on GuardsModule.");
+
+        return method!.GetCustomAttributes(typeof(ScriptFunctionAttribute), inherit: false)
+                      .Cast<ScriptFunctionAttribute>()
+                      .SingleOrDefault()
+                      ?.FunctionName;
     }
 
     private static Type? ResolveModuleType()
