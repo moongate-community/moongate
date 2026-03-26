@@ -61,7 +61,6 @@ public class MobileTemplatePolymorphicTests
                        "fame": 800,
                        "karma": -600,
                        "notoriety": "Murdered",
-                       "brain": "aggressive_orc",
                        "sounds": {
                          "StartAttack": 427,
                          "Idle": 428,

@@ -42,13 +42,6 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public MobileAiTemplate Ai { get; set; } = new();
 
-    [JsonIgnore]
-    public string Brain
-    {
-        get => Ai.Brain;
-        set => Ai.Brain = value;
-    }
-
     public string? SellProfileId { get; set; }
 
     public string? DefaultFactionId { get; set; }
