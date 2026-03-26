@@ -7,6 +7,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Modules;
@@ -86,6 +87,21 @@ public sealed class NpcStateModuleTests
         public void RemoveEntity(Serial serial) { }
     }
 
+    private static (NpcStateModule Module, UOMobileEntity Npc) CreateModuleWithNpc(uint npcSerial)
+    {
+        var spatial = new NpcStateTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)npcSerial,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+
+        spatial.AddMobile(npc);
+
+        return (new NpcStateModule(spatial), npc);
+    }
+
     [Test]
     public void GetHpPercent_AndIsAlive_ShouldReadNpcState()
     {
@@ -147,6 +163,125 @@ public sealed class NpcStateModuleTests
                 Assert.That(mode, Is.EqualTo("guard"));
                 Assert.That(removed, Is.True);
                 Assert.That(missing, Is.Null);
+            }
+        );
+    }
+
+    [Test]
+    public void SetVar_CanonicalAiKeys_ShouldWriteAndClearLegacyAliases()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x102u);
+        npc.SetCustomString("modernuo_action", "wander");
+        npc.SetCustomInteger("modernuo_target_serial", 0x222u);
+
+        var setAction = module.SetVar((uint)npc.Id, "ai_action", "combat");
+        var setTarget = module.SetVar((uint)npc.Id, "ai_target_serial", 0x333u);
+        var action = module.GetVar((uint)npc.Id, "ai_action");
+        var target = module.GetVar((uint)npc.Id, "ai_target_serial");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(setAction, Is.True);
+                Assert.That(setTarget, Is.True);
+                Assert.That(action, Is.EqualTo("combat"));
+                Assert.That(target, Is.EqualTo(0x333L));
+                Assert.That(npc.CustomProperties.ContainsKey("ai_action"), Is.True);
+                Assert.That(npc.CustomProperties.ContainsKey("ai_target_serial"), Is.True);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_action"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_target_serial"), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void GetVar_CanonicalAiKeys_WithLegacyAliases_ShouldReturnCanonicalValuesAndRemoveLegacyAliases()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x103u);
+        npc.SetCustomString("ai_action", "combat");
+        npc.SetCustomString("modernuo_action", "wander");
+        npc.SetCustomInteger("ai_target_serial", 0x333u);
+        npc.SetCustomInteger("modernuo_target_serial", 0x444u);
+
+        var action = module.GetVar((uint)npc.Id, "ai_action");
+        var target = module.GetVar((uint)npc.Id, "ai_target_serial");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(action, Is.EqualTo("combat"));
+                Assert.That(target, Is.EqualTo(0x333L));
+                Assert.That(npc.CustomProperties.ContainsKey("ai_action"), Is.True);
+                Assert.That(npc.CustomProperties.ContainsKey("ai_target_serial"), Is.True);
+                Assert.That(npc.CustomProperties["ai_action"].StringValue, Is.EqualTo("combat"));
+                Assert.That(npc.CustomProperties["ai_target_serial"].IntegerValue, Is.EqualTo(0x333L));
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_action"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_target_serial"), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void GetVar_LegacyAiActionKey_ShouldMigrateToCanonicalKey()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x104u);
+        npc.SetCustomString("modernuo_action", "guard");
+
+        var action = module.GetVar((uint)npc.Id, "ai_action");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(action, Is.EqualTo("guard"));
+                Assert.That(npc.CustomProperties.ContainsKey("ai_action"), Is.True);
+                Assert.That(npc.CustomProperties["ai_action"].Type, Is.EqualTo(ItemCustomPropertyType.String));
+                Assert.That(npc.CustomProperties["ai_action"].StringValue, Is.EqualTo("guard"));
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_action"), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void GetVar_LegacyAiTargetSerialKey_ShouldMigrateToCanonicalKey()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x105u);
+        npc.SetCustomInteger("modernuo_target_serial", 0x444u);
+
+        var target = module.GetVar((uint)npc.Id, "ai_target_serial");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(target, Is.EqualTo(0x444L));
+                Assert.That(npc.CustomProperties.ContainsKey("ai_target_serial"), Is.True);
+                Assert.That(npc.CustomProperties["ai_target_serial"].Type, Is.EqualTo(ItemCustomPropertyType.Integer));
+                Assert.That(npc.CustomProperties["ai_target_serial"].IntegerValue, Is.EqualTo(0x444L));
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_target_serial"), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void SetVar_CanonicalAiKeysWithNil_ShouldClearCanonicalAndLegacyAliases()
+    {
+        var (module, npc) = CreateModuleWithNpc(0x106u);
+        npc.SetCustomString("ai_action", "combat");
+        npc.SetCustomString("modernuo_action", "guard");
+        npc.SetCustomInteger("ai_target_serial", 0x555u);
+        npc.SetCustomInteger("modernuo_target_serial", 0x666u);
+
+        var removeAction = module.SetVar((uint)npc.Id, "ai_action", null);
+        var removeTarget = module.SetVar((uint)npc.Id, "ai_target_serial", null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(removeAction, Is.True);
+                Assert.That(removeTarget, Is.True);
+                Assert.That(npc.CustomProperties.ContainsKey("ai_action"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_action"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("ai_target_serial"), Is.False);
+                Assert.That(npc.CustomProperties.ContainsKey("modernuo_target_serial"), Is.False);
             }
         );
     }

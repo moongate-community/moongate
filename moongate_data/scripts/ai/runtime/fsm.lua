@@ -9,8 +9,8 @@ M.actions = {
     interact = "interact",
 }
 
-local ACTION_KEY = "modernuo_action"
-local TARGET_KEY = "modernuo_target_serial"
+local ACTION_KEY = "ai_action"
+local TARGET_KEY = "ai_target_serial"
 
 function M.set_action(npc_serial, action)
     if action == nil or action == "" then
