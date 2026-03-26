@@ -37,7 +37,6 @@ public sealed class LuaBrainRunner
       IGameEventListener<MobileSpawnedFromSpawnerEvent>
 {
     private const int DefaultInRangeEnterDistance = 3;
-    private const int RangedGuardInRangeEnterDistance = 10;
     private const int DefaultTickMilliseconds = 250;
     private const int FaultRetryMilliseconds = 1000;
 
@@ -393,10 +392,11 @@ public sealed class LuaBrainRunner
 
     private static int ResolveAcquisitionRange(UOMobileEntity mobile)
     {
-        if (mobile.TryGetCustomString("guard_role", out var guardRole) &&
-            string.Equals(guardRole, "ranged", StringComparison.OrdinalIgnoreCase))
+        if (mobile.TryGetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, out var rangePerception) &&
+            rangePerception > 0 &&
+            rangePerception <= int.MaxValue)
         {
-            return RangedGuardInRangeEnterDistance;
+            return (int)rangePerception;
         }
 
         return DefaultInRangeEnterDistance;

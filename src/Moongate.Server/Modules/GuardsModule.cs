@@ -125,6 +125,28 @@ public sealed class GuardsModule
         );
     }
 
+    [ScriptFunction("try_reveal", "Attempts to reveal a hidden target mobile for the provided guard.")]
+    public bool TryReveal(uint guardSerial, uint targetSerial)
+    {
+        if (!MobileScriptResolver.TryResolveMobile(_spatialWorldService, guardSerial, out var resolvedGuard) ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, targetSerial, out var resolvedTarget))
+        {
+            return false;
+        }
+
+        var guard = resolvedGuard!;
+        var target = resolvedTarget!;
+
+        if (guard.MapId != target.MapId || !target.IsHidden)
+        {
+            return false;
+        }
+
+        target.IsHidden = false;
+
+        return true;
+    }
+
     private sealed class NullSpeechService : ISpeechService
     {
         public static readonly NullSpeechService Instance = new();

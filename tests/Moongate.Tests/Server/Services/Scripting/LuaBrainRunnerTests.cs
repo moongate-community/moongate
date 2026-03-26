@@ -214,12 +214,16 @@ public sealed class LuaBrainRunnerTests
     }
 
     [Test]
-    public void ResolveAcquisitionRange_ShouldNotSpecialCaseGuardRole()
+    public void ResolveAcquisitionRange_ShouldUseExplicitAiRangePerception()
     {
         var repositoryRoot = GetRepositoryRoot();
         var runnerPath = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Services", "Scripting", "LuaBrainRunner.cs");
         var source = File.ReadAllText(runnerPath);
 
+        Assert.That(
+            source,
+            Does.Contain("MobileCustomParamKeys.Ai.RangePerception")
+        );
         Assert.That(
             source,
             Does.Not.Contain("guard_role")

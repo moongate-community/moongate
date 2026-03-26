@@ -418,6 +418,7 @@ public sealed class GuardsModuleTests
                     GetScriptFunctionName(moduleType, "TeleportToTarget"),
                     Is.EqualTo("teleport_to_target")
                 );
+                Assert.That(GetScriptFunctionName(moduleType, "TryReveal"), Is.EqualTo("try_reveal"));
             }
         );
     }
@@ -699,6 +700,77 @@ public sealed class GuardsModuleTests
         var module = CreateModule(moduleType, spatial, mobileService);
 
         var result = InvokeBool(moduleType, module, "TeleportToTarget", (uint)guard.Id, 0u);
+
+        Assert.That(result, Is.False);
+    }
+
+    [Test]
+    public void TryReveal_WhenTargetIsHidden_ShouldRevealTarget()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x431u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x432u,
+            MapId = 1,
+            Location = new(101, 100, 0),
+            IsHidden = true
+        };
+        spatial.AddMobile(guard);
+        spatial.AddMobile(target);
+        mobileService.Seed(guard);
+        mobileService.Seed(target);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var result = InvokeBool(moduleType, module, "TryReveal", (uint)guard.Id, (uint)target.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(target.IsHidden, Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public void TryReveal_WhenTargetSerialIsInvalid_ShouldReturnFalse()
+    {
+        var moduleType = ResolveModuleType();
+        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.GuardsModule first.");
+
+        if (moduleType is null)
+        {
+            return;
+        }
+
+        var spatial = new GuardsModuleTestSpatialWorldService();
+        var mobileService = new GuardsModuleTestMobileService();
+        var guard = new UOMobileEntity
+        {
+            Id = (Serial)0x433u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(guard);
+        mobileService.Seed(guard);
+        var module = CreateModule(moduleType, spatial, mobileService);
+
+        var result = InvokeBool(moduleType, module, "TryReveal", (uint)guard.Id, 0u);
 
         Assert.That(result, Is.False);
     }
