@@ -57,7 +57,7 @@ public sealed class StandardAiBrainAssetTests
     }
 
     [Test]
-    public void FullStandardAiAssetSuite_ShouldNotReferenceModernUoRuntimeNamespace()
+    public void StandardAiBrains_ShouldNotReferenceModernUoRuntimeNamespace()
     {
         var repositoryRoot = GetRepositoryRoot();
         var brainPaths = new[]
