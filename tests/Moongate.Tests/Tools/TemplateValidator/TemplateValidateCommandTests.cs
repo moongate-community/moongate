@@ -115,6 +115,12 @@ public class TemplateValidateCommandTests
                 "title": "an orc",
                 "name": "orc",
                 "description": "valid",
+                "ai": {
+                  "brain": "ai_melee",
+                  "fightMode": "closest",
+                  "rangePerception": 10,
+                  "rangeFight": 1
+                },
                 "variants": [
                   {
                     "name": "default",
