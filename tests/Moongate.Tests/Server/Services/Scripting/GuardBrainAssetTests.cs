@@ -47,7 +47,7 @@ public sealed class GuardBrainAssetTests
             () =>
             {
                 Assert.That(
-                    onThinkScript,
+                    noTargetIdleScript,
                     Does.Match(@"patrol_mode\s*==\s*""random_roam""[\s\S]*(?:movement|steering)\.wander\([^)]*\bpatrol_radius\b[^)]*\)")
                 );
                 Assert.That(noTargetIdleScript, Does.Contain("should_return_home(npc_serial, npc)"));
