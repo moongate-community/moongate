@@ -324,18 +324,18 @@ public sealed class PerceptionModuleTests
     {
         var spatial = new PerceptionTestSpatialWorldService();
         var npc = CreateHostileNpc((Serial)0x80u, new Point3D(100, 100, 0));
-        var weaker = CreatePlayer((Serial)0x81u, new Point3D(101, 100, 0));
-        weaker.InitializeSkills();
-        weaker.Strength = 40;
-        weaker.SetSkill(UOSkillName.Tactics, 300);
+        var higherFixedPointTactics = CreatePlayer((Serial)0x81u, new Point3D(101, 100, 0));
+        higherFixedPointTactics.InitializeSkills();
+        higherFixedPointTactics.Strength = 20;
+        higherFixedPointTactics.SetSkill(UOSkillName.Tactics, 900);
 
         var stronger = CreatePlayer((Serial)0x82u, new Point3D(106, 100, 0));
         stronger.InitializeSkills();
         stronger.Strength = 90;
-        stronger.SetSkill(UOSkillName.Tactics, 900);
+        stronger.SetSkill(UOSkillName.Tactics, 300);
 
         spatial.AddMobile(npc);
-        spatial.AddMobile(weaker);
+        spatial.AddMobile(higherFixedPointTactics);
         spatial.AddMobile(stronger);
         var module = new PerceptionModule(spatial);
 

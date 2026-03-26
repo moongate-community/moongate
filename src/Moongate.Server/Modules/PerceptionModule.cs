@@ -213,7 +213,7 @@ public sealed class PerceptionModule
     }
 
     private static double GetStrengthTacticsScore(UOMobileEntity mobile)
-        => (mobile.GetSkill(UOSkillName.Tactics)?.Value ?? 0.0) + mobile.Strength;
+        => ((mobile.GetSkill(UOSkillName.Tactics)?.Value ?? 0.0) / 10.0) + mobile.Strength;
 
     private static bool HasRecentAggression(UOMobileEntity source, UOMobileEntity target)
     {
