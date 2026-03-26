@@ -75,6 +75,8 @@ Run the validator:
 moongate-template validate --root-directory ~/moongate
 ```
 
+Each validation run prints the validator version and the target root directory before the validation summary.
+
 Update an existing global installation:
 
 ```bash

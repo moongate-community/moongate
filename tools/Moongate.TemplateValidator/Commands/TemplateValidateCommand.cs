@@ -35,7 +35,7 @@ public sealed class TemplateValidateCommand
     public async Task<int> RunAsync(string rootDirectory, CancellationToken cancellationToken = default)
     {
         var result = await _runner.ValidateAsync(rootDirectory, cancellationToken);
-        _consoleWriter.Write(result);
+        _consoleWriter.Write(rootDirectory, result);
 
         return result.ExitCode;
     }
