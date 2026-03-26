@@ -14,6 +14,11 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class NpcStateModule
 {
+    private const string AiActionKey = "ai_action";
+    private const string AiTargetSerialKey = "ai_target_serial";
+    private const string LegacyActionKey = "modernuo_action";
+    private const string LegacyTargetSerialKey = "modernuo_target_serial";
+
     private readonly ISpatialWorldService _spatialWorldService;
 
     public NpcStateModule(ISpatialWorldService spatialWorldService)
@@ -40,19 +45,12 @@ public sealed class NpcStateModule
             return null;
         }
 
-        if (!npc!.CustomProperties.TryGetValue(key.Trim(), out var property))
+        if (!TryGetBlackboardValue(npc!, key.Trim(), out var value))
         {
             return null;
         }
 
-        return property.Type switch
-        {
-            ItemCustomPropertyType.Integer => property.IntegerValue,
-            ItemCustomPropertyType.Boolean => property.BooleanValue,
-            ItemCustomPropertyType.Double  => property.DoubleValue,
-            ItemCustomPropertyType.String  => property.StringValue,
-            _                              => null
-        };
+        return value;
     }
 
     [ScriptFunction("is_alive", "Returns true when the npc is alive.")]
@@ -78,70 +76,10 @@ public sealed class NpcStateModule
 
         if (value is null || value is DynValue { Type: DataType.Nil or DataType.Void })
         {
-            return npc!.RemoveCustomProperty(normalizedKey);
+            return RemoveBlackboardValue(npc!, normalizedKey);
         }
 
-        switch (value)
-        {
-            case bool boolValue:
-                npc!.SetCustomBoolean(normalizedKey, boolValue);
-
-                return true;
-            case sbyte sbyteValue:
-                npc!.SetCustomInteger(normalizedKey, sbyteValue);
-
-                return true;
-            case byte byteValue:
-                npc!.SetCustomInteger(normalizedKey, byteValue);
-
-                return true;
-            case short shortValue:
-                npc!.SetCustomInteger(normalizedKey, shortValue);
-
-                return true;
-            case ushort ushortValue:
-                npc!.SetCustomInteger(normalizedKey, ushortValue);
-
-                return true;
-            case int intValue:
-                npc!.SetCustomInteger(normalizedKey, intValue);
-
-                return true;
-            case uint uintValue:
-                npc!.SetCustomInteger(normalizedKey, uintValue);
-
-                return true;
-            case long longValue:
-                npc!.SetCustomInteger(normalizedKey, longValue);
-
-                return true;
-            case ulong ulongValue when ulongValue <= long.MaxValue:
-                npc!.SetCustomInteger(normalizedKey, (long)ulongValue);
-
-                return true;
-            case float floatValue:
-                npc!.SetCustomDouble(normalizedKey, floatValue);
-
-                return true;
-            case double doubleValue:
-                npc!.SetCustomDouble(normalizedKey, doubleValue);
-
-                return true;
-            case decimal decimalValue:
-                npc!.SetCustomDouble(normalizedKey, (double)decimalValue);
-
-                return true;
-            case string stringValue:
-                npc!.SetCustomString(normalizedKey, stringValue);
-
-                return true;
-            case DynValue dynValue:
-                return SetVar(npcSerial, normalizedKey, ConvertDynValue(dynValue));
-            default:
-                npc!.SetCustomString(normalizedKey, value.ToString());
-
-                return true;
-        }
+        return SetBlackboardValue(npc!, normalizedKey, value);
     }
 
     private static object? ConvertDynValue(DynValue value)
@@ -153,6 +91,152 @@ public sealed class NpcStateModule
             DataType.String               => value.String,
             _                             => value.ToString()
         };
+
+    private static object? ConvertCustomPropertyValue(ItemCustomProperty property)
+        => property.Type switch
+        {
+            ItemCustomPropertyType.Integer => property.IntegerValue,
+            ItemCustomPropertyType.Boolean => property.BooleanValue,
+            ItemCustomPropertyType.Double  => property.DoubleValue,
+            ItemCustomPropertyType.String  => property.StringValue,
+            _                              => null
+        };
+
+    private static bool TryGetLegacyAliasKey(string key, out string legacyKey)
+    {
+        legacyKey = key switch
+        {
+            AiActionKey        => LegacyActionKey,
+            AiTargetSerialKey  => LegacyTargetSerialKey,
+            _                  => string.Empty
+        };
+
+        return legacyKey.Length > 0;
+    }
+
+    private static bool TryReadBlackboardValue(UOMobileEntity npc, string key, out object? value)
+    {
+        if (!npc.CustomProperties.TryGetValue(key, out var property))
+        {
+            value = null;
+
+            return false;
+        }
+
+        value = ConvertCustomPropertyValue(property);
+
+        return true;
+    }
+
+    private bool TryGetBlackboardValue(UOMobileEntity npc, string key, out object? value)
+    {
+        if (TryReadBlackboardValue(npc, key, out value))
+        {
+            return true;
+        }
+
+        if (!TryGetLegacyAliasKey(key, out var legacyKey) || !TryReadBlackboardValue(npc, legacyKey, out var legacyValue))
+        {
+            value = null;
+
+            return false;
+        }
+
+        npc.SetCustomProperty(key, npc.CustomProperties[legacyKey]);
+        npc.RemoveCustomProperty(legacyKey);
+        value = legacyValue;
+
+        return true;
+    }
+
+    private bool RemoveBlackboardValue(UOMobileEntity npc, string key)
+    {
+        var removed = npc.RemoveCustomProperty(key);
+
+        if (TryGetLegacyAliasKey(key, out var legacyKey))
+        {
+            removed |= npc.RemoveCustomProperty(legacyKey);
+        }
+
+        return removed;
+    }
+
+    private void ClearLegacyAlias(UOMobileEntity npc, string key)
+    {
+        if (TryGetLegacyAliasKey(key, out var legacyKey))
+        {
+            npc.RemoveCustomProperty(legacyKey);
+        }
+    }
+
+    private bool SetBlackboardValue(UOMobileEntity npc, string key, object? value)
+    {
+        switch (value)
+        {
+            case bool boolValue:
+                npc.SetCustomBoolean(key, boolValue);
+
+                break;
+            case sbyte sbyteValue:
+                npc.SetCustomInteger(key, sbyteValue);
+
+                break;
+            case byte byteValue:
+                npc.SetCustomInteger(key, byteValue);
+
+                break;
+            case short shortValue:
+                npc.SetCustomInteger(key, shortValue);
+
+                break;
+            case ushort ushortValue:
+                npc.SetCustomInteger(key, ushortValue);
+
+                break;
+            case int intValue:
+                npc.SetCustomInteger(key, intValue);
+
+                break;
+            case uint uintValue:
+                npc.SetCustomInteger(key, uintValue);
+
+                break;
+            case long longValue:
+                npc.SetCustomInteger(key, longValue);
+
+                break;
+            case ulong ulongValue when ulongValue <= long.MaxValue:
+                npc.SetCustomInteger(key, (long)ulongValue);
+
+                break;
+            case float floatValue:
+                npc.SetCustomDouble(key, floatValue);
+
+                break;
+            case double doubleValue:
+                npc.SetCustomDouble(key, doubleValue);
+
+                break;
+            case decimal decimalValue:
+                npc.SetCustomDouble(key, (double)decimalValue);
+
+                break;
+            case string stringValue:
+                npc.SetCustomString(key, stringValue);
+
+                break;
+            case DynValue dynValue:
+                return SetBlackboardValue(npc, key, ConvertDynValue(dynValue));
+            default:
+                npc.SetCustomString(key, value.ToString());
+
+                break;
+        }
+
+        ClearLegacyAlias(npc, key);
+
+        return true;
+    }
 
     private bool TryResolveValidNpc(uint npcSerial, string key, out UOMobileEntity? mobile)
     {

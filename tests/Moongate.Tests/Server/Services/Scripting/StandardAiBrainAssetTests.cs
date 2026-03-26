@@ -116,10 +116,9 @@ public sealed class StandardAiBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(script, Does.Contain("ai_action"));
-                Assert.That(script, Does.Contain("ai_target_serial"));
-                Assert.That(script, Does.Not.Contain("modernuo_action"));
-                Assert.That(script, Does.Not.Contain("modernuo_target_serial"));
+                Assert.That(script, Does.Contain("local ACTION_KEY = \"ai_action\""));
+                Assert.That(script, Does.Contain("local TARGET_KEY = \"ai_target_serial\""));
+                Assert.That(script, Does.Not.Contain("modernuo_"));
             }
         );
     }
