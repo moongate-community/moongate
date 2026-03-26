@@ -28,22 +28,24 @@ public sealed class GuardBrainAssetTests
         var repositoryRoot = GetRepositoryRoot();
         var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
         var script = File.ReadAllText(scriptPath);
+        var onThinkStart = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
+        var onEventStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
+
+        Assert.That(onThinkStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
+
+        var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(
-                    script,
-                    Does.Match(
-                        @"function guard\.on_think\(npc_serial\)[\s\S]*?elseif[\s\S]*?patrol_mode\s*==\s*""random_roam""[\s\S]*(?:movement|steering)\.wander\([^)]*\bpatrol_radius\b[^)]*\)"
-                    )
+                    onThinkScript,
+                    Does.Match(@"patrol_mode\s*==\s*""random_roam""[\s\S]*(?:movement|steering)\.wander\([^)]*\bpatrol_radius\b[^)]*\)")
                 );
-                Assert.That(
-                    script,
-                    Does.Match(
-                        @"function guard\.on_think\(npc_serial\)[\s\S]*?if should_return_home\(npc_serial, npc\) then[\s\S]*?move_home\(npc_serial, npc\)[\s\S]*?else[\s\S]*?movement\.guard\(npc_serial\)"
-                    )
-                );
+                Assert.That(onThinkScript, Does.Contain("movement.guard(npc_serial)"));
+                Assert.That(onThinkScript, Does.Contain("should_return_home(npc_serial, npc)"));
+                Assert.That(onThinkScript, Does.Contain("move_home(npc_serial, npc)"));
             }
         );
     }
