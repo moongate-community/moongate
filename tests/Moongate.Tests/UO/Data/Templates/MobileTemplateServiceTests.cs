@@ -54,7 +54,10 @@ public class MobileTemplateServiceTests
             Name = name,
             Category = "monsters",
             Description = name,
-            Brain = "test",
+            Ai = new()
+            {
+                Brain = "test"
+            },
             Variants =
             [
                 new()

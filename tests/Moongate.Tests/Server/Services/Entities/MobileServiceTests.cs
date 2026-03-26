@@ -1071,6 +1071,7 @@ public class MobileServiceTests
                         AccountId = accountId ?? Serial.Zero,
                         BrainId = "factory_brain"
                     };
+                    mobile.SetCustomInteger("mobile_variant_index", 0);
 
                     return mobile;
                 }
