@@ -80,6 +80,36 @@ public sealed class MountAndTestMobAssetTests
         );
     }
 
+    [Test]
+    public void UndeadTemplate_ShouldPreservePassiveSkeletalKnightAiBlock()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "undead.json");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var skeletalKnight = document.RootElement
+                                     .EnumerateArray()
+                                     .First(
+                                         element => string.Equals(
+                                             element.GetProperty("id").GetString(),
+                                             "skeletal_knight_npc",
+                                             StringComparison.Ordinal
+                                         )
+                                     );
+
+        var ai = skeletalKnight.GetProperty("ai");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("none"));
+                Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("none"));
+                Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+                Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+            }
+        );
+    }
+
     private static string GetRepositoryRoot()
         => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }

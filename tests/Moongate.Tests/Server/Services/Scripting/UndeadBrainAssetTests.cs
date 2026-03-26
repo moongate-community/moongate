@@ -70,27 +70,6 @@ public sealed class UndeadBrainAssetTests
             }
         );
 
-        var skeletalKnight = document.RootElement
-                                     .EnumerateArray()
-                                     .First(
-                                         element => string.Equals(
-                                             element.GetProperty("id").GetString(),
-                                             "skeletal_knight_npc",
-                                             StringComparison.Ordinal
-                                         )
-                                     );
-
-        Assert.Multiple(
-            () =>
-            {
-                var skeletalKnightAi = skeletalKnight.GetProperty("ai");
-
-                Assert.That(skeletalKnightAi.GetProperty("brain").GetString(), Is.EqualTo("none"));
-                Assert.That(skeletalKnightAi.GetProperty("fightMode").GetString(), Is.EqualTo("none"));
-                Assert.That(skeletalKnightAi.GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
-                Assert.That(skeletalKnightAi.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
-            }
-        );
     }
 
     private static string GetRepositoryRoot()
