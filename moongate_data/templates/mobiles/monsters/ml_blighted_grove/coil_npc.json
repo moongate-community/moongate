@@ -14,7 +14,12 @@
     "maxHits": 959,
     "minDamage": 19,
     "maxDamage": 28,
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Wrestling": 1329,
       "Tactics": 1361,

@@ -18,7 +18,12 @@
     "fame": 4000,
     "karma": 0,
     "notoriety": "Innocent",
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "lootTables": [
       "loot_pack.rich",
       "loot_pack.average",

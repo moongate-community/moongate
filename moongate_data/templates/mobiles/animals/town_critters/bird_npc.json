@@ -16,7 +16,12 @@
     "fame": 150,
     "karma": 0,
     "notoriety": "Innocent",
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Wrestling": 53,
       "Tactics": 50,

@@ -18,7 +18,12 @@
     "fame": 22000,
     "karma": -22000,
     "notoriety": "CanBeAttacked",
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "EvalInt": 1190,
       "Magery": 1163,

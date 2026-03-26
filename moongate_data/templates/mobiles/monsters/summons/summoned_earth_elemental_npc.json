@@ -15,7 +15,12 @@
     "minDamage": 14,
     "maxDamage": 21,
     "armorRating": 34,
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "MagicResist": 725,
       "Tactics": 800,

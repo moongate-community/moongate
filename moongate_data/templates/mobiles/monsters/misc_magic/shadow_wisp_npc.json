@@ -16,7 +16,12 @@
     "maxDamage": 10,
     "armorRating": 18,
     "fame": 500,
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Tactics": 75,
       "Wrestling": 325

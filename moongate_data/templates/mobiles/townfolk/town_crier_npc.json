@@ -8,7 +8,12 @@
       "townfolk",
       "npc"
     ],
-    "brain": "vendor",
+    "ai": {
+      "brain": "ai_vendor",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "variants": [
       {
         "name": "female",

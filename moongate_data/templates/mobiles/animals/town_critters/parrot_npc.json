@@ -8,7 +8,12 @@
       "animal",
       "tamable"
     ],
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Wrestling": 60,
       "Tactics": 60,

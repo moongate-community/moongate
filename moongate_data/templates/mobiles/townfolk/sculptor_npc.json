@@ -8,7 +8,12 @@
       "townfolk",
       "npc"
     ],
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "variants": [
       {
         "name": "female",

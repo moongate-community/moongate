@@ -7,7 +7,12 @@
     "tags": [
       "monster"
     ],
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "title": "a crystal wisp",
     "variants": [
       {

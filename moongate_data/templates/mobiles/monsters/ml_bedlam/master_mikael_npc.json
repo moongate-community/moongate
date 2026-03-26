@@ -17,7 +17,12 @@
     "fame": 18000,
     "karma": -18000,
     "notoriety": "CanBeAttacked",
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Wrestling": 836,
       "Tactics": 849,

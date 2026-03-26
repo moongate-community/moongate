@@ -10,6 +10,8 @@ CLASS_PATTERN = re.compile(
     r"public\s+(?:(?:abstract|partial)\s+)*class\s+(\w+)\s*:\s*(\w+)"
 )
 _PARENT_SOURCE_CACHE: Dict[Tuple[str, str], Optional[str]] = {}
+DEFAULT_RANGE_PERCEPTION = 16
+DEFAULT_RANGE_FIGHT = 1
 
 
 def _parse_int_literal(value: str) -> int:
@@ -40,12 +42,15 @@ def _strip_comments(text: str) -> str:
     return re.sub(r"//.*$", "", without_block_comments, flags=re.MULTILINE)
 
 
-def _extract_constructible_constructor_body(
-    content: str, class_name: str
+def _extract_constructor_body(
+    content: str,
+    class_name: str,
+    require_constructible: bool = True,
 ) -> Optional[str]:
     content = _strip_comments(content)
+    prefix = r"\[(?:Constructible|Constructable)\][\s\S]*?" if require_constructible else r""
     pattern = re.compile(
-        rf"\[(?:Constructible|Constructable)\][\s\S]*?public\s+{re.escape(class_name)}\s*\([^)]*\)\s*(?::\s*base\([^)]*\))?\s*"
+        rf"{prefix}public\s+{re.escape(class_name)}\s*\([^)]*\)\s*(?::\s*base\([^)]*\))?\s*"
     )
     match = pattern.search(content)
     if match is None:
@@ -78,12 +83,15 @@ def _extract_constructible_constructor_body(
     return content[open_brace_index + 1 : close_brace_index]
 
 
-def _extract_constructible_base_arguments(
-    content: str, class_name: str
+def _extract_base_arguments(
+    content: str,
+    class_name: str,
+    require_constructible: bool = True,
 ) -> Optional[str]:
     content = _strip_comments(content)
+    prefix = r"\[(?:Constructible|Constructable)\][\s\S]*?" if require_constructible else r""
     pattern = re.compile(
-        rf"\[(?:Constructible|Constructable)\][\s\S]*?public\s+{re.escape(class_name)}\s*\([^)]*\)\s*:\s*base\("
+        rf"{prefix}public\s+{re.escape(class_name)}\s*\([^)]*\)\s*:\s*base\("
     )
     match = pattern.search(content)
     if match is None:
@@ -98,6 +106,18 @@ def _extract_constructible_base_arguments(
         return None
 
     return content[open_paren_index + 1 : close_paren_index]
+
+
+def _extract_constructible_constructor_body(
+    content: str, class_name: str
+) -> Optional[str]:
+    return _extract_constructor_body(content, class_name, require_constructible=True)
+
+
+def _extract_constructible_base_arguments(
+    content: str, class_name: str
+) -> Optional[str]:
+    return _extract_base_arguments(content, class_name, require_constructible=True)
 
 
 def _extract_method_body(content: str, method_name: str) -> Optional[str]:
@@ -279,6 +299,124 @@ def _extract_assignment_expression(
                 value = nested_match.group(1)
 
     return _resolve_expression(value, variables)
+
+
+def _strip_named_argument(expression: str) -> str:
+    stripped = expression.strip()
+    named_match = re.match(r"(?:\w+\s*:|\w+\s*=)\s*(.+)$", stripped, re.S)
+    if named_match is not None:
+        return named_match.group(1).strip()
+
+    return stripped
+
+
+def _parse_ai_type_expression(expression: Optional[str]) -> Optional[str]:
+    if expression is None:
+        return None
+
+    match = re.search(r"\bAIType\.(AI_\w+)\b", expression)
+    if match is None:
+        return None
+
+    return match.group(1)
+
+
+def _parse_fight_mode_expression(expression: Optional[str]) -> Optional[str]:
+    if expression is None:
+        return None
+
+    match = re.search(r"\bFightMode\.(\w+)\b", expression)
+    if match is None:
+        return None
+
+    return match.group(1)
+
+
+def _parse_range_expression(expression: Optional[str]) -> Optional[int]:
+    if expression is None:
+        return None
+
+    stripped = _strip_named_argument(expression)
+    if re.fullmatch(r"0x[0-9A-Fa-f]+|\d+", stripped):
+        return _parse_int_literal(stripped)
+
+    if stripped == "DefaultRangePerception":
+        return DEFAULT_RANGE_PERCEPTION
+
+    return None
+
+
+def _extract_ai_metadata(
+    base_arguments: Optional[str],
+    constructor_body: str,
+    variables: Dict[str, str],
+) -> dict:
+    metadata = {}
+
+    if base_arguments:
+        arguments = [_strip_named_argument(argument) for argument in _split_top_level_arguments(base_arguments)]
+        ai_index = -1
+
+        for index, argument in enumerate(arguments):
+            ai_type = _parse_ai_type_expression(argument)
+            if ai_type is None:
+                continue
+
+            metadata["ai_type"] = ai_type
+            ai_index = index
+            break
+
+        if ai_index >= 0:
+            trailing_arguments = arguments[ai_index + 1 :]
+            if trailing_arguments:
+                fight_mode = _parse_fight_mode_expression(trailing_arguments[0])
+                numeric_start = 0
+
+                if fight_mode is not None:
+                    metadata["fight_mode"] = fight_mode
+                    numeric_start = 1
+
+                numeric_values = []
+                for argument in trailing_arguments[numeric_start:]:
+                    parsed_value = _parse_range_expression(argument)
+                    if parsed_value is None:
+                        continue
+
+                    numeric_values.append(parsed_value)
+
+                if numeric_values:
+                    metadata["range_perception"] = numeric_values[0]
+                if len(numeric_values) > 1:
+                    metadata["range_fight"] = numeric_values[1]
+
+    ai_assignment = _parse_ai_type_expression(_extract_assignment_expression(constructor_body, "AI", variables))
+    if ai_assignment is not None:
+        metadata["ai_type"] = ai_assignment
+
+    fight_mode_assignment = _parse_fight_mode_expression(
+        _extract_assignment_expression(constructor_body, "FightMode", variables)
+    )
+    if fight_mode_assignment is not None:
+        metadata["fight_mode"] = fight_mode_assignment
+
+    range_perception_assignment = _parse_range_expression(
+        _extract_assignment_expression(constructor_body, "RangePerception", variables)
+    )
+    if range_perception_assignment is not None:
+        metadata["range_perception"] = range_perception_assignment
+
+    range_fight_assignment = _parse_range_expression(
+        _extract_assignment_expression(constructor_body, "RangeFight", variables)
+    )
+    if range_fight_assignment is not None:
+        metadata["range_fight"] = range_fight_assignment
+
+    if "ai_type" in metadata:
+        metadata.setdefault("fight_mode", "Closest")
+        metadata.setdefault("range_perception", DEFAULT_RANGE_PERCEPTION)
+        metadata.setdefault("range_fight", DEFAULT_RANGE_FIGHT)
+
+    return metadata
 
 
 def _extract_style_assignment(text: str, target: str) -> Optional[int]:
@@ -1108,6 +1246,73 @@ def _inherit_parent_appearance(
     return inherited
 
 
+def _parse_inheritable_ai_metadata(
+    filepath: str,
+    class_name: str,
+    base_class: str,
+    class_content: str,
+    visited: set[str],
+) -> dict:
+    visit_key = f"{Path(filepath).resolve()}::{class_name}::ai"
+    if visit_key in visited:
+        return {}
+
+    visited.add(visit_key)
+
+    constructor_body = _extract_constructor_body(class_content, class_name, require_constructible=False)
+    if constructor_body is None:
+        constructor_body = ""
+
+    variables = _extract_simple_variables(constructor_body)
+    metadata = _extract_ai_metadata(
+        _extract_base_arguments(class_content, class_name, require_constructible=False),
+        constructor_body,
+        variables,
+    )
+
+    missing_keys = {
+        key
+        for key in ("ai_type", "fight_mode", "range_perception", "range_fight")
+        if key not in metadata
+    }
+    if not missing_keys:
+        return metadata
+
+    parent_definition = _resolve_class_definition(filepath, base_class)
+    if parent_definition is None:
+        return metadata
+
+    parent_source, resolved_class_name, parent_base_class, parent_content = parent_definition
+    inherited = _parse_inheritable_ai_metadata(
+        parent_source,
+        resolved_class_name,
+        parent_base_class,
+        parent_content,
+        visited,
+    )
+    inherited.update(metadata)
+    return inherited
+
+
+def _inherit_parent_ai_metadata(
+    filepath: str,
+    base_class: str,
+    visited: set[str],
+) -> dict:
+    parent_definition = _resolve_class_definition(filepath, base_class)
+    if parent_definition is None:
+        return {}
+
+    parent_source, resolved_class_name, parent_base_class, parent_content = parent_definition
+    return _parse_inheritable_ai_metadata(
+        parent_source,
+        resolved_class_name,
+        parent_base_class,
+        parent_content,
+        visited,
+    )
+
+
 def _parse_class_definition(
     filepath: str,
     class_name: str,
@@ -1152,9 +1357,7 @@ def _parse_class_definition(
     if variants:
         data["variants"] = variants
 
-    ai_match = re.search(r"base\s*\(\s*AIType\.(\w+)", class_content)
-    if ai_match:
-        data["ai_type"] = ai_match.group(1)
+    data.update(_extract_ai_metadata(base_arguments, constructor_body, variables))
 
     name_match = re.search(r'DefaultName\s*=>\s*"([^"]+)"', class_content)
     if name_match:
@@ -1324,6 +1527,17 @@ def _parse_class_definition(
     if not variants and "body" not in data and "body_options" not in data:
         inherited_appearance = _inherit_parent_appearance(filepath, base_class, visited)
         data.update(inherited_appearance)
+
+    missing_ai_keys = {
+        key
+        for key in ("ai_type", "fight_mode", "range_perception", "range_fight")
+        if key not in data
+    }
+    if missing_ai_keys:
+        inherited_ai = _inherit_parent_ai_metadata(filepath, base_class, set(visited))
+        for key in ("ai_type", "fight_mode", "range_perception", "range_fight"):
+            if key not in data and key in inherited_ai:
+                data[key] = inherited_ai[key]
 
     if not variants and "body" not in data and "body_options" not in data and "variants" not in data:
         default_variants = _build_base_class_variants(base_class)

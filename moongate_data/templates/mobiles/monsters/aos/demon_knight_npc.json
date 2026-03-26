@@ -19,7 +19,12 @@
     "fame": 28000,
     "karma": -28000,
     "notoriety": "CanBeAttacked",
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Necromancy": 1200,
       "SpiritSpeak": 1200

@@ -18,7 +18,12 @@
     "fame": 15000,
     "karma": -15000,
     "notoriety": "CanBeAttacked",
-    "brain": "ranged_combat",
+    "ai": {
+      "brain": "ai_archer",
+      "fightMode": "closest",
+      "rangePerception": 10,
+      "rangeFight": 3
+    },
     "skills": {
       "Anatomy": 950,
       "Archery": 975,

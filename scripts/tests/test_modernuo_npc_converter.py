@@ -124,12 +124,47 @@ class MapToTemplateTests(unittest.TestCase):
         parsed = {
             "class_name": "Banker",
             "category": "town_npcs",
+            "fight_mode": "None",
+            "range_perception": 2,
+            "range_fight": 1,
         }
 
         template = map_to_template(parsed, item_catalog={})
 
         self.assertEqual("banker_npc", template["id"])
-        self.assertEqual("town_banker", template["brain"])
+        self.assertNotIn("brain", template)
+        self.assertEqual(
+            {
+                "brain": "town_banker",
+                "fightMode": "none",
+                "rangePerception": 2,
+                "rangeFight": 1,
+            },
+            template["ai"],
+        )
+
+    def test_maps_canonical_ai_metadata_without_root_brain(self) -> None:
+        parsed = {
+            "class_name": "JukaLord",
+            "category": "monsters",
+            "ai_type": "AI_Archer",
+            "fight_mode": "Closest",
+            "range_perception": 10,
+            "range_fight": 3,
+        }
+
+        template = map_to_template(parsed, item_catalog={})
+
+        self.assertNotIn("brain", template)
+        self.assertEqual(
+            {
+                "brain": "ai_archer",
+                "fightMode": "closest",
+                "rangePerception": 10,
+                "rangeFight": 3,
+            },
+            template["ai"],
+        )
 
     def test_skips_unsupported_item_hair_and_facial_hues(self) -> None:
         parsed = {
@@ -1163,6 +1198,84 @@ class ParseFileTests(unittest.TestCase):
 
             self.assertIsNotNone(parsed)
             self.assertEqual(0xD2, parsed["body"])
+
+    def test_extracts_ai_metadata_from_base_constructor_arguments(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "JukaLord.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class JukaLord : BaseCreature
+                        {
+                            [Constructible]
+                            public JukaLord() : base(AIType.AI_Archer, FightMode.Closest, 10, 3)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Archer", parsed["ai_type"])
+            self.assertEqual("Closest", parsed["fight_mode"])
+            self.assertEqual(10, parsed["range_perception"])
+            self.assertEqual(3, parsed["range_fight"])
+
+    def test_inherits_ai_metadata_from_parent_constructor_without_constructible_attribute(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            base_vendor_path = tmp_path / "BaseVendor.cs"
+            alchemist_path = tmp_path / "Alchemist.cs"
+
+            base_vendor_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public abstract class BaseVendor : BaseCreature
+                        {
+                            public BaseVendor(string title = null) : base(AIType.AI_Vendor, FightMode.None, 2)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            alchemist_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Alchemist : BaseVendor
+                        {
+                            [Constructible]
+                            public Alchemist() : base("the alchemist")
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(alchemist_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Vendor", parsed["ai_type"])
+            self.assertEqual("None", parsed["fight_mode"])
+            self.assertEqual(2, parsed["range_perception"])
+            self.assertEqual(1, parsed["range_fight"])
 
     def test_extracts_body_from_custom_mount_base_constructor_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
