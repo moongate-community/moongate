@@ -36,7 +36,11 @@ internal static class LuaReflectionHelper
         {
             DataType.Nil     => null,
             DataType.Boolean => dynValue.Boolean,
-            DataType.Number  => Convert.ChangeType(dynValue.Number, targetType, CultureInfo.InvariantCulture),
+            DataType.Number  => Convert.ChangeType(
+                dynValue.Number,
+                GetConversionTargetType(targetType),
+                CultureInfo.InvariantCulture
+            ),
             DataType.String  => dynValue.String,
             DataType.Table   => dynValue.ToObject(),
             _                => dynValue.ToObject()
@@ -314,5 +318,12 @@ internal static class LuaReflectionHelper
         var converted = ConvertFromLua(firstArg, typeof(TInput));
 
         return converted is null ? default : (TInput?)converted;
+    }
+
+    private static Type GetConversionTargetType(Type targetType)
+    {
+        ArgumentNullException.ThrowIfNull(targetType);
+
+        return Nullable.GetUnderlyingType(targetType) ?? targetType;
     }
 }
