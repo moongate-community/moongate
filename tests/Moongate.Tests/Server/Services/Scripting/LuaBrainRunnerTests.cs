@@ -205,6 +205,9 @@ public sealed class LuaBrainRunnerTests
                 if (inRangeEvents.Count == 1)
                 {
                     Assert.That(inRangeEvents[0].Args[1], Is.EqualTo((uint)zombie.Id));
+                    var payload = (Dictionary<string, object>)inRangeEvents[0].Args[2]!;
+                    Assert.That(payload["listener_npc_id"], Is.EqualTo((uint)archerGuard.Id));
+                    Assert.That(payload["listener_npc_id"], Is.Not.EqualTo((uint)warriorGuard.Id));
                 }
             }
         );
