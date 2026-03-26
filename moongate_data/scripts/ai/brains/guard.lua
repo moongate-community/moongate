@@ -15,6 +15,8 @@ local HOME_Z_KEY = "home_z"
 local HOME_MAP_ID_KEY = "home_map_id"
 local GUARD_MODE_KEY = "guard_mode"
 local GUARD_ROLE_KEY = "guard_role"
+local PATROL_MODE_KEY = "patrol_mode"
+local PATROL_RADIUS_KEY = "patrol_radius"
 local PREFERRED_MIN_RANGE_KEY = "preferred_min_range"
 local PREFERRED_MAX_RANGE_KEY = "preferred_max_range"
 local HOLD_RADIUS_KEY = "hold_radius"
@@ -66,6 +68,14 @@ local function get_home_values(npc_serial)
     local leash_radius = tonumber(npc_state.get_var(npc_serial, LEASH_RADIUS_KEY) or 8) or 8
 
     return home_x, home_y, home_z, home_map_id, hold_radius, leash_radius
+end
+
+local function get_patrol_mode(npc_serial)
+    return tostring(npc_state.get_var(npc_serial, PATROL_MODE_KEY) or ""):lower()
+end
+
+local function get_patrol_radius(npc_serial)
+    return tonumber(npc_state.get_var(npc_serial, PATROL_RADIUS_KEY) or 0) or 0
 end
 
 local function clear_focus(npc_serial, npc)
@@ -281,9 +291,15 @@ function guard.on_think(npc_serial)
                     set_focus(npc_serial, target_serial)
                 else
                     clear_focus(npc_serial, npc)
+                    local patrol_mode = get_patrol_mode(npc_serial)
+                    local patrol_radius = get_patrol_radius(npc_serial)
 
                     if should_return_home(npc_serial, npc) then
                         move_home(npc_serial, npc)
+                    elseif patrol_mode == "random_roam" and patrol_radius > 0 then
+                        mark_mode(npc_serial, "patrol")
+                        fsm.set_action(npc_serial, fsm.actions.wander)
+                        movement.wander(npc_serial, patrol_radius)
                     else
                         mark_mode(npc_serial, "idle")
                         fsm.set_action(npc_serial, fsm.actions.guard)
@@ -300,9 +316,18 @@ function guard.on_think(npc_serial)
             elseif should_return_home(npc_serial, npc) then
                 move_home(npc_serial, npc)
             else
-                mark_mode(npc_serial, "idle")
-                fsm.set_action(npc_serial, fsm.actions.guard)
-                movement.guard(npc_serial)
+                local patrol_mode = get_patrol_mode(npc_serial)
+                local patrol_radius = get_patrol_radius(npc_serial)
+
+                if patrol_mode == "random_roam" and patrol_radius > 0 then
+                    mark_mode(npc_serial, "patrol")
+                    fsm.set_action(npc_serial, fsm.actions.wander)
+                    movement.wander(npc_serial, patrol_radius)
+                else
+                    mark_mode(npc_serial, "idle")
+                    fsm.set_action(npc_serial, fsm.actions.guard)
+                    movement.guard(npc_serial)
+                end
             end
         end
 
