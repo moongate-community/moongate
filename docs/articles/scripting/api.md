@@ -142,6 +142,13 @@ npc_state.get_var(npc_serial, "follow_target_serial")
 npc_state.set_var(npc_serial, "follow_target_serial", target_serial)
 ```
 
+Use canonical AI runtime keys in new Lua code:
+
+- `ai_action`
+- `ai_target_serial`
+
+`npc_state` still accepts the legacy aliases `modernuo_action` and `modernuo_target_serial` for compatibility with older persisted NPC state. On read, the module migrates those values to the canonical keys and clears the legacy alias.
+
 Enemy lookup is viewer-relative. The helper uses the same coarse AI relation model as Lua brain payloads:
 
 - `Friendly`

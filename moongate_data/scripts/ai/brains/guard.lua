@@ -2,9 +2,9 @@
 -- Guard policy lives here instead of in the generic runner.
 -- Melee and ranged guards share the same focus lifecycle but diverge on spacing.
 
-local fsm = require("ai.modernuo.fsm")
-local movement = require("ai.modernuo.movement")
-local targeting = require("ai.modernuo.targeting")
+local fsm = require("ai.runtime.fsm")
+local movement = require("ai.runtime.movement")
+local targeting = require("ai.runtime.targeting")
 local guards = require("guards")
 
 guard = {}

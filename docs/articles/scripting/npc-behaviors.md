@@ -20,7 +20,7 @@ Keep NPC AI maintainable by separating:
 ```text
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
-├── modernuo/
+├── runtime/
 │   ├── fsm.lua                  # shared phase-1 FSM helpers
 │   ├── movement.lua             # shared movement intentions
 │   └── targeting.lua            # shared fight-mode and targeting helpers
@@ -228,7 +228,7 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
 
 ## State (Blackboard)
 
-Behavior state is stored per NPC using `npc_state` module keys, for example:
+Behavior state is stored per NPC using canonical `npc_state` module keys, for example:
 
 - `follow_target_serial`
 - `home_x`
@@ -250,6 +250,13 @@ Behavior state is stored per NPC using `npc_state` module keys, for example:
 This keeps behavior logic stateless and reusable.
 
 The guard brain initializes defaults only when a key is missing. That keeps the scripts KISS while still allowing runtime tuning to override blackboard values without being overwritten every tick.
+
+The shared AI runtime also uses canonical blackboard keys:
+
+- `ai_action`
+- `ai_target_serial`
+
+Legacy aliases from the previous naming (`modernuo_action` and `modernuo_target_serial`) are still accepted by `npc_state` for compatibility. When the runtime reads them, it migrates the value to the canonical key and removes the legacy alias.
 
 ## Guard Ranges
 
@@ -289,7 +296,7 @@ For guards this means:
 - warrior guards notice hostiles at `3`, chase, and attack in melee
 - archer guards can notice hostiles earlier, position at `4-6`, and still fire out to the bow maximum range
 
-When a hostile leaves range, the guard brain now clears both `follow_target_serial` and the active combat target. That avoids stale target state lingering after `out_range`.
+When a hostile leaves `out_range`, the guard brain only clears the per-source engagement flag. It does not immediately drop focus or clear the active combat target from the event hook. Focus cleanup and home recovery are deferred to the next `on_think` tick, where the brain revalidates the target and decides whether to continue, teleport, or return home.
 
 Guards also capture a home point once, then use two simple rules:
 

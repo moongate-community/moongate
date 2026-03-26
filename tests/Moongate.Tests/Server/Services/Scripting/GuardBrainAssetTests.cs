@@ -5,6 +5,24 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class GuardBrainAssetTests
 {
     [Test]
+    public void GuardBrainScript_ShouldUseAiRuntimeHelpers()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script, Does.Contain("require(\"ai.runtime.fsm\")"));
+                Assert.That(script, Does.Contain("require(\"ai.runtime.movement\")"));
+                Assert.That(script, Does.Contain("require(\"ai.runtime.targeting\")"));
+                Assert.That(script, Does.Not.Contain("ai.modernuo."));
+            }
+        );
+    }
+
+    [Test]
     public void GuardBrainScript_ShouldGreetPlayersOnceAndAttackEnemiesOnInRange()
     {
         var repositoryRoot = GetRepositoryRoot();
