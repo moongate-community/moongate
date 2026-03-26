@@ -1,5 +1,5 @@
-local fsm = require("ai.modernuo.fsm")
-local movement = require("ai.modernuo.movement")
+local fsm = require("ai.runtime.fsm")
+local movement = require("ai.runtime.movement")
 
 ai_vendor = {}
 

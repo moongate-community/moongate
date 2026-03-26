@@ -87,10 +87,10 @@ public sealed class StandardAiBrainAssetTests
     }
 
     [Test]
-    public void ModernUoFsm_ShouldDefineRequiredActionNames()
+    public void RuntimeFsm_ShouldDefineRequiredActionNames()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "modernuo", "fsm.lua");
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "runtime", "fsm.lua");
         var script = File.ReadAllText(scriptPath);
 
         Assert.Multiple(
