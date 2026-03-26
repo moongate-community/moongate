@@ -372,9 +372,9 @@ public sealed class TemplateValidationLoader : IFileLoader
             errors.Add($"Mobile template '{mobile.Id}' has blank ai.brain.");
         }
 
-        var fightMode = mobile.Ai.FightMode.Trim();
+        var fightMode = mobile.Ai.FightMode?.Trim();
 
-        if (!AllowedFightModes.Contains(fightMode))
+        if (string.IsNullOrWhiteSpace(fightMode) || !AllowedFightModes.Contains(fightMode))
         {
             errors.Add($"Mobile template '{mobile.Id}' has invalid ai.fightMode '{mobile.Ai.FightMode}'.");
         }

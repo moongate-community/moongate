@@ -143,6 +143,55 @@ public class TemplateValidationLoaderTests
     }
 
     [Test]
+    public void LoadAsync_WhenMobileAiFightModeIsNull_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "null_ai_fight_mode_mobile",
+                Name = "Null Ai Fight Mode Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    FightMode = null!
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
     public void LoadAsync_WhenMobileAiRangePerceptionIsNonPositive_ShouldThrow()
     {
         var itemService = new ItemTemplateService();
