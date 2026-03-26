@@ -7,6 +7,13 @@ public static partial class MobileCustomParamKeys
         public const string DamageTypes = "mobile_damage_types";
     }
 
+    public static class Ai
+    {
+        public const string FightMode = "mobile_ai_fight_mode";
+        public const string RangePerception = "mobile_ai_range_perception";
+        public const string RangeFight = "mobile_ai_range_fight";
+    }
+
     public static class Loot
     {
         public const string LootTables = "mobile_loot_tables";

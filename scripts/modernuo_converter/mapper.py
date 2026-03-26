@@ -10,6 +10,11 @@ from .constants import AI_TYPE_TO_BRAIN, LOOT_PACK_MAP, RESISTANCE_TYPE_MAP
 TEMPLATE_BRAIN_OVERRIDES = {
     "banker_npc": "town_banker",
 }
+DEFAULT_FIGHT_MODE = "closest"
+DEFAULT_RANGE_PERCEPTION = 16
+DEFAULT_RANGE_FIGHT = 1
+VENDOR_DEFAULT_FIGHT_MODE = "none"
+VENDOR_DEFAULT_RANGE_PERCEPTION = 2
 
 
 def _pascal_to_snake(name: str) -> str:
@@ -32,6 +37,24 @@ def _avg_float(min_val: float, max_val: float) -> float:
 def _body_hex(body_int: int) -> str:
     """Format body ID as hex string 0xNNNN."""
     return f"0x{body_int:04X}"
+
+
+def _canonicalize_fight_mode(value) -> Optional[str]:
+    if value is None:
+        return None
+
+    if not isinstance(value, str):
+        return None
+
+    stripped = value.strip()
+    if not stripped:
+        return None
+
+    match = re.search(r"(?:FightMode\.)?(\w+)$", stripped)
+    if match is None:
+        return None
+
+    return match.group(1).lower()
 
 
 def _canonicalize_fixed_hue_value(value):
@@ -458,6 +481,34 @@ def _derive_category_label(parsed: dict) -> str:
     return "mobile"
 
 
+def _build_ai(parsed: dict, template_id: str) -> dict:
+    ai_type = parsed.get("ai_type", "")
+    category = parsed.get("category", "")
+
+    if template_id in TEMPLATE_BRAIN_OVERRIDES:
+        brain = TEMPLATE_BRAIN_OVERRIDES[template_id]
+    elif ai_type and ai_type in AI_TYPE_TO_BRAIN:
+        brain = AI_TYPE_TO_BRAIN[ai_type]
+    elif category in ("vendors", "town_npcs"):
+        brain = "ai_vendor"
+    else:
+        brain = "ai_melee"
+
+    if category == "vendors":
+        default_fight_mode = VENDOR_DEFAULT_FIGHT_MODE
+        default_range_perception = VENDOR_DEFAULT_RANGE_PERCEPTION
+    else:
+        default_fight_mode = DEFAULT_FIGHT_MODE
+        default_range_perception = DEFAULT_RANGE_PERCEPTION
+
+    return {
+        "brain": brain,
+        "fightMode": _canonicalize_fight_mode(parsed.get("fight_mode")) or default_fight_mode,
+        "rangePerception": int(parsed.get("range_perception", default_range_perception)),
+        "rangeFight": int(parsed.get("range_fight", DEFAULT_RANGE_FIGHT)),
+    }
+
+
 def map_to_template(parsed: dict, item_catalog: Optional[dict] = None) -> dict:
     """Convert a parsed NPC dict to a Moongate mobile template dict."""
     if item_catalog is None:
@@ -508,18 +559,7 @@ def map_to_template(parsed: dict, item_catalog: Optional[dict] = None) -> dict:
         template["karma"] = parsed["karma"]
         template["notoriety"] = _notoriety_from_karma(parsed["karma"])
 
-    # Brain – use category-aware fallback for NPCs without a mapped AI type
-    ai_type = parsed.get("ai_type", "")
-    category = parsed.get("category", "")
-    if template_id in TEMPLATE_BRAIN_OVERRIDES:
-        brain = TEMPLATE_BRAIN_OVERRIDES[template_id]
-    elif ai_type and ai_type in AI_TYPE_TO_BRAIN:
-        brain = AI_TYPE_TO_BRAIN[ai_type]
-    elif category in ("vendors", "town_npcs"):
-        brain = "vendor"
-    else:
-        brain = "melee_combat"
-    template["brain"] = brain
+    template["ai"] = _build_ai(parsed, template_id)
 
     # Skills
     if "skills" in parsed:

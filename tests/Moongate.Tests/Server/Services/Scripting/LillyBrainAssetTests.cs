@@ -66,7 +66,7 @@ public sealed class LillyBrainAssetTests
     }
 
     [Test]
-    public void NpcsHumansTemplate_ShouldAssignDedicatedLillyBrain()
+    public void NpcsHumansTemplate_ShouldAssignLillyCustomBrainWithoutRepeatingInheritedDefaults()
     {
         var repositoryRoot = GetRepositoryRoot();
         var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
@@ -82,7 +82,16 @@ public sealed class LillyBrainAssetTests
                                 )
                             );
 
-        Assert.That(lilly.GetProperty("brain").GetString(), Is.EqualTo("lilly"));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lilly.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("lilly"));
+                Assert.That(lilly.GetProperty("ai").TryGetProperty("fightMode", out _), Is.False);
+                Assert.That(lilly.GetProperty("ai").TryGetProperty("rangePerception", out _), Is.False);
+                Assert.That(lilly.GetProperty("ai").TryGetProperty("rangeFight", out _), Is.False);
+                Assert.That(lilly.TryGetProperty("brain", out _), Is.False);
+            }
+        );
     }
 
     private static string GetRepositoryRoot()

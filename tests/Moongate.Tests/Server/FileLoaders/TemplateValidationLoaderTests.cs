@@ -46,6 +46,301 @@ public class TemplateValidationLoaderTests
     }
 
     [Test]
+    public void LoadAsync_WhenMobileAiBrainIsBlank_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_ai_brain_mobile",
+                Name = "Invalid Ai Brain Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = " "
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileAiFightModeIsInvalid_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_ai_fight_mode_mobile",
+                Name = "Invalid Ai Fight Mode Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    FightMode = "reckless"
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileAiFightModeIsNull_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "null_ai_fight_mode_mobile",
+                Name = "Null Ai Fight Mode Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    FightMode = null!
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileAiRangePerceptionIsNonPositive_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_ai_range_perception_mobile",
+                Name = "Invalid Ai Range Perception Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    RangePerception = 0
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileAiRangeFightIsNegative_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "invalid_ai_range_fight_mobile",
+                Name = "Invalid Ai Range Fight Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    RangeFight = -1
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
+    public void LoadAsync_WhenMobileAiRangeFightIsZero_ShouldNotThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "valid_ai_range_fight_mobile",
+                Name = "Valid Ai Range Fight Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "ai_guard",
+                    FightMode = "closest",
+                    RangePerception = 1,
+                    RangeFight = 0
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService
+        );
+
+        Assert.That(async () => await loader.LoadAsync(), Throws.Nothing);
+    }
+
+    [Test]
     public void LoadAsync_WhenVariantHasNoBody_ShouldThrow()
     {
         var itemService = new ItemTemplateService();
@@ -655,6 +950,13 @@ public class TemplateValidationLoaderTests
                 Category = "monsters",
                 Description = "orc",
                 DefaultFactionId = "true_britannians",
+                Ai = new()
+                {
+                    Brain = "none",
+                    FightMode = "closest",
+                    RangePerception = 16,
+                    RangeFight = 1
+                },
                 Variants =
                 [
                     new()
@@ -705,6 +1007,13 @@ public class TemplateValidationLoaderTests
                 Category = "vendors",
                 Description = "vendor",
                 SellProfileId = "basic_vendor",
+                Ai = new()
+                {
+                    Brain = "none",
+                    FightMode = "closest",
+                    RangePerception = 16,
+                    RangeFight = 1
+                },
                 Variants =
                 [
                     new()

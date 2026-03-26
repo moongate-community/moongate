@@ -18,7 +18,12 @@
     "fame": 9000,
     "karma": 9000,
     "notoriety": "Innocent",
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "evil",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "EvalInt": 850,
       "Magery": 802,

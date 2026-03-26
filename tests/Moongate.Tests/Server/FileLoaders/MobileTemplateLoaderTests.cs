@@ -448,7 +448,12 @@ public class MobileTemplateLoaderTests
                 "fame": 600,
                 "karma": -600,
                 "notoriety": "Murdered",
-                "brain": "undead_melee",
+                "ai": {
+                  "brain": "undead_melee",
+                  "fightMode": "strongest",
+                  "rangePerception": 14,
+                  "rangeFight": 4
+                },
                 "sounds": {
                   "StartAttack": 471,
                   "Idle": 472,
@@ -492,7 +497,10 @@ public class MobileTemplateLoaderTests
                 Assert.That(template.MaxDamage, Is.EqualTo(10));
                 Assert.That(template.ArmorRating, Is.EqualTo(20));
                 Assert.That(template.Notoriety, Is.EqualTo(Notoriety.Murdered));
-                Assert.That(template.Brain, Is.EqualTo("undead_melee"));
+                Assert.That(template.Ai.Brain, Is.EqualTo("undead_melee"));
+                Assert.That(template.Ai.FightMode, Is.EqualTo("strongest"));
+                Assert.That(template.Ai.RangePerception, Is.EqualTo(14));
+                Assert.That(template.Ai.RangeFight, Is.EqualTo(4));
                 Assert.That(template.LootTables, Is.EquivalentTo(new[] { "bonearmor" }));
                 Assert.That(template.Sounds[MobileSoundType.StartAttack], Is.EqualTo(471));
                 Assert.That(template.Sounds[MobileSoundType.Attack], Is.EqualTo(601));
@@ -640,7 +648,9 @@ public class MobileTemplateLoaderTests
                     }
                   }
                 ],
-                "brain": "aggressive_orc"
+                "ai": {
+                  "brain": "aggressive_orc"
+                }
               }
             ]
             """
@@ -659,7 +669,84 @@ public class MobileTemplateLoaderTests
                 Assert.That(definition?.Variants, Has.Count.EqualTo(1));
                 Assert.That(definition?.Variants[0].Appearance.Body, Is.EqualTo(0x11));
                 Assert.That(definition?.Variants[0].Appearance.SkinHue!.Value.IsRange, Is.True);
-                Assert.That(definition?.Brain, Is.EqualTo("aggressive_orc"));
+                Assert.That(definition?.Ai.Brain, Is.EqualTo("aggressive_orc"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenBaseMobileHasCanonicalAiDefaults_ShouldInheritAndPreserveExplicitOverrides()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(mobilesDirectory, "ai.json"),
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_ai_guard",
+                "name": "Base AI Guard",
+                "ai": {
+                  "brain": "ai_guard",
+                  "fightMode": "strongest",
+                  "rangePerception": 18,
+                  "rangeFight": 4
+                },
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "mobile",
+                "id": "guard_cadet",
+                "base_mobile": "base_ai_guard",
+                "name": "Guard Cadet",
+                "ai": {
+                  "brain": "none",
+                  "fightMode": "closest",
+                  "rangePerception": 16,
+                  "rangeFight": 1
+                }
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("guard_cadet", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Ai.Brain, Is.EqualTo("none"));
+                Assert.That(template.Ai.FightMode, Is.EqualTo("closest"));
+                Assert.That(template.Ai.RangePerception, Is.EqualTo(16));
+                Assert.That(template.Ai.RangeFight, Is.EqualTo(1));
             }
         );
     }

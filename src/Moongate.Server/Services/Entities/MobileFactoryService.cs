@@ -75,7 +75,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             AccountId = accountId ?? Serial.Zero,
             Name = resolvedName,
             Title = template.Title,
-            BrainId = template.Brain,
+            BrainId = ResolveBrainId(template.Ai.Brain),
             Location = Point3D.Zero,
             Direction = DirectionType.South,
             IsPlayer = false,
@@ -106,6 +106,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         ApplyResistances(mobile, template);
         ApplyDamageTypes(mobile, template);
+        ApplyAi(mobile, template);
 
         if (template.LootTables.Count > 0)
         {
@@ -233,6 +234,24 @@ public sealed class MobileFactoryService : IMobileFactoryService
         mobile.SetCustomString(MobileCustomParamKeys.Combat.DamageTypes, string.Join(',', parts));
     }
 
+    private static void ApplyAi(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (!string.IsNullOrWhiteSpace(template.Ai.FightMode))
+        {
+            mobile.SetCustomString(MobileCustomParamKeys.Ai.FightMode, template.Ai.FightMode.Trim());
+        }
+
+        if (template.Ai.RangePerception.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, template.Ai.RangePerception.Value);
+        }
+
+        if (template.Ai.RangeFight.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, template.Ai.RangeFight.Value);
+        }
+    }
+
     private static void ApplyVariantAppearance(UOMobileEntity mobile, MobileTemplateDefinition template)
     {
         var selectedVariantIndex = SelectVariantIndex(template);
@@ -352,6 +371,23 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         return weightedVariants[^1].Index;
+    }
+
+    private static string? ResolveBrainId(string brainId)
+    {
+        if (string.IsNullOrWhiteSpace(brainId))
+        {
+            return null;
+        }
+
+        var normalizedBrainId = brainId.Trim();
+
+        if (string.Equals(normalizedBrainId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return normalizedBrainId;
     }
 
     private void BindSellProfile(UOMobileEntity mobile, MobileTemplateDefinition template)

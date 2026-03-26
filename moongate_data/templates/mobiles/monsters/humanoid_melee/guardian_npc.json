@@ -7,7 +7,12 @@
     "tags": [
       "monster"
     ],
-    "brain": "ranged_combat",
+    "ai": {
+      "brain": "ai_archer",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,

@@ -3,6 +3,7 @@ using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Internal.Templates;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
@@ -129,6 +130,41 @@ public sealed class MobileModule
         }
 
         return CreateLuaMobileProxy(ResolveMobile((Serial)characterId));
+    }
+
+    [ScriptFunction("get_brain_id", "Gets the resolved runtime brain id for a character id, or nil when unavailable.")]
+    public string? GetBrainId(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return mobile?.BrainId;
+    }
+
+    [ScriptFunction("get_ai_fight_mode", "Gets the resolved runtime AI fight mode for a character id, or nil when unavailable.")]
+    public string? GetAiFightMode(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomString(mobile, MobileCustomParamKeys.Ai.FightMode);
+    }
+
+    [ScriptFunction(
+        "get_ai_range_perception",
+        "Gets the resolved runtime AI perception range for a character id, or nil when unavailable."
+    )]
+    public int? GetAiRangePerception(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomInteger(mobile, MobileCustomParamKeys.Ai.RangePerception);
+    }
+
+    [ScriptFunction("get_ai_range_fight", "Gets the resolved runtime AI fight range for a character id, or nil when unavailable.")]
+    public int? GetAiRangeFight(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomInteger(mobile, MobileCustomParamKeys.Ai.RangeFight);
     }
 
     [ScriptFunction("get_backpack", "Gets the backpack item reference for a character id, or nil when unavailable.")]
@@ -503,6 +539,31 @@ public sealed class MobileModule
         }
 
         return false;
+    }
+
+    private static int? TryGetCustomInteger(UOMobileEntity? mobile, string key)
+    {
+        if (mobile is null || !mobile.TryGetCustomInteger(key, out var value))
+        {
+            return null;
+        }
+
+        if (value is < int.MinValue or > int.MaxValue)
+        {
+            return null;
+        }
+
+        return (int)value;
+    }
+
+    private static string? TryGetCustomString(UOMobileEntity? mobile, string key)
+    {
+        if (mobile is null || !mobile.TryGetCustomString(key, out var value) || string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return value;
     }
 
     private static bool TryGetRequiredInt(Table table, string key, out int value)

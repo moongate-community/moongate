@@ -31,7 +31,13 @@ public sealed class TownBankerBrainAssetTests
                                  )
                              );
 
-        Assert.That(banker.GetProperty("brain").GetString(), Is.EqualTo("town_banker"));
+        var ai = banker.GetProperty("ai");
+
+        Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("town_banker"));
+        Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("none"));
+        Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(2));
+        Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+        Assert.That(banker.TryGetProperty("brain", out _), Is.False);
     }
 
     [Test]

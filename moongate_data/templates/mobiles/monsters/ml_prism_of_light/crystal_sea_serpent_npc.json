@@ -14,7 +14,12 @@
     "maxHits": 280,
     "minDamage": 10,
     "maxDamage": 18,
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "resistances": {
       "physical": 60,
       "fire": 0,

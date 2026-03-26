@@ -99,7 +99,10 @@ public class EntityFactoryServiceTests
                 MaxHits = 120,
                 Mana = 20,
                 Stamina = 60,
-                Brain = "aggressive_orc",
+                Ai = new()
+                {
+                    Brain = "aggressive_orc"
+                },
                 Notoriety = Notoriety.Criminal
             }
         );

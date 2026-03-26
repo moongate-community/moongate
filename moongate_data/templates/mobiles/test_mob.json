@@ -9,7 +9,12 @@
       "test",
       "animals"
     ],
-    "brain": "orion",
+    "ai": {
+      "brain": "orion",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "name": "Orione",
     "title": "a beautiful cat",
     "variants": [
@@ -34,7 +39,12 @@
       "test",
       "animals"
     ],
-    "brain": "vega",
+    "ai": {
+      "brain": "vega",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "name": "Vega",
     "title": "a beautiful cat",
     "variants": [

@@ -522,14 +522,14 @@ public sealed class MobileService : IMobileService
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(definition.Brain))
+        if (string.IsNullOrWhiteSpace(definition.Ai.Brain))
         {
             mobile.BrainId = null;
 
             return;
         }
 
-        var resolvedBrainId = definition.Brain.Trim();
+        var resolvedBrainId = definition.Ai.Brain.Trim();
 
         if (string.Equals(resolvedBrainId, "none", StringComparison.OrdinalIgnoreCase))
         {

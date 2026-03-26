@@ -15,7 +15,12 @@
     "mana": 10,
     "minDamage": 15,
     "maxDamage": 28,
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Wrestling": 861,
       "Tactics": 955,

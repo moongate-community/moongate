@@ -139,10 +139,7 @@ public sealed class MobileTemplateLoader : IFileLoader
             child.Notoriety = parent.Notoriety;
         }
 
-        if (string.Equals(child.Brain, Defaults.Brain, StringComparison.OrdinalIgnoreCase))
-        {
-            child.Brain = parent.Brain;
-        }
+        ApplyAiInheritance(parent, child);
 
         if (string.IsNullOrWhiteSpace(child.SellProfileId))
         {
@@ -255,6 +252,29 @@ public sealed class MobileTemplateLoader : IFileLoader
             Type = param.Type,
             Value = param.Value
         };
+
+    private static void ApplyAiInheritance(MobileTemplateDefinition parent, MobileTemplateDefinition child)
+    {
+        if (child.Ai.Brain is null)
+        {
+            child.Ai.Brain = parent.Ai.Brain;
+        }
+
+        if (child.Ai.FightMode is null)
+        {
+            child.Ai.FightMode = parent.Ai.FightMode;
+        }
+
+        if (!child.Ai.RangePerception.HasValue)
+        {
+            child.Ai.RangePerception = parent.Ai.RangePerception;
+        }
+
+        if (!child.Ai.RangeFight.HasValue)
+        {
+            child.Ai.RangeFight = parent.Ai.RangeFight;
+        }
+    }
 
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;

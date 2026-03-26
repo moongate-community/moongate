@@ -16,6 +16,7 @@ namespace Moongate.UO.Data.Json.Context;
  JsonSerializable(typeof(GoldValueSpec)),
  JsonSerializable(typeof(MobileTemplateDefinitionBase[])),
  JsonSerializable(typeof(MobileTemplateDefinition[])),
+ JsonSerializable(typeof(MobileAiTemplate)),
  JsonSerializable(typeof(MobileVariantTemplate)),
  JsonSerializable(typeof(MobileAppearanceTemplate)),
  JsonSerializable(typeof(MobileEquipmentEntryTemplate)),

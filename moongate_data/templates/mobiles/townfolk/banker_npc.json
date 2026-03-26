@@ -8,7 +8,12 @@
       "townfolk",
       "npc"
     ],
-    "brain": "town_banker",
+    "ai": {
+      "brain": "town_banker",
+      "fightMode": "none",
+      "rangePerception": 2,
+      "rangeFight": 1
+    },
     "title": "the banker",
     "variants": [
       {

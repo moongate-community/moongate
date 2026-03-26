@@ -15,7 +15,12 @@
     "minDamage": 14,
     "maxDamage": 21,
     "armorRating": 58,
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "EvalInt": 750,
       "Meditation": 950,

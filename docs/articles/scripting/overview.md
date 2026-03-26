@@ -422,13 +422,15 @@ function on_tick() end  -- Called every game tick
 
 ## NPC Brain Loop
 
-NPC templates can bind a Lua brain through `brain`:
+NPC templates bind a Lua brain through the canonical `ai` object:
 
 ```json
 {
   "type": "mobile",
   "id": "orione",
-  "brain": "orion",
+  "ai": {
+    "brain": "orion"
+  },
   "name": "Orione",
   "title": "a beautiful cat",
   "variants": [
@@ -445,7 +447,20 @@ NPC templates can bind a Lua brain through `brain`:
 }
 ```
 
-The value `brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
+The value `ai.brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
+ModernUO-aligned standard brains can also add:
+
+```json
+{
+  "ai": {
+    "brain": "ai_archer",
+    "fightMode": "closest",
+    "rangePerception": 10,
+    "rangeFight": 3
+  }
+}
+```
+
 Appearance and spawn-time equipment are selected from `variants`; simple NPCs typically declare one default variant.
 
 Real brain script (Orion the cat NPC):

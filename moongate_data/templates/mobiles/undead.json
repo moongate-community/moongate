@@ -22,7 +22,12 @@
     "fame": 600,
     "karma": -600,
     "notoriety": "CanBeAttacked",
-    "brain": "undead_melee",
+    "ai": {
+      "brain": "undead_melee",
+      "fightMode": "closest",
+      "rangePerception": 10,
+      "rangeFight": 1
+    },
     "sounds": {
       "StartAttack": 471,
       "Idle": 472,
@@ -70,7 +75,12 @@
     "fame": 3000,
     "karma": -3000,
     "notoriety": "CanBeAttacked",
-    "brain": "None",
+    "ai": {
+      "brain": "none",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "lootTables": [
       "undead.knight"
     ],

@@ -18,7 +18,12 @@
     "fame": 18000,
     "karma": 18000,
     "notoriety": "Innocent",
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "evil",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "EvalInt": 950,
       "Magery": 950,

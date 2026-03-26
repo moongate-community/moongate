@@ -61,13 +61,18 @@ public class MobileTemplatePolymorphicTests
                        "fame": 800,
                        "karma": -600,
                        "notoriety": "Murdered",
-                       "brain": "aggressive_orc",
                        "sounds": {
                          "StartAttack": 427,
                          "Idle": 428,
                          "Attack": 429,
                          "Defend": 430,
                          "Die": 431
+                       },
+                       "ai": {
+                         "brain": "ai_archer",
+                         "fightMode": "closest",
+                         "rangePerception": 10,
+                         "rangeFight": 3
                        },
                        "goldDrop": "dice(1d13+3)",
                        "lootTables": ["bonearmor", "randomgems"],
@@ -160,7 +165,10 @@ public class MobileTemplatePolymorphicTests
                 Assert.That(mobile.Skills["wrestling"], Is.EqualTo(425));
                 Assert.That(mobile.MinDamage, Is.EqualTo(4));
                 Assert.That(mobile.MaxDamage, Is.EqualTo(10));
-                Assert.That(mobile.Brain, Is.EqualTo("aggressive_orc"));
+                Assert.That(mobile.Ai.Brain, Is.EqualTo("ai_archer"));
+                Assert.That(mobile.Ai.FightMode, Is.EqualTo("closest"));
+                Assert.That(mobile.Ai.RangePerception, Is.EqualTo(10));
+                Assert.That(mobile.Ai.RangeFight, Is.EqualTo(3));
                 Assert.That(mobile.Variants, Has.Count.EqualTo(1));
             }
         );

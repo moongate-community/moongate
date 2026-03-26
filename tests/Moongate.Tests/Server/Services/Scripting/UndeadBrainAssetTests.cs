@@ -56,7 +56,13 @@ public sealed class UndeadBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(zombie.GetProperty("brain").GetString(), Is.EqualTo("undead_melee"));
+                var zombieAi = zombie.GetProperty("ai");
+
+                Assert.That(zombieAi.GetProperty("brain").GetString(), Is.EqualTo("undead_melee"));
+                Assert.That(zombieAi.GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(zombieAi.GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
+                Assert.That(zombieAi.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+                Assert.That(zombie.TryGetProperty("brain", out _), Is.False);
                 Assert.That(zombie.GetProperty("sounds").GetProperty("StartAttack").GetInt32(), Is.EqualTo(471));
                 Assert.That(zombie.GetProperty("sounds").GetProperty("Idle").GetInt32(), Is.EqualTo(472));
                 Assert.That(zombie.GetProperty("sounds").GetProperty("Attack").GetInt32(), Is.EqualTo(473));
@@ -64,6 +70,7 @@ public sealed class UndeadBrainAssetTests
                 Assert.That(zombie.GetProperty("sounds").GetProperty("Die").GetInt32(), Is.EqualTo(475));
             }
         );
+
     }
 
     private static string GetRepositoryRoot()

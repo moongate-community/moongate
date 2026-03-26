@@ -19,7 +19,12 @@
     "fame": 450,
     "karma": 0,
     "notoriety": "Innocent",
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "MagicResist": 295,
       "Tactics": 366,

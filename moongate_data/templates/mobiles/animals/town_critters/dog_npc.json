@@ -20,7 +20,12 @@
     "fame": 0,
     "karma": 300,
     "notoriety": "Innocent",
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "MagicResist": 345,
       "Tactics": 251,

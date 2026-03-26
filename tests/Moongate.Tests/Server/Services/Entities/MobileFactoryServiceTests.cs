@@ -87,6 +87,53 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldProjectAiValuesToBrainIdAndCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "ai_mobile",
+                Name = "Ai Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "orc_warrior",
+                    FightMode = "strongest",
+                    RangePerception = 12,
+                    RangeFight = 0
+                },
+                Variants = [CreateVariant(0x0190, 0, 0, 0)]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("ai_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BrainId, Is.EqualTo("orc_warrior"));
+                Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Ai.FightMode, out var fightMode), Is.True);
+                Assert.That(fightMode, Is.EqualTo("strongest"));
+                Assert.That(
+                    mobile.TryGetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, out var rangePerception),
+                    Is.True
+                );
+                Assert.That(rangePerception, Is.EqualTo(12));
+                Assert.That(
+                    mobile.TryGetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, out var rangeFight),
+                    Is.True
+                );
+                Assert.That(rangeFight, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateHasNoVariants()
     {
         using var temp = new TempDirectory();

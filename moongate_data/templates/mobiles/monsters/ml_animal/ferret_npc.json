@@ -15,7 +15,12 @@
     "maxHits": 47,
     "minDamage": 7,
     "maxDamage": 9,
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "resistances": {
       "physical": 47,
       "fire": 12,

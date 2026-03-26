@@ -20,7 +20,12 @@
     "fame": 300,
     "karma": 0,
     "notoriety": "Innocent",
-    "brain": "animal",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "sounds": {
       "Idle": 0,
       "StartAttack": 1,

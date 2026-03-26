@@ -18,7 +18,12 @@
     "fame": 25000,
     "karma": -25000,
     "notoriety": "CanBeAttacked",
-    "brain": "mage_combat",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "lootTables": [
       "loot_pack.ultra_rich",
       "loot_pack.ultra_rich"

@@ -17,7 +17,12 @@
     "fame": 5000,
     "karma": -5000,
     "notoriety": "CanBeAttacked",
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Fencing": 850,
       "Healing": 751,

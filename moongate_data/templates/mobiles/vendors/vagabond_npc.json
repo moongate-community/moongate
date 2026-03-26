@@ -8,7 +8,12 @@
       "vendor",
       "npc"
     ],
-    "brain": "vendor",
+    "ai": {
+      "brain": "ai_vendor",
+      "fightMode": "none",
+      "rangePerception": 2,
+      "rangeFight": 1
+    },
     "skills": {
       "ItemID": 715
     },

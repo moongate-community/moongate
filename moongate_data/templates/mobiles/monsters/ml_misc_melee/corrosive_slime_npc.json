@@ -19,7 +19,12 @@
     "fame": 300,
     "karma": -300,
     "notoriety": "CanBeAttacked",
-    "brain": "melee_combat",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "skills": {
       "Poisoning": 425,
       "MagicResist": 174,

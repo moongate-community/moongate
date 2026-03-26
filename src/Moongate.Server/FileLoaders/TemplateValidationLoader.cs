@@ -19,6 +19,16 @@ namespace Moongate.Server.FileLoaders;
 [RegisterFileLoader(15)]
 public sealed class TemplateValidationLoader : IFileLoader
 {
+    private static readonly HashSet<string> AllowedFightModes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "none",
+        "aggressor",
+        "strongest",
+        "weakest",
+        "closest",
+        "evil"
+    };
+
     private readonly ILogger _logger = Log.ForContext<TemplateValidationLoader>();
     private readonly IItemTemplateService _itemTemplateService;
     private readonly IMobileTemplateService _mobileTemplateService;
@@ -349,8 +359,34 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Mobile template '{mobile.Id}' references missing default faction '{mobile.DefaultFactionId}'.");
             }
 
+            ValidateMobileAi(mobile, errors);
             ValidateTemplateParams($"Mobile template '{mobile.Id}'", mobile.Params, errors);
             ValidateVariants(mobile, errors);
+        }
+    }
+
+    private static void ValidateMobileAi(MobileTemplateDefinition mobile, List<string> errors)
+    {
+        if (string.IsNullOrWhiteSpace(mobile.Ai.Brain))
+        {
+            errors.Add($"Mobile template '{mobile.Id}' has blank ai.brain.");
+        }
+
+        var fightMode = mobile.Ai.FightMode?.Trim();
+
+        if (string.IsNullOrWhiteSpace(fightMode) || !AllowedFightModes.Contains(fightMode))
+        {
+            errors.Add($"Mobile template '{mobile.Id}' has invalid ai.fightMode '{mobile.Ai.FightMode}'.");
+        }
+
+        if (mobile.Ai.RangePerception is null || mobile.Ai.RangePerception <= 0)
+        {
+            errors.Add($"Mobile template '{mobile.Id}' has non-positive ai.rangePerception {mobile.Ai.RangePerception}.");
+        }
+
+        if (mobile.Ai.RangeFight is null || mobile.Ai.RangeFight < 0)
+        {
+            errors.Add($"Mobile template '{mobile.Id}' has negative ai.rangeFight {mobile.Ai.RangeFight}.");
         }
     }
 

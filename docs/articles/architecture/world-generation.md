@@ -173,7 +173,9 @@ Locations use a hierarchical structure: map, category, subcategory, named locati
 {
   "type": "mobile",
   "id": "orione",
-  "brain": "orion",
+  "ai": {
+    "brain": "orion"
+  },
   "name": "Orione",
   "title": "a beautiful cat",
   "variants": [
@@ -190,7 +192,9 @@ Locations use a hierarchical structure: map, category, subcategory, named locati
 }
 ```
 
-The `brain` field links to table `orion`, loaded from `scripts/ai/npcs/orion.lua` through `scripts/ai/init.lua`.
+The `ai.brain` field links to table `orion`, loaded from `scripts/ai/npcs/orion.lua` through `scripts/ai/init.lua`.
+Standard ModernUO-aligned brains can also declare `fightMode`, `rangePerception`, and `rangeFight` inside the same `ai`
+object.
 Appearance and equipment now live inside `variants`, so even a deterministic mobile uses a single-entry variant list.
 
 ### Item Template

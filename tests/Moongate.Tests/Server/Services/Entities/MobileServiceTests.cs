@@ -878,7 +878,10 @@ public class MobileServiceTests
             new()
             {
                 Id = "orc",
-                Brain = "orc_warrior",
+                Ai = new()
+                {
+                    Brain = "orc_warrior"
+                },
                 Variants =
                 [
                     new()
@@ -969,6 +972,7 @@ public class MobileServiceTests
                         Id = expectedId,
                         Name = $"template:{templateId}",
                         AccountId = accountId ?? Serial.Zero,
+                        BrainId = "factory_brain",
                         BaseBody = 0x0191,
                         SkinHue = 0x0111,
                         HairHue = 0x0222,
@@ -1027,6 +1031,76 @@ public class MobileServiceTests
     }
 
     [Test]
+    public async Task SpawnFromTemplateAsync_ShouldClearBrainWhenTemplateAiBrainIsNone()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new TestMobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "orc",
+                Ai = new()
+                {
+                    Brain = "none"
+                },
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance = new()
+                        {
+                            Body = 0x0190,
+                            SkinHue = HueSpec.FromValue(0),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        }
+                    }
+                ]
+            }
+        );
+        var luaBrainRunner = new TestLuaBrainRunner();
+        var factory = new TestMobileFactoryService
+        {
+            CreateFromTemplateImpl = (templateId, accountId) =>
+                {
+                    var mobile = new UOMobileEntity
+                    {
+                        Id = persistence.UnitOfWork.AllocateNextMobileId(),
+                        Name = $"template:{templateId}",
+                        AccountId = accountId ?? Serial.Zero,
+                        BrainId = "factory_brain"
+                    };
+                    mobile.SetCustomInteger("mobile_variant_index", 0);
+
+                    return mobile;
+                }
+        };
+        var itemFactory = new TestItemFactoryService();
+        IMobileService service = new MobileService(
+            persistence,
+            factory,
+            itemFactory,
+            templateService,
+            luaBrainRunner,
+            DefaultMountTileData
+        );
+
+        var spawned = await service.SpawnFromTemplateAsync("orc", new(100, 200, 7), 1, (Serial)25);
+        var saved = await persistence.UnitOfWork.Mobiles.GetByIdAsync(spawned.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spawned.BrainId, Is.Null);
+                Assert.That(saved, Is.Not.Null);
+                Assert.That(saved!.BrainId, Is.Null);
+                Assert.That(luaBrainRunner.Registered, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public async Task SpawnFromTemplateAsync_ShouldThrow_WhenStoredVariantIndexIsInvalid()
     {
         using var temp = new TempDirectory();
@@ -1036,7 +1110,10 @@ public class MobileServiceTests
             new()
             {
                 Id = "orc",
-                Brain = "orc_warrior",
+                Ai = new()
+                {
+                    Brain = "orc_warrior"
+                },
                 Variants =
                 [
                     new()
@@ -1102,7 +1179,10 @@ public class MobileServiceTests
             new()
             {
                 Id = "chance_orc",
-                Brain = "orc_warrior",
+                Ai = new()
+                {
+                    Brain = "orc_warrior"
+                },
                 Variants =
                 [
                     new()
@@ -1504,7 +1584,10 @@ public class MobileServiceTests
             new()
             {
                 Id = "orc",
-                Brain = "orc_warrior",
+                Ai = new()
+                {
+                    Brain = "orc_warrior"
+                },
                 Variants =
                 [
                     new()

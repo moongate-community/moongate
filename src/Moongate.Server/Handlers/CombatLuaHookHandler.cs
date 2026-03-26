@@ -102,6 +102,7 @@ public sealed class CombatLuaHookHandler
             return;
         }
 
+        payload["mobile_id"] = (uint)mobile.Id;
         _luaBrainRunner.EnqueueCombatHook(mobile.Id, new(hookType, otherMobileId, payload));
     }
 }

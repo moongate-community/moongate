@@ -1,15 +1,15 @@
 """Mapping tables for ModernUO to Moongate conversion."""
 
 AI_TYPE_TO_BRAIN = {
-    "AI_Melee": "melee_combat",
-    "AI_Mage": "mage_combat",
-    "AI_Archer": "ranged_combat",
-    "AI_Animal": "animal",
-    "AI_Vendor": "vendor",
-    "AI_Healer": "healer",
-    "AI_Berserk": "berserk_combat",
-    "AI_Predator": "predator",
-    "AI_Thief": "thief",
+    "AI_Melee": "ai_melee",
+    "AI_Archer": "ai_archer",
+    "AI_Animal": "ai_animal",
+    "AI_Vendor": "ai_vendor",
+    "AI_Berserk": "ai_berserk",
+    "AI_Mage": "ai_mage",
+    "AI_Healer": "ai_healer",
+    "AI_Thief": "ai_thief",
+    "AI_Predator": "ai_melee",
 }
 
 LOOT_PACK_MAP = {
