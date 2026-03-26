@@ -1267,8 +1267,8 @@ class ParseFileTests(unittest.TestCase):
                     {
                         public class Archer : BaseCreature
                         {
-                            private const int PerceptionRange = 12;
-                            private static readonly int FightRange = 4;
+                            const int PerceptionRange = 12;
+                            static readonly int FightRange = 4;
 
                             [Constructible]
                             public Archer() : base(AIType.AI_Archer, FightMode.Closest, PerceptionRange, FightRange)

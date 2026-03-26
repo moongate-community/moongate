@@ -236,7 +236,7 @@ def _extract_class_simple_variables(text: str) -> Dict[str, str]:
     variables: Dict[str, str] = {}
 
     for match in re.finditer(
-        r"(?m)^\s*(?:public|protected|private|internal)\s+(?:(?:static|readonly|const)\s+)*int\s+(\w+)\s*=\s*([^;]+);",
+        r"(?m)^\s*(?:(?:public|protected|private|internal)\s+)?(?:(?:static|readonly|const)\s+)*int\s+(\w+)\s*=\s*([^;]+);",
         _strip_comments(text),
     ):
         variables[match.group(1)] = match.group(2).strip()
