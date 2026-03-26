@@ -35,6 +35,13 @@ public sealed class GuardBrainAssetTests
         Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
 
         var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
+        var noTargetIdleStart = onThinkScript.IndexOf("clear_focus(npc_serial, npc)", StringComparison.Ordinal);
+        var noTargetIdleEnd = onThinkScript.IndexOf("coroutine.yield(TICK_DELAY_MS)", noTargetIdleStart, StringComparison.Ordinal);
+
+        Assert.That(noTargetIdleStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(noTargetIdleEnd, Is.GreaterThan(noTargetIdleStart));
+
+        var noTargetIdleScript = onThinkScript.Substring(noTargetIdleStart, noTargetIdleEnd - noTargetIdleStart);
 
         Assert.Multiple(
             () =>
@@ -43,9 +50,9 @@ public sealed class GuardBrainAssetTests
                     onThinkScript,
                     Does.Match(@"patrol_mode\s*==\s*""random_roam""[\s\S]*(?:movement|steering)\.wander\([^)]*\bpatrol_radius\b[^)]*\)")
                 );
-                Assert.That(onThinkScript, Does.Contain("movement.guard(npc_serial)"));
-                Assert.That(onThinkScript, Does.Contain("should_return_home(npc_serial, npc)"));
-                Assert.That(onThinkScript, Does.Contain("move_home(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("should_return_home(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("move_home(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("movement.guard(npc_serial)"));
             }
         );
     }
