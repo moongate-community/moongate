@@ -16,7 +16,12 @@
     "dexterity": 125,
     "intelligence": 25,
     "hits": 100,
-    "brain": "guard",
+    "ai": {
+      "brain": "guard",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "defaultFactionId": "true_britannians",
     "lootTables": [
       "guard.warrior"
@@ -79,7 +84,12 @@
     "dexterity": 125,
     "intelligence": 25,
     "hits": 100,
-    "brain": "guard",
+    "ai": {
+      "brain": "guard",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "defaultFactionId": "true_britannians",
     "lootTables": [
       "guard.warrior"
@@ -134,7 +144,12 @@
     "dexterity": 125,
     "intelligence": 25,
     "hits": 100,
-    "brain": "guard",
+    "ai": {
+      "brain": "guard",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "defaultFactionId": "true_britannians",
     "lootTables": [
       "guard.archer"
@@ -215,7 +230,12 @@
     "dexterity": 125,
     "intelligence": 25,
     "hits": 100,
-    "brain": "guard",
+    "ai": {
+      "brain": "guard",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "defaultFactionId": "true_britannians",
     "lootTables": [
       "guard.archer"

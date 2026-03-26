@@ -16,7 +16,12 @@
     "mana": 50,
     "stamina": 50,
     "notoriety": "Innocent",
-    "brain": "None",
+    "ai": {
+      "brain": "none",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "title": "a human",
     "variants": [
       {
@@ -54,7 +59,12 @@
       "generic",
       "human"
     ],
-    "brain": "None",
+    "ai": {
+      "brain": "none",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "title": "a generic npc",
     "variants": [
       {
@@ -94,7 +104,12 @@
     ],
     "intelligence": 80,
     "mana": 80,
-    "brain": "town_healer",
+    "ai": {
+      "brain": "town_healer",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "title": "a healer",
     "variants": [
       {
@@ -129,7 +144,12 @@
       "noble",
       "human"
     ],
-    "brain": "lilly",
+    "ai": {
+      "brain": "lilly",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "title": "the Noble",
     "name": "Lilly",
     "variants": [

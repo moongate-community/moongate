@@ -15,7 +15,12 @@
     "hits": 50,
     "mana": 0,
     "stamina": 60,
-    "brain": "None",
+    "ai": {
+      "brain": "none",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
     "params": {
       "mounted_display_item_id": {
         "type": "string",

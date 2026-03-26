@@ -66,12 +66,39 @@ public sealed class LillyBrainAssetTests
     }
 
     [Test]
-    public void NpcsHumansTemplate_ShouldAssignDedicatedLillyBrain()
+    public void NpcsHumansTemplate_ShouldAssignCanonicalAiBlocksToHumanNpcTemplates()
     {
         var repositoryRoot = GetRepositoryRoot();
         var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
 
         using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var baseHuman = document.RootElement
+                                .EnumerateArray()
+                                .First(
+                                    element => string.Equals(
+                                        element.GetProperty("id").GetString(),
+                                        "base_human_npc",
+                                        StringComparison.Ordinal
+                                    )
+                                );
+        var genericNpc = document.RootElement
+                                 .EnumerateArray()
+                                 .First(
+                                     element => string.Equals(
+                                         element.GetProperty("id").GetString(),
+                                         "generic_npc",
+                                         StringComparison.Ordinal
+                                     )
+                                 );
+        var healer = document.RootElement
+                             .EnumerateArray()
+                             .First(
+                                 element => string.Equals(
+                                     element.GetProperty("id").GetString(),
+                                     "healer_npc",
+                                     StringComparison.Ordinal
+                                 )
+                             );
         var lilly = document.RootElement
                             .EnumerateArray()
                             .First(
@@ -82,7 +109,30 @@ public sealed class LillyBrainAssetTests
                                 )
                             );
 
-        Assert.That(lilly.GetProperty("brain").GetString(), Is.EqualTo("lilly"));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(baseHuman.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("none"));
+                Assert.That(baseHuman.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(baseHuman.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+                Assert.That(baseHuman.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+
+                Assert.That(genericNpc.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("none"));
+                Assert.That(genericNpc.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("closest"));
+                Assert.That(genericNpc.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+                Assert.That(genericNpc.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+
+                Assert.That(healer.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("town_healer"));
+                Assert.That(healer.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
+                Assert.That(healer.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+                Assert.That(healer.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+
+                Assert.That(lilly.GetProperty("ai").GetProperty("brain").GetString(), Is.EqualTo("lilly"));
+                Assert.That(lilly.GetProperty("ai").GetProperty("fightMode").GetString(), Is.EqualTo("none"));
+                Assert.That(lilly.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+                Assert.That(lilly.GetProperty("ai").GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+            }
+        );
     }
 
     private static string GetRepositoryRoot()

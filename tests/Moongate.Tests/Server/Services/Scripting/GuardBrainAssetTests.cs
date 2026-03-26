@@ -132,7 +132,12 @@ public sealed class GuardBrainAssetTests
 
         foreach (var guard in document.RootElement.EnumerateArray())
         {
-            Assert.That(guard.GetProperty("brain").GetString(), Is.EqualTo("guard"));
+            var ai = guard.GetProperty("ai");
+
+            Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("guard"));
+            Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("aggressor"));
+            Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(16));
+            Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
             Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }
     }
