@@ -107,6 +107,24 @@ public sealed class StandardAiBrainAssetTests
     }
 
     [Test]
+    public void RuntimeFsm_ShouldUseAiRuntimeBlackboardKeys()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "runtime", "fsm.lua");
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script, Does.Contain("ai_action"));
+                Assert.That(script, Does.Contain("ai_target_serial"));
+                Assert.That(script, Does.Not.Contain("modernuo_action"));
+                Assert.That(script, Does.Not.Contain("modernuo_target_serial"));
+            }
+        );
+    }
+
+    [Test]
     public void AiMelee_ShouldUseBestTargetAndFightRangeContracts()
     {
         var repositoryRoot = GetRepositoryRoot();
