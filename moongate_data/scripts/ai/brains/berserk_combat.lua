@@ -4,7 +4,7 @@ local SEARCH_RANGE = 12
 local TICK_DELAY_MS = 1000
 local FOLLOW_STOP_RANGE = 1
 
-function berserk_combat.brain_loop(npc_serial)
+function berserk_combat.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

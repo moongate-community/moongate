@@ -46,7 +46,7 @@ local function enter_state(state, duration_ms)
     tick.reset(state.cadence, "advance", time.now_ms(), duration_ms)
 end
 
-function test_state_brain.brain_loop(npc_id)
+function test_state_brain.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
 

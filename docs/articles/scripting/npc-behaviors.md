@@ -6,7 +6,7 @@ This page explains the behavior-oriented Lua AI model used by Moongate v2 NPC br
 
 Keep NPC AI maintainable by separating:
 
-- **brain orchestration** (`brain_loop`, event routing, priorities)
+- **brain orchestration** (`on_think`, event routing, priorities)
 - **behaviors** (small focused units like follow, evade, hold_position)
 - **runtime state** (blackboard values stored per NPC)
 
@@ -73,7 +73,7 @@ Custom shard-authored brains continue to use the same field, for example `ai.bra
 
 Each Lua brain table can expose:
 
-- `brain_loop(npc_serial)` required for coroutine execution
+- `on_think(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
 - `on_in_range(npc_serial, source_serial, event_obj)` optional
 - `on_out_range(npc_serial, source_serial, event_obj)` optional
@@ -322,6 +322,6 @@ The behavior does nothing unless the NPC already has a backpack and at least one
 
 - Keep each behavior focused on one decision.
 - Store tunables in blackboard keys instead of hardcoding in multiple files.
-- Use `on_event` for reactive AI (speech, in-range, out-range), and `brain_loop` for tactical polling.
+- Use `on_event` for reactive AI (speech, in-range, out-range), and `on_think` for tactical polling.
 - Return explicit delay values from behaviors to control tick frequency.
 - For conversational NPCs, prefer `common.npc_dialogue` so deterministic dialogue can claim speech before `ai_dialogue` fallback.

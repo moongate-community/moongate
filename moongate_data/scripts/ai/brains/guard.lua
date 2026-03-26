@@ -94,7 +94,7 @@ local function initialize_defaults(npc_serial)
     set_default("follow_stop_range", 1)
 end
 
-function guard.brain_loop(npc_serial)
+function guard.on_think(npc_serial)
     initialize_defaults(npc_serial)
 
     while true do

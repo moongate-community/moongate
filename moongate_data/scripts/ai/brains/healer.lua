@@ -3,7 +3,7 @@ healer = {}
 
 local TICK_DELAY_MS = 3000
 
-function healer.brain_loop(npc_serial)
+function healer.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

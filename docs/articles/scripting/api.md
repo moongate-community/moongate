@@ -579,7 +579,7 @@ local messages = {
 
 orion = {}
 
-function orion.brain_loop(npc_id)
+function orion.on_think(npc_id)
     local mob = mobile.get(npc_id)
     local last_move, last_speech, last_sound = 0, 0, 0
 

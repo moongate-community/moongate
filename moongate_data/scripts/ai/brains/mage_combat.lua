@@ -6,7 +6,7 @@ local PREFERRED_RANGE = 8
 local EVADE_THRESHOLD = 4
 local WANDER_RADIUS = 4
 
-function mage_combat.brain_loop(npc_serial)
+function mage_combat.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

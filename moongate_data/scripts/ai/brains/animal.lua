@@ -4,7 +4,7 @@ local SEARCH_RANGE = 8
 local TICK_DELAY_MS = 3000
 local WANDER_RADIUS = 4
 
-function animal.brain_loop(npc_serial)
+function animal.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

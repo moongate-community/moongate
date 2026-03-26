@@ -6,7 +6,7 @@ local TICK_DELAY_MS = 2000
 local FOLLOW_STOP_RANGE = 1
 local WANDER_RADIUS = 4
 
-function predator.brain_loop(npc_serial)
+function predator.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

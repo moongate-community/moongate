@@ -3,7 +3,7 @@ vendor = {}
 
 local TICK_DELAY_MS = 5000
 
-function vendor.brain_loop(npc_serial)
+function vendor.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

@@ -20,7 +20,7 @@ local SOUNDS = {
     0x6A,
 }
 
-function vega.brain_loop(npc_id)
+function vega.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
 

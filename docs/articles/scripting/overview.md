@@ -162,7 +162,7 @@ local state = {
     }),
 }
 
-function orion.brain_loop(npc_id)
+function orion.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
 
@@ -483,7 +483,7 @@ local last_move  = 0
 local last_speech = 0
 local last_sound  = 0
 
-function brain_loop(npc_id)
+function on_think(npc_id)
     while true do
         local now = os.clock() * 1000
 
@@ -528,7 +528,7 @@ end
 
 Notes:
 
-- `brain_loop` is resumed by the server tactical runner.
+- `on_think` is resumed by the server tactical runner.
 - `coroutine.yield(ms)` controls the next brain tick delay.
 - `on_event(eventType, fromSerial, eventObject)` is the primary callback for runtime brain events.
 - Current event type: `speech_heard`.
@@ -980,7 +980,7 @@ local speeches = {
     "*rubs against your leg*"
 }
 
-function brain_loop(npc_id)
+function on_think(npc_id)
     local cadence = tick.state({
         move = 1000,
         speech = 2000,
