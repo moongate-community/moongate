@@ -170,7 +170,7 @@ File: `moongate_data/scripts/ai/vendor_brain.lua`
 vendor_brain = {}
 local cliloc = require("common.cliloc_ids")
 
-function vendor_brain.brain_loop(npc_id)
+function vendor_brain.on_think(npc_id)
     while true do
         coroutine.yield(250)
     end

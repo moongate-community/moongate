@@ -5,7 +5,7 @@ local TICK_DELAY_MS = 3000
 local APPROACH_RANGE = 2
 local WANDER_RADIUS = 4
 
-function thief.brain_loop(npc_serial)
+function thief.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

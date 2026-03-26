@@ -23,7 +23,7 @@ internal static class LuaBrainHookBinder
         }
 
         hooks = new(
-            ResolveTableFunction(table, "brain_loop", "BrainLoop", "on_brain_tick", "OnBrainTick"),
+            ResolveTableFunction(table, "on_think", "OnThink"),
             ResolveTableFunction(table, "on_speech", "OnSpeech"),
             ResolveTableFunction(table, "on_before_death", "OnBeforeDeath"),
             ResolveTableFunction(table, "on_death", "OnDeath"),

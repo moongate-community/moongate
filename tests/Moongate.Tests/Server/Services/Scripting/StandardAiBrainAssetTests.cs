@@ -189,6 +189,50 @@ public sealed class StandardAiBrainAssetTests
         );
     }
 
+    [Test]
+    public void ShippedLuaBrains_ShouldExposeOnThinkAndNotBrainLoop()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var relativePaths = new[]
+        {
+            "moongate_data/scripts/ai/brains/ai_animal.lua",
+            "moongate_data/scripts/ai/brains/ai_archer.lua",
+            "moongate_data/scripts/ai/brains/ai_berserk.lua",
+            "moongate_data/scripts/ai/brains/ai_melee.lua",
+            "moongate_data/scripts/ai/brains/ai_vendor.lua",
+            "moongate_data/scripts/ai/brains/animal.lua",
+            "moongate_data/scripts/ai/brains/berserk_combat.lua",
+            "moongate_data/scripts/ai/brains/guard.lua",
+            "moongate_data/scripts/ai/brains/healer.lua",
+            "moongate_data/scripts/ai/brains/mage_combat.lua",
+            "moongate_data/scripts/ai/brains/melee_combat.lua",
+            "moongate_data/scripts/ai/brains/predator.lua",
+            "moongate_data/scripts/ai/brains/ranged_combat.lua",
+            "moongate_data/scripts/ai/brains/test_state_brain.lua",
+            "moongate_data/scripts/ai/brains/thief.lua",
+            "moongate_data/scripts/ai/brains/undead_melee.lua",
+            "moongate_data/scripts/ai/brains/utility_npc.lua",
+            "moongate_data/scripts/ai/brains/vendor.lua",
+            "moongate_data/scripts/ai/npcs/lilly.lua",
+            "moongate_data/scripts/ai/npcs/orion.lua",
+            "moongate_data/scripts/ai/npcs/vega.lua",
+        };
+
+        Assert.Multiple(
+            () =>
+            {
+                foreach (var relativePath in relativePaths)
+                {
+                    var scriptPath = Path.Combine(repositoryRoot, relativePath);
+                    var script = File.ReadAllText(scriptPath);
+
+                    Assert.That(script, Does.Contain(".on_think"), relativePath);
+                    Assert.That(script, Does.Not.Contain(".brain_loop"), relativePath);
+                }
+            }
+        );
+    }
+
     private static string GetRepositoryRoot()
         => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }

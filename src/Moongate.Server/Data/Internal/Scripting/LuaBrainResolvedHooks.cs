@@ -6,7 +6,7 @@ namespace Moongate.Server.Data.Internal.Scripting;
 /// Resolved Lua hook references for a brain table.
 /// </summary>
 public sealed record LuaBrainResolvedHooks(
-    DynValue? BrainLoopFunction,
+    DynValue? OnThinkFunction,
     DynValue? OnSpeechFunction,
     DynValue? OnBeforeDeathFunction,
     DynValue? OnDeathFunction,

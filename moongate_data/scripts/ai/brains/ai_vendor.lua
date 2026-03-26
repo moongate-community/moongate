@@ -30,7 +30,7 @@ local function handle_threat(npc_serial, threat_serial)
     movement.flee(npc_serial, threat_serial, FLEE_RANGE)
 end
 
-function ai_vendor.brain_loop(npc_serial)
+function ai_vendor.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

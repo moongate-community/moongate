@@ -19,7 +19,7 @@ local function clear_target(npc_serial, npc)
     end
 end
 
-function ai_archer.brain_loop(npc_serial)
+function ai_archer.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 

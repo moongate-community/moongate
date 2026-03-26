@@ -18,7 +18,7 @@ local function clear_target(npc_serial, npc)
     end
 end
 
-function ai_berserk.brain_loop(npc_serial)
+function ai_berserk.on_think(npc_serial)
     while true do
         local npc = mobile.get(npc_serial)
 
