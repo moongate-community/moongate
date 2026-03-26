@@ -1173,7 +1173,61 @@ class ParseFileTests(unittest.TestCase):
             self.assertEqual(0x190, parsed["body"])
             self.assertEqual("Race.Human.RandomSkinHue()", parsed["skin_hue"])
 
-    def test_extracts_base_mount_body_from_constructor_arguments(self) -> None:
+    def test_inherits_ai_metadata_from_invoked_parent_constructor_overload(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_path = Path(tmp_dir)
+            (tmp_path / "BaseMob.cs").write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class BaseMob : BaseCreature
+                        {
+                            public BaseMob() : base(AIType.AI_Melee, FightMode.Closest, 10, 1)
+                            {
+                            }
+
+                            public BaseMob(int perception) : base(
+                                AIType.AI_Mage,
+                                FightMode.Evil,
+                                rangePerception: perception,
+                                rangeFight: 4)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+            child_path = tmp_path / "ChildMob.cs"
+            child_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class ChildMob : BaseMob
+                        {
+                            [Constructible]
+                            public ChildMob() : base(perception: 22)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(child_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Mage", parsed["ai_type"])
+            self.assertEqual("Evil", parsed["fight_mode"])
+            self.assertEqual(22, parsed["range_perception"])
+            self.assertEqual(4, parsed["range_fight"])
+
+    def test_extracts_base_mount_body_and_ai_from_mixed_signature_constructor_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             source_path = Path(tmp_dir) / "DesertOstard.cs"
             source_path.write_text(
@@ -1184,7 +1238,7 @@ class ParseFileTests(unittest.TestCase):
                         public class DesertOstard : BaseMount
                         {
                             [Constructible]
-                            public DesertOstard() : base(0xD2, 0x3EA3, AIType.AI_Animal, FightMode.Aggressor)
+                            public DesertOstard() : base(0xD2, 0x3EA3, AIType.AI_Animal, FightMode.Aggressor, 17, 5)
                             {
                             }
                         }
@@ -1198,6 +1252,42 @@ class ParseFileTests(unittest.TestCase):
 
             self.assertIsNotNone(parsed)
             self.assertEqual(0xD2, parsed["body"])
+            self.assertEqual("AI_Animal", parsed["ai_type"])
+            self.assertEqual("Aggressor", parsed["fight_mode"])
+            self.assertEqual(17, parsed["range_perception"])
+            self.assertEqual(5, parsed["range_fight"])
+
+    def test_extracts_ai_metadata_from_symbolic_range_arguments(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Archer.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Archer : BaseCreature
+                        {
+                            private const int PerceptionRange = 12;
+                            private static readonly int FightRange = 4;
+
+                            [Constructible]
+                            public Archer() : base(AIType.AI_Archer, FightMode.Closest, PerceptionRange, FightRange)
+                            {
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Archer", parsed["ai_type"])
+            self.assertEqual("Closest", parsed["fight_mode"])
+            self.assertEqual(12, parsed["range_perception"])
+            self.assertEqual(4, parsed["range_fight"])
 
     def test_extracts_ai_metadata_from_base_constructor_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:

@@ -42,45 +42,114 @@ def _strip_comments(text: str) -> str:
     return re.sub(r"//.*$", "", without_block_comments, flags=re.MULTILINE)
 
 
+def _extract_constructor_definitions(
+    content: str,
+    class_name: str,
+    require_constructible: bool = True,
+) -> List[dict]:
+    content = _strip_comments(content)
+    pattern = re.compile(
+        rf"((?:\s*\[[^\]]+\]\s*)*)(?:public|protected|internal|private)\s+{re.escape(class_name)}\s*\("
+    )
+    constructors: List[dict] = []
+
+    for match in pattern.finditer(content):
+        attributes = match.group(1) or ""
+        if require_constructible and not re.search(
+            r"\[(?:Constructible|Constructable)\]",
+            attributes,
+        ):
+            continue
+
+        open_paren_index = content.find("(", match.end() - 1)
+        if open_paren_index < 0:
+            continue
+
+        close_paren_index = _find_matching_delimiter(content, open_paren_index, "(", ")")
+        if close_paren_index < 0:
+            continue
+
+        position = close_paren_index + 1
+        initializer_kind = None
+        initializer_arguments = None
+
+        while position < len(content) and content[position].isspace():
+            position += 1
+
+        if position < len(content) and content[position] == ":":
+            position += 1
+            while position < len(content) and content[position].isspace():
+                position += 1
+
+            if content.startswith("base", position):
+                initializer_kind = "base"
+                position += 4
+            elif content.startswith("this", position):
+                initializer_kind = "this"
+                position += 4
+
+            if initializer_kind is not None:
+                while position < len(content) and content[position].isspace():
+                    position += 1
+
+                if position >= len(content) or content[position] != "(":
+                    continue
+
+                initializer_close_index = _find_matching_delimiter(content, position, "(", ")")
+                if initializer_close_index < 0:
+                    continue
+
+                initializer_arguments = content[position + 1 : initializer_close_index]
+                position = initializer_close_index + 1
+
+        while position < len(content) and content[position].isspace():
+            position += 1
+
+        body = None
+        if content.startswith("=>", position):
+            statement_start = position + 2
+            statement_end = content.find(";", statement_start)
+            if statement_end < 0:
+                continue
+
+            expression = content[statement_start:statement_end].strip()
+            body = (expression + ";") if expression else ""
+        else:
+            if position >= len(content) or content[position] != "{":
+                continue
+
+            close_brace_index = _find_matching_delimiter(content, position, "{", "}")
+            if close_brace_index < 0:
+                continue
+
+            body = content[position + 1 : close_brace_index]
+
+        constructors.append(
+            {
+                "parameters": content[open_paren_index + 1 : close_paren_index],
+                "initializer_kind": initializer_kind,
+                "initializer_arguments": initializer_arguments,
+                "body": body,
+            }
+        )
+
+    return constructors
+
+
 def _extract_constructor_body(
     content: str,
     class_name: str,
     require_constructible: bool = True,
 ) -> Optional[str]:
-    content = _strip_comments(content)
-    prefix = r"\[(?:Constructible|Constructable)\][\s\S]*?" if require_constructible else r""
-    pattern = re.compile(
-        rf"{prefix}public\s+{re.escape(class_name)}\s*\([^)]*\)\s*(?::\s*base\([^)]*\))?\s*"
+    constructors = _extract_constructor_definitions(
+        content,
+        class_name,
+        require_constructible=require_constructible,
     )
-    match = pattern.search(content)
-    if match is None:
+    if not constructors:
         return None
 
-    position = match.end()
-    while position < len(content) and content[position].isspace():
-        position += 1
-
-    if content.startswith("=>", position):
-        statement_start = position + 2
-        statement_end = content.find(";", statement_start)
-        if statement_end < 0:
-            return None
-
-        expression = content[statement_start:statement_end].strip()
-        if not expression:
-            return ""
-
-        return expression + ";"
-
-    if position >= len(content) or content[position] != "{":
-        return None
-
-    open_brace_index = position
-    close_brace_index = _find_matching_delimiter(content, open_brace_index, "{", "}")
-    if close_brace_index < 0:
-        return None
-
-    return content[open_brace_index + 1 : close_brace_index]
+    return constructors[0]["body"]
 
 
 def _extract_base_arguments(
@@ -88,24 +157,19 @@ def _extract_base_arguments(
     class_name: str,
     require_constructible: bool = True,
 ) -> Optional[str]:
-    content = _strip_comments(content)
-    prefix = r"\[(?:Constructible|Constructable)\][\s\S]*?" if require_constructible else r""
-    pattern = re.compile(
-        rf"{prefix}public\s+{re.escape(class_name)}\s*\([^)]*\)\s*:\s*base\("
+    constructors = _extract_constructor_definitions(
+        content,
+        class_name,
+        require_constructible=require_constructible,
     )
-    match = pattern.search(content)
-    if match is None:
+    if not constructors:
         return None
 
-    open_paren_index = content.find("(", match.end() - 1)
-    if open_paren_index < 0:
+    constructor = constructors[0]
+    if constructor["initializer_kind"] != "base":
         return None
 
-    close_paren_index = _find_matching_delimiter(content, open_paren_index, "(", ")")
-    if close_paren_index < 0:
-        return None
-
-    return content[open_paren_index + 1 : close_paren_index]
+    return constructor["initializer_arguments"]
 
 
 def _extract_constructible_constructor_body(
@@ -162,6 +226,18 @@ def _extract_simple_variables(text: str) -> Dict[str, str]:
     for match in re.finditer(
         r"(?:var|int|bool|string|double)\s+(\w+)\s*=\s*([^;]+);",
         text,
+    ):
+        variables[match.group(1)] = match.group(2).strip()
+
+    return variables
+
+
+def _extract_class_simple_variables(text: str) -> Dict[str, str]:
+    variables: Dict[str, str] = {}
+
+    for match in re.finditer(
+        r"(?m)^\s*(?:public|protected|private|internal)\s+(?:(?:static|readonly|const)\s+)*int\s+(\w+)\s*=\s*([^;]+);",
+        _strip_comments(text),
     ):
         variables[match.group(1)] = match.group(2).strip()
 
@@ -310,9 +386,15 @@ def _strip_named_argument(expression: str) -> str:
     return stripped
 
 
-def _parse_ai_type_expression(expression: Optional[str]) -> Optional[str]:
+def _parse_ai_type_expression(
+    expression: Optional[str],
+    variables: Optional[Dict[str, str]] = None,
+) -> Optional[str]:
     if expression is None:
         return None
+
+    if variables is not None:
+        expression = _resolve_expression(expression, variables)
 
     match = re.search(r"\bAIType\.(AI_\w+)\b", expression)
     if match is None:
@@ -321,9 +403,15 @@ def _parse_ai_type_expression(expression: Optional[str]) -> Optional[str]:
     return match.group(1)
 
 
-def _parse_fight_mode_expression(expression: Optional[str]) -> Optional[str]:
+def _parse_fight_mode_expression(
+    expression: Optional[str],
+    variables: Optional[Dict[str, str]] = None,
+) -> Optional[str]:
     if expression is None:
         return None
+
+    if variables is not None:
+        expression = _resolve_expression(expression, variables)
 
     match = re.search(r"\bFightMode\.(\w+)\b", expression)
     if match is None:
@@ -332,16 +420,25 @@ def _parse_fight_mode_expression(expression: Optional[str]) -> Optional[str]:
     return match.group(1)
 
 
-def _parse_range_expression(expression: Optional[str]) -> Optional[int]:
+def _parse_range_expression(
+    expression: Optional[str],
+    variables: Optional[Dict[str, str]] = None,
+) -> Optional[int]:
     if expression is None:
         return None
 
     stripped = _strip_named_argument(expression)
+    if variables is not None:
+        stripped = _resolve_expression(stripped, variables) or ""
+
     if re.fullmatch(r"0x[0-9A-Fa-f]+|\d+", stripped):
         return _parse_int_literal(stripped)
 
     if stripped == "DefaultRangePerception":
         return DEFAULT_RANGE_PERCEPTION
+
+    if stripped in {"DefaultRangeFight", "DefaultFightRange"}:
+        return DEFAULT_RANGE_FIGHT
 
     return None
 
@@ -358,7 +455,7 @@ def _extract_ai_metadata(
         ai_index = -1
 
         for index, argument in enumerate(arguments):
-            ai_type = _parse_ai_type_expression(argument)
+            ai_type = _parse_ai_type_expression(argument, variables)
             if ai_type is None:
                 continue
 
@@ -369,44 +466,48 @@ def _extract_ai_metadata(
         if ai_index >= 0:
             trailing_arguments = arguments[ai_index + 1 :]
             if trailing_arguments:
-                fight_mode = _parse_fight_mode_expression(trailing_arguments[0])
+                fight_mode = _parse_fight_mode_expression(trailing_arguments[0], variables)
                 numeric_start = 0
 
                 if fight_mode is not None:
                     metadata["fight_mode"] = fight_mode
                     numeric_start = 1
 
-                numeric_values = []
-                for argument in trailing_arguments[numeric_start:]:
-                    parsed_value = _parse_range_expression(argument)
-                    if parsed_value is None:
-                        continue
+                range_arguments = trailing_arguments[numeric_start:]
+                if range_arguments:
+                    range_perception = _parse_range_expression(range_arguments[0], variables)
+                    if range_perception is not None:
+                        metadata["range_perception"] = range_perception
 
-                    numeric_values.append(parsed_value)
+                if len(range_arguments) > 1:
+                    range_fight = _parse_range_expression(range_arguments[1], variables)
+                    if range_fight is not None:
+                        metadata["range_fight"] = range_fight
 
-                if numeric_values:
-                    metadata["range_perception"] = numeric_values[0]
-                if len(numeric_values) > 1:
-                    metadata["range_fight"] = numeric_values[1]
-
-    ai_assignment = _parse_ai_type_expression(_extract_assignment_expression(constructor_body, "AI", variables))
+    ai_assignment = _parse_ai_type_expression(
+        _extract_assignment_expression(constructor_body, "AI", variables),
+        variables,
+    )
     if ai_assignment is not None:
         metadata["ai_type"] = ai_assignment
 
     fight_mode_assignment = _parse_fight_mode_expression(
-        _extract_assignment_expression(constructor_body, "FightMode", variables)
+        _extract_assignment_expression(constructor_body, "FightMode", variables),
+        variables,
     )
     if fight_mode_assignment is not None:
         metadata["fight_mode"] = fight_mode_assignment
 
     range_perception_assignment = _parse_range_expression(
-        _extract_assignment_expression(constructor_body, "RangePerception", variables)
+        _extract_assignment_expression(constructor_body, "RangePerception", variables),
+        variables,
     )
     if range_perception_assignment is not None:
         metadata["range_perception"] = range_perception_assignment
 
     range_fight_assignment = _parse_range_expression(
-        _extract_assignment_expression(constructor_body, "RangeFight", variables)
+        _extract_assignment_expression(constructor_body, "RangeFight", variables),
+        variables,
     )
     if range_fight_assignment is not None:
         metadata["range_fight"] = range_fight_assignment
@@ -585,6 +686,142 @@ def _split_top_level_arguments(arguments: str) -> List[str]:
         parts.append(tail)
 
     return parts
+
+
+def _find_top_level_character(text: str, target: str) -> int:
+    depth = 0
+
+    for index, char in enumerate(text):
+        if char in "({[":
+            depth += 1
+        elif char in ")}]":
+            depth = max(0, depth - 1)
+        elif char == target and depth == 0:
+            return index
+
+    return -1
+
+
+def _parse_parameter_definitions(parameters: str) -> List[dict]:
+    definitions: List[dict] = []
+
+    for parameter in _split_top_level_arguments(parameters):
+        stripped = parameter.strip()
+        if not stripped:
+            continue
+
+        default_index = _find_top_level_character(stripped, "=")
+        default_value = None
+        declaration = stripped
+
+        if default_index >= 0:
+            declaration = stripped[:default_index].strip()
+            default_value = stripped[default_index + 1 :].strip()
+
+        declaration = re.sub(r"\[[^\]]+\]\s*", "", declaration).strip()
+        name_match = re.search(r"(@?\w+)\s*$", declaration)
+        if name_match is None:
+            continue
+
+        definitions.append(
+            {
+                "name": name_match.group(1).lstrip("@"),
+                "default": default_value,
+            }
+        )
+
+    return definitions
+
+
+def _parse_named_call_argument(argument: str) -> Tuple[Optional[str], str]:
+    stripped = argument.strip()
+    named_match = re.match(r"^(@?\w+)\s*:\s*(.+)$", stripped, re.S)
+    if named_match is not None:
+        return named_match.group(1).lstrip("@"), named_match.group(2).strip()
+
+    named_match = re.match(r"^(@?\w+)\s*=\s*(.+)$", stripped, re.S)
+    if named_match is not None:
+        return named_match.group(1).lstrip("@"), named_match.group(2).strip()
+
+    return None, stripped
+
+
+def _bind_arguments_to_parameters(
+    arguments: Optional[str],
+    parameters: List[dict],
+    caller_variables: Dict[str, str],
+) -> Optional[Tuple[Dict[str, str], int]]:
+    bindings: Dict[str, str] = {}
+    default_count = 0
+    next_parameter_index = 0
+    call_arguments = _split_top_level_arguments(arguments) if arguments else []
+
+    for argument in call_arguments:
+        name, value = _parse_named_call_argument(argument)
+        resolved_value = _resolve_expression(value, caller_variables) or value.strip()
+
+        if name is None:
+            while (
+                next_parameter_index < len(parameters)
+                and parameters[next_parameter_index]["name"] in bindings
+            ):
+                next_parameter_index += 1
+
+            if next_parameter_index >= len(parameters):
+                return None
+
+            bindings[parameters[next_parameter_index]["name"]] = resolved_value
+            next_parameter_index += 1
+            continue
+
+        matching_parameter = next(
+            (parameter for parameter in parameters if parameter["name"] == name),
+            None,
+        )
+        if matching_parameter is None or name in bindings:
+            return None
+
+        bindings[name] = resolved_value
+
+    for parameter in parameters:
+        parameter_name = parameter["name"]
+        if parameter_name in bindings:
+            continue
+
+        if parameter["default"] is None:
+            return None
+
+        bindings[parameter_name] = parameter["default"]
+        default_count += 1
+
+    return bindings, default_count
+
+
+def _select_constructor_overload(
+    constructors: List[dict],
+    invocation_arguments: Optional[str],
+    caller_variables: Dict[str, str],
+) -> Optional[Tuple[dict, Dict[str, str]]]:
+    best_match: Optional[Tuple[dict, Dict[str, str]]] = None
+    best_score: Optional[Tuple[int, int]] = None
+
+    for constructor in constructors:
+        parameter_definitions = _parse_parameter_definitions(constructor["parameters"])
+        bindings = _bind_arguments_to_parameters(
+            invocation_arguments,
+            parameter_definitions,
+            caller_variables,
+        )
+        if bindings is None:
+            continue
+
+        parameter_bindings, default_count = bindings
+        score = (default_count, len(parameter_definitions))
+        if best_score is None or score < best_score:
+            best_match = (constructor, parameter_bindings)
+            best_score = score
+
+    return best_match
 
 
 def _split_top_level_ternary(expression: str) -> Optional[Tuple[str, str, str]]:
@@ -1246,26 +1483,65 @@ def _inherit_parent_appearance(
     return inherited
 
 
+def _build_ai_metadata_variables(
+    class_content: str,
+    constructor_body: str,
+    parameter_bindings: Optional[Dict[str, str]] = None,
+) -> Dict[str, str]:
+    variables = _extract_class_simple_variables(class_content)
+    if parameter_bindings:
+        variables.update(parameter_bindings)
+    variables.update(_extract_simple_variables(constructor_body))
+    return variables
+
+
 def _parse_inheritable_ai_metadata(
     filepath: str,
     class_name: str,
     base_class: str,
     class_content: str,
+    invocation_arguments: Optional[str],
+    caller_variables: Dict[str, str],
     visited: set[str],
 ) -> dict:
-    visit_key = f"{Path(filepath).resolve()}::{class_name}::ai"
+    visit_key = f"{Path(filepath).resolve()}::{class_name}::ai::{invocation_arguments or '<default>'}"
     if visit_key in visited:
         return {}
 
     visited.add(visit_key)
 
-    constructor_body = _extract_constructor_body(class_content, class_name, require_constructible=False)
-    if constructor_body is None:
-        constructor_body = ""
+    constructors = _extract_constructor_definitions(
+        class_content,
+        class_name,
+        require_constructible=False,
+    )
+    if not constructors:
+        return {}
 
-    variables = _extract_simple_variables(constructor_body)
+    selected_constructor = _select_constructor_overload(
+        constructors,
+        invocation_arguments,
+        caller_variables,
+    )
+    if selected_constructor is None:
+        if len(constructors) != 1:
+            return {}
+
+        constructor = constructors[0]
+        parameter_bindings: Dict[str, str] = {}
+    else:
+        constructor, parameter_bindings = selected_constructor
+
+    constructor_body = constructor["body"] or ""
+    variables = _build_ai_metadata_variables(
+        class_content,
+        constructor_body,
+        parameter_bindings,
+    )
     metadata = _extract_ai_metadata(
-        _extract_base_arguments(class_content, class_name, require_constructible=False),
+        constructor["initializer_arguments"]
+        if constructor["initializer_kind"] == "base"
+        else None,
         constructor_body,
         variables,
     )
@@ -1278,16 +1554,13 @@ def _parse_inheritable_ai_metadata(
     if not missing_keys:
         return metadata
 
-    parent_definition = _resolve_class_definition(filepath, base_class)
-    if parent_definition is None:
-        return metadata
-
-    parent_source, resolved_class_name, parent_base_class, parent_content = parent_definition
-    inherited = _parse_inheritable_ai_metadata(
-        parent_source,
-        resolved_class_name,
-        parent_base_class,
-        parent_content,
+    inherited = _inherit_parent_ai_metadata(
+        filepath,
+        base_class,
+        constructor["initializer_arguments"]
+        if constructor["initializer_kind"] == "base"
+        else None,
+        variables,
         visited,
     )
     inherited.update(metadata)
@@ -1297,6 +1570,8 @@ def _parse_inheritable_ai_metadata(
 def _inherit_parent_ai_metadata(
     filepath: str,
     base_class: str,
+    invocation_arguments: Optional[str],
+    caller_variables: Dict[str, str],
     visited: set[str],
 ) -> dict:
     parent_definition = _resolve_class_definition(filepath, base_class)
@@ -1309,6 +1584,8 @@ def _inherit_parent_ai_metadata(
         resolved_class_name,
         parent_base_class,
         parent_content,
+        invocation_arguments,
+        caller_variables,
         visited,
     )
 
@@ -1344,7 +1621,7 @@ def _parse_class_definition(
 
     base_arguments = _extract_constructible_base_arguments(class_content, class_name)
 
-    variables = _extract_simple_variables(constructor_body)
+    variables = _build_ai_metadata_variables(class_content, constructor_body)
     variants, shared_body = _extract_gender_variants(constructor_body)
 
     data = {
@@ -1534,7 +1811,13 @@ def _parse_class_definition(
         if key not in data
     }
     if missing_ai_keys:
-        inherited_ai = _inherit_parent_ai_metadata(filepath, base_class, set(visited))
+        inherited_ai = _inherit_parent_ai_metadata(
+            filepath,
+            base_class,
+            base_arguments,
+            variables,
+            set(visited),
+        )
         for key in ("ai_type", "fight_mode", "range_perception", "range_fight"):
             if key not in data and key in inherited_ai:
                 data[key] = inherited_ai[key]

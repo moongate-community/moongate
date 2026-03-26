@@ -9,7 +9,7 @@
     ],
     "ai": {
       "brain": "ai_melee",
-      "fightMode": "closest",
+      "fightMode": "aggressor",
       "rangePerception": 16,
       "rangeFight": 1
     },
