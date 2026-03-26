@@ -20,6 +20,8 @@ public sealed class GuardBrainAssetTests
                 Assert.That(script, Does.Contain("npc:set_target(source)"));
                 Assert.That(script, Does.Contain("npc:set_war_mode(true)"));
                 Assert.That(script, Does.Contain("combat.set_target(npc_serial, source_serial)"));
+                Assert.That(script, Does.Contain("guards.set_focus"));
+                Assert.That(script, Does.Contain("guards.teleport_to_target"));
                 Assert.That(script, Does.Contain("local function set_default(key, value)"));
                 Assert.That(script, Does.Contain("set_default(\"evade_desired_range\", 0)"));
                 Assert.That(script, Does.Contain("set_default(HOME_X_KEY, npc.location_x)"));
@@ -136,8 +138,8 @@ public sealed class GuardBrainAssetTests
 
             Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("guard"));
             Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("aggressor"));
-            Assert.That(ai.TryGetProperty("rangePerception", out _), Is.False);
-            Assert.That(ai.TryGetProperty("rangeFight", out _), Is.False);
+            Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
+            Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
             Assert.That(guard.TryGetProperty("brain", out _), Is.False);
             Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }

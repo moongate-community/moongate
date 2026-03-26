@@ -147,7 +147,7 @@ public sealed class LuaBrainRunnerTests
 
     [Test]
     public async Task
-        HandleAsync_WhenEnemyMobileIsWithinRangedGuardAcquisitionRange_ShouldNotifyRangedGuardButNotMeleeGuard()
+        HandleAsync_WhenEnemyMobileUsesTemplateRangePerception_ShouldNotifyRangedGuardButNotMeleeGuard()
     {
         using var temp = new TempDirectory();
         var timerService = new LuaBrainRunnerTimerServiceSpy();
@@ -180,7 +180,8 @@ public sealed class LuaBrainRunnerTests
             Notoriety = Notoriety.CanBeAttacked
         };
 
-        archerGuard.SetCustomString("guard_role", "ranged");
+        archerGuard.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, 10);
+        warriorGuard.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, 3);
 
         runner.Register(archerGuard, archerGuard.BrainId);
         runner.Register(warriorGuard, warriorGuard.BrainId);
