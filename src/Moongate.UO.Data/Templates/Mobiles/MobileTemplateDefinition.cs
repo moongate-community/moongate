@@ -40,7 +40,14 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     [JsonConverter(typeof(JsonStringEnumConverter<Notoriety>))]
     public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
-    public string Brain { get; set; } = "None";
+    public MobileAiTemplate Ai { get; set; } = new();
+
+    [JsonIgnore]
+    public string Brain
+    {
+        get => Ai.Brain;
+        set => Ai.Brain = value;
+    }
 
     public string? SellProfileId { get; set; }
 
