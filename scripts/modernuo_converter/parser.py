@@ -234,14 +234,71 @@ def _extract_simple_variables(text: str) -> Dict[str, str]:
 
 def _extract_class_simple_variables(text: str) -> Dict[str, str]:
     variables: Dict[str, str] = {}
+    class_statements = _extract_top_level_class_statements(text)
 
-    for match in re.finditer(
-        r"(?m)^\s*(?:(?:public|protected|private|internal)\s+)?(?:(?:static|readonly|const)\s+)*int\s+(\w+)\s*=\s*([^;]+);",
-        _strip_comments(text),
-    ):
+    for statement in class_statements:
+        match = re.match(
+            r"^\s*(?:(?:public|protected|private|internal)\s+)?(?:(?:static|readonly|const)\s+)*int\s+(\w+)\s*=\s*([^;]+);\s*$",
+            statement,
+        )
+        if match is None:
+            continue
+
         variables[match.group(1)] = match.group(2).strip()
 
     return variables
+
+
+def _extract_top_level_class_statements(text: str) -> List[str]:
+    statements: List[str] = []
+    content = _strip_comments(text)
+    first_brace_index = content.find("{")
+    if first_brace_index >= 0:
+        close_brace_index = _find_matching_delimiter(content, first_brace_index, "{", "}")
+        if close_brace_index > first_brace_index:
+            content = content[first_brace_index + 1 : close_brace_index]
+    position = 0
+
+    while position < len(content):
+        while position < len(content) and content[position].isspace():
+            position += 1
+
+        if position >= len(content):
+            break
+
+        start = position
+        paren_depth = 0
+        bracket_depth = 0
+
+        while position < len(content):
+            char = content[position]
+
+            if char == "(":
+                paren_depth += 1
+            elif char == ")":
+                paren_depth = max(0, paren_depth - 1)
+            elif char == "[":
+                bracket_depth += 1
+            elif char == "]":
+                bracket_depth = max(0, bracket_depth - 1)
+            elif char == "{" and paren_depth == 0 and bracket_depth == 0:
+                close_brace_index = _find_matching_delimiter(content, position, "{", "}")
+                if close_brace_index < 0:
+                    position = len(content)
+                    break
+
+                position = close_brace_index + 1
+                break
+            elif char == ";" and paren_depth == 0 and bracket_depth == 0:
+                statement = content[start : position + 1].strip()
+                if statement:
+                    statements.append(statement)
+                position += 1
+                break
+
+            position += 1
+
+    return statements
 
 
 def _extract_top_level_statements(text: str) -> List[str]:

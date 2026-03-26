@@ -1289,6 +1289,42 @@ class ParseFileTests(unittest.TestCase):
             self.assertEqual(12, parsed["range_perception"])
             self.assertEqual(4, parsed["range_fight"])
 
+    def test_symbolic_range_resolution_ignores_method_local_variables(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            source_path = Path(tmp_dir) / "Archer.cs"
+            source_path.write_text(
+                textwrap.dedent(
+                    """
+                    namespace Server.Mobiles
+                    {
+                        public class Archer : BaseCreature
+                        {
+                            const int PerceptionRange = 12;
+
+                            [Constructible]
+                            public Archer() : base(AIType.AI_Archer, FightMode.Closest, PerceptionRange, FightRange)
+                            {
+                            }
+
+                            public void Helper()
+                            {
+                                int FightRange = 99;
+                            }
+                        }
+                    }
+                    """
+                ),
+                encoding="utf-8",
+            )
+
+            parsed = parse_file(str(source_path))
+
+            self.assertIsNotNone(parsed)
+            self.assertEqual("AI_Archer", parsed["ai_type"])
+            self.assertEqual("Closest", parsed["fight_mode"])
+            self.assertEqual(12, parsed["range_perception"])
+            self.assertEqual(1, parsed["range_fight"])
+
     def test_extracts_ai_metadata_from_base_constructor_arguments(self) -> None:
         with tempfile.TemporaryDirectory() as tmp_dir:
             source_path = Path(tmp_dir) / "JukaLord.cs"
