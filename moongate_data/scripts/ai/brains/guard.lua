@@ -5,7 +5,7 @@
 local fsm = require("ai.runtime.fsm")
 local movement = require("ai.runtime.movement")
 local targeting = require("ai.runtime.targeting")
-local guards = require("guards")
+local guards = guards
 
 guard = {}
 

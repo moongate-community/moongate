@@ -32,7 +32,8 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(script, Does.Contain("local guards = require(\"guards\")"));
+                Assert.That(script, Does.Contain("local guards = guards"));
+                Assert.That(script, Does.Not.Contain("require(\"guards\")"));
                 Assert.That(script, Does.Contain("function guard.on_think"));
                 Assert.That(script, Does.Contain("function guard.on_in_range"));
                 Assert.That(script, Does.Contain("function guard.on_out_range"));
