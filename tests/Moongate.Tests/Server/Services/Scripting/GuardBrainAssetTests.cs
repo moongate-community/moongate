@@ -168,8 +168,15 @@ public sealed class GuardBrainAssetTests
             Assert.Multiple(
                 () =>
                 {
-                    Assert.That(ai.TryGetProperty("rangePerception", out var rangePerception), Is.True);
-                    Assert.That(rangePerception.GetInt32(), Is.EqualTo(10));
+                    if (ai.TryGetProperty("rangePerception", out var rangePerception))
+                    {
+                        Assert.That(rangePerception.GetInt32(), Is.EqualTo(10));
+                    }
+                    else
+                    {
+                        Assert.Fail("Expected ai.rangePerception to exist for archer guards.");
+                    }
+
                     Assert.That(
                         archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
                         Is.EqualTo(new[] { "guard.archer" })
@@ -204,8 +211,15 @@ public sealed class GuardBrainAssetTests
             Assert.Multiple(
                 () =>
                 {
-                    Assert.That(ai.TryGetProperty("rangePerception", out var rangePerception), Is.True);
-                    Assert.That(rangePerception.GetInt32(), Is.EqualTo(3));
+                    if (ai.TryGetProperty("rangePerception", out var rangePerception))
+                    {
+                        Assert.That(rangePerception.GetInt32(), Is.EqualTo(3));
+                    }
+                    else
+                    {
+                        Assert.Fail("Expected ai.rangePerception to exist for warrior guards.");
+                    }
+
                     Assert.That(
                         warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
                         Is.EqualTo(new[] { "guard.warrior" })
