@@ -57,7 +57,7 @@ public sealed class StandardAiBrainAssetTests
     }
 
     [Test]
-    public void StandardAiBrains_ShouldNotReferenceModernUoRuntimeNamespace()
+    public void FullStandardAiAssetSuite_ShouldNotReferenceModernUoRuntimeNamespace()
     {
         var repositoryRoot = GetRepositoryRoot();
         var brainPaths = new[]
@@ -65,7 +65,10 @@ public sealed class StandardAiBrainAssetTests
             "moongate_data/scripts/ai/brains/ai_animal.lua",
             "moongate_data/scripts/ai/brains/ai_archer.lua",
             "moongate_data/scripts/ai/brains/ai_berserk.lua",
+            "moongate_data/scripts/ai/brains/ai_healer.lua",
+            "moongate_data/scripts/ai/brains/ai_mage.lua",
             "moongate_data/scripts/ai/brains/ai_melee.lua",
+            "moongate_data/scripts/ai/brains/ai_thief.lua",
             "moongate_data/scripts/ai/brains/ai_vendor.lua",
         };
 
