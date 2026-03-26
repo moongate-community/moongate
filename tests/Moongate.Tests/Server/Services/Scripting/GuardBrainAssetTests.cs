@@ -138,8 +138,6 @@ public sealed class GuardBrainAssetTests
 
             Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("guard"));
             Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("aggressor"));
-            Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
-            Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
             Assert.That(guard.TryGetProperty("brain", out _), Is.False);
             Assert.That(guard.GetProperty("defaultFactionId").GetString(), Is.EqualTo("true_britannians"));
         }
@@ -166,10 +164,7 @@ public sealed class GuardBrainAssetTests
                                      )
                                  );
 
-            Assert.That(
-                archer.GetProperty("params").GetProperty("guard_role").GetProperty("value").GetString(),
-                Is.EqualTo("ranged")
-            );
+            Assert.That(archer.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(10));
             Assert.That(archer.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.archer" }));
         }
     }
@@ -195,10 +190,8 @@ public sealed class GuardBrainAssetTests
                                       )
                                   );
 
-            Assert.That(
-                warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()),
-                Is.EqualTo(new[] { "guard.warrior" })
-            );
+            Assert.That(warrior.GetProperty("ai").GetProperty("rangePerception").GetInt32(), Is.EqualTo(3));
+            Assert.That(warrior.GetProperty("lootTables").EnumerateArray().Select(element => element.GetString()), Is.EqualTo(new[] { "guard.warrior" }));
         }
     }
 
