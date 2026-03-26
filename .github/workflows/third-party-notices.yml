@@ -16,7 +16,8 @@ permissions:
 
 jobs:
   generate-third-party-notices:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
 
     steps:
       - uses: actions/checkout@v4

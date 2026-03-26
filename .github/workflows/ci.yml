@@ -16,7 +16,8 @@ permissions:
 
 jobs:
   build-test:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
     permissions:
       contents: write
 

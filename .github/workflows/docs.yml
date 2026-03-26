@@ -25,7 +25,8 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
     
     steps:
       - name: Checkout
@@ -55,7 +56,8 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
