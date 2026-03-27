@@ -30,11 +30,16 @@ public sealed class GuardBrainAssetTests
         var script = File.ReadAllText(scriptPath);
         var onThinkStart = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
         var onEventStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
+        var patrolHelperStart = script.IndexOf("local function patrol_random_roam", StringComparison.Ordinal);
+        var moveHomeStart = script.IndexOf("local function move_home", StringComparison.Ordinal);
 
         Assert.That(onThinkStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
+        Assert.That(patrolHelperStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(moveHomeStart, Is.GreaterThan(patrolHelperStart));
 
         var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
+        var patrolHelperScript = script.Substring(patrolHelperStart, moveHomeStart - patrolHelperStart);
         var noTargetIdleStart = onThinkScript.IndexOf("clear_focus(npc_serial, npc)", StringComparison.Ordinal);
         var noTargetIdleEnd = onThinkScript.IndexOf("coroutine.yield(TICK_DELAY_MS)", noTargetIdleStart, StringComparison.Ordinal);
 
@@ -46,13 +51,20 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(
-                    noTargetIdleScript,
-                    Does.Match(@"patrol_mode\s*==\s*""random_roam""[\s\S]*(?:movement|steering)\.wander\([^)]*\bpatrol_radius\b[^)]*\)")
-                );
                 Assert.That(noTargetIdleScript, Does.Contain("should_return_home(npc_serial, npc)"));
-                Assert.That(noTargetIdleScript, Does.Contain("move_home(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("patrol_random_roam(npc_serial, npc)"));
                 Assert.That(noTargetIdleScript, Does.Contain("movement.guard(npc_serial)"));
+                Assert.That(noTargetIdleScript, Does.Not.Contain("movement.wander(npc_serial, patrol_radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("home_x"));
+                Assert.That(patrolHelperScript, Does.Contain("home_y"));
+                Assert.That(patrolHelperScript, Does.Contain("home_z"));
+                Assert.That(patrolHelperScript, Does.Contain("leash_radius"));
+                Assert.That(patrolHelperScript, Does.Contain("patrol_radius"));
+                Assert.That(patrolHelperScript, Does.Contain("math.min(patrol_radius, leash_radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("math.random(-radius, radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("offset_x * offset_x + offset_y * offset_y <= radius * radius"));
+                Assert.That(patrolHelperScript, Does.Contain("steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)"));
+                Assert.That(noTargetIdleScript, Does.Contain("move_home(npc_serial, npc)"));
             }
         );
     }

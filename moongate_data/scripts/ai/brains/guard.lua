@@ -78,6 +78,10 @@ local function get_patrol_radius(npc_serial)
     return tonumber(npc_state.get_var(npc_serial, PATROL_RADIUS_KEY) or 0) or 0
 end
 
+local function mark_mode(npc_serial, mode)
+    npc_state.set_var(npc_serial, GUARD_MODE_KEY, mode)
+end
+
 local function clear_focus(npc_serial, npc)
     guards.set_focus(npc_serial, nil)
     fsm.clear_target(npc_serial)
@@ -94,8 +98,40 @@ local function set_focus(npc_serial, target_serial)
     fsm.set_target(npc_serial, target_serial)
 end
 
-local function mark_mode(npc_serial, mode)
-    npc_state.set_var(npc_serial, GUARD_MODE_KEY, mode)
+local function patrol_random_roam(npc_serial, npc)
+    local home_x, home_y, home_z, _, _, leash_radius = get_home_values(npc_serial)
+    local patrol_radius = get_patrol_radius(npc_serial)
+
+    if home_x == nil or home_y == nil or home_z == nil or patrol_radius <= 0 then
+        return false
+    end
+
+    local radius = math.max(0, math.floor(math.min(patrol_radius, leash_radius)))
+    if radius <= 0 then
+        return false
+    end
+
+    local origin_x = math.floor(home_x)
+    local origin_y = math.floor(home_y)
+    local origin_z = math.floor(home_z)
+    local patrol_x = origin_x
+    local patrol_y = origin_y
+
+    for _ = 1, 8 do
+        local offset_x = math.random(-radius, radius)
+        local offset_y = math.random(-radius, radius)
+
+        if (offset_x ~= 0 or offset_y ~= 0) and offset_x * offset_x + offset_y * offset_y <= radius * radius then
+            patrol_x = origin_x + offset_x
+            patrol_y = origin_y + offset_y
+            break
+        end
+    end
+
+    mark_mode(npc_serial, "patrol")
+    fsm.set_action(npc_serial, fsm.actions.wander)
+
+    return steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)
 end
 
 local function move_home(npc_serial, npc)
@@ -291,15 +327,11 @@ function guard.on_think(npc_serial)
                     set_focus(npc_serial, target_serial)
                 else
                     clear_focus(npc_serial, npc)
-                    local patrol_mode = get_patrol_mode(npc_serial)
-                    local patrol_radius = get_patrol_radius(npc_serial)
 
                     if should_return_home(npc_serial, npc) then
                         move_home(npc_serial, npc)
-                    elseif patrol_mode == "random_roam" and patrol_radius > 0 then
-                        mark_mode(npc_serial, "patrol")
-                        fsm.set_action(npc_serial, fsm.actions.wander)
-                        movement.wander(npc_serial, patrol_radius)
+                    elseif get_patrol_mode(npc_serial) == "random_roam" and get_patrol_radius(npc_serial) > 0 then
+                        patrol_random_roam(npc_serial, npc)
                     else
                         mark_mode(npc_serial, "idle")
                         fsm.set_action(npc_serial, fsm.actions.guard)
@@ -315,19 +347,12 @@ function guard.on_think(npc_serial)
                 handle_target(npc_serial, npc, target_serial, range_perception, range_fight)
             elseif should_return_home(npc_serial, npc) then
                 move_home(npc_serial, npc)
+            elseif get_patrol_mode(npc_serial) == "random_roam" and get_patrol_radius(npc_serial) > 0 then
+                patrol_random_roam(npc_serial, npc)
             else
-                local patrol_mode = get_patrol_mode(npc_serial)
-                local patrol_radius = get_patrol_radius(npc_serial)
-
-                if patrol_mode == "random_roam" and patrol_radius > 0 then
-                    mark_mode(npc_serial, "patrol")
-                    fsm.set_action(npc_serial, fsm.actions.wander)
-                    movement.wander(npc_serial, patrol_radius)
-                else
-                    mark_mode(npc_serial, "idle")
-                    fsm.set_action(npc_serial, fsm.actions.guard)
-                    movement.guard(npc_serial)
-                end
+                mark_mode(npc_serial, "idle")
+                fsm.set_action(npc_serial, fsm.actions.guard)
+                movement.guard(npc_serial)
             end
         end
 
