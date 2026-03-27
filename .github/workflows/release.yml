@@ -66,8 +66,8 @@ jobs:
       - name: Configure git user
         if: steps.release_check.outputs.should_release == 'true'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Configure authenticated remote for release push
         if: steps.release_check.outputs.should_release == 'true'
@@ -78,7 +78,7 @@ jobs:
             echo "Missing required secret RELEASE_PAT"
             exit 1
           fi
-          git remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
+          git -C "$GITHUB_WORKSPACE" remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
 
       - name: Run semantic-release
         if: steps.release_check.outputs.should_release == 'true'
