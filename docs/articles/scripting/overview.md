@@ -160,6 +160,7 @@ For vendor sell profiles and context menu flow (native + custom Lua), see
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
 For background-safe named jobs callable from Lua, see [Async Jobs](async-jobs.md).
 For recurring coroutine cadences in NPC brains, see [Tick Helper](tick.md).
+For routine staff operations in-game, the built-in GM menu now centralizes template add/search, travel, curated spawn tools, and server broadcast actions under one gump shell.
 
 ### NPC Brain Example
 

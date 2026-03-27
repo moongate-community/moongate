@@ -22,10 +22,17 @@ local function create_default_add_state()
   }
 end
 
+local function create_default_broadcast_state()
+  return {
+    message = ""
+  }
+end
+
 local function create_default_state()
   return {
     active_tab = "add",
-    add = create_default_add_state()
+    add = create_default_add_state(),
+    broadcast = create_default_broadcast_state()
   }
 end
 
@@ -61,6 +68,10 @@ function state.set_active_tab(session_id, active_tab)
     current.active_tab = "travel"
   elseif active_tab == "probe" then
     current.active_tab = "probe"
+  elseif active_tab == "spawn" then
+    current.active_tab = "spawn"
+  elseif active_tab == "broadcast" then
+    current.active_tab = "broadcast"
   else
     current.active_tab = "add"
   end

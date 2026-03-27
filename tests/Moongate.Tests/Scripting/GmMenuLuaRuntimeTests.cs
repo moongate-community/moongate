@@ -13,12 +13,14 @@ using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Scripting.Services;
+using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Internal.Cursors;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Data.World;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Console;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -29,6 +31,7 @@ using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Scripting;
+using Moongate.Server.Types.Commands;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.Tests.Server.Support;
 using Moongate.Tests.TestSupport;
@@ -257,6 +260,12 @@ public sealed class GmMenuLuaRuntimeTests
 
     private sealed class GmMenuLuaRuntimeSpeechService : ISpeechService
     {
+        public List<string> SessionMessages { get; } = [];
+
+        public int BroadcastCallCount { get; private set; }
+
+        public string? LastBroadcastText { get; private set; }
+
         public Task<int> BroadcastFromServerAsync(
             string text,
             short hue = 946,
@@ -264,7 +273,8 @@ public sealed class GmMenuLuaRuntimeTests
             string language = "ENU"
         )
         {
-            _ = text;
+            BroadcastCallCount++;
+            LastBroadcastText = text;
             _ = hue;
             _ = font;
             _ = language;
@@ -307,7 +317,7 @@ public sealed class GmMenuLuaRuntimeTests
         )
         {
             _ = session;
-            _ = text;
+            SessionMessages.Add(text);
             _ = hue;
             _ = font;
             _ = language;
@@ -337,6 +347,75 @@ public sealed class GmMenuLuaRuntimeTests
 
             return Task.FromResult(0);
         }
+    }
+
+    private sealed class GmMenuLuaRuntimeCommandSystemService : ICommandSystemService
+    {
+        public string? LastExecuteCommandText { get; private set; }
+
+        public CommandSourceType LastExecuteSource { get; private set; }
+
+        public IReadOnlyList<string> ExecuteOutput { get; set; } = [];
+
+        public Task ExecuteCommandAsync(
+            string commandWithArgs,
+            CommandSourceType source = CommandSourceType.Console,
+            GameSession? session = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = cancellationToken;
+            LastExecuteCommandText = commandWithArgs;
+            LastExecuteSource = source;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<IReadOnlyList<string>> ExecuteCommandWithOutputAsync(
+            string commandWithArgs,
+            CommandSourceType source = CommandSourceType.Console,
+            GameSession? session = null,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = session;
+            _ = cancellationToken;
+            LastExecuteCommandText = commandWithArgs;
+            LastExecuteSource = source;
+
+            return Task.FromResult(ExecuteOutput);
+        }
+
+        public IReadOnlyList<string> GetAutocompleteSuggestions(string commandWithArgs)
+        {
+            _ = commandWithArgs;
+
+            return [];
+        }
+
+        public void RegisterCommand(
+            string commandName,
+            Func<CommandSystemContext, Task> handler,
+            string description = "",
+            CommandSourceType source = CommandSourceType.Console,
+            AccountType minimumAccountType = AccountType.Administrator,
+            Func<CommandAutocompleteContext, IReadOnlyList<string>>? autocompleteProvider = null
+        )
+        {
+            _ = commandName;
+            _ = handler;
+            _ = description;
+            _ = source;
+            _ = minimumAccountType;
+            _ = autocompleteProvider;
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
     }
 
     private sealed class GmMenuLuaRuntimeItemTemplateService : IItemTemplateService
@@ -723,6 +802,8 @@ public sealed class GmMenuLuaRuntimeTests
             GmMenuLuaRuntimeMobileService mobileService,
             GmMenuLuaRuntimeSpatialWorldService spatialWorldService,
             GmMenuLuaRuntimePlayerTargetService targetService,
+            GmMenuLuaRuntimeSpeechService speechService,
+            GmMenuLuaRuntimeCommandSystemService commandSystemService,
             GameSession session,
             MoongateTCPClient client
         )
@@ -737,6 +818,8 @@ public sealed class GmMenuLuaRuntimeTests
             MobileService = mobileService;
             SpatialWorldService = spatialWorldService;
             TargetService = targetService;
+            SpeechService = speechService;
+            CommandSystemService = commandSystemService;
             Session = session;
             Client = client;
         }
@@ -760,6 +843,10 @@ public sealed class GmMenuLuaRuntimeTests
         public GmMenuLuaRuntimeSpatialWorldService SpatialWorldService { get; }
 
         public GmMenuLuaRuntimePlayerTargetService TargetService { get; }
+
+        public GmMenuLuaRuntimeSpeechService SpeechService { get; }
+
+        public GmMenuLuaRuntimeCommandSystemService CommandSystemService { get; }
 
         public GameSession Session { get; }
 
@@ -799,6 +886,8 @@ public sealed class GmMenuLuaRuntimeTests
                 Assert.That(gump.TextLines, Does.Contain("GM Menu"));
                 Assert.That(gump.TextLines, Does.Contain("Add"));
                 Assert.That(gump.TextLines, Does.Contain("Travel"));
+                Assert.That(gump.TextLines, Does.Contain("Spawn"));
+                Assert.That(gump.TextLines, Does.Contain("Broadcast"));
                 Assert.That(gump.TextLines, Does.Contain("Search Items and NPCs"));
             }
         );
@@ -1310,6 +1399,161 @@ public sealed class GmMenuLuaRuntimeTests
     }
 
     [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenSwitchingToSpawn_ShouldRenderSpawnActions()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        var spawnPacket = new GumpMenuSelectionPacket();
+        Assert.That(
+            spawnPacket.TryParse(BuildGumpResponsePacket((uint)context.Session.CharacterId, 0xB930, 13)),
+            Is.True
+        );
+        Assert.That(context.GumpDispatcher.TryDispatch(context.Session, spawnPacket), Is.True);
+        Assert.That(context.Queue.TryDequeue(out var spawnOutbound), Is.True);
+        Assert.That(spawnOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+        var spawnGump = (CompressedGumpPacket)spawnOutbound.Packet;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spawnGump.TextLines, Does.Contain("Spawn Tools"));
+                Assert.That(spawnGump.TextLines, Does.Contain("Spawn Doors"));
+                Assert.That(spawnGump.TextLines, Does.Contain("Spawn Signs"));
+                Assert.That(spawnGump.TextLines, Does.Contain("Spawn Decorations"));
+                Assert.That(spawnGump.TextLines, Does.Contain("Create Spawners"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenUsingSpawnTab_ShouldExecuteConfiguredCommand()
+    {
+        using var context = await CreateRuntimeContextAsync();
+        context.CommandSystemService.ExecuteOutput = ["Doors spawned."];
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(context, 0xB930, 13);
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(context, 0xB930, 500);
+        Assert.That(context.Queue.TryDequeue(out var reopenedOutbound), Is.True);
+        Assert.That(reopenedOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.CommandSystemService.LastExecuteCommandText, Is.EqualTo("spawn_doors"));
+                Assert.That(context.CommandSystemService.LastExecuteSource, Is.EqualTo(CommandSourceType.InGame));
+                Assert.That(context.SpeechService.SessionMessages, Does.Contain("Executing .spawn_doors ..."));
+                Assert.That(context.SpeechService.SessionMessages, Does.Contain("Doors spawned."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenSwitchingToBroadcast_ShouldRenderBroadcastComposer()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(context, 0xB930, 14);
+        Assert.That(context.Queue.TryDequeue(out var broadcastOutbound), Is.True);
+        Assert.That(broadcastOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+        var broadcastGump = (CompressedGumpPacket)broadcastOutbound.Packet;
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(broadcastGump.TextLines, Does.Contain("Broadcast Message"));
+                Assert.That(broadcastGump.TextLines, Does.Contain("Send"));
+                Assert.That(broadcastGump.TextLines, Has.Some.Contains("SERVER:"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenBroadcastMessageIsBlank_ShouldNotBroadcast()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(context, 0xB930, 14);
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            600,
+            new Dictionary<ushort, string>
+            {
+                [3] = "   "
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out var reopenedOutbound), Is.True);
+        Assert.That(reopenedOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.SpeechService.BroadcastCallCount, Is.EqualTo(0));
+                Assert.That(context.SpeechService.SessionMessages, Does.Contain("Broadcast message cannot be empty."));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithGmMenuScripts_WhenBroadcastMessageIsProvided_ShouldBroadcastWithServerPrefix()
+    {
+        using var context = await CreateRuntimeContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(context, 0xB930, 14);
+        Assert.That(context.Queue.TryDequeue(out _), Is.True);
+
+        DispatchButton(
+            context,
+            0xB930,
+            600,
+            new Dictionary<ushort, string>
+            {
+                [3] = "Server restart in 5 minutes"
+            }
+        );
+        Assert.That(context.Queue.TryDequeue(out var reopenedOutbound), Is.True);
+        Assert.That(reopenedOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.SpeechService.BroadcastCallCount, Is.EqualTo(1));
+                Assert.That(context.SpeechService.LastBroadcastText, Is.EqualTo("SERVER: Server restart in 5 minutes"));
+                Assert.That(context.SpeechService.SessionMessages, Does.Contain("Broadcast sent."));
+            }
+        );
+    }
+
+    [Test]
     public async Task StartAsync_WithTeleportScripts_ShouldStillOpenStandaloneTeleportBrowser()
     {
         using var context = await CreateRuntimeContextAsync();
@@ -1359,7 +1603,9 @@ public sealed class GmMenuLuaRuntimeTests
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/controller.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/render.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/add.lua");
+        CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/broadcast.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/probe.lua");
+        CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/spawn.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/travel.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/teleports.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/teleports/constants.lua");
@@ -1380,6 +1626,7 @@ public sealed class GmMenuLuaRuntimeTests
         var gumpDispatcher = new GumpScriptDispatcherService();
         var characterService = new GmMenuLuaRuntimeCharacterService();
         var speechService = new GmMenuLuaRuntimeSpeechService();
+        var commandSystemService = new GmMenuLuaRuntimeCommandSystemService();
         var itemTemplateService = new GmMenuLuaRuntimeItemTemplateService();
         itemTemplateService.Upsert(
             new ItemTemplateDefinition
@@ -1454,6 +1701,7 @@ public sealed class GmMenuLuaRuntimeTests
         container.RegisterInstance<IGumpScriptDispatcherService>(gumpDispatcher);
         container.RegisterInstance<ICharacterService>(characterService);
         container.RegisterInstance<ISpeechService>(speechService);
+        container.RegisterInstance<ICommandSystemService>(commandSystemService);
         container.RegisterInstance<IItemTemplateService>(itemTemplateService);
         container.RegisterInstance<IMobileTemplateService>(mobileTemplateService);
         container.RegisterInstance<IItemService>(itemService);
@@ -1466,8 +1714,10 @@ public sealed class GmMenuLuaRuntimeTests
             dirs,
             [
                 new(typeof(GumpModule)),
+                new(typeof(CommandModule)),
                 new(typeof(ItemModule)),
                 new(typeof(MobileModule)),
+                new(typeof(SpeechModule)),
                 new(typeof(TargetModule)),
                 new(typeof(LocationModule))
             ],
@@ -1489,6 +1739,8 @@ public sealed class GmMenuLuaRuntimeTests
             mobileService,
             spatialWorldService,
             targetService,
+            speechService,
+            commandSystemService,
             session,
             client
         );
