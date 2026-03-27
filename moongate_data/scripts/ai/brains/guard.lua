@@ -98,6 +98,9 @@ local function set_focus(npc_serial, target_serial)
     fsm.set_target(npc_serial, target_serial)
 end
 
+local move_home
+local should_return_home
+
 local function patrol_random_roam(npc_serial, npc)
     local home_x, home_y, home_z, _, _, leash_radius = get_home_values(npc_serial)
     local patrol_radius = get_patrol_radius(npc_serial)
@@ -141,7 +144,7 @@ local function patrol_random_roam(npc_serial, npc)
     return moved
 end
 
-local function move_home(npc_serial, npc)
+move_home = function(npc_serial, npc)
     local home_x, home_y, home_z, home_map_id, hold_radius = get_home_values(npc_serial)
     if home_x == nil or home_y == nil or home_z == nil then
         return false
@@ -164,7 +167,7 @@ local function move_home(npc_serial, npc)
     return true
 end
 
-local function should_return_home(npc_serial, npc)
+should_return_home = function(npc_serial, npc)
     local home_x, home_y, _, home_map_id, _, leash_radius = get_home_values(npc_serial)
     if home_x == nil or home_y == nil or npc == nil then
         return false

@@ -31,11 +31,17 @@ public sealed class GuardBrainAssetTests
         var onThinkStart = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
         var onEventStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
         var patrolHelperStart = script.IndexOf("local function patrol_random_roam", StringComparison.Ordinal);
-        var moveHomeStart = script.IndexOf("local function move_home", StringComparison.Ordinal);
+        var shouldReturnHomeForwardDeclaration = script.IndexOf("local should_return_home", StringComparison.Ordinal);
+        var moveHomeForwardDeclaration = script.IndexOf("local move_home", StringComparison.Ordinal);
+        var moveHomeStart = script.IndexOf("move_home = function", StringComparison.Ordinal);
 
         Assert.That(onThinkStart, Is.GreaterThanOrEqualTo(0));
         Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
         Assert.That(patrolHelperStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(shouldReturnHomeForwardDeclaration, Is.GreaterThanOrEqualTo(0));
+        Assert.That(moveHomeForwardDeclaration, Is.GreaterThanOrEqualTo(0));
+        Assert.That(shouldReturnHomeForwardDeclaration, Is.LessThan(patrolHelperStart));
+        Assert.That(moveHomeForwardDeclaration, Is.LessThan(patrolHelperStart));
         Assert.That(moveHomeStart, Is.GreaterThan(patrolHelperStart));
 
         var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
@@ -211,8 +217,8 @@ public sealed class GuardBrainAssetTests
         var repositoryRoot = GetRepositoryRoot();
         var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
         var script = File.ReadAllText(scriptPath);
-        var moveHomeStart = script.IndexOf("local function move_home", StringComparison.Ordinal);
-        var shouldReturnHomeStart = script.IndexOf("local function should_return_home", StringComparison.Ordinal);
+        var moveHomeStart = script.IndexOf("move_home = function", StringComparison.Ordinal);
+        var shouldReturnHomeStart = script.IndexOf("should_return_home = function", StringComparison.Ordinal);
         var handleTargetStart = script.IndexOf("local function handle_target", StringComparison.Ordinal);
         var combatHelperStart = script.IndexOf("local function handle_combat_hook", StringComparison.Ordinal);
 

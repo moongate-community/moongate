@@ -14,7 +14,6 @@ constants.MUTED_HUE = 1102
 
 constants.BUTTON_TAB_ADD = 10
 constants.BUTTON_TAB_TRAVEL = 11
-constants.BUTTON_TAB_PROBE = 12
 constants.BUTTON_TAB_SPAWN = 13
 constants.BUTTON_TAB_BROADCAST = 14
 

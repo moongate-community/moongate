@@ -28,12 +28,6 @@ function controller.build_layout(session_id, character_id, reopen_callback)
       return
     end
 
-    if button_id == c.BUTTON_TAB_PROBE then
-      state.set_active_tab(ctx.session_id, "probe")
-      reopen_callback(ctx.session_id, ctx.character_id)
-      return
-    end
-
     if button_id == c.BUTTON_TAB_SPAWN then
       state.set_active_tab(ctx.session_id, "spawn")
       reopen_callback(ctx.session_id, ctx.character_id)

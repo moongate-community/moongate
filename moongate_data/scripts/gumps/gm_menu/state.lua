@@ -66,8 +66,6 @@ function state.set_active_tab(session_id, active_tab)
 
   if active_tab == "travel" then
     current.active_tab = "travel"
-  elseif active_tab == "probe" then
-    current.active_tab = "probe"
   elseif active_tab == "spawn" then
     current.active_tab = "spawn"
   elseif active_tab == "broadcast" then

@@ -33,14 +33,11 @@ function ui.add_sidebar(layout_ui, current_state)
   push(layout_ui, { type = "button", id = c.BUTTON_TAB_TRAVEL, x = 32, y = 126, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
   push(layout_ui, { type = "label", x = 64, y = 128, hue = get_tab_hue("travel"), text = "Travel" })
 
-  push(layout_ui, { type = "button", id = c.BUTTON_TAB_PROBE, x = 32, y = 158, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 160, hue = get_tab_hue("probe"), text = "Probe" })
+  push(layout_ui, { type = "button", id = c.BUTTON_TAB_SPAWN, x = 32, y = 158, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = 64, y = 160, hue = get_tab_hue("spawn"), text = "Spawn" })
 
-  push(layout_ui, { type = "button", id = c.BUTTON_TAB_SPAWN, x = 32, y = 190, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 192, hue = get_tab_hue("spawn"), text = "Spawn" })
-
-  push(layout_ui, { type = "button", id = c.BUTTON_TAB_BROADCAST, x = 32, y = 222, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 224, hue = get_tab_hue("broadcast"), text = "Broadcast" })
+  push(layout_ui, { type = "button", id = c.BUTTON_TAB_BROADCAST, x = 32, y = 190, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = 64, y = 192, hue = get_tab_hue("broadcast"), text = "Broadcast" })
 end
 
 return ui
