@@ -1341,6 +1341,7 @@ public sealed class GmMenuLuaRuntimeTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(Path.Combine(scriptsDir, "interaction"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps"));
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "layout"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "gm_menu"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "gm_menu", "sections"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "teleports"));
@@ -1350,6 +1351,8 @@ public sealed class GmMenuLuaRuntimeTests
             Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
         CopyScript(repoRoot, scriptsDir, "interaction/gm_menu.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu.lua");
+        CopyScript(repoRoot, scriptsDir, "gumps/layout/header.lua");
+        CopyScript(repoRoot, scriptsDir, "gumps/layout/stack.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/constants.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/state.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/ui.lua");

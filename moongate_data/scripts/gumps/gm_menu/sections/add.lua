@@ -1,8 +1,12 @@
 local c = require("gumps.gm_menu.constants")
 local ui = require("gumps.gm_menu.ui")
 local gm_state = require("gumps.gm_menu.state")
+local header = require("gumps.layout.header")
+local stack = require("gumps.layout.stack")
 
 local add_section = {}
+local RESULT_ROW_LINE_GAP = 16
+local RESULT_ROW_PITCH = 38
 
 local function create_default_add_state()
   return {
@@ -271,13 +275,14 @@ local function render_results(layout_ui, add_state, results)
   ui.push(layout_ui, { type = "image_tiled", x = 196, y = 150, width = 260, height = 286, gump_id = 2624 })
   ui.push(layout_ui, { type = "label", x = 208, y = 160, hue = c.TITLE_HUE, text = "Results" })
 
-  local row_y = 188
+  local row_cursor = stack.cursor(188)
 
   for index, result in ipairs(results) do
     local button_id = c.BUTTON_RESULT_BASE + index - 1
     local is_selected = add_state.selected ~= nil and add_state.selected.kind == result.kind and add_state.selected.template_id == result.template_id
     local display_hue = is_selected and c.ACCENT_HUE or c.LABEL_HUE
     local meta_text = result.template_id
+    local row_y = row_cursor:peek()
 
     if result.kind == "item" and result.item_id > 0 then
       meta_text = result.template_id .. " • " .. format_item_id(result.item_id)
@@ -296,14 +301,14 @@ local function render_results(layout_ui, add_state, results)
     ui.push(layout_ui, {
       type = "label_cropped",
       x = 236,
-      y = row_y + 14,
+      y = row_y + RESULT_ROW_LINE_GAP,
       width = 208,
       height = 18,
       hue = c.MUTED_HUE,
       text = meta_text
     })
 
-    row_y = row_y + 34
+    row_cursor:advance(RESULT_ROW_PITCH)
   end
 
   if #results == 0 then
@@ -450,15 +455,18 @@ function add_section.add_content(layout, session_id, character_id, current_state
   local results = load_results(add_state)
 
   ui.push(layout_ui, { type = "image_tiled", x = 188, y = 48, width = 520, height = 428, gump_id = 2624 })
-  ui.push(layout_ui, { type = "label", x = 196, y = 62, hue = c.TITLE_HUE, text = "Search Items and NPCs" })
-  ui.push(layout_ui, {
-    type = "label_cropped",
+  header.add(layout_ui, {
     x = 196,
-    y = 72,
+    y = 62,
     width = 480,
-    height = 18,
-    hue = c.MUTED_HUE,
-    text = "Free search with preview, backpack add, ground target and brush."
+    title = "Search Items and NPCs",
+    subtitle = "Free search with preview, backpack add, ground target and brush.",
+    title_hue = c.TITLE_HUE,
+    subtitle_hue = c.MUTED_HUE,
+    title_height = 10,
+    subtitle_height = 18,
+    title_gap = 0,
+    after_gap = 0
   })
 
   render_filter_buttons(layout_ui, add_state)

@@ -176,11 +176,61 @@ Notes:
   - start with only `background + label`
   - add components one at a time
 
+## 7) Layout helpers for headers and lists
+
+For bigger file-based gumps, use the built-in helpers for repeated vertical rhythm instead of manually chaining `y = y + ...` everywhere.
+
+Available helpers:
+
+- `gumps.layout.header`
+- `gumps.layout.stack`
+
+Example:
+
+```lua
+local header = require("gumps.layout.header")
+local stack = require("gumps.layout.stack")
+
+local layout = {
+    ui = {},
+    handlers = {}
+}
+
+local next_y = header.add(layout.ui, {
+    x = 24,
+    y = 20,
+    width = 320,
+    title = "World Tools",
+    subtitle = "Keep repeated vertical spacing intentional."
+})
+
+local cursor = stack.cursor(next_y)
+local button_y = cursor:add(20, 10)
+
+layout.ui[#layout.ui + 1] = {
+    type = "button",
+    id = BTN_SPAWN_DOORS,
+    x = 24,
+    y = button_y,
+    normal_id = 4005,
+    pressed_id = 4007,
+    onclick = "on_click"
+}
+```
+
+Use them for:
+
+- title + subtitle blocks
+- vertical lists with a repeated cadence
+
+Do not turn them into a general-purpose layout DSL. If explicit coordinates make the gump easier to understand, keep them.
+
 ## Best Practices
 
 - use `gump.send_layout` for complex gumps
 - use `text.render(...)` for long text, welcome messages, rules, and books
 - keep `ui` and `handlers` in the same module file
 - use constants for `gumpId` and `buttonId`
+- use `gumps.layout.header` and `gumps.layout.stack` only for repeated vertical spacing
 - do not rely on “magic” fallbacks for `sender_serial`
 - log important clicks during debugging
