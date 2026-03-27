@@ -886,6 +886,7 @@ public sealed class GmMenuLuaRuntimeTests
                 Assert.That(gump.TextLines, Does.Contain("GM Menu"));
                 Assert.That(gump.TextLines, Does.Contain("Add"));
                 Assert.That(gump.TextLines, Does.Contain("Travel"));
+                Assert.That(gump.TextLines, Does.Not.Contain("Probe"));
                 Assert.That(gump.TextLines, Does.Contain("Spawn"));
                 Assert.That(gump.TextLines, Does.Contain("Broadcast"));
                 Assert.That(gump.TextLines, Does.Contain("Search Items and NPCs"));
@@ -1363,42 +1364,6 @@ public sealed class GmMenuLuaRuntimeTests
     }
 
     [Test]
-    public async Task StartAsync_WithGmMenuScripts_WhenSwitchingToProbe_ShouldRenderSpacingCalibrationSamples()
-    {
-        using var context = await CreateRuntimeContextAsync();
-
-        _ = context.Service.ExecuteFunction(
-            $"(function() return on_gm_menu_request({context.Session.SessionId}, {(uint)context.Session.CharacterId}) end)()"
-        );
-        Assert.That(context.Queue.TryDequeue(out var initialOutbound), Is.True);
-        Assert.That(initialOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-        var initialGump = (CompressedGumpPacket)initialOutbound.Packet;
-        Assert.That(initialGump.TextLines, Does.Contain("Probe"));
-
-        var probePacket = new GumpMenuSelectionPacket();
-        Assert.That(
-            probePacket.TryParse(BuildGumpResponsePacket((uint)context.Session.CharacterId, 0xB930, 12)),
-            Is.True
-        );
-        Assert.That(context.GumpDispatcher.TryDispatch(context.Session, probePacket), Is.True);
-        Assert.That(context.Queue.TryDequeue(out var probeOutbound), Is.True);
-        Assert.That(probeOutbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-        var probeGump = (CompressedGumpPacket)probeOutbound.Packet;
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(probeGump.TextLines, Does.Contain("Spacing Probe"));
-                Assert.That(probeGump.TextLines, Does.Contain("Compact 16/36"));
-                Assert.That(probeGump.TextLines, Does.Contain("Balanced 16/38"));
-                Assert.That(probeGump.TextLines, Does.Contain("Relaxed 18/40"));
-                Assert.That(probeGump.TextLines, Has.Some.Contains("Extremely Long Decorative Plate Legs"));
-                Assert.That(probeGump.TextLines, Has.Some.Contains("decorative_plate_legs_east"));
-            }
-        );
-    }
-
-    [Test]
     public async Task StartAsync_WithGmMenuScripts_WhenSwitchingToSpawn_ShouldRenderSpawnActions()
     {
         using var context = await CreateRuntimeContextAsync();
@@ -1604,7 +1569,6 @@ public sealed class GmMenuLuaRuntimeTests
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/render.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/add.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/broadcast.lua");
-        CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/probe.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/spawn.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/gm_menu/sections/travel.lua");
         CopyScript(repoRoot, scriptsDir, "gumps/teleports.lua");
