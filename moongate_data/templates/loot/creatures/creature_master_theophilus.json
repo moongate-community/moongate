@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.master_theophilus",
+    "name": "MasterTheophilus",
+    "category": "loot",
+    "description": "Creature-specific loot for MasterTheophilus.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 7
+      },
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 7
+      },
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 8
+      }
+    ]
+  }
+]

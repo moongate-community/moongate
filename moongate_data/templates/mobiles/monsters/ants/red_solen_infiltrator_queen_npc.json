@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "red_solen_infiltrator_queen_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RedSolenInfiltratorQueen.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 338,
+    "dexterity": 153,
+    "intelligence": 108,
+    "hits": 156,
+    "maxHits": 156,
+    "minDamage": 10,
+    "maxDamage": 15,
+    "armorRating": 50,
+    "fame": 6500,
+    "karma": -6500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 32,
+      "cold": 30,
+      "poison": 37,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 70,
+      "poison": 30
+    },
+    "title": "a red solen infiltrator",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030F"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

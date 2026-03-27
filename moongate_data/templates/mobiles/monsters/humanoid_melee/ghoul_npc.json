@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "ghoul_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ghoul.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 88,
+    "dexterity": 85,
+    "intelligence": 48,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 9,
+    "armorRating": 28,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 525,
+      "Tactics": 525,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 27,
+      "cold": 25,
+      "poison": 7,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a ghoul",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0099"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

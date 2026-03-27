@@ -15,6 +15,8 @@ This system is intentionally simple:
 
 If you want the shortest path from zero to a working plugin project, start with
 [Create Your First Plugin](create-your-first-plugin.md).
+If you specifically want a compiled admin/operator command after that, continue with
+[Create Your First C# Admin Command](create-your-first-csharp-admin-command.md).
 
 ## Plugin Folder Layout
 

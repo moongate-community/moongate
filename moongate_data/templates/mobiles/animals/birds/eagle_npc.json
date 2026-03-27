@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "eagle_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Eagle.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 39,
+    "dexterity": 48,
+    "intelligence": 14,
+    "hits": 23,
+    "maxHits": 23,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 22,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 226,
+      "Tactics": 275,
+      "Wrestling": 250
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 12,
+      "cold": 22,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "an eagle",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0005"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.earth_elemental",
+    "name": "EarthElemental",
+    "category": "loot",
+    "description": "Creature-specific loot for EarthElemental.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "mandrake_root",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "type": "mobile",
+    "id": "squirrel_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Squirrel.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 47,
+    "dexterity": 35,
+    "intelligence": 5,
+    "hits": 46,
+    "maxHits": 46,
+    "minDamage": 1,
+    "maxDamage": 2,
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 12,
+      "cold": 32,
+      "poison": 22,
+      "energy": 22
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a squirrell",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0116"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

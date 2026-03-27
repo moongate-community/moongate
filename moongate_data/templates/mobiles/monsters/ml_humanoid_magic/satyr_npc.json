@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "satyr_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Satyr.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 186,
+    "dexterity": 260,
+    "intelligence": 161,
+    "hits": 375,
+    "maxHits": 375,
+    "minDamage": 13,
+    "maxDamage": 24,
+    "armorRating": 28,
+    "fame": 5000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 600,
+      "Tactics": 900,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.ml_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 57,
+      "fire": 30,
+      "cold": 35,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a satyr",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010F"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

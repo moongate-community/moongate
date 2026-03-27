@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.wraith",
+    "name": "Wraith",
+    "category": "loot",
+    "description": "Creature-specific loot for Wraith.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 10
+      }
+    ]
+  }
+]

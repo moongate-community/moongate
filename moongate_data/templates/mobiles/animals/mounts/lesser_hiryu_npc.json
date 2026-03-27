@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "lesser_hiryu_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO LesserHiryu.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 355,
+    "dexterity": 220,
+    "intelligence": 313,
+    "hits": 500,
+    "maxHits": 500,
+    "mana": 60,
+    "minDamage": 18,
+    "maxDamage": 23,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 775,
+      "MagicResist": 925,
+      "Tactics": 1050,
+      "Wrestling": 1100
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.lesser_hiryu"
+    ],
+    "resistances": {
+      "physical": 57,
+      "fire": 70,
+      "cold": 10,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a lesser hiryu",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F3"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

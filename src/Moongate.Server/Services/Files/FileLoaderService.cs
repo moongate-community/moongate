@@ -1,5 +1,9 @@
 using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using DryIoc;
+using Moongate.Core.Data.Directories;
+using Moongate.Server.FileLoaders;
 using Moongate.Server.Interfaces.Services.Files;
 using Serilog;
 
@@ -11,14 +15,16 @@ namespace Moongate.Server.Services.Files;
 public class FileLoaderService : IFileLoaderService
 {
     private readonly List<IFileLoader> _fileLoaders = new();
+    private readonly DirectoriesConfig? _directoriesConfig;
 
     private readonly ILogger _logger = Log.ForContext<FileLoaderService>();
 
     private readonly IContainer _container;
 
-    public FileLoaderService(IContainer container)
+    public FileLoaderService(IContainer container, DirectoriesConfig? directoriesConfig = null)
     {
         _container = container;
+        _directoriesConfig = directoriesConfig;
     }
 
     public void AddFileLoader<T>() where T : IFileLoader
@@ -45,6 +51,35 @@ public class FileLoaderService : IFileLoaderService
 
         var fileLoader = (IFileLoader)_container.Resolve(loaderType);
         _fileLoaders.Add(fileLoader);
+    }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        var loaderType = ResolveLoaderTypeByFilePath(filePath);
+
+        if (loaderType is null)
+        {
+            throw new InvalidOperationException($"No file loader is registered for path '{filePath}'.");
+        }
+
+        return LoadSingleAsync(loaderType, filePath);
+    }
+
+    public Task LoadSingleAsync<T>(string filePath) where T : IFileLoader
+        => LoadSingleAsync(typeof(T), filePath);
+
+    public Task LoadSingleAsync(Type loaderType, string filePath)
+    {
+        ArgumentNullException.ThrowIfNull(loaderType);
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        if (!typeof(IFileLoader).IsAssignableFrom(loaderType))
+        {
+            throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
+        }
+
+        var loader = EnsureLoader(loaderType);
+        return loader.LoadSingleAsync(filePath);
     }
 
     public void Dispose()
@@ -80,4 +115,122 @@ public class FileLoaderService : IFileLoaderService
 
     public Task StopAsync()
         => Task.CompletedTask;
+
+    private IFileLoader EnsureLoader(Type loaderType)
+    {
+        foreach (var loader in _fileLoaders)
+        {
+            if (loader.GetType() == loaderType)
+            {
+                return loader;
+            }
+        }
+
+        AddFileLoader(loaderType);
+
+        foreach (var loader in _fileLoaders)
+        {
+            if (loader.GetType() == loaderType)
+            {
+                return loader;
+            }
+        }
+
+        throw new InvalidOperationException($"Unable to resolve loader '{loaderType.FullName}'.");
+    }
+
+    private Type? ResolveLoaderTypeByFilePath(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        if (!string.Equals(Path.GetExtension(filePath), ".json", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        var normalizedPath = NormalizePath(filePath);
+
+        if (IsUnderDirectory(normalizedPath, "templates", "items"))
+        {
+            return typeof(ItemTemplateLoader);
+        }
+
+        if (IsUnderDirectory(normalizedPath, "templates", "mobiles"))
+        {
+            return typeof(MobileTemplateLoader);
+        }
+
+        if (IsUnderDirectory(normalizedPath, "templates", "loot"))
+        {
+            return typeof(LootTemplateLoader);
+        }
+
+        if (IsUnderDirectory(normalizedPath, "templates", "factions"))
+        {
+            return typeof(FactionTemplateLoader);
+        }
+
+        if (IsUnderDirectory(normalizedPath, "templates", "sell_profiles"))
+        {
+            return typeof(SellProfileTemplateLoader);
+        }
+
+        if (IsUnderDirectory(normalizedPath, "data", "spawns"))
+        {
+            return typeof(SpawnsDataLoader);
+        }
+
+        return null;
+    }
+
+    private bool IsUnderDirectory(string normalizedPath, string rootDirectoryName, string childDirectoryName)
+    {
+        if (_directoriesConfig is not null)
+        {
+            var templatesDirectory = GetAbsoluteDirectory(_directoriesConfig[rootDirectoryName], childDirectoryName);
+
+            if (normalizedPath.StartsWith(templatesDirectory, StringComparison.OrdinalIgnoreCase)
+                && (normalizedPath.Length == templatesDirectory.Length
+                    || normalizedPath[templatesDirectory.Length] == '/'))
+            {
+                return true;
+            }
+        }
+
+        return HasFolderChain(normalizedPath, rootDirectoryName, childDirectoryName);
+    }
+
+    private static string GetAbsoluteDirectory(string rootDirectory, string childDirectoryName)
+    {
+        var directoryPath = Path.GetFullPath(Path.Combine(rootDirectory, childDirectoryName));
+        var normalized = NormalizePath(directoryPath);
+
+        return normalized.EndsWith('/') ? normalized : normalized + '/';
+    }
+
+    private static bool HasFolderChain(string normalizedPath, string first, string second)
+    {
+        var segments = normalizedPath.Split(
+            '/',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries
+        );
+
+        for (var i = 0; i < segments.Length - 1; i++)
+        {
+            if (string.Equals(segments[i], first, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(segments[i + 1], second, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static string NormalizePath(string path)
+    {
+        return Path.GetFullPath(path)
+                   .Replace(Path.DirectorySeparatorChar, '/')
+                   .Replace(Path.AltDirectorySeparatorChar, '/');
+    }
 }

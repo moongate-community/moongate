@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.gargoyle_enforcer",
+    "name": "GargoyleEnforcer",
+    "category": "loot",
+    "description": "Creature-specific loot for GargoyleEnforcer.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gargoyles_pickaxe",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

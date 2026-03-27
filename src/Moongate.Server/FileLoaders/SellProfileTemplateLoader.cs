@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
@@ -19,6 +20,7 @@ public sealed class SellProfileTemplateLoader : IFileLoader
     private readonly ILogger _logger = Log.ForContext<SellProfileTemplateLoader>();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
+    private readonly Dictionary<string, string> _templateFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public SellProfileTemplateLoader(
         DirectoriesConfig directoriesConfig,
@@ -49,29 +51,14 @@ public sealed class SellProfileTemplateLoader : IFileLoader
             return Task.CompletedTask;
         }
 
-        _sellProfileTemplateService.Clear();
-        var allProfiles = new List<SellProfileTemplateDefinition>();
+        _templateFileContents.Clear();
 
         foreach (var templateFile in templateFiles)
         {
-            SellProfileTemplateDefinitionBase[] templates;
-
-            try
-            {
-                templates = JsonUtils.DeserializeFromFile<SellProfileTemplateDefinitionBase[]>(
-                    templateFile,
-                    MoongateUOTemplateJsonContext.Default
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Failed to load sell profile template file {TemplateFile}", templateFile);
-
-                throw;
-            }
-
-            allProfiles.AddRange(templates.OfType<SellProfileTemplateDefinition>());
+            _templateFileContents[NormalizePath(templateFile)] = File.ReadAllText(templateFile);
         }
+
+        var allProfiles = RebuildProfilesFromCache();
 
         _sellProfileTemplateService.UpsertRange(allProfiles);
 
@@ -83,4 +70,57 @@ public sealed class SellProfileTemplateLoader : IFileLoader
 
         return Task.CompletedTask;
     }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        _templateFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+        var allProfiles = RebuildProfilesFromCache();
+
+        _sellProfileTemplateService.Clear();
+        _sellProfileTemplateService.UpsertRange(allProfiles);
+
+        _logger.Information("Reloaded sell profile template file {TemplateFile}", normalizedPath);
+
+        return Task.CompletedTask;
+    }
+
+    private List<SellProfileTemplateDefinition> RebuildProfilesFromCache()
+    {
+        var allProfiles = new List<SellProfileTemplateDefinition>();
+
+        foreach (var (templateFile, json) in _templateFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            SellProfileTemplateDefinitionBase[] templates;
+
+            try
+            {
+                templates = Deserialize<SellProfileTemplateDefinitionBase[]>(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load sell profile template file {TemplateFile}", templateFile);
+
+                throw;
+            }
+
+            allProfiles.AddRange(templates.OfType<SellProfileTemplateDefinition>());
+        }
+
+        return allProfiles;
+    }
+
+    private static T Deserialize<T>(string json)
+    {
+        var result = JsonSerializer.Deserialize(json, MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(T)));
+
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
+    }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }

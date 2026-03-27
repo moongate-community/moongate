@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "pack_horse_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO PackHorse.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 82,
+    "dexterity": 45,
+    "intelligence": 8,
+    "hits": 70,
+    "maxHits": 70,
+    "mana": 0,
+    "stamina": 90,
+    "minDamage": 5,
+    "maxDamage": 11,
+    "armorRating": 16,
+    "fame": 0,
+    "karma": 200,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 366,
+      "Wrestling": 366
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 12,
+      "cold": 22,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a pack horse",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0123"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

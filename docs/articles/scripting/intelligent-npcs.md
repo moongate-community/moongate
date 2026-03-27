@@ -97,7 +97,7 @@ function lilly.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y
     npc:say("hello to you, " .. speaker.name .. "!")
 end
 
-function lilly.brain_loop(npc_id)
+function lilly.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
         if npc ~= nil then

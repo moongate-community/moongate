@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "sand_vortex_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SandVortex.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 108,
+    "dexterity": 183,
+    "intelligence": 88,
+    "hits": 56,
+    "maxHits": 56,
+    "minDamage": 3,
+    "maxDamage": 16,
+    "armorRating": 28,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.meager",
+      "creature.sand_vortex"
+    ],
+    "sounds": {
+      "Idle": 263,
+      "StartAttack": 264,
+      "Attack": 265,
+      "Defend": 266,
+      "Die": 267
+    },
+    "resistances": {
+      "physical": 85,
+      "fire": 65,
+      "cold": 65,
+      "poison": 65,
+      "energy": 65
+    },
+    "damageTypes": {
+      "physical": 90,
+      "fire": 10
+    },
+    "title": "a sand vortex",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0316"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

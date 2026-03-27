@@ -20,7 +20,7 @@ function lilly.on_spawn(npc_id, _ctx)
     ensure_ai_ready(npc)
 end
 
-function lilly.brain_loop(npc_id)
+function lilly.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
         if ensure_ai_ready(npc) then

@@ -44,7 +44,7 @@ Provides a catalog of named locations (cities, dungeons, landmarks). Used by the
 
 Manages mob spawn definitions. Spawn entries define mobile templates, locations, counts, and respawn intervals.
 
-Current status: spawn definition import is in place, but the NPC template migration from ServUO/RunUO/ModernUO is still incomplete. Runtime spawners therefore currently materialize `generic_npc` as the spawned mobile fallback.
+Spawn definitions preserve source template names from imported data. The runtime still keeps `generic_npc` as a safety fallback when a spawn entry points at a missing Moongate mobile template, but the normal ModernUO NPC, animal, and monster paths now resolve to dedicated generated templates.
 
 Spawn definitions currently support two runtime kinds through the JSON `type` field:
 
@@ -96,6 +96,10 @@ moongate_data/
 │   │   ├── base/           (doors, signs, spawners, teleports, static)
 │   │   └── modernuo/       (35+ item definition files)
 │   ├── mobiles/
+│   │   ├── animals/
+│   │   ├── monsters/
+│   │   ├── townfolk/
+│   │   ├── vendors/
 │   │   ├── npcs_humans.json
 │   │   └── test_mob.json
 ├── scripts/
@@ -134,7 +138,7 @@ moongate_data/
 }
 ```
 
-At the moment the `entries[].name` values are imported and preserved from source data, but if no matching Moongate mobile template exists yet the runtime spawn path falls back to `generic_npc`.
+The `entries[].name` values are imported and preserved from source data. If a referenced Moongate mobile template is missing, the runtime spawn path still falls back to `generic_npc` instead of failing the spawner.
 
 `type` may be either `Spawner` or `ProximitySpawner`. `initial_spawn` can still force a spawn attempt for both kinds.
 
@@ -169,15 +173,29 @@ Locations use a hierarchical structure: map, category, subcategory, named locati
 {
   "type": "mobile",
   "id": "orione",
-  "body": "0x00C9",
-  "skinHue": 779,
-  "brain": "orion",
+  "ai": {
+    "brain": "orion"
+  },
   "name": "Orione",
-  "title": "a beautiful cat"
+  "title": "a beautiful cat",
+  "variants": [
+    {
+      "name": "default",
+      "weight": 1,
+      "appearance": {
+        "body": "0x00C9",
+        "skinHue": 779
+      },
+      "equipment": []
+    }
+  ]
 }
 ```
 
-The `brain` field links to table `orion`, loaded from `scripts/ai/npcs/orion.lua` through `scripts/ai/init.lua`.
+The `ai.brain` field links to table `orion`, loaded from `scripts/ai/npcs/orion.lua` through `scripts/ai/init.lua`.
+Standard ModernUO-aligned brains can also declare `fightMode`, `rangePerception`, and `rangeFight` inside the same `ai`
+object.
+Appearance and equipment now live inside `variants`, so even a deterministic mobile uses a single-entry variant list.
 
 ### Item Template
 

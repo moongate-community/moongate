@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "brown_bear_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO BrownBear.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 88,
+    "dexterity": 35,
+    "intelligence": 35,
+    "hits": 53,
+    "maxHits": 53,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "armorRating": 24,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 300,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 25,
+      "cold": 17,
+      "poison": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a brown bear",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A7"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

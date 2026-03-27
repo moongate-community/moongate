@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "ice_serpent_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO IceSerpent.",
+    "tags": [
+      "animal"
+    ],
+    "strength": 230,
+    "dexterity": 38,
+    "intelligence": 75,
+    "hits": 138,
+    "maxHits": 138,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 17,
+    "armorRating": 32,
+    "fame": 3500,
+    "karma": -3500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 387,
+      "MagicResist": 325,
+      "Tactics": 775,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.ice_serpent"
+    ],
+    "sounds": {
+      "Idle": 219,
+      "StartAttack": 220,
+      "Attack": 221,
+      "Defend": 222,
+      "Die": 223
+    },
+    "resistances": {
+      "physical": 32,
+      "cold": 85,
+      "poison": 20,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 10,
+      "cold": 90
+    },
+    "title": "a giant ice serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0059"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

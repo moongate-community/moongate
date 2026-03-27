@@ -6,6 +6,14 @@ Creating custom script modules in Moongate v2.
 
 Script modules allow you to expose .NET functionality to Lua scripts. This enables powerful customization without recompiling the server.
 
+If you are starting from zero, do not begin with this reference page. Use:
+
+- [Create Your First Systems](create-your-first-systems.md)
+- [Create Your First Item Script](create-your-first-item-script.md)
+- [Create Your First Scheduled Event](create-your-first-scheduled-event.md)
+- [Create Your First Gump](create-your-first-gump.md)
+- [Create Your First Lua Admin Command](create-your-first-lua-admin-command.md)
+
 ## Built-In Runtime Modules (Current)
 
 The following modules are available in the default server runtime:
@@ -20,6 +28,7 @@ The following modules are available in the default server runtime:
 - `combat`
 - `steering`
 - `perception`
+- `guards`
 - `npc_state`
 - `mobile`
 - `item`
@@ -164,6 +173,15 @@ steering.stop(npcSerial)
 steering.wander(npcSerial, radius)
 ```
 
+`guards` runtime helpers:
+
+```lua
+guards.set_focus(guardSerial, targetSerialOrNil) -- stores or clears the current guard focus
+guards.get_focus(guardSerial)                    -- returns the current focus serial, or nil
+guards.teleport_to_target(guardSerial, targetSerial) -- teleports the guard to the target
+guards.try_reveal(guardSerial, targetSerial)      -- attempts to reveal a hidden target in the same map
+```
+
 `perception` runtime helpers:
 
 ```lua
@@ -172,9 +190,11 @@ perception.in_range(sourceSerial, targetSerial, range)
 perception.find_nearest_enemy(npcSerial, range)
 perception.find_nearest_player_enemy(npcSerial, range)
 perception.find_nearest_friend(npcSerial, range)
+perception.find_best_target(npcSerial, range, fightMode, playersOnly)
 ```
 
 `find_nearest_enemy(...)` and `find_nearest_player_enemy(...)` use viewer-relative AI relation resolution. This means same-faction mobiles are skipped as enemies, guards ignore innocent players, and hostile monsters can still acquire players.
+`find_best_target(...)` uses the supplied fight mode to select the best hostile target in range.
 
 `npc_state` runtime helpers:
 

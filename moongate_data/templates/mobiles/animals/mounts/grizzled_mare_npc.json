@@ -1,0 +1,28 @@
+[
+  {
+    "type": "mobile",
+    "id": "grizzled_mare_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GrizzledMare.",
+    "tags": [
+      "animal"
+    ],
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "title": "a grizzled mare",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0319"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

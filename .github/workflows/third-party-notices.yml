@@ -16,7 +16,13 @@ permissions:
 
 jobs:
   generate-third-party-notices:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v4

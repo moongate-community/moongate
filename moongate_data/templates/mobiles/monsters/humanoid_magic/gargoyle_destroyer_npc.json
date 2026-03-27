@@ -1,0 +1,73 @@
+[
+  {
+    "type": "mobile",
+    "id": "gargoyle_destroyer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GargoyleDestroyer.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 805,
+    "dexterity": 126,
+    "intelligence": 176,
+    "hits": 483,
+    "maxHits": 483,
+    "minDamage": 7,
+    "maxDamage": 14,
+    "armorRating": 50,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 950,
+      "Tactics": 950,
+      "MagicResist": 1402,
+      "Anatomy": 752,
+      "Swords": 950,
+      "Macing": 950,
+      "Fencing": 950,
+      "Magery": 950,
+      "EvalInt": 950,
+      "Meditation": 950
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.gargoyle_destroyer"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 65,
+      "cold": 20,
+      "poison": 20,
+      "energy": 20
+    },
+    "title": "a gargoyle destroyer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02F3"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

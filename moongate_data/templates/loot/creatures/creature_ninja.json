@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ninja",
+    "name": "Ninja",
+    "category": "loot",
+    "description": "Creature-specific loot for Ninja.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 275
+      }
+    ]
+  }
+]

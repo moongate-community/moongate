@@ -101,8 +101,10 @@ public sealed class CombatLuaHookHandlerTests
                 Assert.That(runner.CombatHooks, Has.Count.EqualTo(2));
                 Assert.That(runner.CombatHooks[0].MobileId, Is.EqualTo(attacker.Id));
                 Assert.That(runner.CombatHooks[0].Context.HookType, Is.EqualTo(LuaBrainCombatHookType.Attack));
+                Assert.That(runner.CombatHooks[0].Context.Payload["mobile_id"], Is.EqualTo((uint)attacker.Id));
                 Assert.That(runner.CombatHooks[1].MobileId, Is.EqualTo(defender.Id));
                 Assert.That(runner.CombatHooks[1].Context.HookType, Is.EqualTo(LuaBrainCombatHookType.Attacked));
+                Assert.That(runner.CombatHooks[1].Context.Payload["mobile_id"], Is.EqualTo((uint)defender.Id));
             }
         );
     }
@@ -135,8 +137,12 @@ public sealed class CombatLuaHookHandlerTests
             () =>
             {
                 Assert.That(runner.CombatHooks, Has.Count.EqualTo(2));
+                Assert.That(runner.CombatHooks[0].MobileId, Is.EqualTo(attacker.Id));
                 Assert.That(runner.CombatHooks[0].Context.HookType, Is.EqualTo(LuaBrainCombatHookType.MissedAttack));
+                Assert.That(runner.CombatHooks[0].Context.Payload["mobile_id"], Is.EqualTo((uint)attacker.Id));
+                Assert.That(runner.CombatHooks[1].MobileId, Is.EqualTo(defender.Id));
                 Assert.That(runner.CombatHooks[1].Context.HookType, Is.EqualTo(LuaBrainCombatHookType.MissedByAttack));
+                Assert.That(runner.CombatHooks[1].Context.Payload["mobile_id"], Is.EqualTo((uint)defender.Id));
             }
         );
     }

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ant_lion",
+    "name": "AntLion",
+    "category": "loot",
+    "description": "Creature-specific loot for AntLion.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 3
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

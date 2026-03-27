@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.bowyer",
+    "name": "Bowyer Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Bowyer. SBInfo sources: SBBowyer, SBRangedWeapon, SBSEBowyer.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

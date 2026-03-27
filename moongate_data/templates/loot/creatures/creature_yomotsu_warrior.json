@@ -1,0 +1,57 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.yomotsu_warrior",
+    "name": "YomotsuWarrior",
+    "category": "loot",
+    "description": "Creature-specific loot for YomotsuWarrior.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "green_gourd",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "executioners_axe",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "long_pants",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "short_pants",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "shoes",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "sandals",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "boots",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "thigh_boots",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

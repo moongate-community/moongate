@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "terathan_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO TerathanWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 190,
+    "dexterity": 120,
+    "intelligence": 53,
+    "hits": 114,
+    "maxHits": 114,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 17,
+    "armorRating": 30,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Poisoning": 700,
+      "MagicResist": 675,
+      "Tactics": 900,
+      "Wrestling": 850
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.terathan_warrior"
+    ],
+    "sounds": {
+      "Idle": 589,
+      "StartAttack": 590,
+      "Attack": 591,
+      "Defend": 592,
+      "Die": 593
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 25,
+      "cold": 30,
+      "poison": 35,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a terathan warrior",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0046"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

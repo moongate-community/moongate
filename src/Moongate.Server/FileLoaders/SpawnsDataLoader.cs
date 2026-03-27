@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Json;
 using Moongate.Core.Types;
@@ -33,6 +34,7 @@ public class SpawnsDataLoader : IFileLoader
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly ISpawnsDataService _spawnsDataService;
     private readonly ILogger _logger = Log.ForContext<SpawnsDataLoader>();
+    private readonly Dictionary<string, string> _spawnFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public SpawnsDataLoader(DirectoriesConfig directoriesConfig, ISpawnsDataService spawnsDataService)
     {
@@ -47,24 +49,109 @@ public class SpawnsDataLoader : IFileLoader
         if (!Directory.Exists(rootDirectory))
         {
             _logger.Warning("Spawns directory not found at {Path}.", rootDirectory);
+            _spawnFileContents.Clear();
             _spawnsDataService.SetEntries([]);
 
             return Task.CompletedTask;
         }
 
         var files = Directory.GetFiles(rootDirectory, "*.json", SearchOption.AllDirectories);
-        var entries = new List<SpawnDefinitionEntry>();
+        _spawnFileContents.Clear();
 
         foreach (var filePath in files)
+        {
+            _spawnFileContents[NormalizePath(filePath)] = File.ReadAllText(filePath);
+        }
+
+        var entries = RebuildEntriesFromCache(rootDirectory);
+
+        _spawnsDataService.SetEntries(entries);
+        _logger.Information("Loaded {Count} total spawn definitions from {Path}.", entries.Count, rootDirectory);
+
+        return Task.CompletedTask;
+    }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        var rootDirectory = Path.Combine(_directoriesConfig[DirectoryType.Data], "spawns");
+
+        _spawnFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+
+        var entries = RebuildEntriesFromCache(rootDirectory);
+        _spawnsDataService.SetEntries(entries);
+
+        _logger.Information("Reloaded spawns file {Path}.", normalizedPath);
+
+        return Task.CompletedTask;
+    }
+
+    private static SpawnDefinitionKind ResolveKind(string? rawType)
+        => string.Equals(rawType, "ProximitySpawner", StringComparison.OrdinalIgnoreCase)
+               ? SpawnDefinitionKind.ProximitySpawner
+               : SpawnDefinitionKind.Spawner;
+
+    private static string ResolveSourceGroup(string rootDirectory, string filePath)
+    {
+        var directoryPath = Path.GetDirectoryName(filePath) ?? rootDirectory;
+        var relative = Path.GetRelativePath(rootDirectory, directoryPath);
+
+        return relative == "." ? string.Empty : relative.Replace('\\', '/');
+    }
+
+    private static bool TryParsePoint3D(int[] value, out Point3D location)
+    {
+        if (value.Length < 3)
+        {
+            location = Point3D.Zero;
+
+            return false;
+        }
+
+        location = new(value[0], value[1], value[2]);
+
+        return true;
+    }
+
+    private static bool TryResolveMap(
+        JsonSpawnDefinition spawn,
+        string sourceGroup,
+        out int mapId,
+        out string mapName
+    )
+    {
+        var resolvedMapName = spawn.Map.Trim();
+
+        if (resolvedMapName.Length == 0 && sourceGroup.Length > 0)
+        {
+            resolvedMapName = sourceGroup.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
+        }
+
+        if (MapIdByName.TryGetValue(resolvedMapName, out mapId))
+        {
+            mapName = resolvedMapName;
+
+            return true;
+        }
+
+        mapName = resolvedMapName;
+
+        return false;
+    }
+
+    private List<SpawnDefinitionEntry> RebuildEntriesFromCache(string rootDirectory)
+    {
+        var entries = new List<SpawnDefinitionEntry>();
+
+        foreach (var (filePath, json) in _spawnFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
         {
             JsonSpawnDefinition[] spawns;
 
             try
             {
-                spawns = JsonUtils.DeserializeFromFile<JsonSpawnDefinition[]>(
-                    filePath,
-                    MoongateUOJsonSerializationContext.Default
-                );
+                spawns = Deserialize<JsonSpawnDefinition[]>(json);
             }
             catch (Exception ex)
             {
@@ -131,62 +218,18 @@ public class SpawnsDataLoader : IFileLoader
             _logger.Information("Loaded {Count} spawns from file {File}.", importedFromFile, sourceFile);
         }
 
-        _spawnsDataService.SetEntries(entries);
-        _logger.Information("Loaded {Count} total spawn definitions from {Path}.", entries.Count, rootDirectory);
-
-        return Task.CompletedTask;
+        return entries;
     }
 
-    private static SpawnDefinitionKind ResolveKind(string? rawType)
-        => string.Equals(rawType, "ProximitySpawner", StringComparison.OrdinalIgnoreCase)
-               ? SpawnDefinitionKind.ProximitySpawner
-               : SpawnDefinitionKind.Spawner;
-
-    private static string ResolveSourceGroup(string rootDirectory, string filePath)
+    private static T Deserialize<T>(string json)
     {
-        var directoryPath = Path.GetDirectoryName(filePath) ?? rootDirectory;
-        var relative = Path.GetRelativePath(rootDirectory, directoryPath);
+        var result = JsonSerializer.Deserialize(json, MoongateUOJsonSerializationContext.Default.GetTypeInfo(typeof(T)));
 
-        return relative == "." ? string.Empty : relative.Replace('\\', '/');
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
     }
 
-    private static bool TryParsePoint3D(int[] value, out Point3D location)
-    {
-        if (value.Length < 3)
-        {
-            location = Point3D.Zero;
-
-            return false;
-        }
-
-        location = new(value[0], value[1], value[2]);
-
-        return true;
-    }
-
-    private static bool TryResolveMap(
-        JsonSpawnDefinition spawn,
-        string sourceGroup,
-        out int mapId,
-        out string mapName
-    )
-    {
-        var resolvedMapName = spawn.Map.Trim();
-
-        if (resolvedMapName.Length == 0 && sourceGroup.Length > 0)
-        {
-            resolvedMapName = sourceGroup.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault() ?? string.Empty;
-        }
-
-        if (MapIdByName.TryGetValue(resolvedMapName, out mapId))
-        {
-            mapName = resolvedMapName;
-
-            return true;
-        }
-
-        mapName = resolvedMapName;
-
-        return false;
-    }
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }

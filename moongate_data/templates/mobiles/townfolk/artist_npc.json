@@ -1,0 +1,79 @@
+[
+  {
+    "type": "mobile",
+    "id": "artist_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Artist.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Healing": 520
+    },
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "MiddleTorso",
+            "itemTemplateId": "doublet"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Waist",
+            "itemTemplateId": "half_apron"
+          }
+        ]
+      }
+    ]
+  }
+]

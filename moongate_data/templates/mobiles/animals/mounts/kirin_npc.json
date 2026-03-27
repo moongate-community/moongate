@@ -1,0 +1,72 @@
+[
+  {
+    "type": "mobile",
+    "id": "kirin_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Kirin.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 310,
+    "dexterity": 95,
+    "intelligence": 205,
+    "hits": 200,
+    "maxHits": 200,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "fame": 9000,
+    "karma": 9000,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "evil",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 850,
+      "Magery": 802,
+      "Meditation": 950,
+      "MagicResist": 926,
+      "Tactics": 213,
+      "Wrestling": 865
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.low_scrolls",
+      "loot_pack.potions"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 40,
+      "cold": 30,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 70,
+      "fire": 10,
+      "cold": 10,
+      "energy": 10
+    },
+    "title": "a ki-rin",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0084"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,83 @@
+[
+  {
+    "type": "mobile",
+    "id": "ninja_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Ninja.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Fencing": 720,
+      "Macing": 720,
+      "Ninjitsu": 700,
+      "Parry": 720,
+      "Tactics": 745,
+      "Swords": 745
+    },
+    "lootTables": [
+      "creature.ninja"
+    ],
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Helm",
+            "itemTemplateId": "leather_ninja_hood"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "leather_ninja_pants"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_ninja_jacket"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "ninja_tabi"
+          }
+        ]
+      }
+    ]
+  }
+]

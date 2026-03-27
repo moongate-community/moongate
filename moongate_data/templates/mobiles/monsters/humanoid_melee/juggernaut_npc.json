@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "juggernaut_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Juggernaut.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 350,
+    "dexterity": 60,
+    "intelligence": 75,
+    "hits": 210,
+    "maxHits": 210,
+    "minDamage": 12,
+    "maxDamage": 19,
+    "armorRating": 70,
+    "fame": 12000,
+    "karma": -12000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 950,
+      "MagicResist": 1450,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "creature.juggernaut"
+    ],
+    "resistances": {
+      "physical": 70,
+      "fire": 40,
+      "cold": 40,
+      "poison": 20,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 25,
+      "energy": 25
+    },
+    "title": "a blackthorn juggernaut",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0300"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

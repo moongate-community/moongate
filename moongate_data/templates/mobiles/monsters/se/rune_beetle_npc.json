@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "rune_beetle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RuneBeetle.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 430,
+    "dexterity": 145,
+    "intelligence": 413,
+    "hits": 330,
+    "maxHits": 330,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 15000,
+    "karma": -15000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 1125,
+      "Magery": 1050,
+      "Poisoning": 1300,
+      "MagicResist": 1025,
+      "Tactics": 855,
+      "Wrestling": 738
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.med_scrolls",
+      "creature.rune_beetle"
+    ],
+    "resistances": {
+      "physical": 52,
+      "fire": 42,
+      "cold": 42,
+      "poison": 85,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 20,
+      "poison": 10,
+      "energy": 70
+    },
+    "title": "a rune beetle",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F4"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

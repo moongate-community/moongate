@@ -60,9 +60,23 @@ Use `sellProfileId` in the mobile template:
     "type": "mobile",
     "id": "vendor_test",
     "title": "Vendor",
-    "body": "0x0190",
     "sellProfileId": "vendor.basic",
-    "brain": "vendor_brain"
+    "ai": {
+      "brain": "ai_vendor",
+      "fightMode": "none",
+      "rangePerception": 2,
+      "rangeFight": 1
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190"
+        },
+        "equipment": []
+      }
+    ]
   }
 ]
 ```
@@ -156,7 +170,7 @@ File: `moongate_data/scripts/ai/vendor_brain.lua`
 vendor_brain = {}
 local cliloc = require("common.cliloc_ids")
 
-function vendor_brain.brain_loop(npc_id)
+function vendor_brain.on_think(npc_id)
     while true do
         coroutine.yield(250)
     end

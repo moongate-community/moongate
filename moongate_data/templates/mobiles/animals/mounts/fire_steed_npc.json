@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "fire_steed_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO FireSteed.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 388,
+    "dexterity": 105,
+    "intelligence": 295,
+    "hits": 233,
+    "maxHits": 233,
+    "minDamage": 11,
+    "maxDamage": 30,
+    "fame": 20000,
+    "karma": -20000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 1100
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 35,
+      "fire": 75,
+      "cold": 25,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 20,
+      "fire": 80
+    },
+    "title": "a fire steed",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00BE"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

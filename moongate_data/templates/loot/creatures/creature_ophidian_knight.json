@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ophidian_knight",
+    "name": "OphidianKnight",
+    "category": "loot",
+    "description": "Creature-specific loot for OphidianKnight.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

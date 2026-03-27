@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "forest_ostard_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO ForestOstard.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 132,
+    "dexterity": 65,
+    "intelligence": 8,
+    "hits": 79,
+    "maxHits": 79,
+    "mana": 0,
+    "minDamage": 8,
+    "maxDamage": 14,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 295,
+      "Tactics": 366,
+      "Wrestling": 366
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a forest ostard",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00DB"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

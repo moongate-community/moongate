@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "greater_mongbat_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GreaterMongbat.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 68,
+    "dexterity": 70,
+    "intelligence": 38,
+    "hits": 41,
+    "maxHits": 41,
+    "mana": 38,
+    "stamina": 70,
+    "minDamage": 5,
+    "maxDamage": 7,
+    "armorRating": 10,
+    "fame": 450,
+    "karma": -450,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 225,
+      "Tactics": 425,
+      "Wrestling": 275
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 422,
+      "StartAttack": 423,
+      "Attack": 424,
+      "Defend": 425,
+      "Die": 426
+    },
+    "resistances": {
+      "physical": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a greater mongbat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0027"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

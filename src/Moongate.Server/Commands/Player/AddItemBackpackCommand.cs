@@ -15,7 +15,7 @@ namespace Moongate.Server.Commands.Player;
 /// Spawns an item template and places it in the current player backpack.
 /// </summary>
 [RegisterConsoleCommand(
-    "add_item_backpack|.add_item_backpack",
+    "add_item_backpack",
     "Add an item template to your backpack. Usage: .add_item_backpack <templateId> [amount]",
     CommandSourceType.InGame,
     AccountType.GameMaster

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.alchemist",
+    "name": "Alchemist Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Alchemist. SBInfo sources: SBAlchemist.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

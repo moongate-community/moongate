@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "hind_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Hind.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 36,
+    "dexterity": 62,
+    "intelligence": 32,
+    "hits": 22,
+    "maxHits": 22,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 4,
+    "armorRating": 8,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "resistances": {
+      "physical": 10,
+      "cold": 5
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a hind",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00ED"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

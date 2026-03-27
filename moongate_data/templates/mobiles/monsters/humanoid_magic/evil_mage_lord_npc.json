@@ -1,0 +1,79 @@
+[
+  {
+    "type": "mobile",
+    "id": "evil_mage_lord_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EvilMageLord.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 93,
+    "dexterity": 203,
+    "intelligence": 138,
+    "hits": 56,
+    "maxHits": 56,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 16,
+    "fame": 10500,
+    "karma": -10500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 901,
+      "Magery": 975,
+      "Meditation": 387,
+      "MagicResist": 887,
+      "Tactics": 762,
+      "Wrestling": 501
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls",
+      "creature.evil_mage_lord"
+    ],
+    "resistances": {
+      "physical": 37,
+      "fire": 35,
+      "cold": 35,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "robe",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "wizards_hat",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.orc",
+    "name": "Orc",
+    "category": "loot",
+    "description": "Creature-specific loot for Orc.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "thigh_boots",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

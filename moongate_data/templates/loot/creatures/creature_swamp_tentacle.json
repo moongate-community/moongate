@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.swamp_tentacle",
+    "name": "SwampTentacle",
+    "category": "loot",
+    "description": "Creature-specific loot for SwampTentacle.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

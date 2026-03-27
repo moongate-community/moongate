@@ -1,0 +1,29 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_wisp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalWisp.",
+    "tags": [
+      "monster"
+    ],
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "title": "a crystal wisp",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x003A",
+          "skinHue": "0x0482"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.scribe",
+    "name": "Scribe Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Scribe. SBInfo sources: SBScribe.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

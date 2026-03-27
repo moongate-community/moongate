@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "hell_steed_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO HellSteed.",
+    "tags": [
+      "animal"
+    ],
+    "strength": 205,
+    "dexterity": 105,
+    "intelligence": 108,
+    "hits": 210,
+    "maxHits": 210,
+    "minDamage": 20,
+    "maxDamage": 24,
+    "fame": 0,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 1000,
+      "Wrestling": 1000
+    },
+    "resistances": {
+      "physical": 65,
+      "fire": 90,
+      "poison": 100
+    },
+    "damageTypes": {
+      "physical": 25,
+      "fire": 75
+    },
+    "title": "a hellsteed",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0319"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

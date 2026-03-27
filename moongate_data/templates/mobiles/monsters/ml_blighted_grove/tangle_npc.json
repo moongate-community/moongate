@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "tangle_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Tangle.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 905,
+    "dexterity": 66,
+    "intelligence": 52,
+    "hits": 2600,
+    "maxHits": 2600,
+    "mana": 10,
+    "minDamage": 15,
+    "maxDamage": 28,
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 861,
+      "Tactics": 955,
+      "MagicResist": 1112
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 53,
+      "fire": 41,
+      "cold": 32,
+      "poison": 65,
+      "energy": 43
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "title": "Tangle",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030C",
+          "skinHue": "0x0021"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

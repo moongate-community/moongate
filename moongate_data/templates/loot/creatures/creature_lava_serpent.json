@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.lava_serpent",
+    "name": "LavaSerpent",
+    "category": "loot",
+    "description": "Creature-specific loot for LavaSerpent.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "sulfurous_ash",
+        "chance": 1.0,
+        "amount": 3
+      },
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

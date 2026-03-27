@@ -236,6 +236,7 @@ whole plugin folder with `manifest.json` and `bin/`.
 
 After the first plugin is working, move on to:
 
+- [Create Your First C# Admin Command](create-your-first-csharp-admin-command.md) for a focused command tutorial on top of the plugin path
 - [Plugin System](plugins.md) for lifecycle and dependency model details
 - [Custom Persisted Entities](../persistence/custom-persisted-entities.md) if the plugin stores its own entities
 - [Console Commands](../operations/console-commands.md) for command design patterns

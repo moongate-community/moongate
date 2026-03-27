@@ -9,10 +9,6 @@
       "human",
       "base"
     ],
-    "body": "0x0190",
-    "skinHue": "hue(1002:1058)",
-    "hairHue": "hue(1102:1149)",
-    "hairStyle": 8251,
     "strength": 50,
     "dexterity": 50,
     "intelligence": 50,
@@ -20,52 +16,37 @@
     "mana": 50,
     "stamina": 50,
     "notoriety": "Innocent",
-    "brain": "None",
-    "fixedEquipment": [
+    "ai": {
+      "brain": "none",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "title": "a human",
+    "variants": [
       {
-        "itemTemplateId": "shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "shoes",
-        "layer": "Shoes"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "shirt",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "long_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "shoes",
+            "layer": "Shoes"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a human"
-  },
-  {
-    "type": "mobile",
-    "id": "banker_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Town banker NPC.",
-    "tags": [
-      "npc",
-      "banker",
-      "town"
-    ],
-    "brain": "town_banker",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "shoes",
-        "layer": "Shoes"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a banker"
+    ]
   },
   {
     "type": "mobile",
@@ -78,64 +59,31 @@
       "generic",
       "human"
     ],
-    "brain": "None",
-    "fixedEquipment": [
+    "title": "a generic npc",
+    "variants": [
       {
-        "itemTemplateId": "shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "shoes",
-        "layer": "Shoes"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "shirt",
+            "layer": "Shirt"
+          },
+          {
+            "itemTemplateId": "long_pants",
+            "layer": "Pants"
+          },
+          {
+            "itemTemplateId": "shoes",
+            "layer": "Shoes"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a generic npc"
-  },
-  {
-    "type": "mobile",
-    "id": "blacksmith_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Town blacksmith NPC.",
-    "tags": [
-      "npc",
-      "blacksmith",
-      "town"
-    ],
-    "strength": 80,
-    "dexterity": 60,
-    "intelligence": 45,
-    "hits": 80,
-    "brain": "town_blacksmith",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "fancy_shirt",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "long_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "half_apron",
-        "layer": "Waist"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "hatchet",
-        "layer": "OneHanded"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a blacksmith"
+    ]
   },
   {
     "type": "mobile",
@@ -150,54 +98,30 @@
     ],
     "intelligence": 80,
     "mana": 80,
-    "brain": "town_healer",
-    "fixedEquipment": [
+    "ai": {
+      "brain": "town_healer"
+    },
+    "title": "a healer",
+    "variants": [
       {
-        "itemTemplateId": "robe",
-        "layer": "OuterTorso"
-      },
-      {
-        "itemTemplateId": "sandals",
-        "layer": "Shoes"
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "robe",
+            "layer": "OuterTorso"
+          },
+          {
+            "itemTemplateId": "sandals",
+            "layer": "Shoes"
+          }
+        ]
       }
-    ],
-    "randomEquipment": [],
-    "title": "a healer"
-  },
-  {
-    "type": "mobile",
-    "id": "thief_npc",
-    "base_mobile": "base_human_npc",
-    "category": "npc",
-    "description": "Urban rogue NPC for guards/crime tests.",
-    "tags": [
-      "npc",
-      "thief",
-      "urban"
-    ],
-    "dexterity": 75,
-    "notoriety": "Criminal",
-    "brain": "town_thief",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "doublet",
-        "layer": "Shirt"
-      },
-      {
-        "itemTemplateId": "short_pants",
-        "layer": "Pants"
-      },
-      {
-        "itemTemplateId": "boots",
-        "layer": "Shoes"
-      },
-      {
-        "itemTemplateId": "dagger",
-        "layer": "OneHanded"
-      }
-    ],
-    "randomEquipment": [],
-    "title": "a suspicious man"
+    ]
   },
   {
     "type": "mobile",
@@ -211,24 +135,34 @@
       "noble",
       "human"
     ],
-    "body": "0x0191",
-    "brain": "lilly",
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "backpack",
-        "layer": "Backpack"
-      },
-      {
-        "itemTemplateId": "queen_gilded_dress",
-        "layer": "OuterTorso"
-      },
-      {
-        "itemTemplateId": "queen_boots",
-        "layer": "Shoes"
-      }
-    ],
-    "randomEquipment": [],
+    "ai": {
+      "brain": "lilly"
+    },
     "title": "the Noble",
-    "name": "Lilly"
+    "name": "Lilly",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)",
+          "hairHue": "hue(1102:1149)",
+          "hairStyle": 8251
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "backpack",
+            "layer": "Backpack"
+          },
+          {
+            "itemTemplateId": "queen_gilded_dress",
+            "layer": "OuterTorso"
+          },
+          {
+            "itemTemplateId": "queen_boots",
+            "layer": "Shoes"
+          }
+        ]
+      }
+    ]
   }
 ]

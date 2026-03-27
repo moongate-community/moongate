@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.juggernaut",
+    "name": "Juggernaut",
+    "category": "loot",
+    "description": "Creature-specific loot for Juggernaut.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "power_crystal",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "clockwork_assembly",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

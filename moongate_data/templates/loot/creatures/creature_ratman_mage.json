@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.ratman_mage",
+    "name": "RatmanMage",
+    "category": "loot",
+    "description": "Creature-specific loot for RatmanMage.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 6
+      }
+    ]
+  }
+]

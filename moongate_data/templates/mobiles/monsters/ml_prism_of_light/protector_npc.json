@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "protector_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Protector.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 750,
+    "dexterity": 125,
+    "intelligence": 62,
+    "hits": 400,
+    "maxHits": 400,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 850,
+      "Tactics": 900,
+      "MagicResist": 600,
+      "Anatomy": 850
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 35,
+      "fire": 25,
+      "cold": 37,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a Protector",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "thigh_boots"
+          }
+        ]
+      }
+    ]
+  }
+]

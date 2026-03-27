@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.giant_spider",
+    "name": "GiantSpider",
+    "category": "loot",
+    "description": "Creature-specific loot for GiantSpider.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "spiders_silk",
+        "chance": 1.0,
+        "amount": 5
+      }
+    ]
+  }
+]

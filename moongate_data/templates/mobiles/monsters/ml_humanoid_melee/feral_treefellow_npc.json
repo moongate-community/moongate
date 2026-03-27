@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "feral_treefellow_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FeralTreefellow.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 1475,
+    "dexterity": 425,
+    "intelligence": 775,
+    "hits": 1245,
+    "maxHits": 1245,
+    "minDamage": 26,
+    "maxDamage": 35,
+    "armorRating": 24,
+    "fame": 12500,
+    "karma": 12500,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "evil",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 475,
+      "Tactics": 775,
+      "Wrestling": 750
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "resistances": {
+      "physical": 65,
+      "cold": 75,
+      "poison": 65,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a feral treefellow",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x012D"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

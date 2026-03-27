@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "guile_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Guile.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 133,
+    "dexterity": 305,
+    "intelligence": 477,
+    "hits": 1035,
+    "maxHits": 1035,
+    "mana": 477,
+    "stamina": 305,
+    "minDamage": 14,
+    "maxDamage": 20,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 147,
+      "Tactics": 1168,
+      "MagicResist": 1513,
+      "Magery": 1142,
+      "EvalInt": 1142,
+      "Meditation": 1146
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 85,
+      "fire": 44,
+      "cold": 43,
+      "poison": 46,
+      "energy": 48
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Guile",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0108"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

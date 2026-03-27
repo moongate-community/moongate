@@ -1,0 +1,27 @@
+[
+  {
+    "type": "mobile",
+    "id": "sl_war_horse_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SLWarHorse.",
+    "tags": [
+      "animal"
+    ],
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0079"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "type": "mobile",
+    "id": "jack_rabbit_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO JackRabbit.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 15,
+    "dexterity": 25,
+    "intelligence": 5,
+    "hits": 9,
+    "maxHits": 9,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 2,
+    "armorRating": 4,
+    "fame": 150,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "resistances": {
+      "physical": 3
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a jack rabbit",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00CD",
+          "skinHue": "0x01BB"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

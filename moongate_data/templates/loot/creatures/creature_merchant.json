@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.merchant",
+    "name": "Merchant",
+    "category": "loot",
+    "description": "Creature-specific loot for Merchant.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 225
+      }
+    ]
+  }
+]

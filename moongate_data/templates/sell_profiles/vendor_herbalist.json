@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.herbalist",
+    "name": "Herbalist Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Herbalist. SBInfo sources: SBHerbalist.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

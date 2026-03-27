@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.leviathan",
+    "name": "Leviathan",
+    "category": "loot",
+    "description": "Creature-specific loot for Leviathan.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "message_in_a_bottle",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

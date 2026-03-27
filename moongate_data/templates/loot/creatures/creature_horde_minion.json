@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.horde_minion",
+    "name": "HordeMinion",
+    "category": "loot",
+    "description": "Creature-specific loot for HordeMinion.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

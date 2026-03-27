@@ -1,0 +1,97 @@
+[
+  {
+    "type": "mobile",
+    "id": "chaos_dragoon_elite_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ChaosDragoonElite.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 313,
+    "dexterity": 78,
+    "intelligence": 138,
+    "hits": 313,
+    "maxHits": 313,
+    "minDamage": 29,
+    "maxDamage": 34,
+    "fame": 8000,
+    "karma": -8000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Tactics": 900,
+      "MagicResist": 1050,
+      "Anatomy": 900,
+      "Magery": 925,
+      "EvalInt": 925,
+      "Swords": 837,
+      "Fencing": 925,
+      "Macing": 925
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.gems"
+    ],
+    "resistances": {
+      "physical": 50,
+      "fire": 20,
+      "cold": 50,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a chaos dragoon elite",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "dragon_chest"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "dragon_legs"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "dragon_arms"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "dragon_gloves"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "dragon_helm"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "chaos_shield"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "0x0455"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.enslaved_gargoyle",
+    "name": "EnslavedGargoyle",
+    "category": "loot",
+    "description": "Creature-specific loot for EnslavedGargoyle.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gargoyles_pickaxe",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "strong_mongbat_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO StrongMongbat.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 8,
+    "dexterity": 32,
+    "intelligence": 10,
+    "hits": 5,
+    "maxHits": 5,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 7,
+    "armorRating": 10,
+    "fame": 150,
+    "karma": -150,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 225,
+      "Tactics": 425,
+      "Wrestling": 275
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 422,
+      "StartAttack": 423,
+      "Attack": 424,
+      "Defend": 425,
+      "Die": 426
+    },
+    "resistances": {
+      "physical": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a mongbat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0027"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

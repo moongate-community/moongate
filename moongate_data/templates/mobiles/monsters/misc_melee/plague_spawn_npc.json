@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "plague_spawn_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO PlagueSpawn.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 250,
+    "dexterity": 80,
+    "intelligence": 18,
+    "hits": 150,
+    "maxHits": 150,
+    "minDamage": 11,
+    "maxDamage": 17,
+    "armorRating": 20,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.poor",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 268,
+      "StartAttack": 269,
+      "Attack": 270,
+      "Defend": 271,
+      "Die": 272
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 35,
+      "cold": 30,
+      "poison": 70,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a plague spawn",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0033"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

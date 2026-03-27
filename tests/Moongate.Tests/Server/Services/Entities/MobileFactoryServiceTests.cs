@@ -3,7 +3,6 @@ using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Spans;
 using Moongate.Server.Data.Internal.Scripting;
-using Moongate.Server.FileLoaders;
 using Moongate.Server.Services.Entities;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
@@ -60,10 +59,7 @@ public class MobileFactoryServiceTests
                 Name = "Param Mobile",
                 Category = "test",
                 Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 Params = new()
                 {
                     ["title_suffix"] = new() { Type = ItemTemplateParamType.String, Value = "the brave" },
@@ -91,6 +87,76 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldProjectAiValuesToBrainIdAndCustomProperties()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "ai_mobile",
+                Name = "Ai Mobile",
+                Category = "test",
+                Description = "test",
+                Ai = new()
+                {
+                    Brain = "orc_warrior",
+                    FightMode = "strongest",
+                    RangePerception = 12,
+                    RangeFight = 0
+                },
+                Variants = [CreateVariant(0x0190, 0, 0, 0)]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("ai_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.BrainId, Is.EqualTo("orc_warrior"));
+                Assert.That(mobile.TryGetCustomString(MobileCustomParamKeys.Ai.FightMode, out var fightMode), Is.True);
+                Assert.That(fightMode, Is.EqualTo("strongest"));
+                Assert.That(
+                    mobile.TryGetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, out var rangePerception),
+                    Is.True
+                );
+                Assert.That(rangePerception, Is.EqualTo(12));
+                Assert.That(
+                    mobile.TryGetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, out var rangeFight),
+                    Is.True
+                );
+                Assert.That(rangeFight, Is.EqualTo(0));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateHasNoVariants()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "variantless_mobile",
+                Name = "Variantless Mobile",
+                Category = "test",
+                Description = "test"
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate("variantless_mobile"),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("has no variants")
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldClampHits_WhenMaxHitsIsLower()
     {
         using var temp = new TempDirectory();
@@ -103,10 +169,7 @@ public class MobileFactoryServiceTests
                 Name = "Boss",
                 Category = "boss",
                 Description = "boss",
-                Body = 0x0011,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0011, 0, 0, 0)],
                 Hits = 120,
                 MaxHits = 80
             }
@@ -138,10 +201,7 @@ public class MobileFactoryServiceTests
                 Name = "Sound Mobile",
                 Category = "test",
                 Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 Sounds = new()
                 {
                     [MobileSoundType.StartAttack] = 0x0135,
@@ -178,10 +238,7 @@ public class MobileFactoryServiceTests
                 Name = "Mage",
                 Category = "human",
                 Description = "mage",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 Skills = new(StringComparer.OrdinalIgnoreCase)
                 {
                     ["magery"] = 750,
@@ -220,10 +277,7 @@ public class MobileFactoryServiceTests
                 Name = "Orc Warrior",
                 Category = "orc",
                 Description = "orc",
-                Body = 0x0011,
-                SkinHue = HueSpec.FromValue(1000),
-                HairHue = HueSpec.FromValue(1109),
-                HairStyle = 8251,
+                Variants = [CreateVariant(0x0011, 1000, 1109, 8251)],
                 Strength = 70,
                 Dexterity = 60,
                 Intelligence = 20,
@@ -271,6 +325,71 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldSelectWeightedVariant_AndStoreItsIndex()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "weighted_mobile",
+                Name = "Weighted Mobile",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    CreateVariant(0x0190, 0x0455, 0x0100, 8251, name: "light", weight: 0),
+                    CreateVariant(0x0191, 0x0123, 0x0200, 8252, name: "heavy", weight: 5)
+                ]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("weighted_mobile");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.TryGetCustomInteger("mobile_variant_index", out var selectedIndex), Is.True);
+                Assert.That(selectedIndex, Is.EqualTo(1));
+                Assert.That((int)mobile.Body, Is.EqualTo(0x0191));
+                Assert.That(mobile.SkinHue, Is.EqualTo(0x0123));
+                Assert.That(mobile.HairHue, Is.EqualTo(0x0200));
+                Assert.That(mobile.HairStyle, Is.EqualTo(8252));
+            }
+        );
+    }
+
+    [Test]
+    public async Task CreateMobileFromTemplate_ShouldThrow_WhenAllVariantWeightsAreNonPositive()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "unselectable_mobile",
+                Name = "Unselectable Mobile",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    CreateVariant(0x0190, 0x0455, 0x0100, 8251, name: "first", weight: 0),
+                    CreateVariant(0x0191, 0x0123, 0x0200, 8252, name: "second", weight: 0)
+                ]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        Assert.That(
+            () => service.CreateMobileFromTemplate("unselectable_mobile"),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("has no selectable variants")
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldThrow_WhenSerialParamIsInvalid()
     {
         using var temp = new TempDirectory();
@@ -283,10 +402,7 @@ public class MobileFactoryServiceTests
                 Name = "Invalid Serial Param Mobile",
                 Category = "test",
                 Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 Params = new()
                 {
                     ["owner_id"] = new() { Type = ItemTemplateParamType.Serial, Value = "bad-serial" }
@@ -346,10 +462,7 @@ public class MobileFactoryServiceTests
                 Title = string.Empty,
                 Category = "orc",
                 Description = "orc",
-                Body = 0x0011,
-                SkinHue = HueSpec.FromValue(1000),
-                HairHue = HueSpec.FromValue(1109),
-                HairStyle = 8251
+                Variants = [CreateVariant(0x0011, 1000, 1109, 8251)]
             }
         );
         var nameService = new TestNameService
@@ -376,10 +489,7 @@ public class MobileFactoryServiceTests
                 Name = "Human Vendor",
                 Category = "human",
                 Description = "vendor",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(1000),
-                HairHue = HueSpec.FromValue(1109),
-                HairStyle = 8251
+                Variants = [CreateVariant(0x0190, 1000, 1109, 8251)]
             }
         );
         var nameService = new TestNameService
@@ -406,10 +516,7 @@ public class MobileFactoryServiceTests
                 Name = "Wanderer",
                 Category = "human",
                 Description = "wanderer",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0
+                Variants = [CreateVariant(0x0190, 0, 0, 0)]
             }
         );
         var nameService = new TestNameService();
@@ -433,10 +540,7 @@ public class MobileFactoryServiceTests
                 Name = "Vendor",
                 Category = "human",
                 Description = "vendor",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 SellProfileId = "vendor.blacksmith"
             }
         );
@@ -483,10 +587,7 @@ public class MobileFactoryServiceTests
                 Name = "Vendor",
                 Category = "human",
                 Description = "vendor",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 SellProfileId = "vendor.missing"
             }
         );
@@ -518,10 +619,7 @@ public class MobileFactoryServiceTests
                 Name = "Faction Guard",
                 Category = "guards",
                 Description = "guard",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 DefaultFactionId = "true_britannians"
             }
         );
@@ -533,39 +631,57 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_WhenRepositoryGuardTemplateDefinesFaction_ShouldProjectFactionIdToRuntime()
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesFaction_ShouldProjectFactionIdToRuntime()
     {
-        var repositoryRoot = ResolveRepositoryRoot();
-        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
-        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
         var templateService = new MobileTemplateService();
-        var loader = new MobileTemplateLoader(directoriesConfig, templateService);
-
-        await loader.LoadAsync();
+        templateService.Upsert(
+            new()
+            {
+                Id = "faction_guard",
+                Name = "Faction Guard",
+                Category = "guards",
+                Description = "guard",
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
+                DefaultFactionId = "true_britannians"
+            }
+        );
 
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
         var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
 
-        var mobile = service.CreateMobileFromTemplate("warrior_guard_male_npc");
+        var mobile = service.CreateMobileFromTemplate("faction_guard");
 
         Assert.That(mobile.FactionId, Is.EqualTo("true_britannians"));
     }
 
     [Test]
-    public async Task CreateMobileFromTemplate_WhenRepositoryVendorTemplateDefinesSellProfileAndFaction_ShouldProjectBothToRuntime()
+    public async Task CreateMobileFromTemplate_WhenTemplateDefinesSellProfileAndFaction_ShouldProjectBothToRuntime()
     {
-        var repositoryRoot = ResolveRepositoryRoot();
-        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
-        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
-
         var templateService = new MobileTemplateService();
-        var mobileLoader = new MobileTemplateLoader(directoriesConfig, templateService);
-        await mobileLoader.LoadAsync();
+        templateService.Upsert(
+            new()
+            {
+                Id = "blacksmith_vendor_npc",
+                Name = "Blacksmith Vendor",
+                Category = "guards",
+                Description = "vendor",
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
+                DefaultFactionId = "true_britannians",
+                SellProfileId = "vendor.blacksmith"
+            }
+        );
 
         var sellProfileService = new SellProfileTemplateService();
-        var sellProfileLoader = new SellProfileTemplateLoader(directoriesConfig, sellProfileService);
-        await sellProfileLoader.LoadAsync();
+        sellProfileService.Upsert(
+            new()
+            {
+                Id = "vendor.blacksmith",
+                Name = "Blacksmith Vendor",
+                Category = "vendors",
+                Description = "blacksmith"
+            }
+        );
 
         using var temp = new TempDirectory();
         var persistence = await CreatePersistenceServiceAsync(temp.Path);
@@ -601,10 +717,7 @@ public class MobileFactoryServiceTests
                 Name = "Loot Mobile",
                 Category = "test",
                 Description = "test",
-                Body = 0x0190,
-                SkinHue = HueSpec.FromValue(0),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants = [CreateVariant(0x0190, 0, 0, 0)],
                 LootTables = ["undead.low", "gold.small"]
             }
         );
@@ -647,6 +760,33 @@ public class MobileFactoryServiceTests
             }
         );
     }
+
+    private static MobileVariantTemplate CreateVariant(
+        int body,
+        int skinHue,
+        int hairHue,
+        int hairStyle,
+        int facialHairStyle = 0,
+        int facialHairHue = 0,
+        string? name = null,
+        int weight = 1,
+        IReadOnlyList<MobileEquipmentEntryTemplate>? equipment = null
+    )
+        => new()
+        {
+            Name = name ?? "default",
+            Weight = weight,
+            Appearance = new()
+            {
+                Body = body,
+                SkinHue = HueSpec.FromValue(skinHue),
+                HairHue = HueSpec.FromValue(hairHue),
+                HairStyle = hairStyle,
+                FacialHairStyle = facialHairStyle,
+                FacialHairHue = HueSpec.FromValue(facialHairHue)
+            },
+            Equipment = equipment is null ? [] : [..equipment]
+        };
 
     [SetUp]
     public void SetUp()
@@ -795,20 +935,4 @@ public class MobileFactoryServiceTests
         return persistence;
     }
 
-    private static string ResolveRepositoryRoot()
-    {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (current is not null)
-        {
-            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
-            {
-                return current.FullName;
-            }
-
-            current = current.Parent;
-        }
-
-        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
-    }
 }

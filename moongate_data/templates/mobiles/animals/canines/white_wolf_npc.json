@@ -1,0 +1,71 @@
+[
+  {
+    "type": "mobile",
+    "id": "white_wolf_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO WhiteWolf.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 68,
+    "dexterity": 65,
+    "intelligence": 43,
+    "hits": 41,
+    "maxHits": 41,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 16,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 525,
+      "Wrestling": 525
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 12,
+      "cold": 22,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a white wolf",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0022"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0025"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

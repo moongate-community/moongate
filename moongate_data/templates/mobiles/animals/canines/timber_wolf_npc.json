@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "timber_wolf_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO TimberWolf.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 68,
+    "dexterity": 65,
+    "intelligence": 18,
+    "hits": 41,
+    "maxHits": 41,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 9,
+    "armorRating": 16,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 363,
+      "Tactics": 400,
+      "Wrestling": 500
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "cold": 12,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a timber wolf",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00E1"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

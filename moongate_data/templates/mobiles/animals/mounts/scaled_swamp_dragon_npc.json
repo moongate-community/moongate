@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "scaled_swamp_dragon_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO ScaledSwampDragon.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 250,
+    "dexterity": 75,
+    "intelligence": 80,
+    "hits": 150,
+    "maxHits": 150,
+    "minDamage": 3,
+    "maxDamage": 4,
+    "fame": 2000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 500,
+      "MagicResist": 500,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 25,
+      "cold": 30,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 75,
+      "poison": 25
+    },
+    "title": "a swamp dragon",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x031F"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,58 @@
+[
+  {
+    "type": "mobile",
+    "id": "horse_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Horse.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 60,
+    "dexterity": 65,
+    "intelligence": 8,
+    "hits": 36,
+    "maxHits": 36,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 4,
+    "fame": 300,
+    "karma": 300,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 366,
+      "Wrestling": 366
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a horse",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00E2"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.tavern_keeper",
+    "name": "TavernKeeper Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for TavernKeeper. SBInfo sources: SBTavernKeeper.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

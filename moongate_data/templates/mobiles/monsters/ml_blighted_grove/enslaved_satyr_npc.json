@@ -1,0 +1,28 @@
+[
+  {
+    "type": "mobile",
+    "id": "enslaved_satyr_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EnslavedSatyr.",
+    "tags": [
+      "monster"
+    ],
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "title": "an enslaved satyr",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010F"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

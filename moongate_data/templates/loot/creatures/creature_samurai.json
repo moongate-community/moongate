@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.samurai",
+    "name": "Samurai",
+    "category": "loot",
+    "description": "Creature-specific loot for Samurai.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 275
+      }
+    ]
+  }
+]

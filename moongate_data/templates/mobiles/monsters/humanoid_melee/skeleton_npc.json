@@ -1,0 +1,73 @@
+[
+  {
+    "type": "mobile",
+    "id": "skeleton_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Skeleton.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 68,
+    "dexterity": 65,
+    "intelligence": 28,
+    "hits": 41,
+    "maxHits": 41,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 16,
+    "fame": 450,
+    "karma": -450,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 525,
+      "Tactics": 525,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.poor",
+      "creature.skeleton"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "cold": 32,
+      "poison": 30,
+      "energy": 10
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a skeleton",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0032"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0038"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

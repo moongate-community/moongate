@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "terathan_drone_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO TerathanDrone.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 50,
+    "dexterity": 120,
+    "intelligence": 33,
+    "hits": 30,
+    "maxHits": 30,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 12,
+    "armorRating": 24,
+    "fame": 2000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Poisoning": 500,
+      "MagicResist": 375,
+      "Tactics": 400,
+      "Wrestling": 450
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.terathan_drone"
+    ],
+    "sounds": {
+      "Idle": 594,
+      "StartAttack": 595,
+      "Attack": 596,
+      "Defend": 597,
+      "Die": 598
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 15,
+      "cold": 20,
+      "poison": 35,
+      "energy": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a terathan drone",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0047"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

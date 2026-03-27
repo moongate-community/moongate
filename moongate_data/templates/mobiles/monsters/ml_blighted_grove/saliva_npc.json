@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "saliva_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Saliva.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 158,
+    "dexterity": 172,
+    "intelligence": 103,
+    "hits": 625,
+    "maxHits": 625,
+    "minDamage": 20,
+    "maxDamage": 22,
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1176,
+      "Tactics": 1354,
+      "MagicResist": 946
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 47,
+      "fire": 36,
+      "cold": 41,
+      "poison": 44,
+      "energy": 37
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Saliva",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x001E",
+          "skinHue": "0x011E"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

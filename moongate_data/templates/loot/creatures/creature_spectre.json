@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.spectre",
+    "name": "Spectre",
+    "category": "loot",
+    "description": "Creature-specific loot for Spectre.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 10
+      }
+    ]
+  }
+]

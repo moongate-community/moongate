@@ -11,11 +11,92 @@ namespace Moongate.Tests.Server.FileLoaders;
 public class MobileTemplateLoaderTests
 {
     [Test]
-    public async Task LoadAsync_WhenRepositoryContainsGuardTemplates_ShouldLoadDefaultFactionIdAndLootTables()
+    public async Task LoadAsync_WhenRepositoryContainsGeneratedMobiles_ShouldLoadRepresentativeVariantData()
     {
         var repositoryRoot = ResolveRepositoryRoot();
         var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
         var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobileTemplateService.TryGet("gypsy_npc", out var gypsy), Is.True);
+                Assert.That(gypsy, Is.Not.Null);
+                Assert.That(gypsy!.Variants, Is.Not.Empty);
+                Assert.That(gypsy.Variants.Any(static variant => variant.Appearance.Body > 0), Is.True);
+                Assert.That(gypsy.Variants.SelectMany(static variant => variant.Equipment), Is.Not.Empty);
+
+                Assert.That(mobileTemplateService.TryGet("tropical_bird_npc", out var tropicalBird), Is.True);
+                Assert.That(tropicalBird, Is.Not.Null);
+                Assert.That(tropicalBird!.Variants, Has.Count.GreaterThanOrEqualTo(1));
+                Assert.That(tropicalBird.Variants[0].Appearance.Body, Is.GreaterThan(0));
+
+                Assert.That(mobileTemplateService.TryGet("bird_npc", out var bird), Is.True);
+                Assert.That(bird, Is.Not.Null);
+                Assert.That(bird!.Description, Does.Contain("Converted from ModernUO Bird."));
+                Assert.That(tropicalBird.Title, Is.EqualTo("a tropical bird"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task LoadAsync_WhenGuardTemplatesUseBaseMobile_ShouldInheritDefaultFactionIdAndLootTables()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(mobilesDirectory, "guards.json"),
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_guard",
+                "name": "Base Guard",
+                "defaultFactionId": "true_britannians",
+                "lootTables": ["guard.warrior"],
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "mobile",
+                "id": "warrior_guard_male_npc",
+                "base_mobile": "base_guard",
+                "name": "a warrior guard"
+              },
+              {
+                "type": "mobile",
+                "id": "warrior_guard_female_npc",
+                "base_mobile": "base_guard",
+                "name": "a warrior guard"
+              }
+            ]
+            """
+        );
+
         var mobileTemplateService = new MobileTemplateService();
         var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
 
@@ -28,101 +109,92 @@ public class MobileTemplateLoaderTests
                 Assert.That(warriorMale, Is.Not.Null);
                 Assert.That(warriorMale!.DefaultFactionId, Is.EqualTo("true_britannians"));
                 Assert.That(warriorMale.LootTables, Is.EqualTo(new[] { "guard.warrior" }));
+                Assert.That(warriorMale.Variants, Has.Count.EqualTo(1));
+                Assert.That(warriorMale.Variants[0].Appearance.Body, Is.EqualTo(0x0190));
 
                 Assert.That(mobileTemplateService.TryGet("warrior_guard_female_npc", out var warriorFemale), Is.True);
                 Assert.That(warriorFemale, Is.Not.Null);
                 Assert.That(warriorFemale!.DefaultFactionId, Is.EqualTo("true_britannians"));
                 Assert.That(warriorFemale.LootTables, Is.EqualTo(new[] { "guard.warrior" }));
-
-                Assert.That(mobileTemplateService.TryGet("archer_guard_male_npc", out var archerMale), Is.True);
-                Assert.That(archerMale, Is.Not.Null);
-                Assert.That(archerMale!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(archerMale.LootTables, Is.EqualTo(new[] { "guard.archer" }));
-
-                Assert.That(mobileTemplateService.TryGet("archer_guard_female_npc", out var archerFemale), Is.True);
-                Assert.That(archerFemale, Is.Not.Null);
-                Assert.That(archerFemale!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(archerFemale.LootTables, Is.EqualTo(new[] { "guard.archer" }));
+                Assert.That(warriorFemale.Variants, Has.Count.EqualTo(1));
+                Assert.That(warriorFemale.Variants[0].Appearance.Body, Is.EqualTo(0x0190));
             }
         );
     }
 
     [Test]
-    public async Task LoadAsync_WhenRepositoryContainsVendorTemplates_ShouldLoadVendorDefinitions()
+    public async Task LoadAsync_WhenVendorTemplatesUseVariants_ShouldLoadVariantEquipment()
     {
-        var repositoryRoot = ResolveRepositoryRoot();
-        var dataRoot = Path.Combine(repositoryRoot, "moongate_data");
-        var directoriesConfig = new DirectoriesConfig(dataRoot, DirectoryType.Templates);
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(mobilesDirectory, "vendors.json"),
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "blacksmith_vendor_npc",
+                "name": "a blacksmith",
+                "defaultFactionId": "true_britannians",
+                "sellProfileId": "vendor.blacksmith",
+                "lootTables": ["vendor.blacksmith"],
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    },
+                    "equipment": [
+                      {
+                        "layer": "Shirt",
+                        "itemTemplateId": "fancy_shirt"
+                      },
+                      {
+                        "layer": "OneHanded",
+                        "items": [
+                          {
+                            "itemTemplateId": "tongs",
+                            "weight": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+            """
+        );
+
         var mobileTemplateService = new MobileTemplateService();
         var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
 
         await loader.LoadAsync();
 
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(mobileTemplateService.TryGet("blacksmith_vendor_npc", out var blacksmith), Is.True);
-                Assert.That(blacksmith, Is.Not.Null);
-                Assert.That(blacksmith!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(blacksmith.SellProfileId, Is.EqualTo("vendor.blacksmith"));
-                Assert.That(blacksmith.LootTables, Is.EqualTo(new[] { "vendor.blacksmith" }));
-                Assert.That(blacksmith.Title, Is.EqualTo("a blacksmith"));
-                Assert.That(blacksmith.FixedEquipment, Has.Count.EqualTo(5));
-                Assert.That(blacksmith.FixedEquipment[0].ItemTemplateId, Is.EqualTo("fancy_shirt"));
-                Assert.That(blacksmith.FixedEquipment[4].ItemTemplateId, Is.EqualTo("tongs"));
-
-                Assert.That(mobileTemplateService.TryGet("weaponsmith_vendor_npc", out var weaponsmith), Is.True);
-                Assert.That(weaponsmith, Is.Not.Null);
-                Assert.That(weaponsmith!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(weaponsmith.SellProfileId, Is.EqualTo("vendor.weaponsmith"));
-                Assert.That(weaponsmith.LootTables, Is.EqualTo(new[] { "vendor.weaponsmith" }));
-                Assert.That(weaponsmith.Strength, Is.EqualTo(80));
-                Assert.That(weaponsmith.Dexterity, Is.EqualTo(60));
-                Assert.That(weaponsmith.Intelligence, Is.EqualTo(45));
-                Assert.That(weaponsmith.Hits, Is.EqualTo(80));
-                Assert.That(weaponsmith.Title, Is.EqualTo("the weaponsmith"));
-                Assert.That(weaponsmith.FixedEquipment, Has.Count.EqualTo(5));
-                Assert.That(weaponsmith.FixedEquipment[4].ItemTemplateId, Is.EqualTo("hatchet"));
-
-                Assert.That(mobileTemplateService.TryGet("armorer_vendor_npc", out var armorer), Is.True);
-                Assert.That(armorer, Is.Not.Null);
-                Assert.That(armorer!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(armorer.SellProfileId, Is.EqualTo("vendor.armorer"));
-                Assert.That(armorer.LootTables, Is.EqualTo(new[] { "vendor.armorer" }));
-                Assert.That(armorer.Title, Is.EqualTo("an armorer"));
-                Assert.That(armorer.FixedEquipment, Has.Count.EqualTo(5));
-                Assert.That(armorer.FixedEquipment[4].ItemTemplateId, Is.EqualTo("helmet"));
-
-                Assert.That(mobileTemplateService.TryGet("provisioner_vendor_npc", out var provisioner), Is.True);
-                Assert.That(provisioner, Is.Not.Null);
-                Assert.That(provisioner!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(provisioner.SellProfileId, Is.EqualTo("vendor.provisioner"));
-                Assert.That(provisioner.LootTables, Is.EqualTo(new[] { "vendor.provisioner" }));
-                Assert.That(provisioner.Title, Is.EqualTo("the provisioner"));
-                Assert.That(provisioner.FixedEquipment, Has.Count.EqualTo(4));
-                Assert.That(provisioner.FixedEquipment[3].ItemTemplateId, Is.EqualTo("backpack"));
-
-                Assert.That(mobileTemplateService.TryGet("mage_vendor_npc", out var mage), Is.True);
-                Assert.That(mage, Is.Not.Null);
-                Assert.That(mage!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(mage.SellProfileId, Is.EqualTo("vendor.mage"));
-                Assert.That(mage.LootTables, Is.EqualTo(new[] { "vendor.mage" }));
-                Assert.That(mage.Title, Is.EqualTo("a mage"));
-                Assert.That(mage.FixedEquipment, Has.Count.EqualTo(4));
-                Assert.That(mage.FixedEquipment[2].ItemTemplateId, Is.EqualTo("wizards_hat"));
-                Assert.That(mage.FixedEquipment[3].ItemTemplateId, Is.EqualTo("spellbook"));
-
-                Assert.That(mobileTemplateService.TryGet("healer_vendor_npc", out var healer), Is.True);
-                Assert.That(healer, Is.Not.Null);
-                Assert.That(healer!.DefaultFactionId, Is.EqualTo("true_britannians"));
-                Assert.That(healer.SellProfileId, Is.EqualTo("vendor.healer"));
-                Assert.That(healer.LootTables, Is.EqualTo(new[] { "vendor.healer" }));
-                Assert.That(healer.Title, Is.EqualTo("a healer"));
-                Assert.That(healer.FixedEquipment, Has.Count.EqualTo(2));
-                Assert.That(healer.FixedEquipment[0].ItemTemplateId, Is.EqualTo("robe"));
-                Assert.That(healer.FixedEquipment[1].ItemTemplateId, Is.EqualTo("sandals"));
-            }
-        );
+        Assert.That(mobileTemplateService.TryGet("blacksmith_vendor_npc", out var blacksmith), Is.True);
+        Assert.That(blacksmith, Is.Not.Null);
+        Assert.That(blacksmith!.DefaultFactionId, Is.EqualTo("true_britannians"));
+        Assert.That(blacksmith.SellProfileId, Is.EqualTo("vendor.blacksmith"));
+        Assert.That(blacksmith.LootTables, Is.EqualTo(new[] { "vendor.blacksmith" }));
+        Assert.That(blacksmith.Title, Is.EqualTo("a blacksmith"));
+        Assert.That(blacksmith.Variants, Has.Count.EqualTo(1));
+        Assert.That(blacksmith.Variants[0].Equipment, Has.Count.EqualTo(2));
+        Assert.That(blacksmith.Variants[0].Equipment[0].ItemTemplateId, Is.EqualTo("fancy_shirt"));
+        Assert.That(blacksmith.Variants[0].Equipment[1].Items[0].ItemTemplateId, Is.EqualTo("tongs"));
     }
 
     [Test]
@@ -151,8 +223,17 @@ public class MobileTemplateLoaderTests
                 "type": "mobile",
                 "id": "base_faction_guard",
                 "name": "Base Guard",
-                "body": "0x0190",
-                "defaultFactionId": "true_britannians"
+                "defaultFactionId": "true_britannians",
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ]
               },
               {
                 "type": "mobile",
@@ -200,7 +281,16 @@ public class MobileTemplateLoaderTests
                 "type": "mobile",
                 "id": "base_orc",
                 "name": "Base Orc",
-                "body": "0x0011",
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0011",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ],
                 "params": {
                   "title_suffix": { "type": "string", "value": "the grim" },
                   "owner_id": { "type": "serial", "value": "0x00001000" }
@@ -244,6 +334,75 @@ public class MobileTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenGuardUsesPatrolParams_ShouldLoadStringBackedPatrolValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "guard-patrol.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "patrol_guard",
+                "name": "Patrol Guard",
+                "ai": {
+                  "brain": "guard"
+                },
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ],
+                "params": {
+                  "patrol_mode": { "type": "string", "value": "random_roam" },
+                  "patrol_radius": { "type": "string", "value": "6" }
+                }
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("patrol_guard", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Params.ContainsKey("patrol_mode"), Is.True);
+                Assert.That(template.Params["patrol_mode"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["patrol_mode"].Value, Is.EqualTo("random_roam"));
+                Assert.That(template.Params.ContainsKey("patrol_radius"), Is.True);
+                Assert.That(template.Params["patrol_radius"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["patrol_radius"].Value, Is.EqualTo("6"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileHasSellProfile_ShouldInheritSellProfileId()
     {
         using var tempDirectory = new TempDirectory();
@@ -269,8 +428,17 @@ public class MobileTemplateLoaderTests
                 "type": "mobile",
                 "id": "base_vendor",
                 "name": "Base Vendor",
-                "body": "0x0190",
-                "sellProfileId": "vendor.blacksmith"
+                "sellProfileId": "vendor.blacksmith",
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ]
               },
               {
                 "type": "mobile",
@@ -290,6 +458,13 @@ public class MobileTemplateLoaderTests
         Assert.That(mobileTemplateService.TryGet("blacksmith_vendor", out var template), Is.True);
         Assert.That(template, Is.Not.Null);
         Assert.That(template!.SellProfileId, Is.EqualTo("vendor.blacksmith"));
+    }
+
+    private static string ResolveRepositoryRoot()
+    {
+        return Path.GetFullPath(
+            Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", "..")
+        );
     }
 
     [Test]
@@ -321,10 +496,17 @@ public class MobileTemplateLoaderTests
                 "category": "undead",
                 "description": "base",
                 "tags": ["undead"],
-                "body": "0x0003",
-                "skinHue": 0,
-                "hairHue": 0,
-                "hairStyle": 0,
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0003",
+                      "skinHue": 0,
+                      "hairHue": 0,
+                      "hairStyle": 0
+                    }
+                  }
+                ],
                 "strength": 100,
                 "dexterity": 80,
                 "intelligence": 60,
@@ -335,7 +517,12 @@ public class MobileTemplateLoaderTests
                 "fame": 600,
                 "karma": -600,
                 "notoriety": "Murdered",
-                "brain": "undead_melee",
+                "ai": {
+                  "brain": "undead_melee",
+                  "fightMode": "strongest",
+                  "rangePerception": 14,
+                  "rangeFight": 4
+                },
                 "sounds": {
                   "StartAttack": 471,
                   "Idle": 472,
@@ -373,12 +560,16 @@ public class MobileTemplateLoaderTests
             {
                 Assert.That(template!.Strength, Is.EqualTo(110));
                 Assert.That(template.Category, Is.EqualTo("undead"));
-                Assert.That(template.Body, Is.EqualTo(0x0003));
+                Assert.That(template.Variants, Has.Count.EqualTo(1));
+                Assert.That(template.Variants[0].Appearance.Body, Is.EqualTo(0x0003));
                 Assert.That(template.MinDamage, Is.EqualTo(5));
                 Assert.That(template.MaxDamage, Is.EqualTo(10));
                 Assert.That(template.ArmorRating, Is.EqualTo(20));
                 Assert.That(template.Notoriety, Is.EqualTo(Notoriety.Murdered));
-                Assert.That(template.Brain, Is.EqualTo("undead_melee"));
+                Assert.That(template.Ai.Brain, Is.EqualTo("undead_melee"));
+                Assert.That(template.Ai.FightMode, Is.EqualTo("strongest"));
+                Assert.That(template.Ai.RangePerception, Is.EqualTo(14));
+                Assert.That(template.Ai.RangeFight, Is.EqualTo(4));
                 Assert.That(template.LootTables, Is.EquivalentTo(new[] { "bonearmor" }));
                 Assert.That(template.Sounds[MobileSoundType.StartAttack], Is.EqualTo(471));
                 Assert.That(template.Sounds[MobileSoundType.Attack], Is.EqualTo(601));
@@ -515,11 +706,20 @@ public class MobileTemplateLoaderTests
                 "category": "monsters",
                 "description": "Orc melee unit",
                 "tags": ["orc"],
-                "body": "0x11",
-                "skinHue": "hue(779:790)",
-                "hairHue": 0,
-                "hairStyle": 0,
-                "brain": "aggressive_orc"
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x11",
+                      "skinHue": "hue(779:790)",
+                      "hairHue": 0,
+                      "hairStyle": 0
+                    }
+                  }
+                ],
+                "ai": {
+                  "brain": "aggressive_orc"
+                }
               }
             ]
             """
@@ -535,27 +735,201 @@ public class MobileTemplateLoaderTests
             {
                 Assert.That(mobileTemplateService.Count, Is.EqualTo(1));
                 Assert.That(mobileTemplateService.TryGet("orc_warrior", out var definition), Is.True);
-                Assert.That(definition?.Body, Is.EqualTo(0x11));
-                Assert.That(definition?.SkinHue.IsRange, Is.True);
-                Assert.That(definition?.Brain, Is.EqualTo("aggressive_orc"));
+                Assert.That(definition?.Variants, Has.Count.EqualTo(1));
+                Assert.That(definition?.Variants[0].Appearance.Body, Is.EqualTo(0x11));
+                Assert.That(definition?.Variants[0].Appearance.SkinHue!.Value.IsRange, Is.True);
+                Assert.That(definition?.Ai.Brain, Is.EqualTo("aggressive_orc"));
             }
         );
     }
 
-    private static string ResolveRepositoryRoot()
+    [Test]
+    public async Task LoadAsync_WhenBaseMobileHasCanonicalAiDefaults_ShouldInheritAndPreserveExplicitOverrides()
     {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
 
-        while (current is not null)
-        {
-            if (File.Exists(Path.Combine(current.FullName, "Moongate.slnx")))
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        await File.WriteAllTextAsync(
+            Path.Combine(mobilesDirectory, "ai.json"),
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_ai_guard",
+                "name": "Base AI Guard",
+                "ai": {
+                  "brain": "ai_guard",
+                  "fightMode": "strongest",
+                  "rangePerception": 18,
+                  "rangeFight": 4
+                },
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "mobile",
+                "id": "guard_cadet",
+                "base_mobile": "base_ai_guard",
+                "name": "Guard Cadet",
+                "ai": {
+                  "brain": "none",
+                  "fightMode": "closest",
+                  "rangePerception": 16,
+                  "rangeFight": 1
+                }
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("guard_cadet", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
             {
-                return current.FullName;
+                Assert.That(template!.Ai.Brain, Is.EqualTo("none"));
+                Assert.That(template.Ai.FightMode, Is.EqualTo("closest"));
+                Assert.That(template.Ai.RangePerception, Is.EqualTo(16));
+                Assert.That(template.Ai.RangeFight, Is.EqualTo(1));
             }
-
-            current = current.Parent;
-        }
-
-        throw new DirectoryNotFoundException("Unable to locate repository root from test base directory.");
+        );
     }
+
+    [Test]
+    public async Task LoadAsync_WhenBaseMobileHasResistancesAndDamageTypes_ShouldInheritAndOverride()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "resistances.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "base_elemental",
+                "name": "Base Elemental",
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x000E",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ],
+                "resistances": {
+                  "Physical": 50,
+                  "Fire": 30,
+                  "Cold": 20,
+                  "Poison": 10,
+                  "Energy": 15
+                },
+                "damageTypes": {
+                  "Physical": 100
+                }
+              },
+              {
+                "type": "mobile",
+                "id": "fire_elemental",
+                "base_mobile": "base_elemental",
+                "name": "a fire elemental",
+                "resistances": {
+                  "Fire": 70
+                },
+                "damageTypes": {
+                  "Physical": 25,
+                  "Fire": 75
+                }
+              },
+              {
+                "type": "mobile",
+                "id": "lesser_fire_elemental",
+                "base_mobile": "base_elemental",
+                "name": "a lesser fire elemental"
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("fire_elemental", out var fireElemental), Is.True);
+        Assert.That(fireElemental, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                // Child overrides Fire resistance but inherits others from parent via TryAdd
+                Assert.That(fireElemental!.Resistances["Fire"], Is.EqualTo(70));
+                Assert.That(fireElemental.Resistances["Physical"], Is.EqualTo(50));
+                Assert.That(fireElemental.Resistances["Cold"], Is.EqualTo(20));
+                Assert.That(fireElemental.Resistances["Poison"], Is.EqualTo(10));
+                Assert.That(fireElemental.Resistances["Energy"], Is.EqualTo(15));
+                Assert.That(fireElemental.Resistances, Has.Count.EqualTo(5));
+
+                // Child fully overrides damageTypes
+                Assert.That(fireElemental.DamageTypes["Physical"], Is.EqualTo(25));
+                Assert.That(fireElemental.DamageTypes["Fire"], Is.EqualTo(75));
+                Assert.That(fireElemental.DamageTypes, Has.Count.EqualTo(2));
+            }
+        );
+
+        // Lesser fire elemental inherits everything from parent
+        Assert.That(mobileTemplateService.TryGet("lesser_fire_elemental", out var lesserFire), Is.True);
+        Assert.That(lesserFire, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(lesserFire!.Resistances["Physical"], Is.EqualTo(50));
+                Assert.That(lesserFire.Resistances["Fire"], Is.EqualTo(30));
+                Assert.That(lesserFire.Resistances, Has.Count.EqualTo(5));
+                Assert.That(lesserFire.DamageTypes["Physical"], Is.EqualTo(100));
+                Assert.That(lesserFire.DamageTypes, Has.Count.EqualTo(1));
+            }
+        );
+    }
+
 }

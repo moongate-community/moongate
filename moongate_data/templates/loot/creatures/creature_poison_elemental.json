@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.poison_elemental",
+    "name": "PoisonElemental",
+    "category": "loot",
+    "description": "Creature-specific loot for PoisonElemental.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "nightshade",
+        "chance": 1.0,
+        "amount": 4
+      },
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "type": "mobile",
+    "id": "summoned_daemon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SummonedDaemon.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 200,
+    "dexterity": 110,
+    "intelligence": 150,
+    "hits": 294,
+    "maxHits": 294,
+    "minDamage": 14,
+    "maxDamage": 21,
+    "armorRating": 58,
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 750,
+      "Meditation": 950,
+      "Magery": 750,
+      "MagicResist": 900,
+      "Wrestling": 700,
+      "Tactics": 750
+    },
+    "sounds": {
+      "Idle": 357,
+      "StartAttack": 358,
+      "Attack": 359,
+      "Defend": 360,
+      "Die": 361
+    },
+    "resistances": {
+      "physical": 52,
+      "fire": 55,
+      "cold": 35,
+      "poison": 25,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100,
+      "poison": 100
+    },
+    "title": "daemon",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000A"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0009"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

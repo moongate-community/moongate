@@ -1,0 +1,689 @@
+[
+  {
+    "type": "mobile",
+    "id": "elf_brigand_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ElfBrigand.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 93,
+    "dexterity": 88,
+    "intelligence": 68,
+    "minDamage": 10,
+    "maxDamage": 23,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Fencing": 817,
+      "Macing": 762,
+      "MagicResist": 362,
+      "Swords": 762,
+      "Tactics": 762,
+      "Wrestling": 262
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "variants": [
+      {
+        "name": "female_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "cutlass"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "axe"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "club"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "dagger"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "female_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025E"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "spear"
+          },
+          {
+            "layer": "OuterLegs",
+            "items": [
+              {
+                "itemTemplateId": "skirt",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "kilt",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "male_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "longsword"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "cutlass"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "axe"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "club"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "dagger"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      },
+      {
+        "name": "male_7",
+        "weight": 1,
+        "appearance": {
+          "body": "0x025D"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "sandals",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "shoes",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "spear"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          }
+        ]
+      }
+    ]
+  }
+]

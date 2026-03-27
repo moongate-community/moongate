@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.orcish_lord",
+    "name": "OrcishLord",
+    "category": "loot",
+    "description": "Creature-specific loot for OrcishLord.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "ringmail_chest",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

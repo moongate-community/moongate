@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "malefic_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Malefic.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 247,
+    "dexterity": 175,
+    "intelligence": 369,
+    "hits": 673,
+    "maxHits": 673,
+    "mana": 369,
+    "stamina": 175,
+    "minDamage": 15,
+    "maxDamage": 22,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1046,
+      "Tactics": 983,
+      "MagicResist": 874,
+      "Magery": 1108,
+      "EvalInt": 1126
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 45,
+      "cold": 44,
+      "poison": 100,
+      "energy": 44
+    },
+    "damageTypes": {
+      "physical": 20,
+      "poison": 80
+    },
+    "title": "Malefic",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x000B",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -39,7 +39,8 @@ I am actively looking for contributors and reviewers.
   the GitHub release is created.
 - NuGet packages are published by the `NuGet Publish` workflow.
 - Configure the repository secret `NUGET_KEY` to enable publishing to `nuget.org`.
-- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`.
+- The NuGet publish flow also ships `Moongate.Templates`, which provides `dotnet new moongate-plugin`, and
+  `Moongate.TemplateValidator`, which provides `moongate-template`.
 
 ## Quick Start
 
@@ -55,6 +56,47 @@ git clone https://github.com/moongate-community/moongate.git
 cd moongate
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
+
+### Validate Templates
+
+Run this every time you change shard template data under your Moongate root, especially `~/moongate/templates/items`,
+`~/moongate/templates/mobiles`, `~/moongate/templates/loot`, `~/moongate/templates/factions`,
+`~/moongate/templates/sell_profiles`, or `~/moongate/data/containers`.
+
+Install the validator tool from `nuget.org`:
+
+```bash
+dotnet tool install --global Moongate.TemplateValidator
+```
+
+Run the validator:
+
+```bash
+moongate-template validate --root-directory ~/moongate
+```
+
+Each validation run prints the validator version and the target root directory before the validation summary.
+
+Update an existing global installation:
+
+```bash
+dotnet tool update --global Moongate.TemplateValidator
+```
+
+If you are developing inside this repository and want to install from a locally packed artifact instead:
+
+```bash
+dotnet pack tools/Moongate.TemplateValidator/Moongate.TemplateValidator.csproj -o ./tools/Moongate.TemplateValidator/nupkg
+dotnet tool install --tool-path ./artifacts/template-tool --add-source ./tools/Moongate.TemplateValidator/nupkg Moongate.TemplateValidator
+```
+
+Run the local installation:
+
+```bash
+./artifacts/template-tool/moongate-template validate --root-directory ~/moongate
+```
+
+Published docs: `docs/articles/operations/template-validation.md`
 
 ### Run Server (Docker quick start)
 
@@ -152,11 +194,12 @@ UI default URL: `http://localhost:8088/`
 - Docs home: `docs/index.md`
 - Getting started: `docs/articles/getting-started/`
 - Architecture: `docs/articles/architecture/`
-- Scripting: `docs/articles/scripting/`
+- Beginner content authoring: `docs/articles/scripting/create-your-first-content.md`
+- Beginner systems path: `docs/articles/scripting/create-your-first-systems.md`
+- Scripting: `docs/articles/scripting/` including authored dialogues, scheduled events, starting loadout, and loot containers
 - Persistence: `docs/articles/persistence/`
-- Networking/protocol: `docs/articles/networking/`
-- Client encryption: `docs/articles/networking/client-encryption.md`
-- Operations/stress test: `docs/articles/operations/stress-test.md`
+- Networking/protocol: `docs/articles/networking/` including client encryption and the UDP ping server
+- Operations: `docs/articles/operations/` including template validation, in-game item admin commands, and help ticket workflow
 
 Published docs: <https://moongate-community.github.io/moongate/>
 

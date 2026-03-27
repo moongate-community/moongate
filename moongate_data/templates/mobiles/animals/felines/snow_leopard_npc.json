@@ -1,0 +1,71 @@
+[
+  {
+    "type": "mobile",
+    "id": "snow_leopard_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SnowLeopard.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 68,
+    "dexterity": 75,
+    "intelligence": 38,
+    "hits": 41,
+    "maxHits": 41,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 9,
+    "armorRating": 24,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 300,
+      "Tactics": 525,
+      "Wrestling": 450
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 7,
+      "cold": 35,
+      "poison": 15,
+      "energy": 25
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a snow leopard",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0040"
+        },
+        "equipment": []
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0041"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

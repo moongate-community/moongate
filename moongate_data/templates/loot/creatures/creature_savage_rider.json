@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.savage_rider",
+    "name": "SavageRider",
+    "category": "loot",
+    "description": "Creature-specific loot for SavageRider.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bola_ball",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

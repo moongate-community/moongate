@@ -1,0 +1,402 @@
+[
+  {
+    "type": "mobile",
+    "id": "ronin_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ronin.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 350,
+    "dexterity": 38,
+    "intelligence": 105,
+    "hits": 350,
+    "maxHits": 350,
+    "mana": 105,
+    "minDamage": 17,
+    "maxDamage": 25,
+    "fame": 8500,
+    "karma": -8500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 500,
+      "Tactics": 1225,
+      "Wrestling": 1000,
+      "Anatomy": 1175,
+      "Fencing": 1000,
+      "Macing": 1000,
+      "Swords": 1000
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.ronin"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 50,
+      "cold": 45,
+      "poison": 60,
+      "energy": 65
+    },
+    "damageTypes": {
+      "physical": 90,
+      "poison": 10
+    },
+    "title": "a ronin",
+    "variants": [
+      {
+        "name": "default_1",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "samurai_tabi"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "studded_haidate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "default_2",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "leather_suneate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "default_3",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "plate_suneate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "default_4",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "samurai_tabi"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "studded_haidate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "default_5",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "leather_suneate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "default_6",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "leather_hiro_sode"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "leather_do"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "light_plate_jingasa",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "chain_hatsuburi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "decorative_plate_kabuto",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "leather_jingasa",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "plate_suneate"
+          },
+          {
+            "layer": "TwoHanded",
+            "items": [
+              {
+                "itemTemplateId": "no_dachi",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "halberd",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

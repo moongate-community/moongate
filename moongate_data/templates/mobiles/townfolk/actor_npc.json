@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "actor_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Actor.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "fancy_dress"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Pants",
+            "itemTemplateId": "long_pants",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "fancy_shirt"
+          }
+        ]
+      }
+    ]
+  }
+]

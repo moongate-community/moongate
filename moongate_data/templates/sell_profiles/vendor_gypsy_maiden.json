@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.gypsy_maiden",
+    "name": "GypsyMaiden Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for GypsyMaiden. SBInfo sources: SBProvisioner.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

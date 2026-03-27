@@ -10,10 +10,6 @@
       "zombie",
       "test"
     ],
-    "body": "0x0003",
-    "skinHue": 0,
-    "hairHue": 0,
-    "hairStyle": 0,
     "strength": 58,
     "dexterity": 40,
     "intelligence": 33,
@@ -26,7 +22,12 @@
     "fame": 600,
     "karma": -600,
     "notoriety": "CanBeAttacked",
-    "brain": "undead_melee",
+    "ai": {
+      "brain": "undead_melee",
+      "fightMode": "closest",
+      "rangePerception": 10,
+      "rangeFight": 1
+    },
     "sounds": {
       "StartAttack": 471,
       "Idle": 472,
@@ -34,10 +35,21 @@
       "Defend": 474,
       "Die": 475
     },
-    "lootTables": ["undead.low"],
-    "fixedEquipment": [],
-    "randomEquipment": [],
-    "title": "a zombie"
+    "lootTables": [
+      "undead.low"
+    ],
+    "title": "a zombie",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0003",
+          "skinHue": 0,
+          "hairHue": 0,
+          "hairStyle": 0
+        },
+        "equipment": []
+      }
+    ]
   },
   {
     "type": "mobile",
@@ -51,10 +63,6 @@
       "knight",
       "test"
     ],
-    "body": "0x0093",
-    "skinHue": 0,
-    "hairHue": 0,
-    "hairStyle": 0,
     "strength": 220,
     "dexterity": 85,
     "intelligence": 48,
@@ -67,19 +75,35 @@
     "fame": 3000,
     "karma": -3000,
     "notoriety": "CanBeAttacked",
-    "brain": "None",
-    "lootTables": ["undead.knight"],
-    "fixedEquipment": [
-      {
-        "itemTemplateId": "scimitar",
-        "layer": "OneHanded"
-      },
-      {
-        "itemTemplateId": "wooden_shield",
-        "layer": "TwoHanded"
-      }
+    "ai": {
+      "brain": "none",
+      "fightMode": "none",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "undead.knight"
     ],
-    "randomEquipment": [],
-    "title": "a skeletal knight"
+    "title": "a skeletal knight",
+    "variants": [
+      {
+        "appearance": {
+          "body": "0x0093",
+          "skinHue": 0,
+          "hairHue": 0,
+          "hairStyle": 0
+        },
+        "equipment": [
+          {
+            "itemTemplateId": "scimitar",
+            "layer": "OneHanded"
+          },
+          {
+            "itemTemplateId": "wooden_shield",
+            "layer": "TwoHanded"
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "gaman_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Gaman.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 160,
+    "dexterity": 130,
+    "intelligence": 53,
+    "hits": 145,
+    "maxHits": 145,
+    "mana": 0,
+    "minDamage": 6,
+    "maxDamage": 11,
+    "fame": 2000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 400,
+      "Tactics": 768,
+      "Wrestling": 538
+    },
+    "resistances": {
+      "physical": 60,
+      "fire": 40,
+      "cold": 40,
+      "poison": 50,
+      "energy": 40
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a gaman",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F8"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

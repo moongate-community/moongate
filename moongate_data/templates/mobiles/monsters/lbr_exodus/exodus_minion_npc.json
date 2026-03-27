@@ -1,0 +1,56 @@
+[
+  {
+    "type": "mobile",
+    "id": "exodus_minion_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ExodusMinion.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 900,
+    "dexterity": 75,
+    "intelligence": 75,
+    "hits": 540,
+    "maxHits": 540,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "armorRating": 65,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 950,
+      "Tactics": 950,
+      "Wrestling": 950
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.rich",
+      "creature.exodus_minion"
+    ],
+    "resistances": {
+      "physical": 65,
+      "fire": 45,
+      "cold": 20,
+      "poison": 20,
+      "energy": 20
+    },
+    "title": "an exodus minion",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x02F5"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

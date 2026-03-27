@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "mountain_goat_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO MountainGoat.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 43,
+    "dexterity": 65,
+    "intelligence": 23,
+    "hits": 26,
+    "maxHits": 26,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 7,
+    "armorRating": 10,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 366,
+      "Wrestling": 366
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 15,
+      "fire": 7,
+      "cold": 15,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a mountain goat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0058"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

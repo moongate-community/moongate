@@ -19,7 +19,7 @@ namespace Moongate.Server.Commands.Player;
 /// Removes a targeted item or NPC from the world.
 /// </summary>
 [RegisterConsoleCommand(
-    "remove_item|.remove_item",
+    "remove_item",
     "Target an item or NPC and remove it. Usage: .remove_item",
     CommandSourceType.InGame,
     AccountType.GameMaster

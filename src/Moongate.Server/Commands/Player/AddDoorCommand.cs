@@ -19,7 +19,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "add_door|.add_door|add_wood_door|.add_wood_door|add_metal_door|.add_metal_door",
+    "add_door|add_wood_door|add_metal_door",
     "Add a targeted door. Usage: .add_door [wood|metal]",
     CommandSourceType.InGame,
     AccountType.GameMaster

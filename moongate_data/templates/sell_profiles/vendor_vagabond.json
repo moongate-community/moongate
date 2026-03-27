@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.vagabond",
+    "name": "Vagabond Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Vagabond. SBInfo sources: SBTinker, SBVagabond.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

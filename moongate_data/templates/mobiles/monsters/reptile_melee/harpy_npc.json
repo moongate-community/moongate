@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "harpy_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Harpy.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 108,
+    "dexterity": 98,
+    "intelligence": 63,
+    "hits": 65,
+    "maxHits": 65,
+    "minDamage": 5,
+    "maxDamage": 7,
+    "armorRating": 28,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 575,
+      "Tactics": 850,
+      "Wrestling": 750
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 402,
+      "StartAttack": 403,
+      "Attack": 404,
+      "Defend": 405,
+      "Die": 406
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 15,
+      "cold": 20,
+      "poison": 25,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a harpy",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x001E"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

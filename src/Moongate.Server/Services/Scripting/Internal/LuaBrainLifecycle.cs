@@ -61,12 +61,12 @@ internal static class LuaBrainLifecycle
         state.OnSelectedContextMenuFunction = hooks.OnSelectedContextMenuFunction;
         state.OnEventFunction = hooks.OnEventFunction;
 
-        var brainLoop = hooks.BrainLoopFunction;
+        var onThink = hooks.OnThinkFunction;
 
-        if (brainLoop is null || brainLoop.Type != DataType.Function)
+        if (onThink is null || onThink.Type != DataType.Function)
         {
             logger.Warning(
-                "Lua brain table {BrainTable} for mobile {MobileId} does not expose brain_loop.",
+                "Lua brain table {BrainTable} for mobile {MobileId} does not expose on_think.",
                 state.BrainTableName,
                 state.MobileId
             );
@@ -77,6 +77,6 @@ internal static class LuaBrainLifecycle
             return;
         }
 
-        state.BrainCoroutine = luaScript.CreateCoroutine(brainLoop).Coroutine;
+        state.BrainCoroutine = luaScript.CreateCoroutine(onThink).Coroutine;
     }
 }

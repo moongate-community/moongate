@@ -1,0 +1,66 @@
+[
+  {
+    "type": "mobile",
+    "id": "frost_troll_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FrostTroll.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 246,
+    "dexterity": 75,
+    "intelligence": 58,
+    "hits": 148,
+    "maxHits": 148,
+    "minDamage": 14,
+    "maxDamage": 20,
+    "armorRating": 50,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 725,
+      "Tactics": 900,
+      "Wrestling": 900
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.gems",
+      "creature.frost_troll"
+    ],
+    "sounds": {
+      "Idle": 461,
+      "StartAttack": 462,
+      "Attack": 463,
+      "Defend": 464,
+      "Die": 465
+    },
+    "resistances": {
+      "physical": 50,
+      "cold": 45,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 75,
+      "cold": 25
+    },
+    "title": "a frost troll",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0037"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

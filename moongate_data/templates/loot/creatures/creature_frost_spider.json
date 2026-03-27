@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.frost_spider",
+    "name": "FrostSpider",
+    "category": "loot",
+    "description": "Creature-specific loot for FrostSpider.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "spiders_silk",
+        "chance": 1.0,
+        "amount": 7
+      }
+    ]
+  }
+]

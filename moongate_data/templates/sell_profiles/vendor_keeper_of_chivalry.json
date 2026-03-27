@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.keeper_of_chivalry",
+    "name": "KeeperOfChivalry Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for KeeperOfChivalry. SBInfo sources: SBKeeperOfChivalry.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

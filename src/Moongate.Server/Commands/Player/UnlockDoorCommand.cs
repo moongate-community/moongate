@@ -13,7 +13,7 @@ using Moongate.UO.Data.Types;
 namespace Moongate.Server.Commands.Player;
 
 [RegisterConsoleCommand(
-    "unlock_door|.unlock_door",
+    "unlock_door",
     "Target a locked door and remove its lock id.",
     CommandSourceType.InGame,
     AccountType.GameMaster

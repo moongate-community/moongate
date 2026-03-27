@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "deathwatch_beetle_hatchling_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DeathwatchBeetleHatchling.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 38,
+    "dexterity": 46,
+    "intelligence": 25,
+    "hits": 55,
+    "maxHits": 55,
+    "mana": 20,
+    "minDamage": 2,
+    "maxDamage": 8,
+    "fame": 700,
+    "karma": -700,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 350,
+      "Tactics": 520,
+      "MagicResist": 340,
+      "Anatomy": 220
+    },
+    "lootTables": [
+      "loot_pack.low_scrolls",
+      "loot_pack.potions",
+      "creature.deathwatch_beetle_hatchling"
+    ],
+    "resistances": {
+      "physical": 37,
+      "fire": 22,
+      "cold": 22,
+      "poison": 30,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a deathwatch beetle hatchling",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F2"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

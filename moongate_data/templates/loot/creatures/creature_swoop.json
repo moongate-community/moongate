@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.swoop",
+    "name": "Swoop",
+    "category": "loot",
+    "description": "Creature-specific loot for Swoop.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 4
+      }
+    ]
+  }
+]

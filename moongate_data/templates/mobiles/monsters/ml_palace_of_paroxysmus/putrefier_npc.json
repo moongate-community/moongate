@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "putrefier_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Putrefier.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 1228,
+    "dexterity": 396,
+    "intelligence": 320,
+    "hits": 3551,
+    "maxHits": 3551,
+    "minDamage": 27,
+    "maxDamage": 34,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1196,
+      "Tactics": 1202,
+      "MagicResist": 1567,
+      "Anatomy": 558,
+      "Magery": 1182,
+      "EvalInt": 1209,
+      "Meditation": 632,
+      "Poisoning": 475
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 72,
+      "fire": 72,
+      "cold": 55,
+      "poison": 100,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 50,
+      "fire": 0,
+      "poison": 50,
+      "energy": 0
+    },
+    "title": "Putrefier",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0028",
+          "skinHue": "0x003F"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

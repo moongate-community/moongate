@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.black_solen_worker",
+    "name": "BlackSolenWorker",
+    "category": "loot",
+    "description": "Creature-specific loot for BlackSolenWorker.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "zoogi_fungus",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

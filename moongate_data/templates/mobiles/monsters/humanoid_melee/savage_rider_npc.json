@@ -1,0 +1,85 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_rider_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SavageRider.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 160,
+    "dexterity": 111,
+    "intelligence": 58,
+    "minDamage": 29,
+    "maxDamage": 34,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Fencing": 837,
+      "Healing": 751,
+      "Macing": 837,
+      "Poisoning": 712,
+      "MagicResist": 837,
+      "Swords": 837,
+      "Tactics": 837
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.savage_rider"
+    ],
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00BA"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tribal_spear"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "bone_arms"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "bone_legs"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00B9"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tribal_spear"
+          },
+          {
+            "layer": "Arms",
+            "itemTemplateId": "bone_arms"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "bone_legs"
+          }
+        ]
+      }
+    ]
+  }
+]

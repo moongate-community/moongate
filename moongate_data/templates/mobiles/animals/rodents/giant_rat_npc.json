@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "giant_rat_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GiantRat.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 53,
+    "dexterity": 55,
+    "intelligence": 23,
+    "hits": 32,
+    "maxHits": 32,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 8,
+    "armorRating": 18,
+    "fame": 300,
+    "karma": -300,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 275,
+      "Tactics": 366,
+      "Wrestling": 366
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "poison": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a giant rat",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00D7"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

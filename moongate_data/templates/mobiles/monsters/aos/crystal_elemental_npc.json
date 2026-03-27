@@ -1,0 +1,69 @@
+[
+  {
+    "type": "mobile",
+    "id": "crystal_elemental_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CrystalElemental.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 148,
+    "dexterity": 58,
+    "intelligence": 98,
+    "hits": 150,
+    "maxHits": 150,
+    "minDamage": 10,
+    "maxDamage": 15,
+    "armorRating": 54,
+    "fame": 6500,
+    "karma": -6500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 725,
+      "Magery": 725,
+      "Meditation": 700,
+      "MagicResist": 850,
+      "Tactics": 800,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 278,
+      "StartAttack": 279,
+      "Attack": 280,
+      "Defend": 281,
+      "Die": 282
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 45,
+      "cold": 45,
+      "poison": 100,
+      "energy": 62
+    },
+    "damageTypes": {
+      "physical": 80,
+      "energy": 20
+    },
+    "title": "a crystal elemental",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x012C"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

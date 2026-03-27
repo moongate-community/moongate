@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.yomotsu_elder",
+    "name": "YomotsuElder",
+    "category": "loot",
+    "description": "Creature-specific loot for YomotsuElder.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "green_gourd",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "executioners_axe",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

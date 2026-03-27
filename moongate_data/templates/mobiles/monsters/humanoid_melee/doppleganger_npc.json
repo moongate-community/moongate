@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "doppleganger_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Doppleganger.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 95,
+    "dexterity": 65,
+    "intelligence": 93,
+    "hits": 110,
+    "maxHits": 110,
+    "minDamage": 8,
+    "maxDamage": 12,
+    "armorRating": 55,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 800,
+      "Tactics": 750,
+      "Wrestling": 850
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 15,
+      "cold": 45,
+      "poison": 55,
+      "energy": 35
+    },
+    "title": "a doppleganger",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0309"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

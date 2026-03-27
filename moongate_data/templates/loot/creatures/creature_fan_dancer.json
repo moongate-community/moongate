@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.fan_dancer",
+    "name": "FanDancer",
+    "category": "loot",
+    "description": "Creature-specific loot for FanDancer.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "origami_paper",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

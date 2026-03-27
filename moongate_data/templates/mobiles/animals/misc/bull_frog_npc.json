@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "bull_frog_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO BullFrog.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 58,
+    "dexterity": 15,
+    "intelligence": 15,
+    "hits": 35,
+    "maxHits": 35,
+    "mana": 0,
+    "minDamage": 1,
+    "maxDamage": 2,
+    "armorRating": 6,
+    "fame": 350,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 325,
+      "Tactics": 500,
+      "Wrestling": 500
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a bull frog",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0051"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

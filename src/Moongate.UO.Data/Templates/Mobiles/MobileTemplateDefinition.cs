@@ -13,17 +13,6 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     [JsonPropertyName("base_mobile")]
     public string? BaseMobile { get; set; }
 
-    [JsonConverter(typeof(Int32FlexibleJsonConverter))]
-    public int Body { get; set; }
-
-    [JsonConverter(typeof(HueSpecJsonConverter))]
-    public HueSpec SkinHue { get; set; }
-
-    [JsonConverter(typeof(HueSpecJsonConverter))]
-    public HueSpec HairHue { get; set; }
-
-    public int HairStyle { get; set; }
-
     public int Strength { get; set; } = 50;
 
     public int Dexterity { get; set; } = 50;
@@ -51,7 +40,7 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     [JsonConverter(typeof(JsonStringEnumConverter<Notoriety>))]
     public Notoriety Notoriety { get; set; } = Notoriety.Innocent;
 
-    public string Brain { get; set; } = "None";
+    public MobileAiTemplate Ai { get; set; } = new();
 
     public string? SellProfileId { get; set; }
 
@@ -65,6 +54,10 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
     public List<string> LootTables { get; set; } = [];
 
     public Dictionary<string, int> Skills { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public Dictionary<string, int> Resistances { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+    public Dictionary<string, int> DamageTypes { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     public int TamingDifficulty { get; set; }
 
@@ -82,9 +75,7 @@ public class MobileTemplateDefinition : MobileTemplateDefinitionBase
 
     public int SpellAttackDelay { get; set; }
 
-    public List<MobileEquipmentItemTemplate> FixedEquipment { get; set; } = [];
-
-    public List<MobileRandomEquipmentPoolTemplate> RandomEquipment { get; set; } = [];
+    public List<MobileVariantTemplate> Variants { get; set; } = [];
 
     public Dictionary<string, ItemTemplateParamDefinition> Params { get; set; } = [];
 }

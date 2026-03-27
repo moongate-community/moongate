@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_ridgeback_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO SavageRidgeback.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 79,
+    "dexterity": 65,
+    "intelligence": 23,
+    "hits": 47,
+    "maxHits": 47,
+    "mana": 0,
+    "minDamage": 3,
+    "maxDamage": 5,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 326,
+      "Tactics": 366,
+      "Wrestling": 400
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 12,
+      "cold": 17,
+      "poison": 12,
+      "energy": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a savage ridgeback",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00BC"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

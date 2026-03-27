@@ -1,0 +1,65 @@
+[
+  {
+    "type": "mobile",
+    "id": "sea_serpent_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SeaSerpent.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 196,
+    "dexterity": 71,
+    "intelligence": 74,
+    "hits": 118,
+    "maxHits": 118,
+    "minDamage": 7,
+    "maxDamage": 13,
+    "armorRating": 30,
+    "fame": 6000,
+    "karma": -6000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 675,
+      "Tactics": 650,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "creature.sea_serpent"
+    ],
+    "sounds": {
+      "Idle": 447,
+      "StartAttack": 448,
+      "Attack": 449,
+      "Defend": 450,
+      "Die": 451
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 55,
+      "cold": 35,
+      "poison": 35,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a sea serpent",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0096"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

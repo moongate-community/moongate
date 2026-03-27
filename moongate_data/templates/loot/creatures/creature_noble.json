@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.noble",
+    "name": "Noble",
+    "category": "loot",
+    "description": "Creature-specific loot for Noble.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 225
+      }
+    ]
+  }
+]

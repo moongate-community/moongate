@@ -1,0 +1,27 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.plague_beast",
+    "name": "PlagueBeast",
+    "category": "loot",
+    "description": "Creature-specific loot for PlagueBeast.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "plague_beast_gland",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "metal_chest",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

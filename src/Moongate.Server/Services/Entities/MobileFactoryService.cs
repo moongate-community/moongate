@@ -22,6 +22,7 @@ namespace Moongate.Server.Services.Entities;
 public sealed class MobileFactoryService : IMobileFactoryService
 {
     private const string SellProfileIdKey = "sell_profile_id";
+    private const string VariantIndexKey = "mobile_variant_index";
     private readonly IMobileTemplateService _mobileTemplateService;
     private readonly INameService _nameService;
     private readonly IPersistenceService _persistenceService;
@@ -50,6 +51,11 @@ public sealed class MobileFactoryService : IMobileFactoryService
             throw new InvalidOperationException($"Mobile template '{mobileTemplateId}' not found.");
         }
 
+        if (template.Variants.Count == 0)
+        {
+            throw new InvalidOperationException($"Mobile template '{mobileTemplateId}' has no variants.");
+        }
+
         var now = DateTime.UtcNow;
         var resolvedName = template.Name;
 
@@ -69,16 +75,12 @@ public sealed class MobileFactoryService : IMobileFactoryService
             AccountId = accountId ?? Serial.Zero,
             Name = resolvedName,
             Title = template.Title,
-            BrainId = template.Brain,
-            BaseBody = (Body)template.Body,
+            BrainId = ResolveBrainId(template.Ai.Brain),
             Location = Point3D.Zero,
             Direction = DirectionType.South,
             IsPlayer = false,
             IsAlive = true,
             RaceIndex = 0,
-            SkinHue = (short)template.SkinHue.Resolve(),
-            HairStyle = (short)template.HairStyle,
-            HairHue = (short)template.HairHue.Resolve(),
             FactionId = string.IsNullOrWhiteSpace(template.DefaultFactionId) ? null : template.DefaultFactionId.Trim(),
             BaseStats = new()
             {
@@ -97,9 +99,14 @@ public sealed class MobileFactoryService : IMobileFactoryService
             LastLoginUtc = now
         };
 
+        ApplyVariantAppearance(mobile, template);
         mobile.RecalculateMaxStats();
         InitializeTemplateSkills(mobile, template);
         mobile.Sounds = new(template.Sounds);
+
+        ApplyResistances(mobile, template);
+        ApplyDamageTypes(mobile, template);
+        ApplyAi(mobile, template);
 
         if (template.LootTables.Count > 0)
         {
@@ -178,6 +185,112 @@ public sealed class MobileFactoryService : IMobileFactoryService
         return mobile;
     }
 
+    private static void ApplyResistances(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (template.Resistances.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var (key, value) in template.Resistances)
+        {
+            if (string.Equals(key, "physical", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Physical = value;
+            }
+            else if (string.Equals(key, "fire", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Fire = value;
+            }
+            else if (string.Equals(key, "cold", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Cold = value;
+            }
+            else if (string.Equals(key, "poison", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Poison = value;
+            }
+            else if (string.Equals(key, "energy", StringComparison.OrdinalIgnoreCase))
+            {
+                mobile.BaseResistances.Energy = value;
+            }
+            else
+            {
+                throw new InvalidOperationException(
+                    $"Mobile template '{template.Id}' has unknown resistance key '{key}'."
+                );
+            }
+        }
+    }
+
+    private static void ApplyDamageTypes(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (template.DamageTypes.Count == 0)
+        {
+            return;
+        }
+
+        var parts = template.DamageTypes.Select(kvp => $"{kvp.Key}:{kvp.Value}");
+        mobile.SetCustomString(MobileCustomParamKeys.Combat.DamageTypes, string.Join(',', parts));
+    }
+
+    private static void ApplyAi(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        if (!string.IsNullOrWhiteSpace(template.Ai.FightMode))
+        {
+            mobile.SetCustomString(MobileCustomParamKeys.Ai.FightMode, template.Ai.FightMode.Trim());
+        }
+
+        if (template.Ai.RangePerception.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangePerception, template.Ai.RangePerception.Value);
+        }
+
+        if (template.Ai.RangeFight.HasValue)
+        {
+            mobile.SetCustomInteger(MobileCustomParamKeys.Ai.RangeFight, template.Ai.RangeFight.Value);
+        }
+    }
+
+    private static void ApplyVariantAppearance(UOMobileEntity mobile, MobileTemplateDefinition template)
+    {
+        var selectedVariantIndex = SelectVariantIndex(template);
+        var variant = template.Variants[selectedVariantIndex];
+        var appearance = variant.Appearance;
+
+        if (appearance.Body > 0)
+        {
+            mobile.BaseBody = (Body)appearance.Body;
+        }
+
+        if (appearance.SkinHue.HasValue)
+        {
+            mobile.SkinHue = (short)appearance.SkinHue.Value.Resolve();
+        }
+
+        if (appearance.HairStyle > 0)
+        {
+            mobile.HairStyle = (short)appearance.HairStyle;
+        }
+
+        if (appearance.HairHue.HasValue)
+        {
+            mobile.HairHue = (short)appearance.HairHue.Value.Resolve();
+        }
+
+        if (appearance.FacialHairStyle > 0)
+        {
+            mobile.FacialHairStyle = (short)appearance.FacialHairStyle;
+        }
+
+        if (appearance.FacialHairHue.HasValue)
+        {
+            mobile.FacialHairHue = (short)appearance.FacialHairHue.Value.Resolve();
+        }
+
+        mobile.SetCustomInteger(VariantIndexKey, selectedVariantIndex);
+    }
+
     private static void ApplyTemplateParams(UOMobileEntity mobile, MobileTemplateDefinition template)
     {
         foreach (var (key, param) in template.Params)
@@ -226,9 +339,55 @@ public sealed class MobileFactoryService : IMobileFactoryService
                 default:
                     throw new InvalidOperationException(
                         $"Mobile template '{template.Id}' has unsupported param type '{param.Type}' for key '{normalizedKey}'."
-                    );
+                );
             }
         }
+    }
+
+    private static int SelectVariantIndex(MobileTemplateDefinition template)
+    {
+        var weightedVariants = template.Variants
+                               .Select((variant, index) => (Variant: variant, Index: index))
+                               .Where(static variant => variant.Variant.Weight > 0)
+                               .ToArray();
+
+        if (weightedVariants.Length == 0)
+        {
+            throw new InvalidOperationException($"Mobile template '{template.Id}' has no selectable variants.");
+        }
+
+        var totalWeight = weightedVariants.Sum(static variant => variant.Variant.Weight);
+        var roll = Random.Shared.Next(1, totalWeight + 1);
+        var runningWeight = 0;
+
+        foreach (var variant in weightedVariants)
+        {
+            runningWeight += variant.Variant.Weight;
+
+            if (roll <= runningWeight)
+            {
+                return variant.Index;
+            }
+        }
+
+        return weightedVariants[^1].Index;
+    }
+
+    private static string? ResolveBrainId(string brainId)
+    {
+        if (string.IsNullOrWhiteSpace(brainId))
+        {
+            return null;
+        }
+
+        var normalizedBrainId = brainId.Trim();
+
+        if (string.Equals(normalizedBrainId, "none", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return normalizedBrainId;
     }
 
     private void BindSellProfile(UOMobileEntity mobile, MobileTemplateDefinition template)

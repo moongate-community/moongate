@@ -76,6 +76,8 @@ public sealed class ScheduledEventServiceTests
         public void AddScriptModule(Type type) { }
         public void CallFunction(string functionName, params object[] args) { }
         public void ClearScriptCache() { }
+        public void InvalidateScript(string filePath)
+            => _ = filePath;
         public void ExecuteCallback(string name, params object[] args) { }
         public void ExecuteEngineReady() { }
 
@@ -113,10 +115,9 @@ public sealed class ScheduledEventServiceTests
         public bool UnregisterGlobal(string name)
             => true;
 
-    #pragma warning disable CS0067
-        public event IScriptEngineService.LuaFileChangedHandler? FileChanged;
+#pragma warning disable CS0067
         public event EventHandler<ScriptErrorInfo>? OnScriptError;
-    #pragma warning restore CS0067
+#pragma warning restore CS0067
     }
 
     private sealed class ScheduledEventServiceTestGameEventBusService : IGameEventBusService

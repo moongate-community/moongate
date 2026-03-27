@@ -1,0 +1,72 @@
+[
+  {
+    "type": "mobile",
+    "id": "bone_demon_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO BoneDemon.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 1000,
+    "dexterity": 163,
+    "intelligence": 195,
+    "hits": 3600,
+    "maxHits": 3600,
+    "minDamage": 34,
+    "maxDamage": 36,
+    "armorRating": 44,
+    "fame": 20000,
+    "karma": -20000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 825,
+      "Magery": 825,
+      "MagicResist": 625
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 75,
+      "fire": 60,
+      "cold": 90,
+      "poison": 100,
+      "energy": 60
+    },
+    "damageTypes": {
+      "physical": 50,
+      "cold": 50
+    },
+    "title": "a bone demon",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0134"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "type": "mobile",
+    "id": "evil_mage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EvilMage.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 93,
+    "dexterity": 103,
+    "intelligence": 108,
+    "hits": 56,
+    "maxHits": 56,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 16,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 875,
+      "Magery": 875,
+      "MagicResist": 862,
+      "Tactics": 762,
+      "Wrestling": 401
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.med_scrolls",
+      "creature.evil_mage"
+    ],
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "poison": 7,
+      "energy": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "robe",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "sandals"
+          }
+        ]
+      }
+    ]
+  }
+]

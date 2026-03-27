@@ -1,0 +1,68 @@
+[
+  {
+    "type": "mobile",
+    "id": "ophidian_archmage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OphidianArchmage.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 293,
+    "dexterity": 203,
+    "intelligence": 238,
+    "hits": 176,
+    "maxHits": 176,
+    "stamina": 40,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 44,
+    "fame": 11500,
+    "karma": -11500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 975,
+      "Magery": 975,
+      "MagicResist": 862,
+      "Tactics": 762,
+      "Wrestling": 401
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.med_scrolls",
+      "loot_pack.med_scrolls"
+    ],
+    "sounds": {
+      "Idle": 639,
+      "StartAttack": 640,
+      "Attack": 641,
+      "Defend": 642,
+      "Die": 643
+    },
+    "resistances": {
+      "physical": 42,
+      "fire": 25,
+      "cold": 30,
+      "poison": 37,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0055"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

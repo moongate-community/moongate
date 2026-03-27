@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.tinker",
+    "name": "Tinker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Tinker. SBInfo sources: SBTinker.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

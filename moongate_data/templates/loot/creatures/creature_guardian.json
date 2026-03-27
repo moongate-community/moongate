@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.guardian",
+    "name": "Guardian",
+    "category": "loot",
+    "description": "Creature-specific loot for Guardian.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arrow",
+        "chance": 1.0,
+        "amount": 250
+      },
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amount": 375
+      }
+    ]
+  }
+]

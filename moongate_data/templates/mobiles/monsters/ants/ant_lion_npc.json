@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "ant_lion_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AntLion.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 308,
+    "dexterity": 93,
+    "intelligence": 48,
+    "hits": 156,
+    "maxHits": 156,
+    "minDamage": 7,
+    "maxDamage": 21,
+    "armorRating": 45,
+    "fame": 4500,
+    "karma": -4500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.average",
+      "creature.ant_lion"
+    ],
+    "sounds": {
+      "Idle": 1006,
+      "StartAttack": 1007,
+      "Attack": 1008,
+      "Defend": 1009,
+      "Die": 1010
+    },
+    "resistances": {
+      "physical": 52,
+      "fire": 30,
+      "cold": 35,
+      "poison": 45,
+      "energy": 32
+    },
+    "damageTypes": {
+      "physical": 70,
+      "poison": 30
+    },
+    "title": "an ant lion",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0313"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

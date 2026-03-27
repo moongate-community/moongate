@@ -1,0 +1,66 @@
+[
+  {
+    "type": "mobile",
+    "id": "dark_wisp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DarkWisp.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 210,
+    "dexterity": 210,
+    "intelligence": 210,
+    "hits": 126,
+    "maxHits": 126,
+    "minDamage": 17,
+    "maxDamage": 18,
+    "armorRating": 40,
+    "fame": 4000,
+    "karma": -4000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 466,
+      "StartAttack": 467,
+      "Attack": 468,
+      "Defend": 469,
+      "Die": 470
+    },
+    "resistances": {
+      "physical": 40,
+      "fire": 30,
+      "cold": 20,
+      "poison": 7,
+      "energy": 60
+    },
+    "damageTypes": {
+      "physical": 50,
+      "energy": 50
+    },
+    "title": "a wisp",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A5"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "light_source"
+          }
+        ]
+      }
+    ]
+  }
+]

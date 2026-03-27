@@ -1,0 +1,55 @@
+[
+  {
+    "type": "mobile",
+    "id": "gazer_larva_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO GazerLarva.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 88,
+    "dexterity": 63,
+    "intelligence": 68,
+    "hits": 41,
+    "maxHits": 41,
+    "minDamage": 2,
+    "maxDamage": 9,
+    "armorRating": 25,
+    "fame": 900,
+    "karma": -900,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.poor"
+    ],
+    "sounds": {
+      "Idle": 377,
+      "StartAttack": 378,
+      "Attack": 379,
+      "Defend": 380,
+      "Die": 381
+    },
+    "resistances": {
+      "physical": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a gazer larva",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030A"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

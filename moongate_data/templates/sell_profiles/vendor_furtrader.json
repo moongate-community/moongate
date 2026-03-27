@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.furtrader",
+    "name": "Furtrader Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Furtrader. SBInfo sources: SBFurtrader.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

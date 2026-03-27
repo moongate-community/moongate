@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.hair_stylist",
+    "name": "HairStylist Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for HairStylist. SBInfo sources: SBHairStylist.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

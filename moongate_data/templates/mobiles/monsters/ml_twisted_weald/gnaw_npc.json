@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "gnaw_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Gnaw.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 161,
+    "dexterity": 134,
+    "intelligence": 73,
+    "hits": 837,
+    "maxHits": 837,
+    "mana": 69,
+    "stamina": 134,
+    "minDamage": 16,
+    "maxDamage": 22,
+    "fame": 17500,
+    "karma": -17500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1114,
+      "Tactics": 936,
+      "MagicResist": 1037
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich"
+    ],
+    "resistances": {
+      "physical": 66,
+      "fire": 54,
+      "cold": 24,
+      "poison": 28,
+      "energy": 27
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Gnaw",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0017",
+          "skinHue": "0x0130"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

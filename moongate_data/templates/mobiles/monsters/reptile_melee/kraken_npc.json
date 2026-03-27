@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "kraken_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Kraken.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 768,
+    "dexterity": 235,
+    "intelligence": 33,
+    "hits": 461,
+    "maxHits": 461,
+    "mana": 0,
+    "minDamage": 19,
+    "maxDamage": 33,
+    "armorRating": 50,
+    "fame": 11000,
+    "karma": -11000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 175,
+      "Tactics": 525,
+      "Wrestling": 525
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.kraken"
+    ],
+    "sounds": {
+      "Idle": 353,
+      "StartAttack": 354,
+      "Attack": 355,
+      "Defend": 356,
+      "Die": 357
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 35,
+      "cold": 35,
+      "poison": 25,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 70,
+      "cold": 30
+    },
+    "title": "a kraken",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x004D"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

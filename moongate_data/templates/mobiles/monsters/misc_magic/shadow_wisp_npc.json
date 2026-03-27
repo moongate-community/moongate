@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "shadow_wisp_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ShadowWisp.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 28,
+    "dexterity": 30,
+    "intelligence": 18,
+    "hits": 17,
+    "maxHits": 17,
+    "minDamage": 5,
+    "maxDamage": 10,
+    "armorRating": 18,
+    "fame": 500,
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Tactics": 75,
+      "Wrestling": 325
+    },
+    "sounds": {
+      "Idle": 466,
+      "StartAttack": 467,
+      "Attack": 468,
+      "Defend": 469,
+      "Die": 470
+    },
+    "resistances": {
+      "physical": 17,
+      "fire": 7,
+      "poison": 7,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a shadow wisp",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00A5"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "light_source"
+          }
+        ]
+      }
+    ]
+  }
+]

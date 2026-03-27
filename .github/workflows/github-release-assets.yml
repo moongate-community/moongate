@@ -15,20 +15,14 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-latest
-            rid: linux-x64
-            artifact_name: moongate-linux-x64
-            archive_ext: tar.gz
-          - os: macos-14
-            rid: osx-arm64
-            artifact_name: moongate-osx-arm64
-            archive_ext: tar.gz
-    runs-on: ${{ matrix.os }}
+  build-linux-x64:
+    runs-on:
+      group: Default
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout
@@ -58,35 +52,99 @@ jobs:
           echo "Version: ${VERSION}"
 
       - name: Restore
-        run: dotnet restore -r "${{ matrix.rid }}" src/Moongate.Server/Moongate.Server.csproj
+        run: dotnet restore -r "linux-x64" src/Moongate.Server/Moongate.Server.csproj
 
       - name: Publish
         run: >
           dotnet publish
           src/Moongate.Server/Moongate.Server.csproj
           -c Release
-          -r "${{ matrix.rid }}"
+          -r "linux-x64"
           --self-contained true
           -p:PublishAot=false
           --no-restore
-          -o "dist/${{ matrix.artifact_name }}"
+          -o "dist/moongate-linux-x64"
 
       - name: Archive (tar.gz)
-        shell: bash
         run: |
           mkdir -p artifacts
-          tar -C dist -czf "artifacts/${{ matrix.artifact_name }}-${{ steps.version.outputs.version }}.${{ matrix.archive_ext }}" "${{ matrix.artifact_name }}"
+          tar -C dist -czf "artifacts/moongate-linux-x64-${{ steps.version.outputs.version }}.tar.gz" "moongate-linux-x64"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
+          name: moongate-linux-x64
+          path: artifacts/*
+          if-no-files-found: error
+
+  build-osx-arm64:
+    runs-on: macos-14
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          VERSION=""
+          if [[ -n "${{ github.ref_name }}" && "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+            VERSION="${{ github.event.inputs.version }}"
+            if [[ "$VERSION" != v* ]]; then
+              VERSION="v${VERSION}"
+            fi
+          else
+            VERSION="v0.0.0-dev"
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Version: ${VERSION}"
+
+      - name: Restore
+        run: dotnet restore -r "osx-arm64" src/Moongate.Server/Moongate.Server.csproj
+
+      - name: Publish
+        run: >
+          dotnet publish
+          src/Moongate.Server/Moongate.Server.csproj
+          -c Release
+          -r "osx-arm64"
+          --self-contained true
+          -p:PublishAot=false
+          --no-restore
+          -o "dist/moongate-osx-arm64"
+
+      - name: Archive (tar.gz)
+        run: |
+          mkdir -p artifacts
+          tar -C dist -czf "artifacts/moongate-osx-arm64-${{ steps.version.outputs.version }}.tar.gz" "moongate-osx-arm64"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: moongate-osx-arm64
           path: artifacts/*
           if-no-files-found: error
 
   release:
-    needs: [build]
-    runs-on: ubuntu-latest
+    needs: [build-linux-x64, build-osx-arm64]
+    runs-on:
+      group: Default
+    container:
+      image: python:3.12-bookworm
+    defaults:
+      run:
+        shell: bash
     env:
       DISCORD_CHANGELOG_WEBHOOK_URL: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK_URL }}
 

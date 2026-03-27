@@ -1,0 +1,568 @@
+[
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_average",
+    "name": "AosAverage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 55,
+        "amountMax": 100
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_filthy_rich",
+    "name": "AosFilthyRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 202,
+        "amountMax": 400
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_meager",
+    "name": "AosMeager",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 23,
+        "amountMax": 50
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_poor",
+    "name": "AosPoor",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 11,
+        "amountMax": 20
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_rich",
+    "name": "AosRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 160,
+        "amountMax": 250
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_super_boss",
+    "name": "AosSuperBoss",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 505,
+        "amountMax": 1000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.aos_ultra_rich",
+    "name": "AosUltraRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 505,
+        "amountMax": 1000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.average",
+    "name": "Average",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 108,
+        "amountMax": 180
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.filthy_rich",
+    "name": "FilthyRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 403,
+        "amountMax": 700
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.gems",
+    "name": "Gems",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "amber",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.high_scrolls",
+    "name": "HighScrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "summon_air_elemental_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.low_scrolls",
+    "name": "LowScrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "clumsy_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.meager",
+    "name": "Meager",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 44,
+        "amountMax": 80
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.med_scrolls",
+    "name": "MedScrolls",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "arch_cure_scroll",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.ml_rich",
+    "name": "MlRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 454,
+        "amountMax": 650
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_average",
+    "name": "OldAverage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 60,
+        "amountMax": 150
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_filthy_rich",
+    "name": "OldFilthyRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 402,
+        "amountMax": 650
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_meager",
+    "name": "OldMeager",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 30,
+        "amountMax": 75
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_poor",
+    "name": "OldPoor",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 1,
+        "amountMax": 25
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_rich",
+    "name": "OldRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 260,
+        "amountMax": 350
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_super_boss",
+    "name": "OldSuperBoss",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 505,
+        "amountMax": 1000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.old_ultra_rich",
+    "name": "OldUltraRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 505,
+        "amountMax": 1000
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.poor",
+    "name": "Poor",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 22,
+        "amountMax": 40
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.potions",
+    "name": "Potions",
+    "category": "loot",
+    "description": "",
+    "mode": "weighted",
+    "rolls": 1,
+    "noDropWeight": 0,
+    "entries": [
+      {
+        "itemTemplateId": "agility_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "strength_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "refresh_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_cure_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_heal_potion",
+        "weight": 1,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "lesser_poison_potion",
+        "weight": 1,
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.rich",
+    "name": "Rich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 240,
+        "amountMax": 375
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_average",
+    "name": "SeAverage",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 108,
+        "amountMax": 180
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_filthy_rich",
+    "name": "SeFilthyRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 403,
+        "amountMax": 700
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_meager",
+    "name": "SeMeager",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 44,
+        "amountMax": 80
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_poor",
+    "name": "SePoor",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 22,
+        "amountMax": 40
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_rich",
+    "name": "SeRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 240,
+        "amountMax": 375
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_super_boss",
+    "name": "SeSuperBoss",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 810,
+        "amountMax": 1800
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.se_ultra_rich",
+    "name": "SeUltraRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 606,
+        "amountMax": 1200
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.super_boss",
+    "name": "SuperBoss",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 810,
+        "amountMax": 1800
+      }
+    ]
+  },
+  {
+    "type": "loot",
+    "id": "loot_pack.ultra_rich",
+    "name": "UltraRich",
+    "category": "loot",
+    "description": "",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "gold",
+        "chance": 1.0,
+        "amountMin": 606,
+        "amountMax": 1200
+      }
+    ]
+  }
+]

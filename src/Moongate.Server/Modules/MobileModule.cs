@@ -3,6 +3,8 @@ using Moongate.Scripting.Descriptors;
 using Moongate.Server.Data.Interaction;
 using Moongate.Server.Data.Internal.Entities;
 using Moongate.Server.Data.Internal.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Internal.Templates;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Entities;
@@ -16,7 +18,9 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Mobiles;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 
@@ -29,6 +33,7 @@ namespace Moongate.Server.Modules;
 /// </summary>
 public sealed class MobileModule
 {
+    private const int MaxTemplateSearchPageSize = 50;
     private static bool _isLuaMobileProxyTypeRegistered;
     private static bool _isLuaItemProxyTypeRegistered;
     private readonly ICharacterService _characterService;
@@ -43,7 +48,10 @@ public sealed class MobileModule
     private readonly IOutgoingPacketQueue? _outgoingPacketQueue;
     private readonly IItemService? _itemService;
     private readonly ISkillGainService? _skillGainService;
-    private readonly Func<double> _skillCheckRollProvider;
+    private readonly IMobileTemplateService? _mobileTemplateService;
+    private readonly MobileCombatModule _combatModule;
+    private readonly MobileInventoryModule _inventoryModule;
+    private readonly MobileMovementModule _movementModule;
 
     public MobileModule(
         ICharacterService characterService,
@@ -58,6 +66,7 @@ public sealed class MobileModule
         IOutgoingPacketQueue? outgoingPacketQueue = null,
         IItemService? itemService = null,
         ISkillGainService? skillGainService = null,
+        IMobileTemplateService? mobileTemplateService = null,
         Func<double>? skillCheckRollProvider = null
     )
     {
@@ -73,7 +82,25 @@ public sealed class MobileModule
         _outgoingPacketQueue = outgoingPacketQueue;
         _itemService = itemService;
         _skillGainService = skillGainService;
-        _skillCheckRollProvider = skillCheckRollProvider ?? Random.Shared.NextDouble;
+        _mobileTemplateService = mobileTemplateService;
+        _movementModule = new(
+            speechService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            movementValidationService,
+            pathfindingService,
+            gameEventBusService,
+            backgroundJobService
+        );
+        _combatModule = new(
+            mobileService,
+            gameNetworkSessionService,
+            spatialWorldService,
+            outgoingPacketQueue,
+            skillGainService,
+            skillCheckRollProvider
+        );
+        _inventoryModule = new(itemService);
     }
 
     [ScriptFunction("dismount", "Attempts to dismount the rider from the current mount.")]
@@ -84,11 +111,11 @@ public sealed class MobileModule
             return false;
         }
 
-        var dismounted = _mobileService.DismountAsync((Serial)riderId).GetAwaiter().GetResult();
+        var dismounted = _combatModule.Dismount((Serial)riderId);
 
         if (dismounted)
         {
-            RefreshMountedSession((Serial)riderId, Serial.Zero, false);
+            _combatModule.RefreshMountedSession((Serial)riderId, Serial.Zero, false);
         }
 
         return dismounted;
@@ -103,6 +130,41 @@ public sealed class MobileModule
         }
 
         return CreateLuaMobileProxy(ResolveMobile((Serial)characterId));
+    }
+
+    [ScriptFunction("get_brain_id", "Gets the resolved runtime brain id for a character id, or nil when unavailable.")]
+    public string? GetBrainId(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return mobile?.BrainId;
+    }
+
+    [ScriptFunction("get_ai_fight_mode", "Gets the resolved runtime AI fight mode for a character id, or nil when unavailable.")]
+    public string? GetAiFightMode(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomString(mobile, MobileCustomParamKeys.Ai.FightMode);
+    }
+
+    [ScriptFunction(
+        "get_ai_range_perception",
+        "Gets the resolved runtime AI perception range for a character id, or nil when unavailable."
+    )]
+    public int? GetAiRangePerception(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomInteger(mobile, MobileCustomParamKeys.Ai.RangePerception);
+    }
+
+    [ScriptFunction("get_ai_range_fight", "Gets the resolved runtime AI fight range for a character id, or nil when unavailable.")]
+    public int? GetAiRangeFight(uint characterId)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        return TryGetCustomInteger(mobile, MobileCustomParamKeys.Ai.RangeFight);
     }
 
     [ScriptFunction("get_backpack", "Gets the backpack item reference for a character id, or nil when unavailable.")]
@@ -146,51 +208,30 @@ public sealed class MobileModule
         return CreateLuaItemProxy(TryResolveWeapon(mobile));
     }
 
+    [ScriptFunction("teleport", "Teleports a character id to the provided map and world coordinates.")]
+    public bool Teleport(uint characterId, int mapId, int x, int y, int z)
+    {
+        var mobile = ResolveMobile((Serial)characterId);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        return _movementModule.Teleport(mobile, mapId, x, y, z);
+    }
+
     [ScriptFunction("check_skill", "Checks a skill against a min/max range and applies gain rules.")]
     public bool CheckSkill(uint characterId, string skillName, double minSkill, double maxSkill, uint targetId = 0)
     {
-        if (_skillGainService is null)
-        {
-            return false;
-        }
-
         var mobile = ResolveMobile((Serial)characterId);
 
-        if (mobile is null || !TryResolveSkillName(skillName, out var resolvedSkill))
+        if (mobile is null)
         {
             return false;
         }
 
-        var skill = mobile.GetSkill(resolvedSkill);
-
-        if (skill is null)
-        {
-            return false;
-        }
-
-        var currentValue = skill.Value / 10.0;
-
-        if (currentValue < minSkill)
-        {
-            return false;
-        }
-
-        if (currentValue >= maxSkill || minSkill >= maxSkill)
-        {
-            return true;
-        }
-
-        var successChance = Math.Clamp((currentValue - minSkill) / (maxSkill - minSkill), 0.0, 1.0);
-        var wasSuccessful = successChance >= _skillCheckRollProvider();
-        _ = _skillGainService.TryGain(
-            mobile,
-            resolvedSkill,
-            successChance,
-            wasSuccessful,
-            new SkillGainContext(mobile.Location, targetId == 0 ? null : (Serial)targetId)
-        );
-
-        return wasSuccessful;
+        return _combatModule.CheckSkill(mobile, skillName, minSkill, maxSkill, targetId);
     }
 
     [ScriptFunction("consume_item", "Consumes a matching item id from equipped quivers first, then backpack.")]
@@ -208,22 +249,7 @@ public sealed class MobileModule
             return false;
         }
 
-        var sources = GetConsumableSources(mobile);
-
-        if (CountMatchingItems(sources, itemId) < amount)
-        {
-            return false;
-        }
-
-        for (var i = 0; i < amount; i++)
-        {
-            if (!TryConsumeFromSources(sources, itemId))
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return _inventoryModule.ConsumeItem(mobile, itemId, amount);
     }
 
     [ScriptFunction("add_item_to_backpack", "Spawns an item template and places it in the target backpack.")]
@@ -241,29 +267,7 @@ public sealed class MobileModule
             return null;
         }
 
-        var backpackId = ResolveBackpackId(mobile);
-
-        if (backpackId == Serial.Zero)
-        {
-            return null;
-        }
-
-        var item = _itemService.SpawnFromTemplateAsync(itemTemplateId.Trim()).GetAwaiter().GetResult();
-
-        if (amount > 1)
-        {
-            if (!item.IsStackable)
-            {
-                return null;
-            }
-
-            item.Amount = amount;
-            _itemService.UpsertItemAsync(item).GetAwaiter().GetResult();
-        }
-
-        var moved = _itemService.MoveItemToContainerAsync(item.Id, backpackId, new(1, 1)).GetAwaiter().GetResult();
-
-        return moved ? CreateLuaItemProxy(item) : null;
+        return CreateLuaItemProxy(_inventoryModule.AddItemToBackpack(mobile, itemTemplateId, amount));
     }
 
     [ScriptFunction("spawn", "Spawns a mobile template at world position { x, y, z, map_id }.")]
@@ -280,6 +284,7 @@ public sealed class MobileModule
         var mobile = _mobileService.SpawnFromTemplateAsync(mobileTemplateId.Trim(), location, mapId)
                                    .GetAwaiter()
                                    .GetResult();
+        _spatialWorldService?.AddOrUpdateMobile(mobile);
 
         return new(
             mobile,
@@ -291,6 +296,36 @@ public sealed class MobileModule
             _gameEventBusService,
             _backgroundJobService
         );
+    }
+
+    [ScriptFunction("search_templates", "Searches mobile templates for GM tools and returns paged results.")]
+    public Table SearchTemplates(string query, int page = 1, int pageSize = 20)
+    {
+        var results = new Table(null);
+
+        if (_mobileTemplateService is null)
+        {
+            return results;
+        }
+
+        var normalizedQuery = query?.Trim() ?? string.Empty;
+        var normalizedPage = Math.Max(1, page);
+        var normalizedPageSize = Math.Clamp(pageSize, 1, MaxTemplateSearchPageSize);
+        var matches = SearchTemplateDefinitions(_mobileTemplateService.GetAll(), normalizedQuery);
+        var paged = matches.Skip((normalizedPage - 1) * normalizedPageSize).Take(normalizedPageSize);
+        var index = 1;
+
+        foreach (var match in paged)
+        {
+            var entry = new Table(null)
+            {
+                ["template_id"] = match.TemplateId,
+                ["display_name"] = match.DisplayName
+            };
+            results[index++] = entry;
+        }
+
+        return results;
     }
 
     [ScriptFunction("try_mount", "Attempts to mount the rider on the target mount creature.")]
@@ -307,47 +342,14 @@ public sealed class MobileModule
         var mount = TryResolveRuntimeMobile(mountSerial) ??
                     _mobileService.GetAsync(mountSerial).GetAwaiter().GetResult();
 
-        if (rider is not null)
-        {
-            _mobileService.CreateOrUpdateAsync(rider).GetAwaiter().GetResult();
-        }
-
-        if (mount is not null)
-        {
-            _mobileService.CreateOrUpdateAsync(mount).GetAwaiter().GetResult();
-        }
-
-        var mounted = _mobileService.TryMountAsync(riderSerial, mountSerial).GetAwaiter().GetResult();
+        var mounted = _combatModule.TryMount(riderSerial, mountSerial, rider, mount);
 
         if (mounted)
         {
-            RefreshMountedSession(riderSerial, mountSerial, true);
+            _combatModule.RefreshMountedSession(riderSerial, mountSerial, true);
         }
 
         return mounted;
-    }
-
-    private void RefreshMountedSession(Serial riderId, Serial mountId, bool isMounted)
-    {
-        if (!_gameNetworkSessionService.TryGetByCharacterId(riderId, out var session) || session.Character is null)
-        {
-            return;
-        }
-
-        var rider = TryResolveRuntimeMobile(riderId) ??
-                    _mobileService?.GetAsync(riderId).GetAwaiter().GetResult() ??
-                    session.Character;
-        var mount = mountId == Serial.Zero
-                        ? null
-                        : TryResolveRuntimeMobile(mountId) ??
-                          _mobileService?.GetAsync(mountId).GetAwaiter().GetResult();
-
-        if (_outgoingPacketQueue is null)
-        {
-            return;
-        }
-
-        MountedSelfRefreshHelper.Refresh(session, _outgoingPacketQueue, rider, mount, isMounted);
     }
 
     private static void RegisterLuaTypeIfNeeded()
@@ -376,6 +378,54 @@ public sealed class MobileModule
         UserData.RegisterType(type, new GenericUserDataDescriptor(type));
         _isLuaItemProxyTypeRegistered = true;
     }
+
+    private static string ResolveDisplayName(MobileTemplateDefinition template)
+        => !string.IsNullOrWhiteSpace(template.Name)
+               ? template.Name.Trim()
+               : !string.IsNullOrWhiteSpace(template.Title)
+                   ? template.Title.Trim()
+                   : template.Id;
+
+    private static IReadOnlyList<LuaMobileTemplateSearchResult> SearchTemplateDefinitions(
+        IReadOnlyList<MobileTemplateDefinition> templates,
+        string query
+    )
+    {
+        var orderedTemplates = templates.OrderBy(static template => template.Id, StringComparer.OrdinalIgnoreCase);
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return orderedTemplates.Select(MapSearchResult).ToList();
+        }
+
+        var prefixMatches = new List<LuaMobileTemplateSearchResult>();
+        var substringMatches = new List<LuaMobileTemplateSearchResult>();
+
+        foreach (var template in orderedTemplates)
+        {
+            var displayName = ResolveDisplayName(template);
+            var matchesPrefix = template.Id.StartsWith(query, StringComparison.OrdinalIgnoreCase) ||
+                                displayName.StartsWith(query, StringComparison.OrdinalIgnoreCase);
+
+            if (matchesPrefix)
+            {
+                prefixMatches.Add(MapSearchResult(template));
+
+                continue;
+            }
+
+            if (template.Id.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                displayName.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                substringMatches.Add(MapSearchResult(template));
+            }
+        }
+
+        return [..prefixMatches, ..substringMatches];
+    }
+
+    private static LuaMobileTemplateSearchResult MapSearchResult(MobileTemplateDefinition template)
+        => new(template.Id, ResolveDisplayName(template));
 
     private UOMobileEntity? ResolveRiderForMount(Serial riderId)
     {
@@ -421,58 +471,6 @@ public sealed class MobileModule
         );
     }
 
-    private static int CountMatchingItems(IEnumerable<UOItemEntity> containers, int itemId)
-        => containers.Sum(container => CountMatchingItems(container, itemId));
-
-    private static int CountMatchingItems(UOItemEntity container, int itemId)
-    {
-        var count = 0;
-
-        foreach (var child in container.Items)
-        {
-            if (child.ItemId == itemId)
-            {
-                count += Math.Max(0, child.Amount);
-            }
-
-            if (child.Items.Count > 0)
-            {
-                count += CountMatchingItems(child, itemId);
-            }
-        }
-
-        return count;
-    }
-
-    private IEnumerable<UOItemEntity> GetConsumableSources(UOMobileEntity mobile)
-    {
-        var quiver = mobile.GetEquippedItemsRuntime().FirstOrDefault(static item => item.IsQuiver);
-
-        if (quiver is not null)
-        {
-            yield return quiver;
-        }
-
-        var backpack = TryResolveBackpack(mobile);
-
-        if (backpack is not null)
-        {
-            yield return backpack;
-        }
-    }
-
-    private static Serial ResolveBackpackId(UOMobileEntity mobile)
-    {
-        if (mobile.BackpackId != Serial.Zero)
-        {
-            return mobile.BackpackId;
-        }
-
-        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
-                   ? equippedBackpackId
-                   : Serial.Zero;
-    }
-
     private UOMobileEntity? ResolveMobile(Serial mobileId)
     {
         if (mobileId == Serial.Zero)
@@ -505,71 +503,16 @@ public sealed class MobileModule
                              (item.WeaponSkill is not null || item.CombatStats is not null)
                  );
 
-    private bool TryConsumeFromSources(IEnumerable<UOItemEntity> sources, int itemId)
+    private static Serial ResolveBackpackId(UOMobileEntity mobile)
     {
-        foreach (var source in sources)
+        if (mobile.BackpackId != Serial.Zero)
         {
-            if (!TryConsumeItemRecursive(source, itemId, out var changedStack, out var deletedStack))
-            {
-                continue;
-            }
-
-            if (changedStack is not null)
-            {
-                _itemService!.UpsertItemAsync(changedStack).GetAwaiter().GetResult();
-            }
-
-            if (deletedStack is not null)
-            {
-                _ = _itemService!.DeleteItemAsync(deletedStack.Id).GetAwaiter().GetResult();
-            }
-
-            _itemService!.UpsertItemAsync(source).GetAwaiter().GetResult();
-
-            return true;
+            return mobile.BackpackId;
         }
 
-        return false;
-    }
-
-    private static bool TryConsumeItemRecursive(
-        UOItemEntity container,
-        int itemId,
-        out UOItemEntity? changedStack,
-        out UOItemEntity? deletedStack
-    )
-    {
-        changedStack = null;
-        deletedStack = null;
-
-        for (var index = container.Items.Count - 1; index >= 0; index--)
-        {
-            var child = container.Items[index];
-
-            if (child.ItemId == itemId)
-            {
-                child.Amount--;
-
-                if (child.Amount <= 0)
-                {
-                    container.RemoveItem(child.Id);
-                    deletedStack = child;
-                }
-                else
-                {
-                    changedStack = child;
-                }
-
-                return true;
-            }
-
-            if (TryConsumeItemRecursive(child, itemId, out changedStack, out deletedStack))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return mobile.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
+                   ? equippedBackpackId
+                   : Serial.Zero;
     }
 
     private static bool TryResolveSkillName(string skillName, out UOSkillName resolvedSkill)
@@ -596,6 +539,31 @@ public sealed class MobileModule
         }
 
         return false;
+    }
+
+    private static int? TryGetCustomInteger(UOMobileEntity? mobile, string key)
+    {
+        if (mobile is null || !mobile.TryGetCustomInteger(key, out var value))
+        {
+            return null;
+        }
+
+        if (value is < int.MinValue or > int.MaxValue)
+        {
+            return null;
+        }
+
+        return (int)value;
+    }
+
+    private static string? TryGetCustomString(UOMobileEntity? mobile, string key)
+    {
+        if (mobile is null || !mobile.TryGetCustomString(key, out var value) || string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        return value;
     }
 
     private static bool TryGetRequiredInt(Table table, string key, out int value)

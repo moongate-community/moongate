@@ -1,0 +1,76 @@
+[
+  {
+    "type": "mobile",
+    "id": "fan_dancer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FanDancer.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 338,
+    "dexterity": 228,
+    "intelligence": 23,
+    "hits": 390,
+    "maxHits": 390,
+    "minDamage": 12,
+    "maxDamage": 17,
+    "fame": 9000,
+    "karma": -9000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 1050,
+      "Tactics": 900,
+      "Wrestling": 900,
+      "Anatomy": 900
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "creature.fan_dancer"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 50,
+      "fire": 60,
+      "cold": 60,
+      "poison": 60,
+      "energy": 50
+    },
+    "damageTypes": {
+      "physical": 70,
+      "fire": 10,
+      "cold": 10,
+      "poison": 10
+    },
+    "title": "a fan dancer",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00F7"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "tessen"
+          }
+        ]
+      }
+    ]
+  }
+]

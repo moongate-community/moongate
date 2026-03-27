@@ -1,0 +1,67 @@
+[
+  {
+    "type": "mobile",
+    "id": "peasant_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO Peasant.",
+    "tags": [
+      "townfolk",
+      "npc"
+    ],
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "aggressor",
+      "rangePerception": 22,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "creature.peasant"
+    ],
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "plain_dress"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "boots"
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt"
+          },
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "shoes"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.savage_shaman",
+    "name": "SavageShaman",
+    "category": "loot",
+    "description": "Creature-specific loot for SavageShaman.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "tribal_berry",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

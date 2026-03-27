@@ -83,7 +83,7 @@ local state = {
     }),
 }
 
-function orion.brain_loop(npc_id)
+function orion.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
 

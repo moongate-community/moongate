@@ -2,6 +2,19 @@
 
 Moongate v2 includes a powerful Lua scripting subsystem for gameplay customization.
 
+If you are starting from zero, begin with the hands-on tutorial path:
+
+- [Create Your First Content](create-your-first-content.md)
+- [Create Your First Systems](create-your-first-systems.md)
+- [Create Your First Item Template](create-your-first-item-template.md)
+- [Create Your First Item Script](create-your-first-item-script.md)
+- [Create Your First NPC Brain](create-your-first-npc-brain.md)
+- [Create Your First NPC Template](create-your-first-npc-template.md)
+- [Create Your First Loot Container](create-your-first-loot-container.md)
+- [Create Your First Scheduled Event](create-your-first-scheduled-event.md)
+- [Create Your First Gump](create-your-first-gump.md)
+- [Create Your First Lua Admin Command](create-your-first-lua-admin-command.md)
+
 ## Overview
 
 The scripting system is built on **MoonSharp**, a lightweight Lua interpreter for .NET. It provides:
@@ -11,6 +24,24 @@ The scripting system is built on **MoonSharp**, a lightweight Lua interpreter fo
 - Automatic `.luarc` generation for editor tooling
 - Callback system for game events
 - Lua plugin packaging under `plugins/`
+- File-path-based hot reload invalidation for Lua scripts
+
+## Hot Reload
+
+When `Scripting.EnableFileWatcher` is enabled, Moongate watches:
+
+- `scripts/**/*.lua`
+- `templates/**/*.json`
+- `data/spawns/**/*.json`
+
+Lua hot reload is lazy: when a watched `.lua` file changes, the compiled chunk for that file is invalidated and the next
+execution recompiles it. JSON template and spawn files are reloaded one file at a time through the registered file loader.
+
+For manual reload, use:
+
+```text
+reload_template <filePath>
+```
 
 ## Architecture
 
@@ -119,13 +150,17 @@ For OpenAI-backed NPC speech and deterministic-to-generative fallback patterns, 
 [Intelligent NPC Dialogue](intelligent-npcs.md).
 For shard-level timed callbacks and recurring Lua-driven calendar behavior, see
 [Scheduled Events](scheduled-events.md).
+For first-open chest loot and refillable container behavior driven by item and loot templates, see
+[Loot Containers](loot-containers.md).
 For in-game help tickets opened from the client help button and persisted for staff review, see the
-`help_tickets` module and global `on_ticket_opened(event)` callback in the scripting API reference.
+[`help_tickets` module and callback docs](api.md#help-ticketing) plus the operator-facing
+[Help Ticket Workflow](../operations/help-ticket-workflow.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
 For background-safe named jobs callable from Lua, see [Async Jobs](async-jobs.md).
 For recurring coroutine cadences in NPC brains, see [Tick Helper](tick.md).
+For routine staff operations in-game, the built-in GM menu now centralizes template add/search, travel, curated spawn tools, and server broadcast actions under one gump shell.
 
 ### NPC Brain Example
 
@@ -144,7 +179,7 @@ local state = {
     }),
 }
 
-function orion.brain_loop(npc_id)
+function orion.on_think(npc_id)
     while true do
         local npc = mobile.get(npc_id)
 
@@ -160,8 +195,17 @@ function orion.brain_loop(npc_id)
     end
 end
 
-function orion.on_speech(ctx)
-    -- ctx.source_serial, ctx.text, ctx.range...
+function orion.on_speech(npc_id, speaker_id, text, _speech_type, _map_id, _x, _y, _z)
+    if text == nil then
+        return
+    end
+
+    if string.find(string.lower(text), "hello", 1, true) then
+        local npc = mobile.get(npc_id)
+        if npc ~= nil then
+            npc:say("Meow!")
+        end
+    end
 end
 ```
 
@@ -404,21 +448,46 @@ function on_tick() end  -- Called every game tick
 
 ## NPC Brain Loop
 
-NPC templates can bind a Lua brain through `brain`:
+NPC templates bind a Lua brain through the canonical `ai` object:
 
 ```json
 {
   "type": "mobile",
   "id": "orione",
-  "body": "0x00C9",
-  "skinHue": 779,
-  "brain": "orion",
+  "ai": {
+    "brain": "orion"
+  },
   "name": "Orione",
-  "title": "a beautiful cat"
+  "title": "a beautiful cat",
+  "variants": [
+    {
+      "name": "default",
+      "weight": 1,
+      "appearance": {
+        "body": "0x00C9",
+        "skinHue": 779
+      },
+      "equipment": []
+    }
+  ]
 }
 ```
 
-The value `brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
+The value `ai.brain: "orion"` resolves to table `orion`, loaded from `scripts/ai/npcs/orion.lua`.
+ModernUO-aligned standard brains can also add:
+
+```json
+{
+  "ai": {
+    "brain": "ai_archer",
+    "fightMode": "closest",
+    "rangePerception": 10,
+    "rangeFight": 3
+  }
+}
+```
+
+Appearance and spawn-time equipment are selected from `variants`; simple NPCs typically declare one default variant.
 
 Real brain script (Orion the cat NPC):
 
@@ -440,7 +509,7 @@ local last_move  = 0
 local last_speech = 0
 local last_sound  = 0
 
-function brain_loop(npc_id)
+function on_think(npc_id)
     while true do
         local now = os.clock() * 1000
 
@@ -485,7 +554,7 @@ end
 
 Notes:
 
-- `brain_loop` is resumed by the server tactical runner.
+- `on_think` is resumed by the server tactical runner.
 - `coroutine.yield(ms)` controls the next brain tick delay.
 - `on_event(eventType, fromSerial, eventObject)` is the primary callback for runtime brain events.
 - Current event type: `speech_heard`.
@@ -937,7 +1006,7 @@ local speeches = {
     "*rubs against your leg*"
 }
 
-function brain_loop(npc_id)
+function on_think(npc_id)
     local cadence = tick.state({
         move = 1000,
         speech = 2000,

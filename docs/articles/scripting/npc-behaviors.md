@@ -2,11 +2,16 @@
 
 This page explains the behavior-oriented Lua AI model used by Moongate v2 NPC brains.
 
+If you have never authored an NPC before, start with the tutorial path first:
+
+- [Create Your First NPC Brain](create-your-first-npc-brain.md)
+- [Create Your First NPC Template](create-your-first-npc-template.md)
+
 ## Goal
 
 Keep NPC AI maintainable by separating:
 
-- **brain orchestration** (`brain_loop`, event routing, priorities)
+- **brain orchestration** (`on_think`, event routing, priorities)
 - **behaviors** (small focused units like follow, evade, hold_position)
 - **runtime state** (blackboard values stored per NPC)
 
@@ -15,6 +20,10 @@ Keep NPC AI maintainable by separating:
 ```text
 moongate_data/scripts/ai/
 ├── behavior.lua                 # behavior registry
+├── runtime/
+│   ├── fsm.lua                  # shared phase-1 FSM helpers
+│   ├── movement.lua             # shared movement intentions
+│   └── targeting.lua            # shared fight-mode and targeting helpers
 ├── runners/
 │   └── utility_runner.lua       # utility/priority behavior runner
 ├── behaviors/
@@ -28,6 +37,11 @@ moongate_data/scripts/ai/
 │   ├── self_bandage.lua
 │   └── return_home.lua
 └── brains/
+    ├── ai_melee.lua
+    ├── ai_archer.lua
+    ├── ai_animal.lua
+    ├── ai_vendor.lua
+    ├── ai_berserk.lua
     ├── guard.lua
     ├── undead_melee.lua
     └── utility_npc.lua
@@ -35,25 +49,74 @@ moongate_data/scripts/ai/
 
 ## Brain Contract
 
-Each brain table can expose:
+Mobile templates bind brains through the canonical `ai` object:
 
-- `brain_loop(npc_serial)` required for coroutine execution
+```json
+{
+  "id": "city_guard",
+  "ai": {
+    "brain": "guard"
+  }
+}
+```
+
+ModernUO-aligned standard brains use the same shape with extra AI parameters:
+
+```json
+{
+  "id": "juka_lord_npc",
+  "ai": {
+    "brain": "ai_archer",
+    "fightMode": "closest",
+    "rangePerception": 10,
+    "rangeFight": 3
+  }
+}
+```
+
+Custom shard-authored brains continue to use the same field, for example `ai.brain = "orion"`.
+
+Each Lua brain table can expose:
+
+- `on_think(npc_serial)` required for coroutine execution
 - `on_event(event_type, from_serial, event_obj)` optional
 - `on_in_range(npc_serial, source_serial, event_obj)` optional
 - `on_out_range(npc_serial, source_serial, event_obj)` optional
 - `on_speech(npc_id, speaker_id, text, speech_type, map_id, x, y, z)` optional
 - `on_death(by_character, context)` optional
 
-In templates:
+`ai.brain = "guard"` resolves to Lua table `guard`.
 
-```json
-{
-  "id": "city_guard",
-  "brain": "guard"
-}
-```
+## Canonical AI Fields
 
-`"brain": "guard"` resolves to Lua table `guard`.
+The canonical mobile AI contract is:
+
+- `ai.brain`
+- `ai.fightMode`
+- `ai.rangePerception`
+- `ai.rangeFight`
+
+Standard normalized brain ids currently used by ModernUO-derived templates are:
+
+- `ai_melee`
+- `ai_archer`
+- `ai_animal`
+- `ai_vendor`
+- `ai_berserk`
+- `ai_mage`
+- `ai_healer`
+- `ai_thief`
+
+Phase 1 ships full shared support for:
+
+- `ai_melee`
+- `ai_archer`
+- `ai_animal`
+- `ai_vendor`
+- `ai_berserk`
+
+`ai_mage`, `ai_healer`, and `ai_thief` are currently compatibility aliases to legacy brains while the engine primitives
+for full parity are still incomplete.
 
 ## Behavior Pattern
 
@@ -68,27 +131,47 @@ The utility runner selects the highest score, applies anti-jitter hold (`min_hol
 
 ## Guard Brain Example
 
-`guard.lua` uses these isolated behaviors:
+`guard.lua` is a custom Lua brain with explicit guard policy, not a standard `ai_archer` wrapper and not a generic utility-runner behavior set.
 
-- `leash`
-- `self_bandage`
-- `leash`
-- `evade`
-- `follow` for melee guards
-- `ranged_keep_distance` for archer guards
-- `return_home`
-- `hold_position`
+The brain owns:
+
+- focus lifecycle through `guards.set_focus(...)` and `guards.get_focus(...)`
+- melee vs ranged branching through `guard_role`
+- guard recovery / return-home behavior
+- teleport and reveal decisions through the `guards` module
+- combat-hook recovery when guards are attacked
 
 At each tick:
 
-1. build context (`now_ms`, `min_hold_ms`)
-2. ask `utility_runner` for the best behavior
-3. execute behavior
-4. `coroutine.yield(delay_ms)`
+1. read `ai.rangePerception` and `ai.rangeFight` from the template/runtime data
+2. resolve or refresh the current focus target
+3. fall back to `guard_role`-specific policy inside Lua
+4. decide whether to engage, back off, teleport, or return home
+5. `coroutine.yield(TICK_DELAY_MS)`
 
-Speech events are ignored by the guard brain for targeting decisions.
-On in-range events, the guard can greet a player once per source mobile and start combat only when a hostile target enters range.
-On ranged guard templates, `params.guard_role = "ranged"` switches the brain to a 4-6 tile spacing behavior and a longer hostile-acquisition radius.
+Speech events are still handled separately from combat. In-range events greet players once per source mobile and can arm combat when a hostile target enters range.
+Combat hooks (`attack`, `missed_attack`, `attacked`, `missed_by_attack`, `combat`) refresh focus directly from the aggressor serial.
+
+Archer guards use `guard_role = "ranged"` and keep a 4-6 tile spacing band. Melee guards use the same brain but prefer direct closure and home recovery.
+
+## Optional Patrol Params
+
+The current `guard` brain also reads optional patrol settings from `params`. Patrol is opt-in: if `patrol_mode` is not set to `random_roam`, or `patrol_radius` is missing or non-positive, the guard keeps its existing idle and return-home behavior.
+
+```json
+{
+  "params": {
+    "patrol_mode": { "type": "string", "value": "random_roam" },
+    "patrol_radius": { "type": "string", "value": "6" }
+  }
+}
+```
+
+`patrol_radius` is stored as a string param because mobile template params currently support `string`, `serial`, and `hue` values. `guard.lua` parses the radius with `tonumber(...)` at runtime.
+
+`home_*` remains the patrol center. The guard samples random roam points around the captured home point, and `leash_radius` remains the hard outer boundary because patrol radius is capped to it and immediate boundary breaches hand control back to the existing home-recovery flow in the same think cycle.
+
+Existing production guard templates in `moongate_data/templates/mobiles/guards.json` do not set these patrol params, so their current behavior is unchanged.
 
 `undead_melee.lua` is a simpler fixed-loop brain:
 
@@ -164,7 +247,7 @@ Current built-in behavior modules under `moongate_data/scripts/ai/behaviors/` ar
 
 ## State (Blackboard)
 
-Behavior state is stored per NPC using `npc_state` module keys, for example:
+Behavior state is stored per NPC using canonical `npc_state` module keys, for example:
 
 - `follow_target_serial`
 - `home_x`
@@ -187,19 +270,37 @@ This keeps behavior logic stateless and reusable.
 
 The guard brain initializes defaults only when a key is missing. That keeps the scripts KISS while still allowing runtime tuning to override blackboard values without being overwritten every tick.
 
+The shared AI runtime also uses canonical blackboard keys:
+
+- `ai_action`
+- `ai_target_serial`
+
+Legacy aliases from the previous naming (`modernuo_action` and `modernuo_target_serial`) are still accepted by `npc_state` for compatibility. When the runtime reads them, it migrates the value to the canonical key and removes the legacy alias.
+
 ## Guard Ranges
 
 There are three different ranges involved in guard combat:
 
 1. Acquisition range
    - This is the distance at which the Lua brain receives `in_range` for a hostile target.
-   - Melee guards use `3` tiles.
-   - Guards with `params.guard_role = "ranged"` use `10` tiles.
+   - The runner now reads `ai.rangePerception` from the template data instead of special-casing guards.
+   - Guards still use explicit template values so melee and ranged guards can differ without runner heuristics.
 2. Preferred movement band
    - Archer guards try to stay between `4` and `6` tiles from the target.
-   - Melee guards use `follow_stop_range = 1`.
+   - Melee guards close directly and recover to home when the target escapes.
 3. Actual weapon attack range
    - This is resolved by `CombatService` from the equipped weapon profile.
+
+## Guard Runtime Boundary
+
+The guard brain currently depends on:
+
+- `guards.set_focus(...)`
+- `guards.get_focus(...)`
+- `guards.teleport_to_target(...)`
+- `guards.try_reveal(...)`
+
+The generic runner is intentionally not guard-aware anymore. Guard policy lives in Lua, while C# provides thin primitives for focus, teleport, and reveal.
    - The current bow template uses `maxRange = 10`.
    - Melee weapons without explicit range metadata fall back to `1`.
 
@@ -214,7 +315,7 @@ For guards this means:
 - warrior guards notice hostiles at `3`, chase, and attack in melee
 - archer guards can notice hostiles earlier, position at `4-6`, and still fire out to the bow maximum range
 
-When a hostile leaves range, the guard brain now clears both `follow_target_serial` and the active combat target. That avoids stale target state lingering after `out_range`.
+When a hostile leaves `out_range`, the guard brain only clears the per-source engagement flag. It does not immediately drop focus or clear the active combat target from the event hook. Focus cleanup and home recovery are deferred to the next `on_think` tick, where the brain revalidates the target and decides whether to continue, teleport, or return home.
 
 Guards also capture a home point once, then use two simple rules:
 
@@ -264,6 +365,6 @@ The behavior does nothing unless the NPC already has a backpack and at least one
 
 - Keep each behavior focused on one decision.
 - Store tunables in blackboard keys instead of hardcoding in multiple files.
-- Use `on_event` for reactive AI (speech, in-range, out-range), and `brain_loop` for tactical polling.
+- Use `on_event` for reactive AI (speech, in-range, out-range), and `on_think` for tactical polling.
 - Return explicit delay values from behaviors to control tick frequency.
 - For conversational NPCs, prefer `common.npc_dialogue` so deterministic dialogue can claim speech before `ai_dialogue` fallback.

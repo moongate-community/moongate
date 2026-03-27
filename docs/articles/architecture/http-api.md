@@ -75,6 +75,8 @@ When `enableJwt` is true, protected endpoints require a Bearer token obtained fr
 | PUT | `/api/help-tickets/{ticketId}/status` | Update a help ticket status for staff |
 | GET | `/api/help-tickets/me` | List the authenticated player's open or assigned tickets |
 
+For the end-to-end intake, dashboard, and staff triage flow, see [Help Ticket Workflow](../operations/help-ticket-workflow.md).
+
 ### Commands
 
 | Method | Path | Description |

@@ -1,0 +1,213 @@
+[
+  {
+    "type": "mobile",
+    "id": "keeper_of_chivalry_npc",
+    "category": "npc",
+    "description": "Converted from ModernUO KeeperOfChivalry.",
+    "tags": [
+      "vendor",
+      "npc"
+    ],
+    "ai": {
+      "brain": "ai_vendor",
+      "fightMode": "none",
+      "rangePerception": 2,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Fencing": 800,
+      "Macing": 800,
+      "Swords": 800
+    },
+    "lootTables": [
+      "creature.keeper_of_chivalry"
+    ],
+    "title": "the Keeper of Chivalry",
+    "variants": [
+      {
+        "name": "female",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0191",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "plate_arms"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "plate_chest"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "plate_gloves"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "studded_gorget"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "plate_legs"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "plate_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "norse_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "close_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "helmet",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "MiddleTorso",
+            "items": [
+              {
+                "itemTemplateId": "body_sash",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "doublet",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "tunic",
+                "weight": 1,
+                "hue": "0x0482"
+              }
+            ]
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "metal_kite_shield"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "male",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "plate_arms"
+          },
+          {
+            "layer": "InnerTorso",
+            "itemTemplateId": "plate_chest"
+          },
+          {
+            "layer": "Gloves",
+            "itemTemplateId": "plate_gloves"
+          },
+          {
+            "layer": "Neck",
+            "itemTemplateId": "studded_gorget"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "plate_legs"
+          },
+          {
+            "layer": "Helm",
+            "items": [
+              {
+                "itemTemplateId": "plate_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "norse_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "close_helm",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "helmet",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "layer": "MiddleTorso",
+            "items": [
+              {
+                "itemTemplateId": "body_sash",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "doublet",
+                "weight": 1,
+                "hue": "0x0482"
+              },
+              {
+                "itemTemplateId": "tunic",
+                "weight": 1,
+                "hue": "0x0482"
+              }
+            ]
+          },
+          {
+            "layer": "OneHanded",
+            "itemTemplateId": "broadsword"
+          },
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "metal_kite_shield"
+          },
+          {
+            "layer": "Shoes",
+            "items": [
+              {
+                "itemTemplateId": "boots",
+                "weight": 1
+              },
+              {
+                "itemTemplateId": "thigh_boots",
+                "weight": 1
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

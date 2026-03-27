@@ -1,0 +1,60 @@
+[
+  {
+    "type": "mobile",
+    "id": "impaler_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Impaler.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 190,
+    "dexterity": 45,
+    "intelligence": 190,
+    "hits": 5000,
+    "maxHits": 5000,
+    "minDamage": 31,
+    "maxDamage": 35,
+    "armorRating": 49,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 90,
+      "fire": 60,
+      "cold": 75,
+      "poison": 60,
+      "energy": 100
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "impaler",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0132"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

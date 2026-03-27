@@ -1,0 +1,51 @@
+[
+  {
+    "type": "mobile",
+    "id": "vorpal_bunny_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO VorpalBunny.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 15,
+    "dexterity": 2000,
+    "intelligence": 1000,
+    "hits": 2000,
+    "maxHits": 2000,
+    "mana": 0,
+    "stamina": 500,
+    "minDamage": 1,
+    "maxDamage": 1,
+    "armorRating": 4,
+    "fame": 1000,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "creature.vorpal_bunny"
+    ],
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a vorpal bunny",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00CD",
+          "skinHue": "0x0480"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

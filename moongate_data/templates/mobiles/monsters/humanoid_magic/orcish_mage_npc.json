@@ -1,0 +1,68 @@
+[
+  {
+    "type": "mobile",
+    "id": "orcish_mage_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO OrcishMage.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 133,
+    "dexterity": 103,
+    "intelligence": 173,
+    "hits": 80,
+    "maxHits": 80,
+    "minDamage": 4,
+    "maxDamage": 14,
+    "armorRating": 30,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 663,
+      "Magery": 663,
+      "MagicResist": 675,
+      "Tactics": 575,
+      "Wrestling": 450
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.low_scrolls",
+      "creature.orcish_mage"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 35,
+      "cold": 25,
+      "poison": 35,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "an orcish mage",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x008C"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

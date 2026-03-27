@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.arctic_ogre_lord",
+    "name": "ArcticOgreLord",
+    "category": "loot",
+    "description": "Creature-specific loot for ArcticOgreLord.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "club",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

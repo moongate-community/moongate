@@ -18,7 +18,7 @@ public sealed class TownBankerBrainAssetTests
     public void NpcsHumansTemplate_ShouldAssignTownBankerBrainToBankerNpc()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "npcs_humans.json");
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "townfolk", "banker_npc.json");
 
         using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
         var banker = document.RootElement
@@ -31,7 +31,13 @@ public sealed class TownBankerBrainAssetTests
                                  )
                              );
 
-        Assert.That(banker.GetProperty("brain").GetString(), Is.EqualTo("town_banker"));
+        var ai = banker.GetProperty("ai");
+
+        Assert.That(ai.GetProperty("brain").GetString(), Is.EqualTo("town_banker"));
+        Assert.That(ai.GetProperty("fightMode").GetString(), Is.EqualTo("none"));
+        Assert.That(ai.GetProperty("rangePerception").GetInt32(), Is.EqualTo(2));
+        Assert.That(ai.GetProperty("rangeFight").GetInt32(), Is.EqualTo(1));
+        Assert.That(banker.TryGetProperty("brain", out _), Is.False);
     }
 
     [Test]

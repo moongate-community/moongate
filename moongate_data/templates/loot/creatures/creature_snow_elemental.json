@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.snow_elemental",
+    "name": "SnowElemental",
+    "category": "loot",
+    "description": "Creature-specific loot for SnowElemental.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "black_pearl",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

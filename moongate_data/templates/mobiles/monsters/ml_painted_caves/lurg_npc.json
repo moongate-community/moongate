@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "lurg_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Lurg.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 604,
+    "dexterity": 169,
+    "intelligence": 98,
+    "hits": 3111,
+    "maxHits": 3111,
+    "mana": 98,
+    "stamina": 169,
+    "minDamage": 16,
+    "maxDamage": 19,
+    "fame": 10000,
+    "karma": -10000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1266,
+      "Tactics": 1139,
+      "MagicResist": 802,
+      "Anatomy": 1172,
+      "Healing": 945
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 51,
+      "fire": 46,
+      "cold": 58,
+      "poison": 55,
+      "energy": 48
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Lurg",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x010B",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

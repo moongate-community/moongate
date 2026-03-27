@@ -1,0 +1,66 @@
+[
+  {
+    "type": "mobile",
+    "id": "ettin_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Ettin.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 150,
+    "dexterity": 65,
+    "intelligence": 43,
+    "hits": 90,
+    "maxHits": 90,
+    "minDamage": 7,
+    "maxDamage": 17,
+    "armorRating": 38,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 475,
+      "Tactics": 600,
+      "Wrestling": 550
+    },
+    "lootTables": [
+      "loot_pack.meager",
+      "loot_pack.average",
+      "loot_pack.potions"
+    ],
+    "sounds": {
+      "Idle": 367,
+      "StartAttack": 368,
+      "Attack": 369,
+      "Defend": 370,
+      "Die": 371
+    },
+    "resistances": {
+      "physical": 37,
+      "fire": 20,
+      "cold": 45,
+      "poison": 20,
+      "energy": 20
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "an ettin",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0012"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

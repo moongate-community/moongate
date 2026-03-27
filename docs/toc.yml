@@ -32,6 +32,8 @@
     href: articles/architecture/plugins.md
   - name: Create Your First Plugin
     href: articles/architecture/create-your-first-plugin.md
+  - name: Create Your First C# Admin Command
+    href: articles/architecture/create-your-first-csharp-admin-command.md
   - name: Solution Structure
     href: articles/architecture/solution.md
   - name: Source Generators
@@ -52,16 +54,46 @@
 - name: Scripting
   href: articles/scripting/
   items:
+  - name: Create Your First Content
+    href: articles/scripting/create-your-first-content.md
+  - name: Create Your First Systems
+    href: articles/scripting/create-your-first-systems.md
+  - name: Create Your First Item Template
+    href: articles/scripting/create-your-first-item-template.md
+  - name: Create Your First Item Script
+    href: articles/scripting/create-your-first-item-script.md
+  - name: Create Your First NPC Brain
+    href: articles/scripting/create-your-first-npc-brain.md
+  - name: Create Your First NPC Template
+    href: articles/scripting/create-your-first-npc-template.md
+  - name: Create Your First Loot Container
+    href: articles/scripting/create-your-first-loot-container.md
+  - name: Create Your First Scheduled Event
+    href: articles/scripting/create-your-first-scheduled-event.md
+  - name: Create Your First Gump
+    href: articles/scripting/create-your-first-gump.md
+  - name: Create Your First Lua Admin Command
+    href: articles/scripting/create-your-first-lua-admin-command.md
   - name: Overview
     href: articles/scripting/overview.md
+  - name: Authored Dialogues
+    href: articles/scripting/authored-dialogues.md
+  - name: Scheduled Events
+    href: articles/scripting/scheduled-events.md
+  - name: Loot Containers
+    href: articles/scripting/loot-containers.md
   - name: Vendor and Context Menus
     href: articles/scripting/vendor-context-menus.md
+  - name: Starting Loadout
+    href: articles/scripting/starting-loadout.md
   - name: NPC Behaviors
     href: articles/scripting/npc-behaviors.md
   - name: Intelligent NPC Dialogue
     href: articles/scripting/intelligent-npcs.md
   - name: Lua Plugins
     href: articles/scripting/lua-plugins.md
+  - name: Reputation Titles
+    href: articles/scripting/reputation-titles.md
   - name: Script Modules
     href: articles/scripting/modules.md
   - name: API Reference
@@ -82,22 +114,36 @@
 - name: Networking
   href: articles/networking/
   items:
+  - name: Client Encryption
+    href: articles/networking/client-encryption.md
+  - name: UDP Ping Server
+    href: articles/networking/udp-ping-server.md
   - name: Packet System
     href: articles/networking/packets.md
+  - name: POL Packet Coverage
+    href: articles/networking/pol-packet-coverage.md
   - name: Protocol Reference
     href: articles/networking/protocol.md
   - name: Packet Handler Performance
     href: articles/networking/packet-handler-performance.md
+  - name: Cliloc Notes
+    href: articles/networking/cliloc-notes.md
   - name: Packet Reference
     href: articles/networking/packet-reference/index.md
 
 - name: Operations
-  href: articles/operations/stress-test.md
+  href: articles/operations/
   items:
   - name: Stress Test
     href: articles/operations/stress-test.md
+  - name: Template Validation
+    href: articles/operations/template-validation.md
   - name: Console Commands
     href: articles/operations/console-commands.md
+  - name: In-Game Item Admin Commands
+    href: articles/operations/in-game-item-admin-commands.md
+  - name: Help Ticket Workflow
+    href: articles/operations/help-ticket-workflow.md
 
 - name: Development
   items:

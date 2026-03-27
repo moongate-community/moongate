@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "flesh_golem_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO FleshGolem.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 188,
+    "dexterity": 63,
+    "intelligence": 58,
+    "hits": 113,
+    "maxHits": 113,
+    "minDamage": 18,
+    "maxDamage": 22,
+    "armorRating": 34,
+    "fame": 1000,
+    "karma": -1800,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 625,
+      "Tactics": 675,
+      "Wrestling": 650
+    },
+    "lootTables": [
+      "loot_pack.average"
+    ],
+    "sounds": {
+      "Idle": 684,
+      "StartAttack": 685,
+      "Attack": 686,
+      "Defend": 687,
+      "Die": 688
+    },
+    "resistances": {
+      "physical": 55,
+      "fire": 30,
+      "cold": 20,
+      "poison": 65,
+      "energy": 35
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a flesh golem",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0130"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

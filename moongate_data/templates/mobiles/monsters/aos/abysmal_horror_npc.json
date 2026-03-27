@@ -1,0 +1,66 @@
+[
+  {
+    "type": "mobile",
+    "id": "abysmal_horror_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO AbysmalHorror.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 410,
+    "dexterity": 85,
+    "intelligence": 410,
+    "hits": 6000,
+    "maxHits": 6000,
+    "minDamage": 13,
+    "maxDamage": 17,
+    "armorRating": 54,
+    "fame": 26000,
+    "karma": -26000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Magery": 1150,
+      "MagicResist": 1188,
+      "Wrestling": 860
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 100,
+      "cold": 52,
+      "poison": 62,
+      "energy": 78
+    },
+    "damageTypes": {
+      "physical": 50,
+      "poison": 50
+    },
+    "title": "an abysmal horror",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0138"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "type": "mobile",
+    "id": "giant_serpent_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GiantSerpent.",
+    "tags": [
+      "animal"
+    ],
+    "strength": 200,
+    "dexterity": 68,
+    "intelligence": 75,
+    "hits": 120,
+    "maxHits": 120,
+    "mana": 0,
+    "minDamage": 7,
+    "maxDamage": 17,
+    "armorRating": 32,
+    "fame": 2500,
+    "karma": -2500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Poisoning": 850,
+      "MagicResist": 325,
+      "Tactics": 675,
+      "Wrestling": 700
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.giant_serpent"
+    ],
+    "sounds": {
+      "Idle": 219,
+      "StartAttack": 220,
+      "Attack": 221,
+      "Defend": 222,
+      "Die": 223
+    },
+    "resistances": {
+      "physical": 32,
+      "fire": 7,
+      "cold": 15,
+      "poison": 80,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 40,
+      "poison": 60
+    },
+    "title": "a giant snake",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0015"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

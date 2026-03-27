@@ -79,10 +79,19 @@ public class EntityFactoryServiceTests
                 Name = "Orc Warrior",
                 Category = "orc",
                 Description = "orc",
-                Body = 0x11,
-                SkinHue = HueSpec.FromValue(1000),
-                HairHue = HueSpec.FromValue(0),
-                HairStyle = 0,
+                Variants =
+                [
+                    new()
+                    {
+                        Appearance =
+                        {
+                            Body = 0x11,
+                            SkinHue = HueSpec.FromValue(1000),
+                            HairHue = HueSpec.FromValue(0),
+                            HairStyle = 0
+                        }
+                    }
+                ],
                 Strength = 70,
                 Dexterity = 60,
                 Intelligence = 20,
@@ -90,7 +99,10 @@ public class EntityFactoryServiceTests
                 MaxHits = 120,
                 Mana = 20,
                 Stamina = 60,
-                Brain = "aggressive_orc",
+                Ai = new()
+                {
+                    Brain = "aggressive_orc"
+                },
                 Notoriety = Notoriety.Criminal
             }
         );

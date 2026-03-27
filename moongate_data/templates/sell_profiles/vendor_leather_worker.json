@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.leather_worker",
+    "name": "LeatherWorker Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for LeatherWorker. SBInfo sources: SBLeatherArmor, SBStuddedArmor, SBLeatherWorker.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

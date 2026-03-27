@@ -1,0 +1,73 @@
+[
+  {
+    "type": "mobile",
+    "id": "savage_shaman_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO SavageShaman.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 135,
+    "dexterity": 100,
+    "intelligence": 173,
+    "minDamage": 4,
+    "maxDamage": 10,
+    "fame": 1000,
+    "karma": -1000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 887,
+      "Fencing": 737,
+      "Macing": 737,
+      "Magery": 837,
+      "Meditation": 887,
+      "MagicResist": 887,
+      "Swords": 737,
+      "Tactics": 737,
+      "Wrestling": 737
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "creature.savage_shaman"
+    ],
+    "resistances": {
+      "physical": 35,
+      "fire": 25,
+      "cold": 25,
+      "poison": 25,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00B7"
+        },
+        "equipment": [
+          {
+            "layer": "Arms",
+            "itemTemplateId": "bone_arms"
+          },
+          {
+            "layer": "InnerLegs",
+            "itemTemplateId": "bone_legs"
+          },
+          {
+            "layer": "Helm",
+            "itemTemplateId": "deer_mask"
+          }
+        ]
+      }
+    ]
+  }
+]

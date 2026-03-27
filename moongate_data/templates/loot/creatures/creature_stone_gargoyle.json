@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.stone_gargoyle",
+    "name": "StoneGargoyle",
+    "category": "loot",
+    "description": "Creature-specific loot for StoneGargoyle.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "iron_ingot",
+        "chance": 1.0,
+        "amount": 12
+      },
+      {
+        "itemTemplateId": "gargoyles_pickaxe",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

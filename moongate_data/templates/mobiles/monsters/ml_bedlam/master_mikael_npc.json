@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "master_mikael_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MasterMikael.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 107,
+    "dexterity": 95,
+    "intelligence": 261,
+    "hits": 901,
+    "maxHits": 901,
+    "minDamage": 11,
+    "maxDamage": 19,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 836,
+      "Tactics": 849,
+      "MagicResist": 986,
+      "Magery": 1059,
+      "EvalInt": 1006,
+      "Necromancy": 1059,
+      "SpiritSpeak": 1006
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.master_mikael"
+    ],
+    "resistances": {
+      "physical": 57,
+      "fire": 43,
+      "cold": 76,
+      "poison": 46,
+      "energy": 53
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Master Mikael",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0094",
+          "skinHue": "0x08FD"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

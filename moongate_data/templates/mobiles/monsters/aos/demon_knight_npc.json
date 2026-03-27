@@ -1,0 +1,68 @@
+[
+  {
+    "type": "mobile",
+    "id": "demon_knight_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO DemonKnight.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 500,
+    "dexterity": 100,
+    "intelligence": 1000,
+    "hits": 30000,
+    "maxHits": 30000,
+    "mana": 5000,
+    "minDamage": 17,
+    "maxDamage": 21,
+    "armorRating": 64,
+    "fame": 28000,
+    "karma": -28000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Necromancy": 1200,
+      "SpiritSpeak": 1200
+    },
+    "lootTables": [
+      "loot_pack.super_boss",
+      "loot_pack.super_boss"
+    ],
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 30,
+      "cold": 30,
+      "poison": 30,
+      "energy": 30
+    },
+    "damageTypes": {
+      "physical": 20,
+      "fire": 20,
+      "cold": 20,
+      "poison": 20,
+      "energy": 20
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x013E"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

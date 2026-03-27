@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "rend_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Rend.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 1272,
+    "dexterity": 373,
+    "intelligence": 621,
+    "hits": 5638,
+    "maxHits": 5638,
+    "minDamage": 26,
+    "maxDamage": 33,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 1433,
+      "Tactics": 1374,
+      "MagicResist": 1004,
+      "Anatomy": 693
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 80,
+      "fire": 87,
+      "cold": 50,
+      "poison": 39,
+      "energy": 48
+    },
+    "damageTypes": {
+      "physical": 100,
+      "poison": 0,
+      "energy": 0
+    },
+    "title": "Rend",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0114",
+          "skinHue": "0x0455"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

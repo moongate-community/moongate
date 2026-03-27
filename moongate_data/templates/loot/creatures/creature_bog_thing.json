@@ -1,0 +1,37 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.bog_thing",
+    "name": "BogThing",
+    "category": "loot",
+    "description": "Creature-specific loot for BogThing.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "board",
+        "chance": 1.0,
+        "amount": 10
+      },
+      {
+        "itemTemplateId": "log",
+        "chance": 1.0,
+        "amount": 10
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

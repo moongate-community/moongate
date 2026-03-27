@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.monk",
+    "name": "Monk Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Monk. SBInfo sources: SBMonk.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

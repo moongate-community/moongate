@@ -107,6 +107,10 @@ Moongate v2 is **actively in development**. The following features are implement
 - [x] Weather and lighting system
 - [x] Visual effects system
 - [x] REST API for user management, sessions, metrics, and item templates
+- [x] In-game help ticket intake plus staff dashboard/API triage flow
+- [x] First-open and refillable loot containers driven by templates
+- [x] GameMaster in-game item and door administration commands
+- [x] UDP ping echo listener for lightweight reachability checks
 - [x] React-based admin web UI
 - [x] Source generators: 9 generators for compile-time registration
 - [x] 24 file loaders for data asset management

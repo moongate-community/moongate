@@ -1,0 +1,76 @@
+[
+  {
+    "type": "mobile",
+    "id": "master_theophilus_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MasterTheophilus.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 162,
+    "dexterity": 277,
+    "intelligence": 418,
+    "hits": 769,
+    "maxHits": 769,
+    "minDamage": 15,
+    "maxDamage": 20,
+    "fame": 18000,
+    "karma": -18000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 876,
+      "Tactics": 1154,
+      "MagicResist": 1299,
+      "Magery": 1408,
+      "EvalInt": 1297,
+      "Necromancy": 1297,
+      "SpiritSpeak": 1297,
+      "Meditation": 1308
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "creature.master_theophilus"
+    ],
+    "resistances": {
+      "physical": 57,
+      "fire": 54,
+      "cold": 55,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Master Theophilus",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190",
+          "skinHue": "hue(1002:1058)"
+        },
+        "equipment": [
+          {
+            "layer": "Shoes",
+            "itemTemplateId": "shoes",
+            "hue": "0x0537"
+          },
+          {
+            "layer": "OuterTorso",
+            "itemTemplateId": "robe",
+            "hue": "0x0452"
+          }
+        ]
+      }
+    ]
+  }
+]

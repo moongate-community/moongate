@@ -1,5 +1,5 @@
+using System.Text.Json;
 using Moongate.Core.Data.Directories;
-using Moongate.Core.Json;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
 using Moongate.Server.Interfaces.Services.Files;
@@ -28,6 +28,7 @@ public sealed class MobileTemplateLoader : IFileLoader
     private static readonly MobileTemplateDefinition Defaults = new();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IMobileTemplateService _mobileTemplateService;
+    private readonly Dictionary<string, string> _templateFileContents = new(StringComparer.OrdinalIgnoreCase);
 
     public MobileTemplateLoader(DirectoriesConfig directoriesConfig, IMobileTemplateService mobileTemplateService)
     {
@@ -55,37 +56,16 @@ public sealed class MobileTemplateLoader : IFileLoader
             return Task.CompletedTask;
         }
 
-        _mobileTemplateService.Clear();
-        var allMobileTemplates = new List<MobileTemplateDefinition>();
+        _templateFileContents.Clear();
 
         foreach (var templateFile in templateFiles)
         {
-            MobileTemplateDefinitionBase[] templates;
-
-            try
-            {
-                templates = JsonUtils.DeserializeFromFile<MobileTemplateDefinitionBase[]>(
-                    templateFile,
-                    MoongateUOTemplateJsonContext.Default
-                );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex, "Failed to load mobile template file {TemplateFile}", templateFile);
-
-                throw;
-            }
-
-            var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
-
-            foreach (var mobileTemplate in mobileTemplates)
-            {
-                NormalizeTitleAndName(mobileTemplate);
-            }
-            allMobileTemplates.AddRange(mobileTemplates);
+            _templateFileContents[NormalizePath(templateFile)] = File.ReadAllText(templateFile);
         }
 
-        ResolveBaseMobiles(allMobileTemplates);
+        var allMobileTemplates = RebuildTemplatesFromCache();
+
+        _mobileTemplateService.Clear();
         _mobileTemplateService.UpsertRange(allMobileTemplates);
 
         _logger.Information(
@@ -93,6 +73,23 @@ public sealed class MobileTemplateLoader : IFileLoader
             allMobileTemplates.Count,
             templateFiles.Length
         );
+
+        return Task.CompletedTask;
+    }
+
+    public Task LoadSingleAsync(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var normalizedPath = NormalizePath(filePath);
+        _templateFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+
+        var allMobileTemplates = RebuildTemplatesFromCache();
+
+        _mobileTemplateService.Clear();
+        _mobileTemplateService.UpsertRange(allMobileTemplates);
+
+        _logger.Information("Reloaded mobile template file {TemplateFile}", normalizedPath);
 
         return Task.CompletedTask;
     }
@@ -124,26 +121,6 @@ public sealed class MobileTemplateLoader : IFileLoader
             child.Tags = [..parent.Tags];
         }
 
-        if (child.Body == Defaults.Body)
-        {
-            child.Body = parent.Body;
-        }
-
-        if (child.SkinHue.Equals(default))
-        {
-            child.SkinHue = parent.SkinHue;
-        }
-
-        if (child.HairHue.Equals(default))
-        {
-            child.HairHue = parent.HairHue;
-        }
-
-        if (child.HairStyle == Defaults.HairStyle)
-        {
-            child.HairStyle = parent.HairStyle;
-        }
-
         child.Strength = InheritInt(child.Strength, parent.Strength, Defaults.Strength);
         child.Dexterity = InheritInt(child.Dexterity, parent.Dexterity, Defaults.Dexterity);
         child.Intelligence = InheritInt(child.Intelligence, parent.Intelligence, Defaults.Intelligence);
@@ -162,10 +139,7 @@ public sealed class MobileTemplateLoader : IFileLoader
             child.Notoriety = parent.Notoriety;
         }
 
-        if (string.Equals(child.Brain, Defaults.Brain, StringComparison.OrdinalIgnoreCase))
-        {
-            child.Brain = parent.Brain;
-        }
+        ApplyAiInheritance(parent, child);
 
         if (string.IsNullOrWhiteSpace(child.SellProfileId))
         {
@@ -211,6 +185,30 @@ public sealed class MobileTemplateLoader : IFileLoader
             }
         }
 
+        if (child.Resistances.Count == 0 && parent.Resistances.Count > 0)
+        {
+            child.Resistances = new(parent.Resistances, StringComparer.OrdinalIgnoreCase);
+        }
+        else if (parent.Resistances.Count > 0)
+        {
+            foreach (var kvp in parent.Resistances)
+            {
+                child.Resistances.TryAdd(kvp.Key, kvp.Value);
+            }
+        }
+
+        if (child.DamageTypes.Count == 0 && parent.DamageTypes.Count > 0)
+        {
+            child.DamageTypes = new(parent.DamageTypes, StringComparer.OrdinalIgnoreCase);
+        }
+        else if (parent.DamageTypes.Count > 0)
+        {
+            foreach (var kvp in parent.DamageTypes)
+            {
+                child.DamageTypes.TryAdd(kvp.Key, kvp.Value);
+            }
+        }
+
         child.TamingDifficulty = InheritInt(
             child.TamingDifficulty,
             parent.TamingDifficulty,
@@ -240,43 +238,9 @@ public sealed class MobileTemplateLoader : IFileLoader
             Defaults.SpellAttackDelay
         );
 
-        if (child.FixedEquipment.Count == 0 && parent.FixedEquipment.Count > 0)
+        if (child.Variants.Count == 0 && parent.Variants.Count > 0)
         {
-            child.FixedEquipment = parent
-                                   .FixedEquipment
-                                   .Select(
-                                       static equipment => new MobileEquipmentItemTemplate
-                                       {
-                                           ItemTemplateId = equipment.ItemTemplateId,
-                                           Layer = equipment.Layer
-                                       }
-                                   )
-                                   .ToList();
-        }
-
-        if (child.RandomEquipment.Count == 0 && parent.RandomEquipment.Count > 0)
-        {
-            child.RandomEquipment = parent
-                                    .RandomEquipment
-                                    .Select(
-                                        static pool => new MobileRandomEquipmentPoolTemplate
-                                        {
-                                            Name = pool.Name,
-                                            Layer = pool.Layer,
-                                            SpawnChance = pool.SpawnChance,
-                                            Items = pool
-                                                    .Items
-                                                    .Select(
-                                                        static item => new MobileWeightedEquipmentItemTemplate
-                                                        {
-                                                            ItemTemplateId = item.ItemTemplateId,
-                                                            Weight = item.Weight
-                                                        }
-                                                    )
-                                                    .ToList()
-                                        }
-                                    )
-                                    .ToList();
+            child.Variants = parent.Variants.Select(CloneVariant).ToList();
         }
 
         child.Params = MergeParams(parent.Params, child.Params);
@@ -288,6 +252,29 @@ public sealed class MobileTemplateLoader : IFileLoader
             Type = param.Type,
             Value = param.Value
         };
+
+    private static void ApplyAiInheritance(MobileTemplateDefinition parent, MobileTemplateDefinition child)
+    {
+        if (child.Ai.Brain is null)
+        {
+            child.Ai.Brain = parent.Ai.Brain;
+        }
+
+        if (child.Ai.FightMode is null)
+        {
+            child.Ai.FightMode = parent.Ai.FightMode;
+        }
+
+        if (!child.Ai.RangePerception.HasValue)
+        {
+            child.Ai.RangePerception = parent.Ai.RangePerception;
+        }
+
+        if (!child.Ai.RangeFight.HasValue)
+        {
+            child.Ai.RangeFight = parent.Ai.RangeFight;
+        }
+    }
 
     private static bool InheritBool(bool childValue, bool parentValue, bool defaultValue)
         => childValue == defaultValue ? parentValue : childValue;
@@ -314,6 +301,60 @@ public sealed class MobileTemplateLoader : IFileLoader
 
         return merged;
     }
+
+    private static Dictionary<string, ItemTemplateParamDefinition> CloneParams(
+        Dictionary<string, ItemTemplateParamDefinition> source
+    )
+    {
+        var cloned = new Dictionary<string, ItemTemplateParamDefinition>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, param) in source)
+        {
+            cloned[key] = CloneParam(param);
+        }
+
+        return cloned;
+    }
+
+    private static MobileAppearanceTemplate CloneAppearance(MobileAppearanceTemplate appearance)
+        => new()
+        {
+            Body = appearance.Body,
+            SkinHue = appearance.SkinHue,
+            HairHue = appearance.HairHue,
+            HairStyle = appearance.HairStyle,
+            FacialHairHue = appearance.FacialHairHue,
+            FacialHairStyle = appearance.FacialHairStyle
+        };
+
+    private static MobileEquipmentEntryTemplate CloneEquipmentEntry(MobileEquipmentEntryTemplate equipment)
+        => new()
+        {
+            Layer = equipment.Layer,
+            ItemTemplateId = equipment.ItemTemplateId,
+            Chance = equipment.Chance,
+            Hue = equipment.Hue,
+            Params = CloneParams(equipment.Params),
+            Items = equipment.Items.Select(CloneWeightedEquipmentItem).ToList()
+        };
+
+    private static MobileVariantTemplate CloneVariant(MobileVariantTemplate variant)
+        => new()
+        {
+            Name = variant.Name,
+            Weight = variant.Weight,
+            Appearance = CloneAppearance(variant.Appearance),
+            Equipment = variant.Equipment.Select(CloneEquipmentEntry).ToList()
+        };
+
+    private static MobileWeightedEquipmentItemTemplate CloneWeightedEquipmentItem(MobileWeightedEquipmentItemTemplate item)
+        => new()
+        {
+            ItemTemplateId = item.ItemTemplateId,
+            Weight = item.Weight,
+            Hue = item.Hue,
+            Params = CloneParams(item.Params)
+        };
 
     private static void NormalizeTitleAndName(MobileTemplateDefinition template)
     {
@@ -375,4 +416,50 @@ public sealed class MobileTemplateLoader : IFileLoader
 
         states[template.Id] = ResolveState.Done;
     }
+
+    private List<MobileTemplateDefinition> RebuildTemplatesFromCache()
+    {
+        var allMobileTemplates = new List<MobileTemplateDefinition>();
+
+        foreach (var (templateFile, json) in _templateFileContents.OrderBy(static entry => entry.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            MobileTemplateDefinitionBase[] templates;
+
+            try
+            {
+                templates = Deserialize<MobileTemplateDefinitionBase[]>(json);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "Failed to load mobile template file {TemplateFile}", templateFile);
+
+                throw;
+            }
+
+            var mobileTemplates = templates.OfType<MobileTemplateDefinition>().ToList();
+
+            foreach (var mobileTemplate in mobileTemplates)
+            {
+                NormalizeTitleAndName(mobileTemplate);
+            }
+
+            allMobileTemplates.AddRange(mobileTemplates);
+        }
+
+        ResolveBaseMobiles(allMobileTemplates);
+
+        return allMobileTemplates;
+    }
+
+    private static T Deserialize<T>(string json)
+    {
+        var result = JsonSerializer.Deserialize(json, MoongateUOTemplateJsonContext.Default.GetTypeInfo(typeof(T)));
+
+        return result is T typedResult
+                   ? typedResult
+                   : throw new JsonException($"Deserialization returned null for type {typeof(T).Name}");
+    }
+
+    private static string NormalizePath(string filePath)
+        => Path.GetFullPath(filePath);
 }

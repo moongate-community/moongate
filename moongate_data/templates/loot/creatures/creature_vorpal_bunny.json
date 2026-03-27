@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.vorpal_bunny",
+    "name": "VorpalBunny",
+    "category": "loot",
+    "description": "Creature-specific loot for VorpalBunny.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "brightly_colored_eggs",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "ethereal_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO EtherealWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 685,
+    "dexterity": 216,
+    "intelligence": 400,
+    "hits": 411,
+    "maxHits": 411,
+    "minDamage": 13,
+    "maxDamage": 19,
+    "armorRating": 120,
+    "fame": 7000,
+    "karma": 7000,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "evil",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 625,
+      "EvalInt": 950,
+      "Magery": 995,
+      "Meditation": 950,
+      "MagicResist": 950,
+      "Tactics": 950,
+      "Wrestling": 988
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "loot_pack.rich",
+      "loot_pack.gems"
+    ],
+    "resistances": {
+      "physical": 85,
+      "fire": 45,
+      "cold": 45,
+      "poison": 45,
+      "energy": 45
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x007B"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "type": "mobile",
+    "id": "hell_hound_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO HellHound.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 126,
+    "dexterity": 93,
+    "intelligence": 48,
+    "hits": 95,
+    "maxHits": 95,
+    "minDamage": 11,
+    "maxDamage": 17,
+    "armorRating": 30,
+    "fame": 3400,
+    "karma": -3400,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.average",
+      "loot_pack.meager",
+      "creature.hell_hound"
+    ],
+    "sounds": {
+      "Idle": 229,
+      "StartAttack": 230,
+      "Attack": 231,
+      "Defend": 232,
+      "Die": 233
+    },
+    "resistances": {
+      "physical": 30,
+      "fire": 35,
+      "poison": 15,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 20,
+      "fire": 80
+    },
+    "title": "a hell hound",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0062"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "gorilla_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO Gorilla.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 74,
+    "dexterity": 45,
+    "intelligence": 48,
+    "hits": 44,
+    "maxHits": 44,
+    "mana": 0,
+    "minDamage": 4,
+    "maxDamage": 10,
+    "armorRating": 20,
+    "fame": 450,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 525,
+      "Tactics": 506,
+      "Wrestling": 506
+    },
+    "sounds": {
+      "Idle": 0,
+      "StartAttack": 1,
+      "Attack": 2,
+      "Defend": 3,
+      "Die": 4
+    },
+    "resistances": {
+      "physical": 22,
+      "fire": 7,
+      "cold": 12
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a gorilla",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x001D"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

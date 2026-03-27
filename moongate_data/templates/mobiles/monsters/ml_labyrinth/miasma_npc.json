@@ -1,0 +1,63 @@
+[
+  {
+    "type": "mobile",
+    "id": "miasma_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Miasma.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 551,
+    "dexterity": 286,
+    "intelligence": 203,
+    "hits": 1375,
+    "maxHits": 1375,
+    "mana": 32,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "fame": 21000,
+    "karma": -21000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Wrestling": 941,
+      "Tactics": 1045,
+      "MagicResist": 760,
+      "Poisoning": 1360
+    },
+    "lootTables": [
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich",
+      "loot_pack.ultra_rich"
+    ],
+    "resistances": {
+      "physical": 52,
+      "fire": 42,
+      "cold": 52,
+      "poison": 75,
+      "energy": 42
+    },
+    "damageTypes": {
+      "physical": 60,
+      "poison": 40
+    },
+    "title": "Miasma",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0030",
+          "skinHue": "0x08FD"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

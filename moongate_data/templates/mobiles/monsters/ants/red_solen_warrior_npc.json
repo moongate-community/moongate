@@ -1,0 +1,61 @@
+[
+  {
+    "type": "mobile",
+    "id": "red_solen_warrior_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RedSolenWarrior.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 208,
+    "dexterity": 113,
+    "intelligence": 48,
+    "hits": 101,
+    "maxHits": 101,
+    "minDamage": 5,
+    "maxDamage": 15,
+    "armorRating": 35,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "lootTables": [
+      "loot_pack.rich",
+      "creature.red_solen_warrior"
+    ],
+    "sounds": {
+      "Idle": 959,
+      "StartAttack": 960,
+      "Attack": 961,
+      "Defend": 962,
+      "Die": 963
+    },
+    "resistances": {
+      "physical": 27,
+      "fire": 27,
+      "cold": 17,
+      "poison": 27,
+      "energy": 17
+    },
+    "damageTypes": {
+      "physical": 80,
+      "poison": 20
+    },
+    "title": "a red solen warrior",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x030E"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

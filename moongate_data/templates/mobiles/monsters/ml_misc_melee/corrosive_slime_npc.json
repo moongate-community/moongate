@@ -1,0 +1,64 @@
+[
+  {
+    "type": "mobile",
+    "id": "corrosive_slime_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO CorrosiveSlime.",
+    "tags": [
+      "monster",
+      "tamable"
+    ],
+    "strength": 28,
+    "dexterity": 18,
+    "intelligence": 18,
+    "hits": 17,
+    "maxHits": 17,
+    "minDamage": 1,
+    "maxDamage": 5,
+    "armorRating": 8,
+    "fame": 300,
+    "karma": -300,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Poisoning": 425,
+      "MagicResist": 174,
+      "Tactics": 253,
+      "Wrestling": 255
+    },
+    "lootTables": [
+      "loot_pack.poor",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 456,
+      "StartAttack": 457,
+      "Attack": 458,
+      "Defend": 459,
+      "Die": 460
+    },
+    "resistances": {
+      "physical": 7,
+      "poison": 17
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a corrosive slime",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0033"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

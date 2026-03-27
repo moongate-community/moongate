@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "great_hart_npc",
+    "category": "animal",
+    "description": "Converted from ModernUO GreatHart.",
+    "tags": [
+      "animal",
+      "tamable"
+    ],
+    "strength": 56,
+    "dexterity": 62,
+    "intelligence": 42,
+    "hits": 34,
+    "maxHits": 34,
+    "mana": 0,
+    "minDamage": 5,
+    "maxDamage": 9,
+    "armorRating": 24,
+    "fame": 300,
+    "karma": 0,
+    "notoriety": "Innocent",
+    "ai": {
+      "brain": "ai_animal",
+      "fightMode": "aggressor",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 356,
+      "Tactics": 386,
+      "Wrestling": 386
+    },
+    "resistances": {
+      "physical": 22,
+      "cold": 7
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "a great hart",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x00EA"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

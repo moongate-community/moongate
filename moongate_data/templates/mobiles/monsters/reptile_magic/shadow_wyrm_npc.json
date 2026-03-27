@@ -1,0 +1,75 @@
+[
+  {
+    "type": "mobile",
+    "id": "shadow_wyrm_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO ShadowWyrm.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 964,
+    "dexterity": 134,
+    "intelligence": 554,
+    "hits": 578,
+    "maxHits": 578,
+    "minDamage": 29,
+    "maxDamage": 35,
+    "armorRating": 70,
+    "fame": 22500,
+    "karma": -22500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 900,
+      "Magery": 900,
+      "Meditation": 637,
+      "MagicResist": 1151,
+      "Tactics": 988,
+      "Wrestling": 988
+    },
+    "lootTables": [
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.filthy_rich",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems",
+      "loot_pack.gems"
+    ],
+    "sounds": {
+      "Idle": 362,
+      "StartAttack": 363,
+      "Attack": 364,
+      "Defend": 365,
+      "Die": 366
+    },
+    "resistances": {
+      "physical": 70,
+      "fire": 55,
+      "cold": 50,
+      "poison": 25,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 75,
+      "cold": 25
+    },
+    "title": "a shadow wyrm",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x006A"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

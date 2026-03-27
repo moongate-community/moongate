@@ -1,0 +1,57 @@
+[
+  {
+    "type": "mobile",
+    "id": "szavetra_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Szavetra.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 641,
+    "dexterity": 178,
+    "intelligence": 580,
+    "hits": 363,
+    "maxHits": 363,
+    "minDamage": 20,
+    "maxDamage": 30,
+    "fame": 24000,
+    "karma": -24000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_mage",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "EvalInt": 950,
+      "Magery": 1003,
+      "Meditation": 1000,
+      "MagicResist": 1197,
+      "Tactics": 920,
+      "Wrestling": 833
+    },
+    "resistances": {
+      "physical": 86,
+      "fire": 76,
+      "cold": 44,
+      "poison": 55,
+      "energy": 55
+    },
+    "damageTypes": {
+      "physical": 75,
+      "energy": 25
+    },
+    "title": "Szavetra",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0095"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -8,7 +8,7 @@ local BEHAVIORS = {
     "idle",
 }
 
-function utility_npc.brain_loop(npc_serial)
+function utility_npc.on_think(npc_serial)
     while true do
         local ctx = {
             now_ms = time.now_ms(),

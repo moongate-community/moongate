@@ -1,0 +1,71 @@
+[
+  {
+    "type": "mobile",
+    "id": "ratman_archer_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO RatmanArcher.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 163,
+    "dexterity": 115,
+    "intelligence": 128,
+    "hits": 98,
+    "maxHits": 98,
+    "minDamage": 4,
+    "maxDamage": 10,
+    "armorRating": 56,
+    "fame": 6500,
+    "karma": -6500,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_archer",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Anatomy": 801,
+      "Archery": 850,
+      "MagicResist": 775,
+      "Tactics": 625,
+      "Wrestling": 625
+    },
+    "lootTables": [
+      "loot_pack.rich"
+    ],
+    "sounds": {
+      "Idle": 437,
+      "StartAttack": 438,
+      "Attack": 439,
+      "Defend": 440,
+      "Die": 441
+    },
+    "resistances": {
+      "physical": 47,
+      "fire": 15,
+      "cold": 15,
+      "poison": 15,
+      "energy": 15
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "ratman",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x008E"
+        },
+        "equipment": [
+          {
+            "layer": "TwoHanded",
+            "itemTemplateId": "bow"
+          }
+        ]
+      }
+    ]
+  }
+]

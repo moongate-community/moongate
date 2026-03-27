@@ -17,7 +17,7 @@ namespace Moongate.Server.Commands.Player;
 /// Flips a targeted item if it defines flippable item ids.
 /// </summary>
 [RegisterConsoleCommand(
-    "flip|.flip",
+    "flip",
     "Target an item and flip it to the next configured itemId.",
     CommandSourceType.InGame,
     AccountType.GameMaster

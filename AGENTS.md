@@ -97,10 +97,12 @@
 - This includes plan documents and workflow artifacts under `docs/plans/`, `docs/superpowers/`, and nested agent-generated files below those trees.
 - Every completed feature must update the relevant documentation, integrating any missing documentation needed to describe the shipped behavior.
 - When behavior changes, update the relevant docs if the repo already documents that area.
+- When editing shard template content in the Moongate root directory (for example `~/moongate/templates/items`, `~/moongate/templates/mobiles`, `~/moongate/templates/loot`, `~/moongate/templates/factions`, `~/moongate/templates/sell_profiles`, or `~/moongate/data/containers`), always run `moongate-template validate --root-directory ~/moongate` before completion.
 
 ## Special User Commands
 
 - `/vai`: inspect every modified file first. If there are no modified files, stage the untracked files. Then create the commit without asking for confirmation. Use a Conventional Commit subject and include a detailed body covering all relevant `feat`, `fix`, `refactor`, `test`, or `docs` items instead of a single generic line.
+- `/pr`: inspect every modified file first. If there are no modified files, stage the untracked files. Then create the commit without asking for confirmation, using a Conventional Commit subject and a detailed body covering all relevant `feat`, `fix`, `refactor`, `test`, or `docs` items. Push the current branch, create the GitHub pull request targeting `develop`, verify that the PR is mergeable and required checks succeeded, then merge it into `develop` with GitHub CLI and close the tracked GitHub issue. Ask only if a required detail is missing or a GitHub step fails.
 - `/comment`: add XML documentation comments (`///`) to interfaces.
 
 ## Validation Before Completion
@@ -108,6 +110,7 @@
 - Run the narrowest meaningful validation for the area you changed before claiming completion.
 - Backend and shared code changes should normally include targeted `dotnet test` coverage.
 - Frontend changes must follow the validation gates in `ui/AGENTS.md`.
+- Template/data changes in the external shard root must include `moongate-template validate --root-directory ~/moongate` whenever item, mobile, loot, faction, sell-profile, or container data is touched.
 - If you could not run verification, say so explicitly.
 
 ## Repo-Specific Notes

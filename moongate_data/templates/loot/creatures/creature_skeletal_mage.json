@@ -1,0 +1,22 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.skeletal_mage",
+    "name": "SkeletalMage",
+    "category": "loot",
+    "description": "Creature-specific loot for SkeletalMage.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "bone",
+        "chance": 1.0,
+        "amount": 1
+      },
+      {
+        "itemTag": "reagents",
+        "chance": 1.0,
+        "amount": 3
+      }
+    ]
+  }
+]

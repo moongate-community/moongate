@@ -17,7 +17,13 @@ permissions:
 
 jobs:
   build-amd64:
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
+    container:
+      image: docker:27-cli
+    defaults:
+      run:
+        shell: sh
     outputs:
       digest: ${{ steps.build.outputs.digest }}
       version: ${{ steps.config.outputs.version }}
@@ -28,21 +34,20 @@ jobs:
 
       - name: Determine repository and version
         id: config
-        shell: bash
         run: |
-          # Get repository from GitHub Variable or use default
+          set -eu
+
           REPO="${{ vars.DOCKERHUB_REPOSITORY }}"
-          if [[ -z "$REPO" ]]; then
+          if [ -z "$REPO" ]; then
             REPO="tgiachi/moongate"
           fi
           echo "repository=${REPO}" >> "$GITHUB_OUTPUT"
           echo "Using repository: ${REPO}"
           
-          # Get version from tag or workflow input
           VERSION=""
-          if [[ -n "${{ github.ref_name }}" && "${{ github.ref_type }}" == "tag" ]]; then
+          if [ -n "${{ github.ref_name }}" ] && [ "${{ github.ref_type }}" = "tag" ]; then
             VERSION="${{ github.ref_name }}"
-          elif [[ -n "${{ github.event.inputs.version }}" ]]; then
+          elif [ -n "${{ github.event.inputs.version }}" ]; then
             VERSION="${{ github.event.inputs.version }}"
           else
             VERSION="${{ github.sha }}"
@@ -140,7 +145,13 @@ jobs:
 
   merge:
     needs: [build-amd64, build-arm64]
-    runs-on: ubuntu-latest
+    runs-on:
+      group: Default
+    container:
+      image: docker:27-cli
+    defaults:
+      run:
+        shell: sh
     steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -149,17 +160,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Create multi-arch manifest
-        shell: bash
         env:
           REPO: ${{ needs.build-amd64.outputs.repository || 'tgiachi/moongate' }}
           VERSION: ${{ needs.build-amd64.outputs.version }}
           AMD64_DIGEST: ${{ needs.build-amd64.outputs.digest }}
           ARM64_DIGEST: ${{ needs.build-arm64.outputs.digest }}
         run: |
-          set -euo pipefail
+          set -eu
 
-          # Fallback to default if repository is empty
-          if [[ -z "$REPO" ]]; then
+          if [ -z "$REPO" ]; then
             REPO="tgiachi/moongate"
           fi
 
@@ -171,8 +180,7 @@ jobs:
             "${REPO}@${AMD64_DIGEST}" \
             "${REPO}@${ARM64_DIGEST}"
 
-          # Create latest tag if this is a semantic version
-          if [[ "${VERSION}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+          if printf '%s' "${VERSION}" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+'; then
             echo "Creating ${REPO}:latest"
             docker buildx imagetools create \
               --tag "${REPO}:latest" \

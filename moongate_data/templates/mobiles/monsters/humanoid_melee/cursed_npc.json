@@ -1,0 +1,74 @@
+[
+  {
+    "type": "mobile",
+    "id": "cursed_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO Cursed.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 95,
+    "dexterity": 90,
+    "intelligence": 65,
+    "hits": 105,
+    "maxHits": 105,
+    "minDamage": 5,
+    "maxDamage": 13,
+    "fame": 1000,
+    "karma": -2000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "Fencing": 617,
+      "Macing": 462,
+      "MagicResist": 580,
+      "Swords": 662,
+      "Tactics": 712,
+      "Poisoning": 712
+    },
+    "lootTables": [
+      "loot_pack.meager"
+    ],
+    "sounds": {
+      "Idle": 471,
+      "StartAttack": 472,
+      "Attack": 473,
+      "Defend": 474,
+      "Die": 475
+    },
+    "resistances": {
+      "physical": 20,
+      "fire": 7,
+      "cold": 30,
+      "poison": 7,
+      "energy": 7
+    },
+    "title": "male",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0190"
+        },
+        "equipment": [
+          {
+            "layer": "Pants",
+            "itemTemplateId": "short_pants",
+            "hue": "hue(1801:1908)"
+          },
+          {
+            "layer": "Shirt",
+            "itemTemplateId": "shirt",
+            "hue": "hue(1801:1908)"
+          }
+        ]
+      }
+    ]
+  }
+]

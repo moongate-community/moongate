@@ -1,0 +1,11 @@
+[
+  {
+    "type": "sell_profile",
+    "id": "vendor.tailor",
+    "name": "Tailor Vendor",
+    "category": "vendors",
+    "description": "Placeholder sell profile for Tailor. SBInfo sources: SBTailor.",
+    "vendorItems": [],
+    "acceptedItems": []
+  }
+]

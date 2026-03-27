@@ -1,0 +1,53 @@
+[
+  {
+    "type": "mobile",
+    "id": "moug_guur_npc",
+    "category": "monster",
+    "description": "Converted from ModernUO MougGuur.",
+    "tags": [
+      "monster"
+    ],
+    "strength": 565,
+    "dexterity": 89,
+    "intelligence": 66,
+    "hits": 407,
+    "maxHits": 407,
+    "minDamage": 12,
+    "maxDamage": 20,
+    "fame": 3000,
+    "karma": -3000,
+    "notoriety": "CanBeAttacked",
+    "ai": {
+      "brain": "ai_melee",
+      "fightMode": "closest",
+      "rangePerception": 16,
+      "rangeFight": 1
+    },
+    "skills": {
+      "MagicResist": 726,
+      "Tactics": 812,
+      "Wrestling": 966
+    },
+    "resistances": {
+      "physical": 63,
+      "fire": 17,
+      "cold": 43,
+      "poison": 22,
+      "energy": 22
+    },
+    "damageTypes": {
+      "physical": 100
+    },
+    "title": "Moug-Guur",
+    "variants": [
+      {
+        "name": "default",
+        "weight": 1,
+        "appearance": {
+          "body": "0x0012"
+        },
+        "equipment": []
+      }
+    ]
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "type": "loot",
+    "id": "creature.titan",
+    "name": "Titan",
+    "category": "loot",
+    "description": "Creature-specific loot for Titan.",
+    "mode": "additive",
+    "entries": [
+      {
+        "itemTemplateId": "seed",
+        "chance": 1.0,
+        "amount": 1
+      }
+    ]
+  }
+]
