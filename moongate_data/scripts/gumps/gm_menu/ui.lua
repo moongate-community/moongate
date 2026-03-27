@@ -19,11 +19,14 @@ end
 function ui.add_sidebar(layout_ui, current_state)
   local add_hue = c.LABEL_HUE
   local travel_hue = c.LABEL_HUE
+  local probe_hue = c.LABEL_HUE
 
   if current_state.active_tab == "add" then
     add_hue = c.ACCENT_HUE
-  else
+  elseif current_state.active_tab == "travel" then
     travel_hue = c.ACCENT_HUE
+  else
+    probe_hue = c.ACCENT_HUE
   end
 
   push(layout_ui, { type = "label", x = 32, y = 62, hue = c.TITLE_HUE, text = "Tools" })
@@ -33,6 +36,9 @@ function ui.add_sidebar(layout_ui, current_state)
 
   push(layout_ui, { type = "button", id = c.BUTTON_TAB_TRAVEL, x = 32, y = 126, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
   push(layout_ui, { type = "label", x = 64, y = 128, hue = travel_hue, text = "Travel" })
+
+  push(layout_ui, { type = "button", id = c.BUTTON_TAB_PROBE, x = 32, y = 158, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = 64, y = 160, hue = probe_hue, text = "Probe" })
 end
 
 return ui
