@@ -214,11 +214,6 @@ internal static class LuaReflectionHelper
         };
     }
 
-    [UnconditionalSuppressMessage(
-        "Aot",
-        "IL3050",
-        Justification = "Lua params-array conversion requires runtime element type resolution by reflection."
-    )]
     public static DynValue CreateMethodClosure(ILogger logger, Script script, object instance, MethodInfo method)
     {
         ArgumentNullException.ThrowIfNull(logger);
@@ -289,9 +284,7 @@ internal static class LuaReflectionHelper
         ArgumentNullException.ThrowIfNull(obj);
 
         var table = new Table(script);
-#pragma warning disable IL2075
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-#pragma warning restore IL2075
 
         foreach (var property in properties)
         {

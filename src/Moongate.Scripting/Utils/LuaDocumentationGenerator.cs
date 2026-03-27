@@ -13,9 +13,6 @@ namespace Moongate.Scripting.Utils;
 /// Utility class for generating Lua meta files with EmmyLua/LuaLS annotations
 /// Automatically creates meta.lua files with function signatures, types, and documentation
 /// </summary>
-[RequiresUnreferencedCode(
-    "This class uses reflection to analyze types for Lua meta generation and requires full type metadata."
-)]
 public static class LuaDocumentationGenerator
 {
     private static readonly HashSet<Type> _processedTypes = new();
@@ -62,13 +59,6 @@ public static class LuaDocumentationGenerator
             _enumsBuilder.Clear();
         }
     }
-
-    [SuppressMessage("Trimming", "IL2075:Reflection", Justification = "Reflection is required for script module analysis"),
-     SuppressMessage(
-         "Trimming",
-         "IL2072:Reflection",
-         Justification = "Reflection is required for parameter and return type analysis"
-     )]
 
     /// <summary>
     ///     Generates Lua documentation meta file with all module functions, classes, and constants
@@ -283,9 +273,6 @@ public static class LuaDocumentationGenerator
     private static bool CanProcessType(Type type)
         => true;
 
-    [SuppressMessage("Trimming", "IL2070:Reflection", Justification = "Reflection is required for Lua type conversion"),
-     SuppressMessage("Trimming", "IL2072:Reflection", Justification = "Reflection is required for Lua type conversion"),
-     SuppressMessage("Trimming", "IL2062:Reflection", Justification = "Reflection is required for Lua type conversion")]
     private static string ConvertToLuaType(
         [DynamicallyAccessedMembers(
             DynamicallyAccessedMemberTypes.PublicMethods |
@@ -537,11 +524,6 @@ public static class LuaDocumentationGenerator
         return "any";
     }
 
-    [SuppressMessage(
-        "Trimming",
-        "IL2072:Reflection",
-        Justification = "Reflection is required for constant value formatting"
-    )]
     private static string FormatConstantValue(object? value, Type type)
     {
         ArgumentNullException.ThrowIfNull(type);
@@ -622,8 +604,6 @@ public static class LuaDocumentationGenerator
     /// <summary>
     /// Generate a single class with properties, constructors, and methods
     /// </summary>
-    [SuppressMessage("Trimming", "IL2070:Reflection", Justification = "Reflection is required for class generation"),
-     SuppressMessage("Trimming", "IL2072:Reflection", Justification = "Reflection is required for class generation")]
     private static void GenerateClass(
         [DynamicallyAccessedMembers(
             DynamicallyAccessedMemberTypes.PublicProperties |
@@ -821,11 +801,6 @@ public static class LuaDocumentationGenerator
         _classesBuilder.AppendLine();
     }
 
-    [SuppressMessage(
-        "Trimming",
-        "IL2070:Reflection",
-        Justification = "Reflection is required for enum class generation"
-    )]
     private static void GenerateEnumClass(Type enumType)
     {
         ArgumentNullException.ThrowIfNull(enumType);
@@ -965,7 +940,6 @@ public static class LuaDocumentationGenerator
     /// <summary>
     /// Check if a type is a C# record type
     /// </summary>
-    [SuppressMessage("Trimming", "IL2070:Reflection", Justification = "Reflection is required for record type detection")]
     private static bool IsRecordType(
         [DynamicallyAccessedMembers(
             DynamicallyAccessedMemberTypes.NonPublicProperties | DynamicallyAccessedMemberTypes.PublicMethods
@@ -1013,7 +987,6 @@ public static class LuaDocumentationGenerator
         return result;
     }
 
-    [SuppressMessage("Trimming", "IL2072:Reflection", Justification = "Reflection is required for constant type analysis")]
     private static void ProcessConstants(Dictionary<string, object> constants)
     {
         ArgumentNullException.ThrowIfNull(constants);
