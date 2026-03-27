@@ -34,10 +34,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install git
+      - name: Install git and python
         run: |
           apt-get update
-          apt-get install -y git
+          apt-get install -y git python3
 
       - name: Check for release label
         id: release_check
