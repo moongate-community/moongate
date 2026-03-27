@@ -10,9 +10,7 @@ public sealed class TemplateValidationConsoleWriter
     private readonly IAnsiConsole _console;
 
     public TemplateValidationConsoleWriter()
-        : this(AnsiConsole.Console)
-    {
-    }
+        : this(AnsiConsole.Console) { }
 
     public TemplateValidationConsoleWriter(IAnsiConsole console)
     {
@@ -39,9 +37,10 @@ public sealed class TemplateValidationConsoleWriter
     private void WriteHeader(string rootDirectory)
     {
         var informationalVersion = typeof(TemplateValidationConsoleWriter)
-            .Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-            .InformationalVersion;
+                                   .Assembly
+                                   .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+                                   ?
+                                   .InformationalVersion;
 
         var version = string.IsNullOrWhiteSpace(informationalVersion) ? "unknown" : informationalVersion;
 
