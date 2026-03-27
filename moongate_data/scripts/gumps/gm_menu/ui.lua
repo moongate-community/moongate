@@ -17,28 +17,30 @@ function ui.add_frame(layout_ui)
 end
 
 function ui.add_sidebar(layout_ui, current_state)
-  local add_hue = c.LABEL_HUE
-  local travel_hue = c.LABEL_HUE
-  local probe_hue = c.LABEL_HUE
+  local function get_tab_hue(tab_name)
+    if current_state.active_tab == tab_name then
+      return c.ACCENT_HUE
+    end
 
-  if current_state.active_tab == "add" then
-    add_hue = c.ACCENT_HUE
-  elseif current_state.active_tab == "travel" then
-    travel_hue = c.ACCENT_HUE
-  else
-    probe_hue = c.ACCENT_HUE
+    return c.LABEL_HUE
   end
 
   push(layout_ui, { type = "label", x = 32, y = 62, hue = c.TITLE_HUE, text = "Tools" })
 
   push(layout_ui, { type = "button", id = c.BUTTON_TAB_ADD, x = 32, y = 94, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 96, hue = add_hue, text = "Add" })
+  push(layout_ui, { type = "label", x = 64, y = 96, hue = get_tab_hue("add"), text = "Add" })
 
   push(layout_ui, { type = "button", id = c.BUTTON_TAB_TRAVEL, x = 32, y = 126, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 128, hue = travel_hue, text = "Travel" })
+  push(layout_ui, { type = "label", x = 64, y = 128, hue = get_tab_hue("travel"), text = "Travel" })
 
   push(layout_ui, { type = "button", id = c.BUTTON_TAB_PROBE, x = 32, y = 158, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
-  push(layout_ui, { type = "label", x = 64, y = 160, hue = probe_hue, text = "Probe" })
+  push(layout_ui, { type = "label", x = 64, y = 160, hue = get_tab_hue("probe"), text = "Probe" })
+
+  push(layout_ui, { type = "button", id = c.BUTTON_TAB_SPAWN, x = 32, y = 190, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = 64, y = 192, hue = get_tab_hue("spawn"), text = "Spawn" })
+
+  push(layout_ui, { type = "button", id = c.BUTTON_TAB_BROADCAST, x = 32, y = 222, normal_id = 4005, pressed_id = 4007, onclick = "on_click" })
+  push(layout_ui, { type = "label", x = 64, y = 224, hue = get_tab_hue("broadcast"), text = "Broadcast" })
 end
 
 return ui
