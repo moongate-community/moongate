@@ -26,6 +26,16 @@
     "lootTables": [
       "guard.warrior"
     ],
+    "params": {
+      "patrol_mode": {
+        "type": "string",
+        "value": "random_roam"
+      },
+      "patrol_radius": {
+        "type": "string",
+        "value": "4"
+      }
+    },
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -94,6 +104,16 @@
     "lootTables": [
       "guard.warrior"
     ],
+    "params": {
+      "patrol_mode": {
+        "type": "string",
+        "value": "random_roam"
+      },
+      "patrol_radius": {
+        "type": "string",
+        "value": "4"
+      }
+    },
     "skills": {
       "Anatomy": 1200,
       "Tactics": 1200,
@@ -158,6 +178,14 @@
       "guard_role": {
         "type": "string",
         "value": "ranged"
+      },
+      "patrol_mode": {
+        "type": "string",
+        "value": "random_roam"
+      },
+      "patrol_radius": {
+        "type": "string",
+        "value": "4"
       }
     },
     "skills": {
@@ -244,6 +272,14 @@
       "guard_role": {
         "type": "string",
         "value": "ranged"
+      },
+      "patrol_mode": {
+        "type": "string",
+        "value": "random_roam"
+      },
+      "patrol_radius": {
+        "type": "string",
+        "value": "4"
       }
     },
     "skills": {
