@@ -92,10 +92,12 @@ If you later point a template at the `guard` brain, patrol stays opt-in and uses
 {
   "params": {
     "patrol_mode": { "type": "string", "value": "random_roam" },
-    "patrol_radius": { "type": "number", "value": 6 }
+    "patrol_radius": { "type": "string", "value": "6" }
   }
 }
 ```
+
+`patrol_radius` stays string-backed in template JSON because mobile params do not have a separate numeric param type.
 
 The tutorial cat above does not use these settings, and the current production guard templates do not set them either.
 

@@ -162,12 +162,14 @@ The current `guard` brain also reads optional patrol settings from `params`. Pat
 {
   "params": {
     "patrol_mode": { "type": "string", "value": "random_roam" },
-    "patrol_radius": { "type": "number", "value": 6 }
+    "patrol_radius": { "type": "string", "value": "6" }
   }
 }
 ```
 
-`home_*` remains the patrol center. The guard samples random roam points around the captured home point, and `leash_radius` remains the hard outer boundary because patrol radius is capped to it.
+`patrol_radius` is stored as a string param because mobile template params currently support `string`, `serial`, and `hue` values. `guard.lua` parses the radius with `tonumber(...)` at runtime.
+
+`home_*` remains the patrol center. The guard samples random roam points around the captured home point, and `leash_radius` remains the hard outer boundary because patrol radius is capped to it and immediate boundary breaches hand control back to the existing home-recovery flow in the same think cycle.
 
 Existing production guard templates in `moongate_data/templates/mobiles/guards.json` do not set these patrol params, so their current behavior is unchanged.
 

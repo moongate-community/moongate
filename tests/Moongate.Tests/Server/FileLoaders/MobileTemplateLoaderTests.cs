@@ -334,6 +334,75 @@ public class MobileTemplateLoaderTests
     }
 
     [Test]
+    public async Task LoadAsync_WhenGuardUsesPatrolParams_ShouldLoadStringBackedPatrolValues()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+
+        var mobilesDirectory = Path.Combine(directoriesConfig[DirectoryType.Templates], "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        var filePath = Path.Combine(mobilesDirectory, "guard-patrol.json");
+        await File.WriteAllTextAsync(
+            filePath,
+            """
+            [
+              {
+                "type": "mobile",
+                "id": "patrol_guard",
+                "name": "Patrol Guard",
+                "ai": {
+                  "brain": "guard"
+                },
+                "variants": [
+                  {
+                    "name": "default",
+                    "appearance": {
+                      "body": "0x0190",
+                      "skinHue": 0,
+                      "hairHue": 0
+                    }
+                  }
+                ],
+                "params": {
+                  "patrol_mode": { "type": "string", "value": "random_roam" },
+                  "patrol_radius": { "type": "string", "value": "6" }
+                }
+              }
+            ]
+            """
+        );
+
+        var mobileTemplateService = new MobileTemplateService();
+        var loader = new MobileTemplateLoader(directoriesConfig, mobileTemplateService);
+
+        await loader.LoadAsync();
+
+        Assert.That(mobileTemplateService.TryGet("patrol_guard", out var template), Is.True);
+        Assert.That(template, Is.Not.Null);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(template!.Params.ContainsKey("patrol_mode"), Is.True);
+                Assert.That(template.Params["patrol_mode"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["patrol_mode"].Value, Is.EqualTo("random_roam"));
+                Assert.That(template.Params.ContainsKey("patrol_radius"), Is.True);
+                Assert.That(template.Params["patrol_radius"].Type, Is.EqualTo(ItemTemplateParamType.String));
+                Assert.That(template.Params["patrol_radius"].Value, Is.EqualTo("6"));
+            }
+        );
+    }
+
+    [Test]
     public async Task LoadAsync_WhenBaseMobileHasSellProfile_ShouldInheritSellProfileId()
     {
         using var tempDirectory = new TempDirectory();
