@@ -154,6 +154,23 @@ Combat hooks (`attack`, `missed_attack`, `attacked`, `missed_by_attack`, `combat
 
 Archer guards use `guard_role = "ranged"` and keep a 4-6 tile spacing band. Melee guards use the same brain but prefer direct closure and home recovery.
 
+## Optional Patrol Params
+
+The current `guard` brain also reads optional patrol settings from `params`. Patrol is opt-in: if `patrol_mode` is not set to `random_roam`, or `patrol_radius` is missing or non-positive, the guard keeps its existing idle and return-home behavior.
+
+```json
+{
+  "params": {
+    "patrol_mode": { "type": "string", "value": "random_roam" },
+    "patrol_radius": { "type": "number", "value": 6 }
+  }
+}
+```
+
+`home_*` remains the patrol center. The guard samples random roam points around the captured home point, and `leash_radius` remains the hard outer boundary because patrol radius is capped to it.
+
+Existing production guard templates in `moongate_data/templates/mobiles/guards.json` do not set these patrol params, so their current behavior is unchanged.
+
 `undead_melee.lua` is a simpler fixed-loop brain:
 
 - ticks every `2000ms`

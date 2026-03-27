@@ -86,6 +86,19 @@ What the important fields mean:
 - `appearance.body`: the UO body id
 - `equipment`: starting worn or carried equipment for that variant; empty is fine for a tutorial cat
 
+If you later point a template at the `guard` brain, patrol stays opt-in and uses the same `params` shape documented in [NPC Behaviors](npc-behaviors.md#optional-patrol-params):
+
+```json
+{
+  "params": {
+    "patrol_mode": { "type": "string", "value": "random_roam" },
+    "patrol_radius": { "type": "number", "value": 6 }
+  }
+}
+```
+
+The tutorial cat above does not use these settings, and the current production guard templates do not set them either.
+
 ## Step 3: Validate The Template
 
 Run:
