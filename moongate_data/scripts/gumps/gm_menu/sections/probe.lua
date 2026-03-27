@@ -1,5 +1,7 @@
 local c = require("gumps.gm_menu.constants")
 local ui = require("gumps.gm_menu.ui")
+local header = require("gumps.layout.header")
+local stack = require("gumps.layout.stack")
 
 local probe_section = {}
 
@@ -15,9 +17,11 @@ local SAMPLE_ROWS = {
 }
 
 local function add_sample_rows(layout_ui, panel_x, panel_y, inner_line_gap, row_pitch)
-  local row_y = panel_y
+  local row_cursor = stack.cursor(panel_y)
 
   for _, sample in ipairs(SAMPLE_ROWS) do
+    local row_y = row_cursor:peek()
+
     ui.push(layout_ui, {
       type = "label_cropped",
       x = panel_x,
@@ -37,16 +41,20 @@ local function add_sample_rows(layout_ui, panel_x, panel_y, inner_line_gap, row_
       text = sample.meta
     })
 
-    row_y = row_y + row_pitch
+    row_cursor:advance(row_pitch)
   end
 end
 
-local function add_probe_panel(layout_ui, x, title, subtitle, inner_line_gap, row_pitch)
-  ui.push(layout_ui, { type = "image_tiled", x = x, y = 112, width = 150, height = 312, gump_id = 2624 })
+local function add_probe_panel(layout_ui, x, panel_y, title, subtitle, inner_line_gap, row_pitch)
+  local panel_cursor = stack.cursor(panel_y + 12)
+  local title_y = panel_cursor:add(20, 0)
+  local subtitle_y = panel_cursor:add(28, 14)
+
+  ui.push(layout_ui, { type = "image_tiled", x = x, y = panel_y, width = 150, height = 312, gump_id = 2624 })
   ui.push(layout_ui, {
     type = "label_cropped",
     x = x + 10,
-    y = 124,
+    y = title_y,
     width = 130,
     height = 20,
     hue = c.ACCENT_HUE,
@@ -55,34 +63,33 @@ local function add_probe_panel(layout_ui, x, title, subtitle, inner_line_gap, ro
   ui.push(layout_ui, {
     type = "label_cropped",
     x = x + 10,
-    y = 144,
+    y = subtitle_y,
     width = 130,
     height = 28,
     hue = c.MUTED_HUE,
     text = subtitle
   })
 
-  add_sample_rows(layout_ui, x + 10, 186, inner_line_gap, row_pitch)
+  add_sample_rows(layout_ui, x + 10, panel_cursor:peek(), inner_line_gap, row_pitch)
 end
 
 function probe_section.add_content(layout, session_id, character_id, reopen_callback)
   local layout_ui = layout.ui
 
   ui.push(layout_ui, { type = "image_tiled", x = 188, y = 48, width = 520, height = 428, gump_id = 2624 })
-  ui.push(layout_ui, { type = "label", x = 196, y = 62, hue = c.TITLE_HUE, text = "Spacing Probe" })
-  ui.push(layout_ui, {
-    type = "label_cropped",
+  local panel_y = header.add(layout_ui, {
     x = 196,
-    y = 72,
+    y = 62,
     width = 496,
-    height = 28,
-    hue = c.MUTED_HUE,
-    text = "Compare result row spacing in-client before changing the production Add tab rhythm."
+    title = "Spacing Probe",
+    subtitle = "Compare result row spacing in-client before changing the production Add tab rhythm.",
+    title_hue = c.TITLE_HUE,
+    subtitle_hue = c.MUTED_HUE
   })
 
-  add_probe_panel(layout_ui, 196, "Compact 16/36", "Tight but still readable.", 16, 36)
-  add_probe_panel(layout_ui, 362, "Balanced 16/38", "Closer to staff/admin gump cadence.", 16, 38)
-  add_probe_panel(layout_ui, 528, "Relaxed 18/40", "Most breathable option.", 18, 40)
+  add_probe_panel(layout_ui, 196, panel_y, "Compact 16/36", "Tight but still readable.", 16, 36)
+  add_probe_panel(layout_ui, 362, panel_y, "Balanced 16/38", "Closer to staff/admin gump cadence.", 16, 38)
+  add_probe_panel(layout_ui, 528, panel_y, "Relaxed 18/40", "Most breathable option.", 18, 40)
 
   _ = session_id
   _ = character_id

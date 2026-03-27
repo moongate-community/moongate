@@ -98,6 +98,53 @@ Expected result:
 - Editing the item script but not restarting the server
 - Replacing the `tutorial_brick` table name with something that no longer matches the template `scriptId`
 
+## Optional: Layout Helpers For Vertical Rhythm
+
+When a gump starts to grow, stop hand-counting every vertical offset. Moongate includes two small helpers for the most repetitive spacing work:
+
+- `gumps.layout.header` for `title + subtitle`
+- `gumps.layout.stack` for vertical lists and stacked blocks
+
+Example:
+
+```lua
+local header = require("gumps.layout.header")
+local stack = require("gumps.layout.stack")
+
+local layout = {
+    ui = {},
+    handlers = {}
+}
+
+local next_y = header.add(layout.ui, {
+    x = 24,
+    y = 20,
+    width = 260,
+    title = "Tutorial Brick",
+    subtitle = "Use helpers for repeated vertical rhythm, not for every coordinate."
+})
+
+local cursor = stack.cursor(next_y)
+local first_button_y = cursor:add(20, 12)
+
+layout.ui[#layout.ui + 1] = {
+    type = "button",
+    id = TUTORIAL_BRICK_HELLO_BUTTON,
+    x = 24,
+    y = first_button_y,
+    normal_id = 4005,
+    pressed_id = 4007,
+    onclick = "on_click"
+}
+```
+
+Use these helpers when:
+
+- you have repeated vertical spacing
+- you want the next `y` without recounting by hand
+
+Do not use them as a full layout system. Keep explicit coordinates when they make the gump easier to read.
+
 ## Next Step
 
 Continue with [Create Your First Lua Admin Command](create-your-first-lua-admin-command.md).
