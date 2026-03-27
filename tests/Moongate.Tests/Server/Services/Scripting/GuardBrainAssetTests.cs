@@ -5,6 +5,75 @@ namespace Moongate.Tests.Server.Services.Scripting;
 public sealed class GuardBrainAssetTests
 {
     [Test]
+    public void GuardBrainScript_ShouldUseAiRuntimeHelpers()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(script, Does.Contain("require(\"ai.runtime.fsm\")"));
+                Assert.That(script, Does.Contain("require(\"ai.runtime.movement\")"));
+                Assert.That(script, Does.Contain("require(\"ai.runtime.targeting\")"));
+                Assert.That(script, Does.Not.Contain("ai.modernuo."));
+            }
+        );
+    }
+
+    [Test]
+    public void GuardBrainScript_ShouldSupportOptionalRandomRoamPatrolMode()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scriptPath = Path.Combine(repositoryRoot, "moongate_data", "scripts", "ai", "brains", "guard.lua");
+        var script = File.ReadAllText(scriptPath);
+        var onThinkStart = script.IndexOf("function guard.on_think", StringComparison.Ordinal);
+        var onEventStart = script.IndexOf("function guard.on_event", StringComparison.Ordinal);
+        var patrolHelperStart = script.IndexOf("local function patrol_random_roam", StringComparison.Ordinal);
+        var moveHomeStart = script.IndexOf("local function move_home", StringComparison.Ordinal);
+
+        Assert.That(onThinkStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(onEventStart, Is.GreaterThan(onThinkStart));
+        Assert.That(patrolHelperStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(moveHomeStart, Is.GreaterThan(patrolHelperStart));
+
+        var onThinkScript = script.Substring(onThinkStart, onEventStart - onThinkStart);
+        var patrolHelperScript = script.Substring(patrolHelperStart, moveHomeStart - patrolHelperStart);
+        var noTargetIdleStart = onThinkScript.IndexOf("clear_focus(npc_serial, npc)", StringComparison.Ordinal);
+        var noTargetIdleEnd = onThinkScript.IndexOf("coroutine.yield(TICK_DELAY_MS)", noTargetIdleStart, StringComparison.Ordinal);
+
+        Assert.That(noTargetIdleStart, Is.GreaterThanOrEqualTo(0));
+        Assert.That(noTargetIdleEnd, Is.GreaterThan(noTargetIdleStart));
+
+        var noTargetIdleScript = onThinkScript.Substring(noTargetIdleStart, noTargetIdleEnd - noTargetIdleStart);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(noTargetIdleScript, Does.Contain("should_return_home(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("patrol_random_roam(npc_serial, npc)"));
+                Assert.That(noTargetIdleScript, Does.Contain("movement.guard(npc_serial)"));
+                Assert.That(noTargetIdleScript, Does.Not.Contain("movement.wander(npc_serial, patrol_radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("home_x"));
+                Assert.That(patrolHelperScript, Does.Contain("home_y"));
+                Assert.That(patrolHelperScript, Does.Contain("home_z"));
+                Assert.That(patrolHelperScript, Does.Contain("leash_radius"));
+                Assert.That(patrolHelperScript, Does.Contain("patrol_radius"));
+                Assert.That(patrolHelperScript, Does.Contain("math.min(patrol_radius, leash_radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("math.random(-radius, radius)"));
+                Assert.That(patrolHelperScript, Does.Contain("offset_x * offset_x + offset_y * offset_y <= radius * radius"));
+                Assert.That(patrolHelperScript, Does.Contain("local moved = steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)"));
+                Assert.That(patrolHelperScript, Does.Contain("local current_npc = mobile.get(npc_serial)"));
+                Assert.That(patrolHelperScript, Does.Contain("should_return_home(npc_serial, current_npc)"));
+                Assert.That(patrolHelperScript, Does.Contain("return move_home(npc_serial, current_npc)"));
+                Assert.That(patrolHelperScript, Does.Contain("return moved"));
+                Assert.That(noTargetIdleScript, Does.Contain("move_home(npc_serial, npc)"));
+            }
+        );
+    }
+
+    [Test]
     public void GuardBrainScript_ShouldGreetPlayersOnceAndAttackEnemiesOnInRange()
     {
         var repositoryRoot = GetRepositoryRoot();
@@ -14,7 +83,8 @@ public sealed class GuardBrainAssetTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(script, Does.Contain("local guards = require(\"guards\")"));
+                Assert.That(script, Does.Contain("local guards = guards"));
+                Assert.That(script, Does.Not.Contain("require(\"guards\")"));
                 Assert.That(script, Does.Contain("function guard.on_think"));
                 Assert.That(script, Does.Contain("function guard.on_in_range"));
                 Assert.That(script, Does.Contain("function guard.on_out_range"));

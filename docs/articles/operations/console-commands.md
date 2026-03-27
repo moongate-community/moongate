@@ -139,6 +139,19 @@ Spawns a hardcoded "brick" test item and adds it to the player backpack at posit
 
 Context: InGame only. Access: Regular.
 
+#### Live Item Admin Commands
+
+For the GameMaster live-world item and door commands introduced for shard maintenance, see
+[In-Game Item Admin Commands](in-game-item-admin-commands.md).
+
+That page covers:
+
+- `.spawn_item <templateId>`
+- `.add_door [wood|metal]`
+- `.add_wood_door`
+- `.add_metal_door`
+- `.remove_item`
+
 #### `mod_name`
 
 Opens a target cursor and renames the selected item or mobile. Persists the updated `Name` field and pushes a refresh packet so nearby clients pick up the new tooltip/display name.
@@ -300,6 +313,11 @@ Requires JWT authentication when JWT is enabled.
 2. Decorate with `[RegisterConsoleCommand("name", "description")]`.
 3. Implement `ICommandExecutor`.
 4. The source generator handles registration automatically.
+
+Beginner follow-ups:
+
+- [Create Your First Lua Admin Command](../scripting/create-your-first-lua-admin-command.md)
+- [Create Your First C# Admin Command](../architecture/create-your-first-csharp-admin-command.md)
 
 ---
 
