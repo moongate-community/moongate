@@ -31,7 +31,7 @@ export interface FitScaleInput {
   contentHeight: number
 }
 
-export interface ContainedSizeInput extends FitScaleInput {}
+export type ContainedSizeInput = FitScaleInput
 
 export interface ContainedSize {
   width: number
