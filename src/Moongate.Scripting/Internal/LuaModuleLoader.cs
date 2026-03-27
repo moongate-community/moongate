@@ -140,7 +140,6 @@ internal sealed class LuaModuleLoader
         return moduleTable;
     }
 
-    [RequiresUnreferencedCode("Enum registration uses reflection to access enum metadata.")]
     private void RegisterEnum(Type enumType)
     {
         ArgumentNullException.ThrowIfNull(enumType);

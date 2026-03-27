@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 using DryIoc;
@@ -22,9 +21,6 @@ using Moongate.Scripting.Utils;
 using Moongate.UO.Data.Utils;
 using MoonSharp.Interpreter;
 using Serilog;
-
-#pragma warning disable IL2026 // RequiresUnreferencedCode - Lua scripting uses reflection for dynamic functionality
-#pragma warning disable IL2072 // DynamicallyAccessedMemberTypes - Reflection access is necessary for scripting
 
 namespace Moongate.Scripting.Services;
 
@@ -919,9 +915,6 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
         }
     }
 
-    [RequiresUnreferencedCode(
-        "Lua meta generation relies on reflection-heavy LuaDocumentationGenerator which is not trim-safe."
-    )]
     private async Task GenerateLuaMetaFileAsync(CancellationToken cancellationToken)
     {
         try
@@ -1109,9 +1102,7 @@ public class LuaScriptEngineService : IScriptEngineService, IDisposable
             UserData.RegisterType(scriptUserData.UserType, new GenericUserDataDescriptor(scriptUserData.UserType));
 
             // Check if type has public constructors (instantiable)
-        #pragma warning disable IL2075 // Suppress AOT warning for script proxy
             var publicConstructors = scriptUserData.UserType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-        #pragma warning restore IL2075
 
             if (publicConstructors.Length > 0)
             {
