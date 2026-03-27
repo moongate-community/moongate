@@ -131,7 +131,14 @@ local function patrol_random_roam(npc_serial, npc)
     mark_mode(npc_serial, "patrol")
     fsm.set_action(npc_serial, fsm.actions.wander)
 
-    return steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)
+    local moved = steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)
+    local current_npc = mobile.get(npc_serial)
+
+    if current_npc ~= nil and should_return_home(npc_serial, current_npc) then
+        return move_home(npc_serial, current_npc)
+    end
+
+    return moved
 end
 
 local function move_home(npc_serial, npc)

@@ -63,7 +63,11 @@ public sealed class GuardBrainAssetTests
                 Assert.That(patrolHelperScript, Does.Contain("math.min(patrol_radius, leash_radius)"));
                 Assert.That(patrolHelperScript, Does.Contain("math.random(-radius, radius)"));
                 Assert.That(patrolHelperScript, Does.Contain("offset_x * offset_x + offset_y * offset_y <= radius * radius"));
-                Assert.That(patrolHelperScript, Does.Contain("steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)"));
+                Assert.That(patrolHelperScript, Does.Contain("local moved = steering.move_to(npc_serial, patrol_x, patrol_y, origin_z, 0)"));
+                Assert.That(patrolHelperScript, Does.Contain("local current_npc = mobile.get(npc_serial)"));
+                Assert.That(patrolHelperScript, Does.Contain("should_return_home(npc_serial, current_npc)"));
+                Assert.That(patrolHelperScript, Does.Contain("return move_home(npc_serial, current_npc)"));
+                Assert.That(patrolHelperScript, Does.Contain("return moved"));
                 Assert.That(noTargetIdleScript, Does.Contain("move_home(npc_serial, npc)"));
             }
         );
