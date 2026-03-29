@@ -55,6 +55,7 @@ public sealed class PasswordCommandTests
             string? email = null,
             AccountType? accountType = null,
             bool? isLocked = null,
+            bool allowPrivilegeChanges = false,
             bool clearRecoveryCode = false,
             CancellationToken cancellationToken = default
         )
@@ -63,6 +64,7 @@ public sealed class PasswordCommandTests
             _ = email;
             _ = accountType;
             _ = isLocked;
+            _ = allowPrivilegeChanges;
             _ = clearRecoveryCode;
             _ = cancellationToken;
 

@@ -31,6 +31,7 @@
 
 ### Bug Fixes
 
+* harden users API authorization and account role mutation guards to prevent privilege escalation
 * address code review issues in NPC porting ([c88443c](https://github.com/moongate-community/moongate/commit/c88443ca456b10a2c9dc654a86181e66e4a4ae2a)), closes [#171](https://github.com/moongate-community/moongate/issues/171)
 * align guard brain runtime naming ([d0830a1](https://github.com/moongate-community/moongate/commit/d0830a1bac7f4f035436c14f1ae3f70d4ae204b5))
 * align template validator version metadata ([9c40dbb](https://github.com/moongate-community/moongate/commit/9c40dbb4b7ced180816393f23f26110c459a769c))
