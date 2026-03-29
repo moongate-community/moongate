@@ -209,7 +209,15 @@ public class MoongateHttpServiceOpenApiEndpointTests
             {
                 DirectoriesConfig = directories,
                 Port = port,
-                IsOpenApiEnabled = true
+                IsOpenApiEnabled = true,
+                Jwt = new()
+                {
+                    IsEnabled = true,
+                    SigningKey = "moongate-http-tests-signing-key-at-least-32-bytes",
+                    Issuer = "moongate-tests",
+                    Audience = "moongate-tests-client",
+                    ExpirationMinutes = 5
+                }
             },
             accountService
         );
