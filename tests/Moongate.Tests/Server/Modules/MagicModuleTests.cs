@@ -1,6 +1,8 @@
 using System.Reflection;
+using Moongate.Server.Data.Items;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Magic;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules;
@@ -9,6 +11,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Modules;
@@ -21,9 +24,19 @@ public sealed class MagicModuleTests
 
         public Serial? LastCasterId { get; private set; }
 
+        public int? LastSpellId { get; private set; }
+
+        public SpellTargetData? LastTarget { get; private set; }
+
         public int IsCastingCalls { get; private set; }
 
         public int InterruptCalls { get; private set; }
+
+        public int TryCastCalls { get; private set; }
+
+        public bool TryCastResult { get; set; } = true;
+
+        public bool TrySetTargetResult { get; set; } = true;
 
         public bool IsCasting(Serial casterId)
         {
@@ -35,11 +48,11 @@ public sealed class MagicModuleTests
 
         public bool TrySetTarget(Serial casterId, int spellId, Serial targetId)
         {
-            _ = casterId;
-            _ = spellId;
-            _ = targetId;
+            LastCasterId = casterId;
+            LastSpellId = spellId;
+            LastTarget = SpellTargetData.Mobile(targetId);
 
-            return false;
+            return TrySetTargetResult;
         }
 
         public ValueTask<bool> TrySetTargetAsync(
@@ -49,10 +62,12 @@ public sealed class MagicModuleTests
             CancellationToken cancellationToken = default
         )
         {
-            _ = target;
             _ = cancellationToken;
+            LastCasterId = casterId;
+            LastSpellId = spellId;
+            LastTarget = target;
 
-            return ValueTask.FromResult(TrySetTarget(casterId, spellId, target.TargetId));
+            return ValueTask.FromResult(TrySetTargetResult);
         }
 
         public ValueTask<bool> TryCastAsync(
@@ -61,11 +76,12 @@ public sealed class MagicModuleTests
             CancellationToken cancellationToken = default
         )
         {
-            _ = caster;
-            _ = spellId;
             _ = cancellationToken;
+            LastCasterId = caster.Id;
+            LastSpellId = spellId;
+            TryCastCalls++;
 
-            return ValueTask.FromResult(false);
+            return ValueTask.FromResult(TryCastResult);
         }
 
         public void Interrupt(Serial casterId)
@@ -156,6 +172,62 @@ public sealed class MagicModuleTests
         public void RemoveEntity(Serial serial) { }
     }
 
+    private sealed class RecordingItemService : IItemService
+    {
+        private readonly Dictionary<Serial, UOItemEntity> _items = [];
+
+        public void Add(UOItemEntity item)
+            => _items[item.Id] = item;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => throw new NotSupportedException();
+
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, Moongate.UO.Data.Types.ItemLayerType layer)
+            => throw new NotSupportedException();
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+            => Task.FromResult(_items.GetValueOrDefault(itemId));
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => throw new NotSupportedException();
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((_items.ContainsKey(itemId), _items.GetValueOrDefault(itemId)));
+
+        public Task UpsertItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => throw new NotSupportedException();
+    }
+
     [Test]
     public void ScriptModule_ShouldExposeExpectedLuaModuleAndFunctions()
     {
@@ -171,6 +243,10 @@ public sealed class MagicModuleTests
         Assert.Multiple(
             () =>
             {
+                Assert.That(GetScriptFunctionName(moduleType, "Cast"), Is.EqualTo("cast"));
+                Assert.That(GetScriptFunctionName(moduleType, "CastItem"), Is.EqualTo("cast_item"));
+                Assert.That(GetScriptFunctionName(moduleType, "CastLocation"), Is.EqualTo("cast_location"));
+                Assert.That(GetScriptFunctionName(moduleType, "CastMobile"), Is.EqualTo("cast_mobile"));
                 Assert.That(GetScriptFunctionName(moduleType, "IsCasting"), Is.EqualTo("is_casting"));
                 Assert.That(GetScriptFunctionName(moduleType, "Interrupt"), Is.EqualTo("interrupt"));
             }
@@ -192,7 +268,7 @@ public sealed class MagicModuleTests
         {
             IsCastingResult = true
         };
-        var module = new MagicModule(spatial, magicService);
+        var module = new MagicModule(spatial, magicService, new RecordingItemService());
 
         var isCasting = module.IsCasting((uint)npc.Id);
         _ = module.Interrupt((uint)npc.Id);
@@ -204,6 +280,108 @@ public sealed class MagicModuleTests
                 Assert.That(magicService.IsCastingCalls, Is.EqualTo(1));
                 Assert.That(magicService.InterruptCalls, Is.EqualTo(1));
                 Assert.That(magicService.LastCasterId, Is.EqualTo(npc.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void CastMobile_WhenNpcAndTargetExist_ShouldStartCastAndBindMobileTarget()
+    {
+        var spatial = new MagicModuleTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x601u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x602u,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(target);
+        var magicService = new RecordingMagicService();
+        var module = new MagicModule(spatial, magicService, new RecordingItemService());
+
+        var result = module.CastMobile((uint)npc.Id, 40, (uint)target.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(magicService.TryCastCalls, Is.EqualTo(1));
+                Assert.That(magicService.LastCasterId, Is.EqualTo(npc.Id));
+                Assert.That(magicService.LastSpellId, Is.EqualTo(40));
+                Assert.That(magicService.LastTarget?.Kind, Is.EqualTo(SpellTargetKind.Mobile));
+                Assert.That(magicService.LastTarget?.TargetId, Is.EqualTo(target.Id));
+            }
+        );
+    }
+
+    [Test]
+    public void CastItem_WhenNpcAndItemExist_ShouldStartCastAndBindItemTarget()
+    {
+        var spatial = new MagicModuleTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x611u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        var itemService = new RecordingItemService();
+        var targetItem = new UOItemEntity
+        {
+            Id = (Serial)0x40000100u,
+            ItemId = 0x1F14,
+            MapId = 1,
+            Location = new(120, 140, 0)
+        };
+        itemService.Add(targetItem);
+        var magicService = new RecordingMagicService();
+        var module = new MagicModule(spatial, magicService, itemService);
+
+        var result = module.CastItem((uint)npc.Id, 55, (uint)targetItem.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(magicService.TryCastCalls, Is.EqualTo(1));
+                Assert.That(magicService.LastTarget?.Kind, Is.EqualTo(SpellTargetKind.Item));
+                Assert.That(magicService.LastTarget?.TargetId, Is.EqualTo(targetItem.Id));
+                Assert.That(magicService.LastTarget?.Location, Is.EqualTo(targetItem.Location));
+                Assert.That(magicService.LastTarget?.Graphic, Is.EqualTo((ushort)targetItem.ItemId));
+            }
+        );
+    }
+
+    [Test]
+    public void CastLocation_WhenNpcExists_ShouldStartCastAndBindLocationTarget()
+    {
+        var spatial = new MagicModuleTestSpatialWorldService();
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x621u,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        spatial.AddMobile(npc);
+        var magicService = new RecordingMagicService();
+        var module = new MagicModule(spatial, magicService, new RecordingItemService());
+
+        var result = module.CastLocation((uint)npc.Id, 33, 2, 512, 640, 5);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(magicService.TryCastCalls, Is.EqualTo(1));
+                Assert.That(magicService.LastTarget?.Kind, Is.EqualTo(SpellTargetKind.Location));
+                Assert.That(magicService.LastTarget?.MapId, Is.EqualTo(2));
+                Assert.That(magicService.LastTarget?.Location, Is.EqualTo(new Point3D(512, 640, 5)));
             }
         );
     }

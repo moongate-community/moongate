@@ -3,6 +3,7 @@ using Moongate.Server.Services.Magic.Spells.Magery.First;
 using Moongate.Server.Services.Magic.Spells.Magery.Fifth;
 using Moongate.Server.Services.Magic.Spells.Magery.Fourth;
 using Moongate.Server.Services.Magic.Spells.Magery.Second;
+using Moongate.Server.Services.Magic.Spells.Magery.Seventh;
 using Moongate.Server.Services.Magic.Spells.Magery.Sixth;
 using Moongate.Server.Services.Magic.Spells.Magery.Third;
 using Moongate.Server.Types.Magic;
@@ -33,6 +34,7 @@ public sealed class SpellInitializerTests
             Assert.That(registry.Get(SpellIds.Magery.Fourth.GreaterHeal), Is.TypeOf<GreaterHealSpell>());
             Assert.That(registry.Get(SpellIds.Magery.Fifth.Paralyze), Is.TypeOf<ParalyzeSpell>());
             Assert.That(registry.Get(SpellIds.Magery.Sixth.Explosion), Is.TypeOf<ExplosionSpell>());
+            Assert.That(registry.Get(SpellIds.Magery.Seventh.GateTravel), Is.TypeOf<GateTravelSpell>());
             Assert.That(registry.Get(SpellIds.Magery.First.CreateFood), Is.Null);
         });
     }
