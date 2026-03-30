@@ -192,6 +192,94 @@ public sealed class DispatchEventsServiceTests
     }
 
     [Test]
+    public async Task DispatchMobileUpdateAsync_WhenViewerIsRegular_ShouldNotSendDeadPlayerGhosts()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var ghost = new UOMobileEntity
+        {
+            Id = (Serial)0x00000092u,
+            IsPlayer = true,
+            IsAlive = false,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var viewerCharacter = new UOMobileEntity
+        {
+            Id = (Serial)0x00000093u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var viewerSession = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular,
+            CharacterId = viewerCharacter.Id,
+            Character = viewerCharacter
+        };
+        sessions.Map[viewerCharacter.Id] = viewerSession;
+        spatial.PlayersInRange.Add(viewerSession);
+
+        var recipients = await service.DispatchMobileUpdateAsync(ghost, 1, 18, true);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(0));
+                Assert.That(queue.TryDequeue(out _), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task DispatchMobileUpdateAsync_WhenViewerIsGameMaster_ShouldSendDeadPlayerGhosts()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var ghost = new UOMobileEntity
+        {
+            Id = (Serial)0x00000094u,
+            IsPlayer = true,
+            IsAlive = false,
+            MapId = 1,
+            Location = new(100, 100, 0)
+        };
+        var viewerCharacter = new UOMobileEntity
+        {
+            Id = (Serial)0x00000095u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(101, 100, 0)
+        };
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var viewerSession = new GameSession(new(client))
+        {
+            AccountType = AccountType.GameMaster,
+            CharacterId = viewerCharacter.Id,
+            Character = viewerCharacter
+        };
+        sessions.Map[viewerCharacter.Id] = viewerSession;
+        spatial.PlayersInRange.Add(viewerSession);
+
+        var recipients = await service.DispatchMobileUpdateAsync(ghost, 1, 18, true);
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(recipients, Is.EqualTo(1));
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<MobileIncomingPacket>());
+            }
+        );
+    }
+
+    [Test]
     public async Task HandleAsync_ForMobilePlayAnimationEvent_ShouldBroadcastMobileAnimationPacket()
     {
         var spatial = new DispatchEventsTestSpatialWorldService();
@@ -366,6 +454,44 @@ public sealed class DispatchEventsServiceTests
         Assert.That(packet.Mobile, Is.Not.Null);
         Assert.That(packet.Mobile!.IsWarMode, Is.True);
         Assert.That(packet.ResolvedNotoriety, Is.EqualTo(Notoriety.CanBeAttacked));
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobileWarModeChangedEvent_WhenViewerIsRegular_ShouldNotSendDeadPlayerGhosts()
+    {
+        var spatial = new DispatchEventsTestSpatialWorldService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new DispatchEventsTestGameNetworkSessionService();
+        var service = new DispatchEventsService(spatial, queue, sessions);
+        var ghost = new UOMobileEntity
+        {
+            Id = (Serial)0x00000096u,
+            IsPlayer = true,
+            IsAlive = false,
+            IsWarMode = true,
+            MapId = 1,
+            Location = new(111, 222, 7)
+        };
+        var viewerCharacter = new UOMobileEntity
+        {
+            Id = (Serial)0x00000097u,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(112, 222, 7)
+        };
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var viewerSession = new GameSession(new(client))
+        {
+            AccountType = AccountType.Regular,
+            CharacterId = viewerCharacter.Id,
+            Character = viewerCharacter
+        };
+        sessions.Map[viewerCharacter.Id] = viewerSession;
+        spatial.PlayersInRange.Add(viewerSession);
+
+        await service.HandleAsync(new MobileWarModeChangedEvent(ghost));
+
+        Assert.That(queue.TryDequeue(out _), Is.False);
     }
 
     [Test]

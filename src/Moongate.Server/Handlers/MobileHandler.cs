@@ -400,7 +400,8 @@ public class MobileHandler
         {
             if (otherMobile.Id == mobileEntity.Id ||
                 otherMobile.RiderMobileId != Serial.Zero ||
-                !visibleCenter.InRange(otherMobile.Location, visibleRange))
+                !visibleCenter.InRange(otherMobile.Location, visibleRange) ||
+                !MobileVisibilityHelper.CanSessionSeeMobile(session, otherMobile))
             {
                 continue;
             }

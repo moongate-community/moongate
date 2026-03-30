@@ -126,12 +126,24 @@ Opens the in-game GM sidebar menu. The menu currently exposes:
 
 - `Add`: free-search item/NPC templates, item tile-art preview, quantity input, `Add To Backpack`, `Target Ground`, and repeat `Brush`
 - `Travel`: embedded curated teleport browser grouped by map and category
+- `Spawn`: quick world spawn actions that replace the old `spawn_tools` flow
+- `Broadcast`: server-wide broadcast messaging with a fixed `SERVER:` prefix
 
 ```
 .gm
 ```
 
 Context: InGame only. Access: GameMaster.
+
+#### `resurrect`
+
+Opens a helpful target cursor and resurrects the selected dead player immediately. This bypasses healer and ankh offer flow and is intended for live GM intervention.
+
+```
+.resurrect
+```
+
+Only dead player ghosts are valid targets. Context: InGame only. Access: GameMaster.
 
 #### `add_item`
 

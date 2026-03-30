@@ -1,6 +1,7 @@
 using Moongate.Server.Types.Interaction;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Server.Interfaces.Services.Interaction;
 
@@ -9,6 +10,14 @@ namespace Moongate.Server.Interfaces.Services.Interaction;
 /// </summary>
 public interface IResurrectionService
 {
+    /// <summary>
+    /// Applies resurrection state changes directly to a dead player without requiring an offer source.
+    /// </summary>
+    /// <param name="player">Dead player to resurrect.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><c>true</c> when resurrection was applied; otherwise <c>false</c>.</returns>
+    Task<bool> TryResurrectAsync(UOMobileEntity player, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Validates and applies resurrection for the character currently bound to the specified session.
     /// </summary>

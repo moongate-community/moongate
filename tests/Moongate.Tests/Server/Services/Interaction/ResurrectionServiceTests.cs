@@ -248,6 +248,66 @@ public sealed class ResurrectionServiceTests
         Assert.That(resurrected, Is.False);
     }
 
+    [Test]
+    public async Task TryResurrectAsync_WhenResurrectingDeadPlayerDirectly_ShouldRestoreAliveStateWithoutSourceValidation()
+    {
+        EnsureRaceDefinitionsRegistered();
+        var character = new UOMobileEntity
+        {
+            Id = (Serial)0x00000061u,
+            Name = "Ghost",
+            IsPlayer = true,
+            IsAlive = false,
+            MapId = 1,
+            Location = new(125, 225, 0),
+            Gender = GenderType.Male,
+            Race = Race.Human,
+            BaseBody = 0x00,
+            Hits = 0,
+            MaxHits = 40
+        };
+        var shroud = new UOItemEntity
+        {
+            Id = (Serial)0x40000061u,
+            ItemId = 0x204E,
+            Name = "Death Shroud",
+            MapId = character.MapId,
+            Location = character.Location
+        };
+        character.AddEquippedItem(ItemLayerType.OuterTorso, shroud);
+        var mobileService = new TestMobileService();
+        var itemService = new TestItemService();
+        itemService.Items[shroud.Id] = shroud;
+        var movementTileQueryService = new TestMovementTileQueryService();
+        var eventBus = new TestGameEventBusService();
+        var service = new ResurrectionService(
+            new TestGameNetworkSessionService(),
+            mobileService,
+            itemService,
+            movementTileQueryService,
+            eventBus
+        );
+
+        var resurrected = await service.TryResurrectAsync(character);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(resurrected, Is.True);
+                Assert.That(character.IsAlive, Is.True);
+                Assert.That(character.Hits, Is.EqualTo(4));
+                Assert.That(character.Body, Is.EqualTo((Body)Race.Human.AliveBody(false)));
+                Assert.That(character.EquippedItemIds.ContainsKey(ItemLayerType.OuterTorso), Is.False);
+                Assert.That(itemService.DeletedIds, Contains.Item(shroud.Id));
+                Assert.That(mobileService.UpsertedMobiles, Has.Count.EqualTo(1));
+                Assert.That(
+                    eventBus.Events.OfType<MobileAppearanceChangedEvent>().Any(gameEvent => gameEvent.Mobile == character),
+                    Is.True
+                );
+            }
+        );
+    }
+
     private sealed class TestGameNetworkSessionService : IGameNetworkSessionService
     {
         private readonly List<GameSession> _sessions = [];

@@ -44,6 +44,13 @@ public sealed class ResurrectionService : IResurrectionService
         _gameEventBusService = gameEventBusService;
     }
 
+    public Task<bool> TryResurrectAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+
+        return ApplyResurrectionAsync(player, cancellationToken);
+    }
+
     public async Task<bool> TryResurrectAsync(
         long sessionId,
         Serial characterId,
@@ -99,6 +106,19 @@ public sealed class ResurrectionService : IResurrectionService
             player.MapId != resolvedSource.Value.MapId ||
             !IsWithinSourceRange(player.Location, resolvedSource.Value.Location, sourceType)
         )
+        {
+            return false;
+        }
+
+        return await ApplyResurrectionAsync(player, cancellationToken);
+    }
+
+    private async Task<bool> ApplyResurrectionAsync(
+        UOMobileEntity player,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!player.IsPlayer || player.IsAlive)
         {
             return false;
         }

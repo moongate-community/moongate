@@ -215,6 +215,15 @@ public sealed class ResurrectionOfferServiceTests
             return Task.FromResult(Result);
         }
 
+        public Task<bool> TryResurrectAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
+        {
+            _ = player;
+            _ = cancellationToken;
+            CallCount++;
+
+            return Task.FromResult(Result);
+        }
+
         public Task<bool> TryResurrectAsync(
             long sessionId,
             Serial characterId,

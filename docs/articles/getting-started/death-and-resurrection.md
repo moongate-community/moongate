@@ -35,11 +35,14 @@ After death, the player becomes a ghost mobile in the world.
 
 Current ghost behavior includes:
 
-- dead players stay visible as ghosts
+- dead players stay visible as ghosts to GameMasters
+- normal players do not see other player ghosts
 - the death shroud remains equipped while dead
 - nearby clients receive a redraw so the body change is visible immediately
 
 This is a real gameplay state, not only a persistence flag.
+
+For live support, GameMasters can also use `.resurrect` to target a dead player ghost and restore them immediately without waiting for a healer or ankh offer.
 
 ## Resurrection Sources
 

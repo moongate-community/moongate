@@ -11,6 +11,7 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Services.Interaction;
+using Moongate.Server.Utils;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -261,6 +262,11 @@ public sealed class DispatchEventsService
                 continue;
             }
 
+            if (!MobileVisibilityHelper.CanSessionSeeMobile(playerSession, mobile))
+            {
+                continue;
+            }
+
             if (isNew)
             {
                 _outgoingPacketQueue.Enqueue(
@@ -336,6 +342,11 @@ public sealed class DispatchEventsService
         foreach (var session in recipients)
         {
             if (session.CharacterId == gameEvent.Mobile.Id || session.Character is null)
+            {
+                continue;
+            }
+
+            if (!MobileVisibilityHelper.CanSessionSeeMobile(session, gameEvent.Mobile))
             {
                 continue;
             }
