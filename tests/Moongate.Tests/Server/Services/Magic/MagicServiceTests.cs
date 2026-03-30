@@ -2,6 +2,7 @@ using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Base;
@@ -19,6 +20,7 @@ public sealed class MagicServiceTests
     private RecordingTimerService _timerService = null!;
     private RecordingGameEventBusService _gameEventBusService = null!;
     private FakeCharacterService _characterService = null!;
+    private AllowAllSpellbookService _spellbookService = null!;
     private SpellRegistry _spellRegistry = null!;
     private MagicService _service = null!;
 
@@ -28,8 +30,15 @@ public sealed class MagicServiceTests
         _timerService = new RecordingTimerService();
         _gameEventBusService = new RecordingGameEventBusService();
         _characterService = new FakeCharacterService();
+        _spellbookService = new AllowAllSpellbookService();
         _spellRegistry = new SpellRegistry();
-        _service = new MagicService(_timerService, _gameEventBusService, _characterService, _spellRegistry);
+        _service = new MagicService(
+            _timerService,
+            _gameEventBusService,
+            _characterService,
+            _spellbookService,
+            _spellRegistry
+        );
     }
 
     [Test]
@@ -65,6 +74,32 @@ public sealed class MagicServiceTests
 
         Assert.That(result, Is.False);
         Assert.That(_service.IsCasting(caster.Id), Is.False);
+    }
+
+    [Test]
+    public async Task TryCastAsync_WithoutAvailableSpellbook_ReturnsFalse()
+    {
+        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], [])));
+        _spellbookService.AllowAllSpells = false;
+        var caster = CreateCaster(isAlive: true, mana: 50);
+
+        var result = await _service.TryCastAsync(caster, StubSpellId);
+
+        Assert.That(result, Is.False);
+        Assert.That(_service.IsCasting(caster.Id), Is.False);
+    }
+
+    [Test]
+    public async Task TryCastAsync_WithAvailableSpellbook_ReturnsTrue()
+    {
+        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], [])));
+        _spellbookService.AllowAllSpells = true;
+        var caster = CreateCaster(isAlive: true, mana: 50);
+
+        var result = await _service.TryCastAsync(caster, StubSpellId);
+
+        Assert.That(result, Is.True);
+        Assert.That(_service.IsCasting(caster.Id), Is.True);
     }
 
     [Test]
@@ -225,6 +260,45 @@ public sealed class MagicServiceTests
             where TEvent : IGameEvent
         {
             _ = listener;
+        }
+    }
+
+    private sealed class AllowAllSpellbookService : ISpellbookService
+    {
+        public bool AllowAllSpells { get; set; } = true;
+
+        public SpellbookData GetData(UOItemEntity book)
+        {
+            throw new NotSupportedException();
+        }
+
+        public ValueTask<UOItemEntity?> FindSpellbookAsync(
+            UOMobileEntity mobile,
+            SpellbookType spellbookType,
+            CancellationToken cancellationToken = default
+        )
+        {
+            throw new NotSupportedException();
+        }
+
+        public ValueTask<bool> MobileHasSpellAsync(
+            UOMobileEntity mobile,
+            SpellbookType spellbookType,
+            int spellId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = mobile;
+            _ = spellbookType;
+            _ = spellId;
+            _ = cancellationToken;
+
+            return ValueTask.FromResult(AllowAllSpells);
+        }
+
+        public void SetData(UOItemEntity book, SpellbookData data)
+        {
+            throw new NotSupportedException();
         }
     }
 

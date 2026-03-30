@@ -22,6 +22,7 @@ public sealed class MagicService : IMagicService
     private readonly ITimerService _timerService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ICharacterService _characterService;
+    private readonly ISpellbookService _spellbookService;
     private readonly SpellRegistry _spellRegistry;
     private readonly Lock _syncRoot = new();
     private readonly Dictionary<Serial, SpellCastContext> _activeCasts = [];
@@ -30,17 +31,20 @@ public sealed class MagicService : IMagicService
         ITimerService timerService,
         IGameEventBusService gameEventBusService,
         ICharacterService characterService,
+        ISpellbookService spellbookService,
         SpellRegistry spellRegistry
     )
     {
         ArgumentNullException.ThrowIfNull(timerService);
         ArgumentNullException.ThrowIfNull(gameEventBusService);
         ArgumentNullException.ThrowIfNull(characterService);
+        ArgumentNullException.ThrowIfNull(spellbookService);
         ArgumentNullException.ThrowIfNull(spellRegistry);
 
         _timerService = timerService;
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
+        _spellbookService = spellbookService;
         _spellRegistry = spellRegistry;
     }
 
@@ -91,6 +95,17 @@ public sealed class MagicService : IMagicService
                 caster.Id,
                 caster.Mana,
                 spell.ManaCost
+            );
+
+            return false;
+        }
+
+        if (!await _spellbookService.MobileHasSpellAsync(caster, spell.SpellbookType, spell.SpellId, cancellationToken))
+        {
+            _logger.Debug(
+                "Rejecting spell cast for caster {CasterId} because spell {SpellId} is not available in a spellbook.",
+                caster.Id,
+                spell.SpellId
             );
 
             return false;

@@ -50,4 +50,9 @@ public static class ItemCustomParamKeys
     {
         public const string SpawnerId = "spawner_id";
     }
+
+    public static class Spellbook
+    {
+        public const string Content = "spellbook_content";
+    }
 }
