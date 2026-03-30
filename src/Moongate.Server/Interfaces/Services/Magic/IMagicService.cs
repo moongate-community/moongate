@@ -27,6 +27,15 @@ public interface IMagicService
     );
 
     /// <summary>
+    /// Attempts to bind a pending target to an active cast for the specified mobile and spell.
+    /// </summary>
+    /// <param name="casterId">Caster serial identifier.</param>
+    /// <param name="spellId">Registered spell identifier.</param>
+    /// <param name="targetId">Target serial identifier.</param>
+    /// <returns><see langword="true" /> when a matching active cast was updated.</returns>
+    bool TrySetTarget(Serial casterId, int spellId, Serial targetId);
+
+    /// <summary>
     /// Interrupts an in-progress cast for the specified mobile.
     /// </summary>
     /// <param name="casterId">Caster serial identifier.</param>

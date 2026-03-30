@@ -11,7 +11,8 @@ public sealed class SpellCastContextTests
     public void Constructor_SetsProperties()
     {
         var casterId = new Serial(1);
-        var context = new SpellCastContext(casterId, 4, SpellStateType.Casting, "timer-1");
+        var targetId = new Serial(2);
+        var context = new SpellCastContext(casterId, 4, SpellStateType.Casting, "timer-1", targetId);
 
         Assert.Multiple(() =>
         {
@@ -19,6 +20,7 @@ public sealed class SpellCastContextTests
             Assert.That(context.SpellId, Is.EqualTo(4));
             Assert.That(context.State, Is.EqualTo(SpellStateType.Casting));
             Assert.That(context.TimerId, Is.EqualTo("timer-1"));
+            Assert.That(context.TargetId, Is.EqualTo(targetId));
         });
     }
 }

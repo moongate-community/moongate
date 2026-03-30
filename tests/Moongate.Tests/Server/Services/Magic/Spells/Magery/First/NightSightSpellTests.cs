@@ -1,10 +1,26 @@
 using Moongate.Server.Services.Magic.Spells.Magery.First;
+using Moongate.Server.Types.Magic;
 
 namespace Moongate.Tests.Server.Services.Magic.Spells.Magery.First;
 
 [TestFixture]
 public sealed class NightSightSpellTests
 {
+    [Test]
+    public void Info_UsesCanonicalMetadata()
+    {
+        var spell = new NightSightSpell();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.Info.Name, Is.EqualTo("Night Sight"));
+                Assert.That(spell.Info.Mantra, Is.EqualTo("In Lor"));
+                Assert.That(spell.Info.Reagents, Is.EqualTo([ReagentType.SulfurousAsh, ReagentType.SpidersSilk]));
+            }
+        );
+    }
+
     [Test]
     public void ApplyEffect_WhenTargetIsNull_SetsMarkerOnCaster()
     {

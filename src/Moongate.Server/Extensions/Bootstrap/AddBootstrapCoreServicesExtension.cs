@@ -95,7 +95,16 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
-        container.Register<SpellRegistry>(Reuse.Singleton);
+        container.RegisterDelegate(
+            _ =>
+            {
+                var registry = new SpellRegistry();
+                SpellInitializer.RegisterAll(registry);
+
+                return registry;
+            },
+            Reuse.Singleton
+        );
         container.Register<ISpellbookService, SpellbookService>(Reuse.Singleton);
         container.Register<IMagicService, MagicService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);

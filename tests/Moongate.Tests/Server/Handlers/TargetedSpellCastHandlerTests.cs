@@ -10,15 +10,18 @@ using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Handlers;
 
-public sealed class SpellCastRequestedHandlerTests
+[TestFixture]
+public sealed class TargetedSpellCastHandlerTests
 {
     private sealed class RecordingMagicService : IMagicService
     {
-        public UOMobileEntity? LastCaster { get; private set; }
+        public Serial? LastCasterId { get; private set; }
 
         public int? LastSpellId { get; private set; }
 
-        public int CallCount { get; private set; }
+        public Serial? LastTargetId { get; private set; }
+
+        public int TrySetTargetCalls { get; private set; }
 
         public bool IsCasting(Serial casterId)
         {
@@ -29,11 +32,12 @@ public sealed class SpellCastRequestedHandlerTests
 
         public bool TrySetTarget(Serial casterId, int spellId, Serial targetId)
         {
-            _ = casterId;
-            _ = spellId;
-            _ = targetId;
+            LastCasterId = casterId;
+            LastSpellId = spellId;
+            LastTargetId = targetId;
+            TrySetTargetCalls++;
 
-            return false;
+            return true;
         }
 
         public ValueTask<bool> TryCastAsync(
@@ -42,10 +46,9 @@ public sealed class SpellCastRequestedHandlerTests
             CancellationToken cancellationToken = default
         )
         {
+            _ = caster;
+            _ = spellId;
             _ = cancellationToken;
-            LastCaster = caster;
-            LastSpellId = spellId;
-            CallCount++;
 
             return ValueTask.FromResult(true);
         }
@@ -55,19 +58,19 @@ public sealed class SpellCastRequestedHandlerTests
 
         public ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
         {
-            _ = cancellationToken;
             _ = casterId;
+            _ = cancellationToken;
 
             return ValueTask.CompletedTask;
         }
     }
 
     [Test]
-    public async Task HandleAsync_WhenSessionHasCharacter_ShouldCallMagicService()
+    public async Task HandleAsync_WhenSessionHasCharacter_ShouldBindSpellTarget()
     {
         var magicService = new RecordingMagicService();
         var sessionService = new FakeGameNetworkSessionService();
-        var handler = new SpellCastRequestedHandler(magicService, sessionService);
+        var handler = new TargetedSpellCastHandler(magicService, sessionService);
         var character = new UOMobileEntity
         {
             Id = (Serial)0x00000001u
@@ -82,27 +85,28 @@ public sealed class SpellCastRequestedHandlerTests
 
         sessionService.Add(session);
 
-        await handler.HandleAsync(new(session.SessionId, 45));
+        await handler.HandleAsync(new(session.SessionId, 45, (Serial)0x00000002u));
 
         Assert.Multiple(
             () =>
             {
-                Assert.That(magicService.CallCount, Is.EqualTo(1));
-                Assert.That(magicService.LastCaster, Is.SameAs(character));
+                Assert.That(magicService.TrySetTargetCalls, Is.EqualTo(1));
+                Assert.That(magicService.LastCasterId, Is.EqualTo(character.Id));
                 Assert.That(magicService.LastSpellId, Is.EqualTo(45));
+                Assert.That(magicService.LastTargetId, Is.EqualTo((Serial)0x00000002u));
             }
         );
     }
 
     [Test]
-    public async Task HandleAsync_WhenSessionMissing_ShouldNotCallMagicService()
+    public async Task HandleAsync_WhenSessionMissing_ShouldNotBindSpellTarget()
     {
         var magicService = new RecordingMagicService();
         var sessionService = new FakeGameNetworkSessionService();
-        var handler = new SpellCastRequestedHandler(magicService, sessionService);
+        var handler = new TargetedSpellCastHandler(magicService, sessionService);
 
-        await handler.HandleAsync(new(99, 45));
+        await handler.HandleAsync(new(99, 45, (Serial)0x00000002u));
 
-        Assert.That(magicService.CallCount, Is.Zero);
+        Assert.That(magicService.TrySetTargetCalls, Is.Zero);
     }
 }

@@ -1,4 +1,5 @@
 using Moongate.Server.Services.Magic.Spells.Magery.First;
+using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Persistence.Entities;
 
 namespace Moongate.Tests.Server.Services.Magic.Spells.Magery.First;
@@ -6,6 +7,21 @@ namespace Moongate.Tests.Server.Services.Magic.Spells.Magery.First;
 [TestFixture]
 public sealed class ClumsySpellTests
 {
+    [Test]
+    public void Info_UsesCanonicalMetadata()
+    {
+        var spell = new ClumsySpell();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.Info.Name, Is.EqualTo("Clumsy"));
+                Assert.That(spell.Info.Mantra, Is.EqualTo("Uus Jux"));
+                Assert.That(spell.Info.Reagents, Is.EqualTo([ReagentType.Bloodmoss, ReagentType.Nightshade]));
+            }
+        );
+    }
+
     [Test]
     public void ApplyEffect_WhenTargetIsAlive_ShouldApplyDexterityPenaltyAndMarker()
     {

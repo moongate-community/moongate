@@ -3,6 +3,7 @@ using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Magic;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Ids;
@@ -22,6 +23,7 @@ public sealed class MagicService : IMagicService
     private readonly ITimerService _timerService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ICharacterService _characterService;
+    private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpellbookService _spellbookService;
     private readonly SpellRegistry _spellRegistry;
     private readonly Lock _syncRoot = new();
@@ -31,6 +33,7 @@ public sealed class MagicService : IMagicService
         ITimerService timerService,
         IGameEventBusService gameEventBusService,
         ICharacterService characterService,
+        IGameNetworkSessionService gameNetworkSessionService,
         ISpellbookService spellbookService,
         SpellRegistry spellRegistry
     )
@@ -38,12 +41,14 @@ public sealed class MagicService : IMagicService
         ArgumentNullException.ThrowIfNull(timerService);
         ArgumentNullException.ThrowIfNull(gameEventBusService);
         ArgumentNullException.ThrowIfNull(characterService);
+        ArgumentNullException.ThrowIfNull(gameNetworkSessionService);
         ArgumentNullException.ThrowIfNull(spellbookService);
         ArgumentNullException.ThrowIfNull(spellRegistry);
 
         _timerService = timerService;
         _gameEventBusService = gameEventBusService;
         _characterService = characterService;
+        _gameNetworkSessionService = gameNetworkSessionService;
         _spellbookService = spellbookService;
         _spellRegistry = spellRegistry;
     }
@@ -129,6 +134,8 @@ public sealed class MagicService : IMagicService
             return false;
         }
 
+        caster.Mana = Math.Max(0, caster.Mana - spell.ManaCost);
+
         return true;
     }
 
@@ -148,7 +155,27 @@ public sealed class MagicService : IMagicService
         _logger.Debug("Interrupted active spell cast for caster {CasterId}.", casterId);
     }
 
-    public ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
+    public bool TrySetTarget(Serial casterId, int spellId, Serial targetId)
+    {
+        if (targetId == Serial.Zero)
+        {
+            return false;
+        }
+
+        lock (_syncRoot)
+        {
+            if (!_activeCasts.TryGetValue(casterId, out var activeCast) || activeCast.SpellId != spellId)
+            {
+                return false;
+            }
+
+            activeCast.TargetId = targetId;
+
+            return true;
+        }
+    }
+
+    public async ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
@@ -158,15 +185,30 @@ public sealed class MagicService : IMagicService
         {
             if (!_activeCasts.Remove(casterId, out activeCast))
             {
-                return ValueTask.CompletedTask;
+                return;
             }
         }
 
-        _ = _gameEventBusService;
+        var spell = _spellRegistry.Get(activeCast.SpellId);
 
+        if (spell is null)
+        {
+            _logger.Debug("Cannot complete cast timer for caster {CasterId}: spell {SpellId} is no longer registered.", casterId, activeCast.SpellId);
+
+            return;
+        }
+
+        if (!_gameNetworkSessionService.TryGetByCharacterId(casterId, out var session) || session.Character is null)
+        {
+            _logger.Debug("Cannot complete cast timer for caster {CasterId}: no active session character found.", casterId);
+
+            return;
+        }
+
+        var target = await ResolveTargetAsync(activeCast.TargetId, cancellationToken);
+
+        spell.ApplyEffect(session.Character, target);
         _logger.Debug("Completed cast timer for caster {CasterId} and spell {SpellId}.", casterId, activeCast.SpellId);
-
-        return ValueTask.CompletedTask;
     }
 
     private async ValueTask<bool> HasReagentsAsync(
@@ -280,4 +322,21 @@ public sealed class MagicService : IMagicService
 
     private static string GetTimerName(Serial casterId, int spellId)
         => $"{CastTimerNamePrefix}{casterId}_{spellId}";
+
+    private async ValueTask<UOMobileEntity?> ResolveTargetAsync(Serial targetId, CancellationToken cancellationToken)
+    {
+        if (targetId == Serial.Zero)
+        {
+            return null;
+        }
+
+        if (_gameNetworkSessionService.TryGetByCharacterId(targetId, out var session) && session.Character is not null)
+        {
+            return session.Character;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return await _characterService.GetCharacterAsync(targetId);
+    }
 }

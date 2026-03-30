@@ -6,28 +6,27 @@ using Moongate.UO.Data.Persistence.Entities;
 namespace Moongate.Server.Services.Magic.Spells.Magery.First;
 
 /// <summary>
-/// Clumsy (Uus Jux) weakens the target's dexterity.
+/// Magic Arrow (In Por Ylem) deals a small amount of direct damage.
 /// </summary>
-public sealed class ClumsySpell : MagerySpellBase
+public sealed class MagicArrowSpell : MagerySpellBase
 {
-    private const int DexterityPenalty = -10;
-    private const int MarkerValue = 1;
-    private const string MarkerKey = "magic.clumsy";
+    private const int DamageBase = 3;
+    private const int DamageRandom = 5;
 
-    public override int SpellId => SpellIds.Magery.First.Clumsy;
+    public override int SpellId => SpellIds.Magery.First.MagicArrow;
 
     public override SpellCircleType Circle => SpellCircleType.First;
 
     public override SpellInfo Info { get; } = new(
-        "Clumsy",
-        "Uus Jux",
-        [ReagentType.Bloodmoss, ReagentType.Nightshade],
-        [1, 1]
+        "Magic Arrow",
+        "In Por Ylem",
+        [ReagentType.SulfurousAsh],
+        [1]
     );
 
     public override double MinSkill => 0.0;
 
-    public override double MaxSkill => 20.0;
+    public override double MaxSkill => 40.0;
 
     public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
     {
@@ -38,10 +37,8 @@ public sealed class ClumsySpell : MagerySpellBase
             return;
         }
 
-        target.ApplyRuntimeModifier(new()
-        {
-            DexterityBonus = DexterityPenalty
-        });
-        target.SetCustomInteger(MarkerKey, MarkerValue);
+        var damage = DamageBase + Random.Shared.Next(DamageRandom);
+        target.Hits = Math.Max(0, target.Hits - damage);
+        target.IsAlive = target.Hits > 0;
     }
 }

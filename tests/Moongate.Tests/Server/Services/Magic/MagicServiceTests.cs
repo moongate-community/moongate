@@ -3,10 +3,13 @@ using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Magic;
+using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
+using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
@@ -20,6 +23,7 @@ public sealed class MagicServiceTests
     private RecordingTimerService _timerService = null!;
     private RecordingGameEventBusService _gameEventBusService = null!;
     private FakeCharacterService _characterService = null!;
+    private FakeGameNetworkSessionService _gameNetworkSessionService = null!;
     private AllowAllSpellbookService _spellbookService = null!;
     private SpellRegistry _spellRegistry = null!;
     private MagicService _service = null!;
@@ -30,12 +34,14 @@ public sealed class MagicServiceTests
         _timerService = new RecordingTimerService();
         _gameEventBusService = new RecordingGameEventBusService();
         _characterService = new FakeCharacterService();
+        _gameNetworkSessionService = new FakeGameNetworkSessionService();
         _spellbookService = new AllowAllSpellbookService();
         _spellRegistry = new SpellRegistry();
         _service = new MagicService(
             _timerService,
             _gameEventBusService,
             _characterService,
+            _gameNetworkSessionService,
             _spellbookService,
             _spellRegistry
         );
@@ -127,6 +133,7 @@ public sealed class MagicServiceTests
 
         Assert.That(result, Is.True);
         Assert.That(_service.IsCasting(caster.Id), Is.True);
+        Assert.That(caster.Mana, Is.EqualTo(46));
         Assert.That(_timerService.RegisteredTimers, Has.Count.EqualTo(1));
         Assert.That(_timerService.RegisteredTimers[0].Name, Is.EqualTo($"spell_cast_{caster.Id}_{StubSpellId}"));
         Assert.That(_timerService.RegisteredTimers[0].Interval, Is.EqualTo(TimeSpan.FromSeconds(1.5)));
@@ -172,6 +179,90 @@ public sealed class MagicServiceTests
         await _service.OnCastTimerExpiredAsync(caster.Id);
 
         Assert.That(_service.IsCasting(caster.Id), Is.False);
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenSessionCharacterExists_AppliesSpellEffect()
+    {
+        var spell = new RecordingEffectSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], []));
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = caster,
+                CharacterId = caster.Id
+            }
+        );
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(_service.IsCasting(caster.Id), Is.False);
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(caster.TryGetCustomInteger("magic.effect_applied", out var marker), Is.True);
+                Assert.That(marker, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySetTarget_WhenActiveCastMatchesSpell_BindsPendingTarget()
+    {
+        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Magic Arrow", "In Por Ylem", [], [])));
+        var caster = CreateCaster(isAlive: true, mana: 50);
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+
+        var result = _service.TrySetTarget(caster.Id, StubSpellId, (Serial)0x00000002u);
+
+        Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenTargetIsBound_AppliesSpellEffectToTarget()
+    {
+        var spell = new RecordingEffectSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Magic Arrow", "In Por Ylem", [], []));
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            IsAlive = true
+        };
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = caster,
+                CharacterId = caster.Id
+            }
+        );
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = target,
+                CharacterId = target.Id
+            }
+        );
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        _service.TrySetTarget(caster.Id, StubSpellId, target.Id);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(target.TryGetCustomInteger("magic.effect_applied", out var targetMarker), Is.True);
+                Assert.That(targetMarker, Is.EqualTo(1));
+                Assert.That(caster.TryGetCustomInteger("magic.effect_applied", out _), Is.False);
+            }
+        );
     }
 
     private static UOMobileEntity CreateCaster(bool isAlive, int mana)
@@ -383,6 +474,42 @@ public sealed class MagicServiceTests
         {
             _ = caster;
             _ = target;
+        }
+    }
+
+    private sealed class RecordingEffectSpell : MagerySpellBase
+    {
+        private readonly int _manaCost;
+        private readonly TimeSpan _castDelay;
+
+        public RecordingEffectSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info)
+        {
+            SpellId = spellId;
+            _manaCost = manaCost;
+            _castDelay = castDelay;
+            Info = info;
+        }
+
+        public int ApplyCalls { get; private set; }
+
+        public override int SpellId { get; }
+
+        public override SpellCircleType Circle => SpellCircleType.First;
+
+        public override SpellInfo Info { get; }
+
+        public override int ManaCost => _manaCost;
+
+        public override TimeSpan CastDelay => _castDelay;
+
+        public override double MinSkill => 0;
+
+        public override double MaxSkill => 100;
+
+        public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
+        {
+            ApplyCalls++;
+            (target ?? caster).SetCustomInteger("magic.effect_applied", 1);
         }
     }
 
