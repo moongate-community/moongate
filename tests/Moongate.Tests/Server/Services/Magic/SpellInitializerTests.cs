@@ -1,5 +1,8 @@
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Spells.Magery.First;
+using Moongate.Server.Services.Magic.Spells.Magery.Fourth;
+using Moongate.Server.Services.Magic.Spells.Magery.Second;
+using Moongate.Server.Services.Magic.Spells.Magery.Third;
 using Moongate.Server.Types.Magic;
 
 namespace Moongate.Tests.Server.Services.Magic;
@@ -8,7 +11,7 @@ namespace Moongate.Tests.Server.Services.Magic;
 public sealed class SpellInitializerTests
 {
     [Test]
-    public void RegisterAll_RegistersImplementedFirstCircleSpells()
+    public void RegisterAll_RegistersImplementedMagerySpells()
     {
         var registry = new SpellRegistry();
 
@@ -23,6 +26,9 @@ public sealed class SpellInitializerTests
             Assert.That(registry.Get(SpellIds.Magery.First.NightSight), Is.TypeOf<NightSightSpell>());
             Assert.That(registry.Get(SpellIds.Magery.First.ReactiveArmor), Is.TypeOf<ReactiveArmorSpell>());
             Assert.That(registry.Get(SpellIds.Magery.First.Weaken), Is.TypeOf<WeakenSpell>());
+            Assert.That(registry.Get(SpellIds.Magery.Second.Agility), Is.TypeOf<AgilitySpell>());
+            Assert.That(registry.Get(SpellIds.Magery.Third.Fireball), Is.TypeOf<FireballSpell>());
+            Assert.That(registry.Get(SpellIds.Magery.Fourth.GreaterHeal), Is.TypeOf<GreaterHealSpell>());
             Assert.That(registry.Get(SpellIds.Magery.First.CreateFood), Is.Null);
         });
     }
