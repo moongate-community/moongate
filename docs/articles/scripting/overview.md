@@ -163,6 +163,8 @@ For recurring coroutine cadences in NPC brains, see [Tick Helper](tick.md).
 For routine staff operations in-game, the built-in GM menu now centralizes template add/search, travel, curated spawn tools, and server broadcast actions under one gump shell.
 For spell-aware NPC and gameplay scripting, the `magic` module now exposes cast-state helpers plus explicit target binding entry points:
 `magic.is_casting`, `magic.interrupt`, `magic.cast`, `magic.cast_mobile`, `magic.cast_item`, and `magic.cast_location`.
+For resurrection-driven item and gump scripting, the `resurrection` module now exposes `resurrection.offer_ankh`,
+`resurrection.accept`, and `resurrection.decline`.
 
 ### NPC Brain Example
 

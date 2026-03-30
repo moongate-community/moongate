@@ -18,6 +18,7 @@ using Moongate.UO.Data.Constants;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Interaction;
@@ -113,28 +114,43 @@ public sealed class DeathService : IDeathService
         victim.Aggressors.Clear();
         victim.Aggressed.Clear();
 
+        var corpseBody = ResolveCorpseBody(victim);
         UOItemEntity? corpse = null;
+
+        corpse = await CreateCorpseAsync(victim, corpseBody, cancellationToken);
+        await MoveLootToCorpseAsync(victim, corpse, cancellationToken);
 
         if (victim.IsPlayer)
         {
+            await ConvertPlayerToGhostAsync(victim, cancellationToken);
             await _mobileService.CreateOrUpdateAsync(victim, cancellationToken);
         }
-        else
+
+        if (!victim.IsPlayer)
         {
-            corpse = await CreateCorpseAsync(victim, cancellationToken);
-            await MoveLootToCorpseAsync(victim, corpse, cancellationToken);
             await GenerateCorpseLootAsync(victim, corpse, cancellationToken);
-            _spatialWorldService.AddOrUpdateItem(corpse, corpse.MapId);
-            await BroadcastVisibleCorpsePacketsAsync(corpse);
-            await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
-                new MobileDeathAnimationPacket(victim.Id, corpse.Id),
-                victim.MapId,
-                victim.Location
-            );
+        }
+
+        _spatialWorldService.AddOrUpdateItem(corpse, corpse.MapId);
+        await BroadcastVisibleCorpsePacketsAsync(corpse);
+        await _spatialWorldService.BroadcastToPlayersInUpdateRadiusAsync(
+            new MobileDeathAnimationPacket(victim.Id, corpse.Id),
+            victim.MapId,
+            victim.Location
+        );
+
+        if (victim.IsPlayer)
+        {
+            await _gameEventBusService.PublishAsync(new MobileAppearanceChangedEvent(victim), cancellationToken);
+        }
+
+        if (!victim.IsPlayer)
+        {
             _spatialWorldService.RemoveEntity(victim.Id);
             await _mobileService.DeleteAsync(victim.Id, cancellationToken);
-            ScheduleCorpseDecay(corpse);
         }
+
+        ScheduleCorpseDecay(corpse);
 
         if (killer is not null && !victim.IsPlayer && killer.IsPlayer)
         {
@@ -212,7 +228,11 @@ public sealed class DeathService : IDeathService
         return payload;
     }
 
-    private async Task<UOItemEntity> CreateCorpseAsync(UOMobileEntity victim, CancellationToken cancellationToken)
+    private async Task<UOItemEntity> CreateCorpseAsync(
+        UOMobileEntity victim,
+        int corpseBody,
+        CancellationToken cancellationToken
+    )
     {
         var corpse = new UOItemEntity
         {
@@ -220,7 +240,7 @@ public sealed class DeathService : IDeathService
             Name = string.IsNullOrWhiteSpace(victim.Name) ? "a corpse" : $"{victim.Name}'s corpse",
             MapId = victim.MapId,
             Location = victim.Location,
-            Amount = victim.Body,
+            Amount = corpseBody,
             Hue = victim.SkinHue
         };
         corpse.SetCustomBoolean(CorpsePropertyKeys.IsCorpse, true);
@@ -234,9 +254,21 @@ public sealed class DeathService : IDeathService
 
     private async Task DecayCorpseAsync(Serial corpseId, int mapId, Point3D location)
     {
+        await DeleteContainedItemsRecursiveAsync(corpseId);
         _ = await _itemService.DeleteItemAsync(corpseId);
         _spatialWorldService.RemoveEntity(corpseId);
         await _spatialWorldService.BroadcastToPlayersAsync(new DeleteObjectPacket(corpseId), mapId, location);
+    }
+
+    private async Task DeleteContainedItemsRecursiveAsync(Serial containerId)
+    {
+        var containedItems = await _itemService.GetItemsInContainerAsync(containerId);
+
+        foreach (var item in containedItems)
+        {
+            await DeleteContainedItemsRecursiveAsync(item.Id);
+            _ = await _itemService.DeleteItemAsync(item.Id);
+        }
     }
 
     private void EnqueueLuaDeathHook(
@@ -280,6 +312,21 @@ public sealed class DeathService : IDeathService
             LootGenerationMode.OnDeath,
             cancellationToken
         );
+    }
+
+    private async Task ConvertPlayerToGhostAsync(UOMobileEntity victim, CancellationToken cancellationToken)
+    {
+        _ = cancellationToken;
+
+        await ClearRemainingEquipmentAsync(victim);
+
+        victim.BaseBody = 0x00;
+
+        var shroud = await _itemService.SpawnFromTemplateAsync("death_shroud");
+        shroud.MapId = victim.MapId;
+        shroud.Location = victim.Location;
+        victim.AddEquippedItem(ItemLayerType.OuterTorso, shroud);
+        await _itemService.UpsertItemAsync(shroud);
     }
 
     private static string GetCorpseTimerName(Serial corpseId)
@@ -350,26 +397,43 @@ public sealed class DeathService : IDeathService
             _ = victim.UnequipItem(layer, item);
         }
 
-        if (victim.BackpackId == Serial.Zero)
+        var backpackId = ResolveBackpackId(victim);
+
+        if (backpackId == Serial.Zero)
         {
             return;
         }
 
-        var backpack = await _itemService.GetItemAsync(victim.BackpackId);
+        var backpack = await _itemService.GetItemAsync(backpackId);
 
-        if (backpack is null)
+        if (backpack is null || !IsLootable(backpack))
         {
             return;
         }
 
-        foreach (var item in backpack.Items.ToList())
+        await MoveItemIntoCorpseAsync(backpack, corpse, cancellationToken);
+        _ = victim.UnequipItem(ItemLayerType.Backpack, backpack);
+        victim.BackpackId = Serial.Zero;
+    }
+
+    private async Task ClearRemainingEquipmentAsync(UOMobileEntity victim)
+    {
+        foreach (var layer in victim.EquippedItemIds.Keys.ToList())
         {
-            if (!IsLootable(item))
+            if (layer == ItemLayerType.Bank)
             {
                 continue;
             }
 
-            await MoveItemIntoCorpseAsync(item, corpse, cancellationToken);
+            if (victim.TryGetEquippedReference(layer, out var itemReference))
+            {
+                var item = await _itemService.GetItemAsync(itemReference.Id);
+                _ = victim.UnequipItem(layer, item);
+
+                continue;
+            }
+
+            _ = victim.UnequipItem(layer);
         }
     }
 
@@ -391,5 +455,34 @@ public sealed class DeathService : IDeathService
             () => DecayCorpseAsync(corpse.Id, corpse.MapId, corpse.Location).GetAwaiter().GetResult(),
             repeat: false
         );
+    }
+
+    private static Serial ResolveBackpackId(UOMobileEntity victim)
+    {
+        if (victim.BackpackId != Serial.Zero)
+        {
+            return victim.BackpackId;
+        }
+
+        return victim.EquippedItemIds.TryGetValue(ItemLayerType.Backpack, out var equippedBackpackId)
+                   ? equippedBackpackId
+                   : Serial.Zero;
+    }
+
+    private static int ResolveCorpseBody(UOMobileEntity victim)
+    {
+        if (victim.BaseBody is { } baseBody && baseBody != 0x00)
+        {
+            return baseBody;
+        }
+
+        var race = victim.Race ?? (Race.Races.Length > 0 ? Race.Races[0] : null);
+
+        if (race is not null)
+        {
+            return race.AliveBody(victim.Gender == GenderType.Female);
+        }
+
+        return victim.Body;
     }
 }

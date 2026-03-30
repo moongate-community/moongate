@@ -267,6 +267,12 @@
     "lootTables": [
       "vendor.healer"
     ],
+    "params": {
+      "resurrection_source": {
+        "type": "string",
+        "value": "healer"
+      }
+    },
     "title": "a healer",
     "variants": [
       {

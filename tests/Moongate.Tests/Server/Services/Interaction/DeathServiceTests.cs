@@ -14,11 +14,14 @@ using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Services.Interaction;
 using Moongate.Server.Types.Items;
+using Moongate.UO.Data.Bodies;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Races;
+using Moongate.UO.Data.Races.Base;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -144,6 +147,7 @@ public sealed class DeathServiceTests
 
         public Dictionary<Serial, UOItemEntity> Items { get; } = [];
         public List<Serial> DeletedIds { get; } = [];
+        public List<string> SpawnedTemplateIds { get; } = [];
 
         public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
         {
@@ -244,7 +248,25 @@ public sealed class DeathServiceTests
             => throw new NotSupportedException();
 
         public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
-            => throw new NotSupportedException();
+        {
+            SpawnedTemplateIds.Add(itemTemplateId);
+
+            if (!string.Equals(itemTemplateId, "death_shroud", StringComparison.Ordinal))
+            {
+                throw new NotSupportedException();
+            }
+
+            var item = new UOItemEntity
+            {
+                Id = (Serial)_nextId++,
+                ItemId = 0x204E,
+                Name = "Death Shroud",
+                MapId = 0
+            };
+            Items[item.Id] = item;
+
+            return Task.FromResult(item);
+        }
 
         public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
         {
@@ -475,8 +497,9 @@ public sealed class DeathServiceTests
     }
 
     [Test]
-    public async Task ForceDeathAsync_WhenPlayerIsAlive_ShouldMarkDeadAndPersistWithoutCorpse()
+    public async Task ForceDeathAsync_WhenPlayerIsAlive_ShouldConvertToGhostEquipDeathShroudAndPublishAppearanceChanged()
     {
+        EnsureRaceDefinitionsRegistered();
         var mobileService = new InMemoryMobileService();
         var itemService = new InMemoryItemService();
         var timerService = new TimerServiceSpy();
@@ -494,14 +517,51 @@ public sealed class DeathServiceTests
         {
             Id = (Serial)0x00000031u,
             Name = "Tommy",
+            Body = 0x0190,
             IsPlayer = true,
             MapId = 1,
             Location = new(95, 195, 0),
             Hits = 42,
             MaxHits = 42,
-            IsAlive = true
+            IsAlive = true,
+            Race = Race.Human
         };
+        var weapon = new UOItemEntity
+        {
+            Id = (Serial)0x40000031u,
+            ItemId = 0x13B2,
+            MapId = 1
+        };
+        var robe = new UOItemEntity
+        {
+            Id = (Serial)0x40000030u,
+            ItemId = 0x1F03,
+            MapId = 1
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000032u,
+            ItemId = 0x0E75,
+            MapId = 1
+        };
+        var bandage = new UOItemEntity
+        {
+            Id = (Serial)0x40000033u,
+            ItemId = 0x0E21,
+            Amount = 10,
+            MapId = 1,
+            ParentContainerId = backpack.Id
+        };
+        backpack.AddItem(bandage, new(10, 10));
+        victim.AddEquippedItem(ItemLayerType.OuterTorso, robe);
+        victim.AddEquippedItem(ItemLayerType.OneHanded, weapon);
+        victim.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        victim.BackpackId = backpack.Id;
         mobileService.Mobiles[victim.Id] = victim;
+        itemService.Items[robe.Id] = robe;
+        itemService.Items[weapon.Id] = weapon;
+        itemService.Items[backpack.Id] = backpack;
+        itemService.Items[bandage.Id] = bandage;
 
         IDeathService service = new DeathService(
             mobileService,
@@ -521,8 +581,88 @@ public sealed class DeathServiceTests
                 Assert.That(handled, Is.True);
                 Assert.That(victim.IsAlive, Is.False);
                 Assert.That(victim.Hits, Is.EqualTo(0));
+                Assert.That(victim.BaseBody, Is.EqualTo((Body)0x00));
+                Assert.That(victim.Body, Is.EqualTo((Body)Race.Human.GhostBody(false)));
                 Assert.That(mobileService.Mobiles[victim.Id].IsAlive, Is.False);
-                Assert.That(itemService.Items.Values.Any(item => item.ItemId == 0x2006), Is.False);
+                Assert.That(victim.EquippedItemIds.ContainsKey(ItemLayerType.OuterTorso), Is.True);
+                Assert.That(victim.EquippedItemIds.ContainsKey(ItemLayerType.OneHanded), Is.False);
+                Assert.That(victim.EquippedItemIds.ContainsKey(ItemLayerType.Backpack), Is.False);
+                Assert.That(victim.BackpackId, Is.EqualTo(Serial.Zero));
+                Assert.That(mobileService.DeletedIds, Is.Empty);
+
+                var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
+                var corpseItems = corpse.Items.ToDictionary(item => item.Id);
+                var shroud = victim.GetEquippedItemsRuntime().Single();
+
+                Assert.That(corpse.MapId, Is.EqualTo(victim.MapId));
+                Assert.That(corpse.Location, Is.EqualTo(victim.Location));
+                Assert.That(corpse.Amount, Is.EqualTo(Race.Human.AliveBody(false)));
+                Assert.That(corpseItems.Keys, Does.Contain(robe.Id));
+                Assert.That(corpseItems.Keys, Does.Contain(weapon.Id));
+                Assert.That(corpseItems.Keys, Does.Contain(backpack.Id));
+                Assert.That(corpseItems.Keys, Does.Not.Contain(bandage.Id));
+                Assert.That(corpseItems[robe.Id].TryGetCustomInteger("corpse_equipped_layer", out var robeLayer), Is.True);
+                Assert.That((ItemLayerType)robeLayer, Is.EqualTo(ItemLayerType.OuterTorso));
+                Assert.That(corpseItems[weapon.Id].TryGetCustomInteger("corpse_equipped_layer", out var rawLayer), Is.True);
+                Assert.That((ItemLayerType)rawLayer, Is.EqualTo(ItemLayerType.OneHanded));
+                Assert.That(corpseItems[backpack.Id].Items.Select(static item => item.Id), Contains.Item(bandage.Id));
+                Assert.That(shroud.Name, Is.EqualTo("Death Shroud"));
+                Assert.That(shroud.ItemId, Is.EqualTo(0x204E));
+                Assert.That(shroud.EquippedLayer, Is.EqualTo(ItemLayerType.OuterTorso));
+                Assert.That(victim.EquippedItemIds.Keys, Is.EqualTo(new[] { ItemLayerType.OuterTorso }));
+                Assert.That(
+                    eventBus.Events.Any(gameEvent => gameEvent.GetType().Name == "MobileAppearanceChangedEvent"),
+                    Is.True
+                );
+            }
+        );
+    }
+
+    [Test]
+    public async Task ForceDeathAsync_WhenPlayerUsesRaceDerivedBody_ShouldPreserveAliveBodyForCorpseAmount()
+    {
+        EnsureRaceDefinitionsRegistered();
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000034u,
+            Name = "RacePlayer",
+            BaseBody = (Body)0x00,
+            Gender = GenderType.Male,
+            IsPlayer = true,
+            IsAlive = true,
+            Hits = 10,
+            MaxHits = 10,
+            MapId = 1,
+            Location = new(100, 100, 0),
+            Race = Race.Human
+        };
+        mobileService.Mobiles[victim.Id] = victim;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            new()
+        );
+
+        var handled = await service.ForceDeathAsync(victim, null);
+        var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(corpse.Amount, Is.EqualTo(Race.Human.AliveBody(false)));
+                Assert.That(corpse.Amount, Is.Not.EqualTo(Race.Human.GhostBody(false)));
             }
         );
     }
@@ -582,6 +722,83 @@ public sealed class DeathServiceTests
                     spatial.BroadcastPackets.OfType<DeleteObjectPacket>().Any(packet => packet.Serial == corpse.Id),
                     Is.True
                 );
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDeathAsync_WhenCorpseDecayTimerFires_ShouldDeleteNestedCorpseContents()
+    {
+        var mobileService = new InMemoryMobileService();
+        var itemService = new InMemoryItemService();
+        var timerService = new TimerServiceSpy();
+        var spatial = new SpatialWorldServiceSpy();
+        var eventBus = new RecordingEventBus();
+        var fameKarmaService = new FameKarmaServiceSpy();
+        var victim = new UOMobileEntity
+        {
+            Id = (Serial)0x00000051u,
+            Name = "DecayTester",
+            Body = 0x0003,
+            IsPlayer = true,
+            MapId = 1,
+            Location = new(141, 241, 0),
+            Hits = 0,
+            MaxHits = 30,
+            IsAlive = false
+        };
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000051u,
+            ItemId = 0x0E75,
+            MapId = 1
+        };
+        var bandage = new UOItemEntity
+        {
+            Id = (Serial)0x40000052u,
+            ItemId = 0x0E21,
+            Amount = 5,
+            MapId = 1,
+            ParentContainerId = backpack.Id
+        };
+        backpack.AddItem(bandage, new(12, 12));
+        victim.AddEquippedItem(ItemLayerType.Backpack, backpack);
+        victim.BackpackId = backpack.Id;
+        mobileService.Mobiles[victim.Id] = victim;
+        itemService.Items[backpack.Id] = backpack;
+        itemService.Items[bandage.Id] = bandage;
+
+        IDeathService service = new DeathService(
+            mobileService,
+            itemService,
+            spatial,
+            timerService,
+            eventBus,
+            fameKarmaService,
+            new()
+            {
+                Game = new()
+                {
+                    CorpseDecaySeconds = 5
+                }
+            }
+        );
+
+        var handled = await service.HandleDeathAsync(victim, null);
+        var corpse = itemService.Items.Values.Single(item => item.ItemId == 0x2006);
+
+        timerService.RegisteredTimers[0].Callback.Invoke();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(itemService.DeletedIds, Contains.Item(corpse.Id));
+                Assert.That(itemService.DeletedIds, Contains.Item(backpack.Id));
+                Assert.That(itemService.DeletedIds, Contains.Item(bandage.Id));
+                Assert.That(itemService.Items.ContainsKey(corpse.Id), Is.False);
+                Assert.That(itemService.Items.ContainsKey(backpack.Id), Is.False);
+                Assert.That(itemService.Items.ContainsKey(bandage.Id), Is.False);
             }
         );
     }
@@ -682,9 +899,11 @@ public sealed class DeathServiceTests
                 Assert.That(corpse.Location, Is.EqualTo(victim.Location));
                 Assert.That(corpse.Amount, Is.EqualTo((int)victim.Body));
                 Assert.That(corpseItems.Keys, Does.Contain(chest.Id));
-                Assert.That(corpseItems.Keys, Does.Contain(gold.Id));
+                Assert.That(corpseItems.Keys, Does.Contain(backpack.Id));
+                Assert.That(corpseItems.Keys, Does.Not.Contain(gold.Id));
                 Assert.That(corpseItems[chest.Id].TryGetCustomInteger("corpse_equipped_layer", out var rawLayer), Is.True);
                 Assert.That((ItemLayerType)rawLayer, Is.EqualTo(ItemLayerType.InnerTorso));
+                Assert.That(corpseItems[backpack.Id].Items.Select(static item => item.Id), Contains.Item(gold.Id));
                 Assert.That(mobileService.DeletedIds, Contains.Item(victim.Id));
                 Assert.That(spatial.RemovedEntities, Contains.Item(victim.Id));
                 Assert.That(spatial.AddedItems.Select(item => item.Id), Contains.Item(corpse.Id));
@@ -857,7 +1076,9 @@ public sealed class DeathServiceTests
             {
                 Assert.That(handled, Is.True);
                 Assert.That(corpse.Items.Select(static item => item.Id), Contains.Item(weapon.Id));
-                Assert.That(corpse.Items.Select(static item => item.Id), Contains.Item(bandage.Id));
+                Assert.That(corpse.Items.Select(static item => item.Id), Contains.Item(backpack.Id));
+                Assert.That(corpse.Items.Select(static item => item.Id), Does.Not.Contain(bandage.Id));
+                Assert.That(corpse.Items.Single(item => item.Id == backpack.Id).Items.Select(static item => item.Id), Contains.Item(bandage.Id));
                 Assert.That(corpse.Items.Any(static item => item.Name == "generated_gold"), Is.True);
                 Assert.That(lootGenerationService.Calls, Has.Count.EqualTo(1));
                 Assert.That(lootGenerationService.Calls[0].ContainerId, Is.EqualTo(corpse.Id));
@@ -924,5 +1145,23 @@ public sealed class DeathServiceTests
                 Assert.That(fameKarmaService.Awards, Is.Empty);
             }
         );
+    }
+
+    private static void EnsureRaceDefinitionsRegistered()
+    {
+        if (Race.Races[0] is null)
+        {
+            RaceDefinitions.RegisterRace(new Human(0, 0));
+        }
+
+        if (Race.Races[1] is null)
+        {
+            RaceDefinitions.RegisterRace(new Elf(1, 1));
+        }
+
+        if (Race.Races[2] is null)
+        {
+            RaceDefinitions.RegisterRace(new Gargoyle(2, 2));
+        }
     }
 }

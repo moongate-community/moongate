@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
 using Moongate.Server.Attributes;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Internal.Packets;
 using Moongate.Server.Data.Session;
@@ -28,6 +29,7 @@ namespace Moongate.Server.Handlers;
 [RegisterGameEventListener]
 public class MobileHandler
     : IGameEventListener<MobileAddedInSectorEvent>,
+      IGameEventListener<MobileAppearanceChangedEvent>,
       IGameEventListener<MobilePositionChangedEvent>,
       IMoongateService
 {
@@ -148,6 +150,15 @@ public class MobileHandler
         }
     }
 
+    public async Task HandleAsync(MobileAppearanceChangedEvent gameEvent, CancellationToken cancellationToken = default)
+    {
+        _ = cancellationToken;
+        var mobileEntity = gameEvent.Mobile;
+
+        await UpdatePlayerForMobileMovedOrCreated(mobileEntity, mobileEntity.MapId, true);
+        EnqueueSelfRefresh(mobileEntity);
+    }
+
     public Task StartAsync()
         => Task.CompletedTask;
 
@@ -186,6 +197,9 @@ public class MobileHandler
     }
 
     private void EnqueueSameMapTeleportSelfRefresh(UOMobileEntity mobileEntity)
+        => EnqueueSelfRefresh(mobileEntity);
+
+    private void EnqueueSelfRefresh(UOMobileEntity mobileEntity)
     {
         if (!mobileEntity.IsPlayer ||
             !_gameNetworkSessionService.TryGetByCharacterId(mobileEntity.Id, out var session))
@@ -193,11 +207,17 @@ public class MobileHandler
             return;
         }
 
+        session.Character = mobileEntity;
         _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
         _outgoingPacketQueue.Enqueue(
             session.SessionId,
             new MobileDrawPacket(mobileEntity, mobileEntity, true, true)
         );
+        WornItemPacketHelper.EnqueueVisibleWornItems(
+            mobileEntity,
+            packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
+        );
+        _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
     }
 
     private UOMobileEntity? ResolveCharacterFromSession(long sessionId, Serial characterId)
@@ -616,16 +636,7 @@ public class MobileHandler
             session.SessionId,
             new ServerChangePacket(mobileEntity.Location, mapWidth, mapHeight)
         );
-        _outgoingPacketQueue.Enqueue(session.SessionId, new DrawPlayerPacket(mobileEntity));
-        _outgoingPacketQueue.Enqueue(
-            session.SessionId,
-            new MobileDrawPacket(mobileEntity, mobileEntity, true, true)
-        );
-        WornItemPacketHelper.EnqueueVisibleWornItems(
-            mobileEntity,
-            packet => _outgoingPacketQueue.Enqueue(session.SessionId, packet)
-        );
-        _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobileEntity, 1));
+        EnqueueSelfRefresh(mobileEntity);
 
         var globalLight = _lightService?.ComputeGlobalLightLevel(gameEvent.MapId, mobileEntity.Location) ??
                           (int)LightLevelType.Day;
