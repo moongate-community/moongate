@@ -1,0 +1,268 @@
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Magic;
+using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Magic;
+using Moongate.Server.Interfaces.Services.Timing;
+using Moongate.Server.Types.Magic;
+using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Persistence.Entities;
+using Serilog;
+
+namespace Moongate.Server.Services.Magic;
+
+/// <summary>
+/// Coordinates cast preconditions, active cast state, and cast-delay timers.
+/// </summary>
+public sealed class MagicService : IMagicService
+{
+    private const string CastTimerNamePrefix = "spell_cast_";
+
+    private readonly ILogger _logger = Log.ForContext<MagicService>();
+    private readonly ITimerService _timerService;
+    private readonly IGameEventBusService _gameEventBusService;
+    private readonly ICharacterService _characterService;
+    private readonly SpellRegistry _spellRegistry;
+    private readonly Lock _syncRoot = new();
+    private readonly Dictionary<Serial, SpellCastContext> _activeCasts = [];
+
+    public MagicService(
+        ITimerService timerService,
+        IGameEventBusService gameEventBusService,
+        ICharacterService characterService,
+        SpellRegistry spellRegistry
+    )
+    {
+        ArgumentNullException.ThrowIfNull(timerService);
+        ArgumentNullException.ThrowIfNull(gameEventBusService);
+        ArgumentNullException.ThrowIfNull(characterService);
+        ArgumentNullException.ThrowIfNull(spellRegistry);
+
+        _timerService = timerService;
+        _gameEventBusService = gameEventBusService;
+        _characterService = characterService;
+        _spellRegistry = spellRegistry;
+    }
+
+    public bool IsCasting(Serial casterId)
+    {
+        lock (_syncRoot)
+        {
+            return _activeCasts.ContainsKey(casterId);
+        }
+    }
+
+    public async ValueTask<bool> TryCastAsync(
+        UOMobileEntity caster,
+        int spellId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(caster);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (!caster.IsAlive)
+        {
+            _logger.Debug("Rejecting spell cast for dead caster {CasterId}.", caster.Id);
+
+            return false;
+        }
+
+        if (IsCasting(caster.Id))
+        {
+            _logger.Debug("Rejecting duplicate spell cast for caster {CasterId}.", caster.Id);
+
+            return false;
+        }
+
+        var spell = _spellRegistry.Get(spellId);
+
+        if (spell is null)
+        {
+            _logger.Debug("Rejecting spell cast for caster {CasterId} because spell {SpellId} is not registered.", caster.Id, spellId);
+
+            return false;
+        }
+
+        if (caster.Mana < spell.ManaCost)
+        {
+            _logger.Debug(
+                "Rejecting spell cast for caster {CasterId} because mana {Mana} is below cost {ManaCost}.",
+                caster.Id,
+                caster.Mana,
+                spell.ManaCost
+            );
+
+            return false;
+        }
+
+        if (!await HasReagentsAsync(caster, spell, cancellationToken))
+        {
+            _logger.Debug(
+                "Rejecting spell cast for caster {CasterId} because spell {SpellId} is missing reagents.",
+                caster.Id,
+                spellId
+            );
+
+            return false;
+        }
+
+        if (!TryStartCast(caster.Id, spell))
+        {
+            _logger.Debug("Rejecting duplicate spell cast for caster {CasterId}.", caster.Id);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public void Interrupt(Serial casterId)
+    {
+        SpellCastContext? activeCast;
+
+        lock (_syncRoot)
+        {
+            if (!_activeCasts.Remove(casterId, out activeCast))
+            {
+                return;
+            }
+        }
+
+        _timerService.UnregisterTimer(activeCast.TimerId);
+        _logger.Debug("Interrupted active spell cast for caster {CasterId}.", casterId);
+    }
+
+    public ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        SpellCastContext? activeCast;
+
+        lock (_syncRoot)
+        {
+            if (!_activeCasts.Remove(casterId, out activeCast))
+            {
+                return ValueTask.CompletedTask;
+            }
+        }
+
+        _ = _gameEventBusService;
+
+        _logger.Debug("Completed cast timer for caster {CasterId} and spell {SpellId}.", casterId, activeCast.SpellId);
+
+        return ValueTask.CompletedTask;
+    }
+
+    private async ValueTask<bool> HasReagentsAsync(
+        UOMobileEntity caster,
+        ISpell spell,
+        CancellationToken cancellationToken
+    )
+    {
+        var requiredReagents = BuildRequiredReagentCounts(spell.Info);
+
+        if (requiredReagents.Count == 0)
+        {
+            return true;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        var backpack = await _characterService.GetBackpackWithItemsAsync(caster);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (backpack is null)
+        {
+            return false;
+        }
+
+        var availableReagents = new Dictionary<string, int>(StringComparer.Ordinal);
+        CountAvailableReagents(backpack, availableReagents, cancellationToken);
+
+        foreach (var requiredReagent in requiredReagents)
+        {
+            if (!availableReagents.TryGetValue(requiredReagent.Key, out var availableAmount) ||
+                availableAmount < requiredReagent.Value)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static Dictionary<string, int> BuildRequiredReagentCounts(SpellInfo spellInfo)
+    {
+        var requiredReagents = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        for (var index = 0; index < spellInfo.Reagents.Length; index++)
+        {
+            var reagent = spellInfo.Reagents[index];
+            var amount = spellInfo.ReagentAmounts[index];
+            var templateId = ReagentCatalog.GetTemplateId(reagent);
+
+            if (string.IsNullOrWhiteSpace(templateId) || amount <= 0)
+            {
+                continue;
+            }
+
+            requiredReagents[templateId] = requiredReagents.GetValueOrDefault(templateId) + amount;
+        }
+
+        return requiredReagents;
+    }
+
+    private static void CountAvailableReagents(
+        UOItemEntity container,
+        Dictionary<string, int> availableReagents,
+        CancellationToken cancellationToken
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (container.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) &&
+            !string.IsNullOrWhiteSpace(templateId))
+        {
+            availableReagents[templateId] = availableReagents.GetValueOrDefault(templateId) + Math.Max(1, container.Amount);
+        }
+
+        for (var index = 0; index < container.Items.Count; index++)
+        {
+            CountAvailableReagents(container.Items[index], availableReagents, cancellationToken);
+        }
+    }
+
+    private bool TryStartCast(Serial casterId, ISpell spell)
+    {
+        var timerId = GetTimerName(casterId, spell.SpellId);
+        var context = new SpellCastContext(casterId, spell.SpellId, SpellStateType.Casting, timerId);
+
+        lock (_syncRoot)
+        {
+            if (_activeCasts.ContainsKey(casterId))
+            {
+                return false;
+            }
+
+            _activeCasts[casterId] = context;
+        }
+
+        _timerService.RegisterTimer(
+            timerId,
+            spell.CastDelay,
+            () => OnCastTimerExpiredAsync(casterId).AsTask().GetAwaiter().GetResult()
+        );
+
+        _logger.Debug(
+            "Started spell cast for caster {CasterId}, spell {SpellId}, delay {CastDelay}.",
+            casterId,
+            spell.SpellId,
+            spell.CastDelay
+        );
+
+        return true;
+    }
+
+    private static string GetTimerName(Serial casterId, int spellId)
+        => $"{CastTimerNamePrefix}{casterId}_{spellId}";
+}
