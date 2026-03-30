@@ -341,6 +341,17 @@ public sealed class MagicService : IMagicService
             return;
         }
 
+        if (!await TryConsumeReagentsAsync(caster, spell, cancellationToken))
+        {
+            _logger.Debug(
+                "Skipping spell effect for caster {CasterId} and spell {SpellId}: reagents were unavailable at completion.",
+                caster.Id,
+                spell.SpellId
+            );
+
+            return;
+        }
+
         var context = new SpellExecutionContext(
             caster,
             target,
@@ -505,13 +516,57 @@ public sealed class MagicService : IMagicService
         var availableReagents = new Dictionary<string, int>(StringComparer.Ordinal);
         CountAvailableReagents(backpack, availableReagents, cancellationToken);
 
-        foreach (var requiredReagent in requiredReagents)
+        return HasRequiredReagents(requiredReagents, availableReagents);
+    }
+
+    private async ValueTask<bool> TryConsumeReagentsAsync(
+        UOMobileEntity caster,
+        ISpell spell,
+        CancellationToken cancellationToken
+    )
+    {
+        var requiredReagents = BuildRequiredReagentCounts(spell.Info);
+
+        if (requiredReagents.Count == 0)
         {
-            if (!availableReagents.TryGetValue(requiredReagent.Key, out var availableAmount) ||
-                availableAmount < requiredReagent.Value)
-            {
-                return false;
-            }
+            return true;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        var backpack = await _characterService.GetBackpackWithItemsAsync(caster);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (backpack is null)
+        {
+            return false;
+        }
+
+        var availableReagents = new Dictionary<string, int>(StringComparer.Ordinal);
+        CountAvailableReagents(backpack, availableReagents, cancellationToken);
+
+        if (!HasRequiredReagents(requiredReagents, availableReagents))
+        {
+            return false;
+        }
+
+        var remainingReagents = new Dictionary<string, int>(requiredReagents, StringComparer.Ordinal);
+        var changedStacks = new Dictionary<Serial, UOItemEntity>();
+        var deletedStacks = new List<UOItemEntity>();
+        ConsumeReagentsRecursive(backpack, remainingReagents, changedStacks, deletedStacks, cancellationToken);
+
+        if (remainingReagents.Values.Any(static amount => amount > 0))
+        {
+            return false;
+        }
+
+        for (var index = 0; index < deletedStacks.Count; index++)
+        {
+            _ = await _itemService.DeleteItemAsync(deletedStacks[index].Id);
+        }
+
+        foreach (var changedStack in changedStacks.Values)
+        {
+            await _itemService.UpsertItemAsync(changedStack);
         }
 
         return true;
@@ -556,6 +611,82 @@ public sealed class MagicService : IMagicService
         {
             CountAvailableReagents(container.Items[index], availableReagents, cancellationToken);
         }
+    }
+
+    private static void ConsumeReagentsRecursive(
+        UOItemEntity container,
+        Dictionary<string, int> remainingReagents,
+        Dictionary<Serial, UOItemEntity> changedStacks,
+        List<UOItemEntity> deletedStacks,
+        CancellationToken cancellationToken
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        for (var index = container.Items.Count - 1; index >= 0 && HasOutstandingReagents(remainingReagents); index--)
+        {
+            var child = container.Items[index];
+
+            if (TryGetTemplateId(child, out var templateId) &&
+                remainingReagents.TryGetValue(templateId, out var remainingAmount) &&
+                remainingAmount > 0)
+            {
+                var availableAmount = Math.Max(1, child.Amount);
+                var consumeAmount = Math.Min(availableAmount, remainingAmount);
+                child.Amount = Math.Max(0, child.Amount - consumeAmount);
+                remainingReagents[templateId] = remainingAmount - consumeAmount;
+
+                if (child.Amount <= 0)
+                {
+                    container.RemoveItem(child.Id);
+                    deletedStacks.Add(child);
+
+                    continue;
+                }
+
+                changedStacks[child.Id] = child;
+            }
+
+            if (child.Items.Count > 0)
+            {
+                ConsumeReagentsRecursive(child, remainingReagents, changedStacks, deletedStacks, cancellationToken);
+            }
+        }
+    }
+
+    private static bool HasOutstandingReagents(Dictionary<string, int> remainingReagents)
+        => remainingReagents.Values.Any(static amount => amount > 0);
+
+    private static bool HasRequiredReagents(
+        Dictionary<string, int> requiredReagents,
+        Dictionary<string, int> availableReagents
+    )
+    {
+        foreach (var requiredReagent in requiredReagents)
+        {
+            if (!availableReagents.TryGetValue(requiredReagent.Key, out var availableAmount) ||
+                availableAmount < requiredReagent.Value)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool TryGetTemplateId(UOItemEntity item, out string templateId)
+    {
+        templateId = string.Empty;
+
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var rawTemplateId) ||
+            string.IsNullOrWhiteSpace(rawTemplateId))
+        {
+            return false;
+        }
+
+        templateId = rawTemplateId;
+
+        return true;
     }
 
     private bool TryStartCast(Serial casterId, ISpell spell)
