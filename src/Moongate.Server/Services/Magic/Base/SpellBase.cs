@@ -26,5 +26,19 @@ public abstract class SpellBase : ISpell
 
     public abstract double MaxSkill { get; }
 
-    public abstract void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target);
+    public virtual void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
+    {
+        _ = caster;
+        _ = target;
+    }
+
+    public virtual ValueTask ApplyEffectAsync(SpellExecutionContext context, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        ApplyEffect(context.Caster, context.TargetMobile);
+
+        return ValueTask.CompletedTask;
+    }
 }

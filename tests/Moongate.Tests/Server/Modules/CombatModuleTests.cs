@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Events.Characters;
+using Moongate.Server.Data.Magic;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
@@ -96,6 +97,18 @@ public sealed class CombatModuleTests
             TrySetTargetCalls++;
 
             return TrySetTargetResult;
+        }
+
+        public ValueTask<bool> TrySetTargetAsync(
+            Serial casterId,
+            int spellId,
+            SpellTargetData target,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+
+            return ValueTask.FromResult(TrySetTarget(casterId, spellId, target.TargetId));
         }
 
         public ValueTask<bool> TryCastAsync(

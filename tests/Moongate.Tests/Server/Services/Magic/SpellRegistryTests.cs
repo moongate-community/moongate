@@ -69,5 +69,13 @@ public sealed class SpellRegistryTests
             _ = caster;
             _ = target;
         }
+
+        public ValueTask ApplyEffectAsync(SpellExecutionContext context, CancellationToken cancellationToken = default)
+        {
+            _ = context;
+            _ = cancellationToken;
+
+            return ValueTask.CompletedTask;
+        }
     }
 }

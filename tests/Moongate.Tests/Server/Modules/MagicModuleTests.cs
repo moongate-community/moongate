@@ -1,5 +1,6 @@
 using System.Reflection;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules;
@@ -39,6 +40,19 @@ public sealed class MagicModuleTests
             _ = targetId;
 
             return false;
+        }
+
+        public ValueTask<bool> TrySetTargetAsync(
+            Serial casterId,
+            int spellId,
+            SpellTargetData target,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = target;
+            _ = cancellationToken;
+
+            return ValueTask.FromResult(TrySetTarget(casterId, spellId, target.TargetId));
         }
 
         public ValueTask<bool> TryCastAsync(

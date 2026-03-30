@@ -497,6 +497,48 @@ public class MovementHandlerTests
     }
 
     [Test]
+    public async Task HandlePacketAsync_ShouldDenyFacingChange_WhenCharacterIsParalyzed()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var gameEventBus = new NetworkServiceTestGameEventBusService();
+        var handler = CreateHandler(queue, gameEventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00000001,
+            Character = new()
+            {
+                Id = (Serial)0x00000001,
+                Location = new(500, 500, 0),
+                Direction = DirectionType.North,
+                IsParalyzed = true
+            }
+        };
+
+        _ = await handler.HandlePacketAsync(
+                session,
+                new MoveRequestPacket
+                {
+                    Direction = DirectionType.East,
+                    Sequence = 0
+                }
+            );
+        var dequeued = queue.TryDequeue(out var outbound);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(dequeued, Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<MoveDenyPacket>());
+                Assert.That(session.Character, Is.Not.Null);
+                Assert.That(session.Character!.Direction, Is.EqualTo(DirectionType.North));
+                Assert.That(session.Character.Location, Is.EqualTo(new Point3D(500, 500, 0)));
+                Assert.That(gameEventBus.Events.OfType<MobilePositionChangedEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
     public async Task HandlePacketAsync_ShouldPublishMobilePositionChangedEvent_WhenPositionChanges()
     {
         var queue = new BasePacketListenerTestOutgoingPacketQueue();

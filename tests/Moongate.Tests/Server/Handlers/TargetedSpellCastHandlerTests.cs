@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
+using Moongate.Server.Data.Magic;
 using Moongate.Server.Data.Events.Targeting;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Handlers;
@@ -38,6 +39,18 @@ public sealed class TargetedSpellCastHandlerTests
             TrySetTargetCalls++;
 
             return true;
+        }
+
+        public ValueTask<bool> TrySetTargetAsync(
+            Serial casterId,
+            int spellId,
+            SpellTargetData target,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+
+            return ValueTask.FromResult(TrySetTarget(casterId, spellId, target.TargetId));
         }
 
         public ValueTask<bool> TryCastAsync(

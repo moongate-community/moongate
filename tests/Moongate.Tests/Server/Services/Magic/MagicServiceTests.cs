@@ -1,12 +1,21 @@
+using System.Net.Sockets;
+using Moongate.Network.Client;
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Internal.Cursors;
+using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Data.Session;
+using Moongate.Network.Packets.Incoming.Targeting;
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
@@ -30,6 +39,8 @@ public sealed class MagicServiceTests
     private FakeCharacterService _characterService = null!;
     private FakeGameNetworkSessionService _gameNetworkSessionService = null!;
     private MagicServiceTestSpatialWorldService _spatialWorldService = null!;
+    private RecordingPlayerTargetService _playerTargetService = null!;
+    private FakeItemService _itemService = null!;
     private AllowAllSpellbookService _spellbookService = null!;
     private SpellRegistry _spellRegistry = null!;
     private MagicService _service = null!;
@@ -42,6 +53,8 @@ public sealed class MagicServiceTests
         _characterService = new FakeCharacterService();
         _gameNetworkSessionService = new FakeGameNetworkSessionService();
         _spatialWorldService = new MagicServiceTestSpatialWorldService();
+        _playerTargetService = new RecordingPlayerTargetService();
+        _itemService = new FakeItemService();
         _spellbookService = new AllowAllSpellbookService();
         _spellRegistry = new SpellRegistry();
         _service = new MagicService(
@@ -50,6 +63,8 @@ public sealed class MagicServiceTests
             _characterService,
             _gameNetworkSessionService,
             _spatialWorldService,
+            _playerTargetService,
+            _itemService,
             _spellbookService,
             _spellRegistry
         );
@@ -181,13 +196,7 @@ public sealed class MagicServiceTests
     {
         _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], [])));
         var caster = CreateCaster(isAlive: true, mana: 50);
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = caster,
-                CharacterId = caster.Id
-            }
-        );
+        _gameNetworkSessionService.Add(CreateSession(caster));
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
 
@@ -208,13 +217,7 @@ public sealed class MagicServiceTests
         );
         _spellRegistry.Register(spell);
         var caster = CreateCaster(isAlive: true, mana: 50);
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = caster,
-                CharacterId = caster.Id
-            }
-        );
+        _gameNetworkSessionService.Add(CreateSession(caster));
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
 
@@ -269,20 +272,8 @@ public sealed class MagicServiceTests
             Id = (Serial)0x00000002u,
             IsAlive = true
         };
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = caster,
-                CharacterId = caster.Id
-            }
-        );
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = target,
-                CharacterId = target.Id
-            }
-        );
+        _gameNetworkSessionService.Add(CreateSession(caster));
+        _gameNetworkSessionService.Add(CreateSession(target));
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
         _service.TrySetTarget(caster.Id, StubSpellId, target.Id);
@@ -343,13 +334,7 @@ public sealed class MagicServiceTests
             )
         );
         var caster = CreateCaster(isAlive: true, mana: 50);
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = caster,
-                CharacterId = caster.Id
-            }
-        );
+        _gameNetworkSessionService.Add(CreateSession(caster));
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
 
@@ -360,6 +345,70 @@ public sealed class MagicServiceTests
             {
                 Assert.That(_service.IsCasting(caster.Id), Is.True);
                 Assert.That(_timerService.RegisteredTimers.Select(timer => timer.Name), Does.Contain($"spell_sequence_{caster.Id}_{StubSpellId}"));
+                Assert.That(_playerTargetService.LastSelectionType, Is.EqualTo(TargetCursorSelectionType.SelectObject));
+            }
+        );
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenRequiredItemSpellHasNoBoundTarget_RequestsObjectCursor()
+    {
+        _spellRegistry.Register(
+            new StubSpell(
+                StubSpellId,
+                4,
+                TimeSpan.FromSeconds(1),
+                new("Gate Travel", "Vas Rel Por", [], []),
+                SpellTargetingType.RequiredItem
+            )
+        );
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(_service.IsCasting(caster.Id), Is.True);
+                Assert.That(_timerService.RegisteredTimers.Select(timer => timer.Name), Does.Contain($"spell_sequence_{caster.Id}_{StubSpellId}"));
+                Assert.That(_playerTargetService.LastSelectionType, Is.EqualTo(TargetCursorSelectionType.SelectObject));
+            }
+        );
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenRequiredItemTargetIsProvidedThroughCursor_AppliesSpellEffectToTargetItem()
+    {
+        var spell = new RecordingExecutionSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Gate Travel", "Vas Rel Por", [], []),
+            SpellTargetingType.RequiredItem
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var targetItem = new UOItemEntity
+        {
+            Id = (Serial)0x40000010u
+        };
+        _itemService.Add(targetItem);
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+        _playerTargetService.InvokeObjectResponse(targetItem.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(_service.IsCasting(caster.Id), Is.False);
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(targetItem.TryGetCustomInteger("magic.item_effect_applied", out var marker), Is.True);
+                Assert.That(marker, Is.EqualTo(1));
             }
         );
     }
@@ -387,13 +436,7 @@ public sealed class MagicServiceTests
         caster.Location = new Point3D(100, 100, 0);
         _spatialWorldService.AddMobile(caster);
         _spatialWorldService.AddMobile(target);
-        _gameNetworkSessionService.Add(
-            new GameSession(default!)
-            {
-                Character = caster,
-                CharacterId = caster.Id
-            }
-        );
+        _gameNetworkSessionService.Add(CreateSession(caster));
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
         await _service.OnCastTimerExpiredAsync(caster.Id);
@@ -419,6 +462,17 @@ public sealed class MagicServiceTests
             Id = new Serial(1),
             IsAlive = isAlive,
             Mana = mana
+        };
+    }
+
+    private static GameSession CreateSession(UOMobileEntity character)
+    {
+        var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        return new GameSession(new(client))
+        {
+            Character = character,
+            CharacterId = character.Id
         };
     }
 
@@ -809,6 +863,167 @@ public sealed class MagicServiceTests
             ApplyCalls++;
             (target ?? caster).SetCustomInteger("magic.effect_applied", 1);
         }
+    }
+
+    private sealed class RecordingExecutionSpell : MagerySpellBase
+    {
+        private readonly int _manaCost;
+        private readonly TimeSpan _castDelay;
+        private readonly SpellTargetingType _targeting;
+
+        public RecordingExecutionSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info, SpellTargetingType targeting)
+        {
+            SpellId = spellId;
+            _manaCost = manaCost;
+            _castDelay = castDelay;
+            Info = info;
+            _targeting = targeting;
+        }
+
+        public int ApplyCalls { get; private set; }
+
+        public override int SpellId { get; }
+
+        public override SpellCircleType Circle => SpellCircleType.Seventh;
+
+        public override SpellInfo Info { get; }
+
+        public override SpellTargetingType Targeting => _targeting;
+
+        public override int ManaCost => _manaCost;
+
+        public override TimeSpan CastDelay => _castDelay;
+
+        public override double MinSkill => 0;
+
+        public override double MaxSkill => 100;
+
+        public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
+        {
+            _ = caster;
+            _ = target;
+        }
+
+        public override ValueTask ApplyEffectAsync(SpellExecutionContext context, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            ApplyCalls++;
+            context.TargetItem!.SetCustomInteger("magic.item_effect_applied", 1);
+
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class RecordingPlayerTargetService : IPlayerTargetService
+    {
+        private Action<PendingCursorCallback>? _lastCallback;
+
+        public TargetCursorSelectionType LastSelectionType { get; private set; }
+
+        public TargetCursorType LastCursorType { get; private set; }
+
+        public Serial LastCursorId { get; private set; }
+
+        public Task SendCancelTargetCursorAsync(long sessionId, Serial cursorId)
+        {
+            _ = sessionId;
+            _ = cursorId;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<Serial> SendTargetCursorAsync(
+            long sessionId,
+            Action<PendingCursorCallback> callback,
+            TargetCursorSelectionType selectionType = TargetCursorSelectionType.SelectLocation,
+            TargetCursorType cursorType = TargetCursorType.Neutral
+        )
+        {
+            _ = sessionId;
+            _lastCallback = callback;
+            LastSelectionType = selectionType;
+            LastCursorType = cursorType;
+            LastCursorId = (Serial)0x70000001u;
+
+            return Task.FromResult(LastCursorId);
+        }
+
+        public Task StartAsync()
+            => Task.CompletedTask;
+
+        public Task StopAsync()
+            => Task.CompletedTask;
+
+        public void InvokeObjectResponse(Serial clickedOnId)
+        {
+            _lastCallback?.Invoke(
+                new(
+                    new TargetCursorCommandsPacket
+                    {
+                        CursorTarget = TargetCursorSelectionType.SelectObject,
+                        CursorId = LastCursorId,
+                        CursorType = LastCursorType,
+                        ClickedOnId = clickedOnId
+                    }
+                )
+            );
+        }
+    }
+
+    private sealed class FakeItemService : IItemService
+    {
+        private readonly Dictionary<Serial, UOItemEntity> _items = [];
+
+        public void Add(UOItemEntity item)
+            => _items[item.Id] = item;
+
+        public Task BulkUpsertItemsAsync(IReadOnlyList<UOItemEntity> items)
+            => throw new NotSupportedException();
+
+        public UOItemEntity Clone(UOItemEntity item, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> CloneAsync(Serial itemId, bool generateNewSerial = true)
+            => throw new NotSupportedException();
+
+        public Task<Serial> CreateItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task<bool> DeleteItemAsync(Serial itemId)
+            => throw new NotSupportedException();
+
+        public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
+            => throw new NotSupportedException();
+
+        public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity?> GetItemAsync(Serial itemId)
+            => Task.FromResult(_items.GetValueOrDefault(itemId));
+
+        public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToContainerAsync(Serial itemId, Serial containerId, Point2D position, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<bool> MoveItemToWorldAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
+            => throw new NotSupportedException();
+
+        public Task<UOItemEntity> SpawnFromTemplateAsync(string itemTemplateId)
+            => throw new NotSupportedException();
+
+        public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
+            => Task.FromResult((_items.ContainsKey(itemId), _items.GetValueOrDefault(itemId)));
+
+        public Task UpsertItemAsync(UOItemEntity item)
+            => throw new NotSupportedException();
+
+        public Task UpsertItemsAsync(params UOItemEntity[] items)
+            => throw new NotSupportedException();
     }
 
     private const int StubSpellId = 4;

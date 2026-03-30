@@ -1,5 +1,6 @@
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Magic;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Tiles;
@@ -35,6 +36,11 @@ public sealed class MovementValidationService : IMovementValidationService
         var currentLocation = mobile.Location;
         var destination = currentLocation.Move(direction);
         newLocation = currentLocation;
+
+        if (ParalyzeStateHelper.BlocksMovement(mobile, DateTime.UtcNow))
+        {
+            return false;
+        }
 
         if (!_tileQueryService.TryGetMapBounds(mobile.MapId, out var width, out var height))
         {

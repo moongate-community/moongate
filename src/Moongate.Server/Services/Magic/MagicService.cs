@@ -1,7 +1,11 @@
+using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Data.Internal.Scripting;
+using Moongate.Server.Data.Internal.Cursors;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Services.Events;
+using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -28,6 +32,8 @@ public sealed class MagicService : IMagicService
     private readonly ICharacterService _characterService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly ISpatialWorldService _spatialWorldService;
+    private readonly IPlayerTargetService _playerTargetService;
+    private readonly IItemService _itemService;
     private readonly ISpellbookService _spellbookService;
     private readonly SpellRegistry _spellRegistry;
     private readonly Lock _syncRoot = new();
@@ -39,6 +45,8 @@ public sealed class MagicService : IMagicService
         ICharacterService characterService,
         IGameNetworkSessionService gameNetworkSessionService,
         ISpatialWorldService spatialWorldService,
+        IPlayerTargetService playerTargetService,
+        IItemService itemService,
         ISpellbookService spellbookService,
         SpellRegistry spellRegistry
     )
@@ -48,6 +56,8 @@ public sealed class MagicService : IMagicService
         ArgumentNullException.ThrowIfNull(characterService);
         ArgumentNullException.ThrowIfNull(gameNetworkSessionService);
         ArgumentNullException.ThrowIfNull(spatialWorldService);
+        ArgumentNullException.ThrowIfNull(playerTargetService);
+        ArgumentNullException.ThrowIfNull(itemService);
         ArgumentNullException.ThrowIfNull(spellbookService);
         ArgumentNullException.ThrowIfNull(spellRegistry);
 
@@ -56,6 +66,8 @@ public sealed class MagicService : IMagicService
         _characterService = characterService;
         _gameNetworkSessionService = gameNetworkSessionService;
         _spatialWorldService = spatialWorldService;
+        _playerTargetService = playerTargetService;
+        _itemService = itemService;
         _spellbookService = spellbookService;
         _spellRegistry = spellRegistry;
     }
@@ -169,6 +181,21 @@ public sealed class MagicService : IMagicService
             return false;
         }
 
+        return TrySetTargetAsync(casterId, spellId, SpellTargetData.Mobile(targetId))
+               .AsTask()
+               .GetAwaiter()
+               .GetResult();
+    }
+
+    public async ValueTask<bool> TrySetTargetAsync(
+        Serial casterId,
+        int spellId,
+        SpellTargetData target,
+        CancellationToken cancellationToken = default
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
         SpellCastContext? activeCast;
         ISpell? spell = null;
         var completeImmediately = false;
@@ -180,7 +207,7 @@ public sealed class MagicService : IMagicService
                 return false;
             }
 
-            activeCast.TargetId = targetId;
+            activeCast.Target = target;
             completeImmediately = activeCast.State == SpellStateType.Sequencing;
 
             if (completeImmediately)
@@ -201,7 +228,7 @@ public sealed class MagicService : IMagicService
             return false;
         }
 
-        return CompleteSequencedCast(casterId, activeCast!, spell);
+        return await CompleteSequencedCastAsync(casterId, activeCast!, spell, cancellationToken);
     }
 
     public async ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
@@ -249,11 +276,10 @@ public sealed class MagicService : IMagicService
             return;
         }
 
-        if (activeCast.TargetId != Serial.Zero)
+        if (activeCast.Target.Kind != SpellTargetKind.None)
         {
             RemoveActiveCast(casterId);
-            var boundTarget = await ResolveMobileAsync(activeCast.TargetId, cancellationToken);
-            ApplyResolvedSpellEffect(caster, spell, boundTarget);
+            await ApplyResolvedSpellEffectAsync(caster, spell, activeCast.Target, cancellationToken);
 
             return;
         }
@@ -261,29 +287,50 @@ public sealed class MagicService : IMagicService
         if (spell.Targeting == SpellTargetingType.None)
         {
             RemoveActiveCast(casterId);
-            ApplyResolvedSpellEffect(caster, spell, null);
+            await ApplyResolvedSpellEffectAsync(caster, spell, SpellTargetData.None(), cancellationToken);
 
             return;
         }
 
-        if (!_gameNetworkSessionService.TryGetByCharacterId(casterId, out _))
+        if (!_gameNetworkSessionService.TryGetByCharacterId(casterId, out var session))
         {
             RemoveActiveCast(casterId);
 
             if (spell.Targeting == SpellTargetingType.OptionalMobile)
             {
-                ApplyResolvedSpellEffect(caster, spell, caster);
+                await ApplyResolvedSpellEffectAsync(caster, spell, SpellTargetData.None(), cancellationToken);
             }
 
             return;
         }
 
-        BeginSequencing(activeCast);
+        await BeginSequencingAsync(activeCast, spell, session.SessionId);
     }
 
-    private void ApplyResolvedSpellEffect(UOMobileEntity caster, ISpell spell, UOMobileEntity? target)
+    private async ValueTask ApplyResolvedSpellEffectAsync(
+        UOMobileEntity caster,
+        ISpell spell,
+        SpellTargetData target,
+        CancellationToken cancellationToken
+    )
     {
-        if (spell.Targeting == SpellTargetingType.RequiredMobile && target is null)
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var targetMobile = target.Kind == SpellTargetKind.Mobile
+            ? await ResolveMobileAsync(target.TargetId, cancellationToken)
+            : null;
+        var targetItem = target.Kind == SpellTargetKind.Item
+            ? await ResolveItemAsync(target.TargetId, cancellationToken)
+            : null;
+
+        if (spell.Targeting == SpellTargetingType.OptionalMobile && target.Kind == SpellTargetKind.None)
+        {
+            targetMobile = caster;
+        }
+
+        if ((spell.Targeting == SpellTargetingType.RequiredMobile && targetMobile is null) ||
+            (spell.Targeting == SpellTargetingType.RequiredItem && targetItem is null) ||
+            (spell.Targeting == SpellTargetingType.RequiredLocation && target.Kind != SpellTargetKind.Location))
         {
             _logger.Debug(
                 "Skipping spell effect for caster {CasterId} and spell {SpellId}: required target was unavailable.",
@@ -294,13 +341,24 @@ public sealed class MagicService : IMagicService
             return;
         }
 
-        spell.ApplyEffect(caster, target);
+        var context = new SpellExecutionContext(
+            caster,
+            target,
+            targetMobile,
+            targetItem,
+            _spatialWorldService,
+            _gameEventBusService,
+            _timerService,
+            _itemService
+        );
+
+        await spell.ApplyEffectAsync(context, cancellationToken);
         _logger.Debug("Completed cast for caster {CasterId} and spell {SpellId}.", caster.Id, spell.SpellId);
     }
 
-    private void BeginSequencing(SpellCastContext activeCast)
+    private async ValueTask BeginSequencingAsync(SpellCastContext activeCast, ISpell spell, long sessionId)
     {
-        var timerId = GetSequenceTimerName(activeCast.CasterId, activeCast.SpellId);
+        var timerName = GetSequenceTimerName(activeCast.CasterId, activeCast.SpellId);
 
         lock (_syncRoot)
         {
@@ -310,14 +368,43 @@ public sealed class MagicService : IMagicService
             }
 
             current.State = SpellStateType.Sequencing;
-            current.TimerId = timerId;
         }
 
-        _timerService.RegisterTimer(
-            timerId,
+        var timerId = _timerService.RegisterTimer(
+            timerName,
             SequenceDelay,
             () => OnCastTimerExpiredAsync(activeCast.CasterId).AsTask().GetAwaiter().GetResult()
         );
+
+        lock (_syncRoot)
+        {
+            if (!_activeCasts.TryGetValue(activeCast.CasterId, out var current) || current.SpellId != activeCast.SpellId)
+            {
+                _timerService.UnregisterTimer(timerId);
+
+                return;
+            }
+
+            current.TimerId = timerId;
+        }
+
+        var selectionType = spell.Targeting == SpellTargetingType.RequiredLocation
+            ? TargetCursorSelectionType.SelectLocation
+            : TargetCursorSelectionType.SelectObject;
+
+        var cursorId = await _playerTargetService.SendTargetCursorAsync(
+            sessionId,
+            callback => HandleSequencingTargetCallback(activeCast.CasterId, activeCast.SpellId, spell.Targeting, sessionId, callback),
+            selectionType,
+            TargetCursorType.Neutral
+        );
+
+        if (cursorId == Serial.Zero)
+        {
+            RemoveActiveCast(activeCast.CasterId, timerId);
+
+            return;
+        }
 
         _logger.Debug(
             "Entered sequencing for caster {CasterId}, spell {SpellId}, timeout {SequenceDelay}.",
@@ -327,21 +414,50 @@ public sealed class MagicService : IMagicService
         );
     }
 
-    private bool CompleteSequencedCast(Serial casterId, SpellCastContext activeCast, ISpell spell)
+    private async ValueTask<bool> CompleteSequencedCastAsync(
+        Serial casterId,
+        SpellCastContext activeCast,
+        ISpell spell,
+        CancellationToken cancellationToken
+    )
     {
         RemoveActiveCast(casterId, activeCast.TimerId);
 
-        var caster = ResolveMobileAsync(casterId, CancellationToken.None).AsTask().GetAwaiter().GetResult();
+        var caster = await ResolveMobileAsync(casterId, cancellationToken);
 
         if (caster is null)
         {
             return false;
         }
 
-        var target = ResolveMobileAsync(activeCast.TargetId, CancellationToken.None).AsTask().GetAwaiter().GetResult();
-        ApplyResolvedSpellEffect(caster, spell, target);
+        await ApplyResolvedSpellEffectAsync(caster, spell, activeCast.Target, cancellationToken);
 
         return true;
+    }
+
+    private void HandleSequencingTargetCallback(
+        Serial casterId,
+        int spellId,
+        SpellTargetingType targeting,
+        long sessionId,
+        PendingCursorCallback callback
+    )
+    {
+        if (callback.Packet.CursorType == TargetCursorType.CancelCurrentTargeting)
+        {
+            Interrupt(casterId);
+
+            return;
+        }
+
+        if (!TryCreateTargetData(targeting, sessionId, callback, out var target))
+        {
+            Interrupt(casterId);
+
+            return;
+        }
+
+        TrySetTargetAsync(casterId, spellId, target).AsTask().GetAwaiter().GetResult();
     }
 
     private void RemoveActiveCast(Serial casterId, string? timerId = null)
@@ -457,11 +573,19 @@ public sealed class MagicService : IMagicService
             _activeCasts[casterId] = context;
         }
 
-        _timerService.RegisterTimer(
+        var registeredTimerId = _timerService.RegisterTimer(
             timerId,
             spell.CastDelay,
             () => OnCastTimerExpiredAsync(casterId).AsTask().GetAwaiter().GetResult()
         );
+
+        lock (_syncRoot)
+        {
+            if (_activeCasts.TryGetValue(casterId, out var activeCast) && activeCast.SpellId == spell.SpellId)
+            {
+                activeCast.TimerId = registeredTimerId;
+            }
+        }
 
         _logger.Debug(
             "Started spell cast for caster {CasterId}, spell {SpellId}, delay {CastDelay}.",
@@ -478,6 +602,57 @@ public sealed class MagicService : IMagicService
 
     private static string GetSequenceTimerName(Serial casterId, int spellId)
         => $"{SequenceTimerNamePrefix}{casterId}_{spellId}";
+
+    private bool TryCreateTargetData(
+        SpellTargetingType targeting,
+        long sessionId,
+        PendingCursorCallback callback,
+        out SpellTargetData target
+    )
+    {
+        target = SpellTargetData.None();
+
+        return targeting switch
+        {
+            SpellTargetingType.OptionalMobile or SpellTargetingType.RequiredMobile
+                when callback.Packet.ClickedOnId != Serial.Zero
+                => TryCreateMobileTarget(callback, out target),
+            SpellTargetingType.RequiredItem
+                when callback.Packet.ClickedOnId != Serial.Zero
+                => TryCreateItemTarget(callback, out target),
+            SpellTargetingType.RequiredLocation
+                => TryCreateLocationTarget(sessionId, callback, out target),
+            _ => false
+        };
+    }
+
+    private static bool TryCreateMobileTarget(PendingCursorCallback callback, out SpellTargetData target)
+    {
+        target = SpellTargetData.Mobile(callback.Packet.ClickedOnId);
+
+        return true;
+    }
+
+    private static bool TryCreateItemTarget(PendingCursorCallback callback, out SpellTargetData target)
+    {
+        target = SpellTargetData.Item(callback.Packet.ClickedOnId, callback.Packet.Location, callback.Packet.Graphic);
+
+        return true;
+    }
+
+    private bool TryCreateLocationTarget(long sessionId, PendingCursorCallback callback, out SpellTargetData target)
+    {
+        if (!_gameNetworkSessionService.TryGet(sessionId, out var session) || session.Character is null)
+        {
+            target = SpellTargetData.None();
+
+            return false;
+        }
+
+        target = SpellTargetData.FromLocation(session.Character.MapId, callback.Packet.Location, callback.Packet.Graphic);
+
+        return true;
+    }
 
     private async ValueTask<UOMobileEntity?> ResolveMobileAsync(Serial mobileId, CancellationToken cancellationToken)
     {
@@ -503,5 +678,17 @@ public sealed class MagicService : IMagicService
         cancellationToken.ThrowIfCancellationRequested();
 
         return await _characterService.GetCharacterAsync(mobileId);
+    }
+
+    private async ValueTask<UOItemEntity?> ResolveItemAsync(Serial itemId, CancellationToken cancellationToken)
+    {
+        if (itemId == Serial.Zero)
+        {
+            return null;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return await _itemService.GetItemAsync(itemId);
     }
 }

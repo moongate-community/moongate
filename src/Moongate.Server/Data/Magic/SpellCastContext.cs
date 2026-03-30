@@ -5,14 +5,20 @@ namespace Moongate.Server.Data.Magic;
 
 public sealed record SpellCastContext
 {
-    public SpellCastContext(Serial casterId, int spellId, SpellStateType state, string timerId, Serial targetId = default)
+    public SpellCastContext(
+        Serial casterId,
+        int spellId,
+        SpellStateType state,
+        string timerId,
+        SpellTargetData? target = null
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(timerId);
         CasterId = casterId;
         SpellId = spellId;
         State = state;
         TimerId = timerId;
-        TargetId = targetId;
+        Target = target ?? SpellTargetData.None();
     }
 
     public Serial CasterId { get; init; }
@@ -23,5 +29,5 @@ public sealed record SpellCastContext
 
     public string TimerId { get; set; }
 
-    public Serial TargetId { get; set; }
+    public SpellTargetData Target { get; set; }
 }

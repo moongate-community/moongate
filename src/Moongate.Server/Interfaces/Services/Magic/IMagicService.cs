@@ -1,3 +1,4 @@
+using Moongate.Server.Data.Magic;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 
@@ -34,6 +35,21 @@ public interface IMagicService
     /// <param name="targetId">Target serial identifier.</param>
     /// <returns><see langword="true" /> when a matching active cast was updated.</returns>
     bool TrySetTarget(Serial casterId, int spellId, Serial targetId);
+
+    /// <summary>
+    /// Attempts to bind a resolved target payload to an active cast for the specified mobile and spell.
+    /// </summary>
+    /// <param name="casterId">Caster serial identifier.</param>
+    /// <param name="spellId">Registered spell identifier.</param>
+    /// <param name="target">Resolved target payload.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns><see langword="true" /> when a matching active cast was updated.</returns>
+    ValueTask<bool> TrySetTargetAsync(
+        Serial casterId,
+        int spellId,
+        SpellTargetData target,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// Interrupts an in-progress cast for the specified mobile.

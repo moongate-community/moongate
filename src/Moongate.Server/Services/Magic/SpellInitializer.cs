@@ -1,6 +1,8 @@
 using Moongate.Server.Services.Magic.Spells.Magery.First;
+using Moongate.Server.Services.Magic.Spells.Magery.Fifth;
 using Moongate.Server.Services.Magic.Spells.Magery.Fourth;
 using Moongate.Server.Services.Magic.Spells.Magery.Second;
+using Moongate.Server.Services.Magic.Spells.Magery.Sixth;
 using Moongate.Server.Services.Magic.Spells.Magery.Third;
 using Moongate.Server.Types.Magic;
 
@@ -22,6 +24,8 @@ public static class SpellInitializer
         registry.Register(new HealSpell());
         registry.Register(new MagicArrowSpell());
         registry.Register(new NightSightSpell());
+        registry.Register(new ParalyzeSpell());
+        registry.Register(new ExplosionSpell());
         registry.Register(new GreaterHealSpell());
         registry.Register(new ReactiveArmorSpell());
         registry.Register(new WeakenSpell());

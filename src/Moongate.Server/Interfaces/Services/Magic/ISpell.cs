@@ -55,4 +55,11 @@ public interface ISpell
     /// <param name="caster">Mobile that cast the spell.</param>
     /// <param name="target">Optional mobile target.</param>
     void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target);
+
+    /// <summary>
+    /// Applies the resolved spell effect using the full execution context.
+    /// </summary>
+    /// <param name="context">Resolved cast execution context.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    ValueTask ApplyEffectAsync(SpellExecutionContext context, CancellationToken cancellationToken = default);
 }
