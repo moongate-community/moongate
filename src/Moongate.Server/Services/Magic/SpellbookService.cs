@@ -49,9 +49,21 @@ public sealed class SpellbookService : ISpellbookService
         CancellationToken cancellationToken = default
     )
     {
-        var book = await FindSpellbookAsync(mobile, spellbookType, cancellationToken);
+        ArgumentNullException.ThrowIfNull(mobile);
+        cancellationToken.ThrowIfCancellationRequested();
 
-        return book is not null && GetData(book).HasSpell(spellId);
+        foreach (var item in mobile.GetEquippedItemsRuntime())
+        {
+            if (IsMatchingSpellbook(item, spellbookType) && GetData(item).HasSpell(spellId))
+            {
+                return true;
+            }
+        }
+
+        var backpack = await _characterService.GetBackpackWithItemsAsync(mobile);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return backpack is not null && HasSpellInContainerRecursive(backpack, spellbookType, spellId);
     }
 
     public async ValueTask<UOItemEntity?> FindSpellbookAsync(
@@ -99,6 +111,26 @@ public sealed class SpellbookService : ISpellbookService
         return null;
     }
 
+    private static bool HasSpellInContainerRecursive(UOItemEntity container, SpellbookType spellbookType, int spellId)
+    {
+        for (var index = 0; index < container.Items.Count; index++)
+        {
+            var item = container.Items[index];
+
+            if (IsMatchingSpellbook(item, spellbookType) && new SpellbookData(GetStoredContent(item)).HasSpell(spellId))
+            {
+                return true;
+            }
+
+            if (HasSpellInContainerRecursive(item, spellbookType, spellId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static bool IsMatchingSpellbook(UOItemEntity item, SpellbookType spellbookType)
     {
         ArgumentNullException.ThrowIfNull(item);
@@ -121,4 +153,14 @@ public sealed class SpellbookService : ISpellbookService
             SpellbookType.Regular => RegularSpellbookTemplateId,
             _                     => null
         };
+
+    private static ulong GetStoredContent(UOItemEntity book)
+    {
+        if (book.TryGetCustomInteger(ItemCustomParamKeys.Spellbook.Content, out var stored))
+        {
+            return (ulong)stored;
+        }
+
+        return 0UL;
+    }
 }

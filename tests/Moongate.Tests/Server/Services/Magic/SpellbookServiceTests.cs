@@ -95,9 +95,33 @@ public sealed class SpellbookServiceTests
         Assert.That(result, Is.False);
     }
 
-    private static UOItemEntity CreateSpellbook()
+    [Test]
+    public async Task MobileHasSpellAsync_WhenLaterSpellbookContainsSpell_ReturnsTrue()
     {
-        var book = new UOItemEntity();
+        var mobile = new UOMobileEntity
+        {
+            Id = (Serial)0x00000001u
+        };
+        var backpack = new UOItemEntity();
+        var firstBook = CreateSpellbook((Serial)0x40000001u);
+        var secondBook = CreateSpellbook((Serial)0x40000002u);
+        _service.SetData(firstBook, new SpellbookData(0UL).WithSpell(5));
+        _service.SetData(secondBook, new SpellbookData(0UL).WithSpell(4));
+        backpack.AddItem(firstBook, new(1, 1));
+        backpack.AddItem(secondBook, new(2, 2));
+        _characterService.Backpack = backpack;
+
+        var result = await _service.MobileHasSpellAsync(mobile, SpellbookType.Regular, 4);
+
+        Assert.That(result, Is.True);
+    }
+
+    private static UOItemEntity CreateSpellbook(Serial? id = null)
+    {
+        var book = new UOItemEntity
+        {
+            Id = id ?? Serial.Zero
+        };
         book.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "spellbook");
 
         return book;
