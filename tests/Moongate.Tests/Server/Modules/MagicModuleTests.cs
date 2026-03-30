@@ -1,8 +1,8 @@
 using System.Reflection;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Interfaces.Services.Magic;
-using Moongate.Server.Modules;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Modules;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Json.Regions;
@@ -145,14 +145,7 @@ public sealed class MagicModuleTests
     [Test]
     public void ScriptModule_ShouldExposeExpectedLuaModuleAndFunctions()
     {
-        var moduleType = typeof(CombatModule).Assembly.GetType("Moongate.Server.Modules.MagicModule");
-
-        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.MagicModule first.");
-
-        if (moduleType is null)
-        {
-            return;
-        }
+        var moduleType = typeof(MagicModule);
 
         var moduleAttribute = moduleType.GetCustomAttributes(typeof(ScriptModuleAttribute), inherit: false)
                                         .Cast<ScriptModuleAttribute>()
@@ -173,15 +166,6 @@ public sealed class MagicModuleTests
     [Test]
     public void IsCasting_AndInterrupt_ShouldDelegateToMagicService()
     {
-        var moduleType = typeof(CombatModule).Assembly.GetType("Moongate.Server.Modules.MagicModule");
-
-        Assert.That(moduleType, Is.Not.Null, "Create Moongate.Server.Modules.MagicModule first.");
-
-        if (moduleType is null)
-        {
-            return;
-        }
-
         var spatial = new MagicModuleTestSpatialWorldService();
         var npc = new UOMobileEntity
         {
@@ -194,17 +178,10 @@ public sealed class MagicModuleTests
         {
             IsCastingResult = true
         };
-        var module = Activator.CreateInstance(moduleType, spatial, magicService);
+        var module = new MagicModule(spatial, magicService);
 
-        Assert.That(module, Is.Not.Null, "Expected MagicModule to accept spatial and magic services.");
-
-        if (module is null)
-        {
-            return;
-        }
-
-        var isCasting = (bool)moduleType.GetMethod("IsCasting")!.Invoke(module, [(uint)npc.Id])!;
-        _ = moduleType.GetMethod("Interrupt")!.Invoke(module, [(uint)npc.Id]);
+        var isCasting = module.IsCasting((uint)npc.Id);
+        _ = module.Interrupt((uint)npc.Id);
 
         Assert.Multiple(
             () =>

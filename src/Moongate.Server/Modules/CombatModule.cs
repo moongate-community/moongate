@@ -27,17 +27,8 @@ public sealed class CombatModule
     public CombatModule(
         ISpatialWorldService spatialWorldService,
         IGameEventBusService gameEventBusService,
-        ICombatService combatService
-    )
-        : this(spatialWorldService, gameEventBusService, combatService, null)
-    {
-    }
-
-    public CombatModule(
-        ISpatialWorldService spatialWorldService,
-        IGameEventBusService gameEventBusService,
         ICombatService combatService,
-        IMagicService? magicService
+        IMagicService? magicService = null
     )
     {
         _spatialWorldService = spatialWorldService;
