@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Server.Data.Events.Base;
 using Moongate.Server.Data.Internal.Cursors;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
@@ -163,6 +164,92 @@ public sealed class MagicServiceTests
     }
 
     [Test]
+    public async Task OnCastTimerExpiredAsync_WhenUntargetedSpellCompletes_ConsumesRequiredReagents()
+    {
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Heal", "In Mani", [ReagentType.Garlic], [2]),
+            SpellTargetingType.None
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var garlicStack = CreateReagent((Serial)0x40000011u, "garlic", 5);
+        _characterService.Backpack = CreateBackpack(garlicStack);
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(garlicStack.Amount, Is.EqualTo(3));
+                Assert.That(_itemService.UpsertedItemIds, Is.EqualTo(new[] { garlicStack.Id }));
+                Assert.That(_itemService.DeletedItemIds, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySetTarget_WhenSpellIsSequencing_ConsumesReagentsOnlyAfterTargetIsBound()
+    {
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Magic Arrow", "In Por Ylem", [ReagentType.BlackPearl], [1]),
+            SpellTargetingType.RequiredMobile
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            IsAlive = true,
+            MapId = 1,
+            Location = new Point3D(101, 100, 0)
+        };
+        var blackPearlStack = CreateReagent((Serial)0x40000012u, "black_pearl", 2);
+        var pouch = CreateContainer((Serial)0x40000013u, blackPearlStack);
+        _characterService.Backpack = CreateBackpack(pouch);
+        caster.MapId = 1;
+        caster.Location = new Point3D(100, 100, 0);
+        _spatialWorldService.AddMobile(caster);
+        _spatialWorldService.AddMobile(target);
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(0));
+                Assert.That(blackPearlStack.Amount, Is.EqualTo(2));
+                Assert.That(_itemService.UpsertedItemIds, Is.Empty);
+                Assert.That(_itemService.DeletedItemIds, Is.Empty);
+            }
+        );
+
+        _playerTargetService.InvokeObjectResponse(target.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(blackPearlStack.Amount, Is.EqualTo(1));
+                Assert.That(_itemService.UpsertedItemIds, Is.EqualTo(new[] { blackPearlStack.Id }));
+                Assert.That(_itemService.DeletedItemIds, Is.Empty);
+                Assert.That(target.TryGetCustomInteger("magic.effect_applied", out var marker), Is.True);
+                Assert.That(marker, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public async Task TryCastAsync_WhileAlreadyCasting_ReturnsFalse()
     {
         _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], [])));
@@ -174,6 +261,29 @@ public sealed class MagicServiceTests
 
         Assert.That(result, Is.False);
         Assert.That(_timerService.RegisteredTimers, Has.Count.EqualTo(1));
+    }
+
+    [Test]
+    public async Task Interrupt_ActiveCast_DoesNotConsumeReagents()
+    {
+        _spellRegistry.Register(
+            new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [ReagentType.Garlic], [1]))
+        );
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var garlicStack = CreateReagent((Serial)0x40000014u, "garlic", 3);
+        _characterService.Backpack = CreateBackpack(garlicStack);
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        _service.Interrupt(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(garlicStack.Amount, Is.EqualTo(3));
+                Assert.That(_itemService.UpsertedItemIds, Is.Empty);
+                Assert.That(_itemService.DeletedItemIds, Is.Empty);
+            }
+        );
     }
 
     [Test]
@@ -189,6 +299,39 @@ public sealed class MagicServiceTests
         Assert.That(_service.IsCasting(caster.Id), Is.False);
         Assert.That(_timerService.UnregisteredTimerIds, Has.Count.EqualTo(1));
         Assert.That(_timerService.UnregisteredTimerIds[0], Is.EqualTo($"spell_cast_{caster.Id}_{StubSpellId}"));
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenReagentsDisappearBeforeCompletion_SkipsSpellEffect()
+    {
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Heal", "In Mani", [ReagentType.Garlic], [1]),
+            SpellTargetingType.None
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var garlicStack = CreateReagent((Serial)0x40000015u, "garlic", 1);
+        var backpack = CreateBackpack(garlicStack);
+        _characterService.Backpack = backpack;
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        _ = backpack.RemoveItem(garlicStack.Id);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(0));
+                Assert.That(caster.TryGetCustomInteger("magic.effect_applied", out _), Is.False);
+                Assert.That(_itemService.UpsertedItemIds, Is.Empty);
+                Assert.That(_itemService.DeletedItemIds, Is.Empty);
+            }
+        );
     }
 
     [Test]
@@ -453,6 +596,53 @@ public sealed class MagicServiceTests
                 Assert.That(marker, Is.EqualTo(1));
             }
         );
+    }
+
+    private static UOItemEntity CreateBackpack(params UOItemEntity[] items)
+    {
+        var backpack = new UOItemEntity
+        {
+            Id = (Serial)0x40000001u,
+            ItemId = 0x0E75,
+            Amount = 1
+        };
+
+        foreach (var item in items)
+        {
+            backpack.AddItem(item, new Point2D(1, 1));
+        }
+
+        return backpack;
+    }
+
+    private static UOItemEntity CreateContainer(Serial id, params UOItemEntity[] items)
+    {
+        var container = new UOItemEntity
+        {
+            Id = id,
+            ItemId = 0x0E76,
+            Amount = 1
+        };
+
+        foreach (var item in items)
+        {
+            container.AddItem(item, new Point2D(1, 1));
+        }
+
+        return container;
+    }
+
+    private static UOItemEntity CreateReagent(Serial id, string templateId, int amount)
+    {
+        var reagent = new UOItemEntity
+        {
+            Id = id,
+            ItemId = 0x0F8D,
+            Amount = amount
+        };
+        reagent.SetCustomString(ItemCustomParamKeys.Item.TemplateId, templateId);
+
+        return reagent;
     }
 
     private static UOMobileEntity CreateCaster(bool isAlive, int mana)
@@ -968,11 +1158,30 @@ public sealed class MagicServiceTests
                 )
             );
         }
+
+        public void InvokeCancelResponse()
+        {
+            _lastCallback?.Invoke(
+                new(
+                    new TargetCursorCommandsPacket
+                    {
+                        CursorTarget = TargetCursorSelectionType.SelectObject,
+                        CursorId = LastCursorId,
+                        CursorType = TargetCursorType.CancelCurrentTargeting,
+                        ClickedOnId = Serial.Zero
+                    }
+                )
+            );
+        }
     }
 
     private sealed class FakeItemService : IItemService
     {
         private readonly Dictionary<Serial, UOItemEntity> _items = [];
+
+        public List<Serial> DeletedItemIds { get; } = [];
+
+        public List<Serial> UpsertedItemIds { get; } = [];
 
         public void Add(UOItemEntity item)
             => _items[item.Id] = item;
@@ -990,7 +1199,11 @@ public sealed class MagicServiceTests
             => throw new NotSupportedException();
 
         public Task<bool> DeleteItemAsync(Serial itemId)
-            => throw new NotSupportedException();
+        {
+            DeletedItemIds.Add(itemId);
+
+            return Task.FromResult(_items.Remove(itemId));
+        }
 
         public Task<DropItemToGroundResult?> DropItemToGroundAsync(Serial itemId, Point3D location, int mapId, long sessionId = 0)
             => throw new NotSupportedException();
@@ -1020,10 +1233,23 @@ public sealed class MagicServiceTests
             => Task.FromResult((_items.ContainsKey(itemId), _items.GetValueOrDefault(itemId)));
 
         public Task UpsertItemAsync(UOItemEntity item)
-            => throw new NotSupportedException();
+        {
+            UpsertedItemIds.Add(item.Id);
+            _items[item.Id] = item;
+
+            return Task.CompletedTask;
+        }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
-            => throw new NotSupportedException();
+        {
+            foreach (var item in items)
+            {
+                UpsertedItemIds.Add(item.Id);
+                _items[item.Id] = item;
+            }
+
+            return Task.CompletedTask;
+        }
     }
 
     private const int StubSpellId = 4;
