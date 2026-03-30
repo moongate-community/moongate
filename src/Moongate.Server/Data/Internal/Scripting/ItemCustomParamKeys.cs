@@ -55,4 +55,9 @@ public static class ItemCustomParamKeys
     {
         public const string Content = "spellbook_content";
     }
+
+    public static class Interaction
+    {
+        public const string ResurrectionSource = "resurrection_source";
+    }
 }

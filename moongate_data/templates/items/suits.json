@@ -39,16 +39,17 @@
     "name": "Death Shroud",
     "category": "Suits",
     "description": "",
-    "itemId": "0x0000",
+    "itemId": "0x204E",
     "hue": "0",
     "goldValue": "0",
-    "weight": 0,
+    "weight": 3,
     "scriptId": "none",
     "isMovable": true,
     "tags": [
       "modernuo",
       "suits"
-    ]
+    ],
+    "layer": "OuterTorso"
   },
   {
     "type": "item",

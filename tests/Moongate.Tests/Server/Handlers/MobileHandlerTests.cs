@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.Speech;
 using Moongate.Network.Packets.Outgoing.World;
+using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Spatial;
 using Moongate.Server.Data.Packets;
 using Moongate.Server.Data.Session;
@@ -328,6 +329,103 @@ public sealed class MobileHandlerTests
                 Assert.That(packets[1].Packet, Is.TypeOf<PlayerStatusPacket>());
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobileAppearanceChanged_ShouldRefreshChangedPlayerAndRedrawNearbyObservers()
+    {
+        var playerId = (Serial)0x00000071u;
+        var observerId = (Serial)0x00000072u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var playerSession = CreateSession(playerId);
+        var observerSession = CreateSession(observerId);
+        sessions.Add(playerSession);
+        sessions.Add(observerSession);
+
+        var changedPlayer = CreatePlayer(playerId);
+        changedPlayer.Location = new(150, 160, 0);
+        changedPlayer.MapId = 1;
+        changedPlayer.AddEquippedItem(
+            ItemLayerType.OuterTorso,
+            new UOItemEntity
+            {
+                Id = (Serial)0x40000071u,
+                ItemId = 0x204E,
+                Name = "Death Shroud",
+                Hue = 0x0021
+            }
+        );
+        playerSession.Character = changedPlayer;
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SessionsInRange = [playerSession, observerSession]
+        };
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(changedPlayer),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(new MobileAppearanceChangedEvent(changedPlayer));
+
+        var packets = DequeueAll(queue);
+        var selfPackets = packets.Where(packet => packet.SessionId == playerSession.SessionId).ToList();
+        var observerPackets = packets.Where(packet => packet.SessionId == observerSession.SessionId).ToList();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(selfPackets.Any(packet => packet.Packet is DrawPlayerPacket), Is.True);
+                Assert.That(selfPackets.Any(packet => packet.Packet is MobileDrawPacket), Is.True);
+                Assert.That(selfPackets.Any(packet => packet.Packet is WornItemPacket), Is.True);
+                Assert.That(selfPackets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(selfPackets.Any(packet => packet.Packet is MobileMovingPacket), Is.False);
+                Assert.That(observerPackets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
+                Assert.That(observerPackets.Any(packet => packet.Packet is WornItemPacket), Is.True);
+                Assert.That(observerPackets.Any(packet => packet.Packet is PlayerStatusPacket), Is.True);
+                Assert.That(observerPackets.Any(packet => packet.Packet is MobileMovingPacket), Is.False);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForMobileAppearanceChanged_WhenPlayerSessionExists_ShouldUpdateSessionCharacterReference()
+    {
+        var playerId = (Serial)0x00000073u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var sessions = new FakeGameNetworkSessionService();
+        var playerSession = CreateSession(playerId);
+        sessions.Add(playerSession);
+
+        var staleCharacter = CreatePlayer(playerId);
+        var changedPlayer = CreatePlayer(playerId);
+        changedPlayer.Location = new(220, 221, 0);
+        changedPlayer.MapId = 1;
+        playerSession.Character = staleCharacter;
+
+        var spatial = new MobileHandlerTestSpatialWorldService
+        {
+            SessionsInRange = [playerSession]
+        };
+        var handler = new MobileHandler(
+            spatial,
+            new MobileHandlerTestCharacterService(changedPlayer),
+            new MobileHandlerTestSpeechService(),
+            new DispatchEventsService(spatial, queue, sessions),
+            sessions,
+            queue,
+            new()
+        );
+
+        await handler.HandleAsync(new MobileAppearanceChangedEvent(changedPlayer));
+
+        Assert.That(playerSession.Character, Is.SameAs(changedPlayer));
     }
 
     [Test]

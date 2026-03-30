@@ -109,6 +109,7 @@ Moongate v2 is **actively in development**. The following features are implement
 - [x] REST API for user management, sessions, metrics, and item templates
 - [x] In-game help ticket intake plus staff dashboard/API triage flow
 - [x] First-open and refillable loot containers driven by templates
+- [x] Player death with corpse, ghost body, death shroud, and healer/ankh resurrection offers
 - [x] GameMaster in-game item and door administration commands
 - [x] UDP ping echo listener for lightweight reachability checks
 - [x] React-based admin web UI
