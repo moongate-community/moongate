@@ -18,6 +18,8 @@ public sealed class GreaterHealSpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.Fourth;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.OptionalMobile;
+
     public override SpellInfo Info { get; } = new(
         "Greater Heal",
         "In Vas Mani",

@@ -18,6 +18,8 @@ public sealed class FireballSpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.Third;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.RequiredMobile;
+
     public override SpellInfo Info { get; } = new(
         "Fireball",
         "Vas Flam",

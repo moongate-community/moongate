@@ -16,6 +16,8 @@ public sealed class NightSightSpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.First;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.OptionalMobile;
+
     public override SpellInfo Info { get; } = new(
         "Night Sight",
         "In Lor",

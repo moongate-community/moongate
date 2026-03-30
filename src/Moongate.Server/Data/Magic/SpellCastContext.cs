@@ -21,7 +21,7 @@ public sealed record SpellCastContext
 
     public SpellStateType State { get; set; }
 
-    public string TimerId { get; init; }
+    public string TimerId { get; set; }
 
     public Serial TargetId { get; set; }
 }

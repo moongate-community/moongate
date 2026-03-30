@@ -35,6 +35,11 @@ public interface ISpell
     TimeSpan CastDelay { get; }
 
     /// <summary>
+    /// Gets how the spell expects target resolution to behave after cast completion.
+    /// </summary>
+    SpellTargetingType Targeting { get; }
+
+    /// <summary>
     /// Gets the minimum skill required to attempt the spell.
     /// </summary>
     double MinSkill { get; }

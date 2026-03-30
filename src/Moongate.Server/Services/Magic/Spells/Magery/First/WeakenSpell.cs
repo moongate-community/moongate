@@ -18,6 +18,8 @@ public sealed class WeakenSpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.First;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.RequiredMobile;
+
     public override SpellInfo Info { get; } = new(
         "Weaken",
         "Des Mani",

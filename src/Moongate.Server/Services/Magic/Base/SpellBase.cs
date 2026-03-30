@@ -20,6 +20,8 @@ public abstract class SpellBase : ISpell
 
     public abstract TimeSpan CastDelay { get; }
 
+    public virtual SpellTargetingType Targeting => SpellTargetingType.None;
+
     public abstract double MinSkill { get; }
 
     public abstract double MaxSkill { get; }

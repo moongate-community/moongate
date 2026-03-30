@@ -4,16 +4,21 @@ using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
+using Moongate.UO.Data.Json.Regions;
+using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Tests.Server.Services.Magic;
 
@@ -24,6 +29,7 @@ public sealed class MagicServiceTests
     private RecordingGameEventBusService _gameEventBusService = null!;
     private FakeCharacterService _characterService = null!;
     private FakeGameNetworkSessionService _gameNetworkSessionService = null!;
+    private MagicServiceTestSpatialWorldService _spatialWorldService = null!;
     private AllowAllSpellbookService _spellbookService = null!;
     private SpellRegistry _spellRegistry = null!;
     private MagicService _service = null!;
@@ -35,6 +41,7 @@ public sealed class MagicServiceTests
         _gameEventBusService = new RecordingGameEventBusService();
         _characterService = new FakeCharacterService();
         _gameNetworkSessionService = new FakeGameNetworkSessionService();
+        _spatialWorldService = new MagicServiceTestSpatialWorldService();
         _spellbookService = new AllowAllSpellbookService();
         _spellRegistry = new SpellRegistry();
         _service = new MagicService(
@@ -42,6 +49,7 @@ public sealed class MagicServiceTests
             _gameEventBusService,
             _characterService,
             _gameNetworkSessionService,
+            _spatialWorldService,
             _spellbookService,
             _spellRegistry
         );
@@ -173,6 +181,13 @@ public sealed class MagicServiceTests
     {
         _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], [])));
         var caster = CreateCaster(isAlive: true, mana: 50);
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = caster,
+                CharacterId = caster.Id
+            }
+        );
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
 
@@ -184,7 +199,13 @@ public sealed class MagicServiceTests
     [Test]
     public async Task OnCastTimerExpiredAsync_WhenSessionCharacterExists_AppliesSpellEffect()
     {
-        var spell = new RecordingEffectSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Heal", "In Mani", [], []));
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Heal", "In Mani", [], []),
+            SpellTargetingType.None
+        );
         _spellRegistry.Register(spell);
         var caster = CreateCaster(isAlive: true, mana: 50);
         _gameNetworkSessionService.Add(
@@ -213,7 +234,15 @@ public sealed class MagicServiceTests
     [Test]
     public async Task TrySetTarget_WhenActiveCastMatchesSpell_BindsPendingTarget()
     {
-        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Magic Arrow", "In Por Ylem", [], [])));
+        _spellRegistry.Register(
+            new StubSpell(
+                StubSpellId,
+                4,
+                TimeSpan.FromSeconds(1),
+                new("Magic Arrow", "In Por Ylem", [], []),
+                SpellTargetingType.RequiredMobile
+            )
+        );
         var caster = CreateCaster(isAlive: true, mana: 50);
 
         _ = await _service.TryCastAsync(caster, StubSpellId);
@@ -226,7 +255,13 @@ public sealed class MagicServiceTests
     [Test]
     public async Task OnCastTimerExpiredAsync_WhenTargetIsBound_AppliesSpellEffectToTarget()
     {
-        var spell = new RecordingEffectSpell(StubSpellId, 4, TimeSpan.FromSeconds(1), new("Magic Arrow", "In Por Ylem", [], []));
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Magic Arrow", "In Por Ylem", [], []),
+            SpellTargetingType.RequiredMobile
+        );
         _spellRegistry.Register(spell);
         var caster = CreateCaster(isAlive: true, mana: 50);
         var target = new UOMobileEntity
@@ -265,6 +300,118 @@ public sealed class MagicServiceTests
         );
     }
 
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenNpcCasterExistsInSpatialWorld_AppliesSpellEffect()
+    {
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Reactive Armor", "Flam Sanct", [], []),
+            SpellTargetingType.None
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        caster.MapId = 1;
+        caster.Location = new Point3D(100, 100, 0);
+        _spatialWorldService.AddMobile(caster);
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(caster.TryGetCustomInteger("magic.effect_applied", out var marker), Is.True);
+                Assert.That(marker, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenRequiredTargetSpellHasNoBoundTarget_TransitionsToSequencing()
+    {
+        _spellRegistry.Register(
+            new StubSpell(
+                StubSpellId,
+                4,
+                TimeSpan.FromSeconds(1),
+                new("Magic Arrow", "In Por Ylem", [], []),
+                SpellTargetingType.RequiredMobile
+            )
+        );
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = caster,
+                CharacterId = caster.Id
+            }
+        );
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(_service.IsCasting(caster.Id), Is.True);
+                Assert.That(_timerService.RegisteredTimers.Select(timer => timer.Name), Does.Contain($"spell_sequence_{caster.Id}_{StubSpellId}"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TrySetTarget_WhenSpellIsSequencing_CompletesEffectAgainstLateTarget()
+    {
+        var spell = new RecordingEffectSpell(
+            StubSpellId,
+            4,
+            TimeSpan.FromSeconds(1),
+            new("Magic Arrow", "In Por Ylem", [], []),
+            SpellTargetingType.RequiredMobile
+        );
+        _spellRegistry.Register(spell);
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            IsAlive = true,
+            MapId = 1,
+            Location = new Point3D(101, 100, 0)
+        };
+        caster.MapId = 1;
+        caster.Location = new Point3D(100, 100, 0);
+        _spatialWorldService.AddMobile(caster);
+        _spatialWorldService.AddMobile(target);
+        _gameNetworkSessionService.Add(
+            new GameSession(default!)
+            {
+                Character = caster,
+                CharacterId = caster.Id
+            }
+        );
+
+        _ = await _service.TryCastAsync(caster, StubSpellId);
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        var result = _service.TrySetTarget(caster.Id, StubSpellId, target.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(_service.IsCasting(caster.Id), Is.False);
+                Assert.That(spell.ApplyCalls, Is.EqualTo(1));
+                Assert.That(target.TryGetCustomInteger("magic.effect_applied", out var marker), Is.True);
+                Assert.That(marker, Is.EqualTo(1));
+            }
+        );
+    }
+
     private static UOMobileEntity CreateCaster(bool isAlive, int mana)
     {
         return new UOMobileEntity
@@ -273,6 +420,149 @@ public sealed class MagicServiceTests
             IsAlive = isAlive,
             Mana = mana
         };
+    }
+
+    private sealed class MagicServiceTestSpatialWorldService : ISpatialWorldService
+    {
+        private readonly List<MapSector> _sectors = [];
+
+        public void AddMobile(UOMobileEntity mobile)
+        {
+            var sector = new MapSector(
+                mobile.MapId,
+                mobile.Location.X >> MapSectorConsts.SectorShift,
+                mobile.Location.Y >> MapSectorConsts.SectorShift
+            );
+            sector.AddEntity(mobile);
+            _sectors.Add(sector);
+        }
+
+        public void AddOrUpdateItem(UOItemEntity item, int mapId)
+        {
+            _ = item;
+            _ = mapId;
+        }
+
+        public void AddOrUpdateMobile(UOMobileEntity mobile)
+            => AddMobile(mobile);
+
+        public void AddRegion(JsonRegion region)
+        {
+            _ = region;
+        }
+
+        public Task<int> BroadcastToPlayersAsync(
+            IGameNetworkPacket packet,
+            int mapId,
+            Point3D location,
+            int? range = null,
+            long? excludeSessionId = null
+        )
+        {
+            _ = packet;
+            _ = mapId;
+            _ = location;
+            _ = range;
+            _ = excludeSessionId;
+
+            return Task.FromResult(0);
+        }
+
+        public List<MapSector> GetActiveSectors()
+            => [.. _sectors];
+
+        public List<UOMobileEntity> GetMobilesInSectorRange(int mapId, int centerSectorX, int centerSectorY, int radius = 2)
+        {
+            _ = mapId;
+            _ = centerSectorX;
+            _ = centerSectorY;
+            _ = radius;
+
+            return [];
+        }
+
+        public int GetMusic(int mapId, Point3D location)
+        {
+            _ = mapId;
+            _ = location;
+
+            return 0;
+        }
+
+        public List<UOItemEntity> GetNearbyItems(Point3D location, int range, int mapId)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return [];
+        }
+
+        public List<UOMobileEntity> GetNearbyMobiles(Point3D location, int range, int mapId)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+
+            return [];
+        }
+
+        public List<GameSession> GetPlayersInRange(Point3D location, int range, int mapId, GameSession? excludeSession = null)
+        {
+            _ = location;
+            _ = range;
+            _ = mapId;
+            _ = excludeSession;
+
+            return [];
+        }
+
+        public List<UOMobileEntity> GetPlayersInSector(int mapId, int sectorX, int sectorY)
+        {
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+
+            return [];
+        }
+
+        public JsonRegion? GetRegionById(int regionId)
+        {
+            _ = regionId;
+
+            return null;
+        }
+
+        public MapSector? GetSectorByLocation(int mapId, Point3D location)
+        {
+            _ = mapId;
+            _ = location;
+
+            return null;
+        }
+
+        public SectorSystemStats GetStats()
+            => new();
+
+        public void OnItemMoved(UOItemEntity item, int mapId, Point3D oldLocation, Point3D newLocation)
+        {
+            _ = item;
+            _ = mapId;
+            _ = oldLocation;
+            _ = newLocation;
+        }
+
+        public void OnMobileMoved(UOMobileEntity mobile, Point3D oldLocation, Point3D newLocation)
+        {
+            _ = mobile;
+            _ = oldLocation;
+            _ = newLocation;
+        }
+
+        public void RemoveEntity(Serial serial)
+        {
+            _ = serial;
+        }
     }
 
     private sealed class RecordingTimerService : ITimerService
@@ -447,13 +737,15 @@ public sealed class MagicServiceTests
     {
         private readonly int _manaCost;
         private readonly TimeSpan _castDelay;
+        private readonly SpellTargetingType _targeting;
 
-        public StubSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info)
+        public StubSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info, SpellTargetingType targeting = SpellTargetingType.None)
         {
             SpellId = spellId;
             _manaCost = manaCost;
             _castDelay = castDelay;
             Info = info;
+            _targeting = targeting;
         }
 
         public override int SpellId { get; }
@@ -461,6 +753,8 @@ public sealed class MagicServiceTests
         public override SpellCircleType Circle => SpellCircleType.First;
 
         public override SpellInfo Info { get; }
+
+        public override SpellTargetingType Targeting => _targeting;
 
         public override int ManaCost => _manaCost;
 
@@ -481,13 +775,15 @@ public sealed class MagicServiceTests
     {
         private readonly int _manaCost;
         private readonly TimeSpan _castDelay;
+        private readonly SpellTargetingType _targeting;
 
-        public RecordingEffectSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info)
+        public RecordingEffectSpell(int spellId, int manaCost, TimeSpan castDelay, SpellInfo info, SpellTargetingType targeting = SpellTargetingType.None)
         {
             SpellId = spellId;
             _manaCost = manaCost;
             _castDelay = castDelay;
             Info = info;
+            _targeting = targeting;
         }
 
         public int ApplyCalls { get; private set; }
@@ -497,6 +793,8 @@ public sealed class MagicServiceTests
         public override SpellCircleType Circle => SpellCircleType.First;
 
         public override SpellInfo Info { get; }
+
+        public override SpellTargetingType Targeting => _targeting;
 
         public override int ManaCost => _manaCost;
 

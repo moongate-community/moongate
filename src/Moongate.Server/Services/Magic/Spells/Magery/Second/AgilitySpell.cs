@@ -18,6 +18,8 @@ public sealed class AgilitySpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.Second;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.OptionalMobile;
+
     public override SpellInfo Info { get; } = new(
         "Agility",
         "Ex Uus",

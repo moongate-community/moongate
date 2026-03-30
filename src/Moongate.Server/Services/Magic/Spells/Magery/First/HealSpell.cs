@@ -17,6 +17,8 @@ public sealed class HealSpell : MagerySpellBase
 
     public override SpellCircleType Circle => SpellCircleType.First;
 
+    public override SpellTargetingType Targeting => SpellTargetingType.OptionalMobile;
+
     public override SpellInfo Info { get; } = new(
         "Heal",
         "In Mani",

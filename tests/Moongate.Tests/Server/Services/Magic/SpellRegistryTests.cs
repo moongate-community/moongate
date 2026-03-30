@@ -54,6 +54,8 @@ public sealed class SpellRegistryTests
 
         public SpellInfo Info { get; } = new("Test", "An", [], []);
 
+        public SpellTargetingType Targeting => SpellTargetingType.None;
+
         public int ManaCost => 4;
 
         public TimeSpan CastDelay => TimeSpan.FromSeconds(1);
