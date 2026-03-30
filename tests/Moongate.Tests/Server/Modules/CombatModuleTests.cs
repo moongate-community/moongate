@@ -4,6 +4,7 @@ using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules;
 using Moongate.UO.Data.Bodies;
@@ -62,6 +63,65 @@ public sealed class CombatModuleTests
 
         public void RegisterListener<TEvent>(IGameEventListener<TEvent> listener) where TEvent : IGameEvent
             => _ = listener;
+    }
+
+    private sealed class RecordingMagicService : IMagicService
+    {
+        public Serial? LastCasterId { get; private set; }
+
+        public int? LastSpellId { get; private set; }
+
+        public Serial? LastTargetId { get; private set; }
+
+        public int TryCastCalls { get; private set; }
+
+        public int TrySetTargetCalls { get; private set; }
+
+        public bool TryCastResult { get; set; } = true;
+
+        public bool TrySetTargetResult { get; set; } = true;
+
+        public bool IsCasting(Serial casterId)
+        {
+            _ = casterId;
+
+            return false;
+        }
+
+        public bool TrySetTarget(Serial casterId, int spellId, Serial targetId)
+        {
+            LastCasterId = casterId;
+            LastSpellId = spellId;
+            LastTargetId = targetId;
+            TrySetTargetCalls++;
+
+            return TrySetTargetResult;
+        }
+
+        public ValueTask<bool> TryCastAsync(
+            UOMobileEntity caster,
+            int spellId,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            LastCasterId = caster.Id;
+            LastSpellId = spellId;
+            TryCastCalls++;
+
+            return ValueTask.FromResult(TryCastResult);
+        }
+
+        public void Interrupt(Serial casterId)
+            => _ = casterId;
+
+        public ValueTask OnCastTimerExpiredAsync(Serial casterId, CancellationToken cancellationToken = default)
+        {
+            _ = casterId;
+            _ = cancellationToken;
+
+            return ValueTask.CompletedTask;
+        }
     }
 
     private sealed class CombatTestSpatialWorldService : ISpatialWorldService
@@ -159,6 +219,37 @@ public sealed class CombatModuleTests
                 Assert.That(combatService.LastAttackerId, Is.EqualTo(npc.Id));
                 Assert.That(combatService.LastDefenderId, Is.EqualTo(target.Id));
                 Assert.That(combatService.ClearCalls, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void Cast_WhenTargetIsProvided_ShouldForwardToMagicServiceAndBindTarget()
+    {
+        var spatial = new CombatTestSpatialWorldService();
+        var npc = new UOMobileEntity { Id = (Serial)0x441u, MapId = 1, Location = new(100, 100, 0) };
+        var target = new UOMobileEntity { Id = (Serial)0x442u, IsPlayer = true, MapId = 1, Location = new(101, 100, 0) };
+        spatial.AddMobile(npc);
+        spatial.AddMobile(target);
+        var magicService = new RecordingMagicService();
+        var module = new CombatModule(
+            spatial,
+            new CombatTestGameEventBusService(),
+            new RecordingCombatService(),
+            magicService
+        );
+
+        var cast = module.Cast((uint)npc.Id, 45, (uint)target.Id);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(cast, Is.True);
+                Assert.That(magicService.TryCastCalls, Is.EqualTo(1));
+                Assert.That(magicService.TrySetTargetCalls, Is.EqualTo(1));
+                Assert.That(magicService.LastCasterId, Is.EqualTo(npc.Id));
+                Assert.That(magicService.LastSpellId, Is.EqualTo(45));
+                Assert.That(magicService.LastTargetId, Is.EqualTo(target.Id));
             }
         );
     }
