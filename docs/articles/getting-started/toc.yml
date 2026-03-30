@@ -1,6 +1,8 @@
 items:
   - name: Introduction
     href: introduction.md
+  - name: Death and Resurrection
+    href: death-and-resurrection.md
   - name: Quick Start
     href: quickstart.md
   - name: Installation

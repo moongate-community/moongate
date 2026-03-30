@@ -6,6 +6,8 @@
   items:
   - name: Introduction
     href: articles/getting-started/introduction.md
+  - name: Death and Resurrection
+    href: articles/getting-started/death-and-resurrection.md
   - name: Quick Start
     href: articles/getting-started/quickstart.md
   - name: Installation
@@ -136,6 +138,8 @@
   items:
   - name: Stress Test
     href: articles/operations/stress-test.md
+  - name: GM Menu
+    href: articles/operations/gm-menu.md
   - name: Template Validation
     href: articles/operations/template-validation.md
   - name: Console Commands

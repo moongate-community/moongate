@@ -1,6 +1,8 @@
 items:
   - name: Stress Test
     href: stress-test.md
+  - name: GM Menu
+    href: gm-menu.md
   - name: Template Validation
     href: template-validation.md
   - name: Console Commands
