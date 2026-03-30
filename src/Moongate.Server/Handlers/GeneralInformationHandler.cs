@@ -59,6 +59,10 @@ public class GeneralInformationHandler : BasePacketListener
                 await HandleStatLockChangeAsync(session, payload);
 
                 break;
+            case GeneralInformationSubcommandType.SpellSelected:
+                await HandleSpellSelectedAsync(session, payload);
+
+                break;
             case GeneralInformationSubcommandType.RequestPopupMenu:
                 await HandleRequestPopupMenuAsync(session, payload);
 
@@ -120,6 +124,18 @@ public class GeneralInformationHandler : BasePacketListener
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
 
         return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
+    }
+
+    private ValueTask HandleSpellSelectedAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length != 2)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var spellId = BinaryPrimitives.ReadUInt16BigEndian(payload);
+
+        return _gameEventBusService.PublishAsync(new SpellCastRequestedEvent(session.SessionId, spellId));
     }
 
     private static void HandleClientType(GameSession session, ReadOnlySpan<byte> payload)

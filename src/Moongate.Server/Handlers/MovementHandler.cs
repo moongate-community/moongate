@@ -10,6 +10,7 @@ using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.World;
 using Moongate.Server.Listeners.Base;
+using Moongate.Server.Services.Magic;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Types;
 using Serilog;
@@ -75,6 +76,22 @@ public class MovementHandler : BasePacketListener
 
         if (session.Character is null)
         {
+            return Task.FromResult(true);
+        }
+
+        if (ParalyzeStateHelper.BlocksMovement(session.Character, DateTime.UtcNow))
+        {
+            Enqueue(
+                session,
+                new MoveDenyPacket(
+                    moveRequestPacket.Sequence,
+                    (short)session.Character.Location.X,
+                    (short)session.Character.Location.Y,
+                    session.Character.Direction,
+                    (sbyte)session.Character.Location.Z
+                )
+            );
+
             return Task.FromResult(true);
         }
 

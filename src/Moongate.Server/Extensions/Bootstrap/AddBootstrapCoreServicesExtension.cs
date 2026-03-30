@@ -18,6 +18,7 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Lifecycle;
+using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Messaging;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -36,6 +37,7 @@ using Moongate.Server.Services.Interaction;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Lifecycle;
 using Moongate.Server.Services.Maps;
+using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Movement;
 using Moongate.Server.Services.Packets;
@@ -93,6 +95,18 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
+        container.RegisterDelegate(
+            _ =>
+            {
+                var registry = new SpellRegistry();
+                SpellInitializer.RegisterAll(registry);
+
+                return registry;
+            },
+            Reuse.Singleton
+        );
+        container.Register<ISpellbookService, SpellbookService>(Reuse.Singleton);
+        container.Register<IMagicService, MagicService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
         container.Register<IPlayerLoginWorldSyncService, PlayerLoginWorldSyncService>(Reuse.Singleton);
