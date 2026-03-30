@@ -1,3 +1,76 @@
+## [1.2.0](https://github.com/moongate-community/moongate/compare/v1.1.0...v1.2.0) (2026-03-27)
+
+### Features
+
+* add 9 Lua AI brains for ported ModernUO NPCs ([8345eec](https://github.com/moongate-community/moongate/commit/8345eecfe0ab3f3fc4b303bf67157aed2a6212f4)), closes [#171](https://github.com/moongate-community/moongate/issues/171)
+* add centralized hot reload for scripts and templates ([41ac8af](https://github.com/moongate-community/moongate/commit/41ac8afc8753a9093c3f3364eff4b460af527c9b))
+* add generated NPC templates from ModernUO ([91ce4f5](https://github.com/moongate-community/moongate/commit/91ce4f5babac8551aaebf79494fe7ecdc6da170f)), closes [#171](https://github.com/moongate-community/moongate/issues/171)
+* add gm command entry point ([4e49158](https://github.com/moongate-community/moongate/commit/4e49158ca73bc51351c9b7a914bac83ff5745f15))
+* add gm menu lua hub ([3dd801a](https://github.com/moongate-community/moongate/commit/3dd801a472973b5811083740d001a128c4aae861))
+* add gm menu spacing probe ([d08c6cd](https://github.com/moongate-community/moongate/commit/d08c6cdb3f37e97f7102628ea367b66293aee62e))
+* add gm menu spawn and broadcast tabs ([e629aee](https://github.com/moongate-community/moongate/commit/e629aee3e295bcce4a21a3b7a6f76e6bba967dfc))
+* add gm sidebar menu ([2d6eb90](https://github.com/moongate-community/moongate/commit/2d6eb90a6a71b981e76618b942f50f24f5014817))
+* add guard scripting module ([5184132](https://github.com/moongate-community/moongate/commit/5184132757fbb1fa3a827ec51f8e9587346b1baa))
+* add lua target cursor bridge ([d53a0f9](https://github.com/moongate-community/moongate/commit/d53a0f90f85b831746dd01f72676afe092bd509b))
+* add lua template search bridges ([6e00477](https://github.com/moongate-community/moongate/commit/6e00477d7a1da76add789bc39f1ac8ef3a880f45))
+* add lua training objects ([93b8c76](https://github.com/moongate-community/moongate/commit/93b8c76d367da8ca295d09171bf03fbc33867f90)), closes [#162](https://github.com/moongate-community/moongate/issues/162)
+* add modernuo brain runtime module api ([d9d5ec9](https://github.com/moongate-community/moongate/commit/d9d5ec90ad5bd0d56f3a540fd5c3878e528f3707))
+* add optional guard patrol roam ([b46fa53](https://github.com/moongate-community/moongate/commit/b46fa53e59370933587f0bf410b40524c45bfca7))
+* add phase 1 modernuo ai brains ([2bfea3e](https://github.com/moongate-community/moongate/commit/2bfea3e9a9e3946d24b03f5f5b573344efeadb86))
+* add Python converter tool for ModernUO NPC porting ([f9193d5](https://github.com/moongate-community/moongate/commit/f9193d55d848c88340f129cb2e2fc22a08dfa893))
+* add Resistances and DamageTypes to MobileTemplateDefinition ([#171](https://github.com/moongate-community/moongate/issues/171)) ([b5021ec](https://github.com/moongate-community/moongate/commit/b5021ec9e73ae6c79d85d50f56a3640864910097))
+* add reusable gump layout helpers ([1d353c2](https://github.com/moongate-community/moongate/commit/1d353c20714e46c36ceba16498498847409c9f75))
+* add template validator dotnet tool ([076e0b2](https://github.com/moongate-community/moongate/commit/076e0b2d110e0d64a0c1510e73a07d6b3aac363c)), closes [#184](https://github.com/moongate-community/moongate/issues/184)
+* add validator run header ([8ecc9c7](https://github.com/moongate-community/moongate/commit/8ecc9c75591657aab2901c6b570574cbaa83204b))
+* **converter:** emit canonical mobile ai metadata ([c47d51f](https://github.com/moongate-community/moongate/commit/c47d51f97d3ff77132196072baecb8d4225d5448))
+* enable default patrol on guards ([8ed497b](https://github.com/moongate-community/moongate/commit/8ed497bf8450d5569d7cd6848cee4f6732533f99))
+* map resistances and damage types from template to mobile entity ([#171](https://github.com/moongate-community/moongate/issues/171)) ([473b7b3](https://github.com/moongate-community/moongate/commit/473b7b3fd3a6f4ad2bd921fdf8f84b71b3305825))
+* migrate mobile templates to variants ([3382641](https://github.com/moongate-community/moongate/commit/33826411a420c2ca3cf14e421a18a68c3cc9dc3a)), closes [#179](https://github.com/moongate-community/moongate/issues/179)
+* port guard brain parity into lua ([85ce86d](https://github.com/moongate-community/moongate/commit/85ce86d43e86df90ae3a01b80983cef8d50638a8))
+* **uo:** add canonical mobile ai template schema ([d8bb1d1](https://github.com/moongate-community/moongate/commit/d8bb1d1688bf9d41501480d971ec7f40019cd22a))
+
+### Bug Fixes
+
+* harden users API authorization and account role mutation guards to prevent privilege escalation
+* address code review issues in NPC porting ([c88443c](https://github.com/moongate-community/moongate/commit/c88443ca456b10a2c9dc654a86181e66e4a4ae2a)), closes [#171](https://github.com/moongate-community/moongate/issues/171)
+* align guard brain runtime naming ([d0830a1](https://github.com/moongate-community/moongate/commit/d0830a1bac7f4f035436c14f1ae3f70d4ae204b5))
+* align template validator version metadata ([9c40dbb](https://github.com/moongate-community/moongate/commit/9c40dbb4b7ced180816393f23f26110c459a769c))
+* anchor guard patrol roaming to home ([603fa2e](https://github.com/moongate-community/moongate/commit/603fa2edb9d063f4e1a0c57ed3286f2c1aed805c))
+* **converter:** limit symbolic ai field scope ([e30a2b4](https://github.com/moongate-community/moongate/commit/e30a2b471420798547105cf7012a0e4db0baf3d7))
+* **converter:** resolve inherited modernuo ai metadata ([479e221](https://github.com/moongate-community/moongate/commit/479e221046e0c10735cb83ea2f31a73de7821913))
+* **converter:** resolve package-private ai ranges ([7ab224e](https://github.com/moongate-community/moongate/commit/7ab224ede1adadabedfd250ed5e5e740038a7c91))
+* correct passive mobile ai metadata ([b4ef439](https://github.com/moongate-community/moongate/commit/b4ef439be17710ddcabe923516902b9885845ccc))
+* enhance path traversal security checks in LuaScriptLoader ([2c11e4f](https://github.com/moongate-community/moongate/commit/2c11e4f36eabdfca4c496bf0a81f813280a74f92))
+* enhance template path validation and security checks ([53c9352](https://github.com/moongate-community/moongate/commit/53c9352432b0f9e567ed89c43520fc57b535bf36))
+* handle missed combat hooks in ai vendor ([84dad84](https://github.com/moongate-community/moongate/commit/84dad841cbd72b8930d14b8346c901bb5f42f77f))
+* handle nullable numeric lua bindings ([5dbc2c4](https://github.com/moongate-community/moongate/commit/5dbc2c4e36d89c17b244e7ef0dd5a36843a0b9bb))
+* harden release workflow git setup ([0fb1d56](https://github.com/moongate-community/moongate/commit/0fb1d567b6eea1bd77f16cd923c29468f6250358))
+* harden semantic-release github success handling ([d5923c7](https://github.com/moongate-community/moongate/commit/d5923c7f579c5fbaf1e0b8b1024adaede4f7a5a6)), closes [#127](https://github.com/moongate-community/moongate/issues/127) [#126](https://github.com/moongate-community/moongate/issues/126)
+* import ModernUO loot packs and support items ([6d47b56](https://github.com/moongate-community/moongate/commit/6d47b568def65b0223b58d3ce7076062cae5ba69))
+* include recipient mobile id in lua combat hooks ([2d4f836](https://github.com/moongate-community/moongate/commit/2d4f83632cf58bdb0362b8226671d025c1150f2d))
+* install python in release workflow ([515fcdb](https://github.com/moongate-community/moongate/commit/515fcdb9650b1ce113231ac1b3ec61eb11e080bb))
+* migrate ai blackboard legacy keys in npc state ([21927e8](https://github.com/moongate-community/moongate/commit/21927e86ed312d26f6171e27781b34942945405f))
+* migrate mobile brains to canonical ai blocks ([e6ee153](https://github.com/moongate-community/moongate/commit/e6ee15328c212a31d21b44b8ac4970c4aad7400d))
+* normalize duplicate ai blackboard aliases ([0e0ffb3](https://github.com/moongate-community/moongate/commit/0e0ffb32ce632f20fdf4bfb54f517aed36e84f7b))
+* normalize strongest ai target scoring ([17a60de](https://github.com/moongate-community/moongate/commit/17a60de0c943b7b5af06addf1051c1753576ee8b))
+* polish gm menu spawning workflow ([f8c9b46](https://github.com/moongate-community/moongate/commit/f8c9b465205a2ff7a1918fef80c658c52abbbab0))
+* recover guard patrol after boundary breach ([c364bc5](https://github.com/moongate-community/moongate/commit/c364bc57b08f1938615b541546ea9bacdf2a6905))
+* remove gm menu probe and guard patrol crash ([32d75c3](https://github.com/moongate-community/moongate/commit/32d75c3d85d85391af9a7a19ba00369375f543a8))
+* restore ModernUO NPC outfit extraction ([ec112b6](https://github.com/moongate-community/moongate/commit/ec112b63f5d589ff72132f87abb1ef5347975239)), closes [#181](https://github.com/moongate-community/moongate/issues/181)
+* stop requiring guards lua module ([62c7971](https://github.com/moongate-community/moongate/commit/62c7971e154b011b5b664f58d01b9be799336023))
+* tighten mobile ai parser inheritance ([94d6301](https://github.com/moongate-community/moongate/commit/94d6301150d40d1848999dd0f4e6c4e3abaa0a0e))
+* trust workspace in release workflow ([6c049e9](https://github.com/moongate-community/moongate/commit/6c049e9b841bb2a0563f947e0cd21a54584ca5fc))
+* **uo:** guard null mobile ai fight mode ([a9508c3](https://github.com/moongate-community/moongate/commit/a9508c36ac06f5a6c1b672d77afac25a3851eae3))
+* **uo:** make mobile ai inheritance explicit ([ecb290a](https://github.com/moongate-community/moongate/commit/ecb290a5b2e3bb6502caa2183e0116b007392843))
+* **uo:** migrate mobile ai loader and runtime ([58cbc52](https://github.com/moongate-community/moongate/commit/58cbc5264f1dad433b4326487449d6eade7035fe))
+* **uo:** remove legacy mobile brain shim ([b3676ca](https://github.com/moongate-community/moongate/commit/b3676ca3e6800b3a846805b1ebd6ba51e44d9399))
+* **uo:** update remaining mobile ai test fixtures ([58494c7](https://github.com/moongate-community/moongate/commit/58494c7b99e3048409a3489cf372a302e36825d2))
+
+### Contributors
+
+- tom
+- Agent 57951
+
 ## [1.1.0](https://github.com/moongate-community/moongate/compare/v1.0.0...v1.1.0) (2026-03-24)
 
 ### Features
