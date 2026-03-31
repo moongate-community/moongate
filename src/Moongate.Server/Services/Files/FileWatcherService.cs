@@ -156,6 +156,14 @@ public sealed class FileWatcherService : IFileWatcherService
 
             if (string.Equals(Path.GetExtension(filePath), ".lua", StringComparison.OrdinalIgnoreCase))
             {
+                if (IsQuestScript(filePath))
+                {
+                    _fileLoaderService.LoadSingleAsync(filePath).GetAwaiter().GetResult();
+                    _logger.Information("[HotReload] Reloaded quest template: {FilePath}", filePath);
+
+                    return;
+                }
+
                 _scriptEngineService.InvalidateScript(filePath);
                 _logger.Information("[HotReload] Reloaded script: {FilePath}", filePath);
 
@@ -173,4 +181,22 @@ public sealed class FileWatcherService : IFileWatcherService
             _logger.Warning(ex, "Hot reload failed for {FilePath}", filePath);
         }
     }
+
+    private bool IsQuestScript(string filePath)
+    {
+        var normalizedPath = NormalizePath(filePath);
+        var questScriptsDirectory = GetQuestScriptsDirectory();
+
+        return normalizedPath.StartsWith(questScriptsDirectory, StringComparison.OrdinalIgnoreCase)
+               && (normalizedPath.Length == questScriptsDirectory.Length
+                   || normalizedPath[questScriptsDirectory.Length] == '/');
+    }
+
+    private string GetQuestScriptsDirectory()
+        => NormalizePath(Path.Combine(_directoriesConfig[DirectoryType.Scripts], "quests"));
+
+    private static string NormalizePath(string path)
+        => Path.GetFullPath(path)
+               .Replace(Path.DirectorySeparatorChar, '/')
+               .Replace(Path.AltDirectorySeparatorChar, '/');
 }

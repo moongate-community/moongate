@@ -78,12 +78,14 @@ public class FileLoaderService : IFileLoaderService
             throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
         }
 
+        if (loaderType == typeof(QuestTemplateLoader))
+        {
+            return LoadQuestTemplateAndValidateAsync(filePath);
+        }
+
         var loader = EnsureLoader(loaderType);
         return loader.LoadSingleAsync(filePath);
     }
-
-    public void Dispose()
-        => _fileLoaders.Clear();
 
     public async Task ExecuteLoadersAsync()
     {
@@ -116,6 +118,12 @@ public class FileLoaderService : IFileLoaderService
     public Task StopAsync()
         => Task.CompletedTask;
 
+    private async Task LoadQuestTemplateAndValidateAsync(string filePath)
+    {
+        await LoadQuestTemplateAsync(filePath);
+        await LoadSingleAsync(typeof(TemplateValidationLoader), filePath);
+    }
+
     private IFileLoader EnsureLoader(Type loaderType)
     {
         foreach (var loader in _fileLoaders)
@@ -137,6 +145,13 @@ public class FileLoaderService : IFileLoaderService
         }
 
         throw new InvalidOperationException($"Unable to resolve loader '{loaderType.FullName}'.");
+    }
+
+    private Task LoadQuestTemplateAsync(string filePath)
+    {
+        var loader = EnsureLoader(typeof(QuestTemplateLoader));
+
+        return loader.LoadSingleAsync(filePath);
     }
 
     private Type? ResolveLoaderTypeByFilePath(string filePath)
@@ -247,4 +262,7 @@ public class FileLoaderService : IFileLoaderService
                    .Replace(Path.DirectorySeparatorChar, '/')
                    .Replace(Path.AltDirectorySeparatorChar, '/');
     }
+
+    public void Dispose()
+        => _fileLoaders.Clear();
 }
