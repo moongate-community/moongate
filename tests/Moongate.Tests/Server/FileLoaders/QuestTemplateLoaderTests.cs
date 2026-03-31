@@ -67,7 +67,7 @@ public sealed class QuestTemplateLoaderTests
     }
 
     [Test]
-    public async Task LoadSingleAsync_WhenQuestFileWasDeleted_ShouldRemoveQuestTemplateFromCache()
+    public async Task LoadSingleAsync_WhenQuestFileWasDeletedAndAnotherQuestReloads_ShouldRemoveQuestTemplateFromCache()
     {
         using var tempDirectory = new TempDirectory();
         var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
@@ -87,7 +87,7 @@ public sealed class QuestTemplateLoaderTests
         await loader.LoadAsync();
         File.Delete(spiderCullPath);
 
-        await loader.LoadSingleAsync(spiderCullPath);
+        await loader.LoadSingleAsync(ratHuntPath);
 
         Assert.Multiple(
             () =>
@@ -98,6 +98,7 @@ public sealed class QuestTemplateLoaderTests
                 Assert.That(ratHunt.Objectives[0].MobileTemplateIds, Is.EqualTo(new[] { "sewer_rat" }));
                 Assert.That(templateService.TryGet("new_haven.spider_cull", out _), Is.False);
                 Assert.That(templateService.Count, Is.EqualTo(1));
+                Assert.That(definitionService.TryGet("new_haven.spider_cull", out _), Is.False);
             }
         );
     }

@@ -81,12 +81,21 @@ public sealed class QuestTemplateLoader : IFileLoader
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
         var normalizedPath = NormalizePath(filePath);
+        var fileExists = File.Exists(normalizedPath);
+        var removedCurrentPath = false;
 
-        if (File.Exists(normalizedPath))
+        if (fileExists)
         {
             _scriptFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
         }
-        else if (!_scriptFileContents.Remove(normalizedPath))
+        else
+        {
+            removedCurrentPath = _scriptFileContents.Remove(normalizedPath);
+        }
+
+        var removedMissingPaths = RemoveMissingScriptFiles();
+
+        if (!fileExists && !removedCurrentPath && removedMissingPaths == 0)
         {
             return Task.CompletedTask;
         }
@@ -95,13 +104,17 @@ public sealed class QuestTemplateLoader : IFileLoader
         _questTemplateService.Clear();
         _questTemplateService.UpsertRange(templates);
 
-        if (File.Exists(normalizedPath))
+        if (fileExists)
         {
             _logger.Information("Reloaded quest script file {ScriptFile}", normalizedPath);
         }
-        else
+        else if (removedCurrentPath)
         {
             _logger.Information("Removed quest script file {ScriptFile}", normalizedPath);
+        }
+        else if (removedMissingPaths > 0)
+        {
+            _logger.Information("Purged stale quest script cache entries while processing {ScriptFile}", normalizedPath);
         }
 
         return Task.CompletedTask;
@@ -231,6 +244,26 @@ public sealed class QuestTemplateLoader : IFileLoader
         }
 
         return _questDefinitionService.GetAll().Select(static definition => definition.Compile()).ToList();
+    }
+
+    private int RemoveMissingScriptFiles()
+    {
+        var removedCount = 0;
+
+        foreach (var scriptFile in _scriptFileContents.Keys.ToArray())
+        {
+            if (File.Exists(scriptFile))
+            {
+                continue;
+            }
+
+            if (_scriptFileContents.Remove(scriptFile))
+            {
+                removedCount++;
+            }
+        }
+
+        return removedCount;
     }
 
     private string GetRelativeScriptPath(string scriptFile)

@@ -342,6 +342,144 @@ public class FileLoaderServiceTests
     }
 
     [Test]
+    public async Task LoadSingleAsync_WhenQuestLuaRenameRecoveryWasPreviouslyRolledBack_ShouldPurgeMissingCachedPathsBeforeRebuild()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = new DirectoriesConfig(
+            tempDirectory.Path,
+            DirectoryType.Data,
+            DirectoryType.Templates,
+            DirectoryType.Scripts,
+            DirectoryType.Save,
+            DirectoryType.Logs,
+            DirectoryType.Cache
+        );
+        var questsDirectory = Path.Combine(directoriesConfig[DirectoryType.Scripts], "quests");
+        Directory.CreateDirectory(questsDirectory);
+
+        var oldQuestPath = Path.Combine(questsDirectory, "rat_hunt.lua");
+        var newQuestPath = Path.Combine(questsDirectory, "rat_hunt_renamed.lua");
+
+        await File.WriteAllTextAsync(
+            oldQuestPath,
+            """
+            quest.define({
+                id = "new_haven.rat_hunt",
+                name = "Rat Hunt",
+                category = "starter",
+                description = "Cull the rat infestation near the mill.",
+                quest_givers = { "farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "sewer_rat" }, amount = 10 })
+                },
+                rewards = {
+                    quest.gold(150)
+                }
+            })
+            """
+        );
+
+        using var container = new Container();
+        var questDefinitionService = new QuestDefinitionService();
+        var questTemplateService = new QuestTemplateService();
+        var mobileTemplateService = new MobileTemplateService();
+        var itemTemplateService = new ItemTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileTemplateService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        var bookTemplateService = new BookTemplateService(directoriesConfig, new MoongateConfig());
+
+        mobileTemplateService.Upsert(CreateValidMobileTemplate("farmer_npc", "Farmer NPC"));
+        mobileTemplateService.Upsert(CreateValidMobileTemplate("sewer_rat", "Sewer Rat"));
+
+        container.RegisterInstance(directoriesConfig);
+        container.RegisterInstance<IQuestDefinitionService>(questDefinitionService);
+        container.RegisterInstance<IQuestTemplateService>(questTemplateService);
+        container.RegisterInstance<IItemTemplateService>(itemTemplateService);
+        container.RegisterInstance<IMobileTemplateService>(mobileTemplateService);
+        container.RegisterInstance<IFactionTemplateService>(factionTemplateService);
+        container.RegisterInstance<ISellProfileTemplateService>(sellProfileTemplateService);
+        container.RegisterInstance<ILootTemplateService>(lootTemplateService);
+        container.RegisterInstance<IBookTemplateService>(bookTemplateService);
+
+        var service = new FileLoaderService(container, directoriesConfig);
+
+        await service.LoadSingleAsync(oldQuestPath);
+
+        File.Delete(oldQuestPath);
+        await File.WriteAllTextAsync(
+            newQuestPath,
+            """
+            quest.define({
+                id = "new_haven.rat_hunt",
+                name = "Rat Hunt Broken",
+                category = "starter",
+                description = "Cull the rat infestation near the mill.",
+                quest_givers = { "missing_farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "missing_rat" }, amount = 10 })
+                },
+                rewards = {
+                    quest.gold(150)
+                }
+            })
+            """
+        );
+
+        Assert.That(
+            async () => await service.ReloadQuestTemplateAsync(oldQuestPath, newQuestPath),
+            Throws.TypeOf<InvalidOperationException>()
+        );
+
+        await File.WriteAllTextAsync(
+            newQuestPath,
+            """
+            quest.define({
+                id = "new_haven.rat_hunt",
+                name = "Rat Hunt Renamed",
+                category = "starter",
+                description = "Cull the rat infestation near the mill.",
+                quest_givers = { "farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "sewer_rat" }, amount = 10 })
+                },
+                rewards = {
+                    quest.gold(150)
+                }
+            })
+            """
+        );
+
+        await service.LoadSingleAsync(newQuestPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(questTemplateService.Count, Is.EqualTo(1));
+                Assert.That(questTemplateService.TryGet("new_haven.rat_hunt", out var questTemplate), Is.True);
+                Assert.That(questTemplate, Is.Not.Null);
+                Assert.That(questTemplate!.Name, Is.EqualTo("Rat Hunt Renamed"));
+                Assert.That(questDefinitionService.TryGet("new_haven.rat_hunt", out var questDefinition), Is.True);
+                Assert.That(questDefinition, Is.Not.Null);
+                Assert.That(questDefinition!.Name, Is.EqualTo("Rat Hunt Renamed"));
+                Assert.That(
+                    questDefinition.ScriptPath,
+                    Is.EqualTo("scripts/quests/rat_hunt_renamed.lua")
+                );
+            }
+        );
+    }
+
+    [Test]
     public void ExecuteLoadersAsync_WhenLoaderThrows_ShouldPropagateException()
     {
         using var container = new Container();

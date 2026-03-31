@@ -61,6 +61,40 @@ public sealed class FileWatcherServiceTests
     }
 
     [Test]
+    public async Task StartAsync_WhenQuestLuaFileIsDeleted_ShouldDispatchQuestRemovalReload()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
+        var questPath = WriteFile(directoriesConfig, "scripts/quests/new_haven/rat_hunt.lua");
+        var fileLoaderService = new FileLoaderServiceSpy();
+        var scriptEngineService = new ScriptEngineServiceSpy();
+        var service = CreateService(directoriesConfig, fileLoaderService, scriptEngineService);
+
+        await service.StartAsync();
+
+        try
+        {
+            File.Delete(questPath);
+
+            Assert.That(
+                SpinWait.SpinUntil(() => fileLoaderService.QuestReloadRequests.Count == 1, TimeSpan.FromSeconds(5)),
+                Is.True,
+                "Timed out waiting for quest delete watcher reload."
+            );
+
+            Assert.That(
+                fileLoaderService.QuestReloadRequests,
+                Is.EqualTo(new List<(string? RemovedFilePath, string? LoadedFilePath)> { (questPath, (string?)null) })
+            );
+            Assert.That(scriptEngineService.InvalidatedScripts, Is.Empty);
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Test]
     public void ProcessRenameOnGameLoop_WhenQuestLuaFileChanges_ShouldReloadQuestTemplatesAtomically()
     {
         using var tempDirectory = new TempDirectory();

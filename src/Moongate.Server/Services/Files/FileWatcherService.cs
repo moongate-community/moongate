@@ -96,6 +96,7 @@ public sealed class FileWatcherService : IFileWatcherService
 
         watcher.Changed += OnFileChanged;
         watcher.Created += OnFileChanged;
+        watcher.Deleted += OnFileChanged;
         watcher.Renamed += OnFileRenamed;
         _watchers.Add(watcher);
     }
