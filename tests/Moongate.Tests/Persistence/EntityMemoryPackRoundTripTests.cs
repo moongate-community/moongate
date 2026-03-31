@@ -252,4 +252,54 @@ public sealed class EntityMemoryPackRoundTripTests
             }
         );
     }
+
+    [Test]
+    public void MobileEntity_QuestProgress_ShouldRoundTripDirectlyThroughMemoryPack()
+    {
+        var entity = new UOMobileEntity
+        {
+            Id = (Serial)0x101u
+        };
+        entity.QuestProgress.Add(
+            new()
+            {
+                QuestId = "quest::find-the-herb",
+                Status = QuestProgressStatusType.ReadyToTurnIn,
+                AcceptedAtUtc = new(2026, 3, 31, 9, 15, 0, DateTimeKind.Utc),
+                CompletedAtUtc = new(2026, 3, 31, 10, 30, 0, DateTimeKind.Utc),
+                Objectives =
+                [
+                    new()
+                    {
+                        ObjectiveIndex = 0,
+                        CurrentAmount = 3,
+                        IsCompleted = true
+                    },
+                    new()
+                    {
+                        ObjectiveIndex = 1,
+                        CurrentAmount = 1,
+                        IsCompleted = true
+                    }
+                ]
+            }
+        );
+
+        var payload = MemoryPackSerializer.Serialize(entity);
+        var restored = MemoryPackSerializer.Deserialize<UOMobileEntity>(payload);
+
+        Assert.That(restored, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored!.QuestProgress, Has.Count.EqualTo(1));
+                Assert.That(restored.QuestProgress[0].QuestId, Is.EqualTo("quest::find-the-herb"));
+                Assert.That(restored.QuestProgress[0].Status, Is.EqualTo(QuestProgressStatusType.ReadyToTurnIn));
+                Assert.That(restored.QuestProgress[0].AcceptedAtUtc, Is.EqualTo(entity.QuestProgress[0].AcceptedAtUtc));
+                Assert.That(restored.QuestProgress[0].CompletedAtUtc, Is.EqualTo(entity.QuestProgress[0].CompletedAtUtc));
+                Assert.That(restored.QuestProgress[0].Objectives, Has.Count.EqualTo(2));
+                Assert.That(restored.QuestProgress[0].Objectives[1].IsCompleted, Is.True);
+            }
+        );
+    }
 }

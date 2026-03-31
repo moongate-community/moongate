@@ -852,6 +852,12 @@ public partial class UOMobileEntity : IMobileEntity
     public string? FactionId { get; set; }
 
     /// <summary>
+    /// Gets or sets the persisted quest progress entries for this mobile.
+    /// </summary>
+    [MemoryPackOrder(65)]
+    public List<QuestProgressEntity> QuestProgress { get; set; } = [];
+
+    /// <summary>
     /// Associates an equipped item with this mobile and updates item ownership metadata.
     /// </summary>
     public void AddEquippedItem(ItemLayerType layer, UOItemEntity item)
