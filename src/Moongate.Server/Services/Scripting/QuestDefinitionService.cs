@@ -242,14 +242,12 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
             throw new InvalidOperationException(message);
         }
 
-        var parsed = (int)value.Number;
-
-        if (parsed != 1)
+        if (value.Number != 1d)
         {
             throw new InvalidOperationException(message);
         }
 
-        return parsed;
+        return 1;
     }
 
     private static int RequirePositiveInt(Table table, string key, string message)

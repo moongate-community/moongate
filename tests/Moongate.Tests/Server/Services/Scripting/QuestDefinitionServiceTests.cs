@@ -171,6 +171,20 @@ public sealed class QuestDefinitionServiceTests
     }
 
     [Test]
+    public void Register_WhenMaxActivePerCharacterIsFractional_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition["max_active_per_character"] = 1.5d;
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("supports only one active instance per character")
+        );
+    }
+
+    [Test]
     public void Register_WhenObjectiveTypeIsUnsupported_ShouldThrow()
     {
         var service = new QuestDefinitionService();
