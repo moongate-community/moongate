@@ -2,7 +2,7 @@ using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Quests;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Tests.Server.Services.Quests;
+namespace Moongate.Tests.UO.Data.Services.Templates;
 
 [TestFixture]
 public sealed class QuestTemplateServiceTests
