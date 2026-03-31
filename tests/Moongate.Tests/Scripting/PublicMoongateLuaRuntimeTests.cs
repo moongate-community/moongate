@@ -12,6 +12,7 @@ using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Modules;
 using Moongate.Server.Services.Scripting;
 using Moongate.Tests.Server.Services.Spatial;
@@ -34,6 +35,7 @@ public sealed class PublicMoongateLuaRuntimeTests
         var luarcDir = temp.Path;
         Directory.CreateDirectory(Path.Combine(scriptsDir, "items"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "moongates"));
+        Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "layout"));
         Directory.CreateDirectory(Path.Combine(scriptsDir, "gumps", "moongates"));
         Directory.CreateDirectory(luarcDir);
 
@@ -66,6 +68,14 @@ public sealed class PublicMoongateLuaRuntimeTests
             Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "moongates", "render.lua"),
             Path.Combine(scriptsDir, "gumps", "moongates", "render.lua")
         );
+        File.Copy(
+            Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "layout", "header.lua"),
+            Path.Combine(scriptsDir, "gumps", "layout", "header.lua")
+        );
+        File.Copy(
+            Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "layout", "stack.lua"),
+            Path.Combine(scriptsDir, "gumps", "layout", "stack.lua")
+        );
         await File.WriteAllTextAsync(Path.Combine(scriptsDir, "init.lua"), "require(\"items.public_moongate\")\n");
 
         var queue = new BasePacketListenerTestOutgoingPacketQueue();
@@ -74,6 +84,7 @@ public sealed class PublicMoongateLuaRuntimeTests
         var mobileService = new PublicMoongateLuaRuntimeMobileService();
         var itemService = new PublicMoongateLuaRuntimeItemService();
         var characterService = new PublicMoongateLuaRuntimeCharacterService();
+        var speechService = new PublicMoongateLuaRuntimeSpeechService();
 
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
         var session = new GameSession(new(client))
@@ -108,6 +119,7 @@ public sealed class PublicMoongateLuaRuntimeTests
         container.RegisterInstance<IMobileService>(mobileService);
         container.RegisterInstance<IItemService>(itemService);
         container.RegisterInstance<ICharacterService>(characterService);
+        container.RegisterInstance<ISpeechService>(speechService);
 
         var service = new LuaScriptEngineService(
             dirs,
@@ -271,5 +283,36 @@ public sealed class PublicMoongateLuaRuntimeTests
 
         public Task<bool> RemoveCharacterFromAccountAsync(Serial accountId, Serial characterId)
             => Task.FromResult(true);
+    }
+
+    private sealed class PublicMoongateLuaRuntimeSpeechService : ISpeechService
+    {
+        public Task<int> BroadcastFromServerAsync(string text, short hue = 946, short font = 3, string language = "ENU")
+            => Task.FromResult(0);
+
+        public Task HandleOpenChatWindowAsync(GameSession session, Moongate.Network.Packets.Incoming.Speech.OpenChatWindowPacket packet, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
+
+        public Task<Moongate.Network.Packets.Outgoing.Speech.UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            Moongate.Network.Packets.Incoming.Speech.UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult<Moongate.Network.Packets.Outgoing.Speech.UnicodeSpeechMessagePacket?>(null);
+
+        public Task<bool> SendMessageFromServerAsync(GameSession session, string text, short hue = 946, short font = 3, string language = "ENU")
+            => Task.FromResult(true);
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            Moongate.UO.Data.Types.ChatMessageType messageType = Moongate.UO.Data.Types.ChatMessageType.Regular,
+            short hue = 946,
+            short font = 3,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult(0);
     }
 }
