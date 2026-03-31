@@ -3,6 +3,7 @@ using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.Types;
+using Moongate.Tests.Persistence.Support;
 
 namespace Moongate.Tests.Persistence;
 
@@ -264,7 +265,7 @@ public sealed class EntityMemoryPackRoundTripTests
             new()
             {
                 QuestId = "quest::find-the-herb",
-                Status = QuestProgressStatusType.ReadyToTurnIn,
+                Status = QuestProgressStatusType.Completed,
                 AcceptedAtUtc = new(2026, 3, 31, 9, 15, 0, DateTimeKind.Utc),
                 CompletedAtUtc = new(2026, 3, 31, 10, 30, 0, DateTimeKind.Utc),
                 Objectives =
@@ -294,11 +295,37 @@ public sealed class EntityMemoryPackRoundTripTests
             {
                 Assert.That(restored!.QuestProgress, Has.Count.EqualTo(1));
                 Assert.That(restored.QuestProgress[0].QuestId, Is.EqualTo("quest::find-the-herb"));
-                Assert.That(restored.QuestProgress[0].Status, Is.EqualTo(QuestProgressStatusType.ReadyToTurnIn));
+                Assert.That(restored.QuestProgress[0].Status, Is.EqualTo(QuestProgressStatusType.Completed));
                 Assert.That(restored.QuestProgress[0].AcceptedAtUtc, Is.EqualTo(entity.QuestProgress[0].AcceptedAtUtc));
                 Assert.That(restored.QuestProgress[0].CompletedAtUtc, Is.EqualTo(entity.QuestProgress[0].CompletedAtUtc));
                 Assert.That(restored.QuestProgress[0].Objectives, Has.Count.EqualTo(2));
+                Assert.That(restored.QuestProgress[0].Objectives[0].ObjectiveIndex, Is.EqualTo(0));
+                Assert.That(restored.QuestProgress[0].Objectives[0].CurrentAmount, Is.EqualTo(3));
                 Assert.That(restored.QuestProgress[0].Objectives[1].IsCompleted, Is.True);
+                Assert.That(restored.QuestProgress[0].Objectives[1].ObjectiveIndex, Is.EqualTo(1));
+                Assert.That(restored.QuestProgress[0].Objectives[1].CurrentAmount, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public void MobileEntity_LegacyPayloadWithoutQuestProgress_ShouldDeserializeWithEmptyQuestProgress()
+    {
+        var legacy = new UOMobileEntityLegacyWithoutQuestProgress
+        {
+            Id = (Serial)0x102u
+        };
+
+        var payload = MemoryPackSerializer.Serialize(legacy);
+        var restored = MemoryPackSerializer.Deserialize<UOMobileEntity>(payload);
+
+        Assert.That(restored, Is.Not.Null);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(restored!.Id, Is.EqualTo(legacy.Id));
+                Assert.That(restored.QuestProgress, Is.Not.Null);
+                Assert.That(restored.QuestProgress, Is.Empty);
             }
         );
     }

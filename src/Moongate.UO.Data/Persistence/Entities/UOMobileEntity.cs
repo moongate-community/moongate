@@ -1588,9 +1588,11 @@ public partial class UOMobileEntity : IMobileEntity
     [MemoryPackOnDeserialized]
     private void OnMemoryPackDeserialized()
     {
-        _customProperties = _customProperties.Count == 0
+        _customProperties = _customProperties is null || _customProperties.Count == 0
                                 ? new(StringComparer.Ordinal)
                                 : new(_customProperties, StringComparer.Ordinal);
+        Skills ??= [];
+        QuestProgress ??= [];
 
         foreach (var skill in Skills)
         {
