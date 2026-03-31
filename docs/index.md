@@ -45,6 +45,8 @@ This is the main documentation portal for Moongate v2.
 - [Scheduled Events](articles/scripting/scheduled-events.md)
 - [Loot Containers](articles/scripting/loot-containers.md)
 - [Vendor and Context Menus](articles/scripting/vendor-context-menus.md)
+- [Quests](articles/scripting/quests.md)
+- [Public Moongates](articles/scripting/public-moongates.md)
 - [Lua Starting Loadout](articles/scripting/starting-loadout.md)
 - [NPC Behaviors](articles/scripting/npc-behaviors.md)
 - [Intelligent NPC Dialogue](articles/scripting/intelligent-npcs.md)

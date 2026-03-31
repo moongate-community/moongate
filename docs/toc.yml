@@ -86,6 +86,10 @@
     href: articles/scripting/loot-containers.md
   - name: Vendor and Context Menus
     href: articles/scripting/vendor-context-menus.md
+  - name: Quests
+    href: articles/scripting/quests.md
+  - name: Public Moongates
+    href: articles/scripting/public-moongates.md
   - name: Starting Loadout
     href: articles/scripting/starting-loadout.md
   - name: NPC Behaviors

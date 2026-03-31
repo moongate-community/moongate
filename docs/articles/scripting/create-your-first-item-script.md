@@ -145,3 +145,6 @@ Expected result:
 
 Continue with [Create Your First Loot Container](create-your-first-loot-container.md) or
 [Create Your First Gump](create-your-first-gump.md).
+
+If you want a shared travel item with a dedicated gump and a shard-wide destination list, continue with
+[Public Moongates](public-moongates.md).
