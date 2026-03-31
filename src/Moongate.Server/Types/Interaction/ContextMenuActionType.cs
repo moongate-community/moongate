@@ -9,5 +9,6 @@ public enum ContextMenuActionType : byte
     OpenPaperdoll = 1,
     VendorBuy = 2,
     VendorSell = 3,
-    Script = 4
+    QuestDialog = 4,
+    Script = 5
 }

@@ -11,6 +11,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Scripting;
+using Moongate.Server.Interfaces.Services.Quests;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Interaction;
@@ -18,6 +19,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Templates.Quests;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -136,6 +138,108 @@ public sealed class ContextMenuServiceTests
 
             return Task.CompletedTask;
         }
+    }
+
+    private sealed class TestQuestDialogRequestedEventListener : IGameEventListener<QuestDialogRequestedEvent>
+    {
+        public int Calls { get; private set; }
+
+        public QuestDialogRequestedEvent LastEvent { get; private set; }
+
+        public Task HandleAsync(QuestDialogRequestedEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            Calls++;
+            LastEvent = gameEvent;
+
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class ContextMenuTestQuestService : IQuestService
+    {
+        public IReadOnlyList<string> AvailableQuestIds { get; set; } = [];
+
+        public IReadOnlyList<string> ActiveQuestIds { get; set; } = [];
+
+        public Task<bool> AcceptAsync(UOMobileEntity player, UOMobileEntity npc, string questId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<QuestTemplateDefinition>> GetAvailableForNpcAsync(
+            UOMobileEntity player,
+            UOMobileEntity npc,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = player;
+            _ = cancellationToken;
+
+            if (!npc.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
+                !string.Equals(templateId, "quest_giver_npc", StringComparison.OrdinalIgnoreCase))
+            {
+                return Task.FromResult<IReadOnlyList<QuestTemplateDefinition>>([]);
+            }
+
+            return Task.FromResult<IReadOnlyList<QuestTemplateDefinition>>(
+                AvailableQuestIds.Select(
+                    static questId =>
+                        new QuestTemplateDefinition
+                        {
+                            Id = questId,
+                            Name = "Quest Name",
+                            Description = "Quest Description",
+                            Category = "starter",
+                            QuestGiverTemplateIds = ["quest_giver_npc"],
+                            CompletionNpcTemplateIds = ["quest_giver_npc"],
+                            MaxActivePerCharacter = 1
+                        }
+                ).ToList()
+            );
+        }
+
+        public Task<IReadOnlyList<QuestProgressEntity>> GetActiveForNpcAsync(
+            UOMobileEntity player,
+            UOMobileEntity npc,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = player;
+            _ = cancellationToken;
+
+            if (!npc.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
+                !string.Equals(templateId, "quest_turn_in_npc", StringComparison.OrdinalIgnoreCase))
+            {
+                return Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
+            }
+
+            return Task.FromResult<IReadOnlyList<QuestProgressEntity>>(
+                ActiveQuestIds.Select(
+                    static questId =>
+                        new QuestProgressEntity
+                        {
+                            QuestId = questId,
+                            Status = QuestProgressStatusType.ReadyToTurnIn
+                        }
+                ).ToList()
+            );
+        }
+
+        public Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
+        {
+            _ = player;
+            _ = cancellationToken;
+
+            return Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
+        }
+
+        public Task OnMobileKilledAsync(UOMobileEntity player, UOMobileEntity killedMobile, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task ReevaluateInventoryAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<bool> TryCompleteAsync(UOMobileEntity player, UOMobileEntity npc, string questId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 
     private sealed class ContextMenuTestLuaBrainRunner : ILuaBrainRunner
@@ -383,6 +487,113 @@ public sealed class ContextMenuServiceTests
                 Assert.That(listener.Calls, Is.EqualTo(1));
                 Assert.That(listener.LastEvent.SessionId, Is.EqualTo(session.SessionId));
                 Assert.That(listener.LastEvent.VendorSerial, Is.EqualTo(vendor.Id));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForContextMenuEntrySelectedEvent_WhenQuestEntryIsSelected_ShouldPublishQuestDialogRequestedEvent()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var questListener = new TestQuestDialogRequestedEventListener();
+        eventBus.RegisterListener(questListener);
+        var questService = new ContextMenuTestQuestService
+        {
+            AvailableQuestIds = ["starter.rat_hunt"]
+        };
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, questService: questService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
+        {
+            Id = (Serial)0x00000001u,
+            MapId = 0,
+            Location = new(100, 100, 0)
+        };
+        sessions.Add(session);
+
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x0000002Cu,
+            Name = "Quest Giver",
+            MapId = 0,
+            Location = new(101, 100, 0)
+        };
+        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_giver_npc");
+        mobiles.MobilesById[npc.Id] = npc;
+
+        await service.HandleAsync(new ContextMenuRequestedEvent(session.SessionId, npc.Id));
+        _ = outgoing.TryDequeue(out _);
+
+        await service.HandleAsync(new ContextMenuEntrySelectedEvent(session.SessionId, npc.Id, 4));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(questListener.Calls, Is.EqualTo(1));
+                Assert.That(questListener.LastEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(questListener.LastEvent.TargetSerial, Is.EqualTo(npc.Id));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForContextMenuRequestedEvent_WhenQuestNPCHasAvailableQuests_ShouldIncludeQuestEntry()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var questService = new ContextMenuTestQuestService
+        {
+            AvailableQuestIds = ["starter.rat_hunt"]
+        };
+        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, questService: questService);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
+        {
+            Id = (Serial)0x00000001u,
+            MapId = 0,
+            Location = new(100, 100, 0)
+        };
+        sessions.Add(session);
+
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x0000002Du,
+            Name = "Quest Giver",
+            MapId = 0,
+            Location = new(101, 100, 0)
+        };
+        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_giver_npc");
+        mobiles.MobilesById[npc.Id] = npc;
+
+        var sent = await service.SendContextMenuAsync(session.SessionId, npc.Id);
+
+        Assert.That(sent, Is.True);
+        Assert.That(outgoing.TryDequeue(out var outgoingPacket), Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+
+        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        var payload = packet.SubcommandData.Span;
+        Assert.That(payload[6], Is.EqualTo(2));
+
+        var firstTag = BinaryPrimitives.ReadUInt16BigEndian(payload[7..9]);
+        var secondTag = BinaryPrimitives.ReadUInt16BigEndian(payload[13..15]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(new[] { firstTag, secondTag }, Does.Contain((ushort)1));
+                Assert.That(new[] { firstTag, secondTag }, Does.Contain((ushort)4));
             }
         );
     }
