@@ -99,6 +99,20 @@ public sealed class QuestDefinitionServiceTests
     }
 
     [Test]
+    public void Register_WhenQuestGiverEntryIsNotString_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition.Get("quest_givers").Table![1] = 5;
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("contains invalid 'quest_givers' entry")
+        );
+    }
+
+    [Test]
     public void Register_WhenCompletionNpcsAreMissing_ShouldThrow()
     {
         var service = new QuestDefinitionService();
@@ -125,6 +139,20 @@ public sealed class QuestDefinitionServiceTests
         Assert.That(
             () => service.Register(duplicate, "scripts/quests/b.lua"),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("is already registered")
+        );
+    }
+
+    [Test]
+    public void Register_WhenMaxActivePerCharacterIsNotPositive_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition["max_active_per_character"] = 0;
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("requires positive 'max_active_per_character'")
         );
     }
 
@@ -157,6 +185,20 @@ public sealed class QuestDefinitionServiceTests
     }
 
     [Test]
+    public void Register_WhenKillObjectiveHasInvalidMobileEntry_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition.Get("objectives").Table!.Get(1).Table!.Get("mobiles").Table![1] = 5;
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("contains invalid 'mobiles' entry")
+        );
+    }
+
+    [Test]
     public void Register_WhenCollectObjectiveHasNoItemTemplateId_ShouldThrow()
     {
         var service = new QuestDefinitionService();
@@ -171,6 +213,20 @@ public sealed class QuestDefinitionServiceTests
     }
 
     [Test]
+    public void Register_WhenObjectiveEntryIsNotTable_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition.Get("objectives").Table![1] = "invalid";
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("contains invalid objective shape")
+        );
+    }
+
+    [Test]
     public void Register_WhenRewardShapeIsUnsupported_ShouldThrow()
     {
         var service = new QuestDefinitionService();
@@ -181,6 +237,20 @@ public sealed class QuestDefinitionServiceTests
         Assert.That(
             () => service.Register(definition),
             Throws.TypeOf<InvalidOperationException>().With.Message.Contains("unsupported reward type 'virtue'")
+        );
+    }
+
+    [Test]
+    public void Register_WhenRewardEntryIsNotTable_ShouldThrow()
+    {
+        var service = new QuestDefinitionService();
+        var script = new Script();
+        var definition = BuildValidDefinition(script);
+        definition.Get("rewards").Table![1] = "invalid";
+
+        Assert.That(
+            () => service.Register(definition),
+            Throws.TypeOf<InvalidOperationException>().With.Message.Contains("contains invalid reward shape")
         );
     }
 

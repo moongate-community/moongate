@@ -69,15 +69,21 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
             QuestGiverTemplateIds = RequireStringArray(
                 definition,
                 "quest_givers",
-                $"Quest '{questId}' requires at least one quest giver."
+                $"Quest '{questId}' requires at least one quest giver.",
+                $"Quest '{questId}' contains invalid 'quest_givers' entry."
             ),
             CompletionNpcTemplateIds = RequireStringArray(
                 definition,
                 "completion_npcs",
-                $"Quest '{questId}' requires at least one completion npc."
+                $"Quest '{questId}' requires at least one completion npc.",
+                $"Quest '{questId}' contains invalid 'completion_npcs' entry."
             ),
             Repeatable = ResolveOptionalBool(definition, "repeatable") ?? false,
-            MaxActivePerCharacter = ResolveOptionalPositiveInt(definition, "max_active_per_character") ?? 1,
+            MaxActivePerCharacter = ResolveRequiredPositiveInt(
+                definition,
+                "max_active_per_character",
+                $"Quest '{questId}' requires positive 'max_active_per_character'."
+            ),
             ScriptPath = string.IsNullOrWhiteSpace(scriptPath) ? null : scriptPath.Trim()
         };
 
@@ -99,7 +105,7 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
         {
             if (pair.Value.Type != DataType.Table || pair.Value.Table is null)
             {
-                continue;
+                throw new InvalidOperationException($"Quest '{quest.Id}' contains invalid objective shape.");
             }
 
             quest.Objectives.Add(ParseObjective(quest.Id, pair.Value.Table));
@@ -138,7 +144,8 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
                 objective.MobileTemplateIds = RequireStringArray(
                     objectiveTable,
                     "mobiles",
-                    $"Quest '{questId}' kill objective requires 'mobiles'."
+                    $"Quest '{questId}' kill objective requires 'mobiles'.",
+                    $"Quest '{questId}' kill objective contains invalid 'mobiles' entry."
                 );
                 break;
             case QuestObjectiveType.Collect:
@@ -178,7 +185,7 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
         {
             if (pair.Value.Type != DataType.Table || pair.Value.Table is null)
             {
-                continue;
+                throw new InvalidOperationException($"Quest '{quest.Id}' contains invalid reward shape.");
             }
 
             ParseReward(quest, pair.Value.Table);
@@ -226,18 +233,23 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
         return value.Type == DataType.Boolean ? value.Boolean : null;
     }
 
-    private static int? ResolveOptionalPositiveInt(Table table, string key)
+    private static int ResolveRequiredPositiveInt(Table table, string key, string message)
     {
         var value = table.Get(key);
 
         if (value.Type != DataType.Number)
         {
-            return null;
+            throw new InvalidOperationException(message);
         }
 
         var parsed = (int)value.Number;
 
-        return parsed > 0 ? parsed : null;
+        if (parsed <= 0)
+        {
+            throw new InvalidOperationException(message);
+        }
+
+        return parsed;
     }
 
     private static int RequirePositiveInt(Table table, string key, string message)
@@ -271,19 +283,24 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
         return value.String.Trim();
     }
 
-    private static List<string> RequireStringArray(Table table, string key, string message)
+    private static List<string> RequireStringArray(
+        Table table,
+        string key,
+        string missingMessage,
+        string invalidEntryMessage
+    )
     {
-        var values = ResolveStringArray(table, key);
+        var values = ResolveStringArray(table, key, invalidEntryMessage);
 
         if (values.Count == 0)
         {
-            throw new InvalidOperationException(message);
+            throw new InvalidOperationException(missingMessage);
         }
 
         return values;
     }
 
-    private static List<string> ResolveStringArray(Table table, string key)
+    private static List<string> ResolveStringArray(Table table, string key, string invalidEntryMessage)
     {
         var value = table.Get(key);
 
@@ -292,15 +309,26 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
             return [];
         }
 
-        return value.Table
-                    .Pairs
-                    .OrderBy(static pair => pair.Key.CastToNumber())
-                    .Where(static pair => pair.Value.Type == DataType.String)
-                    .Select(static pair => pair.Value.String?.Trim())
-                    .Where(static item => !string.IsNullOrWhiteSpace(item))
-                    .Cast<string>()
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .ToList();
+        var resolved = new List<string>();
+
+        foreach (var pair in value.Table.Pairs.OrderBy(static pair => pair.Key.CastToNumber()))
+        {
+            if (pair.Value.Type != DataType.String || string.IsNullOrWhiteSpace(pair.Value.String))
+            {
+                throw new InvalidOperationException(invalidEntryMessage);
+            }
+
+            var normalized = pair.Value.String.Trim();
+
+            if (resolved.Contains(normalized, StringComparer.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            resolved.Add(normalized);
+        }
+
+        return resolved;
     }
 
     private static Table RequireTable(Table table, string key, string message)
