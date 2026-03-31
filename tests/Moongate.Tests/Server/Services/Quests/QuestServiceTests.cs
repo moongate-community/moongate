@@ -93,6 +93,46 @@ public sealed class QuestServiceTests
     }
 
     [Test]
+    public async Task AcceptAsync_WhenAnotherQuestIsActive_ShouldNotTreatMaxActiveAsGlobalJournalCap()
+    {
+        var player = CreatePlayer();
+        var npc = CreateMobile((Serial)0x00002001u, "farmer_npc");
+        _questTemplateService.Upsert(CreateKillQuest("starter.rat_hunt"));
+        _questTemplateService.Upsert(
+            new()
+            {
+                Id = "starter.apple_delivery",
+                Name = "Apple Delivery",
+                Category = "starter",
+                Description = "Bring apples to the farmer.",
+                QuestGiverTemplateIds = ["farmer_npc"],
+                CompletionNpcTemplateIds = ["farmer_npc"],
+                Repeatable = false,
+                MaxActivePerCharacter = 1,
+                Objectives =
+                [
+                    new()
+                    {
+                        Type = QuestObjectiveType.Deliver,
+                        ItemTemplateId = "apple",
+                        Amount = 3
+                    }
+                ]
+            }
+        );
+
+        var acceptedFirst = await _service.AcceptAsync(player, npc, "starter.rat_hunt");
+        var acceptedSecond = await _service.AcceptAsync(player, npc, "starter.apple_delivery");
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(acceptedFirst, Is.True);
+            Assert.That(acceptedSecond, Is.True);
+            Assert.That(player.QuestProgress, Has.Count.EqualTo(2));
+        });
+    }
+
+    [Test]
     public async Task AcceptAsync_WhenQuestIsRepeatableAndPreviouslyCompleted_ShouldAllowAcceptingAgain()
     {
         var player = CreatePlayer();
@@ -134,6 +174,58 @@ public sealed class QuestServiceTests
             Assert.That(player.QuestProgress.Count(static progress => progress.QuestId == "starter.apple_delivery"), Is.EqualTo(2));
             Assert.That(player.QuestProgress.Count(static progress => progress.Status == QuestProgressStatusType.Completed), Is.EqualTo(1));
             Assert.That(player.QuestProgress.Count(static progress => progress.Status == QuestProgressStatusType.Active), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public async Task OnMobileKilledAsync_WhenQuestObjectivesAreReordered_ShouldPreserveProgressByStableObjectiveIdentity()
+    {
+        var player = CreatePlayer();
+        var npc = CreateMobile((Serial)0x00002001u, "farmer_npc");
+        var quest = new QuestTemplateDefinition
+        {
+            Id = "starter.double_hunt",
+            Name = "Double Hunt",
+            Category = "starter",
+            Description = "Kill two different pests.",
+            QuestGiverTemplateIds = ["farmer_npc"],
+            CompletionNpcTemplateIds = ["farmer_npc"],
+            Repeatable = false,
+            MaxActivePerCharacter = 1,
+            Objectives =
+            [
+                new()
+                {
+                    Type = QuestObjectiveType.Kill,
+                    MobileTemplateIds = ["sewer_rat"],
+                    Amount = 1
+                },
+                new()
+                {
+                    Type = QuestObjectiveType.Kill,
+                    MobileTemplateIds = ["giant_rat"],
+                    Amount = 1
+                }
+            ]
+        };
+        _questTemplateService.Upsert(quest);
+
+        _ = await _service.AcceptAsync(player, npc, quest.Id);
+        var originalObjectiveId = player.QuestProgress[0].Objectives[0].ObjectiveId;
+
+        Assert.That(originalObjectiveId, Is.Not.Empty);
+
+        quest.Objectives = [quest.Objectives[1], quest.Objectives[0]];
+
+        await _service.OnMobileKilledAsync(player, CreateMobile((Serial)0x00002002u, "sewer_rat"));
+
+        var objective = player.QuestProgress[0].Objectives.Single(entry => entry.ObjectiveId == originalObjectiveId);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(objective.CurrentAmount, Is.EqualTo(1));
+            Assert.That(objective.IsCompleted, Is.True);
+            Assert.That(player.QuestProgress[0].Objectives.Single(entry => entry.ObjectiveId != originalObjectiveId).CurrentAmount, Is.EqualTo(0));
         });
     }
 

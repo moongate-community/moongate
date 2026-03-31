@@ -68,7 +68,7 @@ public sealed class QuestService : IQuestService
         return Task.FromResult<IReadOnlyList<QuestTemplateDefinition>>(available);
     }
 
-    public Task<IReadOnlyList<QuestProgressEntity>> GetActiveForNpcAsync(
+    public async Task<IReadOnlyList<QuestProgressEntity>> GetActiveForNpcAsync(
         UOMobileEntity player,
         UOMobileEntity npc,
         CancellationToken cancellationToken = default
@@ -82,7 +82,7 @@ public sealed class QuestService : IQuestService
 
         if (string.IsNullOrWhiteSpace(npcTemplateId))
         {
-            return Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
+            return [];
         }
 
         var active = player.QuestProgress
@@ -92,10 +92,25 @@ public sealed class QuestService : IQuestService
                                                MatchesTemplateId(quest.CompletionNpcTemplateIds, npcTemplateId)))
                            .ToList();
 
-        return Task.FromResult<IReadOnlyList<QuestProgressEntity>>(active);
+        var changed = false;
+
+        foreach (var progress in active)
+        {
+            if (TryGetQuest(progress.QuestId, out var quest))
+            {
+                changed |= EnsureObjectiveProgress(progress, quest);
+            }
+        }
+
+        if (changed)
+        {
+            await _mobileService.CreateOrUpdateAsync(player, cancellationToken);
+        }
+
+        return active;
     }
 
-    public Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(
+    public async Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(
         UOMobileEntity player,
         CancellationToken cancellationToken = default
     )
@@ -105,7 +120,22 @@ public sealed class QuestService : IQuestService
 
         var active = player.QuestProgress.Where(IsInJournal).ToList();
 
-        return Task.FromResult<IReadOnlyList<QuestProgressEntity>>(active);
+        var changed = false;
+
+        foreach (var progress in active)
+        {
+            if (TryGetQuest(progress.QuestId, out var quest))
+            {
+                changed |= EnsureObjectiveProgress(progress, quest);
+            }
+        }
+
+        if (changed)
+        {
+            await _mobileService.CreateOrUpdateAsync(player, cancellationToken);
+        }
+
+        return active;
     }
 
     public async Task<bool> AcceptAsync(
@@ -239,7 +269,7 @@ public sealed class QuestService : IQuestService
                 continue;
             }
 
-            EnsureObjectiveProgress(progress, quest);
+            changed |= EnsureObjectiveProgress(progress, quest);
 
             for (var index = 0; index < quest.Objectives.Count; index++)
             {
@@ -311,7 +341,10 @@ public sealed class QuestService : IQuestService
             return false;
         }
 
-        var activeCount = player.QuestProgress.Count(IsInJournal);
+        var activeCount = player.QuestProgress.Count(
+            progress => string.Equals(progress.QuestId, quest.Id, StringComparison.OrdinalIgnoreCase) &&
+                        IsInJournal(progress)
+        );
 
         return activeCount < quest.MaxActivePerCharacter;
     }
@@ -361,6 +394,7 @@ public sealed class QuestService : IQuestService
                     static (objective, index) => new QuestObjectiveProgressEntity
                     {
                         ObjectiveIndex = index,
+                        ObjectiveId = objective.ObjectiveId,
                         CurrentAmount = 0,
                         IsCompleted = false
                     }
@@ -471,9 +505,7 @@ public sealed class QuestService : IQuestService
         UOItemEntity? backpack
     )
     {
-        EnsureObjectiveProgress(progress, quest);
-
-        var changed = false;
+        var changed = EnsureObjectiveProgress(progress, quest);
 
         for (var index = 0; index < quest.Objectives.Count; index++)
         {
@@ -612,19 +644,90 @@ public sealed class QuestService : IQuestService
         }
     }
 
-    private void EnsureObjectiveProgress(QuestProgressEntity progress, QuestTemplateDefinition quest)
+    private bool EnsureObjectiveProgress(QuestProgressEntity progress, QuestTemplateDefinition quest)
     {
-        while (progress.Objectives.Count < quest.Objectives.Count)
+        var normalized = new List<QuestObjectiveProgressEntity>(quest.Objectives.Count);
+        var existingByObjectiveId = new Dictionary<string, Queue<QuestObjectiveProgressEntity>>(StringComparer.OrdinalIgnoreCase);
+        var legacyByIndex = new Dictionary<int, QuestObjectiveProgressEntity>();
+
+        foreach (var objectiveProgress in progress.Objectives)
         {
-            progress.Objectives.Add(
-                new QuestObjectiveProgressEntity
+            if (!string.IsNullOrWhiteSpace(objectiveProgress.ObjectiveId))
+            {
+                var objectiveId = objectiveProgress.ObjectiveId.Trim();
+
+                if (!existingByObjectiveId.TryGetValue(objectiveId, out var entries))
                 {
-                    ObjectiveIndex = progress.Objectives.Count,
+                    entries = new Queue<QuestObjectiveProgressEntity>();
+                    existingByObjectiveId[objectiveId] = entries;
+                }
+
+                entries.Enqueue(objectiveProgress);
+
+                continue;
+            }
+
+            if (!legacyByIndex.ContainsKey(objectiveProgress.ObjectiveIndex))
+            {
+                legacyByIndex[objectiveProgress.ObjectiveIndex] = objectiveProgress;
+            }
+        }
+
+        var changed = progress.Objectives.Count != quest.Objectives.Count;
+
+        for (var index = 0; index < quest.Objectives.Count; index++)
+        {
+            var objective = quest.Objectives[index];
+            var objectiveId = objective.ObjectiveId;
+            QuestObjectiveProgressEntity? objectiveProgress = null;
+
+            if (existingByObjectiveId.TryGetValue(objectiveId, out var entries) && entries.Count > 0)
+            {
+                objectiveProgress = entries.Dequeue();
+            }
+            else if (legacyByIndex.TryGetValue(index, out var legacyProgress))
+            {
+                objectiveProgress = legacyProgress;
+            }
+
+            if (objectiveProgress is null)
+            {
+                objectiveProgress = new QuestObjectiveProgressEntity
+                {
                     CurrentAmount = 0,
                     IsCompleted = false
-                }
-            );
+                };
+                changed = true;
+            }
+
+            if (!string.Equals(objectiveProgress.ObjectiveId, objectiveId, StringComparison.OrdinalIgnoreCase))
+            {
+                objectiveProgress.ObjectiveId = objectiveId;
+                changed = true;
+            }
+
+            if (objectiveProgress.ObjectiveIndex != index)
+            {
+                objectiveProgress.ObjectiveIndex = index;
+                changed = true;
+            }
+
+            if (index >= progress.Objectives.Count || !ReferenceEquals(progress.Objectives[index], objectiveProgress))
+            {
+                changed = true;
+            }
+
+            normalized.Add(objectiveProgress);
         }
+
+        if (!changed)
+        {
+            return false;
+        }
+
+        progress.Objectives = normalized;
+
+        return true;
     }
 
     private bool TryGetQuest(string questId, out QuestTemplateDefinition quest)

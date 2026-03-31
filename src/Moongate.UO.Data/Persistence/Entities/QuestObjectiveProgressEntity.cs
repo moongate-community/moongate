@@ -13,4 +13,7 @@ public sealed partial class QuestObjectiveProgressEntity
 
     [MemoryPackOrder(2)]
     public bool IsCompleted { get; set; }
+
+    [MemoryPackOrder(3)]
+    public string? ObjectiveId { get; set; }
 }

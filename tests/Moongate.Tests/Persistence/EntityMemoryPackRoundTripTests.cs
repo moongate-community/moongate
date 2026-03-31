@@ -274,13 +274,15 @@ public sealed class EntityMemoryPackRoundTripTests
                     {
                         ObjectiveIndex = 0,
                         CurrentAmount = 3,
-                        IsCompleted = true
+                        IsCompleted = true,
+                        ObjectiveId = "kill:3:sewer_rat"
                     },
                     new()
                     {
                         ObjectiveIndex = 1,
                         CurrentAmount = 1,
-                        IsCompleted = true
+                        IsCompleted = true,
+                        ObjectiveId = "collect:1:rat_tail"
                     }
                 ]
             }
@@ -301,9 +303,11 @@ public sealed class EntityMemoryPackRoundTripTests
                 Assert.That(restored.QuestProgress[0].Objectives, Has.Count.EqualTo(2));
                 Assert.That(restored.QuestProgress[0].Objectives[0].ObjectiveIndex, Is.EqualTo(0));
                 Assert.That(restored.QuestProgress[0].Objectives[0].CurrentAmount, Is.EqualTo(3));
+                Assert.That(restored.QuestProgress[0].Objectives[0].ObjectiveId, Is.EqualTo("kill:3:sewer_rat"));
                 Assert.That(restored.QuestProgress[0].Objectives[1].IsCompleted, Is.True);
                 Assert.That(restored.QuestProgress[0].Objectives[1].ObjectiveIndex, Is.EqualTo(1));
                 Assert.That(restored.QuestProgress[0].Objectives[1].CurrentAmount, Is.EqualTo(1));
+                Assert.That(restored.QuestProgress[0].Objectives[1].ObjectiveId, Is.EqualTo("collect:1:rat_tail"));
             }
         );
     }
