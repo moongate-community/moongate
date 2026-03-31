@@ -1,7 +1,9 @@
 using DryIoc;
 using Moongate.Server.Extensions.Bootstrap;
+using Moongate.Server.Interfaces.Services.Quests;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Spells.Magery.First;
+using Moongate.Server.Services.Quests;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Types.Magic;
@@ -57,5 +59,15 @@ public sealed class AddBootstrapCoreServicesExtensionTests
         var service = container.Resolve<IQuestDefinitionService>();
 
         Assert.That(service, Is.TypeOf<QuestDefinitionService>());
+    }
+
+    [Test]
+    public void AddBootstrapCoreServices_RegistersQuestService()
+    {
+        using var container = new Container();
+
+        container.AddBootstrapCoreServices();
+
+        Assert.That(container.IsRegistered<IQuestService>(), Is.True);
     }
 }

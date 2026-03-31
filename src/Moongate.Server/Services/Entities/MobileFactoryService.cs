@@ -98,6 +98,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             CreatedUtc = now,
             LastLoginUtc = now
         };
+        mobile.SetCustomString(MobileCustomParamKeys.Template.TemplateId, template.Id);
 
         ApplyVariantAppearance(mobile, template);
         mobile.RecalculateMaxStats();
