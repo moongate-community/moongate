@@ -196,7 +196,7 @@ UI default URL: `http://localhost:8088/`
 - Architecture: `docs/articles/architecture/`
 - Beginner content authoring: `docs/articles/scripting/create-your-first-content.md`
 - Beginner systems path: `docs/articles/scripting/create-your-first-systems.md`
-- Scripting: `docs/articles/scripting/` including authored dialogues, scheduled events, starting loadout, and loot containers
+- Scripting: `docs/articles/scripting/` including authored dialogues, quests, public moongates, scheduled events, starting loadout, and loot containers
 - Persistence: `docs/articles/persistence/`
 - Networking/protocol: `docs/articles/networking/` including client encryption and the UDP ping server
 - Operations: `docs/articles/operations/` including template validation, in-game item admin commands, and help ticket workflow
