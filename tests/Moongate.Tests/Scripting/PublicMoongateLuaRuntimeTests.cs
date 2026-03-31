@@ -1,8 +1,10 @@
+using System.Buffers.Binary;
 using System.Net.Sockets;
 using DryIoc;
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Network.Client;
+using Moongate.Network.Packets.Incoming.UI;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Services;
 using Moongate.Server.Data.Session;
@@ -29,7 +31,95 @@ public sealed class PublicMoongateLuaRuntimeTests
     [Test]
     public async Task StartAsync_WithPublicMoongateScripts_ShouldOpenSharedPublicMoongateGump()
     {
-        using var temp = new TempDirectory();
+        using var context = await CreateContextAsync();
+        var result = context.Service.ExecuteFunction(
+            $"(function() return items_public_moongate.on_double_click({{ session_id = {context.Session.SessionId}, mobile_id = {(uint)context.Session.CharacterId}, item = {{ serial = 0x00006010 }} }}) end)()"
+        );
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result.Success, Is.True);
+                Assert.That(result.Data, Is.EqualTo(true));
+                Assert.That(context.Queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+                var gump = (CompressedGumpPacket)outbound.Packet;
+                Assert.That(gump.TextLines, Contains.Item("Public Moongate"));
+                Assert.That(gump.TextLines, Contains.Item("Britannia"));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithPublicMoongateScripts_ShouldTeleportToSelectedDestination()
+    {
+        using var context = await CreateContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return items_public_moongate.on_double_click({{ session_id = {context.Session.SessionId}, mobile_id = {(uint)context.Session.CharacterId}, item = {{ serial = 0x00006010 }} }}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var packet = new GumpMenuSelectionPacket();
+        Assert.That(packet.TryParse(BuildGumpResponsePacket((uint)context.Session.CharacterId, 0xB960, 2001)), Is.True);
+        Assert.That(context.GumpDispatcher.TryDispatch(context.Session, packet), Is.True);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.Session.Character!.MapId, Is.EqualTo(0));
+                Assert.That(context.Session.Character.Location, Is.EqualTo(new Point3D(4467, 1283, 5)));
+            }
+        );
+    }
+
+    [Test]
+    public async Task StartAsync_WithPublicMoongateScripts_ShouldNotTeleportWhenPlayerLeavesMoongateRangeBeforeConfirm()
+    {
+        using var context = await CreateContextAsync();
+
+        _ = context.Service.ExecuteFunction(
+            $"(function() return items_public_moongate.on_double_click({{ session_id = {context.Session.SessionId}, mobile_id = {(uint)context.Session.CharacterId}, item = {{ serial = 0x00006010 }} }}) end)()"
+        );
+        Assert.That(context.Queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        context.Session.Character!.Location = new Point3D(140, 140, 0);
+
+        var packet = new GumpMenuSelectionPacket();
+        Assert.That(packet.TryParse(BuildGumpResponsePacket((uint)context.Session.CharacterId, 0xB960, 2001)), Is.True);
+        Assert.That(context.GumpDispatcher.TryDispatch(context.Session, packet), Is.True);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(context.Session.Character!.MapId, Is.EqualTo(0));
+                Assert.That(context.Session.Character.Location, Is.EqualTo(new Point3D(140, 140, 0)));
+            }
+        );
+    }
+
+    private static byte[] BuildGumpResponsePacket(uint characterId, uint gumpId, int buttonId)
+    {
+        var buffer = new byte[23];
+        buffer[0] = 0xB1;
+        BinaryPrimitives.WriteUInt16BigEndian(buffer.AsSpan(1, 2), (ushort)buffer.Length);
+        BinaryPrimitives.WriteUInt32BigEndian(buffer.AsSpan(3, 4), characterId);
+        BinaryPrimitives.WriteUInt32BigEndian(buffer.AsSpan(7, 4), gumpId);
+        BinaryPrimitives.WriteUInt32BigEndian(buffer.AsSpan(11, 4), (uint)buttonId);
+        BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(15, 4), 0);
+        BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(19, 4), 0);
+
+        return buffer;
+    }
+
+    private static string GetRepositoryRoot()
+        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+
+    private static async Task<PublicMoongateLuaRuntimeContext> CreateContextAsync()
+    {
+        var temp = new TempDirectory();
         var dirs = new DirectoriesConfig(temp.Path, Enum.GetNames<DirectoryType>());
         var scriptsDir = dirs[DirectoryType.Scripts];
         var luarcDir = temp.Path;
@@ -123,7 +213,7 @@ public sealed class PublicMoongateLuaRuntimeTests
 
         var service = new LuaScriptEngineService(
             dirs,
-            [new(typeof(GumpModule)), new(typeof(ItemModule)), new(typeof(MobileModule))],
+            [new(typeof(GumpModule)), new(typeof(ItemModule)), new(typeof(MobileModule)), new(typeof(MapModule))],
             container,
             new(luarcDir, scriptsDir, "0.1.0"),
             []
@@ -131,26 +221,33 @@ public sealed class PublicMoongateLuaRuntimeTests
 
         await service.StartAsync();
 
-        var result = service.ExecuteFunction(
-            "(function() return items_public_moongate.on_double_click({ session_id = 1, mobile_id = 0x00005010, item = { serial = 0x00006010 } }) end)()"
-        );
-
-        Assert.Multiple(
-            () =>
-            {
-                Assert.That(result.Success, Is.True);
-                Assert.That(result.Data, Is.EqualTo(true));
-                Assert.That(queue.TryDequeue(out var outbound), Is.True);
-                Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
-                var gump = (CompressedGumpPacket)outbound.Packet;
-                Assert.That(gump.TextLines, Contains.Item("Public Moongate"));
-                Assert.That(gump.TextLines, Contains.Item("Britannia"));
-            }
+        return new(
+            temp,
+            queue,
+            gumpDispatcher,
+            mobileService,
+            itemService,
+            session,
+            service
         );
     }
 
-    private static string GetRepositoryRoot()
-        => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
+    private sealed record PublicMoongateLuaRuntimeContext(
+        TempDirectory TempDirectory,
+        BasePacketListenerTestOutgoingPacketQueue Queue,
+        GumpScriptDispatcherService GumpDispatcher,
+        PublicMoongateLuaRuntimeMobileService MobileService,
+        PublicMoongateLuaRuntimeItemService ItemService,
+        GameSession Session,
+        LuaScriptEngineService Service
+    ) : IDisposable
+    {
+        public void Dispose()
+        {
+            Service.Dispose();
+            TempDirectory.Dispose();
+        }
+    }
 
     private sealed class PublicMoongateLuaRuntimeMobileService : IMobileService
     {

@@ -8,5 +8,7 @@ constants.HEIGHT = 260
 constants.BUTTON_CLOSE = 1
 constants.BUTTON_GROUP_BASE = 1000
 constants.BUTTON_DEST_BASE = 2000
+constants.TELEPORT_EFFECT_ITEM_ID = 0x3728
+constants.TELEPORT_SOUND_ID = 0x01FE
 
 return constants
