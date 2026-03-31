@@ -67,7 +67,7 @@ public sealed class QuestTemplateLoaderTests
     }
 
     [Test]
-    public async Task LoadSingleAsync_WhenQuestFileWasDeletedAndAnotherQuestReloads_ShouldRemoveQuestTemplateFromCache()
+    public async Task LoadSingleAsync_WhenQuestFileWasDeleted_ShouldRemoveQuestTemplateFromCache()
     {
         using var tempDirectory = new TempDirectory();
         var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
@@ -87,7 +87,7 @@ public sealed class QuestTemplateLoaderTests
         await loader.LoadAsync();
         File.Delete(spiderCullPath);
 
-        await loader.LoadSingleAsync(ratHuntPath);
+        await loader.LoadSingleAsync(spiderCullPath);
 
         Assert.Multiple(
             () =>

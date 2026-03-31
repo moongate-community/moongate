@@ -342,7 +342,7 @@ public class FileLoaderServiceTests
     }
 
     [Test]
-    public async Task LoadSingleAsync_WhenQuestLuaRenameRecoveryWasPreviouslyRolledBack_ShouldPurgeMissingCachedPathsBeforeRebuild()
+    public async Task LoadSingleAsync_WhenFailedQuestRenameIsFollowedByUnrelatedReload_ShouldPreserveOldQuestState()
     {
         using var tempDirectory = new TempDirectory();
         var directoriesConfig = new DirectoriesConfig(
@@ -357,6 +357,7 @@ public class FileLoaderServiceTests
         var questsDirectory = Path.Combine(directoriesConfig[DirectoryType.Scripts], "quests");
         Directory.CreateDirectory(questsDirectory);
 
+        var spiderQuestPath = Path.Combine(questsDirectory, "spider_cull.lua");
         var oldQuestPath = Path.Combine(questsDirectory, "rat_hunt.lua");
         var newQuestPath = Path.Combine(questsDirectory, "rat_hunt_renamed.lua");
 
@@ -381,6 +382,27 @@ public class FileLoaderServiceTests
             })
             """
         );
+        await File.WriteAllTextAsync(
+            spiderQuestPath,
+            """
+            quest.define({
+                id = "new_haven.spider_cull",
+                name = "Spider Cull",
+                category = "starter",
+                description = "Cull the spider infestation near the mill.",
+                quest_givers = { "farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "giant_spider" }, amount = 6 })
+                },
+                rewards = {
+                    quest.gold(75)
+                }
+            })
+            """
+        );
 
         using var container = new Container();
         var questDefinitionService = new QuestDefinitionService();
@@ -394,6 +416,7 @@ public class FileLoaderServiceTests
 
         mobileTemplateService.Upsert(CreateValidMobileTemplate("farmer_npc", "Farmer NPC"));
         mobileTemplateService.Upsert(CreateValidMobileTemplate("sewer_rat", "Sewer Rat"));
+        mobileTemplateService.Upsert(CreateValidMobileTemplate("giant_spider", "Giant Spider"));
 
         container.RegisterInstance(directoriesConfig);
         container.RegisterInstance<IQuestDefinitionService>(questDefinitionService);
@@ -408,6 +431,7 @@ public class FileLoaderServiceTests
         var service = new FileLoaderService(container, directoriesConfig);
 
         await service.LoadSingleAsync(oldQuestPath);
+        await service.LoadSingleAsync(spiderQuestPath);
 
         File.Delete(oldQuestPath);
         await File.WriteAllTextAsync(
@@ -438,6 +462,42 @@ public class FileLoaderServiceTests
         );
 
         await File.WriteAllTextAsync(
+            spiderQuestPath,
+            """
+            quest.define({
+                id = "new_haven.spider_cull",
+                name = "Spider Cull Updated",
+                category = "starter",
+                description = "Cull the spider infestation near the mill.",
+                quest_givers = { "farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "giant_spider" }, amount = 8 })
+                },
+                rewards = {
+                    quest.gold(90)
+                }
+            })
+            """
+        );
+        await service.LoadSingleAsync(spiderQuestPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(questTemplateService.Count, Is.EqualTo(2));
+                Assert.That(questTemplateService.TryGet("new_haven.rat_hunt", out var failedQuestTemplate), Is.True);
+                Assert.That(failedQuestTemplate, Is.Not.Null);
+                Assert.That(failedQuestTemplate!.Name, Is.EqualTo("Rat Hunt"));
+                Assert.That(questTemplateService.TryGet("new_haven.spider_cull", out var spiderQuestTemplate), Is.True);
+                Assert.That(spiderQuestTemplate, Is.Not.Null);
+                Assert.That(spiderQuestTemplate!.Name, Is.EqualTo("Spider Cull Updated"));
+            }
+        );
+
+        await File.WriteAllTextAsync(
             newQuestPath,
             """
             quest.define({
@@ -464,17 +524,21 @@ public class FileLoaderServiceTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(questTemplateService.Count, Is.EqualTo(1));
+                Assert.That(questTemplateService.Count, Is.EqualTo(2));
                 Assert.That(questTemplateService.TryGet("new_haven.rat_hunt", out var questTemplate), Is.True);
                 Assert.That(questTemplate, Is.Not.Null);
                 Assert.That(questTemplate!.Name, Is.EqualTo("Rat Hunt Renamed"));
+                Assert.That(questTemplateService.TryGet("new_haven.spider_cull", out var spiderQuestTemplate), Is.True);
+                Assert.That(spiderQuestTemplate, Is.Not.Null);
+                Assert.That(spiderQuestTemplate!.Name, Is.EqualTo("Spider Cull Updated"));
                 Assert.That(questDefinitionService.TryGet("new_haven.rat_hunt", out var questDefinition), Is.True);
                 Assert.That(questDefinition, Is.Not.Null);
                 Assert.That(questDefinition!.Name, Is.EqualTo("Rat Hunt Renamed"));
-                Assert.That(
-                    questDefinition.ScriptPath,
-                    Is.EqualTo("scripts/quests/rat_hunt_renamed.lua")
-                );
+                Assert.That(questDefinition.ScriptPath, Is.EqualTo("scripts/quests/rat_hunt_renamed.lua"));
+                Assert.That(questDefinitionService.TryGet("new_haven.spider_cull", out var spiderQuestDefinition), Is.True);
+                Assert.That(spiderQuestDefinition, Is.Not.Null);
+                Assert.That(spiderQuestDefinition!.Name, Is.EqualTo("Spider Cull Updated"));
+                Assert.That(questDefinitionService.GetAll(), Has.Count.EqualTo(2));
             }
         );
     }

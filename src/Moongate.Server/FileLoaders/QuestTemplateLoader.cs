@@ -82,20 +82,12 @@ public sealed class QuestTemplateLoader : IFileLoader
 
         var normalizedPath = NormalizePath(filePath);
         var fileExists = File.Exists(normalizedPath);
-        var removedCurrentPath = false;
 
         if (fileExists)
         {
             _scriptFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
         }
-        else
-        {
-            removedCurrentPath = _scriptFileContents.Remove(normalizedPath);
-        }
-
-        var removedMissingPaths = RemoveMissingScriptFiles();
-
-        if (!fileExists && !removedCurrentPath && removedMissingPaths == 0)
+        else if (!_scriptFileContents.Remove(normalizedPath))
         {
             return Task.CompletedTask;
         }
@@ -108,13 +100,9 @@ public sealed class QuestTemplateLoader : IFileLoader
         {
             _logger.Information("Reloaded quest script file {ScriptFile}", normalizedPath);
         }
-        else if (removedCurrentPath)
+        else
         {
             _logger.Information("Removed quest script file {ScriptFile}", normalizedPath);
-        }
-        else if (removedMissingPaths > 0)
-        {
-            _logger.Information("Purged stale quest script cache entries while processing {ScriptFile}", normalizedPath);
         }
 
         return Task.CompletedTask;
@@ -244,26 +232,6 @@ public sealed class QuestTemplateLoader : IFileLoader
         }
 
         return _questDefinitionService.GetAll().Select(static definition => definition.Compile()).ToList();
-    }
-
-    private int RemoveMissingScriptFiles()
-    {
-        var removedCount = 0;
-
-        foreach (var scriptFile in _scriptFileContents.Keys.ToArray())
-        {
-            if (File.Exists(scriptFile))
-            {
-                continue;
-            }
-
-            if (_scriptFileContents.Remove(scriptFile))
-            {
-                removedCount++;
-            }
-        }
-
-        return removedCount;
     }
 
     private string GetRelativeScriptPath(string scriptFile)
