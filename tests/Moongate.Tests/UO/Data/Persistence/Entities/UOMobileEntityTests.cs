@@ -115,6 +115,44 @@ public class UOMobileEntityTests
     }
 
     [Test]
+    public void QuestProgress_ShouldInitializeEmptyAndAllowMutation()
+    {
+        var mobile = new UOMobileEntity();
+
+        Assert.That(mobile.QuestProgress, Is.Empty);
+
+        mobile.QuestProgress.Add(
+            new()
+            {
+                QuestId = "quest::find-the-herb",
+                Status = QuestProgressStatusType.Active,
+                AcceptedAtUtc = new(2026, 3, 31, 10, 0, 0, DateTimeKind.Utc),
+                CompletedAtUtc = null,
+                Objectives =
+                [
+                    new()
+                    {
+                        ObjectiveIndex = 0,
+                        CurrentAmount = 1,
+                        IsCompleted = false
+                    }
+                ]
+            }
+        );
+
+        Assert.That(mobile.QuestProgress, Has.Count.EqualTo(1));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(mobile.QuestProgress[0].QuestId, Is.EqualTo("quest::find-the-herb"));
+                Assert.That(mobile.QuestProgress[0].Status, Is.EqualTo(QuestProgressStatusType.Active));
+                Assert.That(mobile.QuestProgress[0].Objectives[0].ObjectiveIndex, Is.EqualTo(0));
+                Assert.That(mobile.QuestProgress[0].Objectives[0].CurrentAmount, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
     public void CustomProperties_ShouldStoreTypedValues()
     {
         var mobile = new UOMobileEntity

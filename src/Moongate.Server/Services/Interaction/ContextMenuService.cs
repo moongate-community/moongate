@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Linq;
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
@@ -12,6 +13,8 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Types.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -35,13 +38,16 @@ public sealed class ContextMenuService
     private const ushort PaperdollEntryTag = 1;
     private const ushort VendorBuyEntryTag = 2;
     private const ushort VendorSellEntryTag = 3;
+    private const ushort QuestEntryTag = 4;
     private const ushort ScriptEntryStartTag = 1000;
+    private const int QuestEntryClilocId = 3006159;
 
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
     private readonly IMobileService _mobileService;
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ILuaBrainRunner? _luaBrainRunner;
+    private readonly IQuestTemplateService? _questTemplateService;
 
     private readonly ConcurrentDictionary<long, PendingContextMenuState> _pendingMenus = new();
 
@@ -50,7 +56,8 @@ public sealed class ContextMenuService
         IMobileService mobileService,
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameEventBusService gameEventBusService,
-        ILuaBrainRunner? luaBrainRunner = null
+        ILuaBrainRunner? luaBrainRunner = null,
+        IQuestTemplateService? questTemplateService = null
     )
     {
         _gameNetworkSessionService = gameNetworkSessionService;
@@ -58,6 +65,7 @@ public sealed class ContextMenuService
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameEventBusService = gameEventBusService;
         _luaBrainRunner = luaBrainRunner;
+        _questTemplateService = questTemplateService;
     }
 
     private readonly record struct PendingContextMenuState(
@@ -143,7 +151,7 @@ public sealed class ContextMenuService
             return false;
         }
 
-        var entries = BuildEntries(targetMobile);
+        var entries = await BuildEntriesAsync(session, targetMobile, cancellationToken);
         var entryActions =
             new Dictionary<ushort, (ContextMenuActionType Action, string? ScriptKey)>(entries.Count);
         var hasValidScriptEntries = false;
@@ -202,6 +210,7 @@ public sealed class ContextMenuService
                 PaperdollEntryTag  => (ContextMenuActionType.OpenPaperdoll, null),
                 VendorBuyEntryTag  => (ContextMenuActionType.VendorBuy, null),
                 VendorSellEntryTag => (ContextMenuActionType.VendorSell, null),
+                QuestEntryTag      => (ContextMenuActionType.QuestDialog, null),
                 _                  => (ContextMenuActionType.None, null)
             };
         }
@@ -216,6 +225,47 @@ public sealed class ContextMenuService
 
     public Task StopAsync()
         => Task.CompletedTask;
+
+    private Task<List<PopupContextMenuEntry>> BuildEntriesAsync(
+        GameSession session,
+        UOMobileEntity targetMobile,
+        CancellationToken cancellationToken
+    )
+    {
+        var entries = BuildEntries(targetMobile);
+
+        if (_questTemplateService is not null &&
+            !targetMobile.IsPlayer &&
+            HasQuestTemplateReference(targetMobile))
+        {
+            entries.Add(new(QuestEntryTag, QuestEntryClilocId));
+        }
+
+        _ = session;
+        _ = cancellationToken;
+
+        return Task.FromResult(entries);
+    }
+
+    private bool HasQuestTemplateReference(UOMobileEntity targetMobile)
+    {
+        if (!targetMobile.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
+            string.IsNullOrWhiteSpace(templateId))
+        {
+            return false;
+        }
+
+        foreach (var questTemplate in _questTemplateService!.GetAll())
+        {
+            if (questTemplate.QuestGiverTemplateIds.Any(id => string.Equals(id, templateId, StringComparison.OrdinalIgnoreCase)) ||
+                questTemplate.CompletionNpcTemplateIds.Any(id => string.Equals(id, templateId, StringComparison.OrdinalIgnoreCase)))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private static List<PopupContextMenuEntry> BuildEntries(UOMobileEntity targetMobile)
     {
@@ -281,6 +331,9 @@ public sealed class ContextMenuService
             ),
             ContextMenuActionType.VendorSell => _gameEventBusService.PublishAsync(
                 new VendorSellRequestedEvent(sessionId, vendorSerial)
+            ),
+            ContextMenuActionType.QuestDialog => _gameEventBusService.PublishAsync(
+                new QuestDialogRequestedEvent(sessionId, vendorSerial)
             ),
             _ => ValueTask.CompletedTask
         };

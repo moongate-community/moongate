@@ -35,6 +35,7 @@ The following modules are available in the default server runtime:
 - `door`
 - `effect`
 - `gump`
+- `quests`
 - `text`
 - `location`
 - `random`
@@ -136,6 +137,28 @@ Runtime notes:
 - `help_tickets.submit(...)` persists a real help ticket with sender, message, map, and location
 - successful submission publishes `TicketOpenedEvent`
 - global Lua can react with `on_ticket_opened(event)`
+
+`quests` runtime helpers:
+
+```lua
+quests.open(session_id, character_id, npc_serial)
+quests.open_journal(session_id, character_id)
+
+quests.get_available(session_id, character_id, npc_serial)
+quests.get_active(session_id, character_id, npc_serial)
+quests.get_journal(session_id, character_id)
+
+quests.accept(session_id, character_id, npc_serial, quest_id)
+quests.complete(session_id, character_id, npc_serial, quest_id)
+```
+
+Runtime notes:
+
+- authored quest definitions live under `moongate_data/scripts/quests/**`
+- the shared NPC quest dialog lives in `moongate_data/scripts/gumps/quests/quest_dialog.lua`
+- the shared journal opened by the client `Quests` button lives in `moongate_data/scripts/gumps/quests/quest_journal.lua`
+- the `quests` module is meant for UI and interaction scripts; quest authoring itself uses the `quest.define(...)` DSL during load
+- hot reload for quest files is validated and atomic: invalid edits keep the last valid quest state in memory
 
 `ai_dialogue` runtime helpers:
 
