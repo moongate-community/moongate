@@ -143,7 +143,21 @@ public class FileLoaderService : IFileLoaderService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        if (!string.Equals(Path.GetExtension(filePath), ".json", StringComparison.OrdinalIgnoreCase))
+        var extension = Path.GetExtension(filePath);
+
+        if (string.Equals(extension, ".lua", StringComparison.OrdinalIgnoreCase))
+        {
+            var normalizedLuaPath = NormalizePath(filePath);
+
+            if (IsUnderDirectory(normalizedLuaPath, "scripts", "quests"))
+            {
+                return typeof(QuestTemplateLoader);
+            }
+
+            return null;
+        }
+
+        if (!string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }

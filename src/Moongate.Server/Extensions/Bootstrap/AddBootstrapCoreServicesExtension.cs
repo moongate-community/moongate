@@ -155,6 +155,7 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<INpcAiPromptService, NpcAiPromptService>(Reuse.Singleton);
         container.Register<INpcAiMemoryService, NpcAiMemoryService>(Reuse.Singleton);
         container.Register<IDialogueDefinitionService, DialogueDefinitionService>(Reuse.Singleton);
+        container.Register<IQuestDefinitionService, QuestDefinitionService>(Reuse.Singleton);
         container.Register<IDialogueMemoryService, DialogueMemoryService>(Reuse.Singleton);
         container.Register<IDialogueRuntimeService, DialogueRuntimeService>(Reuse.Singleton);
         container.Register<IScheduledEventDefinitionService, ScheduledEventDefinitionService>(Reuse.Singleton);
