@@ -81,13 +81,28 @@ public sealed class QuestTemplateLoader : IFileLoader
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
         var normalizedPath = NormalizePath(filePath);
-        _scriptFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+
+        if (File.Exists(normalizedPath))
+        {
+            _scriptFileContents[normalizedPath] = File.ReadAllText(normalizedPath);
+        }
+        else if (!_scriptFileContents.Remove(normalizedPath))
+        {
+            return Task.CompletedTask;
+        }
 
         var templates = RebuildTemplatesFromCache();
         _questTemplateService.Clear();
         _questTemplateService.UpsertRange(templates);
 
-        _logger.Information("Reloaded quest script file {ScriptFile}", normalizedPath);
+        if (File.Exists(normalizedPath))
+        {
+            _logger.Information("Reloaded quest script file {ScriptFile}", normalizedPath);
+        }
+        else
+        {
+            _logger.Information("Removed quest script file {ScriptFile}", normalizedPath);
+        }
 
         return Task.CompletedTask;
     }

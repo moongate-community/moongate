@@ -59,6 +59,14 @@ public sealed class ReloadTemplateCommandTests
             return LoadSingleAsync(filePath);
         }
 
+        public Task ReloadQuestTemplateAsync(string? removedFilePath = null, string? loadedFilePath = null)
+        {
+            _ = removedFilePath;
+            _ = loadedFilePath;
+
+            return Task.CompletedTask;
+        }
+
         public Task StartAsync()
             => Task.CompletedTask;
 

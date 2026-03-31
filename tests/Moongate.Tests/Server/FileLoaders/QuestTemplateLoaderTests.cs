@@ -67,7 +67,7 @@ public sealed class QuestTemplateLoaderTests
     }
 
     [Test]
-    public async Task LoadSingleAsync_WhenOtherFileWasRemoved_ShouldPreserveExistingQuests()
+    public async Task LoadSingleAsync_WhenQuestFileWasDeleted_ShouldRemoveQuestTemplateFromCache()
     {
         using var tempDirectory = new TempDirectory();
         var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
@@ -86,23 +86,18 @@ public sealed class QuestTemplateLoaderTests
 
         await loader.LoadAsync();
         File.Delete(spiderCullPath);
-        await File.WriteAllTextAsync(
-            ratHuntPath,
-            BuildQuestScript("new_haven.rat_hunt", "Rat Hunt Updated", "plague_rat")
-        );
 
-        await loader.LoadSingleAsync(ratHuntPath);
+        await loader.LoadSingleAsync(spiderCullPath);
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(templateService.TryGet("new_haven.rat_hunt", out var ratHunt), Is.True);
                 Assert.That(ratHunt, Is.Not.Null);
-                Assert.That(ratHunt!.Name, Is.EqualTo("Rat Hunt Updated"));
-                Assert.That(ratHunt.Objectives[0].MobileTemplateIds, Is.EqualTo(new[] { "plague_rat" }));
-                Assert.That(templateService.TryGet("new_haven.spider_cull", out var spiderCull), Is.True);
-                Assert.That(spiderCull, Is.Not.Null);
-                Assert.That(templateService.Count, Is.EqualTo(2));
+                Assert.That(ratHunt!.Name, Is.EqualTo("Rat Hunt"));
+                Assert.That(ratHunt.Objectives[0].MobileTemplateIds, Is.EqualTo(new[] { "sewer_rat" }));
+                Assert.That(templateService.TryGet("new_haven.spider_cull", out _), Is.False);
+                Assert.That(templateService.Count, Is.EqualTo(1));
             }
         );
     }

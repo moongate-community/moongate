@@ -80,7 +80,7 @@ public class FileLoaderService : IFileLoaderService
 
         if (loaderType == typeof(QuestTemplateLoader))
         {
-            return LoadQuestTemplateAndValidateAsync(filePath);
+            return ReloadQuestTemplateAsync(loadedFilePath: filePath);
         }
 
         var loader = EnsureLoader(loaderType);
@@ -118,15 +118,33 @@ public class FileLoaderService : IFileLoaderService
     public Task StopAsync()
         => Task.CompletedTask;
 
-    private async Task LoadQuestTemplateAndValidateAsync(string filePath)
+    public async Task ReloadQuestTemplateAsync(string? removedFilePath = null, string? loadedFilePath = null)
     {
+        if (string.IsNullOrWhiteSpace(removedFilePath) && string.IsNullOrWhiteSpace(loadedFilePath))
+        {
+            return;
+        }
+
         var loader = (QuestTemplateLoader)EnsureLoader(typeof(QuestTemplateLoader));
         var snapshot = loader.CaptureState();
+        var validationTarget = loadedFilePath ?? removedFilePath;
 
         try
         {
-            await loader.LoadSingleAsync(filePath);
-            await LoadSingleAsync<TemplateValidationLoader>(filePath);
+            if (!string.IsNullOrWhiteSpace(removedFilePath))
+            {
+                await loader.LoadSingleAsync(removedFilePath);
+            }
+
+            if (!string.IsNullOrWhiteSpace(loadedFilePath))
+            {
+                await loader.LoadSingleAsync(loadedFilePath);
+            }
+
+            if (!string.IsNullOrWhiteSpace(validationTarget))
+            {
+                await LoadSingleAsync<TemplateValidationLoader>(validationTarget);
+            }
         }
         catch
         {

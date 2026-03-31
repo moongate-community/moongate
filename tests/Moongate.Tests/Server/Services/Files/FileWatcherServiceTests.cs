@@ -27,7 +27,59 @@ public sealed class FileWatcherServiceTests
         Assert.Multiple(
             () =>
             {
-                Assert.That(fileLoaderService.LoadedFilePaths, Is.EqualTo([questPath]));
+                Assert.That(
+                    fileLoaderService.QuestReloadRequests,
+                    Is.EqualTo(new List<(string? RemovedFilePath, string? LoadedFilePath)> { ((string?)null, questPath) })
+                );
+                Assert.That(scriptEngineService.InvalidatedScripts, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public void ProcessChangeOnGameLoop_WhenQuestLuaFileIsDeleted_ShouldEvictQuestTemplates()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
+        var questPath = Path.Combine(directoriesConfig[DirectoryType.Scripts], "quests", "new_haven", "rat_hunt.lua");
+        var fileLoaderService = new FileLoaderServiceSpy();
+        var scriptEngineService = new ScriptEngineServiceSpy();
+        var service = CreateService(directoriesConfig, fileLoaderService, scriptEngineService);
+
+        InvokeProcessChangeOnGameLoop(service, questPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(
+                    fileLoaderService.QuestReloadRequests,
+                    Is.EqualTo(new List<(string? RemovedFilePath, string? LoadedFilePath)> { (questPath, (string?)null) })
+                );
+                Assert.That(scriptEngineService.InvalidatedScripts, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public void ProcessRenameOnGameLoop_WhenQuestLuaFileChanges_ShouldReloadQuestTemplatesAtomically()
+    {
+        using var tempDirectory = new TempDirectory();
+        var directoriesConfig = CreateDirectoriesConfig(tempDirectory.Path);
+        var oldQuestPath = WriteFile(directoriesConfig, "scripts/quests/new_haven/rat_hunt.lua");
+        var newQuestPath = WriteFile(directoriesConfig, "scripts/quests/new_haven/rat_hunt_renamed.lua");
+        var fileLoaderService = new FileLoaderServiceSpy();
+        var scriptEngineService = new ScriptEngineServiceSpy();
+        var service = CreateService(directoriesConfig, fileLoaderService, scriptEngineService);
+
+        InvokeProcessRenameOnGameLoop(service, oldQuestPath, newQuestPath);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(
+                    fileLoaderService.QuestReloadRequests,
+                    Is.EqualTo(new List<(string? RemovedFilePath, string? LoadedFilePath)> { (oldQuestPath, newQuestPath) })
+                );
                 Assert.That(scriptEngineService.InvalidatedScripts, Is.Empty);
             }
         );
@@ -78,6 +130,17 @@ public sealed class FileWatcherServiceTests
         method!.Invoke(service, [filePath]);
     }
 
+    private static void InvokeProcessRenameOnGameLoop(FileWatcherService service, string oldFilePath, string newFilePath)
+    {
+        var method = typeof(FileWatcherService).GetMethod(
+            "ProcessRenameOnGameLoop",
+            BindingFlags.Instance | BindingFlags.NonPublic
+        );
+
+        Assert.That(method, Is.Not.Null);
+        method!.Invoke(service, [oldFilePath, newFilePath]);
+    }
+
     private static DirectoriesConfig CreateDirectoriesConfig(string rootPath)
         => new(
             rootPath,
@@ -101,6 +164,7 @@ public sealed class FileWatcherServiceTests
     private sealed class FileLoaderServiceSpy : IFileLoaderService
     {
         public List<string> LoadedFilePaths { get; } = [];
+        public List<(string? RemovedFilePath, string? LoadedFilePath)> QuestReloadRequests { get; } = [];
 
         public void AddFileLoader<T>() where T : IFileLoader
         {
@@ -125,6 +189,13 @@ public sealed class FileWatcherServiceTests
 
         public Task LoadSingleAsync(Type loaderType, string filePath)
             => LoadSingleAsync(filePath);
+
+        public Task ReloadQuestTemplateAsync(string? removedFilePath = null, string? loadedFilePath = null)
+        {
+            QuestReloadRequests.Add((removedFilePath, loadedFilePath));
+
+            return Task.CompletedTask;
+        }
 
         public Task StartAsync()
             => Task.CompletedTask;

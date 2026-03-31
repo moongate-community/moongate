@@ -104,7 +104,7 @@ public sealed class FileWatcherService : IFileWatcherService
         => ScheduleReload(e.FullPath);
 
     private void OnFileRenamed(object sender, RenamedEventArgs e)
-        => ScheduleReload(e.FullPath);
+        => _backgroundJobService.PostToGameLoop(() => ProcessRenameOnGameLoop(e.OldFullPath, e.FullPath));
 
     private void ScheduleReload(string filePath)
     {
@@ -147,25 +147,40 @@ public sealed class FileWatcherService : IFileWatcherService
     {
         try
         {
-            if (!File.Exists(filePath))
-            {
-                _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
-
-                return;
-            }
-
             if (string.Equals(Path.GetExtension(filePath), ".lua", StringComparison.OrdinalIgnoreCase))
             {
                 if (IsQuestScript(filePath))
                 {
-                    _fileLoaderService.LoadSingleAsync(filePath).GetAwaiter().GetResult();
-                    _logger.Information("[HotReload] Reloaded quest template: {FilePath}", filePath);
+                    var fileExists = File.Exists(filePath);
+                    _fileLoaderService
+                        .ReloadQuestTemplateAsync(loadedFilePath: fileExists ? filePath : null, removedFilePath: fileExists ? null : filePath)
+                        .GetAwaiter()
+                        .GetResult();
+
+                    _logger.Information(
+                        fileExists ? "[HotReload] Reloaded quest template: {FilePath}" : "[HotReload] Removed quest template: {FilePath}",
+                        filePath
+                    );
+
+                    return;
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
 
                     return;
                 }
 
                 _scriptEngineService.InvalidateScript(filePath);
                 _logger.Information("[HotReload] Reloaded script: {FilePath}", filePath);
+
+                return;
+            }
+
+            if (!File.Exists(filePath))
+            {
+                _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
 
                 return;
             }
@@ -179,6 +194,53 @@ public sealed class FileWatcherService : IFileWatcherService
         catch (Exception ex)
         {
             _logger.Warning(ex, "Hot reload failed for {FilePath}", filePath);
+        }
+    }
+
+    private void ProcessRenameOnGameLoop(string oldFilePath, string newFilePath)
+    {
+        try
+        {
+            var oldIsQuestScript = IsQuestScript(oldFilePath);
+            var newIsQuestScript = IsQuestScript(newFilePath);
+
+            if (oldIsQuestScript && newIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(oldFilePath, newFilePath).GetAwaiter().GetResult();
+                _logger.Information(
+                    "[HotReload] Renamed quest template: {OldFilePath} -> {NewFilePath}",
+                    oldFilePath,
+                    newFilePath
+                );
+
+                return;
+            }
+
+            if (oldIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(removedFilePath: oldFilePath).GetAwaiter().GetResult();
+                _logger.Information("[HotReload] Removed quest template: {FilePath}", oldFilePath);
+
+                return;
+            }
+
+            if (newIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(loadedFilePath: newFilePath).GetAwaiter().GetResult();
+                _logger.Information("[HotReload] Reloaded quest template: {FilePath}", newFilePath);
+
+                return;
+            }
+
+            if (string.Equals(Path.GetExtension(newFilePath), ".lua", StringComparison.OrdinalIgnoreCase))
+            {
+                _scriptEngineService.InvalidateScript(newFilePath);
+                _logger.Information("[HotReload] Reloaded script: {FilePath}", newFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(ex, "Hot reload failed for renamed file {OldFilePath} -> {NewFilePath}", oldFilePath, newFilePath);
         }
     }
 

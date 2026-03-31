@@ -43,4 +43,11 @@ public interface IFileLoaderService : IMoongateService
     /// <param name="loaderType">The file loader type.</param>
     /// <param name="filePath">The file path to load.</param>
     Task LoadSingleAsync(Type loaderType, string filePath);
+
+    /// <summary>
+    /// Reloads quest script state after a quest file was added, removed, or renamed.
+    /// </summary>
+    /// <param name="removedFilePath">Optional quest script path to evict from cache.</param>
+    /// <param name="loadedFilePath">Optional quest script path to load into cache.</param>
+    Task ReloadQuestTemplateAsync(string? removedFilePath = null, string? loadedFilePath = null);
 }
