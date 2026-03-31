@@ -118,7 +118,7 @@ It is meant for gap analysis against the POL packet catalog, not just for docume
 | `0xD0` | Configuration file | C -> S | `?Packet=0xD0` | `ConfigurationFilePacket` | `parse-only` | No behavior attached |
 | `0xD1` | Logout status | C -> S | `?Packet=0xD1` | `LogoutStatusPacket` | `parse-only` | No dedicated logout listener |
 | `0xD4` | Book header new | C -> S | `?Packet=0xD4` | `BookHeaderNewPacket` | `handler` | `ItemHandler -> ItemBookService` | Writable `title` / `author` save for client `7.x` |
-| `0xD7` | Generic AOS commands | C -> S | `?Packet=0xD7` | `GenericAosCommandsPacket` | `parse-only` | AoS subcommands not wired |
+| `0xD7` | Generic AOS command family | C -> S | `?Packet=0xD7` | `QuestGumpRequestPacket` | `handler` | `QuestGumpRequestHandler` | Encoded envelope; quest journal leaf `0x0032` requires payload `[0x07]` |
 | `0xE1` | Client type | C -> S | `?Packet=0xE1` | `ClientTypePacket` | `handler` | `LoginHandler` | Stores session client capability and also accepts the Enhanced Client variant that carries the version string; runtime then drives `0x78` sync shape |
 | `0xEC` | Equip macro | C -> S | `?Packet=0xEC` | `EquipMacroPacket` | `parse-only` | KR macro flow missing |
 | `0xED` | Unequip macro | C -> S | `?Packet=0xED` | `UnequipItemMacroPacket` | `parse-only` | KR macro flow missing |

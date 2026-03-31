@@ -35,7 +35,9 @@ public sealed class QuestGumpRequestHandler : BasePacketListener
             session.Character is null ||
             !session.Character.IsPlayer ||
             session.CharacterId != questGumpRequestPacket.PlayerSerial ||
-            questGumpRequestPacket.EncodedCommandId != 0x0032)
+            questGumpRequestPacket.EncodedCommandId != 0x0032 ||
+            questGumpRequestPacket.EncodedCommandData.Length != 1 ||
+            questGumpRequestPacket.EncodedCommandData.Span[0] != 0x07)
         {
             return true;
         }

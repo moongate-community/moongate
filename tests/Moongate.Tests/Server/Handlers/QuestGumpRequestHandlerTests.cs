@@ -151,4 +151,97 @@ public sealed class QuestGumpRequestHandlerTests
             }
         );
     }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenQuestLeafPayloadIsEmpty_ShouldNotPublishQuestJournalRequestedEvent()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new QuestGumpRequestHandler(queue, eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00005001u,
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00005001u,
+                IsPlayer = true
+            }
+        };
+        var packet = new QuestGumpRequestPacket();
+        Assert.That(
+            packet.TryParse(
+                new byte[]
+                {
+                    0xD7,
+                    0x00,
+                    0x09,
+                    0x00,
+                    0x00,
+                    0x50,
+                    0x01,
+                    0x00,
+                    0x32
+                }
+            ),
+            Is.True
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<QuestJournalRequestedEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenQuestLeafPayloadByteIsWrong_ShouldNotPublishQuestJournalRequestedEvent()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new QuestGumpRequestHandler(queue, eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00005001u,
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00005001u,
+                IsPlayer = true
+            }
+        };
+        var packet = new QuestGumpRequestPacket();
+        Assert.That(
+            packet.TryParse(
+                new byte[]
+                {
+                    0xD7,
+                    0x00,
+                    0x0A,
+                    0x00,
+                    0x00,
+                    0x50,
+                    0x01,
+                    0x00,
+                    0x32,
+                    0x08
+                }
+            ),
+            Is.True
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<QuestJournalRequestedEvent>(), Is.Empty);
+            }
+        );
+    }
 }
