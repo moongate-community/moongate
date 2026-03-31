@@ -44,6 +44,8 @@ public sealed class QuestLuaRuntimeTests
 
         public IReadOnlyList<QuestProgressEntity> Active { get; set; } = [];
 
+        public IReadOnlyList<QuestProgressEntity> Journal { get; set; } = [];
+
         public string? LastAcceptedQuestId { get; private set; }
 
         public string? LastCompletedQuestId { get; private set; }
@@ -79,7 +81,11 @@ public sealed class QuestLuaRuntimeTests
         }
 
         public Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
-            => Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
+        {
+            _ = (player, cancellationToken);
+
+            return Task.FromResult(Journal);
+        }
 
         public Task OnMobileKilledAsync(UOMobileEntity player, UOMobileEntity killedMobile, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -323,6 +329,61 @@ public sealed class QuestLuaRuntimeTests
     }
 
     [Test]
+    public async Task StartAsync_WithQuestJournalRequestedEvent_ShouldOpenReadOnlyQuestJournalThroughHandler()
+    {
+        using var context = await CreateContextAsync(
+                         available: [
+                             new QuestTemplateDefinition
+                             {
+                                 Id = "starter.rat_hunt",
+                                 Name = "Rat Hunt",
+                                 Description = "Kill three sewer rats.",
+                                 Category = "starter",
+                                 Objectives =
+                                 [
+                                     new QuestObjectiveDefinition
+                                     {
+                                         Type = QuestObjectiveType.Kill,
+                                         MobileTemplateIds = ["sewer_rat"],
+                                         Amount = 3
+                                     }
+                                 ]
+                             }
+                         ],
+                         journal: [
+                             new QuestProgressEntity
+                             {
+                                 QuestId = "starter.rat_hunt",
+                                 Status = QuestProgressStatusType.Active,
+                                 Objectives =
+                                 [
+                                     new QuestObjectiveProgressEntity
+                                     {
+                                         ObjectiveIndex = 0,
+                                         CurrentAmount = 2,
+                                         IsCompleted = false
+                                     }
+                                 ]
+                             }
+                         ]
+                     );
+
+        var eventBus = new GameEventBusService();
+        eventBus.RegisterListener(new QuestJournalRequestedHandler(context.SessionService, context.Service));
+
+        await eventBus.PublishAsync(new QuestJournalRequestedEvent(context.Session.SessionId));
+
+        Assert.That(context.Queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.That(gump.TextLines, Contains.Item("Quest Journal"));
+        Assert.That(gump.TextLines, Contains.Item("Rat Hunt"));
+        Assert.That(gump.TextLines, Contains.Item("2 / 3 - Kill sewer_rat"));
+        Assert.That(gump.Layout, Does.Not.Contain("button"));
+    }
+
+    [Test]
     public async Task StartAsync_WithQuestScripts_ShouldAcceptAQuestFromTheDialog()
     {
         using var context = await CreateContextAsync(
@@ -422,7 +483,8 @@ public sealed class QuestLuaRuntimeTests
     private static async Task<QuestLuaRuntimeContext> CreateContextAsync(
         string npcTemplateId = "quest_giver_npc",
         IReadOnlyList<QuestTemplateDefinition>? available = null,
-        IReadOnlyList<QuestProgressEntity>? active = null
+        IReadOnlyList<QuestProgressEntity>? active = null,
+        IReadOnlyList<QuestProgressEntity>? journal = null
     )
     {
         var temp = new TempDirectory();
@@ -442,6 +504,10 @@ public sealed class QuestLuaRuntimeTests
             Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "quests", "quest_dialog.lua"),
             Path.Combine(scriptsDir, "gumps", "quests", "quest_dialog.lua")
         );
+        File.Copy(
+            Path.Combine(repoRoot, "moongate_data", "scripts", "gumps", "quests", "quest_journal.lua"),
+            Path.Combine(scriptsDir, "gumps", "quests", "quest_journal.lua")
+        );
         await File.WriteAllTextAsync(Path.Combine(scriptsDir, "init.lua"), "require(\"interaction.init\")\n");
         await File.WriteAllTextAsync(
             Path.Combine(scriptsDir, "interaction", "init.lua"),
@@ -454,7 +520,8 @@ public sealed class QuestLuaRuntimeTests
         var questService = new QuestLuaRuntimeQuestService
         {
             Available = available ?? [],
-            Active = active ?? []
+            Active = active ?? [],
+            Journal = journal ?? active ?? []
         };
         var questTemplateService = new QuestTemplateService();
         foreach (var template in available ?? [])

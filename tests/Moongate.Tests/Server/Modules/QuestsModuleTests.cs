@@ -114,6 +114,8 @@ public sealed class QuestsModuleTests
 
         public IReadOnlyList<QuestProgressEntity> Active { get; set; } = [];
 
+        public IReadOnlyList<QuestProgressEntity> Journal { get; set; } = [];
+
         public string? LastAcceptedQuestId { get; private set; }
 
         public string? LastCompletedQuestId { get; private set; }
@@ -161,7 +163,11 @@ public sealed class QuestsModuleTests
         }
 
         public Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
-            => Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
+        {
+            _ = (player, cancellationToken);
+
+            return Task.FromResult(Journal);
+        }
 
         public Task OnMobileKilledAsync(UOMobileEntity player, UOMobileEntity killedMobile, CancellationToken cancellationToken = default)
             => Task.CompletedTask;
@@ -377,6 +383,22 @@ public sealed class QuestsModuleTests
     }
 
     [Test]
+    public void OpenJournal_WhenSessionAndCharacterAreValid_ShouldReturnTrue()
+    {
+        var module = CreateModule();
+        var session = _sessionService.GetAll().Single();
+
+        var result = module.OpenJournal(session.SessionId, (uint)session.CharacterId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+            }
+        );
+    }
+
+    [Test]
     public void OpenAcceptAndComplete_WhenSessionIsGameMasterAndNpcIsOutOfRange_ShouldSucceed()
     {
         var module = CreateModule(
@@ -410,6 +432,63 @@ public sealed class QuestsModuleTests
                 Assert.That(_scriptEngine.LastExecuteFunctionCommand, Is.EqualTo($"on_quest_dialog_requested({session.SessionId}, {(uint)session.CharacterId}, 8193)"));
                 Assert.That(_questService.LastAcceptedQuestId, Is.EqualTo("starter.rat_hunt"));
                 Assert.That(_questService.LastCompletedQuestId, Is.EqualTo("starter.rat_hunt"));
+            }
+        );
+    }
+
+    [Test]
+    public void GetJournal_WhenPlayerHasActiveQuestProgress_ShouldReturnQuestRowsWithObjectives()
+    {
+        var module = CreateModule(
+            available: [
+                new QuestTemplateDefinition
+                {
+                    Id = "starter.rat_hunt",
+                    Name = "Rat Hunt",
+                    Description = "Kill sewer rats.",
+                    Category = "starter",
+                    Objectives =
+                    [
+                        new QuestObjectiveDefinition
+                        {
+                            Type = QuestObjectiveType.Kill,
+                            MobileTemplateIds = ["sewer_rat"],
+                            Amount = 3
+                        }
+                    ]
+                }
+            ],
+            journal: [
+                new QuestProgressEntity
+                {
+                    QuestId = "starter.rat_hunt",
+                    Status = QuestProgressStatusType.Active,
+                    Objectives =
+                    [
+                        new QuestObjectiveProgressEntity
+                        {
+                            ObjectiveIndex = 0,
+                            CurrentAmount = 1,
+                            IsCompleted = false
+                        }
+                    ]
+                }
+            ]
+        );
+        var session = _sessionService.GetAll().Single();
+
+        var table = module.GetJournal(session.SessionId, (uint)session.CharacterId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(table.Length, Is.EqualTo(1));
+                var row = table.Get(1).Table!;
+                Assert.That(row.Get("quest_id").String, Is.EqualTo("starter.rat_hunt"));
+                Assert.That(row.Get("status_text").String, Is.EqualTo("In progress"));
+                var objective = row.Get("objectives").Table!.Get(1).Table!;
+                Assert.That(objective.Get("progress_text").String, Is.EqualTo("1 / 3"));
+                Assert.That(objective.Get("objective_text").String, Is.EqualTo("Kill sewer_rat"));
             }
         );
     }
@@ -617,11 +696,13 @@ public sealed class QuestsModuleTests
         int npcMapId = 0,
         Point3D? npcLocation = null,
         IReadOnlyList<QuestTemplateDefinition>? available = null,
-        IReadOnlyList<QuestProgressEntity>? active = null
+        IReadOnlyList<QuestProgressEntity>? active = null,
+        IReadOnlyList<QuestProgressEntity>? journal = null
     )
     {
         _questService.Available = available ?? [];
         _questService.Active = active ?? [];
+        _questService.Journal = journal ?? active ?? [];
 
         var questTemplateService = new QuestTemplateService();
         foreach (var template in available ?? [])

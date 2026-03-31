@@ -186,7 +186,7 @@ Generated packet pages: `201`
 | `0xD3` | Extended 0x78 | `placeholder` | Server | Variable | None | [0xD3.md](0xD3.md) |
 | `0xD4` | Book Header ( New ) | `implemented` | Both | Variable | BookHeaderNewPacket | [0xD4.md](0xD4.md) |
 | `0xD6` | Mega Cliloc | `implemented` | Both | Variable | MegaClilocPacket | [0xD6.md](0xD6.md) |
-| `0xD7` | Generic AOS Commands | `implemented` | Both | Variable | GenericAosCommandsPacket | [0xD7.md](0xD7.md) |
+| `0xD7` | Quest Gump Request | `implemented` | Both | Variable | QuestGumpRequestPacket | [0xD7.md](0xD7.md) |
 | `0xD8` | Send Custom House | `placeholder` | Server | Variable | None | [0xD8.md](0xD8.md) |
 | `0xD9` | Spy On Client | `implemented` | Client | Variable | SpyOnClientPacket | [0xD9.md](0xD9.md) |
 | `0xDA` | Mahjong | `implemented` | Client | Variable | MahjongPacket | [0xDA.md](0xDA.md) |
