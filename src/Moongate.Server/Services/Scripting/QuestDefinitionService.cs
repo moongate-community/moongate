@@ -79,10 +79,10 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
                 $"Quest '{questId}' contains invalid 'completion_npcs' entry."
             ),
             Repeatable = ResolveOptionalBool(definition, "repeatable") ?? false,
-            MaxActivePerCharacter = ResolveRequiredPositiveInt(
+            MaxActivePerCharacter = ResolveRequiredSingleActiveInt(
                 definition,
                 "max_active_per_character",
-                $"Quest '{questId}' requires positive 'max_active_per_character'."
+                $"Quest '{questId}' supports only one active instance per character."
             ),
             ScriptPath = string.IsNullOrWhiteSpace(scriptPath) ? null : scriptPath.Trim()
         };
@@ -233,7 +233,7 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
         return value.Type == DataType.Boolean ? value.Boolean : null;
     }
 
-    private static int ResolveRequiredPositiveInt(Table table, string key, string message)
+    private static int ResolveRequiredSingleActiveInt(Table table, string key, string message)
     {
         var value = table.Get(key);
 
@@ -244,7 +244,7 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
 
         var parsed = (int)value.Number;
 
-        if (parsed <= 0)
+        if (parsed != 1)
         {
             throw new InvalidOperationException(message);
         }

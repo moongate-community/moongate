@@ -471,9 +471,9 @@ public sealed class TemplateValidationLoader : IFileLoader
                 errors.Add($"Quest template '{quest.Id}' has empty name.");
             }
 
-            if (quest.MaxActivePerCharacter <= 0)
+            if (quest.MaxActivePerCharacter != 1)
             {
-                errors.Add($"Quest template '{quest.Id}' has non-positive maxActivePerCharacter {quest.MaxActivePerCharacter}.");
+                errors.Add($"Quest template '{quest.Id}' supports only one active instance per character.");
             }
 
             if (quest.QuestGiverTemplateIds.Count == 0)

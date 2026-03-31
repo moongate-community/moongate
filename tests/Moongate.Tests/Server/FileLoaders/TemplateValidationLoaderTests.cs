@@ -441,6 +441,94 @@ public class TemplateValidationLoaderTests
     }
 
     [Test]
+    public void LoadAsync_WhenQuestAllowsMultipleActiveInstances_ShouldThrow()
+    {
+        var itemService = new ItemTemplateService();
+        var mobileService = new MobileTemplateService();
+        var factionTemplateService = new FactionTemplateService();
+        var sellProfileService = new SellProfileTemplateService();
+        var lootTemplateService = new LootTemplateService();
+        var questTemplateService = new QuestTemplateService();
+        using var tempDirectory = new TempDirectory();
+        var bookTemplateService = CreateBookTemplateService(tempDirectory.Path);
+
+        mobileService.Upsert(
+            new()
+            {
+                Id = "farmer_npc",
+                Name = "Farmer",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x0190
+                        }
+                    }
+                ]
+            }
+        );
+        mobileService.Upsert(
+            new()
+            {
+                Id = "sewer_rat",
+                Name = "Rat",
+                Category = "test",
+                Description = "test",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "default",
+                        Appearance = new()
+                        {
+                            Body = 0x00EE
+                        }
+                    }
+                ]
+            }
+        );
+        questTemplateService.Upsert(
+            new()
+            {
+                Id = "new_haven.rat_hunt",
+                Name = "Rat Hunt",
+                Category = "starter",
+                Description = "test",
+                QuestGiverTemplateIds = ["farmer_npc"],
+                CompletionNpcTemplateIds = ["farmer_npc"],
+                Repeatable = false,
+                MaxActivePerCharacter = 2,
+                Objectives =
+                [
+                    new()
+                    {
+                        Type = QuestObjectiveType.Kill,
+                        MobileTemplateIds = ["sewer_rat"],
+                        Amount = 10
+                    }
+                ]
+            }
+        );
+
+        var loader = new TemplateValidationLoader(
+            itemService,
+            mobileService,
+            factionTemplateService,
+            sellProfileService,
+            bookTemplateService,
+            lootTemplateService,
+            questTemplateService
+        );
+
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await loader.LoadAsync());
+    }
+
+    [Test]
     public void LoadAsync_WhenMobileAiRangeFightIsZero_ShouldNotThrow()
     {
         var itemService = new ItemTemplateService();
