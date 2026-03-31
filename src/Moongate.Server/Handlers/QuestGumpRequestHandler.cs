@@ -26,12 +26,16 @@ public sealed class QuestGumpRequestHandler : BasePacketListener
 
     protected override async Task<bool> HandleCoreAsync(GameSession session, IGameNetworkPacket packet)
     {
-        if (packet is not QuestGumpRequestPacket)
+        if (packet is not QuestGumpRequestPacket questGumpRequestPacket)
         {
             return true;
         }
 
-        if (session.CharacterId == 0 || session.Character is null || !session.Character.IsPlayer)
+        if (session.CharacterId == 0 ||
+            session.Character is null ||
+            !session.Character.IsPlayer ||
+            session.CharacterId != questGumpRequestPacket.PlayerSerial ||
+            questGumpRequestPacket.EncodedCommandId != 0x0032)
         {
             return true;
         }

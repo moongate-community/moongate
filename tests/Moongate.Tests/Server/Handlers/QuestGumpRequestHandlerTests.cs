@@ -37,10 +37,10 @@ public sealed class QuestGumpRequestHandlerTests
                     0xD7,
                     0x00,
                     0x0A,
-                    0xDE,
-                    0xAD,
-                    0xBE,
-                    0xEF,
+                    0x00,
+                    0x00,
+                    0x50,
+                    0x01,
                     0x00,
                     0x32,
                     0x07
@@ -73,6 +73,53 @@ public sealed class QuestGumpRequestHandlerTests
         {
             CharacterId = (Serial)0x00005001u,
             Character = null
+        };
+        var packet = new QuestGumpRequestPacket();
+        Assert.That(
+            packet.TryParse(
+                new byte[]
+                {
+                    0xD7,
+                    0x00,
+                    0x0A,
+                    0xDE,
+                    0xAD,
+                    0xBE,
+                    0xEF,
+                    0x00,
+                    0x32,
+                    0x07
+                }
+            ),
+            Is.True
+        );
+
+        var handled = await handler.HandlePacketAsync(session, packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(eventBus.Events.OfType<QuestJournalRequestedEvent>(), Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandlePacketAsync_WhenPacketSerialDoesNotMatchSessionCharacter_ShouldNotPublishQuestJournalRequestedEvent()
+    {
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var handler = new QuestGumpRequestHandler(queue, eventBus);
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client))
+        {
+            CharacterId = (Serial)0x00005001u,
+            Character = new UOMobileEntity
+            {
+                Id = (Serial)0x00005001u,
+                IsPlayer = true
+            }
         };
         var packet = new QuestGumpRequestPacket();
         Assert.That(

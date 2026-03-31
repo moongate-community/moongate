@@ -6,16 +6,14 @@ using Moongate.UO.Data.Ids;
 
 namespace Moongate.Network.Packets.Incoming;
 
-[PacketHandler(0xD7, PacketSizing.Variable, Description = "Quest Gump Request")]
+[PacketHandler(0xD7, PacketSizing.Variable, Description = "Generic AOS Commands")]
 
 /// <summary>
 /// Represents QuestGumpRequestPacket.
 /// </summary>
 public sealed class QuestGumpRequestPacket : BaseGameNetworkPacket
 {
-    private const ushort QuestButtonCommandId = 0x0032;
-    private const byte TerminatorValue = 0x07;
-    private const int MinimumPacketLength = 10;
+    private const int MinimumPacketLength = 9;
 
     /// <summary>
     /// Gets the character serial encoded in the packet payload.
@@ -28,9 +26,9 @@ public sealed class QuestGumpRequestPacket : BaseGameNetworkPacket
     public ushort EncodedCommandId { get; private set; }
 
     /// <summary>
-    /// Gets the trailing terminator byte.
+    /// Gets the encoded payload bytes that follow the encoded command identifier.
     /// </summary>
-    public byte Terminator { get; private set; }
+    public ReadOnlyMemory<byte> EncodedCommandData { get; private set; } = ReadOnlyMemory<byte>.Empty;
 
     public QuestGumpRequestPacket()
         : base(0xD7) { }
@@ -44,21 +42,15 @@ public sealed class QuestGumpRequestPacket : BaseGameNetworkPacket
 
         var declaredLength = reader.ReadUInt16();
 
-        if (declaredLength != MinimumPacketLength || declaredLength != reader.Length)
+        if (declaredLength != reader.Length || declaredLength < MinimumPacketLength)
         {
             return false;
         }
 
         PlayerSerial = (Serial)reader.ReadUInt32();
         EncodedCommandId = reader.ReadUInt16();
+        EncodedCommandData = reader.Remaining == 0 ? ReadOnlyMemory<byte>.Empty : reader.ReadBytes(reader.Remaining);
 
-        if (EncodedCommandId != QuestButtonCommandId || reader.Remaining != 1)
-        {
-            return false;
-        }
-
-        Terminator = reader.ReadByte();
-
-        return Terminator == TerminatorValue && reader.Remaining == 0;
+        return true;
     }
 }

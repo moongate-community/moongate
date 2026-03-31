@@ -10,19 +10,7 @@ public class QuestGumpRequestPacketTests
     {
         var packet = new QuestGumpRequestPacket();
 
-        var parsed = packet.TryParse(new byte[]
-        {
-            0xD7,
-            0x00,
-            0x0A,
-            0x00,
-            0x00,
-            0x50,
-            0x01,
-            0x00,
-            0x32,
-            0x07
-        });
+        var parsed = packet.TryParse(new byte[] { 0xD7, 0x00, 0x0A, 0x00, 0x00, 0x50, 0x01, 0x00, 0x32, 0x07 });
 
         Assert.Multiple(
             () =>
@@ -30,30 +18,26 @@ public class QuestGumpRequestPacketTests
                 Assert.That(parsed, Is.True);
                 Assert.That(packet.PlayerSerial, Is.EqualTo((Serial)0x00005001u));
                 Assert.That(packet.EncodedCommandId, Is.EqualTo((ushort)0x0032));
-                Assert.That(packet.Terminator, Is.EqualTo((byte)0x07));
+                Assert.That(packet.EncodedCommandData.ToArray(), Is.EqualTo(new byte[] { 0x07 }));
             }
         );
     }
 
     [Test]
-    public void TryParse_WhenEncodedCommandDoesNotMatchQuestButton_ShouldReturnFalse()
+    public void TryParse_WhenEncodedCommandIsAnotherFamilyMember_ShouldStillParseEnvelope()
     {
         var packet = new QuestGumpRequestPacket();
 
-        var parsed = packet.TryParse(new byte[]
-        {
-            0xD7,
-            0x00,
-            0x0A,
-            0x00,
-            0x00,
-            0x50,
-            0x01,
-            0x00,
-            0x33,
-            0x07
-        });
+        var parsed = packet.TryParse(new byte[] { 0xD7, 0x00, 0x09, 0x00, 0x00, 0x50, 0x01, 0x00, 0x28 });
 
-        Assert.That(parsed, Is.False);
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(parsed, Is.True);
+                Assert.That(packet.PlayerSerial, Is.EqualTo((Serial)0x00005001u));
+                Assert.That(packet.EncodedCommandId, Is.EqualTo((ushort)0x0028));
+                Assert.That(packet.EncodedCommandData.IsEmpty, Is.True);
+            }
+        );
     }
 }
