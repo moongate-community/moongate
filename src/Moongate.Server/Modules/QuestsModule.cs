@@ -197,9 +197,14 @@ public sealed class QuestsModule
             return false;
         }
 
-        if (resolvedNpc.IsPlayer ||
-            session.Character.MapId != resolvedNpc.MapId ||
-            !session.Character.Location.InRange(resolvedNpc.Location, InteractionRange))
+        if (resolvedNpc.IsPlayer)
+        {
+            return false;
+        }
+
+        if (session.AccountType < AccountType.GameMaster &&
+            (session.Character.MapId != resolvedNpc.MapId ||
+             !session.Character.Location.InRange(resolvedNpc.Location, InteractionRange)))
         {
             return false;
         }

@@ -11,7 +11,6 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Scripting;
-using Moongate.Server.Interfaces.Services.Quests;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Interaction;
@@ -155,92 +154,6 @@ public sealed class ContextMenuServiceTests
 
             return Task.CompletedTask;
         }
-    }
-
-    private sealed class ContextMenuTestQuestService : IQuestService
-    {
-        public IReadOnlyList<string> AvailableQuestIds { get; set; } = [];
-
-        public IReadOnlyList<string> ActiveQuestIds { get; set; } = [];
-
-        public Task<bool> AcceptAsync(UOMobileEntity player, UOMobileEntity npc, string questId, CancellationToken cancellationToken = default)
-            => throw new NotSupportedException();
-
-        public Task<IReadOnlyList<QuestTemplateDefinition>> GetAvailableForNpcAsync(
-            UOMobileEntity player,
-            UOMobileEntity npc,
-            CancellationToken cancellationToken = default
-        )
-        {
-            _ = player;
-            _ = cancellationToken;
-
-            if (!npc.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
-                !string.Equals(templateId, "quest_giver_npc", StringComparison.OrdinalIgnoreCase))
-            {
-                return Task.FromResult<IReadOnlyList<QuestTemplateDefinition>>([]);
-            }
-
-            return Task.FromResult<IReadOnlyList<QuestTemplateDefinition>>(
-                AvailableQuestIds.Select(
-                    static questId =>
-                        new QuestTemplateDefinition
-                        {
-                            Id = questId,
-                            Name = "Quest Name",
-                            Description = "Quest Description",
-                            Category = "starter",
-                            QuestGiverTemplateIds = ["quest_giver_npc"],
-                            CompletionNpcTemplateIds = ["quest_giver_npc"],
-                            MaxActivePerCharacter = 1
-                        }
-                ).ToList()
-            );
-        }
-
-        public Task<IReadOnlyList<QuestProgressEntity>> GetActiveForNpcAsync(
-            UOMobileEntity player,
-            UOMobileEntity npc,
-            CancellationToken cancellationToken = default
-        )
-        {
-            _ = player;
-            _ = cancellationToken;
-
-            if (!npc.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
-                !string.Equals(templateId, "quest_turn_in_npc", StringComparison.OrdinalIgnoreCase))
-            {
-                return Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
-            }
-
-            return Task.FromResult<IReadOnlyList<QuestProgressEntity>>(
-                ActiveQuestIds.Select(
-                    static questId =>
-                        new QuestProgressEntity
-                        {
-                            QuestId = questId,
-                            Status = QuestProgressStatusType.ReadyToTurnIn
-                        }
-                ).ToList()
-            );
-        }
-
-        public Task<IReadOnlyList<QuestProgressEntity>> GetJournalAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
-        {
-            _ = player;
-            _ = cancellationToken;
-
-            return Task.FromResult<IReadOnlyList<QuestProgressEntity>>([]);
-        }
-
-        public Task OnMobileKilledAsync(UOMobileEntity player, UOMobileEntity killedMobile, CancellationToken cancellationToken = default)
-            => throw new NotSupportedException();
-
-        public Task ReevaluateInventoryAsync(UOMobileEntity player, CancellationToken cancellationToken = default)
-            => throw new NotSupportedException();
-
-        public Task<bool> TryCompleteAsync(UOMobileEntity player, UOMobileEntity npc, string questId, CancellationToken cancellationToken = default)
-            => throw new NotSupportedException();
     }
 
     private sealed class ContextMenuTestLuaBrainRunner : ILuaBrainRunner

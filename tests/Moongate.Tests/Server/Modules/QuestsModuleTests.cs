@@ -377,6 +377,44 @@ public sealed class QuestsModuleTests
     }
 
     [Test]
+    public void OpenAcceptAndComplete_WhenSessionIsGameMasterAndNpcIsOutOfRange_ShouldSucceed()
+    {
+        var module = CreateModule(
+            accountType: AccountType.GameMaster,
+            npcMapId: 1,
+            npcLocation: new Point3D(100, 100, 0),
+            available: [
+                new QuestTemplateDefinition
+                {
+                    Id = "starter.rat_hunt",
+                    Name = "Rat Hunt",
+                    Description = "Kill sewer rats.",
+                    Category = "starter",
+                    QuestGiverTemplateIds = ["quest_giver_npc"],
+                    CompletionNpcTemplateIds = ["quest_turn_in_npc"]
+                }
+            ]
+        );
+        var session = _sessionService.GetAll().Single();
+
+        var opened = module.Open(session.SessionId, (uint)session.CharacterId, 0x2001);
+        var accepted = module.Accept(session.SessionId, (uint)session.CharacterId, 0x2001, "starter.rat_hunt");
+        var completed = module.Complete(session.SessionId, (uint)session.CharacterId, 0x2001, "starter.rat_hunt");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(opened, Is.True);
+                Assert.That(accepted, Is.True);
+                Assert.That(completed, Is.True);
+                Assert.That(_scriptEngine.LastExecuteFunctionCommand, Is.EqualTo($"on_quest_dialog_requested({session.SessionId}, {(uint)session.CharacterId}, 8193)"));
+                Assert.That(_questService.LastAcceptedQuestId, Is.EqualTo("starter.rat_hunt"));
+                Assert.That(_questService.LastCompletedQuestId, Is.EqualTo("starter.rat_hunt"));
+            }
+        );
+    }
+
+    [Test]
     public void GetAvailable_WhenNpcHasAvailableQuests_ShouldReturnQuestRows()
     {
         var module = CreateModule(
@@ -574,7 +612,10 @@ public sealed class QuestsModuleTests
     private readonly RecordingItemService _itemService = new();
 
     private QuestsModule CreateModule(
+        AccountType accountType = AccountType.Regular,
         string npcTemplateId = "quest_giver_npc",
+        int npcMapId = 0,
+        Point3D? npcLocation = null,
         IReadOnlyList<QuestTemplateDefinition>? available = null,
         IReadOnlyList<QuestProgressEntity>? active = null
     )
@@ -592,6 +633,7 @@ public sealed class QuestsModuleTests
         var session = new GameSession(new(client))
         {
             CharacterId = (Serial)0x1001u,
+            AccountType = accountType,
             Character = new UOMobileEntity
             {
                 Id = (Serial)0x1001u,
@@ -606,8 +648,8 @@ public sealed class QuestsModuleTests
         _mobileService.MobilesById[(Serial)0x2001u] = new UOMobileEntity
         {
             Id = (Serial)0x2001u,
-            MapId = 0,
-            Location = new Point3D(11, 10, 0),
+            MapId = npcMapId,
+            Location = npcLocation ?? new Point3D(11, 10, 0),
             IsPlayer = false
         };
         _mobileService.MobilesById[(Serial)0x2001u].SetCustomString(MobileCustomParamKeys.Template.TemplateId, npcTemplateId);

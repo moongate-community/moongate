@@ -9,7 +9,6 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
-using Moongate.Server.Interfaces.Services.Quests;
 using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
@@ -48,7 +47,6 @@ public sealed class ContextMenuService
     private readonly IOutgoingPacketQueue _outgoingPacketQueue;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ILuaBrainRunner? _luaBrainRunner;
-    private readonly IQuestService? _questService;
     private readonly IQuestTemplateService? _questTemplateService;
 
     private readonly ConcurrentDictionary<long, PendingContextMenuState> _pendingMenus = new();
@@ -59,7 +57,6 @@ public sealed class ContextMenuService
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameEventBusService gameEventBusService,
         ILuaBrainRunner? luaBrainRunner = null,
-        IQuestService? questService = null,
         IQuestTemplateService? questTemplateService = null
     )
     {
@@ -68,7 +65,6 @@ public sealed class ContextMenuService
         _outgoingPacketQueue = outgoingPacketQueue;
         _gameEventBusService = gameEventBusService;
         _luaBrainRunner = luaBrainRunner;
-        _questService = questService;
         _questTemplateService = questTemplateService;
     }
 
