@@ -18,6 +18,20 @@ public sealed class QuestDefinitionService : IQuestDefinitionService
     public void Clear()
         => _definitions.Clear();
 
+    public void ReplaceAll(IEnumerable<QuestLuaDefinition> definitions)
+    {
+        ArgumentNullException.ThrowIfNull(definitions);
+
+        _definitions.Clear();
+
+        foreach (var definition in definitions)
+        {
+            ArgumentNullException.ThrowIfNull(definition);
+
+            _definitions[definition.Id] = definition;
+        }
+    }
+
     public IReadOnlyList<QuestLuaDefinition> GetAll()
         => _definitions.Values.OrderBy(static definition => definition.Id, StringComparer.OrdinalIgnoreCase).ToList();
 

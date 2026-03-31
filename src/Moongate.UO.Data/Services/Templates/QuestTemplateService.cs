@@ -17,6 +17,20 @@ public sealed class QuestTemplateService : IQuestTemplateService
     public void Clear()
         => _definitions.Clear();
 
+    public void ReplaceAll(IEnumerable<QuestTemplateDefinition> definitions)
+    {
+        ArgumentNullException.ThrowIfNull(definitions);
+
+        _definitions.Clear();
+
+        foreach (var definition in definitions)
+        {
+            ArgumentNullException.ThrowIfNull(definition);
+
+            _definitions[definition.Id] = definition;
+        }
+    }
+
     public IReadOnlyList<QuestTemplateDefinition> GetAll()
         => _definitions.Values.OrderBy(static definition => definition.Id, StringComparer.OrdinalIgnoreCase).ToList();
 

@@ -120,8 +120,20 @@ public class FileLoaderService : IFileLoaderService
 
     private async Task LoadQuestTemplateAndValidateAsync(string filePath)
     {
-        await LoadQuestTemplateAsync(filePath);
-        await LoadSingleAsync(typeof(TemplateValidationLoader), filePath);
+        var loader = (QuestTemplateLoader)EnsureLoader(typeof(QuestTemplateLoader));
+        var snapshot = loader.CaptureState();
+
+        try
+        {
+            await loader.LoadSingleAsync(filePath);
+            await LoadSingleAsync<TemplateValidationLoader>(filePath);
+        }
+        catch
+        {
+            loader.RestoreState(snapshot);
+
+            throw;
+        }
     }
 
     private IFileLoader EnsureLoader(Type loaderType)
@@ -145,13 +157,6 @@ public class FileLoaderService : IFileLoaderService
         }
 
         throw new InvalidOperationException($"Unable to resolve loader '{loaderType.FullName}'.");
-    }
-
-    private Task LoadQuestTemplateAsync(string filePath)
-    {
-        var loader = EnsureLoader(typeof(QuestTemplateLoader));
-
-        return loader.LoadSingleAsync(filePath);
     }
 
     private Type? ResolveLoaderTypeByFilePath(string filePath)

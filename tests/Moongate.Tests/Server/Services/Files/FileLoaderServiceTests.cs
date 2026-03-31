@@ -125,7 +125,7 @@ public class FileLoaderServiceTests
     }
 
     [Test]
-    public async Task LoadSingleAsync_WhenQuestLuaPathTriggersValidationFailure_ShouldLoadQuestBeforeThrowing()
+    public async Task LoadSingleAsync_WhenQuestLuaValidationFails_ShouldPreserveExistingQuestState()
     {
         using var tempDirectory = new TempDirectory();
         var directoriesConfig = new DirectoriesConfig(
@@ -175,15 +175,6 @@ public class FileLoaderServiceTests
 
         mobileTemplateService.Upsert(CreateValidMobileTemplate("farmer_npc", "Farmer NPC"));
         mobileTemplateService.Upsert(CreateValidMobileTemplate("sewer_rat", "Sewer Rat"));
-        mobileTemplateService.Upsert(
-            new MobileTemplateDefinition
-            {
-                Id = "invalid_mobile",
-                Name = "Invalid Mobile",
-                Category = "test",
-                Description = "test"
-            }
-        );
 
         container.RegisterInstance(directoriesConfig);
         container.RegisterInstance<IQuestDefinitionService>(questDefinitionService);
@@ -197,15 +188,48 @@ public class FileLoaderServiceTests
 
         var service = new FileLoaderService(container, directoriesConfig);
 
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await service.LoadSingleAsync(questPath));
+        await service.LoadSingleAsync(questPath);
+
+        await File.WriteAllTextAsync(
+            questPath,
+            """
+            quest.define({
+                id = "new_haven.rat_hunt",
+                name = "Rat Hunt Broken",
+                category = "starter",
+                description = "Cull the rat infestation near the mill.",
+                quest_givers = { "missing_farmer_npc" },
+                completion_npcs = { "farmer_npc" },
+                repeatable = false,
+                max_active_per_character = 1,
+                objectives = {
+                    quest.kill({ mobiles = { "missing_rat" }, amount = 10 })
+                },
+                rewards = {
+                    quest.gold(150)
+                }
+            })
+            """
+        );
+
+        Assert.That(
+            async () => await service.LoadSingleAsync(questPath),
+            Throws.TypeOf<InvalidOperationException>()
+        );
 
         Assert.Multiple(
             () =>
             {
                 Assert.That(questTemplateService.TryGet("new_haven.rat_hunt", out var questTemplate), Is.True);
                 Assert.That(questTemplate, Is.Not.Null);
+                Assert.That(questTemplate!.Name, Is.EqualTo("Rat Hunt"));
+                Assert.That(questTemplate.QuestGiverTemplateIds, Is.EqualTo(new[] { "farmer_npc" }));
+                Assert.That(questTemplate.Objectives[0].MobileTemplateIds, Is.EqualTo(new[] { "sewer_rat" }));
                 Assert.That(questDefinitionService.TryGet("new_haven.rat_hunt", out var questDefinition), Is.True);
                 Assert.That(questDefinition, Is.Not.Null);
+                Assert.That(questDefinition!.Name, Is.EqualTo("Rat Hunt"));
+                Assert.That(questDefinition.QuestGiverTemplateIds, Is.EqualTo(new[] { "farmer_npc" }));
+                Assert.That(questDefinition.Objectives[0].MobileTemplateIds, Is.EqualTo(new[] { "sewer_rat" }));
             }
         );
     }

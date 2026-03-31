@@ -14,6 +14,12 @@ public interface IQuestDefinitionService
     void Clear();
 
     /// <summary>
+    /// Replaces all registered quest definitions with the provided snapshot.
+    /// </summary>
+    /// <param name="definitions">Quest definitions to restore.</param>
+    void ReplaceAll(IEnumerable<QuestLuaDefinition> definitions);
+
+    /// <summary>
     /// Gets all registered quest definitions as a snapshot list.
     /// </summary>
     /// <returns>All registered quest definitions.</returns>

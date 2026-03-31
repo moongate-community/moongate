@@ -1,9 +1,11 @@
 using Moongate.Core.Data.Directories;
 using Moongate.Core.Types;
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Scripting;
 using Moongate.Server.Interfaces.Services.Files;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Templates.Quests;
 using MoonSharp.Interpreter;
 using Serilog;
 
@@ -88,6 +90,28 @@ public sealed class QuestTemplateLoader : IFileLoader
         _logger.Information("Reloaded quest script file {ScriptFile}", normalizedPath);
 
         return Task.CompletedTask;
+    }
+
+    public QuestTemplateLoaderState CaptureState()
+        => new(
+            new Dictionary<string, string>(_scriptFileContents, StringComparer.OrdinalIgnoreCase),
+            _questDefinitionService.GetAll(),
+            _questTemplateService.GetAll()
+        );
+
+    public void RestoreState(QuestTemplateLoaderState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+
+        _scriptFileContents.Clear();
+
+        foreach (var (scriptFile, content) in state.ScriptFileContents)
+        {
+            _scriptFileContents[scriptFile] = content;
+        }
+
+        _questDefinitionService.ReplaceAll(state.QuestDefinitions);
+        _questTemplateService.ReplaceAll(state.QuestTemplates);
     }
 
     private Script CreateQuestDslScript(string relativeScriptPath)
@@ -221,4 +245,10 @@ public sealed class QuestTemplateLoader : IFileLoader
         => Path.GetFullPath(path)
                .Replace(Path.DirectorySeparatorChar, '/')
                .Replace(Path.AltDirectorySeparatorChar, '/');
+
+    public sealed record QuestTemplateLoaderState(
+        IReadOnlyDictionary<string, string> ScriptFileContents,
+        IReadOnlyList<QuestLuaDefinition> QuestDefinitions,
+        IReadOnlyList<QuestTemplateDefinition> QuestTemplates
+    );
 }

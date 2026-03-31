@@ -18,6 +18,12 @@ public interface IQuestTemplateService
     void Clear();
 
     /// <summary>
+    /// Replaces all registered quest templates with the provided snapshot.
+    /// </summary>
+    /// <param name="definitions">Quest templates to restore.</param>
+    void ReplaceAll(IEnumerable<QuestTemplateDefinition> definitions);
+
+    /// <summary>
     /// Gets all quest templates as a snapshot list.
     /// </summary>
     /// <returns>All registered quest templates.</returns>
