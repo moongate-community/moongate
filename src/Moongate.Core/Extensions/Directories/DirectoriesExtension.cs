@@ -8,10 +8,11 @@ namespace Moongate.Core.Extensions.Directories;
 public static class DirectoriesExtension
 {
     /// <summary>
-    /// Resolves path by expanding tilde (~) to user home directory and expanding environment variables
+    /// Resolves path by expanding tilde (~) to user home directory, expanding environment variables,
+    /// and normalizing the result to an absolute path.
     /// </summary>
     /// <param name="path">The path to resolve</param>
-    /// <returns>The fully resolved path with expanded environment variables</returns>
+    /// <returns>The fully resolved absolute path with expanded environment variables</returns>
     /// <exception cref="ArgumentException">Thrown when path is null or empty</exception>
     public static string ResolvePathAndEnvs(this string path)
     {
@@ -24,6 +25,6 @@ public static class DirectoriesExtension
 
         path = Environment.ExpandEnvironmentVariables(path).ExpandEnvironmentVariables();
 
-        return path;
+        return Path.GetFullPath(path);
     }
 }
