@@ -19,6 +19,7 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Quests;
 using Moongate.UO.Data.Types;
 
@@ -500,11 +501,14 @@ public sealed class ContextMenuServiceTests
         var eventBus = new GameEventBusService();
         var questListener = new TestQuestDialogRequestedEventListener();
         eventBus.RegisterListener(questListener);
-        var questService = new ContextMenuTestQuestService
-        {
-            AvailableQuestIds = ["starter.rat_hunt"]
-        };
-        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, questService: questService);
+        var questTemplateService = CreateQuestTemplateService("quest_giver_npc");
+        var service = new ContextMenuService(
+            sessions,
+            mobiles,
+            outgoing,
+            eventBus,
+            questTemplateService: questTemplateService
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client));
@@ -543,17 +547,22 @@ public sealed class ContextMenuServiceTests
     }
 
     [Test]
-    public async Task HandleAsync_ForContextMenuRequestedEvent_WhenQuestNPCHasAvailableQuests_ShouldIncludeQuestEntry()
+    public async Task HandleAsync_ForContextMenuRequestedEvent_WhenQuestNpcTemplateIsRegisteredButPlayerHasNoQuests_ShouldIncludeQuestEntry()
     {
         var sessions = new ContextMenuTestGameNetworkSessionService();
         var mobiles = new ContextMenuTestMobileService();
         var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
         var eventBus = new GameEventBusService();
-        var questService = new ContextMenuTestQuestService
-        {
-            AvailableQuestIds = ["starter.rat_hunt"]
-        };
-        var service = new ContextMenuService(sessions, mobiles, outgoing, eventBus, questService: questService);
+        var questService = new ContextMenuTestQuestService();
+        var questTemplateService = CreateQuestTemplateService("quest_giver_npc");
+        var service = new ContextMenuService(
+            sessions,
+            mobiles,
+            outgoing,
+            eventBus,
+            questService: questService,
+            questTemplateService: questTemplateService
+        );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
 
         var session = new GameSession(new(client));
@@ -596,6 +605,25 @@ public sealed class ContextMenuServiceTests
                 Assert.That(new[] { firstTag, secondTag }, Does.Contain((ushort)4));
             }
         );
+    }
+
+    private static QuestTemplateService CreateQuestTemplateService(string npcTemplateId)
+    {
+        var questTemplateService = new QuestTemplateService();
+        questTemplateService.Upsert(
+            new QuestTemplateDefinition
+            {
+                Id = "starter.rat_hunt",
+                Name = "Rat Hunt",
+                Description = "Kill sewer rats.",
+                Category = "starter",
+                QuestGiverTemplateIds = [npcTemplateId],
+                CompletionNpcTemplateIds = [npcTemplateId],
+                MaxActivePerCharacter = 1
+            }
+        );
+
+        return questTemplateService;
     }
 
     [Test]

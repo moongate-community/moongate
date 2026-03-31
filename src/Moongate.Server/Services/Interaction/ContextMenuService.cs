@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Linq;
 using Moongate.Abstractions.Interfaces.Services.Base;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Outgoing.World;
@@ -13,6 +14,8 @@ using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Types.Interaction;
+using Moongate.Server.Data.Internal.Scripting;
+using Moongate.UO.Data.Interfaces.Templates;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
@@ -46,6 +49,7 @@ public sealed class ContextMenuService
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ILuaBrainRunner? _luaBrainRunner;
     private readonly IQuestService? _questService;
+    private readonly IQuestTemplateService? _questTemplateService;
 
     private readonly ConcurrentDictionary<long, PendingContextMenuState> _pendingMenus = new();
 
@@ -55,7 +59,8 @@ public sealed class ContextMenuService
         IOutgoingPacketQueue outgoingPacketQueue,
         IGameEventBusService gameEventBusService,
         ILuaBrainRunner? luaBrainRunner = null,
-        IQuestService? questService = null
+        IQuestService? questService = null,
+        IQuestTemplateService? questTemplateService = null
     )
     {
         _gameNetworkSessionService = gameNetworkSessionService;
@@ -64,6 +69,7 @@ public sealed class ContextMenuService
         _gameEventBusService = gameEventBusService;
         _luaBrainRunner = luaBrainRunner;
         _questService = questService;
+        _questTemplateService = questTemplateService;
     }
 
     private readonly record struct PendingContextMenuState(
@@ -224,7 +230,7 @@ public sealed class ContextMenuService
     public Task StopAsync()
         => Task.CompletedTask;
 
-    private async Task<List<PopupContextMenuEntry>> BuildEntriesAsync(
+    private Task<List<PopupContextMenuEntry>> BuildEntriesAsync(
         GameSession session,
         UOMobileEntity targetMobile,
         CancellationToken cancellationToken
@@ -232,19 +238,37 @@ public sealed class ContextMenuService
     {
         var entries = BuildEntries(targetMobile);
 
-        if (_questService is not null && !targetMobile.IsPlayer && session.Character is not null)
+        if (_questTemplateService is not null &&
+            !targetMobile.IsPlayer &&
+            HasQuestTemplateReference(targetMobile))
         {
-            var availableTask = _questService.GetAvailableForNpcAsync(session.Character, targetMobile, cancellationToken);
-            var activeTask = _questService.GetActiveForNpcAsync(session.Character, targetMobile, cancellationToken);
-            await Task.WhenAll(availableTask, activeTask);
+            entries.Add(new(QuestEntryTag, QuestEntryClilocId));
+        }
 
-            if (availableTask.Result.Count > 0 || activeTask.Result.Count > 0)
+        _ = session;
+        _ = cancellationToken;
+
+        return Task.FromResult(entries);
+    }
+
+    private bool HasQuestTemplateReference(UOMobileEntity targetMobile)
+    {
+        if (!targetMobile.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId) ||
+            string.IsNullOrWhiteSpace(templateId))
+        {
+            return false;
+        }
+
+        foreach (var questTemplate in _questTemplateService!.GetAll())
+        {
+            if (questTemplate.QuestGiverTemplateIds.Any(id => string.Equals(id, templateId, StringComparison.OrdinalIgnoreCase)) ||
+                questTemplate.CompletionNpcTemplateIds.Any(id => string.Equals(id, templateId, StringComparison.OrdinalIgnoreCase)))
             {
-                entries.Add(new(QuestEntryTag, QuestEntryClilocId));
+                return true;
             }
         }
 
-        return entries;
+        return false;
     }
 
     private static List<PopupContextMenuEntry> BuildEntries(UOMobileEntity targetMobile)
