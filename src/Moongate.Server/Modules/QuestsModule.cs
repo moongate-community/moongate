@@ -15,6 +15,8 @@ namespace Moongate.Server.Modules;
 [ScriptModule("quests", "Provides quest dialog helpers for Lua scripts.")]
 public sealed class QuestsModule
 {
+    private const int InteractionRange = 18;
+
     private readonly IQuestService _questService;
     private readonly IQuestTemplateService _questTemplateService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -39,14 +41,16 @@ public sealed class QuestsModule
     [ScriptFunction("open", "Opens the shared quest dialog for a session.")]
     public bool Open(long sessionId, uint characterId, uint npcSerial)
     {
-        if (sessionId <= 0 || characterId == 0 || npcSerial == 0)
+        if (!TryResolvePlayerAndNpc(sessionId, characterId, npcSerial, out _, out _))
         {
             return false;
         }
 
-        _scriptEngineService.CallFunction("on_quest_dialog_requested", sessionId, characterId, npcSerial);
+        var result = _scriptEngineService.ExecuteFunction(
+            $"on_quest_dialog_requested({sessionId}, {characterId}, {npcSerial})"
+        );
 
-        return true;
+        return result.Success && result.Data is bool opened && opened;
     }
 
     [ScriptFunction("get_available", "Returns quests available from the specified NPC.")]
@@ -189,6 +193,13 @@ public sealed class QuestsModule
         var resolvedNpc = _mobileService.GetAsync((Serial)npcSerial).GetAwaiter().GetResult();
 
         if (resolvedNpc is null)
+        {
+            return false;
+        }
+
+        if (resolvedNpc.IsPlayer ||
+            session.Character.MapId != resolvedNpc.MapId ||
+            !session.Character.Location.InRange(resolvedNpc.Location, InteractionRange))
         {
             return false;
         }

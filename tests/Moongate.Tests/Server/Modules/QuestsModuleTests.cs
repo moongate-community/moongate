@@ -32,6 +32,8 @@ public sealed class QuestsModuleTests
 
         public object[]? LastFunctionArgs { get; private set; }
 
+        public string? LastExecuteFunctionCommand { get; private set; }
+
         public void AddCallback(string name, Action<object[]> callback)
             => _ = (name, callback);
 
@@ -67,10 +69,14 @@ public sealed class QuestsModuleTests
         public void ExecuteEngineReady() { }
 
         public ScriptResult ExecuteFunction(string command)
-            => new() { Success = true };
+        {
+            LastExecuteFunctionCommand = command;
+
+            return new() { Success = true, Data = true };
+        }
 
         public Task<ScriptResult> ExecuteFunctionAsync(string command)
-            => Task.FromResult(new ScriptResult { Success = true });
+            => Task.FromResult(ExecuteFunction(command));
 
         public void ExecuteFunctionFromBootstrap(string name) { }
 
@@ -342,8 +348,30 @@ public sealed class QuestsModuleTests
             () =>
             {
                 Assert.That(result, Is.True);
-                Assert.That(_scriptEngine.LastFunctionName, Is.EqualTo("on_quest_dialog_requested"));
-                Assert.That(_scriptEngine.LastFunctionArgs, Is.EqualTo([session.SessionId, (uint)session.CharacterId, 0x2001u]));
+                Assert.That(_scriptEngine.LastFunctionName, Is.Null);
+                Assert.That(
+                    _scriptEngine.LastExecuteFunctionCommand,
+                    Is.EqualTo($"on_quest_dialog_requested({session.SessionId}, {(uint)session.CharacterId}, 8193)")
+                );
+            }
+        );
+    }
+
+    [Test]
+    public void Open_WhenNpcIsOnDifferentMap_ShouldReturnFalse()
+    {
+        var module = CreateModule();
+        var session = _sessionService.GetAll().Single();
+        var npc = _mobileService.MobilesById[(Serial)0x2001u];
+        npc.MapId = 1;
+
+        var result = module.Open(session.SessionId, (uint)session.CharacterId, 0x2001);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.False);
+                Assert.That(_scriptEngine.LastExecuteFunctionCommand, Is.Null);
             }
         );
     }
@@ -379,6 +407,28 @@ public sealed class QuestsModuleTests
     }
 
     [Test]
+    public void GetAvailable_WhenNpcIsOnDifferentMap_ShouldReturnEmptyTable()
+    {
+        var module = CreateModule(
+            available: [
+                new QuestTemplateDefinition
+                {
+                    Id = "starter.rat_hunt",
+                    Name = "Rat Hunt",
+                    Description = "Kill sewer rats.",
+                    Category = "starter"
+                }
+            ]
+        );
+        var session = _sessionService.GetAll().Single();
+        _mobileService.MobilesById[(Serial)0x2001u].MapId = 1;
+
+        var table = module.GetAvailable(session.SessionId, (uint)session.CharacterId, 0x2001);
+
+        Assert.That(table.Length, Is.EqualTo(0));
+    }
+
+    [Test]
     public void GetActive_WhenNpcHasReadyQuests_ShouldReturnQuestRows()
     {
         var module = CreateModule(
@@ -389,7 +439,9 @@ public sealed class QuestsModuleTests
                     Id = "starter.rat_hunt",
                     Name = "Rat Hunt",
                     Description = "Kill sewer rats.",
-                    Category = "starter"
+                    Category = "starter",
+                    QuestGiverTemplateIds = ["quest_giver_npc"],
+                    CompletionNpcTemplateIds = ["quest_turn_in_npc"]
                 }
             ],
             active: [
@@ -416,16 +468,51 @@ public sealed class QuestsModuleTests
     }
 
     [Test]
-    public async Task AcceptAndComplete_WhenQuestServiceResolvesNpc_ShouldForwardQuestActions()
+    public void GetActive_WhenNpcIsOutOfRange_ShouldReturnEmptyTable()
     {
         var module = CreateModule(
+            npcTemplateId: "quest_turn_in_npc",
             available: [
                 new QuestTemplateDefinition
                 {
                     Id = "starter.rat_hunt",
                     Name = "Rat Hunt",
                     Description = "Kill sewer rats.",
-                    Category = "starter"
+                    Category = "starter",
+                    QuestGiverTemplateIds = ["quest_giver_npc"],
+                    CompletionNpcTemplateIds = ["quest_turn_in_npc"]
+                }
+            ],
+            active: [
+                new QuestProgressEntity
+                {
+                    QuestId = "starter.rat_hunt",
+                    Status = QuestProgressStatusType.ReadyToTurnIn
+                }
+            ]
+        );
+        var session = _sessionService.GetAll().Single();
+        _mobileService.MobilesById[(Serial)0x2001u].Location = new Point3D(100, 100, 0);
+
+        var table = module.GetActive(session.SessionId, (uint)session.CharacterId, 0x2001);
+
+        Assert.That(table.Length, Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task AcceptAndComplete_WhenQuestServiceResolvesNpc_ShouldForwardQuestActions()
+    {
+        var module = CreateModule(
+            npcTemplateId: "quest_turn_in_npc",
+            available: [
+                new QuestTemplateDefinition
+                {
+                    Id = "starter.rat_hunt",
+                    Name = "Rat Hunt",
+                    Description = "Kill sewer rats.",
+                    Category = "starter",
+                    QuestGiverTemplateIds = ["quest_giver_npc"],
+                    CompletionNpcTemplateIds = ["quest_turn_in_npc"]
                 }
             ]
         );
@@ -441,6 +528,40 @@ public sealed class QuestsModuleTests
                 Assert.That(completed, Is.True);
                 Assert.That(_questService.LastAcceptedQuestId, Is.EqualTo("starter.rat_hunt"));
                 Assert.That(_questService.LastCompletedQuestId, Is.EqualTo("starter.rat_hunt"));
+            }
+        );
+    }
+
+    [Test]
+    public void AcceptAndComplete_WhenNpcMovesOutOfRange_ShouldFailAndNotCallQuestService()
+    {
+        var module = CreateModule(
+            npcTemplateId: "quest_turn_in_npc",
+            available: [
+                new QuestTemplateDefinition
+                {
+                    Id = "starter.rat_hunt",
+                    Name = "Rat Hunt",
+                    Description = "Kill sewer rats.",
+                    Category = "starter",
+                    QuestGiverTemplateIds = ["quest_giver_npc"],
+                    CompletionNpcTemplateIds = ["quest_turn_in_npc"]
+                }
+            ]
+        );
+        var session = _sessionService.GetAll().Single();
+        _mobileService.MobilesById[(Serial)0x2001u].Location = new Point3D(100, 100, 0);
+
+        var accepted = module.Accept(session.SessionId, (uint)session.CharacterId, 0x2001, "starter.rat_hunt");
+        var completed = module.Complete(session.SessionId, (uint)session.CharacterId, 0x2001, "starter.rat_hunt");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(accepted, Is.False);
+                Assert.That(completed, Is.False);
+                Assert.That(_questService.LastAcceptedQuestId, Is.Null);
+                Assert.That(_questService.LastCompletedQuestId, Is.Null);
             }
         );
     }

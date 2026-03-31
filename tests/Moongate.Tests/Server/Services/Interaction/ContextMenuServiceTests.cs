@@ -501,7 +501,7 @@ public sealed class ContextMenuServiceTests
         var eventBus = new GameEventBusService();
         var questListener = new TestQuestDialogRequestedEventListener();
         eventBus.RegisterListener(questListener);
-        var questTemplateService = CreateQuestTemplateService("quest_giver_npc");
+        var questTemplateService = CreateQuestTemplateService("quest_turn_in_npc");
         var service = new ContextMenuService(
             sessions,
             mobiles,
@@ -528,7 +528,7 @@ public sealed class ContextMenuServiceTests
             MapId = 0,
             Location = new(101, 100, 0)
         };
-        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_giver_npc");
+        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_turn_in_npc");
         mobiles.MobilesById[npc.Id] = npc;
 
         await service.HandleAsync(new ContextMenuRequestedEvent(session.SessionId, npc.Id));
@@ -553,14 +553,12 @@ public sealed class ContextMenuServiceTests
         var mobiles = new ContextMenuTestMobileService();
         var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
         var eventBus = new GameEventBusService();
-        var questService = new ContextMenuTestQuestService();
         var questTemplateService = CreateQuestTemplateService("quest_giver_npc");
         var service = new ContextMenuService(
             sessions,
             mobiles,
             outgoing,
             eventBus,
-            questService: questService,
             questTemplateService: questTemplateService
         );
         using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));

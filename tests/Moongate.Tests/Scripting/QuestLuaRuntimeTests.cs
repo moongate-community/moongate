@@ -8,10 +8,13 @@ using Moongate.Network.Packets.Incoming.UI;
 using Moongate.Network.Packets.Outgoing.UI;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
+using Moongate.Server.Data.Events.Interaction;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Session;
+using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Packets;
@@ -289,6 +292,37 @@ public sealed class QuestLuaRuntimeTests
     }
 
     [Test]
+    public async Task StartAsync_WithQuestDialogRequestedEvent_ShouldOpenSharedQuestDialogThroughHandler()
+    {
+        using var context = await CreateContextAsync(
+                         available: [
+                             new QuestTemplateDefinition
+                             {
+                                 Id = "starter.rat_hunt",
+                                 Name = "Rat Hunt",
+                                 Description = "Kill three sewer rats.",
+                                 Category = "starter",
+                                 QuestGiverTemplateIds = ["quest_giver_npc"],
+                                 CompletionNpcTemplateIds = ["quest_giver_npc"],
+                                 MaxActivePerCharacter = 1
+                             }
+                         ]
+                     );
+
+        var eventBus = new GameEventBusService();
+        eventBus.RegisterListener(new QuestDialogRequestedHandler(context.SessionService, context.Service));
+
+        await eventBus.PublishAsync(new QuestDialogRequestedEvent(context.Session.SessionId, context.Npc.Id));
+
+        Assert.That(context.Queue.TryDequeue(out var outbound), Is.True);
+        Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
+
+        var gump = (CompressedGumpPacket)outbound.Packet;
+        Assert.That(gump.TextLines, Contains.Item("Quest Journal"));
+        Assert.That(gump.TextLines, Contains.Item("Rat Hunt"));
+    }
+
+    [Test]
     public async Task StartAsync_WithQuestScripts_ShouldAcceptAQuestFromTheDialog()
     {
         using var context = await CreateContextAsync(
@@ -337,7 +371,7 @@ public sealed class QuestLuaRuntimeTests
                                  Description = "Bring apples to the farmer.",
                                  Category = "starter",
                                  QuestGiverTemplateIds = ["quest_giver_npc"],
-                                 CompletionNpcTemplateIds = ["quest_giver_npc"],
+                                 CompletionNpcTemplateIds = ["quest_turn_in_npc"],
                                  MaxActivePerCharacter = 1
                              }
                          ],
