@@ -36,6 +36,8 @@ When `Scripting.EnableFileWatcher` is enabled, Moongate watches:
 
 Lua hot reload is lazy: when a watched `.lua` file changes, the compiled chunk for that file is invalidated and the next
 execution recompiles it. JSON template and spawn files are reloaded one file at a time through the registered file loader.
+Quest scripts under `scripts/quests/**` are a special case: they are reloaded one file at a time through the quest template
+validation pipeline, and invalid edits keep the last valid in-memory quest state until the authored file is fixed.
 
 For manual reload, use:
 
@@ -157,6 +159,8 @@ For in-game help tickets opened from the client help button and persisted for st
 [Help Ticket Workflow](../operations/help-ticket-workflow.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
+For Lua-authored quests compiled into validated runtime templates, plus the shared NPC dialog and client journal flows, see
+[Quests](quests.md).
 For packaging gameplay extensions outside the core script tree, see [Lua Plugins](lua-plugins.md).
 For background-safe named jobs callable from Lua, see [Async Jobs](async-jobs.md).
 For recurring coroutine cadences in NPC brains, see [Tick Helper](tick.md).
