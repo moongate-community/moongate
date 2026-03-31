@@ -157,6 +157,8 @@ For first-open chest loot and refillable container behavior driven by item and l
 For in-game help tickets opened from the client help button and persisted for staff review, see the
 [`help_tickets` module and callback docs](api.md#help-ticketing) plus the operator-facing
 [Help Ticket Workflow](../operations/help-ticket-workflow.md).
+For shard-wide moongate travel authored in Lua and opened from a dedicated item gump, see
+[Public Moongates](public-moongates.md).
 For vendor sell profiles and context menu flow (native + custom Lua), see
 [Vendor and Context Menus](vendor-context-menus.md).
 For Lua-authored quests compiled into validated runtime templates, plus the shared NPC dialog and client journal flows, see
