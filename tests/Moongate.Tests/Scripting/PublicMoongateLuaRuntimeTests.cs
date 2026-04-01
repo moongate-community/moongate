@@ -46,6 +46,9 @@ public sealed class PublicMoongateLuaRuntimeTests
                 var gump = (CompressedGumpPacket)outbound.Packet;
                 Assert.That(gump.TextLines, Contains.Item("Public Moongate"));
                 Assert.That(gump.TextLines, Contains.Item("Felucca"));
+                Assert.That(gump.Layout, Does.Contain("{ resizepic 0 0 9200 460 340 }"));
+                Assert.That(gump.Layout, Does.Contain("{ resizepic 18 88 9200 130 234 }"));
+                Assert.That(gump.Layout, Does.Contain("{ resizepic 160 88 9200 282 234 }"));
             }
         );
     }
