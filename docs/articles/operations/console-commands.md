@@ -155,6 +155,16 @@ Opens a helpful target cursor and resurrects the selected dead player immediatel
 
 Only dead player ghosts are valid targets. Context: InGame only. Access: GameMaster.
 
+#### `give_magery_test_kit`
+
+Prepares the caller for player-side magery testing by raising `Magery`, topping up mana, filling an available regular spellbook with the currently registered regular spells, and adding reagent stacks to the backpack.
+
+```
+.give_magery_test_kit
+```
+
+The command reuses an existing regular spellbook when one is already present on the character or inside the backpack tree; otherwise it creates one. Context: InGame only. Access: GameMaster.
+
 #### `add_item`
 
 Spawns a hardcoded "brick" test item and adds it to the player backpack at position (1,1). Primarily a development/test command.
