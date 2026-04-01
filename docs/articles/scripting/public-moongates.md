@@ -76,6 +76,22 @@ The current V1 flow is intentionally simple:
 - no expansion-specific destination filtering
 - no special criminal or young-player rules
 
+## Spawning the Network
+
+To regenerate the full public network from the shared Lua dataset, use:
+
+```text
+.spawn_public_moongates
+```
+
+This command:
+
+- reads the current `moongate_data/scripts/moongates/data.lua`
+- removes existing world `public_moongate` items
+- recreates one `public_moongate` at every configured destination
+
+This is the recommended way to refresh the network after editing the shared destination list.
+
 ## Files Involved
 
 - `moongate_data/scripts/items/public_moongate.lua`
@@ -91,5 +107,5 @@ The current V1 flow is intentionally simple:
 When you change the shared destinations:
 
 1. update `moongate_data/scripts/moongates/data.lua`
-2. reload scripts or restart the server
+2. run `.spawn_public_moongates`
 3. verify the gump still opens and the destinations still travel correctly

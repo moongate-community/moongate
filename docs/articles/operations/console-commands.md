@@ -135,6 +135,16 @@ Opens the in-game GM sidebar menu. The menu currently exposes:
 
 Context: InGame only. Access: GameMaster.
 
+#### `spawn_public_moongates`
+
+Rebuilds the full shard-wide public moongate network from `moongate_data/scripts/moongates/data.lua`.
+
+```
+.spawn_public_moongates
+```
+
+The command removes existing world `public_moongate` items first, then respawns one gate for each destination in the shared Lua dataset. Context: Console and InGame. Access: GameMaster.
+
 #### `resurrect`
 
 Opens a helpful target cursor and resurrects the selected dead player immediately. This bypasses healer and ankh offer flow and is intended for live GM intervention.
