@@ -2382,6 +2382,7 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 0,
+    "layer": "OneHanded",
     "scriptId": "none",
     "isMovable": true,
     "tags": [
@@ -2434,6 +2435,7 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 0,
+    "layer": "OneHanded",
     "scriptId": "none",
     "isMovable": true,
     "tags": [
@@ -2451,6 +2453,7 @@
     "hue": "0",
     "goldValue": "0",
     "weight": 3,
+    "layer": "OneHanded",
     "scriptId": "none",
     "isMovable": true,
     "tags": [

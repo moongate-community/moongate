@@ -2,6 +2,7 @@ using Moongate.Server.Data.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Services.Magic.Spells.Magery.Second;
 
@@ -30,6 +31,8 @@ public sealed class AgilitySpell : MagerySpellBase
     public override double MinSkill => 10.0;
 
     public override double MaxSkill => 60.0;
+
+    protected override ushort? DefaultEffectItemId => EffectsUtils.Bless;
 
     public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
     {

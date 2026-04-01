@@ -2,6 +2,7 @@ using Moongate.Server.Data.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Services.Magic.Spells.Magery.Third;
 
@@ -31,6 +32,8 @@ public sealed class FireballSpell : MagerySpellBase
 
     public override double MaxSkill => 60;
 
+    protected override ushort? DefaultEffectItemId => EffectsUtils.Fireball;
+
     public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
     {
         ArgumentNullException.ThrowIfNull(caster);
@@ -42,5 +45,6 @@ public sealed class FireballSpell : MagerySpellBase
 
         var damage = DamageBaseAmount + Random.Shared.Next(DamageRandomAmount);
         target.Hits = Math.Max(0, target.Hits - damage);
+        target.IsAlive = target.Hits > 0;
     }
 }

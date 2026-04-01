@@ -157,13 +157,13 @@ Only dead player ghosts are valid targets. Context: InGame only. Access: GameMas
 
 #### `give_magery_test_kit`
 
-Prepares the caller for player-side magery testing by raising `Magery`, topping up mana, filling an available regular spellbook with the currently registered regular spells, and adding reagent stacks to the backpack.
+Prepares the caller for player-side magery testing by raising `Magery`, topping up mana, cleaning and filling a regular spellbook with the currently registered regular spells, equipping it to the one-handed layer, and adding reagent stacks to the backpack.
 
 ```
 .give_magery_test_kit
 ```
 
-The command reuses an existing regular spellbook when one is already present on the character or inside the backpack tree; otherwise it creates one. Context: InGame only. Access: GameMaster.
+The command reuses an existing regular spellbook when one is already present on the character or inside the backpack tree; otherwise it creates one. When the book carries legacy writable-book metadata, the command strips it so the client opens the spellbook UI instead of the generic book gump. Context: InGame only. Access: GameMaster.
 
 #### `add_item`
 

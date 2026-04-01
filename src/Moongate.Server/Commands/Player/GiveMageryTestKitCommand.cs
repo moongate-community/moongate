@@ -1,4 +1,5 @@
 using Moongate.Server.Attributes;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Internal.Commands;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
@@ -27,6 +28,15 @@ public sealed class GiveMageryTestKitCommand : ICommandExecutor
     private const int TargetMageryValue = 1000;
     private const int MinimumIntelligence = 100;
     private const int ReagentStackAmount = 100;
+    private static readonly string[] LegacyBookKeys =
+    [
+        ItemCustomParamKeys.Book.BookId,
+        ItemCustomParamKeys.Book.Title,
+        ItemCustomParamKeys.Book.Author,
+        ItemCustomParamKeys.Book.Content,
+        ItemCustomParamKeys.Book.Pages,
+        ItemCustomParamKeys.Book.Writable
+    ];
 
     private readonly IItemService _itemService;
     private readonly IGameNetworkSessionService _gameNetworkSessionService;
@@ -86,9 +96,15 @@ public sealed class GiveMageryTestKitCommand : ICommandExecutor
             PrepareStats(player);
 
             var spellbook = await EnsureSpellbookAsync(player, backpack, context.SessionId);
+            SanitizeSpellbook(spellbook);
             var spellbookData = BuildRegularSpellbookData();
             _spellbookService.SetData(spellbook, spellbookData);
             await _itemService.UpsertItemAsync(spellbook);
+
+            if (!await _itemService.EquipItemAsync(spellbook.Id, player.Id, ItemLayerType.OneHanded))
+            {
+                throw new InvalidOperationException("could not equip spellbook to the one-handed layer");
+            }
 
             var reagentTemplateIds = GetRequiredReagentTemplateIds();
             await AddReagentsAsync(backpack.Id, reagentTemplateIds, context.SessionId);
@@ -138,7 +154,22 @@ public sealed class GiveMageryTestKitCommand : ICommandExecutor
             throw new InvalidOperationException("could not move spellbook into backpack");
         }
 
-        return spawnedSpellbook;
+        var (found, persistedSpellbook) = await _itemService.TryToGetItemAsync(spawnedSpellbook.Id);
+
+        if (!found || persistedSpellbook is null)
+        {
+            throw new InvalidOperationException("could not reload spellbook after moving it to the backpack");
+        }
+
+        return persistedSpellbook;
+    }
+
+    private static void SanitizeSpellbook(UOItemEntity spellbook)
+    {
+        foreach (var key in LegacyBookKeys)
+        {
+            _ = spellbook.RemoveCustomProperty(key);
+        }
     }
 
     private SpellbookData BuildRegularSpellbookData()

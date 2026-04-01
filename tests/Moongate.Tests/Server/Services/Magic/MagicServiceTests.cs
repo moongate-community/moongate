@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Server.Data.Events.Base;
+using Moongate.Server.Data.Events.Speech;
 using Moongate.Server.Data.Internal.Cursors;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Items;
@@ -13,14 +14,20 @@ using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Data.Session;
+using Moongate.Network.Packets.Incoming.Speech;
 using Moongate.Network.Packets.Incoming.Targeting;
+using Moongate.Network.Packets.Outgoing.Speech;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Network.Packets.Types.Targeting;
 using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Magic.Base;
+using Moongate.Server.Services.Magic.Spells.Magery.First;
 using Moongate.Server.Types.Magic;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Tests.Server.Support;
 using Moongate.Tests.Server.Services.Spatial;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -43,6 +50,10 @@ public sealed class MagicServiceTests
     private RecordingPlayerTargetService _playerTargetService = null!;
     private FakeItemService _itemService = null!;
     private AllowAllSpellbookService _spellbookService = null!;
+    private FakeMobileService _mobileService = null!;
+    private BasePacketListenerTestOutgoingPacketQueue _outgoingPacketQueue = null!;
+    private FakeDeathService _deathService = null!;
+    private FakeSpeechService _speechService = null!;
     private SpellRegistry _spellRegistry = null!;
     private MagicService _service = null!;
 
@@ -57,6 +68,10 @@ public sealed class MagicServiceTests
         _playerTargetService = new RecordingPlayerTargetService();
         _itemService = new FakeItemService();
         _spellbookService = new AllowAllSpellbookService();
+        _mobileService = new FakeMobileService();
+        _outgoingPacketQueue = new BasePacketListenerTestOutgoingPacketQueue();
+        _deathService = new FakeDeathService();
+        _speechService = new FakeSpeechService();
         _spellRegistry = new SpellRegistry();
         _service = new MagicService(
             _timerService,
@@ -67,6 +82,10 @@ public sealed class MagicServiceTests
             _playerTargetService,
             _itemService,
             _spellbookService,
+            _mobileService,
+            _outgoingPacketQueue,
+            _deathService,
+            _speechService,
             _spellRegistry
         );
     }
@@ -164,6 +183,47 @@ public sealed class MagicServiceTests
     }
 
     [Test]
+    public async Task TryCastAsync_ValidSpell_PersistsCasterManaAndEnqueuesStatusPacket()
+    {
+        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1.5), new("Heal", "In Mani", [], [])));
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var session = CreateSession(caster);
+        _gameNetworkSessionService.Add(session);
+
+        var result = await _service.TryCastAsync(caster, StubSpellId);
+        var packets = DrainOutgoingPacketsFor(session.SessionId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(caster.Mana, Is.EqualTo(46));
+                Assert.That(_mobileService.UpsertedMobileIds, Does.Contain(caster.Id));
+                Assert.That(packets.OfType<PlayerStatusPacket>().Count(), Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public async Task TryCastAsync_ValidSpell_SpeaksSpellMantraAsCaster()
+    {
+        _spellRegistry.Register(new StubSpell(StubSpellId, 4, TimeSpan.FromSeconds(1.5), new("Heal", "In Mani", [], [])));
+        var caster = CreateCaster(isAlive: true, mana: 50);
+
+        var result = await _service.TryCastAsync(caster, StubSpellId);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(result, Is.True);
+                Assert.That(_speechService.SpokenLines, Has.Count.EqualTo(1));
+                Assert.That(_speechService.SpokenLines[0].SpeakerId, Is.EqualTo(caster.Id));
+                Assert.That(_speechService.SpokenLines[0].Text, Is.EqualTo("In Mani"));
+            }
+        );
+    }
+
+    [Test]
     public async Task OnCastTimerExpiredAsync_WhenUntargetedSpellCompletes_ConsumesRequiredReagents()
     {
         var spell = new RecordingEffectSpell(
@@ -189,6 +249,40 @@ public sealed class MagicServiceTests
                 Assert.That(garlicStack.Amount, Is.EqualTo(3));
                 Assert.That(_itemService.UpsertedItemIds, Is.EqualTo(new[] { garlicStack.Id }));
                 Assert.That(_itemService.DeletedItemIds, Is.Empty);
+            }
+        );
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenReactiveArmorCompletes_PublishesEffectAndRefreshesCaster()
+    {
+        _spellRegistry.Register(new ReactiveArmorSpell());
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        _characterService.Backpack = CreateBackpack(
+            CreateReagent((Serial)0x40000021u, "garlic", 2),
+            CreateReagent((Serial)0x40000022u, "spiders_silk", 2),
+            CreateReagent((Serial)0x40000023u, "sulfurous_ash", 2)
+        );
+        var session = CreateSession(caster);
+        _gameNetworkSessionService.Add(session);
+
+        _ = await _service.TryCastAsync(caster, SpellIds.Magery.First.ReactiveArmor);
+        _ = DrainOutgoingPacketsFor(session.SessionId);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        var packets = DrainOutgoingPacketsFor(session.SessionId);
+        var effectEvent = _gameEventBusService.Events.OfType<MobilePlayEffectEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(caster.TryGetCustomBoolean("magic.reactive_armor", out var marker), Is.True);
+                Assert.That(marker, Is.True);
+                Assert.That(_mobileService.UpsertedMobileIds, Does.Contain(caster.Id));
+                Assert.That(packets.OfType<PlayerStatusPacket>().Count(), Is.EqualTo(1));
+                Assert.That(effectEvent.MobileId, Is.EqualTo(caster.Id));
+                Assert.That(effectEvent.ItemId, Is.EqualTo(EffectsUtils.Bless));
             }
         );
     }
@@ -245,6 +339,45 @@ public sealed class MagicServiceTests
                 Assert.That(_itemService.DeletedItemIds, Is.Empty);
                 Assert.That(target.TryGetCustomInteger("magic.effect_applied", out var marker), Is.True);
                 Assert.That(marker, Is.EqualTo(1));
+            }
+        );
+    }
+
+    [Test]
+    public async Task OnCastTimerExpiredAsync_WhenMagicArrowKillsTarget_TriggersDeathPipelineAndPublishesEffect()
+    {
+        _spellRegistry.Register(new MagicArrowSpell());
+        var caster = CreateCaster(isAlive: true, mana: 50);
+        var target = new UOMobileEntity
+        {
+            Id = (Serial)0x00000002u,
+            IsAlive = true,
+            Hits = 1,
+            MaxHits = 20,
+            MapId = 1,
+            Location = new Point3D(101, 100, 0)
+        };
+        caster.MapId = 1;
+        caster.Location = new Point3D(100, 100, 0);
+        _characterService.Backpack = CreateBackpack(CreateReagent((Serial)0x40000023u, "sulfurous_ash", 2));
+        _spatialWorldService.AddMobile(caster);
+        _spatialWorldService.AddMobile(target);
+        _gameNetworkSessionService.Add(CreateSession(caster));
+
+        _ = await _service.TryCastAsync(caster, SpellIds.Magery.First.MagicArrow);
+        _service.TrySetTarget(caster.Id, SpellIds.Magery.First.MagicArrow, target.Id);
+
+        await _service.OnCastTimerExpiredAsync(caster.Id);
+
+        var effectEvent = _gameEventBusService.Events.OfType<MobilePlayEffectEvent>().Single();
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(target.IsAlive, Is.False);
+                Assert.That(_deathService.HandledVictimIds, Does.Contain(target.Id));
+                Assert.That(effectEvent.MobileId, Is.EqualTo(target.Id));
+                Assert.That(effectEvent.ItemId, Is.EqualTo(EffectsUtils.Fireball));
             }
         );
     }
@@ -666,6 +799,21 @@ public sealed class MagicServiceTests
         };
     }
 
+    private List<IGameNetworkPacket> DrainOutgoingPacketsFor(long sessionId)
+    {
+        List<IGameNetworkPacket> packets = [];
+
+        while (_outgoingPacketQueue.TryDequeue(out var outgoing))
+        {
+            if (outgoing.SessionId == sessionId)
+            {
+                packets.Add(outgoing.Packet);
+            }
+        }
+
+        return packets;
+    }
+
     private sealed class MagicServiceTestSpatialWorldService : ISpatialWorldService
     {
         private readonly List<MapSector> _sectors = [];
@@ -872,11 +1020,13 @@ public sealed class MagicServiceTests
 
     private sealed class RecordingGameEventBusService : IGameEventBusService
     {
+        public List<IGameEvent> Events { get; } = [];
+
         public ValueTask PublishAsync<TEvent>(TEvent gameEvent, CancellationToken cancellationToken = default)
             where TEvent : IGameEvent
         {
-            _ = gameEvent;
             _ = cancellationToken;
+            Events.Add(gameEvent);
 
             return ValueTask.CompletedTask;
         }
@@ -886,6 +1036,68 @@ public sealed class MagicServiceTests
         {
             _ = listener;
         }
+    }
+
+    private sealed class FakeMobileService : IMobileService
+    {
+        public List<Serial> UpsertedMobileIds { get; } = [];
+
+        public Task CreateOrUpdateAsync(UOMobileEntity mobile, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            UpsertedMobileIds.Add(mobile.Id);
+
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            _ = id;
+
+            return Task.FromResult(false);
+        }
+
+        public Task<UOMobileEntity?> GetAsync(Serial id, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            _ = id;
+
+            return Task.FromResult<UOMobileEntity?>(null);
+        }
+
+        public Task<List<UOMobileEntity>> GetPersistentMobilesInSectorAsync(
+            int mapId,
+            int sectorX,
+            int sectorY,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            _ = mapId;
+            _ = sectorX;
+            _ = sectorY;
+
+            return Task.FromResult(new List<UOMobileEntity>());
+        }
+
+        public Task<UOMobileEntity> SpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
+
+        public Task<(bool Spawned, UOMobileEntity? Mobile)> TrySpawnFromTemplateAsync(
+            string templateId,
+            Point3D location,
+            int mapId,
+            Serial? accountId = null,
+            CancellationToken cancellationToken = default
+        )
+            => Task.FromResult((false, (UOMobileEntity?)null));
     }
 
     private sealed class AllowAllSpellbookService : ISpellbookService
@@ -1014,6 +1226,92 @@ public sealed class MagicServiceTests
             _ = target;
         }
     }
+
+    private sealed class FakeDeathService : IDeathService
+    {
+        public List<Serial> HandledVictimIds { get; } = [];
+
+        public Task<bool> ForceDeathAsync(
+            UOMobileEntity victim,
+            UOMobileEntity? killer,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            _ = killer;
+            HandledVictimIds.Add(victim.Id);
+
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> HandleDeathAsync(
+            UOMobileEntity victim,
+            UOMobileEntity? killer,
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            _ = killer;
+            HandledVictimIds.Add(victim.Id);
+
+            return Task.FromResult(true);
+        }
+    }
+
+    private sealed class FakeSpeechService : ISpeechService
+    {
+        public List<SpokenLine> SpokenLines { get; } = [];
+
+        public Task<int> BroadcastFromServerAsync(
+            string text,
+            short hue = SpeechHues.System,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU"
+        )
+            => throw new NotSupportedException();
+
+        public Task HandleOpenChatWindowAsync(
+            GameSession session,
+            OpenChatWindowPacket packet,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
+
+        public Task<UnicodeSpeechMessagePacket?> ProcessIncomingSpeechAsync(
+            GameSession session,
+            UnicodeSpeechPacket speechPacket,
+            CancellationToken cancellationToken = default
+        )
+            => throw new NotSupportedException();
+
+        public Task<bool> SendMessageFromServerAsync(
+            GameSession session,
+            string text,
+            short hue = SpeechHues.System,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU"
+        )
+            => throw new NotSupportedException();
+
+        public Task<int> SpeakAsMobileAsync(
+            UOMobileEntity speaker,
+            string text,
+            int range = 12,
+            ChatMessageType messageType = ChatMessageType.Regular,
+            short hue = SpeechHues.Default,
+            short font = SpeechHues.DefaultFont,
+            string language = "ENU",
+            CancellationToken cancellationToken = default
+        )
+        {
+            _ = cancellationToken;
+            SpokenLines.Add(new(speaker.Id, text));
+
+            return Task.FromResult(1);
+        }
+    }
+
+    private sealed record SpokenLine(Serial SpeakerId, string Text);
 
     private sealed class RecordingEffectSpell : MagerySpellBase
     {

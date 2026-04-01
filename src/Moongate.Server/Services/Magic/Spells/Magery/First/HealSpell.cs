@@ -2,6 +2,7 @@ using Moongate.Server.Data.Magic;
 using Moongate.Server.Services.Magic.Base;
 using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Utils;
 
 namespace Moongate.Server.Services.Magic.Spells.Magery.First;
 
@@ -29,6 +30,8 @@ public sealed class HealSpell : MagerySpellBase
     public override double MinSkill => 0.0;
 
     public override double MaxSkill => 60.0;
+
+    protected override ushort? DefaultEffectItemId => EffectsUtils.Heal;
 
     public override void ApplyEffect(UOMobileEntity caster, UOMobileEntity? target)
     {

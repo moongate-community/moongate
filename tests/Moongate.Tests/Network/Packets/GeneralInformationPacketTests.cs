@@ -83,7 +83,7 @@ public class GeneralInformationPacketTests
         yield return Case(GeneralInformationSubcommandType.ExtendedStats, [0x02]);
         yield return Case(GeneralInformationSubcommandType.StatLockChange, [0x00, 0x01]);
         yield return Case(GeneralInformationSubcommandType.NewSpellbook, new byte[8]);
-        yield return Case(GeneralInformationSubcommandType.SpellSelected, [0x00, 0x01]);
+        yield return Case(GeneralInformationSubcommandType.SpellSelected, [0x00, 0x02, 0x00, 0x01]);
         yield return Case(GeneralInformationSubcommandType.HouseRevisionState, new byte[8]);
         yield return Case(GeneralInformationSubcommandType.HouseRevisionRequest, new byte[4]);
         yield return Case(GeneralInformationSubcommandType.CustomHousing, new byte[5]);
@@ -102,6 +102,28 @@ public class GeneralInformationPacketTests
 
     private static TestCaseData Case(GeneralInformationSubcommandType type, byte[] payload)
         => new TestCaseData(type, payload).SetName($"0xBF_{(ushort)type:X2}_{type}");
+
+    [Test]
+    public void WriteAndParse_ShouldRoundtrip_LegacySpellSelectedPayload()
+    {
+        var packet = GeneralInformationPacket.Create(
+            GeneralInformationSubcommandType.SpellSelected,
+            new byte[] { 0x00, 0x01 }
+        );
+        var bytes = Write(packet);
+        var parsed = new GeneralInformationPacket();
+
+        var ok = parsed.TryParse(bytes);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(ok, Is.True);
+                Assert.That(parsed.SubcommandType, Is.EqualTo(GeneralInformationSubcommandType.SpellSelected));
+                Assert.That(parsed.SubcommandData.ToArray(), Is.EqualTo(new byte[] { 0x00, 0x01 }));
+            }
+        );
+    }
 
     private static byte[] Write(GeneralInformationPacket packet)
     {

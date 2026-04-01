@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Incoming.Interaction;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Entity;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
 using Moongate.Server.Data.Internal.Packets;
@@ -20,6 +21,7 @@ namespace Moongate.Server.Services.Items;
 public class ItemInteractionService : IItemInteractionService
 {
     private const int GroundItemInteractionRange = 2;
+    private const string RegularSpellbookTemplateId = "spellbook";
 
     private readonly ILogger _logger = Log.ForContext<ItemInteractionService>();
     private readonly IItemService _itemService;
@@ -108,6 +110,11 @@ public class ItemInteractionService : IItemInteractionService
             );
         }
 
+        if (TryEnqueueSpellbook(session, item))
+        {
+            return true;
+        }
+
         if (await _itemBookService.TryEnqueueBookAsync(session, item))
         {
             return true;
@@ -165,6 +172,39 @@ public class ItemInteractionService : IItemInteractionService
 
     private void Enqueue(GameSession session, IGameNetworkPacket packet)
         => _outgoingPacketQueue.Enqueue(session.SessionId, packet);
+
+    private static ulong GetSpellbookContent(UOItemEntity item)
+    {
+        if (item.TryGetCustomInteger(ItemCustomParamKeys.Spellbook.Content, out var stored))
+        {
+            return unchecked((ulong)stored);
+        }
+
+        return 0UL;
+    }
+
+    private static bool IsRegularSpellbook(UOItemEntity item)
+    {
+        if (!item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) ||
+            string.IsNullOrWhiteSpace(templateId))
+        {
+            return false;
+        }
+
+        return string.Equals(templateId, RegularSpellbookTemplateId, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool TryEnqueueSpellbook(GameSession session, UOItemEntity item)
+    {
+        if (!IsRegularSpellbook(item))
+        {
+            return false;
+        }
+
+        Enqueue(session, new DisplaySpellbookAndContentsPacket(item, GetSpellbookContent(item)));
+
+        return true;
+    }
 
     private static bool IsGroundItem(UOItemEntity item)
         => item.ParentContainerId == Serial.Zero && item.EquippedMobileId == Serial.Zero;

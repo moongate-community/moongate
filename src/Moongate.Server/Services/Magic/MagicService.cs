@@ -1,14 +1,18 @@
 using Moongate.Network.Packets.Types.Targeting;
+using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Internal.Cursors;
 using Moongate.Server.Data.Magic;
 using Moongate.Server.Interfaces.Characters;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Services.Entities;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Magic;
+using Moongate.Server.Interfaces.Services.Packets;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Interfaces.Services.Speech;
 using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.Server.Types.Magic;
 using Moongate.UO.Data.Ids;
@@ -35,6 +39,10 @@ public sealed class MagicService : IMagicService
     private readonly IPlayerTargetService _playerTargetService;
     private readonly IItemService _itemService;
     private readonly ISpellbookService _spellbookService;
+    private readonly IMobileService _mobileService;
+    private readonly IOutgoingPacketQueue _outgoingPacketQueue;
+    private readonly IDeathService _deathService;
+    private readonly ISpeechService _speechService;
     private readonly SpellRegistry _spellRegistry;
     private readonly Lock _syncRoot = new();
     private readonly Dictionary<Serial, SpellCastContext> _activeCasts = [];
@@ -48,6 +56,10 @@ public sealed class MagicService : IMagicService
         IPlayerTargetService playerTargetService,
         IItemService itemService,
         ISpellbookService spellbookService,
+        IMobileService mobileService,
+        IOutgoingPacketQueue outgoingPacketQueue,
+        IDeathService deathService,
+        ISpeechService speechService,
         SpellRegistry spellRegistry
     )
     {
@@ -59,6 +71,10 @@ public sealed class MagicService : IMagicService
         ArgumentNullException.ThrowIfNull(playerTargetService);
         ArgumentNullException.ThrowIfNull(itemService);
         ArgumentNullException.ThrowIfNull(spellbookService);
+        ArgumentNullException.ThrowIfNull(mobileService);
+        ArgumentNullException.ThrowIfNull(outgoingPacketQueue);
+        ArgumentNullException.ThrowIfNull(deathService);
+        ArgumentNullException.ThrowIfNull(speechService);
         ArgumentNullException.ThrowIfNull(spellRegistry);
 
         _timerService = timerService;
@@ -69,6 +85,10 @@ public sealed class MagicService : IMagicService
         _playerTargetService = playerTargetService;
         _itemService = itemService;
         _spellbookService = spellbookService;
+        _mobileService = mobileService;
+        _outgoingPacketQueue = outgoingPacketQueue;
+        _deathService = deathService;
+        _speechService = speechService;
         _spellRegistry = spellRegistry;
     }
 
@@ -154,6 +174,8 @@ public sealed class MagicService : IMagicService
         }
 
         caster.Mana = Math.Max(0, caster.Mana - spell.ManaCost);
+        await SynchronizeMobileAsync(caster, cancellationToken);
+        await _speechService.SpeakAsMobileAsync(caster, spell.Info.Mantra, cancellationToken: cancellationToken);
 
         return true;
     }
@@ -364,7 +386,73 @@ public sealed class MagicService : IMagicService
         );
 
         await spell.ApplyEffectAsync(context, cancellationToken);
+        await SynchronizeAffectedMobilesAsync(caster, targetMobile, cancellationToken);
         _logger.Debug("Completed cast for caster {CasterId} and spell {SpellId}.", caster.Id, spell.SpellId);
+    }
+
+    private async ValueTask SynchronizeAffectedMobilesAsync(
+        UOMobileEntity caster,
+        UOMobileEntity? targetMobile,
+        CancellationToken cancellationToken
+    )
+    {
+        Dictionary<Serial, UOMobileEntity> affectedMobiles = [];
+        TrackAffectedMobile(affectedMobiles, caster);
+        TrackAffectedMobile(affectedMobiles, targetMobile);
+
+        foreach (var mobile in affectedMobiles.Values)
+        {
+            NormalizeAliveState(mobile);
+            await SynchronizeMobileAsync(mobile, cancellationToken);
+        }
+
+        foreach (var mobile in affectedMobiles.Values)
+        {
+            if (!mobile.IsAlive)
+            {
+                await _deathService.HandleDeathAsync(mobile, mobile.Id == caster.Id ? null : caster, cancellationToken);
+            }
+        }
+    }
+
+    private async ValueTask SynchronizeMobileAsync(UOMobileEntity mobile, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        _spatialWorldService.AddOrUpdateMobile(mobile);
+        await _mobileService.CreateOrUpdateAsync(mobile, cancellationToken);
+
+        if (_gameNetworkSessionService.TryGetByCharacterId(mobile.Id, out var session))
+        {
+            _outgoingPacketQueue.Enqueue(session.SessionId, new PlayerStatusPacket(mobile, 1));
+        }
+    }
+
+    private static void NormalizeAliveState(UOMobileEntity mobile)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (mobile.Hits <= 0)
+        {
+            mobile.Hits = 0;
+            mobile.IsAlive = false;
+        }
+    }
+
+    private static void TrackAffectedMobile(
+        Dictionary<Serial, UOMobileEntity> affectedMobiles,
+        UOMobileEntity? mobile
+    )
+    {
+        ArgumentNullException.ThrowIfNull(affectedMobiles);
+
+        if (mobile is null || mobile.Id == Serial.Zero)
+        {
+            return;
+        }
+
+        affectedMobiles[mobile.Id] = mobile;
     }
 
     private async ValueTask BeginSequencingAsync(SpellCastContext activeCast, ISpell spell, long sessionId)

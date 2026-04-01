@@ -47,12 +47,7 @@ function build_starting_loadout(context)
     if profession == "warrior" then
         add_backpack(loadout, "Broadsword", 1)
     elseif profession == "mage" then
-        add_backpack(loadout, "Spellbook", 1, {
-            title = "Arcane Notes",
-            author = context.player_name,
-            pages = 32,
-            writable = true
-        })
+        add_backpack(loadout, "Spellbook", 1)
     elseif profession == "blacksmith" then
         add_backpack(loadout, "Tongs", 1)
         add_backpack(loadout, "IronIngot", 50)

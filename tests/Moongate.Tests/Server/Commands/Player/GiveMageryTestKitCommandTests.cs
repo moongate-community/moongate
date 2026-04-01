@@ -1,3 +1,4 @@
+using MemoryPack;
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Server.Commands.Player;
@@ -25,10 +26,13 @@ public sealed class GiveMageryTestKitCommandTests
     private sealed class GiveMageryTestKitTestItemService : IItemService
     {
         private uint _nextSerial = 0x40000000u;
+        private readonly Dictionary<Serial, UOItemEntity> _persistedItems = [];
 
         public List<UOItemEntity> SpawnedItems { get; } = [];
 
         public List<(Serial ItemId, Serial ContainerId)> MoveOperations { get; } = [];
+
+        public List<(Serial ItemId, Serial MobileId, ItemLayerType Layer)> EquipOperations { get; } = [];
 
         public List<UOItemEntity> UpsertedItems { get; } = [];
 
@@ -51,13 +55,25 @@ public sealed class GiveMageryTestKitCommandTests
             => Task.FromResult<DropItemToGroundResult?>(null);
 
         public Task<bool> EquipItemAsync(Serial itemId, Serial mobileId, ItemLayerType layer)
-            => Task.FromResult(true);
+        {
+            EquipOperations.Add((itemId, mobileId, layer));
+
+            if (_persistedItems.TryGetValue(itemId, out var item))
+            {
+                item.ParentContainerId = Serial.Zero;
+                item.ContainerPosition = Point2D.Zero;
+                item.EquippedMobileId = mobileId;
+                item.EquippedLayer = layer;
+            }
+
+            return Task.FromResult(true);
+        }
 
         public Task<List<UOItemEntity>> GetGroundItemsInSectorAsync(int mapId, int sectorX, int sectorY)
             => Task.FromResult(new List<UOItemEntity>());
 
         public Task<UOItemEntity?> GetItemAsync(Serial itemId)
-            => Task.FromResult<UOItemEntity?>(null);
+            => Task.FromResult(_persistedItems.TryGetValue(itemId, out var item) ? CloneForPersistence(item) : null);
 
         public Task<List<UOItemEntity>> GetItemsInContainerAsync(Serial containerId)
             => Task.FromResult(new List<UOItemEntity>());
@@ -67,6 +83,13 @@ public sealed class GiveMageryTestKitCommandTests
             _ = position;
             _ = sessionId;
             MoveOperations.Add((itemId, containerId));
+
+            if (_persistedItems.TryGetValue(itemId, out var item))
+            {
+                item.ParentContainerId = containerId;
+                item.ContainerPosition = position;
+                item.Location = new(position.X, position.Y, 0);
+            }
 
             return Task.FromResult(true);
         }
@@ -83,26 +106,48 @@ public sealed class GiveMageryTestKitCommandTests
                 IsStackable = !string.Equals(itemTemplateId, "spellbook", StringComparison.OrdinalIgnoreCase)
             };
             item.SetCustomString(ItemCustomParamKeys.Item.TemplateId, itemTemplateId);
-            SpawnedItems.Add(item);
+            _persistedItems[item.Id] = CloneForPersistence(item);
+            SpawnedItems.Add(CloneForPersistence(item));
 
-            return Task.FromResult(item);
+            return Task.FromResult(CloneForPersistence(item));
         }
 
         public Task<(bool Found, UOItemEntity? Item)> TryToGetItemAsync(Serial itemId)
-            => Task.FromResult((false, (UOItemEntity?)null));
+            => Task.FromResult(
+                _persistedItems.TryGetValue(itemId, out var item)
+                    ? (true, CloneForPersistence(item))
+                    : (false, (UOItemEntity?)null)
+            );
 
         public Task UpsertItemAsync(UOItemEntity item)
         {
-            UpsertedItems.Add(item);
+            var clone = CloneForPersistence(item);
+            _persistedItems[item.Id] = clone;
+            UpsertedItems.Add(CloneForPersistence(clone));
 
             return Task.CompletedTask;
         }
 
         public Task UpsertItemsAsync(params UOItemEntity[] items)
         {
-            UpsertedItems.AddRange(items);
+            foreach (var item in items)
+            {
+                var clone = CloneForPersistence(item);
+                _persistedItems[item.Id] = clone;
+                UpsertedItems.Add(CloneForPersistence(clone));
+            }
 
             return Task.CompletedTask;
+        }
+
+        public UOItemEntity? GetPersistedItem(Serial itemId)
+            => _persistedItems.TryGetValue(itemId, out var item) ? CloneForPersistence(item) : null;
+
+        private static UOItemEntity CloneForPersistence(UOItemEntity item)
+        {
+            var payload = MemoryPackSerializer.Serialize(item);
+
+            return MemoryPackSerializer.Deserialize<UOItemEntity>(payload)!;
         }
     }
 
@@ -222,7 +267,8 @@ public sealed class GiveMageryTestKitCommandTests
 
         await command.ExecuteCommandAsync(context);
 
-        var spellbook = itemService.SpawnedItems.Single(item => item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) && templateId == "spellbook");
+        var spawnedSpellbook = itemService.SpawnedItems.Single(item => item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) && templateId == "spellbook");
+        var spellbook = itemService.GetPersistedItem(spawnedSpellbook.Id)!;
         var spellbookData = spellbookService.GetData(spellbook);
         var reagentTemplateIds = itemService.SpawnedItems
             .Where(item => item.TryGetCustomString(ItemCustomParamKeys.Item.TemplateId, out var templateId) && templateId != "spellbook")
@@ -237,6 +283,10 @@ public sealed class GiveMageryTestKitCommandTests
                 Assert.That(character.Intelligence, Is.EqualTo(100));
                 Assert.That(character.MaxMana, Is.EqualTo(100));
                 Assert.That(character.Mana, Is.EqualTo(100));
+                Assert.That(itemService.EquipOperations, Has.Count.EqualTo(1));
+                Assert.That(itemService.EquipOperations[0], Is.EqualTo((spellbook.Id, character.Id, ItemLayerType.OneHanded)));
+                Assert.That(spellbook.EquippedMobileId, Is.EqualTo(character.Id));
+                Assert.That(spellbook.EquippedLayer, Is.EqualTo(ItemLayerType.OneHanded));
                 Assert.That(spellbookData.HasSpell(SpellIds.Magery.First.Heal), Is.True);
                 Assert.That(spellbookData.HasSpell(SpellIds.Magery.First.MagicArrow), Is.True);
                 Assert.That(reagentTemplateIds, Is.EqualTo(new[] { "garlic", "ginseng", "sulfurous_ash" }));
@@ -263,6 +313,9 @@ public sealed class GiveMageryTestKitCommandTests
         var backpack = new UOItemEntity { Id = (Serial)0x40002000u };
         var existingSpellbook = new UOItemEntity { Id = (Serial)0x40002001u };
         existingSpellbook.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "spellbook");
+        existingSpellbook.SetCustomString(ItemCustomParamKeys.Book.Title, "Arcane Notes");
+        existingSpellbook.SetCustomString(ItemCustomParamKeys.Book.Author, "Tester");
+        existingSpellbook.SetCustomBoolean(ItemCustomParamKeys.Book.Writable, true);
         backpack.AddItem(existingSpellbook, Point2D.Zero);
         var session = new GameSession(new(client))
         {
@@ -304,6 +357,11 @@ public sealed class GiveMageryTestKitCommandTests
                 Assert.That(character.Intelligence, Is.EqualTo(110));
                 Assert.That(character.MaxMana, Is.EqualTo(110));
                 Assert.That(character.Mana, Is.EqualTo(110));
+                Assert.That(itemService.EquipOperations, Has.Count.EqualTo(1));
+                Assert.That(itemService.EquipOperations[0], Is.EqualTo((existingSpellbook.Id, character.Id, ItemLayerType.OneHanded)));
+                Assert.That(existingSpellbook.TryGetCustomString(ItemCustomParamKeys.Book.Title, out _), Is.False);
+                Assert.That(existingSpellbook.TryGetCustomString(ItemCustomParamKeys.Book.Author, out _), Is.False);
+                Assert.That(existingSpellbook.TryGetCustomBoolean(ItemCustomParamKeys.Book.Writable, out _), Is.False);
                 Assert.That(output[^1], Does.Contain("Prepared magery test kit"));
             }
         );
