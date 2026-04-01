@@ -14,7 +14,7 @@ The shared destination list lives in:
 
 - `moongate_data/scripts/moongates/data.lua`
 
-That file returns grouped destinations, for example:
+That file returns grouped destinations. The shipped defaults mirror the classic ModernUO public network for Felucca and Ilshenar. For example:
 
 ```lua
 local data = {}
@@ -22,8 +22,8 @@ local data = {}
 function data.load()
   return {
     {
-      id = "britannia",
-      name = "Britannia",
+      id = "felucca",
+      name = "Felucca",
       destinations = {
         { id = "moonglow", name = "Moonglow", map = "felucca", x = 4467, y = 1283, z = 5 },
         { id = "britain", name = "Britain", map = "felucca", x = 1336, y = 1997, z = 5 }

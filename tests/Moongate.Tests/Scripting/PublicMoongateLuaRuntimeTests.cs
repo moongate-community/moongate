@@ -45,7 +45,7 @@ public sealed class PublicMoongateLuaRuntimeTests
                 Assert.That(outbound.Packet, Is.TypeOf<CompressedGumpPacket>());
                 var gump = (CompressedGumpPacket)outbound.Packet;
                 Assert.That(gump.TextLines, Contains.Item("Public Moongate"));
-                Assert.That(gump.TextLines, Contains.Item("Britannia"));
+                Assert.That(gump.TextLines, Contains.Item("Felucca"));
             }
         );
     }
