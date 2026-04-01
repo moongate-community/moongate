@@ -355,6 +355,35 @@ public sealed class GuardBrainAssetTests
         }
     }
 
+    [Test]
+    public void GuardsTemplate_ShouldGiveMaleWarriorGuardVisiblePants()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var templatePath = Path.Combine(repositoryRoot, "moongate_data", "templates", "mobiles", "guards.json");
+
+        using var document = JsonDocument.Parse(File.ReadAllText(templatePath));
+        var warriorMale = document.RootElement
+                                  .EnumerateArray()
+                                  .First(
+                                      element => string.Equals(
+                                          element.GetProperty("id").GetString(),
+                                          "warrior_guard_male_npc",
+                                          StringComparison.Ordinal
+                                      )
+                                  );
+        var equipment = warriorMale.GetProperty("variants")[0].GetProperty("equipment");
+        var pantsItem = equipment.EnumerateArray()
+                                 .First(
+                                     entry => string.Equals(
+                                         entry.GetProperty("layer").GetString(),
+                                         "Pants",
+                                         StringComparison.Ordinal
+                                     )
+                                 );
+
+        Assert.That(pantsItem.GetProperty("itemTemplateId").GetString(), Is.EqualTo("long_pants"));
+    }
+
     private static string GetRepositoryRoot()
         => Path.GetFullPath(Path.Combine(TestContext.CurrentContext.TestDirectory, "..", "..", "..", "..", ".."));
 }
