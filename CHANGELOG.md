@@ -1,3 +1,70 @@
+## [1.3.0](https://github.com/moongate-community/moongate/compare/v1.2.0...v1.3.0) (2026-04-03)
+
+### Features
+
+* add client quest journal flow ([b6ac1c1](https://github.com/moongate-community/moongate/commit/b6ac1c1bec8c782fa7f59c98efb7a99685337c02))
+* add client quest journal flow ([66e6787](https://github.com/moongate-community/moongate/commit/66e67878e49d664c12cf4012a7701e0aa84e1f02))
+* add first-circle stat debuff spells ([8c17226](https://github.com/moongate-community/moongate/commit/8c172263376c29213563e11649a47f38af80182e))
+* add first-circle utility spell behavior ([0bb63a1](https://github.com/moongate-community/moongate/commit/0bb63a1b99eb0affce6828ce37a3fbeda80fce90))
+* add gm magery test kit command ([6bb5d3e](https://github.com/moongate-community/moongate/commit/6bb5d3e7108081b60d314a16be239ed7cf7fc558))
+* add gm resurrection command ([c47cc37](https://github.com/moongate-community/moongate/commit/c47cc370e05287724b5bf47194f1c25839c66de4))
+* add JWT configuration to OpenApi service for enhanced security ([edf682e](https://github.com/moongate-community/moongate/commit/edf682e80c53f7bc51919af3843e7b93105ac679))
+* add lua-authored quest definition parser ([1f38088](https://github.com/moongate-community/moongate/commit/1f3808839efe7cfff8b44d740c17954955bd81e8))
+* add magic lua module bridge ([49a165f](https://github.com/moongate-community/moongate/commit/49a165f9ec13adbc6ab22d73d82161b30d119ab8))
+* add npc quest dialog flow ([4751480](https://github.com/moongate-community/moongate/commit/4751480105dcafe50fe8d79f1515b58b29608535))
+* add persisted player quest progress ([d2fbcb7](https://github.com/moongate-community/moongate/commit/d2fbcb79cbba670723e680e36fa1c5b8bb15401d))
+* add player death and resurrection flow ([310a212](https://github.com/moongate-community/moongate/commit/310a21289d73edfcf06c2205c355c9ac5501fddf))
+* add public moongate gump shell ([31a49f5](https://github.com/moongate-community/moongate/commit/31a49f579a9b8e918b98942a47fd3ebe24828842))
+* add public moongate travel handling ([f3628ad](https://github.com/moongate-community/moongate/commit/f3628ad1799850905d54c38de45703835bbf5e21))
+* add quest runtime service ([48a2cb0](https://github.com/moongate-community/moongate/commit/48a2cb01bf2ade8a22dba8c7d3310a6c1b647745))
+* add static quest template service ([c222fed](https://github.com/moongate-community/moongate/commit/c222fed7ea1dfc9968d41bcb67e61d3323895765))
+* enhance user account management with privilege change controls and authorization checks ([1f5ce0c](https://github.com/moongate-community/moongate/commit/1f5ce0c985d47f7f99c969030b5cc9cf5835a7c6))
+* expand public moongate destinations ([928d43a](https://github.com/moongate-community/moongate/commit/928d43a0270dfb5143f3e31f6a63d74a59973afd))
+* load and validate lua-authored quest templates ([877aa0e](https://github.com/moongate-community/moongate/commit/877aa0e72d45e003a929f27239e6b4c1e9f8be97))
+* **magic:** add agility and greater heal sample spells ([f4bcf3f](https://github.com/moongate-community/moongate/commit/f4bcf3fbd6ecf5193183d235496569fb59d36d13))
+* **magic:** add Fireball sample spell ([c9570db](https://github.com/moongate-community/moongate/commit/c9570dbbce9a5e5fba2fce3867817101cd19eb3c))
+* **magic:** add gate travel and lua cast targets ([af269aa](https://github.com/moongate-community/moongate/commit/af269aac19eba1c251b496994e2d1e6c6dccad54)), closes [#220](https://github.com/moongate-community/moongate/issues/220)
+* **magic:** add MagicService cast skeleton ([8a55829](https://github.com/moongate-community/moongate/commit/8a55829094bcbf517bf61a3dbc4c90ffb4633418))
+* **magic:** add paralyze slice and richer spell targeting ([56b6164](https://github.com/moongate-community/moongate/commit/56b6164b0985cc29236ea9b416efd2492ec86fd2))
+* **magic:** add phase 1 magic foundations ([7090d26](https://github.com/moongate-community/moongate/commit/7090d26e2b388964c9fc6540877c011333afe805))
+* **magic:** add spellbook groundwork ([a15f887](https://github.com/moongate-community/moongate/commit/a15f8872fe7236dac71db6d844b00450dedb5f68))
+* **magic:** complete first-circle casting flow ([0bdb47a](https://github.com/moongate-community/moongate/commit/0bdb47a1fc5045c6184c291fed168e353b078f7b))
+* regenerate public moongate network ([a33735b](https://github.com/moongate-community/moongate/commit/a33735b533c6acf182fc419cff94181e1f97b2ab))
+* wire quest progress events ([b86a833](https://github.com/moongate-community/moongate/commit/b86a833f13e26dd80d447eb7340b0df98c9c6f47))
+* wire spell selection into magic casting ([92c7384](https://github.com/moongate-community/moongate/commit/92c7384501d44fd77bcbf3abff9b3cee756ad4fb))
+
+### Bug Fixes
+
+* align quest gm bypass policy ([3c0eed4](https://github.com/moongate-community/moongate/commit/3c0eed4436c229122e8145a9b6427c621cead2ec))
+* complete spellbook and magery cast feedback ([ecb305a](https://github.com/moongate-community/moongate/commit/ecb305afe046ee426aa3bea1b90bf886b7a0229c))
+* evict stale quest cache entries ([296cfb2](https://github.com/moongate-community/moongate/commit/296cfb2b4f0c617eb826f8c854038d1798870774))
+* gate quest entry on registered templates ([8614b36](https://github.com/moongate-community/moongate/commit/8614b36ad53bda35926b7c8b2ce8e0c96ea46580))
+* give warrior guards visible pants ([09624d8](https://github.com/moongate-community/moongate/commit/09624d836c572ae48f5b304a408ff962cab4bfd6))
+* handle quest button packet format ([5fe5ffe](https://github.com/moongate-community/moongate/commit/5fe5ffe5fee4a71c6f1be24516601601349256db))
+* harden quest definition validation ([c4ee4ca](https://github.com/moongate-community/moongate/commit/c4ee4caff16fab35d373f3302026bf03370c4cac))
+* harden quest progress memorypack compatibility ([107944a](https://github.com/moongate-community/moongate/commit/107944a3993c83cc64635e36375cf6dd6272eb02))
+* heal quest reload cache on delete ([233c7a1](https://github.com/moongate-community/moongate/commit/233c7a1bcf7051ddb5e71fd763a7921b7657eda3))
+* load public moongate item script ([8aadb77](https://github.com/moongate-community/moongate/commit/8aadb77f8d4f017950940cad6ec47b26a61889bb))
+* **magic:** consume reagents on completed casts ([c8c5406](https://github.com/moongate-community/moongate/commit/c8c54069c7d287edcdb48c82bcee6ba73d20586b)), closes [#222](https://github.com/moongate-community/moongate/issues/222)
+* **magic:** keep combat lua module DI-friendly ([3fc6756](https://github.com/moongate-community/moongate/commit/3fc67564dffe3ea39447859a448d16c9cb44ad54))
+* **magic:** register implemented magery sample spells ([cfd173c](https://github.com/moongate-community/moongate/commit/cfd173c725db127050819789b30a62da0a3fc773))
+* **magic:** scan all available spellbooks ([5692517](https://github.com/moongate-community/moongate/commit/56925173cb044196a045a34f16d9de6b37f512ba))
+* **magic:** support cast sequencing and live target resolution ([e99825b](https://github.com/moongate-community/moongate/commit/e99825b05274bb75f5a29c5cf1769ef4236c5f38))
+* normalize resolved directories to absolute paths ([d61d397](https://github.com/moongate-community/moongate/commit/d61d3972f71ba700abcf981154a19d8e7a440a53))
+* reject fractional quest active counts ([3cbc0cc](https://github.com/moongate-community/moongate/commit/3cbc0cc927e1fd9059c074cc06773907684f74bb))
+* reject multi-active quest templates ([bc2cfc9](https://github.com/moongate-community/moongate/commit/bc2cfc9d03657709b969e3b7ad4d1a27b7813a50))
+* reload quest lua files through validation ([92afaa5](https://github.com/moongate-community/moongate/commit/92afaa5c67a05462770d15aa1859e232741852eb))
+* require quest journal leaf payload ([81def56](https://github.com/moongate-community/moongate/commit/81def56062d193d26bdcf7ad43f5e077a35a7e96))
+* roll back failed quest reloads ([36fe9ac](https://github.com/moongate-community/moongate/commit/36fe9ac11925983bb5d53a24dbbfbc2bf2028c1c))
+* stabilize quest objective progress ([ea7dbc6](https://github.com/moongate-community/moongate/commit/ea7dbc67454f62d4e7c4100ec849cc2ff68b61ef))
+* target quest rename recovery ([5d6ceff](https://github.com/moongate-community/moongate/commit/5d6cefff06e4b57008449d12d2190fbc1dfee62c))
+* validate quest dialog context and bridge ([0212c84](https://github.com/moongate-community/moongate/commit/0212c84648225192e2ef74223b9e630ef9db6312))
+
+### Contributors
+
+- tom
+- Agent 57951
+
 ## [1.2.0](https://github.com/moongate-community/moongate/compare/v1.1.0...v1.2.0) (2026-03-27)
 
 ### Features
