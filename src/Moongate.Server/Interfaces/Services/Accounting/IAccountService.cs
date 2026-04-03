@@ -66,6 +66,7 @@ public interface IAccountService
         string? email = null,
         AccountType? accountType = null,
         bool? isLocked = null,
+        bool allowPrivilegeChanges = false,
         bool clearRecoveryCode = false,
         CancellationToken cancellationToken = default
     );

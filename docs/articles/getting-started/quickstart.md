@@ -67,7 +67,8 @@ Built-in default commands currently include:
 - `orion` (in-game only, minimum `Regular`, requests target cursor and spawns Orion on selected tile)
 - `teleport` / `tp` (in-game only, minimum `GameMaster`, usage: `.teleport <mapId> <x> <y> <z>`)
 - `add_item_backpack` / `.add_item_backpack` (in-game only, minimum `GameMaster`, usage: `.add_item_backpack <templateId> [amount]`)
-- `gm` / `.gm` (in-game only, minimum `GameMaster`, opens the GM sidebar menu with Add and Travel tools)
+- `gm` / `.gm` (in-game only, minimum `GameMaster`, opens the GM sidebar menu with Add, Travel, Spawn, and Broadcast tools)
+- `resurrect` / `.resurrect` (in-game only, minimum `GameMaster`, targets a dead player ghost and resurrects them immediately)
 
 Command source and authorization rules:
 

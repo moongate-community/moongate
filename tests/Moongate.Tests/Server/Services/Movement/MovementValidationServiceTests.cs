@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Spatial;
+using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Movement;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
@@ -225,6 +226,42 @@ public class MovementValidationServiceTests
 
         var service = new MovementValidationService(tileQuery, spatial);
         var mobile = CreateMobile(new(10, 10, 18));
+
+        var allowed = service.TryResolveMove(mobile, DirectionType.East, out _);
+
+        Assert.That(allowed, Is.False);
+    }
+
+    [Test]
+    public void TryResolveMove_ShouldReturnFalse_WhenMobileIsParalyzed()
+    {
+        var tileQuery = new TestMovementTileQueryService
+        {
+            HasMapBounds = true
+        };
+        tileQuery.StaticTiles[(11, 10)] = [new(0x2000, 0)];
+
+        var service = new MovementValidationService(tileQuery, new TestSpatialWorldService());
+        var mobile = CreateMobile(new(10, 10, 20));
+        ParalyzeStateHelper.Apply(mobile, DateTime.UtcNow.AddSeconds(5), "spell_paralyze_test");
+
+        var allowed = service.TryResolveMove(mobile, DirectionType.East, out _);
+
+        Assert.That(allowed, Is.False);
+    }
+
+    [Test]
+    public void TryResolveMove_ShouldReturnFalse_WhenMobileIsFrozen()
+    {
+        var tileQuery = new TestMovementTileQueryService
+        {
+            HasMapBounds = true
+        };
+        tileQuery.StaticTiles[(11, 10)] = [new(0x2000, 0)];
+
+        var service = new MovementValidationService(tileQuery, new TestSpatialWorldService());
+        var mobile = CreateMobile(new(10, 10, 20));
+        mobile.IsFrozen = true;
 
         var allowed = service.TryResolveMove(mobile, DirectionType.East, out _);
 

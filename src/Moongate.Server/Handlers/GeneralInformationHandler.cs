@@ -21,6 +21,9 @@ namespace Moongate.Server.Handlers;
 [RegisterPacketHandler(PacketDefinition.GeneralInformationPacket)]
 public class GeneralInformationHandler : BasePacketListener
 {
+    private const int LegacySpellSelectionPayloadLength = 2;
+    private const int NewSpellbookSelectionPayloadLength = 4;
+
     private readonly IGameEventBusService _gameEventBusService;
 
     public GeneralInformationHandler(
@@ -57,6 +60,10 @@ public class GeneralInformationHandler : BasePacketListener
                 break;
             case GeneralInformationSubcommandType.StatLockChange:
                 await HandleStatLockChangeAsync(session, payload);
+
+                break;
+            case GeneralInformationSubcommandType.SpellSelected:
+                await HandleSpellSelectedAsync(session, payload);
 
                 break;
             case GeneralInformationSubcommandType.RequestPopupMenu:
@@ -120,6 +127,20 @@ public class GeneralInformationHandler : BasePacketListener
         var targetSerial = (Serial)BinaryPrimitives.ReadUInt32BigEndian(payload[2..]);
 
         return _gameEventBusService.PublishAsync(new TargetedSpellCastEvent(session.SessionId, spellId, targetSerial));
+    }
+
+    private ValueTask HandleSpellSelectedAsync(GameSession session, ReadOnlySpan<byte> payload)
+    {
+        if (payload.Length != LegacySpellSelectionPayloadLength && payload.Length != NewSpellbookSelectionPayloadLength)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var spellId = payload.Length == LegacySpellSelectionPayloadLength
+            ? BinaryPrimitives.ReadUInt16BigEndian(payload)
+            : BinaryPrimitives.ReadUInt16BigEndian(payload[2..]);
+
+        return _gameEventBusService.PublishAsync(new SpellCastRequestedEvent(session.SessionId, spellId));
     }
 
     private static void HandleClientType(GameSession session, ReadOnlySpan<byte> payload)

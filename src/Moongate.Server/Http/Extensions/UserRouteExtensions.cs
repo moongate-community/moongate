@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -16,71 +17,82 @@ internal static class UserRouteExtensions
         MoongateHttpRouteContext context
     )
     {
-        if (context.AccountService is null)
+        if (context.AccountService is null || !context.JwtOptions.IsEnabled)
         {
             return endpoints;
         }
 
         var usersGroup = endpoints.MapGroup("/api/users").WithTags("Users");
-
-        if (context.JwtOptions.IsEnabled)
-        {
-            usersGroup.RequireAuthorization();
-        }
+        usersGroup.RequireAuthorization();
 
         usersGroup.MapGet(
                       "/",
-                      (CancellationToken cancellationToken) => HandleGetUsers(context, cancellationToken)
+                      (ClaimsPrincipal user, CancellationToken cancellationToken) =>
+                          HandleGetUsers(context, user, cancellationToken)
                   )
                   .WithName("UsersGetAll")
                   .WithSummary("Returns all users.")
-                  .Produces<IReadOnlyList<MoongateHttpUser>>();
+                  .Produces<IReadOnlyList<MoongateHttpUser>>()
+                  .Produces(StatusCodes.Status401Unauthorized)
+                  .Produces(StatusCodes.Status403Forbidden);
 
         usersGroup.MapGet(
                       "/{accountId}",
-                      (string accountId, CancellationToken cancellationToken) =>
-                          HandleGetUserById(context, accountId, cancellationToken)
+                      (ClaimsPrincipal user, string accountId, CancellationToken cancellationToken) =>
+                          HandleGetUserById(context, user, accountId, cancellationToken)
                   )
                   .WithName("UsersGetById")
                   .WithSummary("Returns a user by account id.")
                   .Produces<MoongateHttpUser>()
+                  .Produces(StatusCodes.Status401Unauthorized)
+                  .Produces(StatusCodes.Status403Forbidden)
                   .Produces(StatusCodes.Status404NotFound);
 
         usersGroup.MapPost(
                       "/",
-                      (MoongateHttpCreateUserRequest request, CancellationToken cancellationToken) =>
-                          HandleCreateUser(context, request, cancellationToken)
+                      (
+                          ClaimsPrincipal user,
+                          MoongateHttpCreateUserRequest request,
+                          CancellationToken cancellationToken
+                      ) => HandleCreateUser(context, user, request, cancellationToken)
                   )
                   .WithName("UsersCreate")
                   .WithSummary("Creates a new user.")
                   .Accepts<MoongateHttpCreateUserRequest>("application/json")
                   .Produces<MoongateHttpUser>(StatusCodes.Status201Created)
                   .Produces(StatusCodes.Status400BadRequest)
+                  .Produces(StatusCodes.Status401Unauthorized)
+                  .Produces(StatusCodes.Status403Forbidden)
                   .Produces(StatusCodes.Status409Conflict);
 
         usersGroup.MapPut(
                       "/{accountId}",
                       (
+                          ClaimsPrincipal user,
                           string accountId,
                           MoongateHttpUpdateUserRequest request,
                           CancellationToken cancellationToken
-                      ) => HandleUpdateUser(context, accountId, request, cancellationToken)
+                      ) => HandleUpdateUser(context, user, accountId, request, cancellationToken)
                   )
                   .WithName("UsersUpdate")
                   .WithSummary("Updates a user by account id.")
                   .Accepts<MoongateHttpUpdateUserRequest>("application/json")
                   .Produces<MoongateHttpUser>()
                   .Produces(StatusCodes.Status400BadRequest)
+                  .Produces(StatusCodes.Status401Unauthorized)
+                  .Produces(StatusCodes.Status403Forbidden)
                   .Produces(StatusCodes.Status404NotFound);
 
         usersGroup.MapDelete(
                       "/{accountId}",
-                      (string accountId, CancellationToken cancellationToken) =>
-                          HandleDeleteUser(context, accountId, cancellationToken)
+                      (ClaimsPrincipal user, string accountId, CancellationToken cancellationToken) =>
+                          HandleDeleteUser(context, user, accountId, cancellationToken)
                   )
                   .WithName("UsersDelete")
                   .WithSummary("Deletes a user by account id.")
                   .Produces(StatusCodes.Status204NoContent)
+                  .Produces(StatusCodes.Status401Unauthorized)
+                  .Produces(StatusCodes.Status403Forbidden)
                   .Produces(StatusCodes.Status404NotFound);
 
         return endpoints;
@@ -88,11 +100,17 @@ internal static class UserRouteExtensions
 
     private static IResult HandleCreateUser(
         MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
         MoongateHttpCreateUserRequest request,
         CancellationToken cancellationToken
     )
     {
         _ = cancellationToken;
+
+        if (!HttpRouteAccessHelper.IsAdministrativeUser(user))
+        {
+            return HttpResponseHelper.ForbidOrUnauthorized(user);
+        }
 
         if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
         {
@@ -114,18 +132,25 @@ internal static class UserRouteExtensions
             return TypedResults.Conflict();
         }
 
-        var user = MapAccountToHttpUser(created);
+        var createdUser = MapAccountToHttpUser(created);
 
-        return TypedResults.Created($"/api/users/{user.AccountId}", user);
+        return TypedResults.Created($"/api/users/{createdUser.AccountId}", createdUser);
     }
 
     private static IResult HandleDeleteUser(
         MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
         string accountId,
         CancellationToken cancellationToken
     )
     {
         _ = cancellationToken;
+
+        if (!HttpRouteAccessHelper.IsAdministrativeUser(user))
+        {
+            return HttpResponseHelper.ForbidOrUnauthorized(user);
+        }
+
         var parsedId = HttpRouteAccessHelper.ParseAccountIdOrNull(accountId);
 
         if (!parsedId.HasValue)
@@ -145,11 +170,18 @@ internal static class UserRouteExtensions
 
     private static IResult HandleGetUserById(
         MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
         string accountId,
         CancellationToken cancellationToken
     )
     {
         _ = cancellationToken;
+
+        if (!HttpRouteAccessHelper.IsAdministrativeUser(user))
+        {
+            return HttpResponseHelper.ForbidOrUnauthorized(user);
+        }
+
         var parsedId = HttpRouteAccessHelper.ParseAccountIdOrNull(accountId);
 
         if (!parsedId.HasValue)
@@ -172,9 +204,15 @@ internal static class UserRouteExtensions
 
     private static IResult HandleGetUsers(
         MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
         CancellationToken cancellationToken
     )
     {
+        if (!HttpRouteAccessHelper.IsAdministrativeUser(user))
+        {
+            return HttpResponseHelper.ForbidOrUnauthorized(user);
+        }
+
         var accounts = context.AccountService!
                               .GetAccountsAsync(cancellationToken)
                               .GetAwaiter()
@@ -186,11 +224,17 @@ internal static class UserRouteExtensions
 
     private static IResult HandleUpdateUser(
         MoongateHttpRouteContext context,
+        ClaimsPrincipal user,
         string accountId,
         MoongateHttpUpdateUserRequest request,
         CancellationToken cancellationToken
     )
     {
+        if (!HttpRouteAccessHelper.IsAdministrativeUser(user))
+        {
+            return HttpResponseHelper.ForbidOrUnauthorized(user);
+        }
+
         var parsedId = HttpRouteAccessHelper.ParseAccountIdOrNull(accountId);
 
         if (!parsedId.HasValue)
@@ -229,6 +273,7 @@ internal static class UserRouteExtensions
                                  request.Email,
                                  role,
                                  request.IsLocked,
+                                 allowPrivilegeChanges: true,
                                  cancellationToken: cancellationToken
                              )
                              .GetAwaiter()

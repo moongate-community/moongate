@@ -31,6 +31,10 @@ items:
     href: lua-plugins.md
   - name: Scheduled Events
     href: scheduled-events.md
+  - name: Quests
+    href: quests.md
+  - name: Public Moongates
+    href: public-moongates.md
   - name: Loot Containers
     href: loot-containers.md
   - name: Vendor and Context Menus

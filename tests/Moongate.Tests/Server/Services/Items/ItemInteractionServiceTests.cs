@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Incoming.Books;
 using Moongate.Network.Packets.Outgoing.Entity;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Data.Events.Items;
+using Moongate.Server.Data.Internal.Scripting;
 using Moongate.Server.Data.Items;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Characters;
@@ -340,6 +341,41 @@ public class ItemInteractionServiceTests
                 Assert.That(handled, Is.True);
                 Assert.That(bookService.TryEnqueueBookCalled, Is.True);
                 Assert.That(bookService.LastItem?.Id, Is.EqualTo(targetSerial));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleDoubleClickAsync_WhenRegularSpellbook_ShouldEnqueueSpellbookPacket()
+    {
+        var eventBus = new NetworkServiceTestGameEventBusService();
+        var itemService = new TestItemService();
+        var bookService = new TestBookService();
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var service = new ItemInteractionService(itemService, eventBus, bookService, queue);
+        var targetSerial = (Serial)0x40000022u;
+        var spellbook = new UOItemEntity
+        {
+            Id = targetSerial,
+            ItemId = 0x0EFA,
+            ParentContainerId = (Serial)0x40000001u
+        };
+        spellbook.SetCustomString(ItemCustomParamKeys.Item.TemplateId, "spellbook");
+        spellbook.SetCustomInteger(ItemCustomParamKeys.Spellbook.Content, 0x0000000000000003L);
+        spellbook.SetCustomString(ItemCustomParamKeys.Book.Title, "Legacy");
+        itemService.ItemsById[targetSerial] = spellbook;
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+        var session = new GameSession(new(client));
+
+        var handled = await service.HandleDoubleClickAsync(session, new() { TargetSerial = targetSerial });
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(handled, Is.True);
+                Assert.That(bookService.TryEnqueueBookCalled, Is.False);
+                Assert.That(queue.TryDequeue(out var outbound), Is.True);
+                Assert.That(outbound.Packet, Is.TypeOf<DisplaySpellbookAndContentsPacket>());
             }
         );
     }

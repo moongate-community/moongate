@@ -126,12 +126,44 @@ Opens the in-game GM sidebar menu. The menu currently exposes:
 
 - `Add`: free-search item/NPC templates, item tile-art preview, quantity input, `Add To Backpack`, `Target Ground`, and repeat `Brush`
 - `Travel`: embedded curated teleport browser grouped by map and category
+- `Spawn`: quick world spawn actions that replace the old `spawn_tools` flow
+- `Broadcast`: server-wide broadcast messaging with a fixed `SERVER:` prefix
 
 ```
 .gm
 ```
 
 Context: InGame only. Access: GameMaster.
+
+#### `spawn_public_moongates`
+
+Rebuilds the full shard-wide public moongate network from `moongate_data/scripts/moongates/data.lua`.
+
+```
+.spawn_public_moongates
+```
+
+The command removes existing world `public_moongate` items first, then respawns one gate for each destination in the shared Lua dataset. Context: Console and InGame. Access: GameMaster.
+
+#### `resurrect`
+
+Opens a helpful target cursor and resurrects the selected dead player immediately. This bypasses healer and ankh offer flow and is intended for live GM intervention.
+
+```
+.resurrect
+```
+
+Only dead player ghosts are valid targets. Context: InGame only. Access: GameMaster.
+
+#### `give_magery_test_kit`
+
+Prepares the caller for player-side magery testing by raising `Magery`, topping up mana, cleaning and filling a regular spellbook with the currently registered regular spells, equipping it to the one-handed layer, and adding reagent stacks to the backpack.
+
+```
+.give_magery_test_kit
+```
+
+The command reuses an existing regular spellbook when one is already present on the character or inside the backpack tree; otherwise it creates one. When the book carries legacy writable-book metadata, the command strips it so the client opens the spellbook UI instead of the generic book gump. Context: InGame only. Access: GameMaster.
 
 #### `add_item`
 

@@ -66,10 +66,12 @@ public sealed class CommandSystemTestAccountService : IAccountService
         string? email = null,
         AccountType? accountType = null,
         bool? isLocked = null,
+        bool allowPrivilegeChanges = false,
         bool clearRecoveryCode = false,
         CancellationToken cancellationToken = default
     )
     {
+        _ = allowPrivilegeChanges;
         _ = clearRecoveryCode;
 
         return Task.FromResult<UOAccountEntity?>(null);

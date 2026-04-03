@@ -134,6 +134,38 @@ public class MobileFactoryServiceTests
     }
 
     [Test]
+    public async Task CreateMobileFromTemplate_ShouldPersistStableTemplateIdMarker()
+    {
+        using var temp = new TempDirectory();
+        var persistence = await CreatePersistenceServiceAsync(temp.Path);
+        var templateService = new MobileTemplateService();
+        templateService.Upsert(
+            new()
+            {
+                Id = "quest_rat",
+                Name = "Quest Rat",
+                Category = "test",
+                Description = "test",
+                Variants = [CreateVariant(0x0190, 0, 0, 0)]
+            }
+        );
+        var service = new MobileFactoryService(templateService, new TestNameService(), persistence);
+
+        var mobile = service.CreateMobileFromTemplate("quest_rat");
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(
+                    mobile.TryGetCustomString(MobileCustomParamKeys.Template.TemplateId, out var templateId),
+                    Is.True
+                );
+                Assert.That(templateId, Is.EqualTo("quest_rat"));
+            }
+        );
+    }
+
+    [Test]
     public async Task CreateMobileFromTemplate_ShouldThrow_WhenTemplateHasNoVariants()
     {
         using var temp = new TempDirectory();

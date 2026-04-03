@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.Incoming.GeneralInformation;
 using Moongate.Network.Spans;
+using Moongate.UO.Data.Ids;
 using UOMap = Moongate.UO.Data.Maps.Map;
 
 namespace Moongate.Network.Packets.Outgoing.World;
@@ -33,5 +34,29 @@ public static class GeneralInformationFactory
         writer.Dispose();
 
         return GeneralInformationPacketBuilder.CreateEnableMapDiff(payload);
+    }
+
+    public static GeneralInformationPacket CreateNewSpellbookContent(
+        Serial spellbookSerial,
+        int graphic,
+        int offset,
+        ulong content
+    )
+    {
+        var writer = new SpanWriter(18, true);
+        writer.Write((short)0x0001);
+        writer.Write(spellbookSerial.Value);
+        writer.Write((short)graphic);
+        writer.Write((short)offset);
+
+        for (var index = 0; index < 8; index++)
+        {
+            writer.Write((byte)(content >> (index * 8)));
+        }
+
+        var payload = writer.ToArray();
+        writer.Dispose();
+
+        return GeneralInformationPacketBuilder.CreateNewSpellbook(payload);
     }
 }

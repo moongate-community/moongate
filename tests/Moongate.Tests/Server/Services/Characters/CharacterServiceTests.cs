@@ -404,12 +404,24 @@ public class CharacterServiceTests
             }
         );
 
+        var persistedGold = await persistence.UnitOfWork.Items.GetByIdAsync(goldId);
+        Assert.That(persistedGold, Is.Not.Null);
+        persistedGold!.SetCustomString("template_id", "garlic");
+        await persistence.UnitOfWork.Items.UpsertAsync(persistedGold);
+
         var backpack = await service.GetBackpackWithItemsAsync(character);
 
-        Assert.That(backpack, Is.Not.Null);
-        Assert.That(backpack!.Items.Count, Is.EqualTo(1));
-        Assert.That(backpack.Items[0].Id, Is.EqualTo(goldId));
-        Assert.That(backpack.Items[0].Location, Is.EqualTo(new Point3D(11, 22, 0)));
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(backpack, Is.Not.Null);
+                Assert.That(backpack!.Items.Count, Is.EqualTo(1));
+                Assert.That(backpack.Items[0].Id, Is.EqualTo(goldId));
+                Assert.That(backpack.Items[0].Location, Is.EqualTo(new Point3D(11, 22, 0)));
+                Assert.That(backpack.Items[0].TryGetCustomString("template_id", out var templateId), Is.True);
+                Assert.That(templateId, Is.EqualTo("garlic"));
+            }
+        );
     }
 
     [Test]

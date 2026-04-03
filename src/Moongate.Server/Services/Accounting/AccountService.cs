@@ -148,6 +148,7 @@ public class AccountService : IAccountService
         string? email = null,
         AccountType? accountType = null,
         bool? isLocked = null,
+        bool allowPrivilegeChanges = false,
         bool clearRecoveryCode = false,
         CancellationToken cancellationToken = default
     )
@@ -191,7 +192,7 @@ public class AccountService : IAccountService
             account.Email = email;
         }
 
-        if (accountType.HasValue)
+        if (accountType.HasValue && allowPrivilegeChanges)
         {
             account.AccountType = accountType.Value;
         }

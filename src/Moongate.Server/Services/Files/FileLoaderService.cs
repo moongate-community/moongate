@@ -16,6 +16,8 @@ public class FileLoaderService : IFileLoaderService
 {
     private readonly List<IFileLoader> _fileLoaders = new();
     private readonly DirectoriesConfig? _directoriesConfig;
+    private readonly object _questRenameRecoveryLock = new();
+    private readonly Dictionary<string, string> _questRenameRecoveries = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly ILogger _logger = Log.ForContext<FileLoaderService>();
 
@@ -78,12 +80,14 @@ public class FileLoaderService : IFileLoaderService
             throw new InvalidOperationException($"Type '{loaderType.FullName}' does not implement IFileLoader.");
         }
 
+        if (loaderType == typeof(QuestTemplateLoader))
+        {
+            return ReloadQuestTemplateAsync(loadedFilePath: filePath);
+        }
+
         var loader = EnsureLoader(loaderType);
         return loader.LoadSingleAsync(filePath);
     }
-
-    public void Dispose()
-        => _fileLoaders.Clear();
 
     public async Task ExecuteLoadersAsync()
     {
@@ -116,6 +120,70 @@ public class FileLoaderService : IFileLoaderService
     public Task StopAsync()
         => Task.CompletedTask;
 
+    public async Task ReloadQuestTemplateAsync(string? removedFilePath = null, string? loadedFilePath = null)
+    {
+        if (string.IsNullOrWhiteSpace(removedFilePath) && string.IsNullOrWhiteSpace(loadedFilePath))
+        {
+            return;
+        }
+
+        var normalizedRemovedFilePath = NormalizePath(removedFilePath);
+        var normalizedLoadedFilePath = NormalizePath(loadedFilePath);
+
+        if (string.IsNullOrWhiteSpace(normalizedRemovedFilePath) && !string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+        {
+            if (File.Exists(normalizedLoadedFilePath))
+            {
+                if (TryConsumeQuestRenameRecovery(normalizedLoadedFilePath, out var recoveredRemovedFilePath))
+                {
+                    normalizedRemovedFilePath = recoveredRemovedFilePath;
+                }
+            }
+            else if (HasQuestRenameRecovery(normalizedLoadedFilePath))
+            {
+                return;
+            }
+        }
+
+        var loader = (QuestTemplateLoader)EnsureLoader(typeof(QuestTemplateLoader));
+        var snapshot = loader.CaptureState();
+        var validationTarget = normalizedLoadedFilePath ?? normalizedRemovedFilePath;
+
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(normalizedRemovedFilePath))
+            {
+                await loader.LoadSingleAsync(normalizedRemovedFilePath);
+            }
+
+            if (!string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+            {
+                await loader.LoadSingleAsync(normalizedLoadedFilePath);
+            }
+
+            if (!string.IsNullOrWhiteSpace(validationTarget))
+            {
+                await LoadSingleAsync<TemplateValidationLoader>(validationTarget);
+            }
+
+            if (!string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+            {
+                ClearQuestRenameRecovery(normalizedLoadedFilePath);
+            }
+        }
+        catch
+        {
+            loader.RestoreState(snapshot);
+
+            if (!string.IsNullOrWhiteSpace(normalizedRemovedFilePath) && !string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+            {
+                RememberQuestRenameRecovery(normalizedRemovedFilePath, normalizedLoadedFilePath);
+            }
+
+            throw;
+        }
+    }
+
     private IFileLoader EnsureLoader(Type loaderType)
     {
         foreach (var loader in _fileLoaders)
@@ -143,7 +211,21 @@ public class FileLoaderService : IFileLoaderService
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
 
-        if (!string.Equals(Path.GetExtension(filePath), ".json", StringComparison.OrdinalIgnoreCase))
+        var extension = Path.GetExtension(filePath);
+
+        if (string.Equals(extension, ".lua", StringComparison.OrdinalIgnoreCase))
+        {
+            var normalizedLuaPath = NormalizePath(filePath);
+
+            if (IsUnderDirectory(normalizedLuaPath, "scripts", "quests"))
+            {
+                return typeof(QuestTemplateLoader);
+            }
+
+            return null;
+        }
+
+        if (!string.Equals(extension, ".json", StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
@@ -227,10 +309,81 @@ public class FileLoaderService : IFileLoaderService
         return false;
     }
 
-    private static string NormalizePath(string path)
+    private static string NormalizePath(string? path)
     {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return string.Empty;
+        }
+
         return Path.GetFullPath(path)
                    .Replace(Path.DirectorySeparatorChar, '/')
                    .Replace(Path.AltDirectorySeparatorChar, '/');
     }
+
+    private void ClearQuestRenameRecovery(string loadedFilePath)
+    {
+        var normalizedLoadedFilePath = NormalizePath(loadedFilePath);
+
+        if (string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+        {
+            return;
+        }
+
+        lock (_questRenameRecoveryLock)
+        {
+            _questRenameRecoveries.Remove(normalizedLoadedFilePath);
+        }
+    }
+
+    private bool HasQuestRenameRecovery(string loadedFilePath)
+    {
+        var normalizedLoadedFilePath = NormalizePath(loadedFilePath);
+
+        if (string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+        {
+            return false;
+        }
+
+        lock (_questRenameRecoveryLock)
+        {
+            return _questRenameRecoveries.ContainsKey(normalizedLoadedFilePath);
+        }
+    }
+
+    private bool TryConsumeQuestRenameRecovery(string loadedFilePath, out string removedFilePath)
+    {
+        var normalizedLoadedFilePath = NormalizePath(loadedFilePath);
+
+        if (string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+        {
+            removedFilePath = string.Empty;
+
+            return false;
+        }
+
+        lock (_questRenameRecoveryLock)
+        {
+            return _questRenameRecoveries.Remove(normalizedLoadedFilePath, out removedFilePath);
+        }
+    }
+
+    private void RememberQuestRenameRecovery(string removedFilePath, string loadedFilePath)
+    {
+        var normalizedRemovedFilePath = NormalizePath(removedFilePath);
+        var normalizedLoadedFilePath = NormalizePath(loadedFilePath);
+
+        if (string.IsNullOrWhiteSpace(normalizedRemovedFilePath) || string.IsNullOrWhiteSpace(normalizedLoadedFilePath))
+        {
+            return;
+        }
+
+        lock (_questRenameRecoveryLock)
+        {
+            _questRenameRecoveries[normalizedLoadedFilePath] = normalizedRemovedFilePath;
+        }
+    }
+
+    public void Dispose()
+        => _fileLoaders.Clear();
 }

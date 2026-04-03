@@ -96,6 +96,7 @@ public sealed class FileWatcherService : IFileWatcherService
 
         watcher.Changed += OnFileChanged;
         watcher.Created += OnFileChanged;
+        watcher.Deleted += OnFileChanged;
         watcher.Renamed += OnFileRenamed;
         _watchers.Add(watcher);
     }
@@ -104,7 +105,7 @@ public sealed class FileWatcherService : IFileWatcherService
         => ScheduleReload(e.FullPath);
 
     private void OnFileRenamed(object sender, RenamedEventArgs e)
-        => ScheduleReload(e.FullPath);
+        => _backgroundJobService.PostToGameLoop(() => ProcessRenameOnGameLoop(e.OldFullPath, e.FullPath));
 
     private void ScheduleReload(string filePath)
     {
@@ -147,17 +148,40 @@ public sealed class FileWatcherService : IFileWatcherService
     {
         try
         {
-            if (!File.Exists(filePath))
+            if (string.Equals(Path.GetExtension(filePath), ".lua", StringComparison.OrdinalIgnoreCase))
             {
-                _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
+                if (IsQuestScript(filePath))
+                {
+                    var fileExists = File.Exists(filePath);
+                    _fileLoaderService
+                        .ReloadQuestTemplateAsync(loadedFilePath: fileExists ? filePath : null, removedFilePath: fileExists ? null : filePath)
+                        .GetAwaiter()
+                        .GetResult();
+
+                    _logger.Information(
+                        fileExists ? "[HotReload] Reloaded quest template: {FilePath}" : "[HotReload] Removed quest template: {FilePath}",
+                        filePath
+                    );
+
+                    return;
+                }
+
+                if (!File.Exists(filePath))
+                {
+                    _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
+
+                    return;
+                }
+
+                _scriptEngineService.InvalidateScript(filePath);
+                _logger.Information("[HotReload] Reloaded script: {FilePath}", filePath);
 
                 return;
             }
 
-            if (string.Equals(Path.GetExtension(filePath), ".lua", StringComparison.OrdinalIgnoreCase))
+            if (!File.Exists(filePath))
             {
-                _scriptEngineService.InvalidateScript(filePath);
-                _logger.Information("[HotReload] Reloaded script: {FilePath}", filePath);
+                _logger.Debug("Skipping hot reload for deleted file {FilePath}", filePath);
 
                 return;
             }
@@ -173,4 +197,69 @@ public sealed class FileWatcherService : IFileWatcherService
             _logger.Warning(ex, "Hot reload failed for {FilePath}", filePath);
         }
     }
+
+    private void ProcessRenameOnGameLoop(string oldFilePath, string newFilePath)
+    {
+        try
+        {
+            var oldIsQuestScript = IsQuestScript(oldFilePath);
+            var newIsQuestScript = IsQuestScript(newFilePath);
+
+            if (oldIsQuestScript && newIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(oldFilePath, newFilePath).GetAwaiter().GetResult();
+                _logger.Information(
+                    "[HotReload] Renamed quest template: {OldFilePath} -> {NewFilePath}",
+                    oldFilePath,
+                    newFilePath
+                );
+
+                return;
+            }
+
+            if (oldIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(removedFilePath: oldFilePath).GetAwaiter().GetResult();
+                _logger.Information("[HotReload] Removed quest template: {FilePath}", oldFilePath);
+
+                return;
+            }
+
+            if (newIsQuestScript)
+            {
+                _fileLoaderService.ReloadQuestTemplateAsync(loadedFilePath: newFilePath).GetAwaiter().GetResult();
+                _logger.Information("[HotReload] Reloaded quest template: {FilePath}", newFilePath);
+
+                return;
+            }
+
+            if (string.Equals(Path.GetExtension(newFilePath), ".lua", StringComparison.OrdinalIgnoreCase))
+            {
+                _scriptEngineService.InvalidateScript(newFilePath);
+                _logger.Information("[HotReload] Reloaded script: {FilePath}", newFilePath);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.Warning(ex, "Hot reload failed for renamed file {OldFilePath} -> {NewFilePath}", oldFilePath, newFilePath);
+        }
+    }
+
+    private bool IsQuestScript(string filePath)
+    {
+        var normalizedPath = NormalizePath(filePath);
+        var questScriptsDirectory = GetQuestScriptsDirectory();
+
+        return normalizedPath.StartsWith(questScriptsDirectory, StringComparison.OrdinalIgnoreCase)
+               && (normalizedPath.Length == questScriptsDirectory.Length
+                   || normalizedPath[questScriptsDirectory.Length] == '/');
+    }
+
+    private string GetQuestScriptsDirectory()
+        => NormalizePath(Path.Combine(_directoriesConfig[DirectoryType.Scripts], "quests"));
+
+    private static string NormalizePath(string path)
+        => Path.GetFullPath(path)
+               .Replace(Path.DirectorySeparatorChar, '/')
+               .Replace(Path.AltDirectorySeparatorChar, '/');
 }

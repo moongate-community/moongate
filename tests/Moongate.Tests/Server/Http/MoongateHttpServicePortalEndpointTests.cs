@@ -464,7 +464,7 @@ public class MoongateHttpServicePortalEndpointTests
                                  Task.FromResult(username == "player_one" && password == "secret" ? account : null),
             GetAccountAsyncImpl = accountId =>
                                       Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
-            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, _, _) =>
+            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, _, _, _) =>
                                      {
                                          if (accountId != account.Id || string.IsNullOrWhiteSpace(password))
                                          {
@@ -651,7 +651,7 @@ public class MoongateHttpServicePortalEndpointTests
                                  Task.FromResult(username == "player_one" && password == "secret" ? account : null),
             GetAccountAsyncImpl = accountId =>
                                       Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
-            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, clearRecoveryCode, _) =>
+            UpdateAccountAsyncImpl = (accountId, _, password, _, _, _, _, clearRecoveryCode, _) =>
                                      {
                                          if (accountId != account.Id || string.IsNullOrWhiteSpace(password))
                                          {
@@ -725,7 +725,7 @@ public class MoongateHttpServicePortalEndpointTests
                                  Task.FromResult(username == "player_one" && password == "secret" ? account : null),
             GetAccountAsyncImpl = accountId =>
                                       Task.FromResult<UOAccountEntity?>(accountId == account.Id ? account : null),
-            UpdateAccountAsyncImpl = (accountId, _, _, email, _, _, _, _) =>
+            UpdateAccountAsyncImpl = (accountId, _, _, email, _, _, _, _, _) =>
                                      {
                                          if (accountId != account.Id || string.IsNullOrWhiteSpace(email))
                                          {

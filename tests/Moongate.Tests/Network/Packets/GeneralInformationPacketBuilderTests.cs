@@ -74,6 +74,30 @@ public class GeneralInformationPacketBuilderTests
     }
 
     [Test]
+    public void CreateNewSpellbook_ShouldBuildServerPayloadPacket()
+    {
+        var payload = new byte[18];
+        payload[0] = 0x00;
+        payload[1] = 0x01;
+        var packet = GeneralInformationPacketBuilder.CreateNewSpellbook(payload);
+        var data = Write(packet);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(data[0], Is.EqualTo(0xBF));
+                Assert.That(BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(1, 2)), Is.EqualTo((ushort)23));
+                Assert.That(
+                    BinaryPrimitives.ReadUInt16BigEndian(data.AsSpan(3, 2)),
+                    Is.EqualTo((ushort)GeneralInformationSubcommandType.NewSpellbook)
+                );
+                Assert.That(data[5], Is.EqualTo(0x00));
+                Assert.That(data[6], Is.EqualTo(0x01));
+            }
+        );
+    }
+
+    [Test]
     public void CreateSetCursorHueSetMap_ShouldBuildExpectedPacket()
     {
         var packet = GeneralInformationPacketBuilder.CreateSetCursorHueSetMap(2);

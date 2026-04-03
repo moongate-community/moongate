@@ -6,6 +6,8 @@
   items:
   - name: Introduction
     href: articles/getting-started/introduction.md
+  - name: Death and Resurrection
+    href: articles/getting-started/death-and-resurrection.md
   - name: Quick Start
     href: articles/getting-started/quickstart.md
   - name: Installation
@@ -84,6 +86,10 @@
     href: articles/scripting/loot-containers.md
   - name: Vendor and Context Menus
     href: articles/scripting/vendor-context-menus.md
+  - name: Quests
+    href: articles/scripting/quests.md
+  - name: Public Moongates
+    href: articles/scripting/public-moongates.md
   - name: Starting Loadout
     href: articles/scripting/starting-loadout.md
   - name: NPC Behaviors
@@ -136,6 +142,8 @@
   items:
   - name: Stress Test
     href: articles/operations/stress-test.md
+  - name: GM Menu
+    href: articles/operations/gm-menu.md
   - name: Template Validation
     href: articles/operations/template-validation.md
   - name: Console Commands

@@ -18,9 +18,11 @@ using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
 using Moongate.Server.Interfaces.Services.Items;
 using Moongate.Server.Interfaces.Services.Lifecycle;
+using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Messaging;
 using Moongate.Server.Interfaces.Services.Movement;
 using Moongate.Server.Interfaces.Services.Packets;
+using Moongate.Server.Interfaces.Services.Quests;
 using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.Server.Interfaces.Services.Sessions;
 using Moongate.Server.Interfaces.Services.Spatial;
@@ -36,9 +38,11 @@ using Moongate.Server.Services.Interaction;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Lifecycle;
 using Moongate.Server.Services.Maps;
+using Moongate.Server.Services.Magic;
 using Moongate.Server.Services.Messaging;
 using Moongate.Server.Services.Movement;
 using Moongate.Server.Services.Packets;
+using Moongate.Server.Services.Quests;
 using Moongate.Server.Services.Scripting;
 using Moongate.Server.Services.Scripting.Jobs;
 using Moongate.Server.Services.Sessions;
@@ -93,6 +97,18 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
         container.Register<IChatSystemService, ChatSystemService>(Reuse.Singleton);
         container.Register<ITimerService, TimerWheelService>(Reuse.Singleton);
+        container.RegisterDelegate(
+            _ =>
+            {
+                var registry = new SpellRegistry();
+                SpellInitializer.RegisterAll(registry);
+
+                return registry;
+            },
+            Reuse.Singleton
+        );
+        container.Register<ISpellbookService, SpellbookService>(Reuse.Singleton);
+        container.Register<IMagicService, MagicService>(Reuse.Singleton);
         container.Register<IAccountService, AccountService>(Reuse.Singleton);
         container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
         container.Register<IPlayerLoginWorldSyncService, PlayerLoginWorldSyncService>(Reuse.Singleton);
@@ -107,6 +123,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IBulletinBoardService, BulletinBoardService>(Reuse.Singleton);
         container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.Register<IHelpRequestService, HelpRequestService>(Reuse.Singleton);
+        container.Register<IResurrectionOfferService, ResurrectionOfferService>(Reuse.Singleton);
+        container.Register<IResurrectionService, ResurrectionService>(Reuse.Singleton);
         container.Register<IHelpTicketService, HelpTicketService>(Reuse.Singleton);
         container.Register<INotorietyService, NotorietyService>(Reuse.Singleton);
         container.Register<IAiRelationService, AiRelationService>(Reuse.Singleton);
@@ -139,6 +157,8 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<INpcAiPromptService, NpcAiPromptService>(Reuse.Singleton);
         container.Register<INpcAiMemoryService, NpcAiMemoryService>(Reuse.Singleton);
         container.Register<IDialogueDefinitionService, DialogueDefinitionService>(Reuse.Singleton);
+        container.Register<IQuestDefinitionService, QuestDefinitionService>(Reuse.Singleton);
+        container.Register<IQuestService, QuestService>(Reuse.Singleton);
         container.Register<IDialogueMemoryService, DialogueMemoryService>(Reuse.Singleton);
         container.Register<IDialogueRuntimeService, DialogueRuntimeService>(Reuse.Singleton);
         container.Register<IScheduledEventDefinitionService, ScheduledEventDefinitionService>(Reuse.Singleton);
@@ -165,10 +185,12 @@ public static class AddBootstrapCoreServicesExtension
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
+        container.Register<IQuestTemplateService, QuestTemplateService>(Reuse.Singleton);
         container.Register<IFactionTemplateService, FactionTemplateService>(Reuse.Singleton);
         container.Register<ISellProfileTemplateService, SellProfileTemplateService>(Reuse.Singleton);
         container.Register<IWorldGeneratorBuilderService, WorldGeneratorBuilderService>(Reuse.Singleton);
         container.Register<IDoorGenerationMapSpecProvider, DefaultDoorGenerationMapSpecProvider>(Reuse.Singleton);
+        container.Register<IPublicMoongateDefinitionService, PublicMoongateDefinitionService>(Reuse.Singleton);
         container.Register<IWorldGenerator, DoorGeneratorBuilder>(Reuse.Singleton);
         container.Register<IWorldGenerator, ItemsImageBuilder>(Reuse.Singleton);
         container.Register<ILocationCatalogService, LocationCatalogService>(Reuse.Singleton);

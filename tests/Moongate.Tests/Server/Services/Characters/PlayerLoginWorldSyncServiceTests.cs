@@ -332,6 +332,99 @@ public sealed class PlayerLoginWorldSyncServiceTests
     }
 
     [Test]
+    public async Task SyncAsync_WhenViewerIsRegular_ShouldNotSendDeadPlayerGhosts()
+    {
+        var playerId = (Serial)0x00004032u;
+        var ghostId = (Serial)0x00005032u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = ghostId,
+                Name = "ghost-player",
+                IsPlayer = true,
+                IsAlive = false,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.False);
+    }
+
+    [Test]
+    public async Task SyncAsync_WhenViewerIsGameMaster_ShouldSendDeadPlayerGhosts()
+    {
+        var playerId = (Serial)0x00004033u;
+        var ghostId = (Serial)0x00005033u;
+        var queue = new BasePacketListenerTestOutgoingPacketQueue();
+        var session = CreateSession(playerId);
+        session.AccountType = AccountType.GameMaster;
+        var spawnLocation = new Point3D(132, 132, 0);
+        var sectorX = spawnLocation.X >> MapSectorConsts.SectorShift;
+        var sectorY = spawnLocation.Y >> MapSectorConsts.SectorShift;
+        var sector = new MapSector(1, sectorX, sectorY);
+        sector.AddEntity(
+            new UOMobileEntity
+            {
+                Id = ghostId,
+                Name = "ghost-player",
+                IsPlayer = true,
+                IsAlive = false,
+                Location = spawnLocation,
+                MapId = 1
+            }
+        );
+
+        var spatial = new PlayerLoginWorldSyncTestSpatialWorldService();
+        spatial.SectorsByCoordinate[(1, sectorX, sectorY)] = sector;
+        spatial.SectorByLocationResolver = (_, location) =>
+                                           {
+                                               var key = (1, location.X >> MapSectorConsts.SectorShift,
+                                                          location.Y >> MapSectorConsts.SectorShift);
+
+                                               return spatial.SectorsByCoordinate.TryGetValue(key, out var resolved)
+                                                          ? resolved
+                                                          : null;
+                                           };
+
+        var character = CreatePlayer(playerId, spawnLocation);
+        session.Character = character;
+        var service = new PlayerLoginWorldSyncService(spatial, queue, new());
+
+        await service.SyncAsync(session, character);
+
+        var packets = DequeueAll(queue);
+
+        Assert.That(packets.Any(packet => packet.Packet is MobileIncomingPacket), Is.True);
+    }
+
+    [Test]
     public async Task SyncAsync_ShouldRefillVisibleRangeOutsideLoginSnapshotRadius()
     {
         var playerId = (Serial)0x00004020u;

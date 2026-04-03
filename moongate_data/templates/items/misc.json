@@ -1731,17 +1731,21 @@
     "type": "item",
     "id": "public_moongate",
     "name": "Public Moongate",
-    "category": "Misc",
-    "description": "",
+    "category": "Structure",
+    "description": "Shared destination moongate.",
+    "base_item": "teleporter",
     "itemId": "0x0F6C",
     "hue": "0",
     "goldValue": "0",
-    "weight": 0,
-    "scriptId": "none",
-    "isMovable": true,
+    "weight": 10,
+    "scriptId": "items.public_moongate",
+    "isMovable": false,
     "tags": [
-      "modernuo",
-      "misc"
+      "moongate",
+      "teleport",
+      "worldgen",
+      "public",
+      "modernuo"
     ]
   },
   {

@@ -2,6 +2,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Data.Events.Characters;
 using Moongate.Server.Interfaces.Services.Events;
 using Moongate.Server.Interfaces.Services.Interaction;
+using Moongate.Server.Interfaces.Services.Magic;
 using Moongate.Server.Interfaces.Services.Spatial;
 using Moongate.Server.Modules.Internal;
 using Moongate.UO.Data.Ids;
@@ -21,27 +22,52 @@ public sealed class CombatModule
     private readonly ISpatialWorldService _spatialWorldService;
     private readonly IGameEventBusService _gameEventBusService;
     private readonly ICombatService _combatService;
+    private readonly IMagicService? _magicService;
 
     public CombatModule(
         ISpatialWorldService spatialWorldService,
         IGameEventBusService gameEventBusService,
-        ICombatService combatService
+        ICombatService combatService,
+        IMagicService? magicService = null
     )
     {
         _spatialWorldService = spatialWorldService;
         _gameEventBusService = gameEventBusService;
         _combatService = combatService;
+        _magicService = magicService;
     }
 
-    [ScriptFunction("cast", "Spell cast primitive placeholder. Returns false when no cast is executed.")]
+    [ScriptFunction("cast", "Starts a spell cast for the resolved npc and optionally binds a target.")]
     public bool Cast(uint npcSerial, int spellId, uint? targetSerial = null)
     {
-        _ = npcSerial;
-        _ = spellId;
-        _ = targetSerial;
+        if (_magicService is null ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, npcSerial, out var npc))
+        {
+            return false;
+        }
 
-        // TODO: wire real spell system.
-        return false;
+        var castSucceeded = _magicService.TryCastAsync(npc!, spellId).AsTask().GetAwaiter().GetResult();
+
+        if (!castSucceeded)
+        {
+            return false;
+        }
+
+        if (targetSerial is null)
+        {
+            return true;
+        }
+
+        if (targetSerial.Value == 0 ||
+            !MobileScriptResolver.TryResolveMobile(_spatialWorldService, targetSerial.Value, out var target) ||
+            !_magicService.TrySetTarget(npc!.Id, spellId, target!.Id))
+        {
+            _magicService.Interrupt(npc!.Id);
+
+            return false;
+        }
+
+        return true;
     }
 
     [ScriptFunction("clear_target", "Clears combat target for the given npc.")]

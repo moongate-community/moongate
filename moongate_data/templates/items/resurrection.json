@@ -1,0 +1,74 @@
+[
+  {
+    "type": "item",
+    "id": "AnkhNorth",
+    "name": "Ankh",
+    "category": "Structure",
+    "description": "A resurrection ankh.",
+    "tags": ["ankh", "resurrection", "worldgen"],
+    "base_item": "static",
+    "itemId": "0x0004",
+    "scriptId": "items.resurrection_shrine",
+    "isMovable": false,
+    "params": {
+      "resurrection_source": {
+        "type": "string",
+        "value": "ankh"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "AnkhWest",
+    "name": "Ankh",
+    "category": "Structure",
+    "description": "A resurrection ankh.",
+    "tags": ["ankh", "resurrection", "worldgen"],
+    "base_item": "static",
+    "itemId": "0x0003",
+    "scriptId": "items.resurrection_shrine",
+    "isMovable": false,
+    "params": {
+      "resurrection_source": {
+        "type": "string",
+        "value": "ankh"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "RejuvinationAnkhNorth",
+    "name": "Rejuvenation Ankh",
+    "category": "Structure",
+    "description": "A resurrection ankh.",
+    "tags": ["ankh", "resurrection", "worldgen"],
+    "base_item": "static",
+    "itemId": "0x0004",
+    "scriptId": "items.resurrection_shrine",
+    "isMovable": false,
+    "params": {
+      "resurrection_source": {
+        "type": "string",
+        "value": "ankh"
+      }
+    }
+  },
+  {
+    "type": "item",
+    "id": "RejuvinationAnkhWest",
+    "name": "Rejuvenation Ankh",
+    "category": "Structure",
+    "description": "A resurrection ankh.",
+    "tags": ["ankh", "resurrection", "worldgen"],
+    "base_item": "static",
+    "itemId": "0x0003",
+    "scriptId": "items.resurrection_shrine",
+    "isMovable": false,
+    "params": {
+      "resurrection_source": {
+        "type": "string",
+        "value": "ankh"
+      }
+    }
+  }
+]

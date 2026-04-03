@@ -18,6 +18,8 @@ using Moongate.Tests.Server.Support;
 using Moongate.UO.Data.Geometry;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
+using Moongate.UO.Data.Services.Templates;
+using Moongate.UO.Data.Templates.Quests;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Services.Interaction;
@@ -129,6 +131,22 @@ public sealed class ContextMenuServiceTests
         public VendorSellRequestedEvent LastEvent { get; private set; }
 
         public Task HandleAsync(VendorSellRequestedEvent gameEvent, CancellationToken cancellationToken = default)
+        {
+            _ = cancellationToken;
+            Calls++;
+            LastEvent = gameEvent;
+
+            return Task.CompletedTask;
+        }
+    }
+
+    private sealed class TestQuestDialogRequestedEventListener : IGameEventListener<QuestDialogRequestedEvent>
+    {
+        public int Calls { get; private set; }
+
+        public QuestDialogRequestedEvent LastEvent { get; private set; }
+
+        public Task HandleAsync(QuestDialogRequestedEvent gameEvent, CancellationToken cancellationToken = default)
         {
             _ = cancellationToken;
             Calls++;
@@ -385,6 +403,138 @@ public sealed class ContextMenuServiceTests
                 Assert.That(listener.LastEvent.VendorSerial, Is.EqualTo(vendor.Id));
             }
         );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForContextMenuEntrySelectedEvent_WhenQuestEntryIsSelected_ShouldPublishQuestDialogRequestedEvent()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var questListener = new TestQuestDialogRequestedEventListener();
+        eventBus.RegisterListener(questListener);
+        var questTemplateService = CreateQuestTemplateService("quest_turn_in_npc");
+        var service = new ContextMenuService(
+            sessions,
+            mobiles,
+            outgoing,
+            eventBus,
+            questTemplateService: questTemplateService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
+        {
+            Id = (Serial)0x00000001u,
+            MapId = 0,
+            Location = new(100, 100, 0)
+        };
+        sessions.Add(session);
+
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x0000002Cu,
+            Name = "Quest Giver",
+            MapId = 0,
+            Location = new(101, 100, 0)
+        };
+        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_turn_in_npc");
+        mobiles.MobilesById[npc.Id] = npc;
+
+        await service.HandleAsync(new ContextMenuRequestedEvent(session.SessionId, npc.Id));
+        _ = outgoing.TryDequeue(out _);
+
+        await service.HandleAsync(new ContextMenuEntrySelectedEvent(session.SessionId, npc.Id, 4));
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(questListener.Calls, Is.EqualTo(1));
+                Assert.That(questListener.LastEvent.SessionId, Is.EqualTo(session.SessionId));
+                Assert.That(questListener.LastEvent.TargetSerial, Is.EqualTo(npc.Id));
+            }
+        );
+    }
+
+    [Test]
+    public async Task HandleAsync_ForContextMenuRequestedEvent_WhenQuestNpcTemplateIsRegisteredButPlayerHasNoQuests_ShouldIncludeQuestEntry()
+    {
+        var sessions = new ContextMenuTestGameNetworkSessionService();
+        var mobiles = new ContextMenuTestMobileService();
+        var outgoing = new BasePacketListenerTestOutgoingPacketQueue();
+        var eventBus = new GameEventBusService();
+        var questTemplateService = CreateQuestTemplateService("quest_giver_npc");
+        var service = new ContextMenuService(
+            sessions,
+            mobiles,
+            outgoing,
+            eventBus,
+            questTemplateService: questTemplateService
+        );
+        using var client = new MoongateTCPClient(new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp));
+
+        var session = new GameSession(new(client));
+        session.SetClientVersion(new("7.0.114.0"));
+        session.Character = new()
+        {
+            Id = (Serial)0x00000001u,
+            MapId = 0,
+            Location = new(100, 100, 0)
+        };
+        sessions.Add(session);
+
+        var npc = new UOMobileEntity
+        {
+            Id = (Serial)0x0000002Du,
+            Name = "Quest Giver",
+            MapId = 0,
+            Location = new(101, 100, 0)
+        };
+        npc.SetCustomString(MobileCustomParamKeys.Template.TemplateId, "quest_giver_npc");
+        mobiles.MobilesById[npc.Id] = npc;
+
+        var sent = await service.SendContextMenuAsync(session.SessionId, npc.Id);
+
+        Assert.That(sent, Is.True);
+        Assert.That(outgoing.TryDequeue(out var outgoingPacket), Is.True);
+        Assert.That(outgoingPacket.Packet, Is.TypeOf<GeneralInformationPacket>());
+
+        var packet = (GeneralInformationPacket)outgoingPacket.Packet;
+        var payload = packet.SubcommandData.Span;
+        Assert.That(payload[6], Is.EqualTo(2));
+
+        var firstTag = BinaryPrimitives.ReadUInt16BigEndian(payload[7..9]);
+        var secondTag = BinaryPrimitives.ReadUInt16BigEndian(payload[13..15]);
+
+        Assert.Multiple(
+            () =>
+            {
+                Assert.That(new[] { firstTag, secondTag }, Does.Contain((ushort)1));
+                Assert.That(new[] { firstTag, secondTag }, Does.Contain((ushort)4));
+            }
+        );
+    }
+
+    private static QuestTemplateService CreateQuestTemplateService(string npcTemplateId)
+    {
+        var questTemplateService = new QuestTemplateService();
+        questTemplateService.Upsert(
+            new QuestTemplateDefinition
+            {
+                Id = "starter.rat_hunt",
+                Name = "Rat Hunt",
+                Description = "Kill sewer rats.",
+                Category = "starter",
+                QuestGiverTemplateIds = [npcTemplateId],
+                CompletionNpcTemplateIds = [npcTemplateId],
+                MaxActivePerCharacter = 1
+            }
+        );
+
+        return questTemplateService;
     }
 
     [Test]

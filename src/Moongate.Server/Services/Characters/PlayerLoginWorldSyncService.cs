@@ -205,6 +205,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             if (otherMobile.Id == mobileEntity.Id ||
                 otherMobile.RiderMobileId != Serial.Zero ||
                 !visibleCenter.InRange(otherMobile.Location, visibleRange) ||
+                !MobileVisibilityHelper.CanSessionSeeMobile(session, otherMobile) ||
                 !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;
@@ -303,6 +304,7 @@ public sealed class PlayerLoginWorldSyncService : IPlayerLoginWorldSyncService
             if (otherMobile.Id == mobileEntity.Id ||
                 otherMobile.RiderMobileId != Serial.Zero ||
                 !visibleCenter.InRange(otherMobile.Location, visibleRange) ||
+                !MobileVisibilityHelper.CanSessionSeeMobile(session, otherMobile) ||
                 !sentMobileSerials.Add(otherMobile.Id))
             {
                 continue;

@@ -18,31 +18,47 @@ If you are new to Moongate authoring, do not start here. Start with:
 
 The following modules are currently wired in runtime:
 
-- `log`
-- `command`
-- `speech`
-- `help_tickets`
-- `combat`
-- `steering`
-- `perception`
-- `npc_state`
-- `mobile`
-- `item`
+- `ai_dialogue`
+- `async_job`
+- `bank`
 - `bulletin`
-- `dye`
-- `door`
-- `effect`
-- `gump`
-- `location`
-- `random`
+- `clock`
+- `combat`
+- `command`
+- `convert`
+- `dialogue`
 - `dice`
-- `timer`
+- `door`
+- `dye`
+- `effect`
+- `guards`
+- `gump`
+- `healing`
+- `help_tickets`
+- `item`
+- `location`
+- `log`
+- `magic`
+- `map`
+- `mobile`
+- `npc_state`
+- `perception`
+- `potion_effects`
+- `quests`
+- `random`
+- `resurrection`
+- `scheduled_events`
+- `spawn`
+- `speech`
+- `steering`
+- `target`
+- `text`
 - `time`
+- `timer`
 - `weather` (`set_global_light`, `clear_global_light`)
-- `map` (`to_id`)
-- `convert` (`to_bool`, `to_int`, `parse_delay_ms`, `parse_point3d`)
 
-23 modules total (`log` is defined in `Moongate.Scripting`, all others in `Moongate.Server`).
+Use the generated `definitions.lua` baseline at runtime for the complete exported surface. This page highlights the most
+commonly used modules and examples, including the shared quest authoring and interaction flow.
 
 Common shipped command scripts:
 
@@ -311,6 +327,60 @@ Persisted tickets store:
 
 For staff-facing triage, dashboard usage, and endpoint mapping, see
 [Help Ticket Workflow](../operations/help-ticket-workflow.md).
+
+### Quest Authoring And Runtime
+
+Quest authoring is Lua-first, but runtime execution stays in validated C# quest services.
+
+Authored quest scripts live under:
+
+- `moongate_data/scripts/quests/**/*.lua`
+
+Example:
+
+```lua
+quest.define({
+    id = "new_haven.rat_hunt",
+    name = "Rat Hunt",
+    category = "starter",
+    description = "Cull the rat infestation near the mill.",
+    quest_givers = { "farmer_npc" },
+    completion_npcs = { "farmer_npc" },
+    repeatable = false,
+    max_active_per_character = 1,
+    objectives = {
+        quest.kill({ mobiles = { "sewer_rat", "giant_rat" }, amount = 10 }),
+        quest.collect({ item_template_id = "rat_tail", amount = 10 }),
+        quest.deliver({ item_template_id = "rat_tail", amount = 10 })
+    },
+    rewards = {
+        quest.gold(150),
+        quest.item("bandage", 10)
+    }
+})
+```
+
+Shared runtime helpers exposed to Lua gumps and interaction scripts:
+
+```lua
+quests.open(session_id, character_id, npc_serial)
+quests.open_journal(session_id, character_id)
+quests.get_available(session_id, character_id, npc_serial)
+quests.get_active(session_id, character_id, npc_serial)
+quests.get_journal(session_id, character_id)
+
+quests.accept(session_id, character_id, npc_serial, quest_id)
+quests.complete(session_id, character_id, npc_serial, quest_id)
+```
+
+Runtime notes:
+
+- the NPC `Quest` interaction opens the shared dialog in `gumps/quests/quest_dialog.lua`
+- the client `Quests` button opens the shared journal in `gumps/quests/quest_journal.lua`
+- quest file hot reload goes through validation and preserves the last valid in-memory state when an edit fails
+- `max_active_per_character` is currently validated to `1` in v1
+
+For a focused authoring guide, see [Quests](quests.md).
 
 ### Loot Containers
 

@@ -1093,7 +1093,9 @@ public class ItemTemplateLoaderTests
             {
                 Assert.That(itemTemplateService.TryGet("iron_ingot", out _), Is.True);
                 Assert.That(itemTemplateService.TryGet("leather", out _), Is.True);
-                Assert.That(itemTemplateService.TryGet("spellbook", out _), Is.True);
+                Assert.That(itemTemplateService.TryGet("spellbook", out var spellbook), Is.True);
+                Assert.That(spellbook, Is.Not.Null);
+                Assert.That(spellbook!.Layer, Is.EqualTo(ItemLayerType.OneHanded));
                 Assert.That(itemTemplateService.TryGet("clock", out var clock), Is.True);
                 Assert.That(clock, Is.Not.Null);
                 Assert.That(clock!.ScriptId, Is.EqualTo("items.clock"));

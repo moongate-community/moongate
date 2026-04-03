@@ -4,9 +4,11 @@ using Moongate.Server.Interfaces.Services.Scripting;
 using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Interfaces.Templates;
+using Moongate.UO.Data.Services.Templates;
 using Moongate.UO.Data.Templates.Items;
 using Moongate.UO.Data.Templates.Loot;
 using Moongate.UO.Data.Templates.Mobiles;
+using Moongate.UO.Data.Templates.Quests;
 using Moongate.UO.Data.Templates.SellProfiles;
 using Moongate.UO.Data.Types;
 using Serilog;
@@ -16,7 +18,7 @@ namespace Moongate.Server.FileLoaders;
 /// <summary>
 /// Validates loaded item and mobile templates and fails startup on invalid references or malformed entries.
 /// </summary>
-[RegisterFileLoader(15)]
+[RegisterFileLoader(16)]
 public sealed class TemplateValidationLoader : IFileLoader
 {
     private static readonly HashSet<string> AllowedFightModes = new(StringComparer.OrdinalIgnoreCase)
@@ -36,6 +38,7 @@ public sealed class TemplateValidationLoader : IFileLoader
     private readonly ISellProfileTemplateService _sellProfileTemplateService;
     private readonly IBookTemplateService _bookTemplateService;
     private readonly ILootTemplateService _lootTemplateService;
+    private readonly IQuestTemplateService _questTemplateService;
 
     public TemplateValidationLoader(
         IItemTemplateService itemTemplateService,
@@ -43,7 +46,8 @@ public sealed class TemplateValidationLoader : IFileLoader
         IFactionTemplateService factionTemplateService,
         ISellProfileTemplateService sellProfileTemplateService,
         IBookTemplateService bookTemplateService,
-        ILootTemplateService lootTemplateService
+        ILootTemplateService lootTemplateService,
+        IQuestTemplateService? questTemplateService = null
     )
     {
         _itemTemplateService = itemTemplateService;
@@ -52,6 +56,7 @@ public sealed class TemplateValidationLoader : IFileLoader
         _sellProfileTemplateService = sellProfileTemplateService;
         _bookTemplateService = bookTemplateService;
         _lootTemplateService = lootTemplateService;
+        _questTemplateService = questTemplateService ?? new QuestTemplateService();
     }
 
     public Task LoadAsync()
@@ -63,6 +68,7 @@ public sealed class TemplateValidationLoader : IFileLoader
         ValidateFactions(errors);
         ValidateSellProfiles(errors);
         ValidateMobiles(errors);
+        ValidateQuests(errors);
 
         if (errors.Count == 0)
         {
@@ -362,6 +368,168 @@ public sealed class TemplateValidationLoader : IFileLoader
             ValidateMobileAi(mobile, errors);
             ValidateTemplateParams($"Mobile template '{mobile.Id}'", mobile.Params, errors);
             ValidateVariants(mobile, errors);
+        }
+    }
+
+    private void ValidateQuestObjective(QuestTemplateDefinition quest, QuestObjectiveDefinition objective, int index, List<string> errors)
+    {
+        var objectiveLabel = $"Quest template '{quest.Id}' objective {index}";
+
+        if (objective.Amount <= 0)
+        {
+            errors.Add($"{objectiveLabel} has non-positive amount {objective.Amount}.");
+        }
+
+        switch (objective.Type)
+        {
+            case QuestObjectiveType.Kill:
+                if (objective.MobileTemplateIds.Count == 0)
+                {
+                    errors.Add($"{objectiveLabel} requires at least one mobile template id.");
+
+                    return;
+                }
+
+                foreach (var mobileTemplateId in objective.MobileTemplateIds)
+                {
+                    if (string.IsNullOrWhiteSpace(mobileTemplateId))
+                    {
+                        errors.Add($"{objectiveLabel} has an empty mobile template id.");
+
+                        continue;
+                    }
+
+                    if (!_mobileTemplateService.TryGet(mobileTemplateId.Trim(), out _))
+                    {
+                        errors.Add($"{objectiveLabel} references missing mobile template '{mobileTemplateId}'.");
+                    }
+                }
+
+                break;
+            case QuestObjectiveType.Collect:
+            case QuestObjectiveType.Deliver:
+                if (string.IsNullOrWhiteSpace(objective.ItemTemplateId))
+                {
+                    errors.Add($"{objectiveLabel} requires itemTemplateId.");
+
+                    return;
+                }
+
+                if (!_itemTemplateService.TryGet(objective.ItemTemplateId.Trim(), out _))
+                {
+                    errors.Add($"{objectiveLabel} references missing item template '{objective.ItemTemplateId}'.");
+                }
+
+                break;
+        }
+    }
+
+    private void ValidateQuestReward(QuestTemplateDefinition quest, QuestRewardDefinition reward, int index, List<string> errors)
+    {
+        var rewardLabel = $"Quest template '{quest.Id}' reward {index}";
+
+        if (reward.Gold < 0)
+        {
+            errors.Add($"{rewardLabel} has negative gold {reward.Gold}.");
+        }
+
+        for (var itemIndex = 0; itemIndex < reward.Items.Count; itemIndex++)
+        {
+            var rewardItem = reward.Items[itemIndex];
+            var rewardItemLabel = $"{rewardLabel} item {itemIndex}";
+
+            if (string.IsNullOrWhiteSpace(rewardItem.ItemTemplateId))
+            {
+                errors.Add($"{rewardItemLabel} has empty itemTemplateId.");
+
+                continue;
+            }
+
+            if (rewardItem.Amount <= 0)
+            {
+                errors.Add($"{rewardItemLabel} has non-positive amount {rewardItem.Amount}.");
+            }
+
+            if (!_itemTemplateService.TryGet(rewardItem.ItemTemplateId.Trim(), out _))
+            {
+                errors.Add($"{rewardItemLabel} references missing item template '{rewardItem.ItemTemplateId}'.");
+            }
+        }
+    }
+
+    private void ValidateQuests(List<string> errors)
+    {
+        foreach (var quest in _questTemplateService.GetAll())
+        {
+            if (string.IsNullOrWhiteSpace(quest.Id))
+            {
+                errors.Add("Quest template has empty id.");
+            }
+
+            if (string.IsNullOrWhiteSpace(quest.Name))
+            {
+                errors.Add($"Quest template '{quest.Id}' has empty name.");
+            }
+
+            if (quest.MaxActivePerCharacter != 1)
+            {
+                errors.Add($"Quest template '{quest.Id}' supports only one active instance per character.");
+            }
+
+            if (quest.QuestGiverTemplateIds.Count == 0)
+            {
+                errors.Add($"Quest template '{quest.Id}' has no quest giver template ids.");
+            }
+
+            foreach (var questGiverTemplateId in quest.QuestGiverTemplateIds)
+            {
+                if (string.IsNullOrWhiteSpace(questGiverTemplateId))
+                {
+                    errors.Add($"Quest template '{quest.Id}' has an empty quest giver template id.");
+
+                    continue;
+                }
+
+                if (!_mobileTemplateService.TryGet(questGiverTemplateId.Trim(), out _))
+                {
+                    errors.Add($"Quest template '{quest.Id}' references missing quest giver template '{questGiverTemplateId}'.");
+                }
+            }
+
+            if (quest.CompletionNpcTemplateIds.Count == 0)
+            {
+                errors.Add($"Quest template '{quest.Id}' has no completion npc template ids.");
+            }
+
+            foreach (var completionNpcTemplateId in quest.CompletionNpcTemplateIds)
+            {
+                if (string.IsNullOrWhiteSpace(completionNpcTemplateId))
+                {
+                    errors.Add($"Quest template '{quest.Id}' has an empty completion npc template id.");
+
+                    continue;
+                }
+
+                if (!_mobileTemplateService.TryGet(completionNpcTemplateId.Trim(), out _))
+                {
+                    errors.Add($"Quest template '{quest.Id}' references missing completion npc template '{completionNpcTemplateId}'.");
+                }
+            }
+
+            if (quest.Objectives.Count == 0)
+            {
+                errors.Add($"Quest template '{quest.Id}' has no objectives.");
+            }
+
+            for (var index = 0; index < quest.Objectives.Count; index++)
+            {
+                ValidateQuestObjective(quest, quest.Objectives[index], index, errors);
+            }
+
+            for (var index = 0; index < quest.Rewards.Count; index++)
+            {
+                ValidateQuestReward(quest, quest.Rewards[index], index, errors);
+            }
         }
     }
 

@@ -328,23 +328,109 @@ public class CharacterService : ICharacterService
     }
 
     private static UOItemEntity CloneItem(UOItemEntity item)
-        => new()
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        var clone = new UOItemEntity
         {
             Id = item.Id,
             Location = item.Location,
+            MapId = item.MapId,
             Name = item.Name,
             Weight = item.Weight,
             Amount = item.Amount,
-            IsStackable = item.IsStackable,
-            Rarity = item.Rarity,
             ItemId = item.ItemId,
             Hue = item.Hue,
             GumpId = item.GumpId,
+            Direction = item.Direction,
+            IsStackable = item.IsStackable,
+            ScriptId = item.ScriptId,
+            Rarity = item.Rarity,
+            Visibility = item.Visibility,
+            CombatStats = CloneCombatStats(item.CombatStats),
+            Modifiers = CloneModifiers(item.Modifiers),
             ParentContainerId = item.ParentContainerId,
             ContainerPosition = item.ContainerPosition,
             EquippedMobileId = item.EquippedMobileId,
-            EquippedLayer = item.EquippedLayer
+            EquippedLayer = item.EquippedLayer,
+            ContainedItemIds = [.. item.ContainedItemIds],
+            WeaponSkill = item.WeaponSkill,
+            AmmoItemId = item.AmmoItemId,
+            AmmoEffectId = item.AmmoEffectId,
+            IsQuiver = item.IsQuiver,
+            QuiverLowerAmmoCost = item.QuiverLowerAmmoCost,
+            QuiverDamageIncrease = item.QuiverDamageIncrease,
+            QuiverWeightReduction = item.QuiverWeightReduction,
+            HitSound = item.HitSound,
+            MissSound = item.MissSound
         };
+
+        foreach (var customProperty in item.CustomProperties)
+        {
+            clone.SetCustomProperty(customProperty.Key, CloneCustomProperty(customProperty.Value));
+        }
+
+        return clone;
+    }
+
+    private static ItemCombatStats? CloneCombatStats(ItemCombatStats? combatStats)
+        => combatStats is null
+            ? null
+            : new()
+            {
+                MinStrength = combatStats.MinStrength,
+                MinDexterity = combatStats.MinDexterity,
+                MinIntelligence = combatStats.MinIntelligence,
+                DamageMin = combatStats.DamageMin,
+                DamageMax = combatStats.DamageMax,
+                Defense = combatStats.Defense,
+                AttackSpeed = combatStats.AttackSpeed,
+                RangeMin = combatStats.RangeMin,
+                RangeMax = combatStats.RangeMax,
+                MaxDurability = combatStats.MaxDurability,
+                CurrentDurability = combatStats.CurrentDurability
+            };
+
+    private static ItemCustomProperty CloneCustomProperty(ItemCustomProperty customProperty)
+    {
+        ArgumentNullException.ThrowIfNull(customProperty);
+
+        return new()
+        {
+            Type = customProperty.Type,
+            IntegerValue = customProperty.IntegerValue,
+            BooleanValue = customProperty.BooleanValue,
+            DoubleValue = customProperty.DoubleValue,
+            StringValue = customProperty.StringValue
+        };
+    }
+
+    private static ItemModifiers? CloneModifiers(ItemModifiers? modifiers)
+        => modifiers is null
+            ? null
+            : new()
+            {
+                StrengthBonus = modifiers.StrengthBonus,
+                DexterityBonus = modifiers.DexterityBonus,
+                IntelligenceBonus = modifiers.IntelligenceBonus,
+                PhysicalResist = modifiers.PhysicalResist,
+                FireResist = modifiers.FireResist,
+                ColdResist = modifiers.ColdResist,
+                PoisonResist = modifiers.PoisonResist,
+                EnergyResist = modifiers.EnergyResist,
+                HitChanceIncrease = modifiers.HitChanceIncrease,
+                DefenseChanceIncrease = modifiers.DefenseChanceIncrease,
+                DamageIncrease = modifiers.DamageIncrease,
+                SwingSpeedIncrease = modifiers.SwingSpeedIncrease,
+                SpellDamageIncrease = modifiers.SpellDamageIncrease,
+                FasterCasting = modifiers.FasterCasting,
+                FasterCastRecovery = modifiers.FasterCastRecovery,
+                LowerManaCost = modifiers.LowerManaCost,
+                LowerReagentCost = modifiers.LowerReagentCost,
+                Luck = modifiers.Luck,
+                SpellChanneling = modifiers.SpellChanneling,
+                UsesRemaining = modifiers.UsesRemaining
+            };
 
     private static StarterProfileContext CreateStarterProfileContext(UOMobileEntity character)
         => new(character.Profession, character.Race, character.Gender);
