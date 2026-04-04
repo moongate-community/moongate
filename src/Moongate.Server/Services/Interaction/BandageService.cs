@@ -6,6 +6,7 @@ using Moongate.Server.Interfaces.Services.Timing;
 using Moongate.UO.Data.Ids;
 using Moongate.UO.Data.Persistence.Entities;
 using Moongate.UO.Data.Types;
+using Serilog;
 
 namespace Moongate.Server.Services.Interaction;
 
@@ -15,6 +16,7 @@ public sealed class BandageService : IBandageService
     private const int HealAmount = 12;
     private static readonly TimeSpan BandageDelay = TimeSpan.FromSeconds(3);
 
+    private readonly ILogger _logger = Log.ForContext<BandageService>();
     private readonly ITimerService _timerService;
     private readonly IMobileService _mobileService;
     private readonly IItemService _itemService;
@@ -130,7 +132,11 @@ public sealed class BandageService : IBandageService
         }
 
         mobile.Hits = Math.Min(mobile.MaxHits, mobile.Hits + HealAmount);
-        _mobileService.CreateOrUpdateAsync(mobile).GetAwaiter().GetResult();
+
+        _ = _mobileService.CreateOrUpdateAsync(mobile).ContinueWith(
+            t => _logger.Error(t.Exception, "Bandage persistence failed for mobile {MobileId}", mobileId),
+            TaskContinuationOptions.OnlyOnFaulted
+        );
     }
 
     private static bool ContainsBandage(UOItemEntity container)
