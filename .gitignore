@@ -589,3 +589,6 @@ definitions.lua
 
 dist/
 benchmarks/.compare
+
+# Local runtime data directory
+/moongate/

@@ -1,0 +1,18 @@
+Third-party notices for Moongate
+================================
+
+Moongate.Ultima
+---------------
+
+The Moongate.Ultima project is a Linux-first port of the "Ultima" library from
+UOFiddler (https://github.com/polserver/UOFiddler), itself based on the Ultima
+SDK by Krrios. The original source code is released under the Beerware license:
+
+    "THE BEER-WARE LICENSE"
+    As long as you retain this notice you can do whatever you want with
+    this stuff. If we meet some day, and you think this stuff is worth it,
+    you can buy me a beer in return.
+
+Modifications in this port include: replacement of System.Drawing with
+SkiaSharp, removal of Windows-only client memory access (P/Invoke) and
+registry-based client discovery, and namespace changes.
