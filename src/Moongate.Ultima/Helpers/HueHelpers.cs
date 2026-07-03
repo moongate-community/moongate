@@ -9,7 +9,7 @@
 //  *
 //  ***************************************************************************/
 
-using SkiaSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Moongate.Ultima.Helpers;
 
@@ -17,13 +17,13 @@ public static class HueHelpers
 {
     // Canonical 8-bit RGB -> 15-bit hue. Uses bit-shift (>>3) packing with the rule:
     // input all-zero -> 0; else any lane that collapses to 0 -> 1.
-    public static ushort ColorToHue(SKColor color) => ColorToHueShift(color.Red, color.Green, color.Blue);
+    public static ushort ColorToHue(Rgba32 color) => ColorToHueShift(color.R, color.G, color.B);
 
     // Canonical 15-bit hue -> 32-bit ARGB, expanding 5-bit components via
     // (c<<3)|(c>>2) so 31 maps to 255 (not 248 as the previous *8 integer math did).
-    public static SKColor HueToColor(ushort hue)
+    public static Rgba32 HueToColor(ushort hue)
     {
-        return new SKColor(
+        return new Rgba32(
             (byte)Expand5To8((hue & 0x7c00) >> 10),
             (byte)Expand5To8((hue & 0x03e0) >> 5),
             (byte)Expand5To8(hue & 0x001f));

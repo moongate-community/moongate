@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Moongate.Ultima.Imaging;
-using SkiaSharp;
+using SixLabors.ImageSharp;
 
 namespace Moongate.Ultima;
 
@@ -18,7 +18,7 @@ public sealed class FrameEdit
     }
 
     public Raw[] RawData { get; }
-    public SKPointI Center { get; set; }
+    public Point Center { get; set; }
 
     public readonly int Width;
     public readonly int Height;
@@ -60,12 +60,12 @@ public sealed class FrameEdit
         }
 
         RawData = tmp.ToArray();
-        Center = new SKPointI(xCenter, yCenter);
+        Center = new Point(xCenter, yCenter);
     }
 
     public unsafe FrameEdit(UltimaBitmap bit, ushort[] palette, int centerX, int centerY)
     {
-        Center = new SKPointI(centerX, centerY);
+        Center = new Point(centerX, centerY);
         Width = bit.Width;
         Height = bit.Height;
 
@@ -141,7 +141,7 @@ public sealed class FrameEdit
             RawData[i].offsetY -= y;
         }
 
-        Center = new SKPointI(x, y);
+        Center = new Point(x, y);
     }
 
     private static byte GetPaletteIndex(IReadOnlyList<ushort> palette, ushort col)

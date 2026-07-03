@@ -17,22 +17,22 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
-using SkiaSharp;
+using SixLabors.ImageSharp;
 
 namespace Moongate.Ultima;
 
 public sealed class MultiComponentList
 {
-    private readonly SKPointI _min;
-    private readonly SKPointI _max;
+    private readonly Point _min;
+    private readonly Point _max;
 
-    private SKPointI _center;
+    private Point _center;
 
     public static readonly MultiComponentList Empty = new MultiComponentList();
 
-    public SKPointI Min { get { return _min; } }
-    public SKPointI Max { get { return _max; } }
-    public SKPointI Center { get { return _center; } }
+    public Point Min { get { return _min; } }
+    public Point Max { get { return _max; } }
+    public Point Center { get { return _center; } }
     public int Width { get; private set; }
     public int Height { get; private set; }
     public MTile[][][] Tiles { get; private set; }
@@ -152,7 +152,7 @@ public sealed class MultiComponentList
 
     public MultiComponentList(BinaryReader reader, int count, bool useNewMultiFormat)
     {
-        _min = _max = SKPointI.Empty;
+        _min = _max = Point.Empty;
 
         SortedTiles = new MultiTileEntry[count];
 
@@ -197,7 +197,7 @@ public sealed class MultiComponentList
 
     public MultiComponentList(string fileName, Multis.ImportType type)
     {
-        _min = _max = SKPointI.Empty;
+        _min = _max = Point.Empty;
 
         int itemCount;
 
@@ -625,7 +625,7 @@ public sealed class MultiComponentList
 
     public MultiComponentList(List<MultiTileEntry> arr)
     {
-        _min = _max = SKPointI.Empty;
+        _min = _max = Point.Empty;
         int itemCount = arr.Count;
         SortedTiles = new MultiTileEntry[itemCount];
         _min.X = 10000;
@@ -670,7 +670,7 @@ public sealed class MultiComponentList
     public MultiComponentList(StreamReader stream, int count)
     {
         int itemCount = 0;
-        _min = _max = SKPointI.Empty;
+        _min = _max = Point.Empty;
         SortedTiles = new MultiTileEntry[count];
         _min.X = 10000;
         _min.Y = 10000;
@@ -724,7 +724,7 @@ public sealed class MultiComponentList
 
     private void ConvertList()
     {
-        _center = new SKPointI(-_min.X, -_min.Y);
+        _center = new Point(-_min.X, -_min.Y);
         Width = (_max.X - _min.X) + 1;
         Height = (_max.Y - _min.Y) + 1;
 
@@ -778,9 +778,9 @@ public sealed class MultiComponentList
 
     public MultiComponentList(MTileList[][] newTiles, int count, int width, int height)
     {
-        _min = _max = SKPointI.Empty;
+        _min = _max = Point.Empty;
         SortedTiles = new MultiTileEntry[count];
-        _center = new SKPointI((int)Math.Round(width / 2.0) - 1, (int)Math.Round(height / 2.0) - 1);
+        _center = new Point((int)Math.Round(width / 2.0) - 1, (int)Math.Round(height / 2.0) - 1);
         if (_center.X < 0)
         {
             _center.X = width / 2;

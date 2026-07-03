@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
-using SkiaSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Moongate.Ultima;
 
@@ -25,7 +25,7 @@ public sealed class Hue
         TableEnd = 0;
     }
 
-    public SKColor GetColor(int index)
+    public Rgba32 GetColor(int index)
     {
         return HueToColor(Colors[index]);
     }
@@ -34,11 +34,11 @@ public sealed class Hue
     /// Converts Hue color to RGB color
     /// </summary>
     /// <param name="hue"></param>
-    private static SKColor HueToColor(ushort hue)
+    private static Rgba32 HueToColor(ushort hue)
     {
         const int scale = 255 / 31;
 
-        return new SKColor(
+        return new Rgba32(
             (byte)(((hue & 0x7c00) >> 10) * scale),
             (byte)(((hue & 0x3e0) >> 5) * scale),
             (byte)((hue & 0x1f) * scale));

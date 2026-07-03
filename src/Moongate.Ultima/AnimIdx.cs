@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
 using Moongate.Ultima.Imaging;
-using SkiaSharp;
 
 namespace Moongate.Ultima;
 
@@ -218,7 +217,7 @@ public sealed class AnimIdx
                 }
             }
 
-            bmp.Save(filename, SKEncodedImageFormat.Png);
+            bmp.Save(filename);
         }
     }
 

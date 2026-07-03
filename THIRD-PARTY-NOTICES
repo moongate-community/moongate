@@ -14,5 +14,5 @@ SDK by Krrios. The original source code is released under the Beerware license:
     you can buy me a beer in return.
 
 Modifications in this port include: replacement of System.Drawing with
-SkiaSharp, removal of Windows-only client memory access (P/Invoke) and
+SixLabors.ImageSharp, removal of Windows-only client memory access (P/Invoke) and
 registry-based client discovery, and namespace changes.

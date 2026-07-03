@@ -8,7 +8,8 @@
 //  ***************************************************************************/
 
 using System.Runtime.InteropServices;
-using SkiaSharp;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Moongate.Ultima.Imaging;
 
@@ -16,7 +17,7 @@ namespace Moongate.Ultima.Imaging;
 /// A 16-bit ARGB1555 pixel surface backed by native memory, mirroring the layout of the
 /// GDI+ <c>Format16bppArgb1555</c> bitmaps used by the original Ultima SDK. <see cref="Scan0"/>
 /// and <see cref="Stride"/> follow the same semantics as System.Drawing's <c>BitmapData</c>,
-/// so the SDK's unsafe pixel loops port unchanged. Convert with <see cref="ToSKBitmap"/>
+/// so the SDK's unsafe pixel loops port unchanged. Convert with <see cref="ToImage"/>
 /// only when rendering or exporting is needed.
 /// </summary>
 public sealed unsafe class UltimaBitmap : IDisposable
@@ -107,90 +108,80 @@ public sealed unsafe class UltimaBitmap : IDisposable
     }
 
     /// <summary>
-    /// Converts the ARGB1555 surface to a 32-bit BGRA8888 Skia bitmap. Pass
+    /// Converts the ARGB1555 surface to a 32-bit BGRA image. Pass
     /// <paramref name="opaque"/> = true for surfaces produced without the alpha bit
     /// (e.g. map renders, originally RGB555): every pixel is emitted fully opaque.
     /// </summary>
-    public SKBitmap ToSKBitmap(bool opaque = false)
+    public Image<Bgra32> ToImage(bool opaque = false)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        var bmp = new SKBitmap(new SKImageInfo(Width, Height, SKColorType.Bgra8888, SKAlphaType.Unpremul));
-        var dst = (uint*)bmp.GetPixels();
-
-        for (var y = 0; y < Height; y++)
+        var image = new Image<Bgra32>(Width, Height);
+        image.ProcessPixelRows(accessor =>
         {
-            var src = (ushort*)_scan0 + (y * Width);
-            for (var x = 0; x < Width; x++)
+            for (var y = 0; y < accessor.Height; y++)
             {
-                var pixel = Expand1555To8888(src[x]);
-                if (opaque)
+                Span<uint> dst = MemoryMarshal.Cast<Bgra32, uint>(accessor.GetRowSpan(y));
+                var src = (ushort*)_scan0 + (y * Width);
+
+                for (var x = 0; x < Width; x++)
                 {
-                    pixel |= 0xFF000000u;
+                    var pixel = Expand1555To8888(src[x]);
+                    if (opaque)
+                    {
+                        pixel |= 0xFF000000u;
+                    }
+
+                    dst[x] = pixel;
                 }
-
-                dst[(y * Width) + x] = pixel;
             }
-        }
+        });
 
-        return bmp;
-    }
-
-    /// <summary>Encodes the surface to <paramref name="fileName"/> (PNG by default).</summary>
-    public void Save(
-        string fileName, SKEncodedImageFormat format = SKEncodedImageFormat.Png, int quality = 100, bool opaque = false)
-    {
-        using var bmp = ToSKBitmap(opaque);
-        using var image = SKImage.FromBitmap(bmp);
-        using var data = image.Encode(format, quality);
-        using var stream = File.Create(fileName);
-        data.SaveTo(stream);
+        return image;
     }
 
     /// <summary>
-    /// Converts a Skia bitmap to an ARGB1555 surface. Pixels with alpha below 128
+    /// Encodes the surface to <paramref name="fileName"/>; the format is picked from the
+    /// file extension (png, bmp, tiff, jpeg, ...).
+    /// </summary>
+    public void Save(string fileName, bool opaque = false)
+    {
+        using Image<Bgra32> image = ToImage(opaque);
+        image.Save(fileName);
+    }
+
+    /// <summary>
+    /// Converts a 32-bit BGRA image to an ARGB1555 surface. Pixels with alpha below 128
     /// become fully transparent (alpha bit unset).
     /// </summary>
-    public static UltimaBitmap FromSKBitmap(SKBitmap source)
+    public static UltimaBitmap FromImage(Image<Bgra32> source)
     {
         ArgumentNullException.ThrowIfNull(source);
 
-        SKBitmap working = source;
-        if (source.ColorType != SKColorType.Bgra8888)
+        var result = new UltimaBitmap(source.Width, source.Height);
+        source.ProcessPixelRows(accessor =>
         {
-            working = source.Copy(SKColorType.Bgra8888)
-                      ?? throw new InvalidOperationException("Could not convert source bitmap to BGRA8888.");
-        }
-
-        try
-        {
-            var result = new UltimaBitmap(working.Width, working.Height);
-            var src = (uint*)working.GetPixels();
-            var dst = (ushort*)result._scan0;
-
-            for (var i = 0; i < working.Width * working.Height; i++)
+            for (var y = 0; y < accessor.Height; y++)
             {
-                dst[i] = Pack8888To1555(src[i]);
-            }
+                Span<uint> src = MemoryMarshal.Cast<Bgra32, uint>(accessor.GetRowSpan(y));
+                var dst = (ushort*)result._scan0 + (y * result.Width);
 
-            return result;
-        }
-        finally
-        {
-            if (!ReferenceEquals(working, source))
-            {
-                working.Dispose();
+                for (var x = 0; x < src.Length; x++)
+                {
+                    dst[x] = Pack8888To1555(src[x]);
+                }
             }
-        }
+        });
+
+        return result;
     }
 
     /// <summary>Decodes an image file (PNG, BMP, JPEG, ...) into an ARGB1555 surface.</summary>
     public static UltimaBitmap FromFile(string fileName)
     {
-        using var decoded = SKBitmap.Decode(fileName)
-                            ?? throw new FileNotFoundException($"Could not decode image '{fileName}'.", fileName);
+        using Image<Bgra32> decoded = Image.Load<Bgra32>(fileName);
 
-        return FromSKBitmap(decoded);
+        return FromImage(decoded);
     }
 
     private static uint Expand1555To8888(ushort pixel)

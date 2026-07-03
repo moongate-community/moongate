@@ -1,12 +1,12 @@
 using System.IO;
 using Moongate.Ultima.Imaging;
-using SkiaSharp;
+using SixLabors.ImageSharp;
 
 namespace Moongate.Ultima;
 
 public sealed class AnimationFrame
 {
-    public SKPointI Center { get; set; }
+    public Point Center { get; set; }
     public UltimaBitmap Bitmap { get; set; }
 
     private const int _doubleXor = (0x200 << 22) | (0x200 << 12);
@@ -78,7 +78,7 @@ public sealed class AnimationFrame
             xCenter = width - xCenter;
         }
 
-        Center = new SKPointI(xCenter, yCenter);
+        Center = new Point(xCenter, yCenter);
         Bitmap = bmp;
     }
 }
