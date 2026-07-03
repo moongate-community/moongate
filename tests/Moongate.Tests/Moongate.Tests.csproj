@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
+    <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj" />
   </ItemGroup>
 
 </Project>
