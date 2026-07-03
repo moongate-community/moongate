@@ -1,5 +1,6 @@
 using System.Buffers.Binary;
 using System.Text;
+using Moongate.Ultima.Helpers;
 
 namespace Moongate.Tests.Support;
 
@@ -189,6 +190,49 @@ public static class UltimaFixtures
         BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + 64), tableStart);
         BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + 66), tableEnd);
         WriteName(buffer, offset + 68, firstHueName);
+
+        return buffer;
+    }
+
+    /// <summary>
+    /// Wraps raw map block data into a minimal MythicPackage (UOP) container the way
+    /// the client ships mapXLegacyMUL.uop: a single uncompressed
+    /// <c>build/{pattern}/00000000.dat</c> entry holding the blocks.
+    /// </summary>
+    /// <param name="pattern">Inner entry pattern, e.g. "map0legacymul".</param>
+    /// <param name="blockData">Concatenated 196-byte map blocks.</param>
+    public static byte[] BuildMapUop(string pattern, byte[] blockData)
+    {
+        const int headerSize = 28;
+        const int blockTableHeaderSize = 12;
+        const int entrySize = 34;
+        int dataOffset = headerSize + blockTableHeaderSize + entrySize;
+
+        var buffer = new byte[dataOffset + blockData.Length];
+        Span<byte> span = buffer;
+
+        // Header: magic "MYP\0", version+signature, first block offset, capacity, file count.
+        BinaryPrimitives.WriteInt32LittleEndian(span, 0x50594D);
+        BinaryPrimitives.WriteInt64LittleEndian(span[4..], 0);
+        BinaryPrimitives.WriteInt64LittleEndian(span[12..], headerSize);
+        BinaryPrimitives.WriteInt32LittleEndian(span[20..], 1);
+        BinaryPrimitives.WriteInt32LittleEndian(span[24..], 1);
+
+        // Block table: one entry, no next block.
+        BinaryPrimitives.WriteInt32LittleEndian(span[headerSize..], 1);
+        BinaryPrimitives.WriteInt64LittleEndian(span[(headerSize + 4)..], 0);
+
+        // Entry: offset, headerLength, compressed/decompressed length, name hash, adler, flag 0 (raw).
+        int entry = headerSize + blockTableHeaderSize;
+        BinaryPrimitives.WriteInt64LittleEndian(span[entry..], dataOffset);
+        BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 8)..], 0);
+        BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 12)..], blockData.Length);
+        BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 16)..], blockData.Length);
+        BinaryPrimitives.WriteUInt64LittleEndian(span[(entry + 20)..], UopUtils.HashFileName($"build/{pattern}/00000000.dat"));
+        BinaryPrimitives.WriteUInt32LittleEndian(span[(entry + 28)..], 0);
+        BinaryPrimitives.WriteInt16LittleEndian(span[(entry + 32)..], 0);
+
+        blockData.CopyTo(buffer, dataOffset);
 
         return buffer;
     }

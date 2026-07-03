@@ -53,6 +53,33 @@ public class TileMatrixTests
     }
 
     [Fact]
+    public void GetLandTile_SingleBlockUopMap_ReturnsIdAndZ()
+    {
+        byte[] mapBlock = UltimaFixtures.BuildMapBlock(0x0003, 5);
+        UltimaFixtures.SetMapCell(mapBlock, 6, 1, 0x0245, 12);
+
+        byte[] uop = UltimaFixtures.BuildMapUop("map0legacymul", mapBlock);
+        string dir = UltimaFixtures.CreateClientDirectory(("map0LegacyMUL.uop", uop));
+
+        try
+        {
+            using var matrix = new TileMatrix(0, 0, 8, 8, dir);
+
+            Tile plain = matrix.GetLandTile(0, 0);
+            Assert.Equal(0x0003, plain.Id);
+            Assert.Equal(5, plain.Z);
+
+            Tile marked = matrix.GetLandTile(6, 1);
+            Assert.Equal(0x0245, marked.Id);
+            Assert.Equal(12, marked.Z);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
     public void GetStaticTiles_SingleBlock_ReturnsStaticsForCell()
     {
         byte[] mapBlock = UltimaFixtures.BuildMapBlock(0x0003, 0);
