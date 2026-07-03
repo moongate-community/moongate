@@ -11,9 +11,19 @@ public static class UltimaFixtures
 {
     private const int OldLandRecordSize = 26;
     private const int OldItemRecordSize = 37;
+    private const int NewLandRecordSize = 30;
+    private const int NewItemRecordSize = 41;
     private const int LandGroupSize = 4 + (32 * OldLandRecordSize);
     private const int ItemGroupSize = 4 + (32 * OldItemRecordSize);
+    private const int NewLandGroupSize = 4 + (32 * NewLandRecordSize);
+    private const int NewItemGroupSize = 4 + (32 * NewItemRecordSize);
     private const int MapBlockSize = 196;
+
+    /// <summary>
+    /// Minimum artidx.mul size that makes <c>Art.IsUOAHS()</c> report the post-HS client
+    /// (0x13FDC entries of 12 bytes), which switches TileData to the new 64-bit-flag format.
+    /// </summary>
+    private const int UoahsArtIdxSize = 0x13FDC * 12;
 
     /// <summary>
     /// Creates a temporary directory holding the given synthetic client files and
@@ -51,6 +61,43 @@ public static class UltimaFixtures
     public static byte[] BuildTileData()
     {
         return new byte[(512 * LandGroupSize) + ItemGroupSize];
+    }
+
+    /// <summary>Builds a new-format (HS 7.0.9+) tiledata.mul with the full land table and one item group.</summary>
+    public static byte[] BuildTileDataNew()
+    {
+        return new byte[(512 * NewLandGroupSize) + NewItemGroupSize];
+    }
+
+    /// <summary>
+    /// Builds a zero-filled artidx.mul large enough that the library detects a post-HS
+    /// client (new tiledata format). Pair with <see cref="BuildTileDataNew"/>.
+    /// </summary>
+    public static byte[] BuildUoahsArtIndex()
+    {
+        return new byte[UoahsArtIdxSize];
+    }
+
+    /// <summary>Writes a new-format land record (64-bit flags, textureId, name) for tile <paramref name="id"/>.</summary>
+    public static void SetLandNew(byte[] tileData, int id, ulong flags, ushort textureId, string name)
+    {
+        int group = id / 32;
+        int inGroup = id % 32;
+        int offset = (group * NewLandGroupSize) + 4 + (inGroup * NewLandRecordSize);
+
+        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
+        BinaryPrimitives.WriteUInt16LittleEndian(tileData.AsSpan(offset + 8), textureId);
+        WriteName(tileData, offset + 10, name);
+    }
+
+    /// <summary>Writes a new-format item record (64-bit flags, height, name) for item <paramref name="id"/> (first group only).</summary>
+    public static void SetItemNew(byte[] tileData, int id, ulong flags, byte height, string name)
+    {
+        int offset = (512 * NewLandGroupSize) + 4 + (id * NewItemRecordSize);
+
+        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
+        tileData[offset + 20] = height;
+        WriteName(tileData, offset + 21, name);
     }
 
     /// <summary>Writes an old-format land record (flags, textureId, name) for tile <paramref name="id"/>.</summary>
