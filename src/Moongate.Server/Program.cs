@@ -1,4 +1,4 @@
-﻿using ConsoleAppFramework;
+using ConsoleAppFramework;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Extensions.Env;
 using SquidStd.Services.Core.Services.Bootstrap;

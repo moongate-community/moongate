@@ -1,6 +1,8 @@
 using Moongate.Tests.Support;
 using Moongate.Ultima;
 
+using Moongate.Ultima.Maps;
+
 namespace Moongate.Tests.Ultima;
 
 [Collection("UltimaClientData")]

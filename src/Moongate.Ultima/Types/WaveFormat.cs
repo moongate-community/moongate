@@ -1,4 +1,4 @@
-namespace Moongate.Ultima;
+namespace Moongate.Ultima.Types;
 
 public enum WaveFormat
 {

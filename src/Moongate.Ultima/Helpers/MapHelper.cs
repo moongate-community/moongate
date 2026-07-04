@@ -9,6 +9,10 @@
 //  *
 //  ***************************************************************************/
 
+using Moongate.Ultima.Io;
+
+using Moongate.Ultima.Maps;
+
 namespace Moongate.Ultima.Helpers;
 
 public sealed class MapHelper

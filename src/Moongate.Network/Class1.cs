@@ -1,3 +1,3 @@
-﻿namespace Moongate.Network;
+namespace Moongate.Network;
 
 public class Class1 { }

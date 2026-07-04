@@ -1,3 +1,3 @@
-﻿namespace Moongate.UO.Data;
+namespace Moongate.UO.Data;
 
 public class Class1 { }

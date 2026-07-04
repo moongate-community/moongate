@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
+using Moongate.Ultima.Animation;
+
 namespace Moongate.Ultima.Caching;
 
 /// <summary>

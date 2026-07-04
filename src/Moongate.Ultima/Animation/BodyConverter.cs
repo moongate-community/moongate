@@ -1,0 +1,421 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+
+using Moongate.Ultima.Io;
+
+namespace Moongate.Ultima.Animation;
+
+/// <summary>
+/// Contains translation tables used for mapping body values to file subsets.
+/// <seealso cref="Animations" />
+/// </summary>
+public static class BodyConverter
+{
+    public static int[] Table1 { get; private set; }
+    public static int[] Table2 { get; private set; }
+    public static int[] Table3 { get; private set; }
+    public static int[] Table4 { get; private set; }
+    public static int[] Table5 { get; private set; }
+
+    // Reverse maps: in-file body id → server body id (first match wins,
+    // matching the historical linear-scan behavior of GetTrueBody).
+    private static Dictionary<int, int> _reverse1;
+    private static Dictionary<int, int> _reverse2;
+    private static Dictionary<int, int> _reverse3;
+    private static Dictionary<int, int> _reverse4;
+    private static Dictionary<int, int> _reverse5;
+
+    static BodyConverter()
+    {
+        Initialize();
+    }
+
+    /// <summary>
+    /// Fills bodyconv.def Tables
+    /// </summary>
+    public static void Initialize()
+    {
+        string path = Files.GetFilePath("bodyconv.def");
+        if (path == null)
+        {
+            return;
+        }
+
+        List<int> list1 = new List<int>();
+        List<int> list2 = new List<int>();
+        List<int> list3 = new List<int>();
+        List<int> list4 = new List<int>();
+        List<int> list5 = new List<int>();
+
+        int max1 = 0;
+        int max2 = 0;
+        int max3 = 0;
+        int max4 = 0;
+        int max5 = 0;
+
+        using (var ip = new StreamReader(path))
+        {
+            while (ip.ReadLine() is { } line)
+            {
+                line = line.Trim();
+
+                if (line.Length == 0 || line.StartsWith('#') || line.StartsWith('"'))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    string[] split = line.Split(new[] { '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    bool hasOriginalBodyId = int.TryParse(split[0], out int original);
+                    if (!hasOriginalBodyId)
+                    {
+                        // First item in array is not an int which means 
+                        // it's probably wrong line to parse. So we skip it.
+                        continue;
+                    }
+
+                    if (!int.TryParse(split[1], out int anim2))
+                    {
+                        anim2 = -1;
+                    }
+
+                    if (!int.TryParse(split[2], out int anim3))
+                    {
+                        anim3 = -1;
+                    }
+
+                    if (!int.TryParse(split[3], out int anim4))
+                    {
+                        anim4 = -1;
+                    }
+
+                    if (!int.TryParse(split[4], out int anim5))
+                    {
+                        anim5 = -1;
+                    }
+
+                    int anim6 = -1;
+                    if (split.Length > 5 && !int.TryParse(split[5], out anim6))
+                    {
+                        anim6 = -1;
+                    }
+
+                    if (anim2 != -1)
+                    {
+                        if (anim2 == 68)
+                        {
+                            anim2 = 122;
+                        }
+
+                        if (original > max1)
+                        {
+                            max1 = original;
+                        }
+
+                        list1.Add(original);
+                        list1.Add(anim2);
+                    }
+
+                    if (anim3 != -1)
+                    {
+                        if (original > max2)
+                        {
+                            max2 = original;
+                        }
+
+                        list2.Add(original);
+                        list2.Add(anim3);
+                    }
+
+                    if (anim4 != -1)
+                    {
+                        if (original > max3)
+                        {
+                            max3 = original;
+                        }
+
+                        list3.Add(original);
+                        list3.Add(anim4);
+                    }
+
+                    if (anim5 != -1)
+                    {
+                        if (original > max4)
+                        {
+                            max4 = original;
+                        }
+
+                        list4.Add(original);
+                        list4.Add(anim5);
+                    }
+
+                    if (anim6 != -1)
+                    {
+                        if (original > max5)
+                        {
+                            max5 = original;
+                        }
+
+                        list5.Add(original);
+                        list5.Add(anim6);
+                    }
+                }
+                catch
+                {
+                    // TODO: ignored?
+                }
+            }
+        }
+
+        Table1 = new int[max1 + 1];
+
+        for (int i = 0; i < Table1.Length; ++i)
+        {
+            Table1[i] = -1;
+        }
+
+        for (int i = 0; i < list1.Count; i += 2)
+        {
+            Table1[list1[i]] = list1[i + 1];
+        }
+
+        Table2 = new int[max2 + 1];
+
+        for (int i = 0; i < Table2.Length; ++i)
+        {
+            Table2[i] = -1;
+        }
+
+        for (int i = 0; i < list2.Count; i += 2)
+        {
+            Table2[list2[i]] = list2[i + 1];
+        }
+
+        Table3 = new int[max3 + 1];
+
+        for (int i = 0; i < Table3.Length; ++i)
+        {
+            Table3[i] = -1;
+        }
+
+        for (int i = 0; i < list3.Count; i += 2)
+        {
+            Table3[list3[i]] = list3[i + 1];
+        }
+
+        Table4 = new int[max4 + 1];
+
+        for (int i = 0; i < Table4.Length; ++i)
+        {
+            Table4[i] = -1;
+        }
+
+        for (int i = 0; i < list4.Count; i += 2)
+        {
+            Table4[list4[i]] = list4[i + 1];
+        }
+
+        Table5 = new int[max5 + 1];
+
+        for (int i = 0; i < Table5.Length; ++i)
+        {
+            Table5[i] = -1;
+        }
+
+        for (int i = 0; i < list5.Count; i += 2)
+        {
+            Table5[list5[i]] = list5[i + 1];
+        }
+
+        _reverse1 = BuildReverse(list1);
+        _reverse2 = BuildReverse(list2);
+        _reverse3 = BuildReverse(list3);
+        _reverse4 = BuildReverse(list4);
+        _reverse5 = BuildReverse(list5);
+    }
+
+    private static Dictionary<int, int> BuildReverse(List<int> pairs)
+    {
+        // pairs is [server0, inFile0, server1, inFile1, ...] from the
+        // forward-table population pass. Insert in order so first server
+        // body to claim an in-file id wins — matches the historical
+        // linear-scan-from-zero behavior of GetTrueBody.
+        var map = new Dictionary<int, int>(pairs.Count / 2);
+        for (int i = 0; i < pairs.Count; i += 2)
+        {
+            int serverBody = pairs[i];
+            int inFile = pairs[i + 1];
+            if (!map.ContainsKey(inFile))
+            {
+                map[inFile] = serverBody;
+            }
+        }
+        return map;
+    }
+
+    /// <summary>
+    /// Checks to see if <paramref name="body" /> is contained within the mapping table.
+    /// </summary>
+    /// <returns>True if it is, false if not.</returns>
+    public static bool Contains(int body)
+    {
+        if (Table1 != null && body >= 0 && body < Table1.Length && Table1[body] != -1)
+        {
+            return true;
+        }
+
+        if (Table2 != null && body >= 0 && body < Table2.Length && Table2[body] != -1)
+        {
+            return true;
+        }
+
+        if (Table3 != null && body >= 0 && body < Table3.Length && Table3[body] != -1)
+        {
+            return true;
+        }
+
+        if (Table4 != null && body >= 0 && body < Table4.Length && Table4[body] != -1)
+        {
+            return true;
+        }
+
+        if (Table5 != null && body >= 0 && body < Table5.Length && Table5[body] != -1)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    ///     Attempts to convert <paramref name="body" /> to a body index relative to a file subset, specified by the return value.
+    /// </summary>
+    /// <returns>
+    ///     A value indicating a file subset:
+    ///     <list type="table">
+    ///         <listheader>
+    ///             <term>Return Value</term>
+    ///             <description>File Subset</description>
+    ///         </listheader>
+    ///         <item>
+    ///             <term>1</term>
+    ///             <description>Anim.mul, Anim.idx (Standard)</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>2</term>
+    ///             <description>Anim2.mul, Anim2.idx (LBR)</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>3</term>
+    ///             <description>Anim3.mul, Anim3.idx (AOS)</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>4</term>
+    ///             <description>Anim4.mul, Anim4.idx (SE)</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>5</term>
+    ///             <description>Anim5.mul, Anim5.idx (ML)</description>
+    ///         </item>
+    ///         <item>
+    ///             <term>6</term>
+    ///             <description>Anim6.mul, Anim6.idx (SA/HS)</description>
+    ///         </item>
+    ///     </list>
+    /// </returns>
+    public static int Convert(ref int body)
+    {
+        if (Table1 != null && body >= 0 && body < Table1.Length)
+        {
+            int val = Table1[body];
+
+            if (val != -1)
+            {
+                body = val;
+                return 2;
+            }
+        }
+
+        if (Table2 != null && body >= 0 && body < Table2.Length)
+        {
+            int val = Table2[body];
+
+            if (val != -1)
+            {
+                body = val;
+                return 3;
+            }
+        }
+
+        if (Table3 != null && body >= 0 && body < Table3.Length)
+        {
+            int val = Table3[body];
+
+            if (val != -1)
+            {
+                body = val;
+                return 4;
+            }
+        }
+
+        if (Table4 != null && body >= 0 && body < Table4.Length)
+        {
+            int val = Table4[body];
+
+            if (val != -1)
+            {
+                body = val;
+                return 5;
+            }
+        }
+
+        if (Table5 != null && body >= 0 && body < Table5.Length)
+        {
+            int val = Table5[body];
+            if (val == -1)
+            {
+                return 1;
+            }
+
+            body = val;
+            return 6;
+        }
+
+        return 1;
+    }
+
+    /// <summary>
+    /// Converts backward
+    /// </summary>
+    /// <param name="fileType"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public static int GetTrueBody(int fileType, int index)
+    {
+        if (index < 0)
+        {
+            return -1;
+        }
+
+        Dictionary<int, int> map = fileType switch
+        {
+            1 => null,           // anim.mul: server id == in-file id
+            2 => _reverse1,
+            3 => _reverse2,
+            4 => _reverse3,
+            5 => _reverse4,
+            6 => _reverse5,
+            _ => null
+        };
+
+        if (fileType == 1)
+        {
+            return index;
+        }
+
+        return map != null && map.TryGetValue(index, out int serverBody) ? serverBody : -1;
+    }
+}
