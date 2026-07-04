@@ -58,4 +58,19 @@ public class SerialTests
         Assert.Equal("0x4000000A", new Serial(0x4000000Au).ToString());
         Assert.Equal("0x00000001", new Serial(1).ToString());
     }
+
+    [Fact]
+    public void GetHashCode_EqualValues_AreEqual()
+    {
+        Assert.Equal(new Serial(0x40000123u).GetHashCode(), new Serial(0x40000123u).GetHashCode());
+    }
+
+    [Fact]
+    public void ProtocolConstants_MatchWireRanges()
+    {
+        Assert.Equal(0x00000001u, Serial.MinMobile);
+        Assert.Equal(0x3FFFFFFFu, Serial.MaxMobile);
+        Assert.Equal(0x40000000u, Serial.MinItem);
+        Assert.Equal(0x7FFFFFFFu, Serial.MaxItem);
+    }
 }

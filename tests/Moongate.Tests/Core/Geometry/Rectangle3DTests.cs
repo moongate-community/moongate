@@ -38,4 +38,21 @@ public class Rectangle3DTests
         Assert.True(a == b);
         Assert.False(a != b);
     }
+
+    [Fact]
+    public void GetHashCode_EqualBounds_AreEqual()
+    {
+        var a = new Rectangle3D(new Point3D(0, 0, 0), new Point3D(2, 2, 2));
+        var b = new Rectangle3D(new Point3D(0, 0, 0), new Point3D(2, 2, 2));
+
+        Assert.Equal(a.GetHashCode(), b.GetHashCode());
+    }
+
+    [Fact]
+    public void ToString_ShowsStartAndSize()
+    {
+        var r = new Rectangle3D(new Point3D(1, 2, -10), new Point3D(5, 6, 10));
+
+        Assert.Equal("(1, 2, -10)+(4, 4, 20)", r.ToString());
+    }
 }

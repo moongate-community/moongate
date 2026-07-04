@@ -81,4 +81,19 @@ public class Point3DTests
     {
         Assert.False(Point3D.TryParse(input, null, out _));
     }
+
+    [Fact]
+    public void GetHashCode_EqualValues_AreEqual()
+    {
+        Assert.Equal(new Point3D(1, 2, 3).GetHashCode(), new Point3D(1, 2, 3).GetHashCode());
+    }
+
+    [Fact]
+    public void InRange_UsesChebyshevDistance_IgnoringZ()
+    {
+        var origin = new Point3D(100, 100, 0);
+
+        Assert.True(origin.InRange(new Point3D(103, 98, 50), 3));
+        Assert.False(origin.InRange(new Point3D(104, 98, 0), 3));
+    }
 }

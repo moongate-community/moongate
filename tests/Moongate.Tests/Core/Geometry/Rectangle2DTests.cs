@@ -58,4 +58,10 @@ public class Rectangle2DTests
     {
         Assert.Equal("(1, 2)+(3, 4)", new Rectangle2D(1, 2, 3, 4).ToString());
     }
+
+    [Fact]
+    public void GetHashCode_EqualBounds_AreEqual()
+    {
+        Assert.Equal(new Rectangle2D(1, 2, 3, 4).GetHashCode(), new Rectangle2D(1, 2, 3, 4).GetHashCode());
+    }
 }
