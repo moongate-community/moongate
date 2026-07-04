@@ -1,12 +1,10 @@
-using System;
-
 namespace Moongate.Core.Types;
 
-[Flags]
-
 /// <summary>
-/// Represents DirectionType.
+/// UO movement direction as sent on the wire. The low 3 bits encode the facing;
+/// bit 7 (<see cref="Running"/>) marks a running step.
 /// </summary>
+[Flags]
 public enum DirectionType : byte
 {
     North = 0x0,
@@ -19,6 +17,4 @@ public enum DirectionType : byte
     NorthWest = 0x7,
 
     Running = 0x80
-
-
 }
