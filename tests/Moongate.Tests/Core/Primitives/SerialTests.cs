@@ -37,7 +37,8 @@ public class SerialTests
         Assert.True(low < high);
         Assert.True(high > low);
         Assert.True(low <= new Serial(5));
-        Assert.True(high >= high);
+        var sameAsHigh = new Serial(9);
+        Assert.True(high >= sameAsHigh);
         Assert.True(low.CompareTo(high) < 0);
     }
 
