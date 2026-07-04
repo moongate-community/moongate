@@ -1,6 +1,4 @@
 using Moongate.Tests.Support;
-using Moongate.Ultima;
-
 using Moongate.Ultima.Io;
 
 namespace Moongate.Tests.Ultima;
@@ -9,20 +7,15 @@ namespace Moongate.Tests.Ultima;
 public class FilesTests
 {
     [Fact]
-    public void SetDirectory_MixedCaseFileNames_AreResolvedOnCaseSensitiveFilesystem()
+    public void GetFilePath_MissingFile_ReturnsNull()
     {
-        string dir = UltimaFixtures.CreateClientDirectory(
-            ("map0LegacyMUL.uop", [1]),
-            ("artLegacyMUL.uop", [1]),
-            ("tiledata.mul", [1]));
+        var dir = UltimaFixtures.CreateClientDirectory(("tiledata.mul", [1]));
 
         try
         {
             Files.SetDirectory(dir);
 
-            Assert.Equal(Path.Combine(dir, "map0LegacyMUL.uop"), Files.GetFilePath("map0legacymul.uop"));
-            Assert.Equal(Path.Combine(dir, "artLegacyMUL.uop"), Files.GetFilePath("artlegacymul.uop"));
-            Assert.Equal(Path.Combine(dir, "tiledata.mul"), Files.GetFilePath("tiledata.mul"));
+            Assert.Null(Files.GetFilePath("hues.mul"));
         }
         finally
         {
@@ -31,15 +24,21 @@ public class FilesTests
     }
 
     [Fact]
-    public void GetFilePath_MissingFile_ReturnsNull()
+    public void SetDirectory_MixedCaseFileNames_AreResolvedOnCaseSensitiveFilesystem()
     {
-        string dir = UltimaFixtures.CreateClientDirectory(("tiledata.mul", [1]));
+        var dir = UltimaFixtures.CreateClientDirectory(
+            ("map0LegacyMUL.uop", [1]),
+            ("artLegacyMUL.uop", [1]),
+            ("tiledata.mul", [1])
+        );
 
         try
         {
             Files.SetDirectory(dir);
 
-            Assert.Null(Files.GetFilePath("hues.mul"));
+            Assert.Equal(Path.Combine(dir, "map0LegacyMUL.uop"), Files.GetFilePath("map0legacymul.uop"));
+            Assert.Equal(Path.Combine(dir, "artLegacyMUL.uop"), Files.GetFilePath("artlegacymul.uop"));
+            Assert.Equal(Path.Combine(dir, "tiledata.mul"), Files.GetFilePath("tiledata.mul"));
         }
         finally
         {
