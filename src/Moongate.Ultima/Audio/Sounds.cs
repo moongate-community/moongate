@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-
-using Moongate.Ultima.Types;
-
 using Moongate.Ultima.Io;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Audio;
 
@@ -23,57 +18,31 @@ public static class Sounds
         Initialize();
     }
 
-    /// <summary>
-    /// Reads Sounds and def
-    /// </summary>
-    public static void Initialize()
+    public static void Add(int id, string name, string file)
     {
-        _cache = new UoSound[0xFFF];
-        _removed = new bool[0xFFF];
-        _fileIndex = new FileIndex("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
-        var reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
-
-        _translations = new Dictionary<int, int>();
-
-        string path = Files.GetFilePath("Sound.def");
-        if (path == null)
+        using (var wav = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            return;
-        }
+            var resultBuffer = new byte[wav.Length];
+            wav.Seek(0, SeekOrigin.Begin);
+            wav.ReadExactly(resultBuffer, 0, (int)wav.Length);
 
-        using (var reader = new StreamReader(path))
-        {
-            while (reader.ReadLine() is { } line)
-            {
-                line = line.Trim();
+            resultBuffer = CheckAndFixWave(resultBuffer);
 
-                if (line.Length == 0 || line.StartsWith('#'))
-                {
-                    continue;
-                }
-
-                Match match = reg.Match(line);
-
-                if (match.Success)
-                {
-                    _translations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
-                }
-            }
+            _cache[id] = new(name, id, resultBuffer);
+            _removed[id] = false;
         }
     }
 
     /// <summary>
-    /// Returns <see cref="UoSound"/> of ID
+    /// Returns <see cref="UoSound" /> of ID
     /// </summary>
     /// <param name="soundId"></param>
     /// <returns></returns>
     public static UoSound GetSound(int soundId)
-    {
-        return GetSound(soundId, out bool _);
-    }
+        => GetSound(soundId, out var _);
 
     /// <summary>
-    /// Returns <see cref="UoSound"/> of ID with bool translated in .def
+    /// Returns <see cref="UoSound" /> of ID with bool translated in .def
     /// </summary>
     /// <param name="soundId"></param>
     /// <param name="translated"></param>
@@ -81,6 +50,7 @@ public static class Sounds
     public static UoSound GetSound(int soundId, out bool translated)
     {
         translated = false;
+
         if (soundId < 0)
         {
             return null;
@@ -96,7 +66,7 @@ public static class Sounds
             return _cache[soundId];
         }
 
-        Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
+        var stream = _fileIndex.Seek(soundId, out var length, out var _, out var _);
 
         if (_fileIndex[soundId].Lookup < 0 || length <= 0)
         {
@@ -106,7 +76,7 @@ public static class Sounds
             }
 
             translated = true;
-            stream = _fileIndex.Seek(soundId, out length, out int _, out bool _);
+            stream = _fileIndex.Seek(soundId, out length, out var _, out var _);
         }
 
         if (stream == null)
@@ -115,7 +85,7 @@ public static class Sounds
         }
 
         length -= 32;
-        int[] waveHeader = WaveHeader(length);
+        var waveHeader = WaveHeader(length);
 
         var stringBuffer = new byte[32];
         var buffer = new byte[length];
@@ -128,7 +98,8 @@ public static class Sounds
         Buffer.BlockCopy(waveHeader, 0, resultBuffer, 0, waveHeader.Length << 2);
         Buffer.BlockCopy(buffer, 0, resultBuffer, waveHeader.Length << 2, buffer.Length);
 
-        string str = Encoding.ASCII.GetString(stringBuffer);
+        var str = Encoding.ASCII.GetString(stringBuffer);
+
         // seems that the null terminator's not being properly recognized :/
         if (str.IndexOf('\0') > 0)
         {
@@ -148,88 +119,6 @@ public static class Sounds
         }
 
         return sound;
-    }
-
-    private static int[] WaveHeader(int length)
-    {
-        /* ====================
-         * = WAVE File layout =
-         * ====================
-         * char[4] = 'RIFF' \
-         * int - chunk size |- Riff Header
-         * char[4] = 'WAVE' /
-         * char[4] = 'fmt ' \
-         * int - chunk size |
-         * short - format	|
-         * short - channels	|
-         * int - samples p/s|- Format header
-         * int - avg bytes	|
-         * short - align	|
-         * short - bits p/s /
-         * char[4] - data	\
-         * int - chunk size | - Data header
-         * short[..] - data /
-         * ====================
-         * */
-        return new[] { 0x46464952, length + 36, 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length };
-    }
-
-    /// <summary>
-    /// Returns Sound name and tests if valid
-    /// </summary>
-    /// <param name="soundId"></param>
-    /// <param name="name"></param>
-    /// <param name="translated"></param>
-    /// <returns></returns>
-    public static bool IsValidSound(int soundId, out string name, out bool translated)
-    {
-        translated = false;
-        name = "";
-
-        if (soundId < 0)
-        {
-            return false;
-        }
-
-        if (_removed[soundId])
-        {
-            return false;
-        }
-
-        if (_cache[soundId] != null)
-        {
-            name = _cache[soundId].Name;
-            return true;
-        }
-
-        Stream stream = _fileIndex.Seek(soundId, out int length, out _, out _);
-
-        if (_fileIndex[soundId].Lookup < 0 || length <= 0)
-        {
-            if (!_translations.TryGetValue(soundId, out soundId))
-            {
-                return false;
-            }
-
-            translated = true;
-
-            stream = _fileIndex.Seek(soundId, out _, out _, out _);
-        }
-
-        if (stream == null)
-        {
-            return false;
-        }
-
-        var stringBuffer = new byte[32];
-        stream.ReadExactly(stringBuffer, 0, 32);
-        name = Encoding.ASCII.GetString(stringBuffer); // seems that the null terminator's not being properly recognized :/
-        if (name.IndexOf('\0') > 0)
-        {
-            name = name.Substring(0, name.IndexOf('\0'));
-        }
-
-        return true;
     }
 
     /// <summary>
@@ -258,7 +147,8 @@ public static class Sounds
         }
         else
         {
-            Stream stream = _fileIndex.Seek(soundId, out int length, out int _, out bool _);
+            var stream = _fileIndex.Seek(soundId, out var length, out var _, out var _);
+
             if (_fileIndex[soundId].Lookup < 0 || length <= 0)
             {
                 if (!_translations.TryGetValue(soundId, out soundId))
@@ -266,7 +156,7 @@ public static class Sounds
                     return 0;
                 }
 
-                stream = _fileIndex.Seek(soundId, out length, out int _, out bool _);
+                stream = _fileIndex.Seek(soundId, out length, out var _, out var _);
             }
 
             if (stream == null)
@@ -284,19 +174,107 @@ public static class Sounds
         return len;
     }
 
-    public static void Add(int id, string name, string file)
+    /// <summary>
+    /// Reads Sounds and def
+    /// </summary>
+    public static void Initialize()
     {
-        using (FileStream wav = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read))
+        _cache = new UoSound[0xFFF];
+        _removed = new bool[0xFFF];
+        _fileIndex = new("soundidx.mul", "sound.mul", "soundLegacyMUL.uop", 0xFFF, 8, ".dat", -1, false);
+        var reg = new Regex(@"(\d{1,4}) \x7B(\d{1,4})\x7D (\d{1,3})", RegexOptions.Compiled);
+
+        _translations = new();
+
+        var path = Files.GetFilePath("Sound.def");
+
+        if (path == null)
         {
-            byte[] resultBuffer = new byte[wav.Length];
-            wav.Seek(0, SeekOrigin.Begin);
-            wav.ReadExactly(resultBuffer, 0, (int)wav.Length);
-
-            resultBuffer = CheckAndFixWave(resultBuffer);
-
-            _cache[id] = new UoSound(name, id, resultBuffer);
-            _removed[id] = false;
+            return;
         }
+
+        using (var reader = new StreamReader(path))
+        {
+            while (reader.ReadLine() is { } line)
+            {
+                line = line.Trim();
+
+                if (line.Length == 0 || line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                var match = reg.Match(line);
+
+                if (match.Success)
+                {
+                    _translations.Add(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+                }
+            }
+        }
+    }
+
+    public static bool IsRemovedSound(int soundId)
+        => soundId < 0 || _removed[soundId];
+
+    /// <summary>
+    /// Returns Sound name and tests if valid
+    /// </summary>
+    /// <param name="soundId"></param>
+    /// <param name="name"></param>
+    /// <param name="translated"></param>
+    /// <returns></returns>
+    public static bool IsValidSound(int soundId, out string name, out bool translated)
+    {
+        translated = false;
+        name = "";
+
+        if (soundId < 0)
+        {
+            return false;
+        }
+
+        if (_removed[soundId])
+        {
+            return false;
+        }
+
+        if (_cache[soundId] != null)
+        {
+            name = _cache[soundId].Name;
+
+            return true;
+        }
+
+        var stream = _fileIndex.Seek(soundId, out var length, out _, out _);
+
+        if (_fileIndex[soundId].Lookup < 0 || length <= 0)
+        {
+            if (!_translations.TryGetValue(soundId, out soundId))
+            {
+                return false;
+            }
+
+            translated = true;
+
+            stream = _fileIndex.Seek(soundId, out _, out _, out _);
+        }
+
+        if (stream == null)
+        {
+            return false;
+        }
+
+        var stringBuffer = new byte[32];
+        stream.ReadExactly(stringBuffer, 0, 32);
+        name = Encoding.ASCII.GetString(stringBuffer); // seems that the null terminator's not being properly recognized :/
+
+        if (name.IndexOf('\0') > 0)
+        {
+            name = name.Substring(0, name.IndexOf('\0'));
+        }
+
+        return true;
     }
 
     public static void Remove(int id)
@@ -307,69 +285,78 @@ public static class Sounds
 
     public static void Save(string path)
     {
-        string idx = Path.Combine(path, "soundidx.mul");
-        string mul = Path.Combine(path, "sound.mul");
+        var idx = Path.Combine(path, "soundidx.mul");
+        var mul = Path.Combine(path, "sound.mul");
 
         const int headerLength = 44;
 
         using (var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write))
-        using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
-        using (var binidx = new BinaryWriter(fsidx))
-        using (var binmul = new BinaryWriter(fsmul))
         {
-            for (int i = 0; i < _cache.Length; ++i)
+            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
             {
-                UoSound sound = _cache[i];
-
-                if (sound == null && !_removed[i])
+                using (var binidx = new BinaryWriter(fsidx))
                 {
-                    sound = GetSound(i, out bool trans);
-
-                    if (!trans)
+                    using (var binmul = new BinaryWriter(fsmul))
                     {
-                        _cache[i] = sound;
-                    }
-                    else
-                    {
-                        sound = null;
-                    }
-                }
-
-                if (sound == null || _removed[i])
-                {
-                    binidx.Write(-1); // lookup
-                    binidx.Write(-1); // length
-                    binidx.Write(-1); // extra
-                }
-                else
-                {
-                    binidx.Write((int)fsmul.Position); // lookup
-                    var length = (int)fsmul.Position;
-
-                    var b = new byte[32];
-                    if (sound.Name != null)
-                    {
-                        byte[] bb = Encoding.ASCII.GetBytes(sound.Name);
-                        if (bb.Length > 32)
+                        for (var i = 0; i < _cache.Length; ++i)
                         {
-                            Array.Resize(ref bb, 32);
+                            var sound = _cache[i];
+
+                            if (sound == null && !_removed[i])
+                            {
+                                sound = GetSound(i, out var trans);
+
+                                if (!trans)
+                                {
+                                    _cache[i] = sound;
+                                }
+                                else
+                                {
+                                    sound = null;
+                                }
+                            }
+
+                            if (sound == null || _removed[i])
+                            {
+                                binidx.Write(-1); // lookup
+                                binidx.Write(-1); // length
+                                binidx.Write(-1); // extra
+                            }
+                            else
+                            {
+                                binidx.Write((int)fsmul.Position); // lookup
+                                var length = (int)fsmul.Position;
+
+                                var b = new byte[32];
+
+                                if (sound.Name != null)
+                                {
+                                    var bb = Encoding.ASCII.GetBytes(sound.Name);
+
+                                    if (bb.Length > 32)
+                                    {
+                                        Array.Resize(ref bb, 32);
+                                    }
+
+                                    bb.CopyTo(b, 0);
+                                }
+
+                                binmul.Write(b);
+
+                                using (var m = new MemoryStream(sound.Buffer))
+                                {
+                                    m.Seek(headerLength, SeekOrigin.Begin);
+                                    var resultBuffer = new byte[m.Length - headerLength];
+                                    m.ReadExactly(resultBuffer, 0, (int)m.Length - headerLength);
+                                    binmul.Write(resultBuffer);
+                                }
+
+                                length = (int)fsmul.Position - length;
+                                binidx.Write(length);
+                                binidx.Write(i + 1);
+                            }
                         }
-
-                        bb.CopyTo(b, 0);
                     }
-
-                    binmul.Write(b);
-                    using (var m = new MemoryStream(sound.Buffer))
-                    {
-                        m.Seek(headerLength, SeekOrigin.Begin);
-                        var resultBuffer = new byte[m.Length - headerLength];
-                        m.ReadExactly(resultBuffer, 0, (int)m.Length - headerLength);
-                        binmul.Write(resultBuffer);
-                    }
-
-                    length = (int)fsmul.Position - length;
-                    binidx.Write(length);
-                    binidx.Write(i + 1);
                 }
             }
         }
@@ -377,13 +364,16 @@ public static class Sounds
 
     public static void SaveSoundListToCsv(string fileName, int soundIdOffset = 0)
     {
-        using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+        using (var tex = new StreamWriter(
+                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+                   Encoding.GetEncoding(1252)
+               ))
         {
             tex.WriteLine("ID;Name;Length");
 
-            for (int i = 0; i < 0xFFF; ++i)
+            for (var i = 0; i < 0xFFF; ++i)
             {
-                if (!IsValidSound(i, out string name, out bool _))
+                if (!IsValidSound(i, out var name, out var _))
                 {
                     continue;
                 }
@@ -393,11 +383,6 @@ public static class Sounds
                 tex.WriteLine(";{0:f}", GetSoundLength(i));
             }
         }
-    }
-
-    public static bool IsRemovedSound(int soundId)
-    {
-        return soundId < 0 || _removed[soundId];
     }
 
     private static byte[] CheckAndFixWave(byte[] inputBuffer)
@@ -412,116 +397,134 @@ public static class Sounds
             var croppedByteCount = 0;
 
             using (var outputMemoryStream = new MemoryStream())
-            using (var output = new BinaryWriter(outputMemoryStream))
-            using (var inputMemoryStream = new MemoryStream(inputBuffer))
-            using (var input = new BinaryReader(inputMemoryStream))
             {
-                // RIFF HEADER
-                if (input.ReadString(4) != "RIFF")
+                using (var output = new BinaryWriter(outputMemoryStream))
                 {
-                    throw new WaveFormatException("RIFF Header not found.");
-                }
-
-                output.WriteString("RIFF");
-
-                var riffLength = input.ReadUInt32();
-                output.Write(riffLength);
-
-                Debug.WriteLine("RIFF length: " + riffLength + " bytes");
-
-                if (input.ReadString(4) != "WAVE")
-                {
-                    throw new WaveFormatException("WAVE Format not found.");
-                }
-
-                output.WriteString("WAVE");
-
-                var fmtWritten = false;
-                while (inputMemoryStream.Position < inputMemoryStream.Length)
-                {
-                    var currentHeader = input.ReadString(4);
-                    var currentLength = input.ReadInt32();
-
-                    if (currentHeader == "fmt ")
+                    using (var inputMemoryStream = new MemoryStream(inputBuffer))
                     {
-                        if (currentLength != 16)
+                        using (var input = new BinaryReader(inputMemoryStream))
                         {
-                            throw new WaveFormatException("FMT size not supported.");
+                            // RIFF HEADER
+                            if (input.ReadString(4) != "RIFF")
+                            {
+                                throw new WaveFormatException("RIFF Header not found.");
+                            }
+
+                            output.WriteString("RIFF");
+
+                            var riffLength = input.ReadUInt32();
+                            output.Write(riffLength);
+
+                            Debug.WriteLine("RIFF length: " + riffLength + " bytes");
+
+                            if (input.ReadString(4) != "WAVE")
+                            {
+                                throw new WaveFormatException("WAVE Format not found.");
+                            }
+
+                            output.WriteString("WAVE");
+
+                            var fmtWritten = false;
+
+                            while (inputMemoryStream.Position < inputMemoryStream.Length)
+                            {
+                                var currentHeader = input.ReadString(4);
+                                var currentLength = input.ReadInt32();
+
+                                if (currentHeader == "fmt ")
+                                {
+                                    if (currentLength != 16)
+                                    {
+                                        throw new WaveFormatException("FMT size not supported.");
+                                    }
+
+                                    output.WriteString(currentHeader);
+                                    output.Write(currentLength);
+
+                                    var waveFormat = (WaveFormat)input.ReadInt16();
+
+                                    if (waveFormat != WaveFormat.PCM)
+                                    {
+                                        throw new WaveFormatException(
+                                            "Format not supported: PCM expected but " + waveFormat + " given!"
+                                        );
+                                    }
+
+                                    output.Write((short)waveFormat);
+
+                                    var channels = input.ReadUInt16();
+
+                                    if (channels != 1)
+                                    {
+                                        throw new WaveFormatException(
+                                            "Only Mono supported, but " + channels + " channels given!"
+                                        );
+                                    }
+
+                                    output.Write(channels);
+
+                                    var frequency = input.ReadUInt32();
+
+                                    if (frequency != 22050)
+                                    {
+                                        throw new WaveFormatException(
+                                            "Only 22050Hz supported, but " + frequency + "Hz given!"
+                                        );
+                                    }
+
+                                    output.Write(frequency);
+
+                                    var rate = input.ReadUInt32();
+                                    output.Write(rate);
+                                    Debug.WriteLine("Rate: " + rate + " byte/s");
+                                    var align = input.ReadUInt16();
+                                    output.Write(align);
+                                    Debug.WriteLine("Align: " + align);
+
+                                    var depth = input.ReadUInt16();
+
+                                    if (depth != 16)
+                                    {
+                                        throw new WaveFormatException(
+                                            "Only 16 bits supported, but " + depth + " bits given!"
+                                        );
+                                    }
+
+                                    output.Write(depth);
+                                    Debug.WriteLine("Depth: " + depth + " bits");
+
+                                    fmtWritten = true;
+                                }
+                                else if (currentHeader == "data")
+                                {
+                                    if (!fmtWritten)
+                                    {
+                                        throw new WaveFormatException("Unexpected wave file order.");
+                                    }
+
+                                    output.WriteString(currentHeader);
+                                    output.Write(currentLength);
+
+                                    Debug.WriteLine("Data length: " + currentLength + " bytes");
+                                    var data = input.ReadBytes(currentLength);
+
+                                    output.Write(data);
+                                }
+                                else
+                                {
+                                    croppedByteCount += currentLength + 8;
+                                    input.ReadBytes(currentLength); // throw away
+                                }
+                            }
+
+                            // Adjust riff length
+                            outputMemoryStream.Position = 4;
+                            output.Write((uint)(riffLength - croppedByteCount));
+
+                            return outputMemoryStream.ToArray();
                         }
-
-                        output.WriteString(currentHeader);
-                        output.Write(currentLength);
-
-                        var waveFormat = (WaveFormat)input.ReadInt16();
-                        if (waveFormat != WaveFormat.PCM)
-                        {
-                            throw new WaveFormatException("Format not supported: PCM expected but " + waveFormat + " given!");
-                        }
-
-                        output.Write((short)waveFormat);
-
-                        var channels = input.ReadUInt16();
-                        if (channels != 1)
-                        {
-                            throw new WaveFormatException("Only Mono supported, but " + channels + " channels given!");
-                        }
-
-                        output.Write(channels);
-
-                        var frequency = input.ReadUInt32();
-                        if (frequency != 22050)
-                        {
-                            throw new WaveFormatException("Only 22050Hz supported, but " + frequency + "Hz given!");
-                        }
-
-                        output.Write(frequency);
-
-                        var rate = input.ReadUInt32();
-                        output.Write(rate);
-                        Debug.WriteLine("Rate: " + rate + " byte/s");
-                        var align = input.ReadUInt16();
-                        output.Write(align);
-                        Debug.WriteLine("Align: " + align);
-
-                        var depth = input.ReadUInt16();
-                        if (depth != 16)
-                        {
-                            throw new WaveFormatException(
-                                "Only 16 bits supported, but " + depth + " bits given!");
-                        }
-
-                        output.Write(depth);
-                        Debug.WriteLine("Depth: " + depth + " bits");
-
-                        fmtWritten = true;
-                    }
-                    else if (currentHeader == "data")
-                    {
-                        if (!fmtWritten)
-                        {
-                            throw new WaveFormatException("Unexpected wave file order.");
-                        }
-
-                        output.WriteString(currentHeader);
-                        output.Write(currentLength);
-
-                        Debug.WriteLine("Data length: " + currentLength + " bytes");
-                        var data = input.ReadBytes(currentLength);
-
-                        output.Write(data);
-                    }
-                    else
-                    {
-                        croppedByteCount += currentLength + 8;
-                        input.ReadBytes(currentLength); // throw away
                     }
                 }
-
-                // Adjust riff length
-                outputMemoryStream.Position = 4;
-                output.Write((uint)(riffLength - croppedByteCount));
-
-                return outputMemoryStream.ToArray();
             }
         }
         catch (EndOfStreamException ex)
@@ -529,4 +532,29 @@ public static class Sounds
             throw new WaveFormatException("Unexpected Data end.", ex);
         }
     }
+
+    private static int[] WaveHeader(int length)
+        /* ====================
+         * = WAVE File layout =
+         * ====================
+         * char[4] = 'RIFF' \
+         * int - chunk size |- Riff Header
+         * char[4] = 'WAVE' /
+         * char[4] = 'fmt ' \
+         * int - chunk size |
+         * short - format	|
+         * short - channels	|
+         * int - samples p/s|- Format header
+         * int - avg bytes	|
+         * short - align	|
+         * short - bits p/s /
+         * char[4] - data	\
+         * int - chunk size | - Data header
+         * short[..] - data /
+         * ====================
+         * */
+        => new[]
+        {
+            0x46464952, length + 36, 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length
+        };
 }

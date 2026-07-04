@@ -1,41 +1,51 @@
-using System;
-using System.IO;
-
 namespace Moongate.Ultima.Io;
 
 public sealed class FileIndex : IDisposable
 {
     public IFileAccessor FileAccessor { get; }
 
-    public long IndexLength { get => FileAccessor?.IndexLength ?? 0; }
-    public long IdxLength { get => FileAccessor?.IdxLength ?? 0; }
+    public long IndexLength => FileAccessor?.IndexLength ?? 0;
+    public long IdxLength => FileAccessor?.IdxLength ?? 0;
+
     public IEntry this[int index]
     {
         get => FileAccessor[index];
         set => FileAccessor[index] = (Entry6D)value;
     }
 
-    private readonly string _mulPath;
-
     /// <summary>
     /// Absolute path to the .mul or .uop file backing this index, or null
     /// if no client file was located. Exposed so parallel preloaders can
     /// open their own per-thread FileStreams (FileShare.Read).
     /// </summary>
-    public string MulPath => _mulPath;
+    public string MulPath { get; }
 
-    public FileIndex(string idxFile, string mulFile, int length, int file) : this(idxFile, mulFile, null, length,
-        file, ".dat", -1, false)
-    {
-    }
+    public FileIndex(string idxFile, string mulFile, int length, int file) : this(
+        idxFile,
+        mulFile,
+        null,
+        length,
+        file,
+        ".dat",
+        -1,
+        false
+    ) { }
 
-    public FileIndex(string idxFile, string mulFile, string uopFile, int length, int file, string uopEntryExtension,
-        int idxLength, bool hasExtra)
+    public FileIndex(
+        string idxFile,
+        string mulFile,
+        string uopFile,
+        int length,
+        int file,
+        string uopEntryExtension,
+        int idxLength,
+        bool hasExtra
+    )
     {
         string idxPath = null;
         string uopPath = null;
 
-        _mulPath = null;
+        MulPath = null;
 
         if (Files.MulPath == null)
         {
@@ -45,7 +55,7 @@ public sealed class FileIndex : IDisposable
         if (Files.MulPath.Count > 0)
         {
             idxPath = Files.MulPath[idxFile];
-            _mulPath = Files.MulPath[mulFile];
+            MulPath = Files.MulPath[mulFile];
 
             if (!string.IsNullOrEmpty(uopFile) && Files.MulPath.ContainsKey(uopFile))
             {
@@ -69,20 +79,20 @@ public sealed class FileIndex : IDisposable
                 }
             }
 
-            if (string.IsNullOrEmpty(_mulPath))
+            if (string.IsNullOrEmpty(MulPath))
             {
-                _mulPath = null;
+                MulPath = null;
             }
             else
             {
-                if (string.IsNullOrEmpty(Path.GetDirectoryName(_mulPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
                 {
-                    _mulPath = Path.Combine(Files.RootDir, _mulPath);
+                    MulPath = Path.Combine(Files.RootDir, MulPath);
                 }
 
-                if (!File.Exists(_mulPath))
+                if (!File.Exists(MulPath))
                 {
-                    _mulPath = null;
+                    MulPath = null;
                 }
             }
 
@@ -95,7 +105,7 @@ public sealed class FileIndex : IDisposable
 
                 if (File.Exists(uopPath))
                 {
-                    _mulPath = uopPath;
+                    MulPath = uopPath;
                 }
             }
         }
@@ -107,13 +117,13 @@ public sealed class FileIndex : IDisposable
          * It's possible that UOP can include some entries with unknown hash: not really unknown for me, but
          * not useful for reading legacy entries. That's why i removed unknown hash exception throwing from this code
          */
-        if (_mulPath?.EndsWith(".uop") == true)
+        if (MulPath?.EndsWith(".uop") == true)
         {
-            FileAccessor = new UopFileAccessor(_mulPath, uopEntryExtension, length, idxLength, hasExtra);
+            FileAccessor = new UopFileAccessor(MulPath, uopEntryExtension, length, idxLength, hasExtra);
         }
-        else if ((idxPath != null) && (_mulPath != null))
+        else if (idxPath != null && MulPath != null)
         {
-            FileAccessor = new MulFileAccessor(idxPath, _mulPath, length);
+            FileAccessor = new MulFileAccessor(idxPath, MulPath, length);
         }
         else
         {
@@ -125,7 +135,8 @@ public sealed class FileIndex : IDisposable
             return;
         }
 
-        Entry5D[] verdataPatches = Verdata.Patches;
+        var verdataPatches = Verdata.Patches;
+
         foreach (var patch in verdataPatches)
         {
             if (patch.File != file || patch.Index < 0 || patch.Index >= length)
@@ -140,7 +151,7 @@ public sealed class FileIndex : IDisposable
     public FileIndex(string idxFile, string mulFile, int file)
     {
         string idxPath = null;
-        _mulPath = null;
+        MulPath = null;
 
         if (Files.MulPath == null)
         {
@@ -150,7 +161,8 @@ public sealed class FileIndex : IDisposable
         if (Files.MulPath.Count > 0)
         {
             idxPath = Files.MulPath[idxFile];
-            _mulPath = Files.MulPath[mulFile];
+            MulPath = Files.MulPath[mulFile];
+
             if (string.IsNullOrEmpty(idxPath))
             {
                 idxPath = null;
@@ -168,27 +180,27 @@ public sealed class FileIndex : IDisposable
                 }
             }
 
-            if (string.IsNullOrEmpty(_mulPath))
+            if (string.IsNullOrEmpty(MulPath))
             {
-                _mulPath = null;
+                MulPath = null;
             }
             else
             {
-                if (string.IsNullOrEmpty(Path.GetDirectoryName(_mulPath)))
+                if (string.IsNullOrEmpty(Path.GetDirectoryName(MulPath)))
                 {
-                    _mulPath = Path.Combine(Files.RootDir, _mulPath);
+                    MulPath = Path.Combine(Files.RootDir, MulPath);
                 }
 
-                if (!File.Exists(_mulPath))
+                if (!File.Exists(MulPath))
                 {
-                    _mulPath = null;
+                    MulPath = null;
                 }
             }
         }
 
-        if ((idxPath != null) && (_mulPath != null))
+        if (idxPath != null && MulPath != null)
         {
-            FileAccessor = new MulFileAccessor(idxPath, _mulPath);
+            FileAccessor = new MulFileAccessor(idxPath, MulPath);
         }
         else
         {
@@ -211,12 +223,29 @@ public sealed class FileIndex : IDisposable
         }
     }
 
+    /// <summary>
+    /// Releases the underlying .mul / .uop FileStream so the next access
+    /// re-opens fresh. Additive — existing code paths that ignore the
+    /// disposable contract keep working because EnsureOpen handles a
+    /// disposed FileAccessor.Stream gracefully.
+    /// </summary>
+    public void Dispose()
+    {
+        FileAccessor?.Stream?.Dispose();
+
+        if (FileAccessor != null)
+        {
+            FileAccessor.Stream = null;
+        }
+    }
+
     public Stream Seek(int index, out int length, out int extra, out bool patched)
     {
         if (FileAccessor is null)
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
@@ -224,15 +253,17 @@ public sealed class FileIndex : IDisposable
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
-        IEntry e = FileAccessor.GetEntry(index);
+        var e = FileAccessor.GetEntry(index);
 
-        if (e.Lookup < 0 || (e.Lookup > 0 && e.Length == -1))
+        if (e.Lookup < 0 || e.Lookup > 0 && e.Length == -1)
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
@@ -243,6 +274,7 @@ public sealed class FileIndex : IDisposable
         {
             patched = true;
             Verdata.Seek(e.Lookup);
+
             return Verdata.Stream;
         }
 
@@ -250,14 +282,17 @@ public sealed class FileIndex : IDisposable
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
-        FileStream stream = EnsureOpen();
+        var stream = EnsureOpen();
+
         if (stream == null)
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
@@ -265,12 +300,14 @@ public sealed class FileIndex : IDisposable
         {
             length = extra = 0;
             patched = false;
+
             return null;
         }
 
         patched = false;
 
         stream.Seek(e.Lookup, SeekOrigin.Begin);
+
         return stream;
     }
 
@@ -279,27 +316,32 @@ public sealed class FileIndex : IDisposable
         if (FileAccessor is null)
         {
             patched = false;
+
             return null;
         }
 
         if (index < 0 || index >= FileAccessor.IndexLength)
         {
             patched = false;
+
             return null;
         }
 
-        IEntry e = FileAccessor.GetEntry(index);
+        var e = FileAccessor.GetEntry(index);
 
         if (e.Lookup < 0)
         {
             patched = false;
+
             return null;
         }
 
         var length = e.Length & 0x7FFFFFFF;
+
         if (length < 0)
         {
             patched = false;
+
             return null;
         }
 
@@ -309,32 +351,115 @@ public sealed class FileIndex : IDisposable
         {
             patched = true;
             Verdata.Seek(e.Lookup);
+
             return Verdata.Stream;
         }
 
         if (e.Length < 0)
         {
             patched = false;
+
             return null;
         }
 
-        FileStream stream = EnsureOpen();
+        var stream = EnsureOpen();
+
         if (stream == null)
         {
             patched = false;
+
             return null;
         }
 
         if (stream.Length < e.Lookup)
         {
             patched = false;
+
             return null;
         }
 
         patched = false;
 
         stream.Seek(e.Lookup, SeekOrigin.Begin);
+
         return stream;
+    }
+
+    public bool Valid(int index, out int length, out int extra, out bool patched)
+    {
+        if (FileAccessor is null)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        if (index < 0 || index >= FileAccessor.IndexLength)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        var e = FileAccessor.GetEntry(index);
+
+        if (e.Lookup < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        length = e.Length & 0x7FFFFFFF;
+        extra = e.Extra;
+
+        if ((e.Length & (1 << 31)) != 0)
+        {
+            patched = true;
+
+            return true;
+        }
+
+        if (e.Length < 0)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        if (MulPath == null || !File.Exists(MulPath))
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        var stream = EnsureOpen();
+
+        if (stream == null)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        if (stream.Length < e.Lookup)
+        {
+            length = extra = 0;
+            patched = false;
+
+            return false;
+        }
+
+        patched = false;
+
+        return true;
     }
 
     /// <summary>
@@ -345,103 +470,23 @@ public sealed class FileIndex : IDisposable
     /// </summary>
     private FileStream EnsureOpen()
     {
-        FileStream stream = FileAccessor.Stream;
+        var stream = FileAccessor.Stream;
+
         if (stream != null && stream.CanRead && stream.CanSeek)
         {
             return stream;
         }
 
-        if (_mulPath == null)
+        if (MulPath == null)
         {
             FileAccessor.Stream = null;
+
             return null;
         }
 
-        stream = new FileStream(_mulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        stream = new(MulPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         FileAccessor.Stream = stream;
+
         return stream;
-    }
-
-    /// <summary>
-    /// Releases the underlying .mul / .uop FileStream so the next access
-    /// re-opens fresh. Additive — existing code paths that ignore the
-    /// disposable contract keep working because EnsureOpen handles a
-    /// disposed FileAccessor.Stream gracefully.
-    /// </summary>
-    public void Dispose()
-    {
-        FileAccessor?.Stream?.Dispose();
-        if (FileAccessor != null)
-        {
-            FileAccessor.Stream = null;
-        }
-    }
-
-    public bool Valid(int index, out int length, out int extra, out bool patched)
-    {
-        if (FileAccessor is null)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        if (index < 0 || index >= FileAccessor.IndexLength)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        IEntry e = FileAccessor.GetEntry(index);
-
-        if (e.Lookup < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        length = e.Length & 0x7FFFFFFF;
-        extra = e.Extra;
-
-        if ((e.Length & (1 << 31)) != 0)
-        {
-            patched = true;
-            return true;
-        }
-
-        if (e.Length < 0)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        if ((_mulPath == null) || !File.Exists(_mulPath))
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        FileStream stream = EnsureOpen();
-        if (stream == null)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        if (stream.Length < e.Lookup)
-        {
-            length = extra = 0;
-            patched = false;
-            return false;
-        }
-
-        patched = false;
-
-        return true;
     }
 }

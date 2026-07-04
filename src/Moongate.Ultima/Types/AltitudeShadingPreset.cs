@@ -9,14 +9,17 @@ public enum AltitudeShadingPreset
     /// Dramatic, high-contrast shading with sharp edges
     /// </summary>
     Sharp,
+
     /// <summary>
     /// More pronounced shading with higher contrast
     /// </summary>
     Normal,
+
     /// <summary>
     /// Very subtle, smooth shading (matches UO client closely)
     /// </summary>
     Soft,
+
     /// <summary>
     /// Custom settings (uses manual configuration)
     /// </summary>

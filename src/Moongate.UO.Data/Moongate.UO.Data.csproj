@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj" />
+        <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
     </ItemGroup>
 
 </Project>

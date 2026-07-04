@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-
 using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Io;
@@ -7,7 +6,7 @@ namespace Moongate.Ultima.Io;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct Entry6D : IEntry
 {
-    public IEntry Invalid { get => new Entry6D(); }
+    public IEntry Invalid => new Entry6D();
 
     public int Lookup { get; set; }
 
@@ -18,7 +17,7 @@ public struct Entry6D : IEntry
 
     public int Extra
     {
-        get => extra1 << 16 | extra2;
+        get => (extra1 << 16) | extra2;
         set
         {
             extra1 = value & 0x0000FFFF;

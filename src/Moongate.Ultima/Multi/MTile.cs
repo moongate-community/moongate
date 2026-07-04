@@ -1,7 +1,4 @@
-using System;
-
 using Moongate.Ultima.Graphics;
-
 using Moongate.Ultima.Tiles;
 
 namespace Moongate.Ultima.Multi;
@@ -44,6 +41,67 @@ public struct MTile : IComparable
         Unk1 = unk1;
     }
 
+    public int CompareTo(object obj)
+    {
+        if (obj == null)
+        {
+            return 1;
+        }
+
+        if (!(obj is MTile))
+        {
+            throw new ArgumentNullException();
+        }
+
+        var a = (MTile)obj;
+
+        var ourData = TileData.ItemTable[Id];
+        var theirData = TileData.ItemTable[a.Id];
+
+        var ourThreshold = 0;
+
+        if (ourData.Height > 0)
+        {
+            ++ourThreshold;
+        }
+
+        if (!ourData.Background)
+        {
+            ++ourThreshold;
+        }
+
+        int ourZ = Z;
+        var theirThreshold = 0;
+
+        if (theirData.Height > 0)
+        {
+            ++theirThreshold;
+        }
+
+        if (!theirData.Background)
+        {
+            ++theirThreshold;
+        }
+
+        int theirZ = a.Z;
+
+        ourZ += ourThreshold;
+        theirZ += theirThreshold;
+        var res = ourZ - theirZ;
+
+        if (res == 0)
+        {
+            res = ourThreshold - theirThreshold;
+        }
+
+        if (res == 0)
+        {
+            res = Solver - a.Solver;
+        }
+
+        return res;
+    }
+
     public void Set(ushort id, sbyte z)
     {
         Id = Art.GetLegalItemId(id);
@@ -63,63 +121,5 @@ public struct MTile : IComparable
         Z = z;
         Flag = flag;
         Unk1 = unk1;
-    }
-
-    public int CompareTo(object obj)
-    {
-        if (obj == null)
-        {
-            return 1;
-        }
-
-        if (!(obj is MTile))
-        {
-            throw new ArgumentNullException();
-        }
-
-        var a = (MTile)obj;
-
-        ItemData ourData = TileData.ItemTable[Id];
-        ItemData theirData = TileData.ItemTable[a.Id];
-
-        int ourThreshold = 0;
-        if (ourData.Height > 0)
-        {
-            ++ourThreshold;
-        }
-
-        if (!ourData.Background)
-        {
-            ++ourThreshold;
-        }
-
-        int ourZ = Z;
-        int theirThreshold = 0;
-        if (theirData.Height > 0)
-        {
-            ++theirThreshold;
-        }
-
-        if (!theirData.Background)
-        {
-            ++theirThreshold;
-        }
-
-        int theirZ = a.Z;
-
-        ourZ += ourThreshold;
-        theirZ += theirThreshold;
-        int res = ourZ - theirZ;
-        if (res == 0)
-        {
-            res = ourThreshold - theirThreshold;
-        }
-
-        if (res == 0)
-        {
-            res = Solver - a.Solver;
-        }
-
-        return res;
     }
 }

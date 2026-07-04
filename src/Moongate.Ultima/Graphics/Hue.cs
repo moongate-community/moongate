@@ -1,6 +1,4 @@
-using System;
 using System.Buffers.Binary;
-using System.IO;
 using System.Text;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
@@ -25,25 +23,6 @@ public sealed class Hue
         TableEnd = 0;
     }
 
-    public Rgba32 GetColor(int index)
-    {
-        return HueToColor(Colors[index]);
-    }
-
-    /// <summary>
-    /// Converts Hue color to RGB color
-    /// </summary>
-    /// <param name="hue"></param>
-    private static Rgba32 HueToColor(ushort hue)
-    {
-        const int scale = 255 / 31;
-
-        return new Rgba32(
-            (byte)(((hue & 0x7c00) >> 10) * scale),
-            (byte)(((hue & 0x3e0) >> 5) * scale),
-            (byte)((hue & 0x1f) * scale));
-    }
-
     private static readonly byte[] _stringBuffer = new byte[20];
 
     public Hue(int index, BinaryReader bin)
@@ -51,13 +30,15 @@ public sealed class Hue
         Index = index;
         Colors = new ushort[32];
 
-        byte[] buffer = bin.ReadBytes(88);
+        var buffer = bin.ReadBytes(88);
+
         unsafe
         {
             fixed (byte* bufferPtr = buffer)
             {
                 var buf = (ushort*)bufferPtr;
-                for (int i = 0; i < 32; ++i)
+
+                for (var i = 0; i < 32; ++i)
                 {
                     Colors[i] = *buf++;
                 }
@@ -67,6 +48,7 @@ public sealed class Hue
 
                 var stringBuffer = (byte*)buf;
                 int count;
+
                 for (count = 0; count < 20 && *stringBuffer != 0; ++count)
                 {
                     _stringBuffer[count] = *stringBuffer++;
@@ -82,9 +64,11 @@ public sealed class Hue
     {
         Index = index;
         Colors = new ushort[32];
-        for (int i = 0; i < 32; ++i)
+
+        for (var i = 0; i < 32; ++i)
         {
-            ushort c = mulStruct.colors[i];
+            var c = mulStruct.colors[i];
+
             // Clamp c == 0 or any value with the high bit set to 1. The high bit is a
             // flag in this format, never part of a valid color value.
             if (c == 0 || c > 0x7fff)
@@ -111,9 +95,11 @@ public sealed class Hue
     {
         Index = index;
         Colors = new ushort[32];
-        for (int i = 0; i < 32; ++i)
+
+        for (var i = 0; i < 32; ++i)
         {
-            ushort c = BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(i * 2));
+            var c = BinaryPrimitives.ReadUInt16LittleEndian(data.Slice(i * 2));
+
             if (c == 0 || c > 0x7fff)
             {
                 c = 1;
@@ -136,14 +122,14 @@ public sealed class Hue
     /// <param name="onlyHueGrayPixels"></param>
     public unsafe void ApplyTo(UltimaBitmap bmp, bool onlyHueGrayPixels)
     {
-        int stride = bmp.Stride >> 1;
-        int width = bmp.Width;
-        int height = bmp.Height;
-        int delta = stride - width;
+        var stride = bmp.Stride >> 1;
+        var width = bmp.Width;
+        var height = bmp.Height;
+        var delta = stride - width;
 
         var pBuffer = (ushort*)bmp.Scan0;
-        ushort* pLineEnd = pBuffer + width;
-        ushort* pImageEnd = pBuffer + (stride * height);
+        var pLineEnd = pBuffer + width;
+        var pImageEnd = pBuffer + stride * height;
 
         if (onlyHueGrayPixels)
         {
@@ -152,11 +138,13 @@ public sealed class Hue
                 while (pBuffer < pLineEnd)
                 {
                     int c = *pBuffer;
+
                     if (c != 0)
                     {
-                        int r = (c >> 10) & 0x1F;
-                        int g = (c >> 5) & 0x1F;
-                        int b = c & 0x1F;
+                        var r = (c >> 10) & 0x1F;
+                        var g = (c >> 5) & 0x1F;
+                        var b = c & 0x1F;
+
                         if (r == g && r == b)
                         {
                             *pBuffer = (ushort)(Colors[(c >> 10) & 0x1F] | 0x8000);
@@ -191,7 +179,10 @@ public sealed class Hue
 
     public void Export(string fileName)
     {
-        using (var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.GetEncoding(1252)))
+        using (var tex = new StreamWriter(
+                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+                   Encoding.GetEncoding(1252)
+               ))
         {
             tex.WriteLine(Name);
             tex.WriteLine(TableStart.ToString());
@@ -204,6 +195,9 @@ public sealed class Hue
         }
     }
 
+    public Rgba32 GetColor(int index)
+        => HueToColor(Colors[index]);
+
     public void Import(string fileName)
     {
         if (!File.Exists(fileName))
@@ -213,7 +207,7 @@ public sealed class Hue
 
         using (var sr = new StreamReader(fileName))
         {
-            int i = -3;
+            var i = -3;
 
             while (sr.ReadLine() is { } line)
             {
@@ -230,15 +224,19 @@ public sealed class Hue
                     {
                         case -3:
                             Name = line;
+
                             break;
                         case -2:
                             TableStart = ushort.Parse(line);
+
                             break;
                         case -1:
                             TableEnd = ushort.Parse(line);
+
                             break;
                         default:
                             Colors[i] = ushort.Parse(line);
+
                             break;
                     }
 
@@ -251,5 +249,20 @@ public sealed class Hue
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Converts Hue color to RGB color
+    /// </summary>
+    /// <param name="hue"></param>
+    private static Rgba32 HueToColor(ushort hue)
+    {
+        const int scale = 255 / 31;
+
+        return new(
+            (byte)(((hue & 0x7c00) >> 10) * scale),
+            (byte)(((hue & 0x3e0) >> 5) * scale),
+            (byte)((hue & 0x1f) * scale)
+        );
     }
 }

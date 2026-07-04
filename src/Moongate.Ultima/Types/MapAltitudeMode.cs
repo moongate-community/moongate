@@ -9,10 +9,12 @@ public enum MapAltitudeMode
     /// Normal flat rendering without altitude effects
     /// </summary>
     Normal,
+
     /// <summary>
     /// Normal rendering with altitude-based shading
     /// </summary>
     NormalWithAltitude,
+
     /// <summary>
     /// Pure altitude map (grayscale based on height)
     /// </summary>

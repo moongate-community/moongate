@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Moongate.Ultima.Maps;
 
 public sealed class TileList
@@ -8,19 +6,21 @@ public sealed class TileList
 
     public TileList()
     {
-        _tiles = new List<Tile>();
+        _tiles = new();
     }
 
-    public int Count { get { return _tiles.Count; } }
+    public int Count => _tiles.Count;
 
     public void Add(ushort id, sbyte z)
-    {
-        _tiles.Add(new Tile(id, z));
-    }
+        => _tiles.Add(new(id, z));
+
+    public Tile Get(int i)
+        => _tiles[i];
 
     public Tile[] ToArray()
     {
         var tiles = new Tile[Count];
+
         if (_tiles.Count > 0)
         {
             _tiles.CopyTo(tiles);
@@ -29,10 +29,5 @@ public sealed class TileList
         _tiles.Clear();
 
         return tiles;
-    }
-
-    public Tile Get(int i)
-    {
-        return _tiles[i];
     }
 }

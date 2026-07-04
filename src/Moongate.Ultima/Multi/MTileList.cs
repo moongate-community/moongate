@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Moongate.Ultima.Multi;
 
 public sealed class MTileList
@@ -8,43 +6,29 @@ public sealed class MTileList
 
     public MTileList()
     {
-        _tiles = new List<MTile>();
+        _tiles = new();
     }
 
-    public int Count { get { return _tiles.Count; } }
+    public int Count => _tiles.Count;
 
     public void Add(ushort id, sbyte z)
-    {
-        _tiles.Add(new MTile(id, z));
-    }
+        => _tiles.Add(new(id, z));
 
     public void Add(ushort id, sbyte z, sbyte flag)
-    {
-        _tiles.Add(new MTile(id, z, flag));
-    }
+        => _tiles.Add(new(id, z, flag));
 
     public void Add(ushort id, sbyte z, sbyte flag, int unk1)
-    {
-        _tiles.Add(new MTile(id, z, flag, unk1));
-    }
-
-    public MTile[] ToArray()
-    {
-        var tiles = new MTile[Count];
-
-        if (_tiles.Count > 0)
-        {
-            _tiles.CopyTo(tiles);
-        }
-
-        _tiles.Clear();
-
-        return tiles;
-    }
+        => _tiles.Add(new(id, z, flag, unk1));
 
     public MTile Get(int i)
+        => _tiles[i];
+
+    public void Remove(int i)
     {
-        return _tiles[i];
+        if (i < Count)
+        {
+            _tiles.RemoveAt(i);
+        }
     }
 
     public void Set(int i, ushort id, sbyte z)
@@ -70,11 +54,18 @@ public sealed class MTileList
             _tiles[i].Set(id, z, flag, unk1);
         }
     }
-    public void Remove(int i)
+
+    public MTile[] ToArray()
     {
-        if (i < Count)
+        var tiles = new MTile[Count];
+
+        if (_tiles.Count > 0)
         {
-            _tiles.RemoveAt(i);
+            _tiles.CopyTo(tiles);
         }
+
+        _tiles.Clear();
+
+        return tiles;
     }
 }

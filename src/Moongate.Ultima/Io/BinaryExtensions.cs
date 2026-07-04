@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Text;
 
 namespace Moongate.Ultima.Io;
@@ -15,9 +13,10 @@ public static class BinaryExtensions
             throw new ArgumentException("Out of range.");
         }
 
-        char[] buffer = new char[length];
+        var buffer = new char[length];
         reader.Read(buffer, 0, length);
-        return new string(buffer);
+
+        return new(buffer);
     }
 
     public static void WriteString(this BinaryWriter writer, string data)
@@ -26,7 +25,7 @@ public static class BinaryExtensions
 
         ArgumentNullException.ThrowIfNull(data);
 
-        byte[] bytes = Encoding.ASCII.GetBytes(data);
+        var bytes = Encoding.ASCII.GetBytes(data);
         writer.Write(bytes);
     }
 }

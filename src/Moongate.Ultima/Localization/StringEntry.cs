@@ -1,4 +1,3 @@
-using System;
 using System.Text.RegularExpressions;
 
 namespace Moongate.Ultima.Localization;
@@ -19,11 +18,8 @@ public sealed class StringEntry
 
     public string Text
     {
-        get { return _text; }
-        set
-        {
-            _text = value ?? string.Empty;
-        }
+        get => _text;
+        set => _text = value ?? string.Empty;
     }
 
     public CliLocFlag Flag { get; set; }
@@ -43,9 +39,11 @@ public sealed class StringEntry
     }
 
     // Razor
-    private static readonly Regex _regEx = new Regex(
+    private static readonly Regex _regEx = new(
         @"~(\d+)[_\w]+~",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant);
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant
+    );
+
     private string _fmtTxt;
     private static readonly object[] _args = { "", "", "", "", "", "", "", "", "", "", "" };
 
@@ -56,7 +54,7 @@ public sealed class StringEntry
             _fmtTxt = _regEx.Replace(_text, "{$1}");
         }
 
-        for (int i = 0; i < args.Length && i < 10; i++)
+        for (var i = 0; i < args.Length && i < 10; i++)
         {
             _args[i + 1] = args[i];
         }
@@ -71,9 +69,9 @@ public sealed class StringEntry
             _fmtTxt = _regEx.Replace(_text, "{$1}");
         }
 
-        string[] args = argString.Split('\t'); // adds an extra on to the args array
+        var args = argString.Split('\t'); // adds an extra on to the args array
 
-        for (int i = 0; i < args.Length && i < 10; i++)
+        for (var i = 0; i < args.Length && i < 10; i++)
         {
             _args[i + 1] = args[i];
         }

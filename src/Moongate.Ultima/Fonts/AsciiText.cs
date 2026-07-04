@@ -1,8 +1,7 @@
-using System.IO;
 using Moongate.Ultima.Imaging;
+using Moongate.Ultima.Io;
 
 // ascii text support written by arul
-using Moongate.Ultima.Io;
 
 namespace Moongate.Ultima.Fonts;
 
@@ -16,11 +15,36 @@ public static class AsciiText
     }
 
     /// <summary>
+    /// Draws Text with font in Bitmap and returns
+    /// </summary>
+    /// <param name="fontId"></param>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    public static UltimaBitmap DrawText(int fontId, string text)
+    {
+        var font = AsciiFont.GetFixed(fontId, Fonts);
+        var result = new UltimaBitmap(font.GetWidth(text) + 2, font.Height + 2);
+
+        var dx = 2;
+        var dy = font.Height + 2;
+
+        foreach (var character in text)
+        {
+            var bmp = font.GetBitmap(character);
+            bmp.DrawInto(result, dx, dy - bmp.Height);
+            dx += bmp.Width;
+        }
+
+        return result;
+    }
+
+    /// <summary>
     /// Reads fonts.mul
     /// </summary>
     public static unsafe void Initialize()
     {
-        string path = Files.GetFilePath("fonts.mul");
+        var path = Files.GetFilePath("fonts.mul");
+
         if (path == null)
         {
             return;
@@ -30,19 +54,21 @@ public static class AsciiText
         {
             var buffer = new byte[(int)reader.Length];
             reader.ReadExactly(buffer, 0, (int)reader.Length);
+
             fixed (byte* bin = buffer)
             {
-                byte* read = bin;
-                for (int i = 0; i < 10; ++i)
-                {
-                    byte header = *read++;
-                    Fonts[i] = new AsciiFont(header);
+                var read = bin;
 
-                    for (int k = 0; k < 224; ++k)
+                for (var i = 0; i < 10; ++i)
+                {
+                    var header = *read++;
+                    Fonts[i] = new(header);
+
+                    for (var k = 0; k < 224; ++k)
                     {
-                        byte width = *read++;
-                        byte height = *read++;
-                        byte unk = *read++; // delimiter?
+                        var width = *read++;
+                        var height = *read++;
+                        var unk = *read++; // delimiter?
 
                         if (width <= 0 || height <= 0)
                         {
@@ -56,14 +82,16 @@ public static class AsciiText
 
                         var bmp = new UltimaBitmap(width, height);
                         var line = (ushort*)bmp.Scan0;
-                        int delta = bmp.Stride >> 1;
+                        var delta = bmp.Stride >> 1;
 
-                        for (int y = 0; y < height; ++y, line += delta)
+                        for (var y = 0; y < height; ++y, line += delta)
                         {
-                            ushort* cur = line;
-                            for (int x = 0; x < width; ++x)
+                            var cur = line;
+
+                            for (var x = 0; x < width; ++x)
                             {
                                 var pixel = (ushort)(*read++ | (*read++ << 8));
+
                                 if (pixel == 0)
                                 {
                                     cur[x] = pixel;
@@ -86,59 +114,41 @@ public static class AsciiText
     public static unsafe void Save(string fileName)
     {
         using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
-        using (var bin = new BinaryWriter(fs))
         {
-            for (int i = 0; i < 10; ++i)
+            using (var bin = new BinaryWriter(fs))
             {
-                bin.Write(Fonts[i].Header);
-                for (int k = 0; k < 224; ++k)
+                for (var i = 0; i < 10; ++i)
                 {
-                    bin.Write((byte)Fonts[i].Characters[k].Width);
-                    bin.Write((byte)Fonts[i].Characters[k].Height);
-                    bin.Write(Fonts[i].Unk[k]);
-                    UltimaBitmap bmp = Fonts[i].Characters[k];
-                    var line = (ushort*)bmp.Scan0;
-                    int delta = bmp.Stride >> 1;
-                    for (int y = 0; y < bmp.Height; ++y, line += delta)
+                    bin.Write(Fonts[i].Header);
+
+                    for (var k = 0; k < 224; ++k)
                     {
-                        ushort* cur = line;
-                        for (int x = 0; x < bmp.Width; ++x)
+                        bin.Write((byte)Fonts[i].Characters[k].Width);
+                        bin.Write((byte)Fonts[i].Characters[k].Height);
+                        bin.Write(Fonts[i].Unk[k]);
+                        var bmp = Fonts[i].Characters[k];
+                        var line = (ushort*)bmp.Scan0;
+                        var delta = bmp.Stride >> 1;
+
+                        for (var y = 0; y < bmp.Height; ++y, line += delta)
                         {
-                            if (cur[x] == 0)
+                            var cur = line;
+
+                            for (var x = 0; x < bmp.Width; ++x)
                             {
-                                bin.Write(cur[x]);
-                            }
-                            else
-                            {
-                                bin.Write((ushort)(cur[x] ^ 0x8000));
+                                if (cur[x] == 0)
+                                {
+                                    bin.Write(cur[x]);
+                                }
+                                else
+                                {
+                                    bin.Write((ushort)(cur[x] ^ 0x8000));
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
-
-    /// <summary>
-    /// Draws Text with font in Bitmap and returns
-    /// </summary>
-    /// <param name="fontId"></param>
-    /// <param name="text"></param>
-    /// <returns></returns>
-    public static UltimaBitmap DrawText(int fontId, string text)
-    {
-        AsciiFont font = AsciiFont.GetFixed(fontId, Fonts);
-        var result = new UltimaBitmap(font.GetWidth(text) + 2, font.Height + 2);
-
-        int dx = 2;
-        int dy = font.Height + 2;
-        foreach (var character in text)
-        {
-            UltimaBitmap bmp = font.GetBitmap(character);
-            bmp.DrawInto(result, dx, dy - bmp.Height);
-            dx += bmp.Width;
-        }
-
-        return result;
     }
 }

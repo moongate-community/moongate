@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-
 using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Io;
@@ -15,12 +14,16 @@ public struct Entry3D : IEntry
 
     public int Extra { get; set; }
 
-    public int DecompressedLength { get => Length; set => Length = value; }
+    public int DecompressedLength
+    {
+        get => Length;
+        set => Length = value;
+    }
 
     public int Extra1
     {
         get => (int)((Extra & 0xFFFF0000) >> 16);
-        set => Extra = Extra & 0x0000FFFF | (value << 16);
+        set => Extra = (Extra & 0x0000FFFF) | (value << 16);
     }
 
     public int Extra2
@@ -29,5 +32,9 @@ public struct Entry3D : IEntry
         set => Extra = (int)((Extra & 0xFFFF0000) | (uint)value);
     }
 
-    public CompressionFlag Flag { get => CompressionFlag.None; set { } } // No compression, means that we have only three first fields
+    public CompressionFlag Flag
+    {
+        get => CompressionFlag.None;
+        set { }
+    } // No compression, means that we have only three first fields
 }

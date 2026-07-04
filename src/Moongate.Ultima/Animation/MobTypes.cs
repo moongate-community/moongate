@@ -9,20 +9,14 @@
  *
  ***************************************************************************/
 
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-
-using Moongate.Ultima.Types;
-
 using Moongate.Ultima.Io;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Animation;
 
 /// <summary>
 /// Single source of truth for <c>mobtypes.txt</c>.
-///
 /// The client uses this file (when present) to decide a body's category
 /// (MONSTER / ANIMAL / SEA_MONSTER / HUMAN / EQUIPMENT) and per-body
 /// optional-action flags. Without it, UOFiddler falls back to the
@@ -64,12 +58,39 @@ public static class MobTypes
         Reload();
     }
 
+    public static int GetActionCount(MobType type)
+    {
+        var idx = (int)type;
+
+        return (uint)idx < _actionCounts.Length ? _actionCounts[idx] : 22;
+    }
+
+    public static IEnumerable<int> GetDefinedBodies()
+        => _entries.Keys;
+
+    public static uint GetFlags(int body)
+        => _entries.TryGetValue(body, out var entry) ? entry.Flags : 0u;
+
+    /// <summary>
+    /// idx records per body for a given category (5 directions × action count).
+    /// </summary>
+    public static int GetIdxStride(MobType type)
+        => GetActionCount(type) * 5;
+
+    /// <summary>
+    /// Returns the mobtype for a body, or <see cref="MobType.Monster" /> if
+    /// the body has no entry (per user-confirmed plan choice).
+    /// </summary>
+    public static MobType GetTypeOrDefault(int body)
+        => _entries.TryGetValue(body, out var entry) ? entry.Type : MobType.Monster;
+
     public static void Reload()
     {
         _entries.Clear();
         IsLoaded = false;
 
-        string path = Files.GetFilePath("mobtypes.txt");
+        var path = Files.GetFilePath("mobtypes.txt");
+
         if (path == null)
         {
             return;
@@ -77,29 +98,32 @@ public static class MobTypes
 
         try
         {
-            foreach (string rawLine in File.ReadLines(path))
+            foreach (var rawLine in File.ReadLines(path))
             {
-                string line = rawLine.Trim();
+                var line = rawLine.Trim();
+
                 if (line.Length == 0 || line[0] == '#' || !char.IsDigit(line[0]))
                 {
                     continue;
                 }
 
-                string[] parts = line.Split(new[] { '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var parts = line.Split(new[] { '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
                 if (parts.Length < 3)
                 {
                     continue;
                 }
 
-                if (!int.TryParse(parts[0], out int id))
+                if (!int.TryParse(parts[0], out var id))
                 {
                     continue;
                 }
 
-                string typeName = parts[1].ToLowerInvariant();
+                var typeName = parts[1].ToLowerInvariant();
 
-                string flagStr = parts[2];
-                int commentIdx = flagStr.IndexOf('#');
+                var flagStr = parts[2];
+                var commentIdx = flagStr.IndexOf('#');
+
                 if (commentIdx == 0)
                 {
                     continue;
@@ -111,18 +135,20 @@ public static class MobTypes
                 }
 
                 flagStr = flagStr.Replace("0x", "").Replace("0X", "");
-                if (!uint.TryParse(flagStr, NumberStyles.HexNumber, null, out uint flags))
+
+                if (!uint.TryParse(flagStr, NumberStyles.HexNumber, null, out var flags))
                 {
                     continue;
                 }
 
-                int typeIdx = Array.IndexOf(_typeNames, typeName);
+                var typeIdx = Array.IndexOf(_typeNames, typeName);
+
                 if (typeIdx < 0)
                 {
                     continue;
                 }
 
-                _entries[id] = new Entry { Type = (MobType)typeIdx, Flags = flags };
+                _entries[id] = new() { Type = (MobType)typeIdx, Flags = flags };
             }
 
             IsLoaded = _entries.Count > 0;
@@ -137,48 +163,17 @@ public static class MobTypes
 
     public static bool TryGet(int body, out MobType type, out uint flags)
     {
-        if (_entries.TryGetValue(body, out Entry entry))
+        if (_entries.TryGetValue(body, out var entry))
         {
             type = entry.Type;
             flags = entry.Flags;
+
             return true;
         }
 
         type = MobType.Monster;
         flags = 0;
+
         return false;
-    }
-
-    /// <summary>
-    /// Returns the mobtype for a body, or <see cref="MobType.Monster"/> if
-    /// the body has no entry (per user-confirmed plan choice).
-    /// </summary>
-    public static MobType GetTypeOrDefault(int body)
-    {
-        return _entries.TryGetValue(body, out Entry entry) ? entry.Type : MobType.Monster;
-    }
-
-    public static uint GetFlags(int body)
-    {
-        return _entries.TryGetValue(body, out Entry entry) ? entry.Flags : 0u;
-    }
-
-    public static int GetActionCount(MobType type)
-    {
-        int idx = (int)type;
-        return (uint)idx < _actionCounts.Length ? _actionCounts[idx] : 22;
-    }
-
-    /// <summary>
-    /// idx records per body for a given category (5 directions × action count).
-    /// </summary>
-    public static int GetIdxStride(MobType type)
-    {
-        return GetActionCount(type) * 5;
-    }
-
-    public static IEnumerable<int> GetDefinedBodies()
-    {
-        return _entries.Keys;
     }
 }

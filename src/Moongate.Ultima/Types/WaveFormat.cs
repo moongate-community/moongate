@@ -44,5 +44,5 @@ public enum WaveFormat
     OLIADPCM = 0x1001,
     OLICELP = 0x1002,
     OLISBC = 0x1003,
-    OLIOPR = 0x1004,
+    OLIOPR = 0x1004
 }

@@ -1,4 +1,3 @@
-using System.IO;
 using Moongate.Ultima.Imaging;
 using SixLabors.ImageSharp;
 
@@ -11,12 +10,13 @@ public sealed class AnimationFrame
 
     private const int _doubleXor = (0x200 << 22) | (0x200 << 12);
 
-    public static readonly AnimationFrame Empty = new AnimationFrame();
+    public static readonly AnimationFrame Empty = new();
+
     //public static readonly AnimationFrame[] EmptyFrames = new AnimationFrame[1] { Empty };
 
     private AnimationFrame()
     {
-        Bitmap = new UltimaBitmap(1, 1);
+        Bitmap = new(1, 1);
     }
 
     public unsafe AnimationFrame(ushort[] palette, BinaryReader bin, bool flip)
@@ -26,6 +26,7 @@ public sealed class AnimationFrame
 
         int width = bin.ReadUInt16();
         int height = bin.ReadUInt16();
+
         if (height == 0 || width == 0)
         {
             return;
@@ -33,12 +34,12 @@ public sealed class AnimationFrame
 
         var bmp = new UltimaBitmap(width, height);
         var line = (ushort*)bmp.Scan0;
-        int delta = bmp.Stride >> 1;
+        var delta = bmp.Stride >> 1;
 
         int header;
 
-        int xBase = xCenter - 0x200;
-        int yBase = (yCenter + height) - 0x200;
+        var xBase = xCenter - 0x200;
+        var yBase = yCenter + height - 0x200;
 
         if (!flip)
         {
@@ -49,8 +50,9 @@ public sealed class AnimationFrame
             {
                 header ^= _doubleXor;
 
-                ushort* cur = line + ((((header >> 12) & 0x3FF) * delta) + ((header >> 22) & 0x3FF));
-                ushort* end = cur + (header & 0xFFF);
+                var cur = line + (((header >> 12) & 0x3FF) * delta + ((header >> 22) & 0x3FF));
+                var end = cur + (header & 0xFFF);
+
                 while (cur < end)
                 {
                     *cur++ = palette[bin.ReadByte()];
@@ -66,8 +68,8 @@ public sealed class AnimationFrame
             {
                 header ^= _doubleXor;
 
-                ushort* cur = line + ((((header >> 12) & 0x3FF) * delta) - ((header >> 22) & 0x3FF));
-                ushort* end = cur - (header & 0xFFF);
+                var cur = line + (((header >> 12) & 0x3FF) * delta - ((header >> 22) & 0x3FF));
+                var end = cur - (header & 0xFFF);
 
                 while (cur > end)
                 {
@@ -78,7 +80,7 @@ public sealed class AnimationFrame
             xCenter = width - xCenter;
         }
 
-        Center = new Point(xCenter, yCenter);
+        Center = new(xCenter, yCenter);
         Bitmap = bmp;
     }
 }

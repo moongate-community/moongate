@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.IO;
 using Moongate.Ultima.Imaging;
 using SixLabors.ImageSharp;
 
@@ -44,11 +42,11 @@ public sealed class FrameEdit
         {
             var raw = new Raw();
             header ^= _doubleXor;
-            raw.run = (header & 0xFFF);
-            raw.offsetY = ((header >> 12) & 0x3FF);
-            raw.offsetX = ((header >> 22) & 0x3FF);
+            raw.run = header & 0xFFF;
+            raw.offsetY = (header >> 12) & 0x3FF;
+            raw.offsetX = (header >> 22) & 0x3FF;
 
-            int i = 0;
+            var i = 0;
             raw.data = new byte[raw.run];
 
             while (i < raw.run)
@@ -60,25 +58,25 @@ public sealed class FrameEdit
         }
 
         RawData = tmp.ToArray();
-        Center = new Point(xCenter, yCenter);
+        Center = new(xCenter, yCenter);
     }
 
     public unsafe FrameEdit(UltimaBitmap bit, ushort[] palette, int centerX, int centerY)
     {
-        Center = new Point(centerX, centerY);
+        Center = new(centerX, centerY);
         Width = bit.Width;
         Height = bit.Height;
 
         var line = (ushort*)bit.Scan0;
-        int delta = bit.Stride >> 1;
+        var delta = bit.Stride >> 1;
         var tmp = new List<Raw>();
 
-        for (int y = 0; y < bit.Height; ++y, line += delta)
+        for (var y = 0; y < bit.Height; ++y, line += delta)
         {
-            ushort* cur = line;
+            var cur = line;
 
-            int i = 0;
-            int x = 0;
+            var i = 0;
+            var x = 0;
 
             while (i < bit.Width)
             {
@@ -97,7 +95,8 @@ public sealed class FrameEdit
                 }
 
                 int j;
-                for (j = (i + 1); j < bit.Width; ++j)
+
+                for (j = i + 1; j < bit.Width; ++j)
                 {
                     // next non set pixel
                     if (cur[j] == 0)
@@ -115,11 +114,12 @@ public sealed class FrameEdit
                 raw.offsetY = y - centerY - bit.Height;
                 raw.offsetY += 512;
 
-                int r = 0;
+                var r = 0;
                 raw.data = new byte[raw.run];
+
                 while (r < raw.run)
                 {
-                    ushort col = cur[r + i];
+                    var col = cur[r + i];
                     raw.data[r++] = GetPaletteIndex(palette, col);
                 }
                 tmp.Add(raw);
@@ -133,7 +133,7 @@ public sealed class FrameEdit
 
     public void ChangeCenter(int x, int y)
     {
-        for (int i = 0; i < RawData.Length; i++)
+        for (var i = 0; i < RawData.Length; i++)
         {
             RawData[i].offsetX += Center.X;
             RawData[i].offsetX -= x;
@@ -141,20 +141,7 @@ public sealed class FrameEdit
             RawData[i].offsetY -= y;
         }
 
-        Center = new Point(x, y);
-    }
-
-    private static byte GetPaletteIndex(IReadOnlyList<ushort> palette, ushort col)
-    {
-        for (int i = 0; i < palette.Count; i++)
-        {
-            if (palette[i] == col)
-            {
-                return (byte)i;
-            }
-        }
-
-        return 0;
+        Center = new(x, y);
     }
 
     public void Save(BinaryWriter bin)
@@ -166,12 +153,13 @@ public sealed class FrameEdit
 
         if (RawData != null)
         {
-            for (int j = 0; j < RawData.Length; j++)
+            for (var j = 0; j < RawData.Length; j++)
             {
-                int newHeader = RawData[j].run | (RawData[j].offsetY << 12) | (RawData[j].offsetX << 22);
+                var newHeader = RawData[j].run | (RawData[j].offsetY << 12) | (RawData[j].offsetX << 22);
                 newHeader ^= _doubleXor;
                 bin.Write(newHeader);
-                foreach (byte b in RawData[j].data)
+
+                foreach (var b in RawData[j].data)
                 {
                     bin.Write(b);
                 }
@@ -179,5 +167,18 @@ public sealed class FrameEdit
         }
 
         bin.Write(0x7FFF7FFF);
+    }
+
+    private static byte GetPaletteIndex(IReadOnlyList<ushort> palette, ushort col)
+    {
+        for (var i = 0; i < palette.Count; i++)
+        {
+            if (palette[i] == col)
+            {
+                return (byte)i;
+            }
+        }
+
+        return 0;
     }
 }

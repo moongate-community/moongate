@@ -10,7 +10,6 @@
 //  ***************************************************************************/
 
 using Moongate.Ultima.Io;
-
 using Moongate.Ultima.Maps;
 
 namespace Moongate.Ultima.Helpers;
@@ -18,21 +17,21 @@ namespace Moongate.Ultima.Helpers;
 public sealed class MapHelper
 {
     /// <summary>
-    /// Checks if map1.mul exists and sets <see cref="Ultima.Map"/>
+    /// Checks if map1.mul exists and sets <see cref="Ultima.Map" />
     /// </summary>
     public static void CheckForNewMapSize()
     {
         if (Files.GetFilePath("map1.mul") != null || Files.GetFilePath("map1legacymul.uop") != null)
         {
             Map.Trammel = Map.Trammel.Width == 7168
-                ? new Map(1, 1, 7168, 4096)
-                : new Map(1, 1, 6144, 4096);
+                              ? new(1, 1, 7168, 4096)
+                              : new Map(1, 1, 6144, 4096);
         }
         else
         {
             Map.Trammel = Map.Trammel.Width == 7168
-                ? new Map(0, 1, 7168, 4096)
-                : new Map(0, 1, 6144, 4096);
+                              ? new(0, 1, 7168, 4096)
+                              : new Map(0, 1, 6144, 4096);
         }
     }
 }

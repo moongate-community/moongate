@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Text;
 using Moongate.Ultima.Helpers;
-
 using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Io;
@@ -15,7 +12,7 @@ public class UopFileAccessor : IFileAccessor
 
     public long IdxLength { get; }
 
-    public int IndexLength { get => Index.Length; }
+    public int IndexLength => Index.Length;
 
     public IEntry this[int index]
     {
@@ -32,14 +29,14 @@ public class UopFileAccessor : IFileAccessor
             IdxLength = idxLength * 12;
         }
 
-        Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        Stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         var fileInfo = new FileInfo(path);
-        string uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
+        var uopPattern = fileInfo.Name.Replace(fileInfo.Extension, "").ToLowerInvariant();
 
         // leaveOpen: this ctor caches Stream on the instance for later
         // FileIndex.Seek calls; disposing the BinaryReader must not close it.
-        using (var br = new BinaryReader(Stream, System.Text.Encoding.UTF8, leaveOpen: true))
+        using (var br = new BinaryReader(Stream, Encoding.UTF8, true))
         {
             br.BaseStream.Seek(0, SeekOrigin.Begin);
 
@@ -50,16 +47,16 @@ public class UopFileAccessor : IFileAccessor
 
             _ = br.ReadUInt32(); // version
             _ = br.ReadUInt32(); // signature
-            long nextBlock = br.ReadInt64();
+            var nextBlock = br.ReadInt64();
             _ = br.ReadUInt32(); // block size (capacity?)
-            _ = br.ReadInt32(); // count
+            _ = br.ReadInt32();  // count
 
             var hashes = new Dictionary<ulong, int>();
 
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
             {
-                string entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
-                ulong hash = UopUtils.HashFileName(entryName);
+                var entryName = $"build/{uopPattern}/{i:D8}{uopEntryExtension}";
+                var hash = UopUtils.HashFileName(entryName);
 
                 hashes.TryAdd(hash, i);
             }
@@ -77,39 +74,41 @@ public class UopFileAccessor : IFileAccessor
 
             do
             {
-                int filesCount = br.ReadInt32();
+                var filesCount = br.ReadInt32();
                 nextBlock = br.ReadInt64();
 
-                for (int i = 0; i < filesCount; i++)
+                for (var i = 0; i < filesCount; i++)
                 {
-                    long offset = br.ReadInt64();
-                    int headerLength = br.ReadInt32();
-                    int compressedLength = br.ReadInt32();
-                    int decompressedLength = br.ReadInt32();
-                    ulong hash = br.ReadUInt64();
+                    var offset = br.ReadInt64();
+                    var headerLength = br.ReadInt32();
+                    var compressedLength = br.ReadInt32();
+                    var decompressedLength = br.ReadInt32();
+                    var hash = br.ReadUInt64();
                     _ = br.ReadUInt32(); // data_hash
-                    short flag = br.ReadInt16();
+                    var flag = br.ReadInt16();
 
                     if (offset == 0)
                     {
                         continue;
                     }
 
-                    if (!hashes.TryGetValue(hash, out int idx))
+                    if (!hashes.TryGetValue(hash, out var idx))
                     {
                         continue;
                     }
 
                     if (idx < 0 || idx > Index.Length)
                     {
-                        throw new IndexOutOfRangeException("hashes dictionary and files collection have different count of entries!");
+                        throw new IndexOutOfRangeException(
+                            "hashes dictionary and files collection have different count of entries!"
+                        );
                     }
 
                     offset += headerLength;
 
                     if (hasextra && flag != 3)
                     {
-                        long curPos = br.BaseStream.Position;
+                        var curPos = br.BaseStream.Position;
 
                         br.BaseStream.Seek(offset, SeekOrigin.Begin);
 
@@ -119,7 +118,7 @@ public class UopFileAccessor : IFileAccessor
                         Index[idx].Length = compressedLength - 8;
                         Index[idx].DecompressedLength = decompressedLength;
                         Index[idx].Flag = (CompressionFlag)flag;
-                        Index[idx].Extra = extra1 << 16 | extra2;
+                        Index[idx].Extra = (extra1 << 16) | extra2;
                         Index[idx].Extra1 = extra1;
                         Index[idx].Extra2 = extra2;
 
@@ -127,15 +126,14 @@ public class UopFileAccessor : IFileAccessor
                     }
                     else
                     {
-                        Index[idx].Lookup = (int)(offset);
+                        Index[idx].Lookup = (int)offset;
                         Index[idx].Length = compressedLength;
                         Index[idx].DecompressedLength = decompressedLength;
                         Index[idx].Flag = (CompressionFlag)flag;
                         Index[idx].Extra = 0x0FFFFFFF; // we cant read it right now, but -1 and 0 makes this entry invalid
                     }
                 }
-            }
-            while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
+            } while (br.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
         }
     }
 

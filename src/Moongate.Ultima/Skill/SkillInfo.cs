@@ -10,11 +10,8 @@ public sealed class SkillInfo
 
     public string Name
     {
-        get { return _name; }
-        set
-        {
-            _name = value ?? string.Empty;
-        }
+        get => _name;
+        set => _name = value ?? string.Empty;
     }
 
     public int Extra { get; }

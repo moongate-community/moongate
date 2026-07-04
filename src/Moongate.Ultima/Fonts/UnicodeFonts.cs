@@ -1,13 +1,12 @@
-using System.IO;
 using Moongate.Ultima.Imaging;
-
 using Moongate.Ultima.Io;
 
 namespace Moongate.Ultima.Fonts;
 
 public static class UnicodeFonts
 {
-    private static readonly string[] _files = {
+    private static readonly string[] _files =
+    {
         "unifont.mul",
         "unifont1.mul",
         "unifont2.mul",
@@ -35,32 +34,35 @@ public static class UnicodeFonts
     /// </summary>
     public static void Initialize()
     {
-        for (int i = 0; i < _files.Length; i++)
+        for (var i = 0; i < _files.Length; i++)
         {
-            string filePath = Files.GetFilePath(_files[i]);
+            var filePath = Files.GetFilePath(_files[i]);
+
             if (filePath == null)
             {
                 continue;
             }
 
-            Fonts[i] = new UnicodeFont();
+            Fonts[i] = new();
+
             using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 using (var bin = new BinaryReader(fs))
                 {
-                    for (int c = 0; c < 0x10000; ++c)
+                    for (var c = 0; c < 0x10000; ++c)
                     {
-                        Fonts[i].Chars[c] = new UnicodeChar();
+                        Fonts[i].Chars[c] = new();
                         fs.Seek(c * 4, SeekOrigin.Begin);
-                        int num2 = bin.ReadInt32();
-                        if ((num2 >= fs.Length) || (num2 <= 0))
+                        var num2 = bin.ReadInt32();
+
+                        if (num2 >= fs.Length || num2 <= 0)
                         {
                             continue;
                         }
                         fs.Seek(num2, SeekOrigin.Begin);
 
-                        sbyte xOffset = bin.ReadSByte();
-                        sbyte yOffset = bin.ReadSByte();
+                        var xOffset = bin.ReadSByte();
+                        var yOffset = bin.ReadSByte();
                         int width = bin.ReadByte();
                         int height = bin.ReadByte();
 
@@ -69,14 +71,54 @@ public static class UnicodeFonts
                         Fonts[i].Chars[c].Width = width;
                         Fonts[i].Chars[c].Height = height;
 
-                        if (!((width == 0) || (height == 0)))
+                        if (!(width == 0 || height == 0))
                         {
-                            Fonts[i].Chars[c].Bytes = bin.ReadBytes(height * (((width - 1) / 8) + 1));
+                            Fonts[i].Chars[c].Bytes = bin.ReadBytes(height * ((width - 1) / 8 + 1));
                         }
                     }
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Saves Font and returns string Filename
+    /// </summary>
+    /// <param name="path"></param>
+    /// <param name="fileType"></param>
+    /// <returns></returns>
+    public static string Save(string path, int fileType)
+    {
+        var fileName = Path.Combine(path, _files[fileType]);
+
+        using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+        {
+            using (var bin = new BinaryWriter(fs))
+            {
+                fs.Seek(0x10000 * 4, SeekOrigin.Begin);
+                bin.Write(0);
+
+                // Set first data
+                for (var c = 0; c < 0x10000; ++c)
+                {
+                    if (Fonts[fileType].Chars[c].Bytes == null)
+                    {
+                        continue;
+                    }
+
+                    fs.Seek(c * 4, SeekOrigin.Begin);
+                    bin.Write((int)fs.Length);
+                    fs.Seek(fs.Length, SeekOrigin.Begin);
+                    bin.Write(Fonts[fileType].Chars[c].XOffset);
+                    bin.Write(Fonts[fileType].Chars[c].YOffset);
+                    bin.Write((byte)Fonts[fileType].Chars[c].Width);
+                    bin.Write((byte)Fonts[fileType].Chars[c].Height);
+                    bin.Write(Fonts[fileType].Chars[c].Bytes);
+                }
+            }
+        }
+
+        return fileName;
     }
 
     /// <summary>
@@ -89,56 +131,18 @@ public static class UnicodeFonts
     {
         var result = new UltimaBitmap(Fonts[fontId].GetWidth(text) + 2, Fonts[fontId].GetHeight(text) + 2);
 
-        int dx = 2;
-        int dy = 2;
+        var dx = 2;
+        var dy = 2;
 
         foreach (var character in text)
         {
-            int c = character % 0x10000;
-            UltimaBitmap bmp = Fonts[fontId].Chars[c].GetImage();
+            var c = character % 0x10000;
+            var bmp = Fonts[fontId].Chars[c].GetImage();
             dx += Fonts[fontId].Chars[c].XOffset;
             bmp.DrawInto(result, dx, dy + Fonts[fontId].Chars[c].YOffset);
             dx += bmp.Width;
         }
 
         return result;
-    }
-
-    /// <summary>
-    /// Saves Font and returns string Filename
-    /// </summary>
-    /// <param name="path"></param>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
-    public static string Save(string path, int fileType)
-    {
-        string fileName = Path.Combine(path, _files[fileType]);
-
-        using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
-        using (var bin = new BinaryWriter(fs))
-        {
-            fs.Seek(0x10000 * 4, SeekOrigin.Begin);
-            bin.Write(0);
-
-            // Set first data
-            for (int c = 0; c < 0x10000; ++c)
-            {
-                if (Fonts[fileType].Chars[c].Bytes == null)
-                {
-                    continue;
-                }
-
-                fs.Seek(c * 4, SeekOrigin.Begin);
-                bin.Write((int)fs.Length);
-                fs.Seek(fs.Length, SeekOrigin.Begin);
-                bin.Write(Fonts[fileType].Chars[c].XOffset);
-                bin.Write(Fonts[fileType].Chars[c].YOffset);
-                bin.Write((byte)Fonts[fileType].Chars[c].Width);
-                bin.Write((byte)Fonts[fileType].Chars[c].Height);
-                bin.Write(Fonts[fileType].Chars[c].Bytes);
-            }
-        }
-
-        return fileName;
     }
 }

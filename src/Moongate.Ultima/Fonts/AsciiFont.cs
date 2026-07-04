@@ -24,8 +24,16 @@ public sealed class AsciiFont
     /// <param name="character"></param>
     /// <returns></returns>
     public UltimaBitmap GetBitmap(char character)
+        => Characters[((character - 0x20) & 0x7FFFFFFF) % 224];
+
+    public static AsciiFont GetFixed(int font, AsciiFont[] fonts)
     {
-        return Characters[((character - 0x20) & 0x7FFFFFFF) % 224];
+        if (font is < 0 or > 9)
+        {
+            font = 3;
+        }
+
+        return fonts[font];
     }
 
     public int GetWidth(string text)
@@ -35,7 +43,7 @@ public sealed class AsciiFont
             return 0;
         }
 
-        int width = 0;
+        var width = 0;
 
         foreach (var character in text)
         {
@@ -49,15 +57,5 @@ public sealed class AsciiFont
     {
         Characters[character] = import;
         Height = import.Height;
-    }
-
-    public static AsciiFont GetFixed(int font, AsciiFont[] fonts)
-    {
-        if (font is < 0 or > 9)
-        {
-            font = 3;
-        }
-
-        return fonts[font];
     }
 }

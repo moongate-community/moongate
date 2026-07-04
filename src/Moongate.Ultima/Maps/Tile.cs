@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.InteropServices;
-
 using Moongate.Ultima.Tiles;
 
 namespace Moongate.Ultima.Maps;
@@ -13,12 +11,6 @@ public struct Tile : IComparable
     public sbyte Z { get; set; }
 
     public Tile(ushort id, sbyte z)
-    {
-        Id = id;
-        Z = z;
-    }
-
-    public void Set(ushort id, sbyte z)
     {
         Id = id;
         Z = z;
@@ -48,8 +40,8 @@ public struct Tile : IComparable
             return -1;
         }
 
-        ItemData ourData = TileData.ItemTable[Id];
-        ItemData theirData = TileData.ItemTable[a.Id];
+        var ourData = TileData.ItemTable[Id];
+        var theirData = TileData.ItemTable[a.Id];
 
         if (ourData.Height > theirData.Height)
         {
@@ -72,5 +64,11 @@ public struct Tile : IComparable
         }
 
         return 0;
+    }
+
+    public void Set(ushort id, sbyte z)
+    {
+        Id = id;
+        Z = z;
     }
 }

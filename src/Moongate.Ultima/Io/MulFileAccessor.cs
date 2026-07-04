@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Moongate.Ultima.Io;
@@ -12,9 +10,13 @@ public class MulFileAccessor : IFileAccessor
 
     public FileStream Stream { get; set; }
 
-    public int IndexLength { get => Index.Length; }
+    public int IndexLength => Index.Length;
 
-    public IEntry this[int index] { get => Index[index]; set => Index[index] = (Entry3D)value; }
+    public IEntry this[int index]
+    {
+        get => Index[index];
+        set => Index[index] = (Entry3D)value;
+    }
 
     public MulFileAccessor(string idxPath, string path, int length)
     {
@@ -22,14 +24,14 @@ public class MulFileAccessor : IFileAccessor
 
         using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            Stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             var count = (int)(index.Length / 12);
             IdxLength = index.Length;
 
-            int readLen = (int)Math.Min(IdxLength, (long)Index.Length * 12);
+            var readLen = (int)Math.Min(IdxLength, (long)Index.Length * 12);
             index.ReadExactly(MemoryMarshal.AsBytes(Index.AsSpan()).Slice(0, readLen));
 
-            for (int i = count; i < Index.Length; ++i)
+            for (var i = count; i < Index.Length; ++i)
             {
                 Index[i].Lookup = -1;
                 Index[i].Length = -1;
@@ -42,7 +44,7 @@ public class MulFileAccessor : IFileAccessor
     {
         using (var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            Stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            Stream = new(path, FileMode.Open, FileAccess.Read, FileShare.Read);
             var count = (int)(index.Length / 12);
             IdxLength = index.Length;
             Index = new Entry3D[count];

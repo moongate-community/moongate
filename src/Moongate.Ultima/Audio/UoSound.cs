@@ -12,4 +12,4 @@ public sealed class UoSound
         Id = id;
         Buffer = buff;
     }
-};
+}

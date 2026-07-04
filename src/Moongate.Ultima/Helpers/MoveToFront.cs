@@ -1,57 +1,56 @@
-using System;
-
 namespace Moongate.Ultima.Helpers;
 
 public static class MoveToFrontCoding
 {
     // complexity : O(256*N) -> O(N)
-    public static byte[] Encode(byte[] input)
-    {
-        Span<byte> symbols = stackalloc byte[256];
-        byte[] output = new byte[input.Length];
-
-        for (int i = 0; i < 256; i++)
-        {
-            symbols[i] = (byte)i;
-        }
-
-        for (int i = 0; i < input.Length; i++)
-        {
-            int ind = MoveToFront(symbols, input[i]);
-            output[i] = (byte)ind;
-        }
-
-        return output;
-    }
-
-    // complexity : O(256*N) -> O(N)
     public static byte[] Decode(byte[] input)
     {
-        byte[] output = new byte[input.Length];
+        var output = new byte[input.Length];
         Decode(input, output);
+
         return output;
     }
 
     /// <summary>
-    /// MTF-decodes <paramref name="input"/> into <paramref name="output"/>.
-    /// <paramref name="output"/> must be at least <paramref name="input"/>.Length long.
+    /// MTF-decodes <paramref name="input" /> into <paramref name="output" />.
+    /// <paramref name="output" /> must be at least <paramref name="input" />.Length long.
     /// </summary>
     public static void Decode(ReadOnlySpan<byte> input, Span<byte> output)
     {
         Span<byte> symbols = stackalloc byte[256];
 
-        for (int i = 0; i < 256; i++)
+        for (var i = 0; i < 256; i++)
         {
             symbols[i] = (byte)i;
         }
 
-        for (int i = 0; i < input.Length; i++)
+        for (var i = 0; i < input.Length; i++)
         {
             int ind = input[i];
             output[i] = symbols[ind];
 
             MoveToFront(symbols, ind);
         }
+    }
+
+    // complexity : O(256*N) -> O(N)
+    public static byte[] Encode(byte[] input)
+    {
+        Span<byte> symbols = stackalloc byte[256];
+        var output = new byte[input.Length];
+
+        for (var i = 0; i < 256; i++)
+        {
+            symbols[i] = (byte)i;
+        }
+
+        for (var i = 0; i < input.Length; i++)
+        {
+            var ind = MoveToFront(symbols, input[i]);
+            output[i] = (byte)ind;
+        }
+
+        return output;
     }
 
     // params : array, element to move
@@ -64,9 +63,9 @@ public static class MoveToFrontCoding
             return 0;
         }
 
-        int elementInd = -1;
+        var elementInd = -1;
 
-        for (int i = array.Length - 1; i > 0; i--)
+        for (var i = array.Length - 1; i > 0; i--)
         {
             if (array[i] == element)
             {
@@ -90,9 +89,9 @@ public static class MoveToFrontCoding
     // best case : O(1), worst case : O(N)
     private static void MoveToFront(Span<byte> array, int elementInd)
     {
-        byte element = array[elementInd];
+        var element = array[elementInd];
 
-        for (int i = elementInd; i > 0; i--)
+        for (var i = elementInd; i > 0; i--)
         {
             array[i] = array[i - 1];
         }

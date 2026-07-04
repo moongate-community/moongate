@@ -1,5 +1,4 @@
-using System;
-using System.IO;
+
 
 /*
     FileIDs
@@ -42,6 +41,7 @@ public sealed class Verdata
     public static void Initialize()
     {
         _path = Files.GetFilePath("verdata.mul");
+
         if (_path == null)
         {
             Patches = Array.Empty<Entry5D>();
@@ -50,17 +50,19 @@ public sealed class Verdata
         else
         {
             using (Stream = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var bin = new BinaryReader(Stream))
             {
-                Patches = new Entry5D[bin.ReadInt32()];
-
-                for (int i = 0; i < Patches.Length; ++i)
+                using (var bin = new BinaryReader(Stream))
                 {
-                    Patches[i].File = bin.ReadInt32();
-                    Patches[i].Index = bin.ReadInt32();
-                    Patches[i].Lookup = bin.ReadInt32();
-                    Patches[i].Length = bin.ReadInt32();
-                    Patches[i].Extra = bin.ReadInt32();
+                    Patches = new Entry5D[bin.ReadInt32()];
+
+                    for (var i = 0; i < Patches.Length; ++i)
+                    {
+                        Patches[i].File = bin.ReadInt32();
+                        Patches[i].Index = bin.ReadInt32();
+                        Patches[i].Lookup = bin.ReadInt32();
+                        Patches[i].Length = bin.ReadInt32();
+                        Patches[i].Extra = bin.ReadInt32();
+                    }
                 }
             }
 

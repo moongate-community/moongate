@@ -1,12 +1,12 @@
 <Solution>
     <Folder Name="/src/">
-        <Project Path="src/Moongate.Core/Moongate.Core.csproj" />
-        <Project Path="src/Moongate.Network/Moongate.Network.csproj" />
-        <Project Path="src/Moongate.Server/Moongate.Server.csproj" />
-        <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj" />
-        <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj" />
+        <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
+        <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>
+        <Project Path="src/Moongate.Server/Moongate.Server.csproj"/>
+        <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj"/>
+        <Project Path="src/Moongate.UO.Data/Moongate.UO.Data.csproj"/>
     </Folder>
     <Folder Name="/tests/">
-        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj" />
+        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj"/>
     </Folder>
 </Solution>

@@ -1,21 +1,18 @@
-using System.Collections.Generic;
-
 namespace Moongate.Ultima.Maps;
 
 public sealed class HuedTileList
 {
     private readonly List<HuedTile> _tiles;
+
     public HuedTileList()
     {
-        _tiles = new List<HuedTile>();
+        _tiles = new();
     }
 
-    public int Count { get { return _tiles.Count; } }
+    public int Count => _tiles.Count;
 
     public void Add(ushort id, short hue, sbyte z)
-    {
-        _tiles.Add(new HuedTile(id, hue, z));
-    }
+        => _tiles.Add(new(id, hue, z));
 
     public HuedTile[] ToArray()
     {

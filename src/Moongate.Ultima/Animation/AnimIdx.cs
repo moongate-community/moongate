@@ -1,7 +1,5 @@
-using System.Collections.Generic;
-using System.IO;
+using System.Text;
 using Moongate.Ultima.Imaging;
-
 using Moongate.Ultima.Io;
 
 namespace Moongate.Ultima.Animation;
@@ -19,8 +17,9 @@ public sealed class AnimIdx
     {
         Palette = new ushort[PaletteCapacity];
 
-        Stream stream = fileIndex.Seek(index, out int length, out int extra, out bool _);
-        if ((stream == null) || (length < 1))
+        var stream = fileIndex.Seek(index, out var length, out var extra, out var _);
+
+        if (stream == null || length < 1)
         {
             return;
         }
@@ -30,29 +29,29 @@ public sealed class AnimIdx
         // leaveOpen: stream is owned by the shared FileIndex; disposing the
         // BinaryReader must not close it, or the next FileIndex.Seek pays a
         // full re-open.
-        using (var bin = new BinaryReader(stream, System.Text.Encoding.UTF8, leaveOpen: true))
+        using (var bin = new BinaryReader(stream, Encoding.UTF8, true))
         {
-            for (int i = 0; i < PaletteCapacity; ++i)
+            for (var i = 0; i < PaletteCapacity; ++i)
             {
                 Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
             }
 
             var start = (int)bin.BaseStream.Position;
-            int frameCount = bin.ReadInt32();
+            var frameCount = bin.ReadInt32();
 
             var lookups = new int[frameCount];
 
-            for (int i = 0; i < frameCount; ++i)
+            for (var i = 0; i < frameCount; ++i)
             {
                 lookups[i] = start + bin.ReadInt32();
             }
 
-            Frames = new List<FrameEdit>();
+            Frames = new();
 
-            for (int i = 0; i < frameCount; ++i)
+            for (var i = 0; i < frameCount; ++i)
             {
                 stream.Seek(lookups[i], SeekOrigin.Begin);
-                Frames.Add(new FrameEdit(bin));
+                Frames.Add(new(bin));
             }
         }
     }
@@ -62,43 +61,130 @@ public sealed class AnimIdx
         _idxExtra = extra;
 
         Palette = new ushort[PaletteCapacity];
-        for (int i = 0; i < PaletteCapacity; ++i)
+
+        for (var i = 0; i < PaletteCapacity; ++i)
         {
             Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);
         }
 
         var start = (int)bin.BaseStream.Position;
-        int frameCount = bin.ReadInt32();
+        var frameCount = bin.ReadInt32();
 
         var lookups = new int[frameCount];
 
-        for (int i = 0; i < frameCount; ++i)
+        for (var i = 0; i < frameCount; ++i)
         {
             lookups[i] = start + bin.ReadInt32();
         }
 
-        Frames = new List<FrameEdit>();
+        Frames = new();
 
-        for (int i = 0; i < frameCount; ++i)
+        for (var i = 0; i < frameCount; ++i)
         {
             bin.BaseStream.Seek(lookups[i], SeekOrigin.Begin);
-            Frames.Add(new FrameEdit(bin));
+            Frames.Add(new(bin));
         }
+    }
+
+    public void AddFrame(UltimaBitmap bit, int centerX = 0, int centerY = 0)
+    {
+        if (Frames == null)
+        {
+            Frames = new();
+        }
+
+        Frames.Add(new(bit, Palette, centerX, centerY));
+    }
+
+    public void ClearFrames()
+        => Frames?.Clear();
+
+    public void ExportPalette(string filename, int type)
+    {
+        switch (type)
+        {
+            case 0:
+                using (var tex = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite)))
+                {
+                    for (var i = 0; i < PaletteCapacity; ++i)
+                    {
+                        tex.WriteLine(Palette[i]);
+                    }
+                }
+
+                break;
+            case 1:
+                SavePaletteImage(filename);
+
+                break;
+            case 2:
+                SavePaletteImage(filename);
+
+                break;
+        }
+    }
+
+    public void ExportToVD(BinaryWriter bin, ref long indexpos, ref long animpos)
+    {
+        bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
+
+        if (Frames == null || Frames.Count == 0)
+        {
+            bin.Write(-1);
+            bin.Write(-1);
+            bin.Write(-1);
+            indexpos = bin.BaseStream.Position;
+
+            return;
+        }
+
+        bin.Write((int)animpos);
+        indexpos = bin.BaseStream.Position;
+        bin.BaseStream.Seek(animpos, SeekOrigin.Begin);
+
+        for (var i = 0; i < PaletteCapacity; ++i)
+        {
+            bin.Write((ushort)(Palette[i] ^ 0x8000));
+        }
+
+        long startPosition = (int)bin.BaseStream.Position;
+        bin.Write(Frames.Count);
+        long seek = (int)bin.BaseStream.Position;
+        var curr = bin.BaseStream.Position + 4 * Frames.Count;
+
+        foreach (var frame in Frames)
+        {
+            bin.BaseStream.Seek(seek, SeekOrigin.Begin);
+            bin.Write((int)(curr - startPosition));
+            seek = bin.BaseStream.Position;
+            bin.BaseStream.Seek(curr, SeekOrigin.Begin);
+            frame.Save(bin);
+            curr = bin.BaseStream.Position;
+        }
+
+        var length = bin.BaseStream.Position - animpos;
+        animpos = bin.BaseStream.Position;
+        bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
+        bin.Write((int)length);
+        bin.Write(_idxExtra);
+        indexpos = bin.BaseStream.Position;
     }
 
     public unsafe UltimaBitmap[] GetFrames()
     {
-        if ((Frames == null) || (Frames.Count == 0))
+        if (Frames == null || Frames.Count == 0)
         {
             return null;
         }
 
         var bits = new UltimaBitmap[Frames.Count];
-        for (int i = 0; i < bits.Length; ++i)
+
+        for (var i = 0; i < bits.Length; ++i)
         {
-            FrameEdit frame = Frames[i];
-            int width = frame.Width;
-            int height = frame.Height;
+            var frame = Frames[i];
+            var width = frame.Width;
+            var height = frame.Height;
+
             if (height == 0 || width == 0)
             {
                 continue;
@@ -106,22 +192,23 @@ public sealed class AnimIdx
 
             var bmp = new UltimaBitmap(width, height);
             var line = (ushort*)bmp.Scan0;
-            int delta = bmp.Stride >> 1;
+            var delta = bmp.Stride >> 1;
 
-            int xBase = frame.Center.X - 0x200;
-            int yBase = frame.Center.Y + height - 0x200;
+            var xBase = frame.Center.X - 0x200;
+            var yBase = frame.Center.Y + height - 0x200;
 
             line += xBase;
             line += yBase * delta;
 
-            for (int j = 0; j < frame.RawData.Length; ++j)
+            for (var j = 0; j < frame.RawData.Length; ++j)
             {
-                FrameEdit.Raw raw = frame.RawData[j];
+                var raw = frame.RawData[j];
 
-                ushort* cur = line + (((raw.offsetY) * delta) + ((raw.offsetX) & 0x3FF));
-                ushort* end = cur + (raw.run);
+                var cur = line + (raw.offsetY * delta + (raw.offsetX & 0x3FF));
+                var end = cur + raw.run;
 
-                int ii = 0;
+                var ii = 0;
+
                 while (cur < end)
                 {
                     *cur++ = Palette[raw.data[ii++]];
@@ -132,31 +219,6 @@ public sealed class AnimIdx
         }
 
         return bits;
-    }
-
-    public void AddFrame(UltimaBitmap bit, int centerX = 0, int centerY = 0)
-    {
-        if (Frames == null)
-        {
-            Frames = new List<FrameEdit>();
-        }
-
-        Frames.Add(new FrameEdit(bit, Palette, centerX, centerY));
-    }
-
-    public void ReplaceFrame(UltimaBitmap bit, int index)
-    {
-        if ((Frames == null) || (Frames.Count == 0))
-        {
-            return;
-        }
-
-        if (index > Frames.Count)
-        {
-            return;
-        }
-
-        Frames[index] = new FrameEdit(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
     }
 
     public void RemoveFrame(int index)
@@ -174,63 +236,27 @@ public sealed class AnimIdx
         Frames.RemoveAt(index);
     }
 
-    public void ClearFrames()
+    public void ReplaceFrame(UltimaBitmap bit, int index)
     {
-        Frames?.Clear();
-    }
-
-    public void ExportPalette(string filename, int type)
-    {
-        switch (type)
+        if (Frames == null || Frames.Count == 0)
         {
-            case 0:
-                using (var tex = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite)))
-                {
-                    for (int i = 0; i < PaletteCapacity; ++i)
-                    {
-                        tex.WriteLine(Palette[i]);
-                    }
-                }
-                break;
-            case 1:
-                SavePaletteImage(filename);
-                break;
-            case 2:
-                SavePaletteImage(filename);
-                break;
+            return;
         }
-    }
 
-    // Skia cannot encode BMP/TIFF, so the palette image is always written as PNG
-    // regardless of the requested export type.
-    private unsafe void SavePaletteImage(string filename)
-    {
-        using (var bmp = new UltimaBitmap(PaletteCapacity, 20))
+        if (index > Frames.Count)
         {
-            var line = (ushort*)bmp.Scan0;
-            int delta = bmp.Stride >> 1;
-
-            for (int y = 0; y < bmp.Height; ++y, line += delta)
-            {
-                ushort* cur = line;
-                for (int i = 0; i < PaletteCapacity; ++i)
-                {
-                    *cur++ = Palette[i];
-                }
-            }
-
-            bmp.Save(filename);
+            return;
         }
+
+        Frames[index] = new(bit, Palette, Frames[index].Center.X, Frames[index].Center.Y);
     }
 
     public void ReplacePalette(ushort[] palette)
-    {
-        Palette = palette;
-    }
+        => Palette = palette;
 
     public void Save(BinaryWriter bin, BinaryWriter idx)
     {
-        if ((Frames == null) || (Frames.Count == 0))
+        if (Frames == null || Frames.Count == 0)
         {
             idx.Write(-1);
             idx.Write(-1);
@@ -239,21 +265,21 @@ public sealed class AnimIdx
             return;
         }
 
-        long start = bin.BaseStream.Position;
+        var start = bin.BaseStream.Position;
         idx.Write((int)start);
 
-        for (int i = 0; i < PaletteCapacity; ++i)
+        for (var i = 0; i < PaletteCapacity; ++i)
         {
             bin.Write((ushort)(Palette[i] ^ 0x8000));
         }
 
-        long startPosition = bin.BaseStream.Position;
+        var startPosition = bin.BaseStream.Position;
         bin.Write(Frames.Count);
 
-        long seek = bin.BaseStream.Position;
-        long curr = bin.BaseStream.Position + (4 * Frames.Count);
+        var seek = bin.BaseStream.Position;
+        var curr = bin.BaseStream.Position + 4 * Frames.Count;
 
-        foreach (FrameEdit frame in Frames)
+        foreach (var frame in Frames)
         {
             bin.BaseStream.Seek(seek, SeekOrigin.Begin);
             bin.Write((int)(curr - startPosition));
@@ -268,46 +294,26 @@ public sealed class AnimIdx
         idx.Write(_idxExtra);
     }
 
-    public void ExportToVD(BinaryWriter bin, ref long indexpos, ref long animpos)
+    // Skia cannot encode BMP/TIFF, so the palette image is always written as PNG
+    // regardless of the requested export type.
+    private unsafe void SavePaletteImage(string filename)
     {
-        bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
-        if ((Frames == null) || (Frames.Count == 0))
+        using (var bmp = new UltimaBitmap(PaletteCapacity, 20))
         {
-            bin.Write(-1);
-            bin.Write(-1);
-            bin.Write(-1);
-            indexpos = bin.BaseStream.Position;
-            return;
+            var line = (ushort*)bmp.Scan0;
+            var delta = bmp.Stride >> 1;
+
+            for (var y = 0; y < bmp.Height; ++y, line += delta)
+            {
+                var cur = line;
+
+                for (var i = 0; i < PaletteCapacity; ++i)
+                {
+                    *cur++ = Palette[i];
+                }
+            }
+
+            bmp.Save(filename);
         }
-
-        bin.Write((int)animpos);
-        indexpos = bin.BaseStream.Position;
-        bin.BaseStream.Seek(animpos, SeekOrigin.Begin);
-
-        for (int i = 0; i < PaletteCapacity; ++i)
-        {
-            bin.Write((ushort)(Palette[i] ^ 0x8000));
-        }
-
-        long startPosition = (int)bin.BaseStream.Position;
-        bin.Write(Frames.Count);
-        long seek = (int)bin.BaseStream.Position;
-        long curr = bin.BaseStream.Position + (4 * Frames.Count);
-        foreach (FrameEdit frame in Frames)
-        {
-            bin.BaseStream.Seek(seek, SeekOrigin.Begin);
-            bin.Write((int)(curr - startPosition));
-            seek = bin.BaseStream.Position;
-            bin.BaseStream.Seek(curr, SeekOrigin.Begin);
-            frame.Save(bin);
-            curr = bin.BaseStream.Position;
-        }
-
-        long length = bin.BaseStream.Position - animpos;
-        animpos = bin.BaseStream.Position;
-        bin.BaseStream.Seek(indexpos, SeekOrigin.Begin);
-        bin.Write((int)length);
-        bin.Write(_idxExtra);
-        indexpos = bin.BaseStream.Position;
     }
 }
