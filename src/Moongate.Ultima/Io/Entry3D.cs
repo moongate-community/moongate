@@ -7,20 +7,15 @@ namespace Moongate.Ultima.Io;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct Entry3D : IEntry
 {
-    // do not mess with the fields struct layout in memory is important because of how we read the index files.
-    private int lookup;
-    private int length;
-    private int extra;
+    // The three auto-properties below define the 12-byte on-disk index record; their
+    // declaration order fixes the backing-field layout read via MemoryMarshal.
+    public int Lookup { get; set; }
 
-#pragma warning disable S2292
-    public int Lookup { get => lookup; set => lookup = value; }
+    public int Length { get; set; }
 
-    public int Length { get => length; set => length = value; }
+    public int Extra { get; set; }
 
-    public int Extra { get => extra; set => extra = value; }
-
-    public int DecompressedLength { get => length; set => length = value; }
-#pragma warning restore S2292
+    public int DecompressedLength { get => Length; set => Length = value; }
 
     public int Extra1
     {
