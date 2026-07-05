@@ -187,12 +187,13 @@ public static class UltimaFixtures
         return dir;
     }
 
-    /// <summary>Writes an old-format item record (flags, height, name) for item <paramref name="id" /> (first group only).</summary>
-    public static void SetItem(byte[] tileData, int id, uint flags, byte height, string name)
+    /// <summary>Writes an old-format item record (flags, anim, height, name) for item <paramref name="id" /> (first group only).</summary>
+    public static void SetItem(byte[] tileData, int id, uint flags, byte height, string name, short anim = 0)
     {
         var offset = 512 * LandGroupSize + 4 + id * OldItemRecordSize;
 
         BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
+        BinaryPrimitives.WriteInt16LittleEndian(tileData.AsSpan(offset + 10), anim);
         tileData[offset + 16] = height;
         WriteName(tileData, offset + 17, name);
     }
@@ -337,7 +338,9 @@ public static class UltimaFixtures
                 blob.AddRange(BitConverter.GetBytes(rowOffset));
             }
 
-            var stored = (ushort)(color ^ 0x8000);
+            // real gump data stores colors with bit15 clear; the reader XORs with 0x8000,
+            // which sets the alpha bit and makes the pixel opaque for DrawInto
+            var stored = (ushort)(color & 0x7FFF);
 
             for (var y = 0; y < height; y++)
             {
