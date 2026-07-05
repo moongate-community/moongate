@@ -261,6 +261,164 @@ public static class UltimaFixtures
         mapBlock[offset + 2] = unchecked((byte)z);
     }
 
+    /// <summary>
+    /// Builds artidx.mul + art.mul holding a single solid-color static at
+    /// <paramref name="itemId" /> (record 0x4000 + itemId). All other records are -1.
+    /// </summary>
+    public static (byte[] Index, byte[] Art) BuildStaticArt(int itemId, int width, int height, ushort color)
+    {
+        var pixels = new List<ushort>
+        {
+            0,
+            0,
+            (ushort)width,
+            (ushort)height
+        };
+
+        var rowLength = 2 + width + 2; // offset+run, pixels, terminator pair
+        var stored = (ushort)(color ^ 0x8000); // the reader XORs every pixel with 0x8000
+
+        for (var y = 0; y < height; y++)
+        {
+            pixels.Add((ushort)(y * rowLength));
+        }
+
+        for (var y = 0; y < height; y++)
+        {
+            pixels.Add(0);              // xOffset
+            pixels.Add((ushort)width);  // xRun
+
+            for (var x = 0; x < width; x++)
+            {
+                pixels.Add(stored);
+            }
+
+            pixels.Add(0);              // terminator offset
+            pixels.Add(0);              // terminator run
+        }
+
+        var art = new byte[pixels.Count * 2];
+
+        for (var i = 0; i < pixels.Count; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(art.AsSpan(i * 2), pixels[i]);
+        }
+
+        var recordCount = 0x4000 + itemId + 1;
+        var index = new byte[recordCount * 12];
+        index.AsSpan().Fill(0xFF); // every lookup/length = -1
+
+        var record = (0x4000 + itemId) * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), 0);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), art.Length);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+
+        return (index, art);
+    }
+
+    /// <summary>Builds gumpidx.mul + gumpart.mul containing solid-color gumps.</summary>
+    public static (byte[] Index, byte[] Gumps) BuildGumps(params (int GumpId, int Width, int Height, ushort Color)[] gumps)
+    {
+        var maxId = gumps.Max(g => g.GumpId);
+        var index = new byte[(maxId + 1) * 12];
+        index.AsSpan().Fill(0xFF);
+
+        var data = new List<byte>();
+
+        foreach (var (gumpId, width, height, color) in gumps)
+        {
+            var lookup = data.Count;
+            var blob = new List<byte>();
+
+            for (var y = 0; y < height; y++)
+            {
+                // row offset in DWORDs relative to blob start: lookup table (height) + y rows of 1 dword each
+                var rowOffset = height + y;
+                blob.AddRange(BitConverter.GetBytes(rowOffset));
+            }
+
+            var stored = (ushort)(color ^ 0x8000);
+
+            for (var y = 0; y < height; y++)
+            {
+                blob.AddRange(BitConverter.GetBytes(stored));
+                blob.AddRange(BitConverter.GetBytes((ushort)width));
+            }
+
+            data.AddRange(blob);
+
+            var record = gumpId * 12;
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), lookup);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), blob.Count);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), (width << 16) | height);
+        }
+
+        return (index, data.ToArray());
+    }
+
+    /// <summary>
+    /// Builds anim.idx + anim.mul with one animation of <paramref name="frameCount" />
+    /// identical solid frames for (body &lt; 200, action, direction &lt;= 4), fileType 1.
+    /// </summary>
+    public static (byte[] Index, byte[] Anim) BuildAnim(
+        int body, int action, int direction, int frameCount, int width, int height,
+        byte paletteIndex, ushort paletteColor)
+    {
+        const int DoubleXor = (0x200 << 22) | (0x200 << 12);
+
+        var blob = new List<byte>();
+
+        for (var i = 0; i < 256; i++)
+        {
+            var value = i == paletteIndex ? (ushort)(paletteColor ^ 0x8000) : (ushort)0x8000;
+            blob.AddRange(BitConverter.GetBytes(value));
+        }
+
+        var frame = new List<byte>();
+        frame.AddRange(BitConverter.GetBytes((short)0x200));            // xCenter
+        frame.AddRange(BitConverter.GetBytes((short)(0x200 - height))); // yCenter -> origin at (0,0)
+        frame.AddRange(BitConverter.GetBytes((ushort)width));
+        frame.AddRange(BitConverter.GetBytes((ushort)height));
+
+        for (var y = 0; y < height; y++)
+        {
+            var wanted = (0 << 22) | (y << 12) | width;
+            frame.AddRange(BitConverter.GetBytes(wanted ^ DoubleXor));
+
+            for (var x = 0; x < width; x++)
+            {
+                frame.Add(paletteIndex);
+            }
+        }
+
+        frame.AddRange(BitConverter.GetBytes(0x7FFF7FFF));
+
+        // header after palette: frameCount + frameCount offsets (relative to that point)
+        var tableBytes = 4 + frameCount * 4;
+        blob.AddRange(BitConverter.GetBytes(frameCount));
+
+        for (var i = 0; i < frameCount; i++)
+        {
+            blob.AddRange(BitConverter.GetBytes(tableBytes + i * frame.Count));
+        }
+
+        for (var i = 0; i < frameCount; i++)
+        {
+            blob.AddRange(frame);
+        }
+
+        var recordIndex = body * 110 + action * 5 + direction;
+        var index = new byte[(recordIndex + 1) * 12];
+        index.AsSpan().Fill(0xFF);
+
+        var record = recordIndex * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), 0);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), blob.Count);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+
+        return (index, blob.ToArray());
+    }
+
     private static void WriteName(byte[] buffer, int offset, string name)
     {
         var bytes = Encoding.ASCII.GetBytes(name);
