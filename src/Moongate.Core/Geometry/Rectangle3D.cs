@@ -10,20 +10,11 @@ public readonly struct Rectangle3D : IEquatable<Rectangle3D>
 
     public Point3D End { get; }
 
-    public int Width
-    {
-        get { return End.X - Start.X; }
-    }
+    public int Width => End.X - Start.X;
 
-    public int Height
-    {
-        get { return End.Y - Start.Y; }
-    }
+    public int Height => End.Y - Start.Y;
 
-    public int Depth
-    {
-        get { return End.Z - Start.Z; }
-    }
+    public int Depth => End.Z - Start.Z;
 
     public Rectangle3D(Point3D start, Point3D end)
     {

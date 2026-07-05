@@ -14,15 +14,9 @@ public readonly struct Rectangle2D : IEquatable<Rectangle2D>
 
     public int Height { get; }
 
-    public Point2D Start
-    {
-        get { return new Point2D(X, Y); }
-    }
+    public Point2D Start => new(X, Y);
 
-    public Point2D End
-    {
-        get { return new Point2D(X + Width, Y + Height); }
-    }
+    public Point2D End => new(X + Width, Y + Height);
 
     public Rectangle2D(int x, int y, int width, int height)
     {

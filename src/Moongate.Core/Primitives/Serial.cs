@@ -21,20 +21,11 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
         Value = value;
     }
 
-    public bool IsMobile
-    {
-        get { return Value is >= MinMobile and <= MaxMobile; }
-    }
+    public bool IsMobile => Value is >= MinMobile and <= MaxMobile;
 
-    public bool IsItem
-    {
-        get { return Value is >= MinItem and <= MaxItem; }
-    }
+    public bool IsItem => Value is >= MinItem and <= MaxItem;
 
-    public bool IsValid
-    {
-        get { return Value != 0; }
-    }
+    public bool IsValid => Value != 0;
 
     public bool Equals(Serial other)
     {
