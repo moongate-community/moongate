@@ -1,0 +1,38 @@
+using System.Net;
+using Moongate.Network.Packets.Incoming;
+using Moongate.Network.Packets.Outgoing;
+using Moongate.Server.Data;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Interfaces;
+
+namespace Moongate.Server.Handlers;
+
+/// <summary>Handles account login (0x80): authenticates and returns the server list or a denial.</summary>
+public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPacket>
+{
+    private readonly IAccountService _accounts;
+    private readonly MoongateConfig _config;
+
+    public AccountLoginHandler(IAccountService accounts, MoongateConfig config)
+    {
+        _accounts = accounts;
+        _config = config;
+    }
+
+    public void Handle(AccountLoginRequestPacket packet, in PacketContext context)
+    {
+        var result = _accounts.Authenticate(packet.Account, packet.Password);
+
+        if (!result.Success)
+        {
+            _ = context.Session.SendAsync(new LoginDeniedPacket(result.Reason));
+
+            return;
+        }
+
+        context.Session.MarkAuthenticated(result.Username);
+        _ = context.Session.SendAsync(
+            new ServerListPacket(_config.ShardName, IPAddress.Parse(_config.Network.PublicAddress))
+        );
+    }
+}
