@@ -1,3 +1,4 @@
+using Moongate.Server.Interfaces;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Types;
 

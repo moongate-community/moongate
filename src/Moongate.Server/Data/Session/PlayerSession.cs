@@ -1,6 +1,6 @@
 using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
-using Moongate.Server.Services.Network;
+using Moongate.Server.Interfaces;
 using Moongate.Server.Types;
 using SquidStd.Network.Client;
 using SquidStd.Network.Spans;

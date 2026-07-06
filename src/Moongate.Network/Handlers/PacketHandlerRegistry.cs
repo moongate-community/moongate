@@ -11,8 +11,7 @@ namespace Moongate.Network.Handlers;
 /// </summary>
 public sealed class PacketHandlerRegistry
 {
-    private static readonly ILogger _logger = Log.ForContext<PacketHandlerRegistry>();
-
+    private readonly ILogger _logger = Log.ForContext<PacketHandlerRegistry>();
     private readonly PacketHandlerDelegate?[] _handlers = new PacketHandlerDelegate?[256];
     private readonly bool[] _warned = new bool[256];
 
