@@ -1,0 +1,9 @@
+using Moongate.Server.Data;
+
+namespace Moongate.Server.Interfaces;
+
+/// <summary>Authenticates account credentials. Persistence is wired later; the stub accepts non-empty credentials.</summary>
+public interface IAccountService
+{
+    AccountAuthResult Authenticate(string username, string password);
+}
