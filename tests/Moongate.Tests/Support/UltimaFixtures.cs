@@ -392,6 +392,31 @@ public static class UltimaFixtures
         return (idx, mul);
     }
 
+    /// <summary>
+    /// Builds texidx.mul + texmaps.mul with a single texture at <paramref name="index" />:
+    /// a solid <paramref name="size" />x<paramref name="size" /> square of <paramref name="pixel" />
+    /// (raw 16-bit pixels; <paramref name="size" /> is 64 or 128).
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildTexmap(int index, int size, ushort pixel)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[size * size * 2];
+
+        for (var i = 0; i < size * size; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(mul.AsSpan(i * 2), pixel);
+        }
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);              // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length); // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), size == 64 ? 0 : 1); // extra
+
+        return (idx, mul);
+    }
+
     public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
     {
         var dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
