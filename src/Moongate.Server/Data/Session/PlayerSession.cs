@@ -10,6 +10,8 @@ namespace Moongate.Server.Data.Session;
 /// <summary>Server-side state for one connected client: protocol phase, seed, account, compression.</summary>
 public sealed class PlayerSession : ISeedTarget
 {
+    private const int InitialWriteBufferSize = 1024;
+
     private readonly SquidStdTcpClient _client;
     private readonly object _stateSync = new();
 
@@ -57,12 +59,13 @@ public sealed class PlayerSession : ISeedTarget
         }
     }
 
-    public Task SendAsync<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+    public Task SendAsync<TPacket>(TPacket packet, CancellationToken cancellationToken = default)
+        where TPacket : IOutgoingPacket
     {
-        var writer = new SpanWriter(1024, resize: true);
+        var writer = new SpanWriter(InitialWriteBufferSize, resize: true);
         packet.Write(ref writer);
         var bytes = writer.Span.ToArray();
 
-        return _client.SendAsync(bytes, CancellationToken.None);
+        return _client.SendAsync(bytes, cancellationToken);
     }
 }

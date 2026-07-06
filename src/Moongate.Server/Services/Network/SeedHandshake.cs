@@ -10,44 +10,45 @@ namespace Moongate.Server.Services.Network;
 public static class SeedHandshake
 {
     private const byte LoginSeedPacketId = 0xEF;
+    private const int RawSeedLength = 4;
 
-    public static SeedHandshakeResult Process(ISeedTarget target, ReadOnlySpan<byte> frame, out int consumed)
+    public static SeedHandshakeResultType Process(ISeedTarget target, ReadOnlySpan<byte> frame, out int consumed)
     {
         consumed = 0;
 
         if (target.State != SessionStateType.AwaitingSeed)
         {
-            return SeedHandshakeResult.PassThrough;
+            return SeedHandshakeResultType.PassThrough;
         }
 
         if (frame.IsEmpty)
         {
-            return SeedHandshakeResult.Reject;
+            return SeedHandshakeResultType.Reject;
         }
 
         if (frame[0] == LoginSeedPacketId)
         {
             target.SetState(SessionStateType.Login);
 
-            return SeedHandshakeResult.PassThrough;
+            return SeedHandshakeResultType.PassThrough;
         }
 
-        if (frame.Length < 4)
+        if (frame.Length < RawSeedLength)
         {
-            return SeedHandshakeResult.Reject;
+            return SeedHandshakeResultType.Reject;
         }
 
         var seed = BinaryPrimitives.ReadUInt32BigEndian(frame);
 
         if (seed == 0)
         {
-            return SeedHandshakeResult.Reject;
+            return SeedHandshakeResultType.Reject;
         }
 
         target.SetSeed(seed);
         target.SetState(SessionStateType.Login);
-        consumed = 4;
+        consumed = RawSeedLength;
 
-        return SeedHandshakeResult.Consumed;
+        return SeedHandshakeResultType.Consumed;
     }
 }

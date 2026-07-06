@@ -6,6 +6,7 @@ using Moongate.Server.Data;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces;
+using Moongate.Server.Types;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Network.Data.Events;
@@ -112,7 +113,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
 
         var handshake = SeedHandshake.Process(session, frame, out var consumed);
 
-        if (handshake == SeedHandshakeResult.Reject)
+        if (handshake == SeedHandshakeResultType.Reject)
         {
             _logger.Warning("Rejecting session {SessionId}: malformed seed handshake.", session.SessionId);
             _ = e.Client.CloseAsync();
@@ -120,7 +121,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
             return;
         }
 
-        if (handshake == SeedHandshakeResult.Consumed)
+        if (handshake == SeedHandshakeResultType.Consumed)
         {
             frame = frame[consumed..];
 

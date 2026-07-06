@@ -1,7 +1,7 @@
-namespace Moongate.Server.Services.Network;
+namespace Moongate.Server.Types;
 
 /// <summary>Outcome of the initial seed handshake for a frame.</summary>
-public enum SeedHandshakeResult : byte
+public enum SeedHandshakeResultType : byte
 {
     /// <summary>The frame (or its leading bytes) was the seed; continue with the remainder.</summary>
     Consumed = 0,

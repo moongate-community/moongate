@@ -21,7 +21,7 @@ public class SeedHandshakeTests
 
         var result = SeedHandshake.Process(target, [0xEF, 0, 0, 0, 0], out var consumed);
 
-        Assert.Equal(SeedHandshakeResult.PassThrough, result);
+        Assert.Equal(SeedHandshakeResultType.PassThrough, result);
         Assert.Equal(0, consumed);
         Assert.Equal(SessionStateType.Login, target.State);
     }
@@ -33,7 +33,7 @@ public class SeedHandshakeTests
 
         var result = SeedHandshake.Process(target, [0x00, 0x00, 0x00, 0x2A, 0x91], out var consumed);
 
-        Assert.Equal(SeedHandshakeResult.Consumed, result);
+        Assert.Equal(SeedHandshakeResultType.Consumed, result);
         Assert.Equal(4, consumed);
         Assert.Equal(42u, target.Seed);
         Assert.Equal(SessionStateType.Login, target.State);
@@ -46,7 +46,7 @@ public class SeedHandshakeTests
 
         var result = SeedHandshake.Process(target, [0x00, 0x00, 0x00, 0x00], out _);
 
-        Assert.Equal(SeedHandshakeResult.Reject, result);
+        Assert.Equal(SeedHandshakeResultType.Reject, result);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class SeedHandshakeTests
 
         var result = SeedHandshake.Process(target, [0x80, 1, 2], out var consumed);
 
-        Assert.Equal(SeedHandshakeResult.PassThrough, result);
+        Assert.Equal(SeedHandshakeResultType.PassThrough, result);
         Assert.Equal(0, consumed);
     }
 }
