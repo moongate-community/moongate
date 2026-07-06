@@ -1,12 +1,13 @@
 using System.Net;
 using System.Text;
 using Moongate.Network.Helpers;
+using Moongate.Network.Interfaces;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
 
 /// <summary>Server list (0xA8): advertises the available shards. Card 09 sends the single shard.</summary>
-public readonly record struct ServerListPacket(string ShardName, IPAddress Address)
+public readonly record struct ServerListPacket(string ShardName, IPAddress Address) : IOutgoingPacket
 {
     public const byte PacketId = 0xA8;
 
