@@ -28,4 +28,9 @@
         <PackageReference Include="SquidStd.Services.Core" Version="0.23.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\**\**" />
+      <EmbeddedResource Include="Assets\**\**" />
+    </ItemGroup>
+
 </Project>
