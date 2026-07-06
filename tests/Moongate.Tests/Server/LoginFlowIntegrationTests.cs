@@ -4,8 +4,11 @@ using System.Text;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
+using SquidStd.Core.Interfaces.Events;
+using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
 
@@ -20,7 +23,12 @@ public class LoginFlowIntegrationTests
         };
     }
 
-    private static async Task<NetworkService> StartServerAsync(MoongateConfig config)
+    private static Task<NetworkService> StartServerAsync(MoongateConfig config)
+    {
+        return StartServerAsync(config, new EventBusService());
+    }
+
+    private static async Task<NetworkService> StartServerAsync(MoongateConfig config, IEventBus eventBus)
     {
         var sessions = new SessionManager();
         var accounts = new StubAccountService();
@@ -33,7 +41,7 @@ public class LoginFlowIntegrationTests
             new SelectServerHandler(pending, config)
         };
 
-        var network = new NetworkService(sessions, config, handlers);
+        var network = new NetworkService(sessions, config, handlers, eventBus);
         await network.StartAsync(CancellationToken.None);
 
         return network;
@@ -119,6 +127,85 @@ public class LoginFlowIntegrationTests
             var denied = ReadResponse(socket, 0x82);
 
             Assert.Equal(0x82, denied[0]);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
+    {
+        var config = LoopbackConfig();
+        var eventBus = new EventBusService();
+
+        using var created = new ManualResetEventSlim();
+        using var destroyed = new ManualResetEventSlim();
+        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
+        {
+            created.Set();
+
+            return Task.CompletedTask;
+        });
+        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
+        {
+            destroyed.Set();
+
+            return Task.CompletedTask;
+        });
+
+        var network = await StartServerAsync(config, eventBus);
+
+        try
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            Assert.True(created.Wait(TimeSpan.FromSeconds(2)), "SessionCreatedEvent was not published.");
+
+            socket.Close();
+
+            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task Dispatch_HandledPacket_PublishesPacketDispatchedEvent()
+    {
+        var config = LoopbackConfig();
+        var eventBus = new EventBusService();
+
+        using var dispatched = new ManualResetEventSlim();
+        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
+        {
+            if (e.OpCode == 0x80)
+            {
+                dispatched.Set();
+            }
+
+            return Task.CompletedTask;
+        });
+
+        var network = await StartServerAsync(config, eventBus);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A;
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+
+            Assert.True(dispatched.Wait(TimeSpan.FromSeconds(2)), "PacketDispatchedEvent was not published for 0x80.");
         }
         finally
         {

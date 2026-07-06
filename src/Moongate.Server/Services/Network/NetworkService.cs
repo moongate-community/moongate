@@ -4,11 +4,13 @@ using Moongate.Network.Interfaces;
 using Moongate.Network.Protocol;
 using Moongate.Server.Data;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Types;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Network.Data.Events;
 using SquidStd.Network.Server;
 using SquidStd.Network.Spans;
@@ -26,6 +28,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
     private readonly ISessionManager _sessions;
     private readonly MoongateConfig _config;
     private readonly IEnumerable<IPacketHandlerRegistration> _handlerRegistrations;
+    private readonly IEventBus _eventBus;
     private readonly PacketDispatch?[] _handlers = new PacketDispatch?[256];
 
     private SquidTcpServer? _server;
@@ -35,12 +38,14 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
     public NetworkService(
         ISessionManager sessions,
         MoongateConfig config,
-        IEnumerable<IPacketHandlerRegistration> handlerRegistrations
+        IEnumerable<IPacketHandlerRegistration> handlerRegistrations,
+        IEventBus eventBus
     )
     {
         _sessions = sessions;
         _config = config;
         _handlerRegistrations = handlerRegistrations;
+        _eventBus = eventBus;
     }
 
     public void RegisterHandler<TPacket>(IPacketHandler<TPacket> handler) where TPacket : IIncomingPacket<TPacket>
@@ -55,12 +60,12 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         }
 
         _handlers[opCode] = (session, packet) =>
-        {
-            var reader = new SpanReader(packet);
-            var decoded = TPacket.Read(ref reader);
+                            {
+                                var reader = new SpanReader(packet);
+                                var decoded = TPacket.Read(ref reader);
 
-            handler.Handle(decoded, new PacketContext(session));
-        };
+                                handler.Handle(decoded, new PacketContext(session));
+                            };
     }
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
@@ -69,6 +74,11 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         {
             registration.Register(this);
         }
+
+        _logger.Information("Total packet table: {PacketCount}", PacketLengths.Count);
+        _logger.Information("Total packets info: {PacketCount}", PacketsInfo.Count);
+        _logger.Information("Registering {Count} packet handlers", _handlerRegistrations.Count());
+
 
         var endpoint = new IPEndPoint(IPAddress.Parse(_config.Network.Address), _config.Network.Port);
         _server = new SquidTcpServer(endpoint, new UoPacketFramer());
@@ -96,13 +106,19 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
 
     private void OnClientConnect(object? sender, SquidStdTcpClientEventArgs e)
     {
-        _sessions.GetOrCreate(e.Client);
+        var session = _sessions.GetOrCreate(e.Client);
         _logger.Information("Client connected: {SessionId}", e.Client.SessionId);
+        _eventBus.Publish(new SessionCreatedEvent(session));
     }
 
     private void OnClientDisconnect(object? sender, SquidStdTcpClientEventArgs e)
     {
-        _sessions.Remove(e.Client.SessionId);
+        if (_sessions.TryGet(e.Client.SessionId, out var session))
+        {
+            _sessions.Remove(e.Client.SessionId);
+            _eventBus.Publish(new SessionDestroyedEvent(session));
+        }
+
         _logger.Information("Client disconnected: {SessionId}", e.Client.SessionId);
     }
 
@@ -155,6 +171,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         try
         {
             handler(session, frame);
+            _eventBus.Publish(new PacketDispatchedEvent(session, opCode));
         }
         catch (Exception ex)
         {
