@@ -12,6 +12,9 @@ public static class PacketsInfo
 {
     private static readonly PacketInfo?[] _table = BuildTable();
 
+    /// <summary>The number of documented packets in the catalog.</summary>
+    public static int Count { get; } = _table.Count(static entry => entry is not null);
+
     public static PacketInfo? GetPacket(byte packetId)
     {
         return _table[packetId];

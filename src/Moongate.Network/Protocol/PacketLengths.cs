@@ -14,6 +14,9 @@ public static class PacketLengths
 
     private static readonly short[] _lengths = BuildTable();
 
+    /// <summary>The number of documented packet ids in the table.</summary>
+    public static int Count { get; } = _lengths.Count(static length => length != Unknown);
+
     public static short Get(byte packetId)
     {
         return _lengths[packetId];

@@ -87,6 +87,12 @@ public class PacketsInfoTests
     }
 
     [Fact]
+    public void Count_MatchesNumberOfDocumentedPackets()
+    {
+        Assert.Equal(198, PacketsInfo.Count);
+    }
+
+    [Fact]
     public void Catalog_EveryEntryHasNameAndDirection()
     {
         for (var id = 0; id < 256; id++)

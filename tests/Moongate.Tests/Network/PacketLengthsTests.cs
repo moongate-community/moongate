@@ -37,4 +37,10 @@ public class PacketLengthsTests
     {
         Assert.Equal(PacketLengths.Unknown, PacketLengths.Get(0xFF));
     }
+
+    [Fact]
+    public void Count_MatchesNumberOfDocumentedPackets()
+    {
+        Assert.Equal(198, PacketLengths.Count);
+    }
 }
