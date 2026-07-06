@@ -31,7 +31,7 @@ internal static class AnimationsUopLoader
         public long Position;
         public int CompressedSize;
         public int DecompressedSize;
-        public short CompressionFlag;
+        public short CompressionFlagType;
     }
 
     static AnimationsUopLoader()
@@ -251,7 +251,7 @@ internal static class AnimationsUopLoader
                     Position = offset + headerLength,
                     CompressedSize = dataSize,
                     DecompressedSize = decompressedLength,
-                    CompressionFlag = flag
+                    CompressionFlagType = flag
                 };
             }
 
@@ -340,7 +340,7 @@ internal static class AnimationsUopLoader
                         Position = offset + headerLength,
                         CompressedSize = dataSize,
                         DecompressedSize = decompressedLength,
-                        CompressionFlag = flag
+                        CompressionFlagType = flag
                     };
                 }
 
@@ -366,7 +366,7 @@ internal static class AnimationsUopLoader
                 var buffer = new byte[entry.CompressedSize];
                 _ = fileStream.Read(buffer, 0, buffer.Length);
 
-                if (entry.CompressionFlag >= 1)
+                if (entry.CompressionFlagType >= 1)
                 {
                     var (ok, dec) = UopUtils.Decompress(buffer);
 
@@ -572,7 +572,7 @@ internal static class AnimationsUopLoader
             _ = fileStream.Read(buffer, 0, buffer.Length);
         }
 
-        if (entry.CompressionFlag >= 1)
+        if (entry.CompressionFlagType >= 1)
         {
             var (ok, data) = UopUtils.Decompress(buffer);
 

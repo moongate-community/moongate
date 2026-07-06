@@ -14,14 +14,14 @@ public struct LandData
     public unsafe LandData(NewLandTileDataMul mulStruct)
     {
         TextureId = mulStruct.texID;
-        Flags = (TileFlag)mulStruct.flags;
+        Flags = (TileFlagType)mulStruct.flags;
         Name = TileDataHelpers.ReadNameString(mulStruct.name);
     }
 
     public unsafe LandData(OldLandTileDataMul mulStruct)
     {
         TextureId = mulStruct.texID;
-        Flags = (TileFlag)mulStruct.flags;
+        Flags = (TileFlagType)mulStruct.flags;
         Name = TileDataHelpers.ReadNameString(mulStruct.name);
     }
 
@@ -38,7 +38,7 @@ public struct LandData
     /// <summary>
     /// Gets a bitfield representing the 32 individual flags of this land tile.
     /// </summary>
-    public TileFlag Flags { get; set; }
+    public TileFlagType Flags { get; set; }
 
     public void ReadData(string[] split)
     {
@@ -51,224 +51,224 @@ public struct LandData
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Background;
+            Flags |= TileFlagType.Background;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Weapon;
+            Flags |= TileFlagType.Weapon;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Transparent;
+            Flags |= TileFlagType.Transparent;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Translucent;
+            Flags |= TileFlagType.Translucent;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Wall;
+            Flags |= TileFlagType.Wall;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Damaging;
+            Flags |= TileFlagType.Damaging;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Impassable;
+            Flags |= TileFlagType.Impassable;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Wet;
+            Flags |= TileFlagType.Wet;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unknown1;
+            Flags |= TileFlagType.Unknown1;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Surface;
+            Flags |= TileFlagType.Surface;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Bridge;
+            Flags |= TileFlagType.Bridge;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Generic;
+            Flags |= TileFlagType.Generic;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Window;
+            Flags |= TileFlagType.Window;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.NoShoot;
+            Flags |= TileFlagType.NoShoot;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.ArticleA;
+            Flags |= TileFlagType.ArticleA;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.ArticleAn;
+            Flags |= TileFlagType.ArticleAn;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.ArticleThe;
+            Flags |= TileFlagType.ArticleThe;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Foliage;
+            Flags |= TileFlagType.Foliage;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.PartialHue;
+            Flags |= TileFlagType.PartialHue;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.NoHouse;
+            Flags |= TileFlagType.NoHouse;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Map;
+            Flags |= TileFlagType.Map;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Container;
+            Flags |= TileFlagType.Container;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Wearable;
+            Flags |= TileFlagType.Wearable;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.LightSource;
+            Flags |= TileFlagType.LightSource;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Animation;
+            Flags |= TileFlagType.Animation;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.HoverOver;
+            Flags |= TileFlagType.HoverOver;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.NoDiagonal;
+            Flags |= TileFlagType.NoDiagonal;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Armor;
+            Flags |= TileFlagType.Armor;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Roof;
+            Flags |= TileFlagType.Roof;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Door;
+            Flags |= TileFlagType.Door;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.StairBack;
+            Flags |= TileFlagType.StairBack;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.StairRight;
+            Flags |= TileFlagType.StairRight;
         }
 
         // Read new flags if file format support them
@@ -288,217 +288,217 @@ public struct LandData
 
         if (temp != 0)
         {
-            Flags |= TileFlag.AlphaBlend;
+            Flags |= TileFlagType.AlphaBlend;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.UseNewArt;
+            Flags |= TileFlagType.UseNewArt;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.ArtUsed;
+            Flags |= TileFlagType.ArtUsed;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused8;
+            Flags |= TileFlagType.Unused8;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.NoShadow;
+            Flags |= TileFlagType.NoShadow;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.PixelBleed;
+            Flags |= TileFlagType.PixelBleed;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.PlayAnimOnce;
+            Flags |= TileFlagType.PlayAnimOnce;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.MultiMovable;
+            Flags |= TileFlagType.MultiMovable;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused10;
+            Flags |= TileFlagType.Unused10;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused11;
+            Flags |= TileFlagType.Unused11;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused12;
+            Flags |= TileFlagType.Unused12;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused13;
+            Flags |= TileFlagType.Unused13;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused14;
+            Flags |= TileFlagType.Unused14;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused15;
+            Flags |= TileFlagType.Unused15;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused16;
+            Flags |= TileFlagType.Unused16;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused17;
+            Flags |= TileFlagType.Unused17;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused18;
+            Flags |= TileFlagType.Unused18;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused19;
+            Flags |= TileFlagType.Unused19;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused20;
+            Flags |= TileFlagType.Unused20;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused21;
+            Flags |= TileFlagType.Unused21;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused22;
+            Flags |= TileFlagType.Unused22;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused23;
+            Flags |= TileFlagType.Unused23;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused24;
+            Flags |= TileFlagType.Unused24;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused25;
+            Flags |= TileFlagType.Unused25;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused26;
+            Flags |= TileFlagType.Unused26;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused27;
+            Flags |= TileFlagType.Unused27;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused28;
+            Flags |= TileFlagType.Unused28;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused29;
+            Flags |= TileFlagType.Unused29;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused30;
+            Flags |= TileFlagType.Unused30;
         }
 
         temp = Convert.ToByte(split[i++]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused31;
+            Flags |= TileFlagType.Unused31;
         }
 
         temp = Convert.ToByte(split[i]);
 
         if (temp != 0)
         {
-            Flags |= TileFlag.Unused32;
+            Flags |= TileFlagType.Unused32;
         }
     }
 }

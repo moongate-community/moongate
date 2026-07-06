@@ -1,6 +1,6 @@
 namespace Moongate.Ultima.Types;
 
-public enum CompressionFlag
+public enum CompressionFlagType
 {
     None = 0,
     Zlib = 1,

@@ -1,17 +1,10 @@
 using System.Text.RegularExpressions;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Localization;
 
 public sealed class StringEntry
 {
-    [Flags]
-    public enum CliLocFlag
-    {
-        Original = 0x0,
-        Custom = 0x1,
-        Modified = 0x2
-    }
-
     private string _text;
 
     public int Number { get; }
@@ -22,16 +15,16 @@ public sealed class StringEntry
         set => _text = value ?? string.Empty;
     }
 
-    public CliLocFlag Flag { get; set; }
+    public CliLocFlagType Flag { get; set; }
 
     public StringEntry(int number, string text, byte flag)
     {
         Number = number;
         _text = text;
-        Flag = (CliLocFlag)flag;
+        Flag = (CliLocFlagType)flag;
     }
 
-    public StringEntry(int number, string text, CliLocFlag flag)
+    public StringEntry(int number, string text, CliLocFlagType flag)
     {
         Number = number;
         _text = text;

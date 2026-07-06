@@ -3,7 +3,7 @@ namespace Moongate.Ultima.Types;
 /// <summary>
 /// Altitude shading preset configuration
 /// </summary>
-public enum AltitudeShadingPreset
+public enum AltitudeShadingPresetType
 {
     /// <summary>
     /// Dramatic, high-contrast shading with sharp edges

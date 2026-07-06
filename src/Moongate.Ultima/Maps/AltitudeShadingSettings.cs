@@ -28,22 +28,22 @@ public class AltitudeShadingSettings
     /// <summary>
     /// Gets preset configuration
     /// </summary>
-    public static AltitudeShadingSettings GetPreset(AltitudeShadingPreset preset)
+    public static AltitudeShadingSettings GetPreset(AltitudeShadingPresetType preset)
         => preset switch
         {
-            AltitudeShadingPreset.Sharp => new()
+            AltitudeShadingPresetType.Sharp => new()
             {
                 NormalZ = 2.0f,
                 BrightnessRange = 0.40f,
                 GradientSmoothing = 0.75f
             },
-            AltitudeShadingPreset.Normal => new()
+            AltitudeShadingPresetType.Normal => new()
             {
                 NormalZ = 4.0f,
                 BrightnessRange = 0.30f,
                 GradientSmoothing = 0.50f
             },
-            AltitudeShadingPreset.Soft => new()
+            AltitudeShadingPresetType.Soft => new()
             {
                 NormalZ = 8.0f,
                 BrightnessRange = 0.15f,

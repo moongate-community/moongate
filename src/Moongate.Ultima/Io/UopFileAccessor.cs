@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 using System.Text;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Types;
@@ -117,7 +118,7 @@ public class UopFileAccessor : IFileAccessor
                         Index[idx].Lookup = (int)(offset + 8);
                         Index[idx].Length = compressedLength - 8;
                         Index[idx].DecompressedLength = decompressedLength;
-                        Index[idx].Flag = (CompressionFlag)flag;
+                        Index[idx].Flag = (CompressionFlagType)flag;
                         Index[idx].Extra = (extra1 << 16) | extra2;
                         Index[idx].Extra1 = extra1;
                         Index[idx].Extra2 = extra2;
@@ -129,7 +130,7 @@ public class UopFileAccessor : IFileAccessor
                         Index[idx].Lookup = (int)offset;
                         Index[idx].Length = compressedLength;
                         Index[idx].DecompressedLength = decompressedLength;
-                        Index[idx].Flag = (CompressionFlag)flag;
+                        Index[idx].Flag = (CompressionFlagType)flag;
                         Index[idx].Extra = 0x0FFFFFFF; // we cant read it right now, but -1 and 0 makes this entry invalid
                     }
                 }

@@ -6,7 +6,7 @@ namespace Moongate.Ultima.Types;
 /// <seealso cref="LandData" />
 /// </summary>
 [Flags]
-public enum TileFlag : ulong
+public enum TileFlagType : ulong
 {
     /// <summary>
     /// Nothing is flagged.
@@ -74,7 +74,7 @@ public enum TileFlag : ulong
     Generic = 0x00000800,
 
     /// <summary>
-    /// The tile is a window. Like <see cref="TileFlag.NoShoot" />, tiles with this flag block line of sight.
+    /// The tile is a window. Like <see cref="TileFlagType.NoShoot" />, tiles with this flag block line of sight.
     /// </summary>
     Window = 0x00001000,
 

@@ -71,7 +71,7 @@ public static class TileData
                 tex.Write($";{tile.Unk2}");
                 tex.Write($";{tile.Unk3}");
 
-                var enumValues = Enum.GetValues<TileFlag>();
+                var enumValues = Enum.GetValues<TileFlagType>();
                 var maxLength = Art.IsUOAHS() ? enumValues.Length : enumValues.Length / 2 + 1;
 
                 for (var t = 1; t < maxLength; ++t)
@@ -103,7 +103,7 @@ public static class TileData
                 tex.Write($";{tile.Name}");
                 tex.Write($";0x{tile.TextureId:X4}");
 
-                var enumValues = Enum.GetValues<TileFlag>();
+                var enumValues = Enum.GetValues<TileFlagType>();
                 var maxLength = Art.IsUOAHS() ? enumValues.Length : enumValues.Length / 2 + 1;
 
                 for (var t = 1; t < maxLength; ++t)
@@ -392,7 +392,7 @@ public static class TileData
 
     private static string GetTileFlagColumnNames()
     {
-        var enumNames = Enum.GetNames<TileFlag>();
+        var enumNames = Enum.GetNames<TileFlagType>();
         var maxLength = Art.IsUOAHS() ? enumNames.Length : enumNames.Length / 2 + 1;
 
         // full column string length for latest client is around ~580 characters

@@ -15,10 +15,10 @@ public sealed class Map
     private static bool _useDiff;
 
     private static int _altitudeIntensity = 15;
-    private static AltitudeShadingPreset _shadingPreset = AltitudeShadingPreset.Normal;
+    private static AltitudeShadingPresetType _shadingPreset = AltitudeShadingPresetType.Normal;
 
     private static AltitudeShadingSettings _customShadingSettings =
-        AltitudeShadingSettings.GetPreset(AltitudeShadingPreset.Soft);
+        AltitudeShadingSettings.GetPreset(AltitudeShadingPresetType.Soft);
 
     /// <summary>
     /// Controls the intensity of altitude-based shading (1-20, lower = more contrast)
@@ -41,7 +41,7 @@ public sealed class Map
     /// <summary>
     /// Current altitude shading preset
     /// </summary>
-    public static AltitudeShadingPreset ShadingPreset
+    public static AltitudeShadingPresetType ShadingPreset
     {
         get => _shadingPreset;
         set
@@ -1499,7 +1499,7 @@ public sealed class Map
     /// <param name="statics">Include statics in rendering</param>
     /// <param name="altitudeMode">Altitude rendering mode</param>
     /// <returns>Rendered bitmap</returns>
-    public UltimaBitmap GetImageWithAltitude(int x, int y, int width, int height, bool statics, MapAltitudeMode altitudeMode)
+    public UltimaBitmap GetImageWithAltitude(int x, int y, int width, int height, bool statics, MapAltitudeModeType altitudeMode)
     {
         var bmp = new UltimaBitmap(width << 3, height << 3);
 
@@ -1525,7 +1525,7 @@ public sealed class Map
         int height,
         UltimaBitmap bmp,
         bool statics,
-        MapAltitudeMode altitudeMode
+        MapAltitudeModeType altitudeMode
     )
     {
         var stride = bmp.Stride;
@@ -1533,7 +1533,7 @@ public sealed class Map
 
         var pStart = (byte*)bmp.Scan0;
 
-        if (altitudeMode == MapAltitudeMode.Altitude)
+        if (altitudeMode == MapAltitudeModeType.Altitude)
         {
             // Grayscale altitude mode (formerly 8bpp indexed with a gray palette)
             for (int oy = 0,
@@ -1607,7 +1607,7 @@ public sealed class Map
         else
         {
             // 16-bit color modes (Normal and NormalWithAltitude)
-            var withAltitude = altitudeMode == MapAltitudeMode.NormalWithAltitude;
+            var withAltitude = altitudeMode == MapAltitudeModeType.NormalWithAltitude;
 
             for (int oy = 0,
                      by = y;
@@ -1801,7 +1801,7 @@ public sealed class Map
     private static ushort[] ProcessBlockWithAltitude(ushort[] colors, sbyte[] altitudes)
     {
         // Get current shading settings based on preset
-        var settings = ShadingPreset == AltitudeShadingPreset.Custom
+        var settings = ShadingPreset == AltitudeShadingPresetType.Custom
                            ? CustomShadingSettings
                            : AltitudeShadingSettings.GetPreset(ShadingPreset);
 

@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 using System.Buffers;
 using Moongate.Ultima.Caching;
 using Moongate.Ultima.Helpers;
@@ -310,7 +311,7 @@ public sealed class Gumps
             var height = (uint)entry.Extra2;
 
             // Compressed UOPs
-            if (entry.Flag >= CompressionFlag.Zlib)
+            if (entry.Flag >= CompressionFlagType.Zlib)
             {
                 var decSize = entry.DecompressedLength;
 
@@ -326,7 +327,7 @@ public sealed class Gumps
                     return null;
                 }
 
-                if (entry.Flag == CompressionFlag.Mythic)
+                if (entry.Flag == CompressionFlagType.Mythic)
                 {
                     var mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
 
@@ -456,7 +457,7 @@ public sealed class Gumps
         }
 
         // Compressed UOPs
-        if (entry.Flag >= CompressionFlag.Zlib)
+        if (entry.Flag >= CompressionFlagType.Zlib)
         {
             if (patched)
             {
@@ -487,7 +488,7 @@ public sealed class Gumps
                 byte[] payload;
                 int payloadLength;
 
-                if (entry.Flag == CompressionFlag.Mythic)
+                if (entry.Flag == CompressionFlagType.Mythic)
                 {
                     var mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
 
@@ -867,7 +868,7 @@ public sealed class Gumps
         }
 
         // For uncompressed entries the index already knows width/height.
-        if (entry.Flag < CompressionFlag.Zlib)
+        if (entry.Flag < CompressionFlagType.Zlib)
         {
             width = entry.Extra1;
             height = entry.Extra2;
@@ -951,7 +952,7 @@ public sealed class Gumps
             width = entry.Extra1;
             height = entry.Extra2;
 
-            if (entry.Flag >= CompressionFlag.Zlib)
+            if (entry.Flag >= CompressionFlagType.Zlib)
             {
                 var decSize = entry.DecompressedLength;
 
@@ -967,7 +968,7 @@ public sealed class Gumps
                     return false;
                 }
 
-                if (entry.Flag == CompressionFlag.Mythic)
+                if (entry.Flag == CompressionFlagType.Mythic)
                 {
                     var mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
 
@@ -1104,7 +1105,7 @@ public sealed class Gumps
             var width = (uint)entry.Extra1;
             var height = (uint)entry.Extra2;
 
-            if (entry.Flag >= CompressionFlag.Zlib)
+            if (entry.Flag >= CompressionFlagType.Zlib)
             {
                 var decSize = entry.DecompressedLength;
 
@@ -1120,7 +1121,7 @@ public sealed class Gumps
                     return;
                 }
 
-                if (entry.Flag == CompressionFlag.Mythic)
+                if (entry.Flag == CompressionFlagType.Mythic)
                 {
                     var mythicLen = MythicDecompress.PeekDecompressedLength(zlibBuf.AsSpan(0, zlibLen));
 

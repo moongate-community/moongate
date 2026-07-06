@@ -19,7 +19,7 @@ public class PaperdollComposerTests
     private static string CreateFixtureDirectory()
     {
         var tileData = UltimaFixtures.BuildTileData();
-        UltimaFixtures.SetItem(tileData, TunicItemId, (uint)TileFlag.Wearable, 0, "tunic", TunicAnim);
+        UltimaFixtures.SetItem(tileData, TunicItemId, (uint)TileFlagType.Wearable, 0, "tunic", TunicAnim);
 
         var (gumpIndex, gumps) = UltimaFixtures.BuildGumps(
             (0x07D0, 260, 237, 0x0100),           // male background, dark green

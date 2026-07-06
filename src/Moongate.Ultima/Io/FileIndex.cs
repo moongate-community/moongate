@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 namespace Moongate.Ultima.Io;
 
 public sealed class FileIndex : IDisposable

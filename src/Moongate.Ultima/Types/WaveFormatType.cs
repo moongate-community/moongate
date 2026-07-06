@@ -1,6 +1,6 @@
 namespace Moongate.Ultima.Types;
 
-public enum WaveFormat
+public enum WaveFormatType
 {
     PCM = 0x0001,
     MS_ADPCM = 0x0002,

@@ -3,7 +3,7 @@ namespace Moongate.Ultima.Types;
 /// <summary>
 /// Altitude rendering mode for map preview generation
 /// </summary>
-public enum MapAltitudeMode
+public enum MapAltitudeModeType
 {
     /// <summary>
     /// Normal flat rendering without altitude effects

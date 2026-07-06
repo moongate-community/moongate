@@ -441,9 +441,9 @@ public static class Sounds
                                     output.WriteString(currentHeader);
                                     output.Write(currentLength);
 
-                                    var waveFormat = (WaveFormat)input.ReadInt16();
+                                    var waveFormat = (WaveFormatType)input.ReadInt16();
 
-                                    if (waveFormat != WaveFormat.PCM)
+                                    if (waveFormat != WaveFormatType.PCM)
                                     {
                                         throw new WaveFormatException(
                                             "Format not supported: PCM expected but " + waveFormat + " given!"

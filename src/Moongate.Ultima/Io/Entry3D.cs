@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 using System.Runtime.InteropServices;
 using Moongate.Ultima.Types;
 
@@ -32,9 +33,9 @@ public struct Entry3D : IEntry
         set => Extra = (int)((Extra & 0xFFFF0000) | (uint)value);
     }
 
-    public CompressionFlag Flag
+    public CompressionFlagType Flag
     {
-        get => CompressionFlag.None;
+        get => CompressionFlagType.None;
         set { }
     } // No compression, means that we have only three first fields
 }

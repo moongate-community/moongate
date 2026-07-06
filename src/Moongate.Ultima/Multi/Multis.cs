@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Io;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Ultima.Multi;
 
@@ -15,19 +16,6 @@ public sealed class Multis
 
     private static MultiComponentList[] _uopComponents = new MultiComponentList[MaximumMultiIndex];
     private static bool _uopLoaded;
-
-    public enum ImportType
-    {
-        TXT,
-        UOA,
-        UOAB,
-        WSC,
-        CSV, // Punt's multi tool csv format
-        UOX3,
-        MULTICACHE,
-        UOADESIGN,
-        XML
-    }
 
     public static bool HasUopFile => !string.IsNullOrEmpty(Files.GetFilePath("multicollection.uop"));
 

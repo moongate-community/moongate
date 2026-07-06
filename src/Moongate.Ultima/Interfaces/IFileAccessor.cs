@@ -1,4 +1,5 @@
-namespace Moongate.Ultima.Io;
+using Moongate.Ultima.Io;
+namespace Moongate.Ultima.Interfaces;
 
 public interface IFileAccessor
 {

@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 using System.Runtime.InteropServices;
 
 namespace Moongate.Ultima.Io;

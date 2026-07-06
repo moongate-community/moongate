@@ -18,6 +18,8 @@ using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
 using SixLabors.ImageSharp;
 
+using Moongate.Ultima.Types;
+
 namespace Moongate.Ultima.Multi;
 
 public sealed class MultiComponentList
@@ -96,7 +98,7 @@ public sealed class MultiComponentList
         ConvertList();
     }
 
-    public MultiComponentList(string fileName, Multis.ImportType type)
+    public MultiComponentList(string fileName, ImportType type)
     {
         _min = _max = Point.Empty;
 
@@ -104,7 +106,7 @@ public sealed class MultiComponentList
 
         switch (type)
         {
-            case Multis.ImportType.TXT:
+            case ImportType.TXT:
                 {
                     itemCount = 0;
 
@@ -169,7 +171,7 @@ public sealed class MultiComponentList
 
                     break;
                 }
-            case Multis.ImportType.UOA:
+            case ImportType.UOA:
                 {
                     itemCount = 0;
 
@@ -250,7 +252,7 @@ public sealed class MultiComponentList
 
                     break;
                 }
-            case Multis.ImportType.UOAB:
+            case ImportType.UOAB:
                 {
                     using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
                     {
@@ -320,7 +322,7 @@ public sealed class MultiComponentList
 
                     break;
                 }
-            case Multis.ImportType.WSC:
+            case ImportType.WSC:
                 {
                     itemCount = 0;
 
@@ -454,7 +456,7 @@ public sealed class MultiComponentList
 
                     break;
                 }
-            case Multis.ImportType.CSV:
+            case ImportType.CSV:
                 {
                     const string headerCheck = "TileID,OffsetX";
 

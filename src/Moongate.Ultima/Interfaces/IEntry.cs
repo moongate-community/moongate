@@ -1,6 +1,6 @@
 using Moongate.Ultima.Types;
 
-namespace Moongate.Ultima.Io;
+namespace Moongate.Ultima.Interfaces;
 
 // Dumb access to all possible fields of entries
 public interface IEntry
@@ -11,5 +11,5 @@ public interface IEntry
     int DecompressedLength { get; set; }
     int Extra1 { get; set; }
     int Extra2 { get; set; }
-    CompressionFlag Flag { get; set; }
+    CompressionFlagType Flag { get; set; }
 }

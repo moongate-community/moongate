@@ -17,7 +17,7 @@ public class ItemCatalogTests
     private static string CreateFixtureDirectory()
     {
         var tileData = UltimaFixtures.BuildTileData();
-        UltimaFixtures.SetItem(tileData, ItemId, (uint)(TileFlag.Wearable | TileFlag.PartialHue), 4, "test tunic");
+        UltimaFixtures.SetItem(tileData, ItemId, (uint)(TileFlagType.Wearable | TileFlagType.PartialHue), 4, "test tunic");
 
         var (artIndex, art) = UltimaFixtures.BuildStaticArt(ItemId, 2, 2, 0xFFFF); // white -> gray, huable
         var hues = UltimaFixtures.BuildHues("Red", 0x7C00, 0, 0);
@@ -54,7 +54,7 @@ public class ItemCatalogTests
             Assert.Equal((uint)ItemId, info.ItemId);
             Assert.Equal("test tunic", info.Name);
             Assert.Equal(4, info.Height);
-            Assert.True((info.Flags & TileFlag.Wearable) != 0);
+            Assert.True((info.Flags & TileFlagType.Wearable) != 0);
             Assert.True(info.HasArt);
             Assert.Equal(2, info.ArtWidth);
             Assert.Equal(2, info.ArtHeight);

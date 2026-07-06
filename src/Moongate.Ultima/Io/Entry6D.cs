@@ -1,3 +1,4 @@
+using Moongate.Ultima.Interfaces;
 using System.Runtime.InteropServices;
 using Moongate.Ultima.Types;
 
@@ -12,16 +13,16 @@ public struct Entry6D : IEntry
 
     public int Length { get; set; }
 
-    private int extra1;
-    private int extra2;
+    private int _extra1;
+    private int _extra2;
 
     public int Extra
     {
-        get => (extra1 << 16) | extra2;
+        get => (_extra1 << 16) | _extra2;
         set
         {
-            extra1 = value & 0x0000FFFF;
-            extra2 = (int)((value & 0xFFFF0000) >> 16);
+            _extra1 = value & 0x0000FFFF;
+            _extra2 = (int)((value & 0xFFFF0000) >> 16);
         }
     }
 
@@ -31,5 +32,5 @@ public struct Entry6D : IEntry
 
     public int Extra2 { get; set; }
 
-    public CompressionFlag Flag { get; set; }
+    public CompressionFlagType Flag { get; set; }
 }

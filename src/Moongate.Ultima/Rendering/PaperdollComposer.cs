@@ -107,7 +107,7 @@ public sealed class PaperdollComposer : IPaperdollComposer
 
             if (entry.Hue > 0)
             {
-                var partialHue = entry.PartialHueOverride ?? (data.Flags & TileFlag.PartialHue) != 0;
+                var partialHue = entry.PartialHueOverride ?? (data.Flags & TileFlagType.PartialHue) != 0;
                 var clone = bitmap.Clone();
                 owned.Add(clone);
                 Hues.GetHue(entry.Hue - 1).ApplyTo(clone, partialHue);

@@ -11,7 +11,7 @@ public sealed record UoItemInfo
 
     public string Name { get; init; } = string.Empty;
 
-    public TileFlag Flags { get; init; }
+    public TileFlagType Flags { get; init; }
 
     public byte Weight { get; init; }
 

@@ -72,7 +72,7 @@ public sealed class ItemCatalog : IItemCatalog
 
                 if (table is not null && itemId < table.Length)
                 {
-                    partialHue = (table[itemId].Flags & TileFlag.PartialHue) != 0;
+                    partialHue = (table[itemId].Flags & TileFlagType.PartialHue) != 0;
                 }
 
                 Hues.GetHue(hue - 1).ApplyTo(owned, partialHue);
