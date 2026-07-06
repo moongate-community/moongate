@@ -371,6 +371,27 @@ public static class UltimaFixtures
         return data.ToArray();
     }
 
+    /// <summary>
+    /// Builds lightidx.mul + light.mul with a single light at <paramref name="index" />:
+    /// <c>width*height</c> intensity bytes, with size packed into the idx entry's extra field
+    /// (<c>(height &lt;&lt; 16) | width</c>).
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildLight(int index, int width, int height, byte fill)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[width * height];
+        mul.AsSpan().Fill(fill);
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);           // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length); // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), (height << 16) | width); // extra
+
+        return (idx, mul);
+    }
+
     public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
     {
         var dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
