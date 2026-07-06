@@ -7,6 +7,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces;
 using Serilog;
+using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Network.Data.Events;
 using SquidStd.Network.Server;
 using SquidStd.Network.Spans;
@@ -14,25 +15,31 @@ using SquidStd.Network.Spans;
 namespace Moongate.Server.Services.Network;
 
 /// <summary>
-/// Runs the framed TCP listener, resolves sessions, applies the seed handshake, and
-/// dispatches each frame to the registered session-aware handler.
+/// Runs the framed TCP listener as a SquidStd lifecycle service: it starts itself, resolves
+/// sessions, applies the seed handshake, and dispatches each frame to the registered
+/// session-aware handler.
 /// </summary>
-public sealed class NetworkService : INetworkService, IAsyncDisposable
+public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDisposable
 {
-    private static readonly ILogger _logger = Log.ForContext<NetworkService>();
-
+    private readonly ILogger _logger = Log.ForContext<NetworkService>();
     private readonly ISessionManager _sessions;
     private readonly MoongateConfig _config;
+    private readonly IEnumerable<IPacketHandlerRegistration> _handlerRegistrations;
     private readonly PacketDispatch?[] _handlers = new PacketDispatch?[256];
 
     private SquidTcpServer? _server;
 
     public int Port => _server?.Port ?? 0;
 
-    public NetworkService(ISessionManager sessions, MoongateConfig config)
+    public NetworkService(
+        ISessionManager sessions,
+        MoongateConfig config,
+        IEnumerable<IPacketHandlerRegistration> handlerRegistrations
+    )
     {
         _sessions = sessions;
         _config = config;
+        _handlerRegistrations = handlerRegistrations;
     }
 
     public void RegisterHandler<TPacket>(IPacketHandler<TPacket> handler) where TPacket : IIncomingPacket<TPacket>
@@ -55,8 +62,13 @@ public sealed class NetworkService : INetworkService, IAsyncDisposable
         };
     }
 
-    public async Task StartAsync()
+    public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
+        foreach (var registration in _handlerRegistrations)
+        {
+            registration.Register(this);
+        }
+
         var endpoint = new IPEndPoint(IPAddress.Parse(_config.Network.Address), _config.Network.Port);
         _server = new SquidTcpServer(endpoint, new UoPacketFramer());
 
@@ -65,18 +77,18 @@ public sealed class NetworkService : INetworkService, IAsyncDisposable
         _server.OnDataReceived += OnDataReceived;
         _server.OnException += OnException;
 
-        await _server.StartAsync(CancellationToken.None);
+        await _server.StartAsync(cancellationToken);
         _logger.Information("Network service listening on {Address}:{Port}", _config.Network.Address, Port);
     }
 
-    public async Task StopAsync()
+    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
         if (_server is null)
         {
             return;
         }
 
-        await _server.StopAsync(CancellationToken.None);
+        await _server.StopAsync(cancellationToken);
         await _server.DisposeAsync();
         _server = null;
     }

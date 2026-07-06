@@ -8,7 +8,7 @@ using Moongate.Server.Interfaces;
 namespace Moongate.Server.Handlers;
 
 /// <summary>Handles select server (0xA0): mints an auth key and redirects to the game port.</summary>
-public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>
+public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>, IPacketHandlerRegistration
 {
     private readonly IPendingLoginStore _pendingLogins;
     private readonly MoongateConfig _config;
@@ -30,5 +30,10 @@ public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>
                 authKey
             )
         );
+    }
+
+    public void Register(INetworkService network)
+    {
+        network.RegisterHandler(this);
     }
 }

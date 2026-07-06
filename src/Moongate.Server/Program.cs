@@ -6,10 +6,13 @@ using Moongate.Server.Interfaces;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
 using SquidStd.Abstractions.Extensions.Config;
+using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Extensions.Env;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
+
+const int loginHandoffTtlMs = 30_000;
 
 await ConsoleApp.RunAsync(
     args,
@@ -47,29 +50,15 @@ await ConsoleApp.RunAsync(
                 container.RegisterConfigSection<MoongateConfig>("moongate");
                 container.Register<IAccountService, StubAccountService>(Reuse.Singleton);
                 container.RegisterInstance<IPendingLoginStore>(
-                    new PendingLoginStore(30000, () => Environment.TickCount64)
+                    new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
                 );
                 container.Register<ISessionManager, SessionManager>(Reuse.Singleton);
-                container.Register<INetworkService, NetworkService>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, LoginSeedHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, AccountLoginHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
+                container.RegisterStdService<INetworkService, NetworkService>();
 
                 return container;
-            }
-        );
-
-        stdBootstrap.OnConfigReady(
-            _ =>
-            {
-                var container = stdBootstrap.Container;
-                var network = container.Resolve<INetworkService>();
-                var accounts = container.Resolve<IAccountService>();
-                var pendingLogins = container.Resolve<IPendingLoginStore>();
-                var config = container.Resolve<MoongateConfig>();
-
-                network.RegisterHandler(new LoginSeedHandler());
-                network.RegisterHandler(new AccountLoginHandler(accounts, config));
-                network.RegisterHandler(new SelectServerHandler(pendingLogins, config));
-
-                network.StartAsync().GetAwaiter().GetResult();
             }
         );
 

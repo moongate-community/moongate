@@ -8,7 +8,7 @@ using Moongate.Server.Interfaces;
 namespace Moongate.Server.Handlers;
 
 /// <summary>Handles account login (0x80): authenticates and returns the server list or a denial.</summary>
-public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPacket>
+public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPacket>, IPacketHandlerRegistration
 {
     private readonly IAccountService _accounts;
     private readonly MoongateConfig _config;
@@ -34,5 +34,10 @@ public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPack
         _ = context.Session.SendAsync(
             new ServerListPacket(_config.ShardName, IPAddress.Parse(_config.Network.PublicAddress))
         );
+    }
+
+    public void Register(INetworkService network)
+    {
+        network.RegisterHandler(this);
     }
 }

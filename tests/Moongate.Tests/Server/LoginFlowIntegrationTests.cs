@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Handlers;
+using Moongate.Server.Interfaces;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
 
@@ -22,15 +23,18 @@ public class LoginFlowIntegrationTests
     private static async Task<NetworkService> StartServerAsync(MoongateConfig config)
     {
         var sessions = new SessionManager();
-        var network = new NetworkService(sessions, config);
         var accounts = new StubAccountService();
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
-        network.RegisterHandler(new LoginSeedHandler());
-        network.RegisterHandler(new AccountLoginHandler(accounts, config));
-        network.RegisterHandler(new SelectServerHandler(pending, config));
+        var handlers = new IPacketHandlerRegistration[]
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config)
+        };
 
-        await network.StartAsync();
+        var network = new NetworkService(sessions, config, handlers);
+        await network.StartAsync(CancellationToken.None);
 
         return network;
     }
@@ -91,7 +95,7 @@ public class LoginFlowIntegrationTests
         }
         finally
         {
-            await network.StopAsync();
+            await network.StopAsync(CancellationToken.None);
         }
     }
 
@@ -118,7 +122,7 @@ public class LoginFlowIntegrationTests
         }
         finally
         {
-            await network.StopAsync();
+            await network.StopAsync(CancellationToken.None);
         }
     }
 }
