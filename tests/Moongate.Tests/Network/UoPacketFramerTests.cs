@@ -65,7 +65,7 @@ public class UoPacketFramerTests
     [Fact]
     public void TryReadFrame_UnknownPacketId_Throws()
     {
-        Assert.Throws<UoFramingException>(() => _framer.TryReadFrame([0xE0, 0x00, 0x00], out _));
+        Assert.Throws<UoFramingException>(() => _framer.TryReadFrame([0xFF, 0x00, 0x00], out _));
     }
 
     [Theory]

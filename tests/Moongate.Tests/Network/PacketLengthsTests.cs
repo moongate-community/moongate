@@ -35,6 +35,6 @@ public class PacketLengthsTests
     [Fact]
     public void Get_UndefinedPacket_ReturnsUnknown()
     {
-        Assert.Equal(PacketLengths.Unknown, PacketLengths.Get(0xE0));
+        Assert.Equal(PacketLengths.Unknown, PacketLengths.Get(0xFF));
     }
 }
