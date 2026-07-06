@@ -175,6 +175,87 @@ public static class UltimaFixtures
     /// Creates a temporary directory holding the given synthetic client files and
     /// returns its path. Caller deletes it when done.
     /// </summary>
+    /// <summary>
+    /// Builds an uncompressed cliloc file: a 6-byte header followed by
+    /// <c>[int32 number][byte flag][ushort length][UTF-8 text]</c> per entry.
+    /// </summary>
+    public static byte[] BuildCliloc(params (int Number, byte Flag, string Text)[] entries)
+    {
+        using var stream = new MemoryStream();
+        using var bin = new BinaryWriter(stream);
+
+        bin.Write(0);        // header1
+        bin.Write((short)0); // header2
+
+        foreach (var (number, flag, text) in entries)
+        {
+            var utf8 = Encoding.UTF8.GetBytes(text);
+
+            bin.Write(number);
+            bin.Write(flag);
+            bin.Write((ushort)utf8.Length);
+            bin.Write(utf8);
+        }
+
+        bin.Flush();
+
+        return stream.ToArray();
+    }
+
+    /// <summary>
+    /// Builds skills.idx (<c>[int32 lookup][int32 length][int32 extra]</c> per entry) and skills.mul
+    /// (<c>[bool isAction][ASCII name][0]</c> per entry) for the given skills.
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildSkills(params (string Name, bool IsAction, int Extra)[] skills)
+    {
+        using var idxStream = new MemoryStream();
+        using var mulStream = new MemoryStream();
+        using var idx = new BinaryWriter(idxStream);
+        using var mul = new BinaryWriter(mulStream);
+
+        foreach (var (name, isAction, extra) in skills)
+        {
+            var lookup = (int)mulStream.Position;
+
+            mul.Write(isAction);
+            mul.Write(Encoding.ASCII.GetBytes(name));
+            mul.Write((byte)0);
+
+            var length = (int)mulStream.Position - lookup;
+
+            idx.Write(lookup);
+            idx.Write(length);
+            idx.Write(extra);
+        }
+
+        idx.Flush();
+        mul.Flush();
+
+        return (idxStream.ToArray(), mulStream.ToArray());
+    }
+
+    /// <summary>
+    /// Builds speech.mul: <c>[int16 BE id][int16 BE length][UTF-8 keyword]</c> per entry.
+    /// </summary>
+    public static byte[] BuildSpeech(params (short Id, string KeyWord)[] entries)
+    {
+        using var stream = new MemoryStream();
+        using var bin = new BinaryWriter(stream);
+
+        foreach (var (id, keyword) in entries)
+        {
+            var utf8 = Encoding.UTF8.GetBytes(keyword);
+
+            bin.Write(BinaryPrimitives.ReverseEndianness(id));
+            bin.Write(BinaryPrimitives.ReverseEndianness((short)utf8.Length));
+            bin.Write(utf8);
+        }
+
+        bin.Flush();
+
+        return stream.ToArray();
+    }
+
     public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
     {
         var dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
