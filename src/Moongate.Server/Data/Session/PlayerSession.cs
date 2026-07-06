@@ -1,5 +1,6 @@
 using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Types;
 using SquidStd.Network.Client;
 using SquidStd.Network.Spans;
@@ -7,7 +8,7 @@ using SquidStd.Network.Spans;
 namespace Moongate.Server.Data.Session;
 
 /// <summary>Server-side state for one connected client: protocol phase, seed, account, compression.</summary>
-public sealed class PlayerSession
+public sealed class PlayerSession : ISeedTarget
 {
     private readonly SquidStdTcpClient _client;
     private readonly object _stateSync = new();

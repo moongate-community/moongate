@@ -1,11 +1,13 @@
+using Moongate.Network.Interfaces;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
 
 /// <summary>Account login request (0x80): credentials for the login server.</summary>
 public readonly record struct AccountLoginRequestPacket(string Account, string Password, byte NextLoginKey)
+    : IIncomingPacket<AccountLoginRequestPacket>
 {
-    public const byte PacketId = 0x80;
+    public static byte PacketId => 0x80;
 
     public static AccountLoginRequestPacket Read(ref SpanReader reader)
     {
