@@ -1,10 +1,12 @@
 using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
+using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Extensions.Env;
@@ -59,6 +61,20 @@ await ConsoleApp.RunAsync(
                 container.RegisterStdService<INetworkService, NetworkService>();
 
                 return container;
+            }
+        );
+
+        stdBootstrap.OnConfigLoaded<MoongateConfig>(
+            config =>
+            {
+                if (string.IsNullOrEmpty(config.UltimaDirectory))
+                {
+                    Log.Logger.Warning("UltimaDirectory is not set in the config; clients will not be able to connect.");
+
+                    throw new UODirectoryNotValidException(
+                        "UltimaDirectory is not set in the config; clients will not be able to connect."
+                    );
+                }
             }
         );
 
