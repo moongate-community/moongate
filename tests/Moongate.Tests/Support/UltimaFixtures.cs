@@ -256,6 +256,121 @@ public static class UltimaFixtures
         return stream.ToArray();
     }
 
+    /// <summary>Builds radarcol.mul: a flat little-endian array of 16-bit colors.</summary>
+    public static byte[] BuildRadarCol(ushort[] colors)
+    {
+        var buffer = new byte[colors.Length * 2];
+
+        for (var i = 0; i < colors.Length; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(i * 2), colors[i]);
+        }
+
+        return buffer;
+    }
+
+    /// <summary>
+    /// Builds soundidx.mul (<c>[int32 lookup][int32 length][int32 extra]</c> per entry, gaps = -1)
+    /// and sound.mul (<c>[32-byte ASCII name][PCM audio]</c> per entry) for the given sounds.
+    /// </summary>
+    public static (byte[] Index, byte[] Sounds) BuildSounds(params (int Id, string Name, byte[] Audio)[] sounds)
+    {
+        var maxId = sounds.Max(s => s.Id);
+        var index = new byte[(maxId + 1) * 12];
+        index.AsSpan().Fill(0xFF); // every missing entry has lookup/length = -1
+
+        var data = new List<byte>();
+
+        foreach (var (id, name, audio) in sounds)
+        {
+            var lookup = data.Count;
+            var nameBuffer = new byte[32];
+            var nameBytes = Encoding.ASCII.GetBytes(name);
+            Array.Copy(nameBytes, nameBuffer, Math.Min(nameBytes.Length, 32));
+
+            data.AddRange(nameBuffer);
+            data.AddRange(audio);
+
+            var record = id * 12;
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), lookup);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), 32 + audio.Length);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+        }
+
+        return (index, data.ToArray());
+    }
+
+    /// <summary>
+    /// Builds Multi.idx + Multi.mul (old 12-byte format: <c>[uint16 itemId][int16 x][int16 y][int16 z][int32 flags]</c>
+    /// per tile) with a single multi at <paramref name="index" />.
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildMulti(int index, params (ushort ItemId, short X, short Y, short Z)[] tiles)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[tiles.Length * 12];
+
+        for (var i = 0; i < tiles.Length; i++)
+        {
+            var (itemId, x, y, z) = tiles[i];
+            var offset = i * 12;
+
+            BinaryPrimitives.WriteUInt16LittleEndian(mul.AsSpan(offset), itemId);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 2), x);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 4), y);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 6), z);
+            BinaryPrimitives.WriteInt32LittleEndian(mul.AsSpan(offset + 8), 0); // flags
+        }
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);          // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length); // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), 0);      // extra
+
+        return (idx, mul);
+    }
+
+    /// <summary>
+    /// Builds fonts.mul: 10 fonts of 224 characters each. Every character is empty (0x0) except
+    /// <paramref name="character" /> in font <paramref name="fontIndex" />, which gets a solid
+    /// <paramref name="width" />x<paramref name="height" /> bitmap filled with <paramref name="pixel" />.
+    /// </summary>
+    public static byte[] BuildAsciiFonts(int fontIndex, char character, int width, int height, ushort pixel)
+    {
+        var data = new List<byte>();
+        var targetChar = character - 0x20;
+
+        for (var i = 0; i < 10; i++)
+        {
+            data.Add(0); // font header
+
+            for (var k = 0; k < 224; k++)
+            {
+                if (i == fontIndex && k == targetChar)
+                {
+                    data.Add((byte)width);
+                    data.Add((byte)height);
+                    data.Add(0); // unk
+
+                    for (var p = 0; p < width * height; p++)
+                    {
+                        data.Add((byte)(pixel & 0xFF));
+                        data.Add((byte)(pixel >> 8));
+                    }
+                }
+                else
+                {
+                    data.Add(0); // width
+                    data.Add(0); // height
+                    data.Add(0); // unk
+                }
+            }
+        }
+
+        return data.ToArray();
+    }
+
     public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
     {
         var dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
