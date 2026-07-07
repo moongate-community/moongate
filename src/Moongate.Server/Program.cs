@@ -1,15 +1,14 @@
 using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Core.Interfaces;
 using Moongate.Persistence;
 using Moongate.Scripting;
-using Moongate.Scripting.Modules;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
-using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
@@ -21,12 +20,9 @@ using SquidStd.Core.Directories;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Extensions;
-using SquidStd.Scripting.Lua.Data.Config;
-using SquidStd.Scripting.Lua.Extensions.Scripts;
 using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
 
-const string appVersion = "0.0.1";
 const int loginHandoffTtlMs = 30_000;
 
 await ConsoleApp.RunAsync(
@@ -66,7 +62,7 @@ await ConsoleApp.RunAsync(
             new()
             {
                 AppName = "Moongate",
-                AppVersion = appVersion,
+                AppVersion = VersionUtils.GetVersion(typeof(Program).Assembly),
                 ConfigName = "moongate",
                 RootDirectory = rootDirectory
             }
@@ -104,6 +100,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
+
                 // Priority 100 so it starts after the event bus and the Lua forwarder are up,
                 // ensuring subscribers actually receive the FilesLoadedEvent.
                 container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
@@ -113,6 +110,7 @@ await ConsoleApp.RunAsync(
                     new TimerWheelConfig()
                         { }
                 );
+                container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
                 container.RegisterEventLoop(
                     new EventLoopConfig()
                     {

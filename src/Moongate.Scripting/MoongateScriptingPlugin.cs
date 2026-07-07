@@ -29,6 +29,7 @@ public class MoongateScriptingPlugin : ISquidStdPlugin
         container.RegisterLuaEvents();
 
         container.RegisterScriptModule<LoggerModule>();
+        container.RegisterScriptModule<GameLoopModule>();
     }
 
     public PluginMetadata Metadata
