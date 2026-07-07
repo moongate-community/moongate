@@ -93,41 +93,37 @@ public sealed class Skills
         var idx = Path.Combine(path, "skills.idx");
         var mul = Path.Combine(path, "skills.mul");
 
-        using (var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write))
+        using var fsidx = new FileStream(idx, FileMode.Create, FileAccess.Write, FileShare.Write);
+
+        using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
+
+        using var binidx = new BinaryWriter(fsidx);
+
+        using var binmul = new BinaryWriter(fsmul);
+
+        for (var i = 0; i < _fileIndex.IndexLength; ++i)
         {
-            using (var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write))
+            var skill = i < _skillEntries.Count ? _skillEntries[i] : null;
+
+            if (skill == null)
             {
-                using (var binidx = new BinaryWriter(fsidx))
-                {
-                    using (var binmul = new BinaryWriter(fsmul))
-                    {
-                        for (var i = 0; i < _fileIndex.IndexLength; ++i)
-                        {
-                            var skill = i < _skillEntries.Count ? _skillEntries[i] : null;
+                binidx.Write(-1); // lookup
+                binidx.Write(0);  // length
+                binidx.Write(0);  // extra
+            }
+            else
+            {
+                binidx.Write((int)fsmul.Position); // lookup
+                var length = (int)fsmul.Position;
+                binmul.Write(skill.IsAction);
 
-                            if (skill == null)
-                            {
-                                binidx.Write(-1); // lookup
-                                binidx.Write(0);  // length
-                                binidx.Write(0);  // extra
-                            }
-                            else
-                            {
-                                binidx.Write((int)fsmul.Position); // lookup
-                                var length = (int)fsmul.Position;
-                                binmul.Write(skill.IsAction);
+                var nameBytes = Encoding.ASCII.GetBytes(skill.Name);
+                binmul.Write(nameBytes);
+                binmul.Write((byte)0); // null terminated
 
-                                var nameBytes = Encoding.ASCII.GetBytes(skill.Name);
-                                binmul.Write(nameBytes);
-                                binmul.Write((byte)0); // null terminated
-
-                                length = (int)fsmul.Position - length;
-                                binidx.Write(length);
-                                binidx.Write(skill.Extra);
-                            }
-                        }
-                    }
-                }
+                length = (int)fsmul.Position - length;
+                binidx.Write(length);
+                binidx.Write(skill.Extra);
             }
         }
     }

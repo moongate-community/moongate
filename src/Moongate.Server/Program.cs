@@ -1,5 +1,7 @@
 using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Persistence;
+using Moongate.Scripting;
 using Moongate.Scripting.Modules;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
@@ -13,6 +15,7 @@ using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Data.EventLoop;
+using SquidStd.Core.Data.Jobs;
 using SquidStd.Core.Data.Timing;
 using SquidStd.Core.Directories;
 using SquidStd.Core.Extensions.Directories;
@@ -69,10 +72,16 @@ await ConsoleApp.RunAsync(
             }
         );
 
+        // Serilog first (idempotent): plugin-load logs and any pre-start logging become visible.
+        // Safe with config-first: sections bind eagerly at registration, even after this call.
+        stdBootstrap.ConfigureLogging();
+
         stdBootstrap.UsePlugins(
             builder =>
             {
                 builder.FromDirectory("plugins");
+                builder.Add<MoongatePersistencePlugin>();
+                builder.Add<MoongateScriptingPlugin>();
             }
         );
 
@@ -93,7 +102,6 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, LoginSeedHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, AccountLoginHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
-                container.RegisterStdService<INetworkService, NetworkService>();
 
                 // Priority 100 so it starts after the event bus and the Lua forwarder are up,
                 // ensuring subscribers actually receive the FilesLoadedEvent.
@@ -113,26 +121,19 @@ await ConsoleApp.RunAsync(
                     }
                 );
 
-                container.RegisterEventBusService();
-                container.RegisterLuaEvents();
-
-                container.RegisterLuaEngine(
-                    new LuaEngineConfig(
-                        directoryConfig.GetPath("scripts"),
-                        directoryConfig.GetPath("scripts"),
-                        appConfig.AppName,
-                        appConfig.AppVersion
-                    )
+                container.RegisterJobSystemService(
+                    new JobsConfig()
+                    {
+                        ShutdownTimeoutSeconds = 5,
+                        WorkerThreadCount = Environment.ProcessorCount - 1,
+                    }
                 );
 
-                container.RegisterScriptModule<LoggerModule>();
+                container.RegisterEventBusService();
 
                 return container;
             }
         );
-
-        // Configure Serilog now (idempotent) so pre-start logging is visible.
-        stdBootstrap.ConfigureLogging();
 
         // The UO client directory is loaded by FilesLoaderService at startup, which then
         // publishes FilesLoadedEvent on the event bus.

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SquidStd.Persistence" Version="0.26.0" />
+      <PackageReference Include="SquidStd.Persistence.Abstractions" Version="0.26.0" />
+      <PackageReference Include="SquidStd.Persistence.MessagePack" Version="0.26.0" />
+      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.26.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
+    </ItemGroup>
+
+</Project>

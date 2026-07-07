@@ -7,7 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SquidStd.Scripting.Lua" Version="0.25.0" />
+      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.26.0" />
+      <PackageReference Include="SquidStd.Scripting.Lua" Version="0.26.0" />
     </ItemGroup>
 
 </Project>
