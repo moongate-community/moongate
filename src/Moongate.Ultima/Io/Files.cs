@@ -185,11 +185,6 @@ public sealed class Files
         "verdata.mul"
     ];
 
-    static Files()
-    {
-        LoadMulPath();
-    }
-
     public static void FireFileSaveEvent()
         => FileSaveEvent?.Invoke();
 
@@ -201,7 +196,7 @@ public sealed class Files
     /// </returns>
     public static string GetFilePath(string file)
     {
-        if (MulPath.Count == 0)
+        if (MulPath == null || MulPath.Count == 0)
         {
             return null;
         }
@@ -261,6 +256,7 @@ public sealed class Files
     public static void SetMulPath(string path)
     {
         RootDir = path;
+        MulPath ??= new(StringComparer.OrdinalIgnoreCase);
 
         var onDisk = BuildCaseInsensitiveFileMap(RootDir);
 
@@ -298,7 +294,10 @@ public sealed class Files
     /// <param name="path"></param>
     /// <param name="key"></param>
     public static void SetMulPath(string path, string key)
-        => MulPath[key] = path;
+    {
+        MulPath ??= new(StringComparer.OrdinalIgnoreCase);
+        MulPath[key] = path;
+    }
 
     /// <summary>
     /// Maps lowercase file names to their actual on-disk names for <paramref name="directory" />,
