@@ -11,6 +11,8 @@ using Moongate.Server.Types;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Events;
+using SquidStd.Core.Interfaces.Threading;
+using SquidStd.Network.Client;
 using SquidStd.Network.Data.Events;
 using SquidStd.Network.Server;
 using SquidStd.Network.Spans;
@@ -31,6 +33,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
     private readonly IEventBus _eventBus;
     private readonly PacketDispatch?[] _handlers = new PacketDispatch?[256];
 
+    private readonly IMainThreadDispatcher _mainThreadDispatcher;
     private SquidTcpServer? _server;
 
     public int Port => _server?.Port ?? 0;
@@ -39,13 +42,15 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         ISessionManager sessions,
         MoongateConfig config,
         IEnumerable<IPacketHandlerRegistration> handlerRegistrations,
-        IEventBus eventBus
+        IEventBus eventBus,
+        IMainThreadDispatcher mainThreadDispatcher
     )
     {
         _sessions = sessions;
         _config = config;
         _handlerRegistrations = handlerRegistrations;
         _eventBus = eventBus;
+        _mainThreadDispatcher = mainThreadDispatcher;
     }
 
     public void RegisterHandler<TPacket>(IPacketHandler<TPacket> handler) where TPacket : IIncomingPacket<TPacket>
@@ -125,14 +130,27 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
     private void OnDataReceived(object? sender, SquidStdTcpDataReceivedEventArgs e)
     {
         var session = _sessions.GetOrCreate(e.Client);
-        var frame = e.Data.Span;
+        var client = e.Client;
+
+        // Copy off the receive buffer: it is reused by the transport before the posted work runs,
+        // and a Span cannot be captured in the closure anyway.
+        var bytes = e.Data.ToArray();
+
+        // Marshal all session/game-state work onto the main game-loop thread; sends triggered by
+        // handlers then run there too, reading consistent state.
+        _mainThreadDispatcher.Post(() => ProcessInbound(session, client, bytes));
+    }
+
+    private void ProcessInbound(PlayerSession session, SquidStdTcpClient client, byte[] bytes)
+    {
+        ReadOnlySpan<byte> frame = bytes;
 
         var handshake = SeedHandshake.Process(session, frame, out var consumed);
 
         if (handshake == SeedHandshakeResultType.Reject)
         {
             _logger.Warning("Rejecting session {SessionId}: malformed seed handshake.", session.SessionId);
-            _ = e.Client.CloseAsync();
+            _ = client.CloseAsync();
 
             return;
         }

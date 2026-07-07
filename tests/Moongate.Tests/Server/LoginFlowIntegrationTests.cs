@@ -8,12 +8,30 @@ using Moongate.Server.Data.Events;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
 using SquidStd.Core.Interfaces.Events;
+using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
 
 public class LoginFlowIntegrationTests
 {
+    // Runs posted work inline (no game loop in the test), so inbound packets are processed
+    // synchronously on the receive thread exactly as before the main-thread marshaling.
+    private sealed class InlineDispatcher : IMainThreadDispatcher
+    {
+        public int PendingCount => 0;
+
+        public int DrainPending(double? budgetMs = null)
+        {
+            return 0;
+        }
+
+        public void Post(Action action)
+        {
+            action();
+        }
+    }
+
     private static MoongateConfig LoopbackConfig()
     {
         return new MoongateConfig
@@ -41,7 +59,7 @@ public class LoginFlowIntegrationTests
             new SelectServerHandler(pending, config)
         };
 
-        var network = new NetworkService(sessions, config, handlers, eventBus);
+        var network = new NetworkService(sessions, config, handlers, eventBus, new InlineDispatcher());
         await network.StartAsync(CancellationToken.None);
 
         return network;

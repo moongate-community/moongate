@@ -25,13 +25,13 @@ public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPack
 
         if (!result.Success)
         {
-            _ = context.Session.SendAsync(new LoginDeniedPacket(result.Reason));
+            context.Session.Send(new LoginDeniedPacket(result.Reason));
 
             return;
         }
 
         context.Session.MarkAuthenticated(result.Username);
-        _ = context.Session.SendAsync(
+        context.Session.Send(
             new ServerListPacket(_config.ShardName, IPAddress.Parse(_config.Network.PublicAddress))
         );
     }

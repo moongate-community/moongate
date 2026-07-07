@@ -23,7 +23,7 @@ public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>, IP
     {
         var authKey = _pendingLogins.Create(new PendingLogin(context.Session.Username ?? string.Empty));
 
-        _ = context.Session.SendAsync(
+        context.Session.Send(
             new ConnectToGameServerPacket(
                 IPAddress.Parse(_config.Network.PublicAddress),
                 (ushort)_config.Network.Port,
