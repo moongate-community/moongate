@@ -12,11 +12,9 @@ using Moongate.Server.Services.Network;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
-using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Data.EventLoop;
 using SquidStd.Core.Data.Jobs;
 using SquidStd.Core.Data.Timing;
-using SquidStd.Core.Directories;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Extensions;
@@ -84,8 +82,6 @@ await ConsoleApp.RunAsync(
         stdBootstrap.ConfigureServices(
             container =>
             {
-                var appConfig = container.Resolve<SquidStdOptions>();
-                var directoryConfig = container.Resolve<DirectoriesConfig>();
 
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
