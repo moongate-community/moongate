@@ -12,7 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SquidStd.Network" Version="0.24.1" />
+      <PackageReference Include="SquidStd.Network" Version="0.25.0" />
     </ItemGroup>
 
 </Project>

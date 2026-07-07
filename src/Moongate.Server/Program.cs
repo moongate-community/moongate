@@ -1,5 +1,6 @@
 using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Scripting.Modules;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
@@ -9,18 +10,29 @@ using Moongate.Server.Services.Network;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
-using SquidStd.Core.Extensions.Env;
+using SquidStd.Core.Config;
+using SquidStd.Core.Data.Bootstrap;
+using SquidStd.Core.Data.EventLoop;
+using SquidStd.Core.Data.Timing;
+using SquidStd.Core.Directories;
+using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Extensions;
+using SquidStd.Scripting.Lua.Data.Config;
+using SquidStd.Scripting.Lua.Extensions.Scripts;
+using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
 
+const string appVersion = "0.0.1";
 const int loginHandoffTtlMs = 30_000;
 
 await ConsoleApp.RunAsync(
     args,
-    async (string rootDirectory = null, bool showHeader = true, CancellationToken ct = default) =>
+    async (string rootDirectory = null, bool showHeader = true, string? uoDirectory = null, CancellationToken ct = default)
+        =>
     {
-        rootDirectory ??= "$HOME/.moongate".ReplaceEnv();
+        rootDirectory = (rootDirectory ?? "~/.moongate").ResolvePathAndEnvs();
+        uoDirectory = (uoDirectory ?? "~/uo").ResolvePathAndEnvs();
 
         if (showHeader)
         {
@@ -29,11 +41,29 @@ await ConsoleApp.RunAsync(
             Console.WriteLine(headerFile);
         }
 
-        var stdBootstrap = new SquidStdBootstrap(
+        // Config-first: the YAML is loaded eagerly, outside the container, and the sections
+        // are real objects from here on. CLI overrides happen BEFORE anything consumes them.
+        var config = SquidStdConfig.Load("moongate", rootDirectory);
+        var moongateConfig = config.GetSection<MoongateConfig>("moongate");
+
+        if (!string.IsNullOrEmpty(uoDirectory))
+        {
+            moongateConfig.UltimaDirectory = uoDirectory;
+        }
+
+        if (string.IsNullOrEmpty(moongateConfig.UltimaDirectory))
+        {
+            throw new UODirectoryNotValidException(
+                "UltimaDirectory is not set in the config; clients will not be able to connect."
+            );
+        }
+
+        var stdBootstrap = SquidStdBootstrap.Create(
+            config,
             new()
             {
                 AppName = "Moongate",
-                AppVersion = "0.0.1",
+                AppVersion = appVersion,
                 ConfigName = "moongate",
                 RootDirectory = rootDirectory
             }
@@ -49,7 +79,12 @@ await ConsoleApp.RunAsync(
         stdBootstrap.ConfigureServices(
             container =>
             {
+                var appConfig = container.Resolve<SquidStdOptions>();
+                var directoryConfig = container.Resolve<DirectoriesConfig>();
+
+                // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
+
                 container.Register<IAccountService, StubAccountService>(Reuse.Singleton);
                 container.RegisterInstance<IPendingLoginStore>(
                     new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
@@ -60,24 +95,47 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
                 container.RegisterStdService<INetworkService, NetworkService>();
 
+                // Priority 100 so it starts after the event bus and the Lua forwarder are up,
+                // ensuring subscribers actually receive the FilesLoadedEvent.
+                container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
+
+                container.RegisterMainThreadDispatcherService();
+                container.RegisterTimerWheelService(
+                    new TimerWheelConfig()
+                        { }
+                );
+                container.RegisterEventLoop(
+                    new EventLoopConfig()
+                    {
+                        IdleSleepMs = 1,
+                        IdleCpuEnabled = true,
+                        SlowTickThresholdMs = 250
+                    }
+                );
+
+                container.RegisterEventBusService();
+                container.RegisterLuaEvents();
+
+                container.RegisterLuaEngine(
+                    new LuaEngineConfig(
+                        directoryConfig.GetPath("scripts"),
+                        directoryConfig.GetPath("scripts"),
+                        appConfig.AppName,
+                        appConfig.AppVersion
+                    )
+                );
+
+                container.RegisterScriptModule<LoggerModule>();
+
                 return container;
             }
         );
 
-        stdBootstrap.OnConfigLoaded<MoongateConfig>(
-            config =>
-            {
-                if (string.IsNullOrEmpty(config.UltimaDirectory))
-                {
-                    Log.Logger.Warning("UltimaDirectory is not set in the config; clients will not be able to connect.");
+        // Configure Serilog now (idempotent) so pre-start logging is visible.
+        stdBootstrap.ConfigureLogging();
 
-                    throw new UODirectoryNotValidException(
-                        "UltimaDirectory is not set in the config; clients will not be able to connect."
-                    );
-                }
-            }
-        );
-
+        // The UO client directory is loaded by FilesLoaderService at startup, which then
+        // publishes FilesLoadedEvent on the event bus.
         await stdBootstrap.RunAsync(ct);
     }
 );

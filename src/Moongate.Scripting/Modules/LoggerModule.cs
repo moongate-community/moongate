@@ -4,9 +4,9 @@ using SquidStd.Scripting.Lua.Attributes.Scripts;
 namespace Moongate.Scripting.Modules;
 
 [ScriptModule("log")]
-public class ConsoleModule
+public class LoggerModule
 {
-    private readonly ILogger _logger = Log.Logger.ForContext<ConsoleModule>();
+    private readonly ILogger _logger = Log.Logger.ForContext<LoggerModule>();
 
     [ScriptFunction("info", "Write information to console")]
     public void Info(string message, params object[] args)
