@@ -103,6 +103,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, AccountLoginHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
 
+                container.RegisterStdService<INetworkService, NetworkService>();
                 // Priority 100 so it starts after the event bus and the Lua forwarder are up,
                 // ensuring subscribers actually receive the FilesLoadedEvent.
                 container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);

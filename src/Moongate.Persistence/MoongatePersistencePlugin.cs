@@ -16,7 +16,7 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
     public void Configure(IContainer container, PluginContext context)
     {
         var persistenceConfig = new PersistenceConfig();
-        
+
         var directoriesConfig = container.Resolve<DirectoriesConfig>();
 
         directoriesConfig.RegisterDirectory("saves");
