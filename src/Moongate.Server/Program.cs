@@ -3,6 +3,7 @@ using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Persistence;
 using Moongate.Scripting;
+using Moongate.Server;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
@@ -89,6 +90,7 @@ await ConsoleApp.RunAsync(
                 builder.FromDirectory("plugins");
                 builder.Add<MoongatePersistencePlugin>();
                 builder.Add<MoongateScriptingPlugin>();
+                builder.Add<MoongateDataLoaderPlugin>();
             }
         );
 
@@ -109,41 +111,7 @@ await ConsoleApp.RunAsync(
 
                 container.RegisterStdService<INetworkService, NetworkService>();
 
-                // Priority 100 so it starts after the event bus and the Lua forwarder are up,
-                // ensuring subscribers actually receive the FilesLoadedEvent.
-                container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
 
-                container.Register<ISkillService, SkillService>(Reuse.Singleton);
-                container.RegisterDataLoader<SkillLoader>();
-
-                container.Register<IProfessionService, ProfessionService>(Reuse.Singleton);
-                container.RegisterDataLoader<ProfessionsLoader>(10);
-
-                container.Register<ILocationService, LocationService>(Reuse.Singleton);
-                container.RegisterDataLoader<LocationsLoader>(20);
-
-                container.Register<INameService, NameService>(Reuse.Singleton);
-                container.RegisterDataLoader<NamesLoader>(30);
-
-                container.Register<IRegionService, RegionService>(Reuse.Singleton);
-                container.RegisterDataLoader<RegionsLoader>(40);
-
-                container.Register<IWeatherService, WeatherService>(Reuse.Singleton);
-                container.RegisterDataLoader<WeatherLoader>(50);
-
-                container.Register<ITeleporterService, TeleporterService>(Reuse.Singleton);
-                container.RegisterDataLoader<TeleportersLoader>(60);
-
-                container.Register<IContainerService, ContainerService>(Reuse.Singleton);
-                container.RegisterDataLoader<ContainersLoader>(70);
-
-                container.Register<ISignService, SignService>(Reuse.Singleton);
-                container.RegisterDataLoader<SignsLoader>(80);
-
-                container.Register<IContainerGumpService, ContainerGumpService>(Reuse.Singleton);
-                container.RegisterDataLoader<ContainerGumpsLoader>(90);
-
-                container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(
