@@ -137,6 +137,9 @@ await ConsoleApp.RunAsync(
                 container.Register<IContainerService, ContainerService>(Reuse.Singleton);
                 container.RegisterDataLoader<ContainersLoader>(70);
 
+                container.Register<ISignService, SignService>(Reuse.Singleton);
+                container.RegisterDataLoader<SignsLoader>(80);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
