@@ -122,6 +122,9 @@ await ConsoleApp.RunAsync(
                 container.Register<ILocationService, LocationService>(Reuse.Singleton);
                 container.RegisterDataLoader<LocationsLoader>(20);
 
+                container.Register<INameService, NameService>(Reuse.Singleton);
+                container.RegisterDataLoader<NamesLoader>(30);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
