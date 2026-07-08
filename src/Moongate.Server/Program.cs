@@ -134,6 +134,9 @@ await ConsoleApp.RunAsync(
                 container.Register<ITeleporterService, TeleporterService>(Reuse.Singleton);
                 container.RegisterDataLoader<TeleportersLoader>(60);
 
+                container.Register<IContainerService, ContainerService>(Reuse.Singleton);
+                container.RegisterDataLoader<ContainersLoader>(70);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
