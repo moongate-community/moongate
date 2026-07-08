@@ -592,3 +592,5 @@ benchmarks/.compare
 
 # Local runtime data directory
 /moongate/
+# Runtime persistence (world snapshot + journal + persisted entities)
+/moongate_root/saves/

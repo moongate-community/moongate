@@ -28,7 +28,7 @@ await ConsoleApp.RunAsync(
     async (string rootDirectory = null, bool showHeader = true, string? uoDirectory = null, CancellationToken ct = default)
         =>
     {
-        rootDirectory = (rootDirectory ?? "$HOME/projects/personal/Moongate/moongate").ResolvePathAndEnvs();
+        rootDirectory = (rootDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), "moongate_root")).ResolvePathAndEnvs();
         uoDirectory = (uoDirectory ?? "~/uo").ResolvePathAndEnvs();
 
         if (showHeader)
