@@ -1,11 +1,12 @@
 using Moongate.Server.Services;
 using Moongate.UO.Data.Teleporters;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
 public class TeleporterServiceTests
 {
-    private static TeleporterDefinition Tele(string map)
+    private static TeleporterDefinition Tele(MapType map)
     {
         return new TeleporterDefinition
         {
@@ -18,20 +19,20 @@ public class TeleporterServiceTests
     public void Register_CountsAll_AndFiltersBySourceMap()
     {
         var service = new TeleporterService();
-        service.Register(Tele("Felucca"));
-        service.Register(Tele("Malas"));
+        service.Register(Tele(MapType.Felucca));
+        service.Register(Tele(MapType.Malas));
 
         Assert.Equal(2, service.Count);
-        Assert.Single(service.ForMap("felucca"));
-        Assert.Equal(4, service.ForMap("Felucca")[0].Dst.X);
+        Assert.Single(service.ForMap(MapType.Felucca));
+        Assert.Equal(4, service.ForMap(MapType.Felucca)[0].Dst.X);
     }
 
     [Fact]
     public void ForMap_Unknown_IsEmpty()
     {
         var service = new TeleporterService();
-        service.Register(Tele("Felucca"));
+        service.Register(Tele(MapType.Felucca));
 
-        Assert.Empty(service.ForMap("Tokuno"));
+        Assert.Empty(service.ForMap(MapType.Tokuno));
     }
 }

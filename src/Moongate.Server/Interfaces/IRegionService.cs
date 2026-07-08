@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Regions;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Interfaces;
 
@@ -14,6 +15,6 @@ public interface IRegionService
     /// <summary>Adds a region to the registry.</summary>
     void Register(RegionDefinition region);
 
-    /// <summary>Returns the regions on the given map (case-insensitive).</summary>
-    IReadOnlyList<RegionDefinition> ForMap(string map);
+    /// <summary>Returns the regions on the given map.</summary>
+    IReadOnlyList<RegionDefinition> ForMap(MapType map);
 }

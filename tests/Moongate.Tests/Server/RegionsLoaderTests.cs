@@ -1,5 +1,6 @@
 using Moongate.Server.Loaders;
 using Moongate.Server.Services;
+using Moongate.UO.Data.Types;
 using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server;
@@ -23,7 +24,7 @@ public class RegionsLoaderTests
 
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "regions.yaml")));
             Assert.Equal(398, regions.Count);
-            Assert.NotEmpty(regions.ForMap("Felucca"));
+            Assert.NotEmpty(regions.ForMap(MapType.Felucca));
             Assert.Contains(regions.All, r => r.Area.Count > 0);
         }
         finally

@@ -1,5 +1,6 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Regions;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services;
 
@@ -21,8 +22,8 @@ public sealed class RegionService : IRegionService
         _regions.Add(region);
     }
 
-    public IReadOnlyList<RegionDefinition> ForMap(string map)
+    public IReadOnlyList<RegionDefinition> ForMap(MapType map)
     {
-        return [.. _regions.Where(region => string.Equals(region.Map, map, StringComparison.OrdinalIgnoreCase))];
+        return [.. _regions.Where(region => region.Map == map)];
     }
 }

@@ -1,3 +1,5 @@
+using Moongate.UO.Data.Types;
+
 namespace Moongate.UO.Data.Regions;
 
 /// <summary>
@@ -7,7 +9,7 @@ namespace Moongate.UO.Data.Regions;
 public sealed class RegionDefinition
 {
     public string Type { get; set; } = string.Empty;
-    public string Map { get; set; } = string.Empty;
+    public MapType Map { get; set; }
     public string Name { get; set; } = string.Empty;
     public int Priority { get; set; }
     public List<RegionRectangle> Area { get; set; } = [];

@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Teleporters;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Interfaces;
 
@@ -14,6 +15,6 @@ public interface ITeleporterService
     /// <summary>Adds a teleporter to the registry.</summary>
     void Register(TeleporterDefinition teleporter);
 
-    /// <summary>Returns the teleporters whose source is on the given map (case-insensitive).</summary>
-    IReadOnlyList<TeleporterDefinition> ForMap(string map);
+    /// <summary>Returns the teleporters whose source is on the given map.</summary>
+    IReadOnlyList<TeleporterDefinition> ForMap(MapType map);
 }

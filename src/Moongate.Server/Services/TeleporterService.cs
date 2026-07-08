@@ -1,5 +1,6 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Teleporters;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services;
 
@@ -21,8 +22,8 @@ public sealed class TeleporterService : ITeleporterService
         _teleporters.Add(teleporter);
     }
 
-    public IReadOnlyList<TeleporterDefinition> ForMap(string map)
+    public IReadOnlyList<TeleporterDefinition> ForMap(MapType map)
     {
-        return [.. _teleporters.Where(teleporter => string.Equals(teleporter.Src.Map, map, StringComparison.OrdinalIgnoreCase))];
+        return [.. _teleporters.Where(teleporter => teleporter.Src.Map == map)];
     }
 }

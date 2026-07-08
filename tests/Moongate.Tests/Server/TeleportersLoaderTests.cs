@@ -1,5 +1,6 @@
 using Moongate.Server.Loaders;
 using Moongate.Server.Services;
+using Moongate.UO.Data.Types;
 using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server;
@@ -23,7 +24,7 @@ public class TeleportersLoaderTests
 
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "teleporters.yaml")));
             Assert.Equal(1368, teleporters.Count);
-            Assert.NotEmpty(teleporters.ForMap("Felucca"));
+            Assert.NotEmpty(teleporters.ForMap(MapType.Felucca));
         }
         finally
         {
@@ -50,7 +51,7 @@ public class TeleportersLoaderTests
 
             Assert.Equal(1, teleporters.Count);
             Assert.True(teleporters.All[0].Back);
-            Assert.Equal("Malas", teleporters.All[0].Dst.Map);
+            Assert.Equal(MapType.Malas, teleporters.All[0].Dst.Map);
         }
         finally
         {
