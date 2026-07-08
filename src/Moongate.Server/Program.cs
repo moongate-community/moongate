@@ -131,6 +131,9 @@ await ConsoleApp.RunAsync(
                 container.Register<IWeatherService, WeatherService>(Reuse.Singleton);
                 container.RegisterDataLoader<WeatherLoader>(50);
 
+                container.Register<ITeleporterService, TeleporterService>(Reuse.Singleton);
+                container.RegisterDataLoader<TeleportersLoader>(60);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
