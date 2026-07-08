@@ -125,6 +125,9 @@ await ConsoleApp.RunAsync(
                 container.Register<INameService, NameService>(Reuse.Singleton);
                 container.RegisterDataLoader<NamesLoader>(30);
 
+                container.Register<IRegionService, RegionService>(Reuse.Singleton);
+                container.RegisterDataLoader<RegionsLoader>(40);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();

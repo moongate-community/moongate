@@ -1,0 +1,7386 @@
+- Type: GuardedRegion
+  Map: Felucca
+  Name: Moongates
+  Priority: 50
+  Area:
+  - X1: 1330
+    Y1: 1991
+    X2: 1343
+    Y2: 2004
+  - X1: 1494
+    Y1: 3767
+    X2: 1506
+    Y2: 3778
+  - X1: 2694
+    Y1: 685
+    X2: 2709
+    Y2: 701
+  - X1: 1823
+    Y1: 2943
+    X2: 1834
+    Y2: 2954
+  - X1: 761
+    Y1: 741
+    X2: 780
+    Y2: 762
+  - X1: 638
+    Y1: 2062
+    X2: 650
+    Y2: 2073
+  - X1: 4459
+    Y1: 1276
+    X2: 4475
+    Y2: 1292
+  - X1: 3554
+    Y1: 2132
+    X2: 3572
+    Y2: 2150
+- Type: GuardedRegion
+  Map: Felucca
+  Name: T2A Arena
+  Priority: 50
+  Area:
+  - X1: 2396
+    Y1: 197
+    X2: 2407
+    Y2: 220
+  - X1: 5717
+    Y1: 428
+    X2: 5755
+    Y2: 456
+  - X1: 6085
+    Y1: 3674
+    X2: 6108
+    Y2: 3698
+  - X1: 6063
+    Y1: 3698
+    X2: 6111
+    Y2: 3750
+  GoLocation:
+    X: 6103
+    Y: 3724
+    Z: 25
+- Type: TownRegion
+  Map: Felucca
+  Name: The Heartwood
+  Priority: 50
+  Area:
+  - X1: 6911
+    Y1: 255
+    X2: 7168
+    Y2: 512
+  Music: ElfCity
+  GoLocation:
+    X: 6984
+    Y: 337
+    Z: 0
+  Entrance:
+    X: 535
+    Y: 995
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Sanctuary
+  Priority: 50
+  Area:
+  - X1: 6144
+    Y1: 0
+    X2: 6399
+    Y2: 255
+  Music: Dungeon9
+  GoLocation:
+    X: 6174
+    Y: 23
+    Z: 0
+  Entrance:
+    X: 762
+    Y: 1645
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: The Painted Caves
+  Priority: 50
+  Area:
+  - X1: 6240
+    Y1: 850
+    X2: 6315
+    Y2: 920
+  Music: Dungeon9
+  GoLocation:
+    X: 6308
+    Y: 892
+    Z: -1
+  Entrance:
+    X: 1716
+    Y: 892
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: The Prism of Light
+  Priority: 50
+  Area:
+  - X1: 6400
+    Y1: 0
+    X2: 6621
+    Y2: 255
+  Music: Dungeon9
+  GoLocation:
+    X: 6474
+    Y: 188
+    Z: 0
+  Entrance:
+    X: 3784
+    Y: 1097
+    Z: 14
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Blighted Grove
+  Priority: 50
+  Area:
+  - X1: 6440
+    Y1: 820
+    X2: 6600
+    Y2: 970
+  Music: MelisandesLair
+  GoLocation:
+    X: 6478
+    Y: 863
+    Z: 11
+  Entrance:
+    X: 587
+    Y: 1641
+    Z: -1
+- Type: DungeonRegion
+  Map: Felucca
+  Name: The Palace of Paroxysmus
+  Priority: 50
+  Area:
+  - X1: 6191
+    Y1: 311
+    X2: 6561
+    Y2: 671
+  Music: ParoxysmusLair
+  GoLocation:
+    X: 6222
+    Y: 335
+    Z: 60
+  Entrance:
+    X: 5574
+    Y: 3024
+    Z: 31
+- Type: BaseRegion
+  Map: Felucca
+  Name: Bravehorn's drinking pool
+  Priority: 50
+  Area:
+  - X1: 1302
+    Y1: 2331
+    X2: 1340
+    Y2: 2353
+- Type: BaseRegion
+  Map: Felucca
+  Name: Huntsman's Forest
+  Priority: 50
+  Area:
+  - X1: 1595
+    Y1: 550
+    X2: 1715
+    Y2: 670
+- Type: TownRegion
+  Map: Felucca
+  Name: Cove
+  Priority: 50
+  Area:
+  - X1: 2200
+    Y1: 1110
+    X2: 2250
+    Y2: 1160
+  - X1: 2200
+    Y1: 1160
+    X2: 2286
+    Y2: 1246
+  Music: Cove
+  GoLocation:
+    X: 2275
+    Y: 1210
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: Britain
+  Priority: 50
+  Area:
+  - X1: 1416
+    Y1: 1498
+    X2: 1740
+    Y2: 1777
+  - X1: 1500
+    Y1: 1408
+    X2: 1546
+    Y2: 1498
+  - X1: 1385
+    Y1: 1538
+    X2: 1416
+    Y2: 1777
+  - X1: 1416
+    Y1: 1777
+    X2: 1740
+    Y2: 1837
+  - X1: 1385
+    Y1: 1777
+    X2: 1416
+    Y2: 1907
+  - X1: 1093
+    Y1: 1538
+    X2: 1385
+    Y2: 1907
+  Music: Britain1
+  GoLocation:
+    X: 1495
+    Y: 1629
+    Z: 10
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1492
+    Y1: 1602
+    X2: 1500
+    Y2: 1621
+  - X1: 1500
+    Y1: 1610
+    X2: 1508
+    Y2: 1626
+  - X1: 1576
+    Y1: 1584
+    X2: 1600
+    Y2: 1600
+  - X1: 1456
+    Y1: 1512
+    X2: 1472
+    Y2: 1528
+  - X1: 1472
+    Y1: 1512
+    X2: 1480
+    Y2: 1520
+  - X1: 1486
+    Y1: 1684
+    X2: 1494
+    Y2: 1692
+  - X1: 1494
+    Y1: 1676
+    X2: 1502
+    Y2: 1700
+  - X1: 1424
+    Y1: 1712
+    X2: 1432
+    Y2: 1736
+  - X1: 1432
+    Y1: 1712
+    X2: 1440
+    Y2: 1724
+  - X1: 1608
+    Y1: 1584
+    X2: 1632
+    Y2: 1592
+  - X1: 1616
+    Y1: 1576
+    X2: 1624
+    Y2: 1584
+  - X1: 1544
+    Y1: 1760
+    X2: 1560
+    Y2: 1776
+  - X1: 1560
+    Y1: 1760
+    X2: 1568
+    Y2: 1768
+  Parent:
+    Name: Britain
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1120
+    Y1: 1776
+    X2: 1152
+    Y2: 1808
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1135
+    Y: 1791
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1184
+    Y1: 1808
+    X2: 1216
+    Y2: 1840
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1199
+    Y: 1823
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Britain 3
+  Priority: 50
+  Area:
+  - X1: 1216
+    Y1: 1872
+    X2: 1248
+    Y2: 1904
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1231
+    Y: 1887
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Carrot Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1208
+    Y1: 1712
+    X2: 1224
+    Y2: 1736
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1215
+    Y: 1723
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: An Onion Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1224
+    Y1: 1712
+    X2: 1240
+    Y2: 1736
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1231
+    Y: 1723
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Cabbage Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1176
+    Y1: 1672
+    X2: 1192
+    Y2: 1695
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1183
+    Y: 1683
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Turnip Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1192
+    Y1: 1672
+    X2: 1208
+    Y2: 1696
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1199
+    Y: 1683
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Britain 4
+  Priority: 50
+  Area:
+  - X1: 1104
+    Y1: 1608
+    X2: 1136
+    Y2: 1640
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1120
+    Y: 1624
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Britain 5
+  Priority: 50
+  Area:
+  - X1: 1136
+    Y1: 1560
+    X2: 1168
+    Y2: 1592
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1152
+    Y: 1576
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Turnip Field in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1208
+    Y1: 1592
+    X2: 1224
+    Y2: 1616
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1216
+    Y: 1604
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Carrot Field in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1224
+    Y1: 1592
+    X2: 1240
+    Y2: 1616
+  Parent:
+    Name: Britain
+    Map: Felucca
+  GoLocation:
+    X: 1232
+    Y: 1604
+    Z: 0
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Britain Graveyard
+  Priority: 50
+  Area:
+  - X1: 1333
+    Y1: 1441
+    X2: 1417
+    Y2: 1523
+  GoLocation:
+    X: 1384
+    Y: 1492
+    Z: 10
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Jhelom Islands
+  Priority: 50
+  Area:
+  - X1: 1111
+    Y1: 3567
+    X2: 1144
+    Y2: 3588
+  - X1: 1078
+    Y1: 3588
+    X2: 1202
+    Y2: 3709
+  - X1: 1224
+    Y1: 3592
+    X2: 1533
+    Y2: 4065
+  Music: Jhelom
+  GoLocation:
+    X: 1383
+    Y: 3815
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: Jhelom
+  Priority: 50
+  Area:
+  - X1: 1303
+    Y1: 3670
+    X2: 1492
+    Y2: 3895
+  - X1: 1338
+    Y1: 3895
+    X2: 1412
+    Y2: 3923
+  - X1: 1383
+    Y1: 3951
+    X2: 1492
+    Y2: 4045
+  Parent:
+    Name: Jhelom Islands
+    Map: Felucca
+  GoLocation:
+    X: 1383
+    Y: 3815
+    Z: 0
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1352
+    Y1: 3800
+    X2: 1368
+    Y2: 3832
+  - X1: 1368
+    Y1: 3808
+    X2: 1376
+    Y2: 3824
+  - X1: 1432
+    Y1: 3768
+    X2: 1464
+    Y2: 3776
+  - X1: 1440
+    Y1: 3776
+    X2: 1464
+    Y2: 3784
+  Parent:
+    Name: Jhelom
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Minoc
+  Priority: 50
+  Area:
+  - X1: 2411
+    Y1: 366
+    X2: 2546
+    Y2: 607
+  - X1: 2548
+    Y1: 495
+    X2: 2620
+    Y2: 550
+  - X1: 2564
+    Y1: 585
+    X2: 2567
+    Y2: 627
+  - X1: 2567
+    Y1: 585
+    X2: 2628
+    Y2: 646
+  - X1: 2499
+    Y1: 627
+    X2: 2567
+    Y2: 690
+  Music: Minoc
+  GoLocation:
+    X: 2466
+    Y: 544
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2457
+    Y1: 397
+    X2: 2497
+    Y2: 405
+  - X1: 2465
+    Y1: 405
+    X2: 2473
+    Y2: 413
+  - X1: 2481
+    Y1: 405
+    X2: 2489
+    Y2: 413
+  Parent:
+    Name: Minoc
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Ocllo
+  Priority: 50
+  Area:
+  - X1: 3587
+    Y1: 2456
+    X2: 3706
+    Y2: 2555
+  - X1: 3706
+    Y1: 2460
+    X2: 3708
+    Y2: 2555
+  - X1: 3587
+    Y1: 2555
+    X2: 3693
+    Y2: 2628
+  - X1: 3590
+    Y1: 2628
+    X2: 3693
+    Y2: 2686
+  - X1: 3693
+    Y1: 2555
+    X2: 3754
+    Y2: 2699
+  - X1: 3754
+    Y1: 2558
+    X2: 3761
+    Y2: 2699
+  - X1: 3761
+    Y1: 2555
+    X2: 3768
+    Y2: 2699
+  - X1: 3695
+    Y1: 2699
+    X2: 3761
+    Y2: 2712
+  Music: Ocllo
+  GoLocation:
+    X: 3650
+    Y: 2519
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3664
+    Y1: 2608
+    X2: 3680
+    Y2: 2624
+  - X1: 3664
+    Y1: 2640
+    X2: 3672
+    Y2: 2656
+  - X1: 3672
+    Y1: 2648
+    X2: 3680
+    Y2: 2656
+  Parent:
+    Name: Ocllo
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Trinsic
+  Priority: 50
+  Area:
+  - X1: 1856
+    Y1: 2636
+    X2: 1931
+    Y2: 2664
+  - X1: 1816
+    Y1: 2664
+    X2: 2099
+    Y2: 2895
+  - X1: 2099
+    Y1: 2782
+    X2: 2117
+    Y2: 2807
+  - X1: 1970
+    Y1: 2895
+    X2: 2017
+    Y2: 2927
+  - X1: 1796
+    Y1: 2696
+    X2: 1816
+    Y2: 2763
+  - X1: 1800
+    Y1: 2796
+    X2: 1816
+    Y2: 2848
+  Music: Trinsic
+  GoLocation:
+    X: 1867
+    Y: 2780
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1834
+    Y1: 2728
+    X2: 1856
+    Y2: 2744
+  - X1: 2024
+    Y1: 2784
+    X2: 2040
+    Y2: 2804
+  - X1: 2026
+    Y1: 2804
+    X2: 2040
+    Y2: 2806
+  - X1: 2024
+    Y1: 2806
+    X2: 2040
+    Y2: 2813
+  - X1: 1923
+    Y1: 2786
+    X2: 1935
+    Y2: 2808
+  - X1: 1935
+    Y1: 2786
+    X2: 1942
+    Y2: 2800
+  Parent:
+    Name: Trinsic
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Vesper
+  Priority: 50
+  Area:
+  - X1: 2893
+    Y1: 598
+    X2: 3014
+    Y2: 648
+  - X1: 2816
+    Y1: 648
+    X2: 3065
+    Y2: 1013
+  - X1: 2734
+    Y1: 944
+    X2: 2816
+    Y2: 948
+  - X1: 2728
+    Y1: 948
+    X2: 2816
+    Y2: 1001
+  Music: Vesper
+  GoLocation:
+    X: 2899
+    Y: 676
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2952
+    Y1: 864
+    X2: 2968
+    Y2: 896
+  - X1: 2968
+    Y1: 872
+    X2: 2976
+    Y2: 888
+  - X1: 2776
+    Y1: 952
+    X2: 2792
+    Y2: 984
+  - X1: 2768
+    Y1: 960
+    X2: 2776
+    Y2: 976
+  - X1: 2892
+    Y1: 901
+    X2: 2908
+    Y2: 920
+  - X1: 2908
+    Y1: 904
+    X2: 2916
+    Y2: 912
+  Parent:
+    Name: Vesper
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Yew
+  Priority: 50
+  Area:
+  - X1: 92
+    Y1: 656
+    X2: 441
+    Y2: 881
+  - X1: 441
+    Y1: 746
+    X2: 657
+    Y2: 881
+  - X1: 258
+    Y1: 881
+    X2: 657
+    Y2: 1261
+  - X1: 657
+    Y1: 922
+    X2: 699
+    Y2: 1229
+  - X1: 657
+    Y1: 806
+    X2: 674
+    Y2: 834
+  - X1: 718
+    Y1: 874
+    X2: 756
+    Y2: 896
+  Music: Yew
+  GoLocation:
+    X: 546
+    Y: 992
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 600
+    Y1: 808
+    X2: 624
+    Y2: 832
+  Parent:
+    Name: Yew
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: A Field of Sheep in Yew 1
+  Priority: 50
+  Area:
+  - X1: 664
+    Y1: 928
+    X2: 686
+    Y2: 950
+  Parent:
+    Name: Yew
+    Map: Felucca
+  RuneName: A Field of Sheep in Yew
+  GoLocation:
+    X: 675
+    Y: 939
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Field of Sheep in Yew 2
+  Priority: 50
+  Area:
+  - X1: 664
+    Y1: 1168
+    X2: 686
+    Y2: 1190
+  Parent:
+    Name: Yew
+    Map: Felucca
+  RuneName: A Field of Sheep in Yew
+  GoLocation:
+    X: 675
+    Y: 1179
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Farm in Yew
+  Priority: 50
+  Area:
+  - X1: 560
+    Y1: 1088
+    X2: 582
+    Y2: 1110
+  Parent:
+    Name: Yew
+    Map: Felucca
+  RuneName: A Farm in Yew
+  GoLocation:
+    X: 571
+    Y: 1099
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Yew 1
+  Priority: 50
+  Area:
+  - X1: 560
+    Y1: 1232
+    X2: 576
+    Y2: 1248
+  Parent:
+    Name: Yew
+    Map: Felucca
+  RuneName: A Wheatfield in Yew
+  GoLocation:
+    X: 567
+    Y: 1239
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: A Wheatfield in Yew 2
+  Priority: 50
+  Area:
+  - X1: 368
+    Y1: 1176
+    X2: 382
+    Y2: 1208
+  Parent:
+    Name: Yew
+    Map: Felucca
+  RuneName: A Wheatfield in Yew
+  GoLocation:
+    X: 375
+    Y: 1191
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: Wind
+  Priority: 50
+  Area:
+  - X1: 5294
+    Y1: 19
+    X2: 5366
+    Y2: 139
+  - X1: 5132
+    Y1: 58
+    X2: 5213
+    Y2: 126
+  - X1: 5197
+    Y1: 126
+    X2: 5252
+    Y2: 204
+  - X1: 5132
+    Y1: 3
+    X2: 5202
+    Y2: 58
+  - X1: 5252
+    Y1: 112
+    X2: 5294
+    Y2: 170
+  - X1: 5213
+    Y1: 98
+    X2: 5252
+    Y2: 126
+  - X1: 5279
+    Y1: 57
+    X2: 5294
+    Y2: 112
+  - X1: 5252
+    Y1: 170
+    X2: 5284
+    Y2: 178
+  - X1: 5286
+    Y1: 25
+    X2: 5294
+    Y2: 57
+  - X1: 5252
+    Y1: 178
+    X2: 5272
+    Y2: 183
+  - X1: 5252
+    Y1: 183
+    X2: 5262
+    Y2: 193
+  Music: Wind
+  GoLocation:
+    X: 5223
+    Y: 190
+    Z: 5
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5159
+    Y1: 15
+    X2: 5184
+    Y2: 24
+  - X1: 5159
+    Y1: 24
+    X2: 5168
+    Y2: 40
+  - X1: 5175
+    Y1: 24
+    X2: 5184
+    Y2: 32
+  - X1: 5212
+    Y1: 159
+    X2: 5221
+    Y2: 183
+  - X1: 5221
+    Y1: 171
+    X2: 5228
+    Y2: 183
+  - X1: 5206
+    Y1: 164
+    X2: 5212
+    Y2: 179
+  - X1: 5303
+    Y1: 28
+    X2: 5319
+    Y2: 42
+  Parent:
+    Name: Wind
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Serpent's Hold
+  Priority: 50
+  Area:
+  - X1: 2868
+    Y1: 3324
+    X2: 3073
+    Y2: 3519
+  Music: Serpents
+  GoLocation:
+    X: 3010
+    Y: 3371
+    Z: 15
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2960
+    Y1: 3400
+    X2: 2976
+    Y2: 3416
+  - X1: 2968
+    Y1: 3416
+    X2: 2976
+    Y2: 3432
+  - X1: 3008
+    Y1: 3450
+    X2: 3022
+    Y2: 3464
+  Parent:
+    Name: Serpent's Hold
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Skara Brae
+  Priority: 50
+  Area:
+  - X1: 538
+    Y1: 2107
+    X2: 688
+    Y2: 2297
+  Music: Skarabra
+  GoLocation:
+    X: 632
+    Y: 2233
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 600
+    Y1: 2232
+    X2: 616
+    Y2: 2256
+  - X1: 592
+    Y1: 2240
+    X2: 600
+    Y2: 2256
+  - X1: 616
+    Y1: 2240
+    X2: 624
+    Y2: 2256
+  - X1: 552
+    Y1: 2168
+    X2: 568
+    Y2: 2192
+  - X1: 568
+    Y1: 2168
+    X2: 576
+    Y2: 2176
+  Parent:
+    Name: Skara Brae
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Nujel'm
+  Priority: 50
+  Area:
+  - X1: 3475
+    Y1: 1000
+    X2: 3835
+    Y2: 1435
+  Music: Nujelm
+  GoLocation:
+    X: 3732
+    Y: 1279
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3736
+    Y1: 1184
+    X2: 3752
+    Y2: 1207
+  - X1: 3728
+    Y1: 1192
+    X2: 3736
+    Y2: 1207
+  - X1: 3728
+    Y1: 1288
+    X2: 3751
+    Y2: 1303
+  - X1: 3728
+    Y1: 1303
+    X2: 3744
+    Y2: 1312
+  - X1: 3728
+    Y1: 1312
+    X2: 3740
+    Y2: 1320
+  - X1: 3728
+    Y1: 1320
+    X2: 3744
+    Y2: 1343
+  - X1: 3744
+    Y1: 1328
+    X2: 3751
+    Y2: 1343
+  - X1: 3760
+    Y1: 1216
+    X2: 3772
+    Y2: 1240
+  - X1: 3772
+    Y1: 1220
+    X2: 3776
+    Y2: 1236
+  - X1: 3776
+    Y1: 1224
+    X2: 3784
+    Y2: 1232
+  - X1: 3728
+    Y1: 1248
+    X2: 3744
+    Y2: 1272
+  - X1: 3744
+    Y1: 1264
+    X2: 3752
+    Y2: 1272
+  - X1: 3744
+    Y1: 1248
+    X2: 3752
+    Y2: 1256
+  Parent:
+    Name: Nujel'm
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Moonglow
+  Priority: 50
+  Area:
+  - X1: 4535
+    Y1: 844
+    X2: 4555
+    Y2: 847
+  - X1: 4530
+    Y1: 847
+    X2: 4561
+    Y2: 908
+  - X1: 4521
+    Y1: 914
+    X2: 4577
+    Y2: 963
+  - X1: 4278
+    Y1: 915
+    X2: 4332
+    Y2: 934
+  - X1: 4283
+    Y1: 944
+    X2: 4336
+    Y2: 1017
+  - X1: 4377
+    Y1: 1015
+    X2: 4436
+    Y2: 1052
+  - X1: 4367
+    Y1: 1050
+    X2: 4509
+    Y2: 1195
+  - X1: 4539
+    Y1: 1036
+    X2: 4566
+    Y2: 1054
+  - X1: 4517
+    Y1: 1053
+    X2: 4540
+    Y2: 1075
+  - X1: 4389
+    Y1: 1198
+    X2: 4436
+    Y2: 1237
+  - X1: 4466
+    Y1: 1211
+    X2: 4498
+    Y2: 1236
+  - X1: 4700
+    Y1: 1108
+    X2: 4717
+    Y2: 1126
+  - X1: 4656
+    Y1: 1127
+    X2: 4682
+    Y2: 1140
+  - X1: 4678
+    Y1: 1162
+    X2: 4703
+    Y2: 1187
+  - X1: 4613
+    Y1: 1196
+    X2: 4636
+    Y2: 1218
+  - X1: 4646
+    Y1: 1212
+    X2: 4660
+    Y2: 1229
+  - X1: 4677
+    Y1: 1214
+    X2: 4703
+    Y2: 1236
+  - X1: 4622
+    Y1: 1316
+    X2: 4644
+    Y2: 1340
+  - X1: 4487
+    Y1: 1353
+    X2: 4546
+    Y2: 1374
+  - X1: 4477
+    Y1: 1374
+    X2: 4546
+    Y2: 1409
+  - X1: 4659
+    Y1: 1387
+    X2: 4699
+    Y2: 1427
+  - X1: 4549
+    Y1: 1482
+    X2: 4578
+    Y2: 1509
+  - X1: 4405
+    Y1: 1451
+    X2: 4428
+    Y2: 1474
+  - X1: 4483
+    Y1: 1468
+    X2: 4504
+    Y2: 1481
+  Music: Moonglow
+  GoLocation:
+    X: 4442
+    Y: 1172
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 4384
+    Y1: 1152
+    X2: 4392
+    Y2: 1176
+  - X1: 4392
+    Y1: 1160
+    X2: 4408
+    Y2: 1168
+  - X1: 4400
+    Y1: 1152
+    X2: 4408
+    Y2: 1160
+  - X1: 4480
+    Y1: 1056
+    X2: 4488
+    Y2: 1072
+  - X1: 4488
+    Y1: 1060
+    X2: 4492
+    Y2: 1068
+  - X1: 4476
+    Y1: 1060
+    X2: 4480
+    Y2: 1068
+  Parent:
+    Name: Moonglow
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Magincia
+  Priority: 50
+  Area:
+  - X1: 3653
+    Y1: 2046
+    X2: 3680
+    Y2: 2094
+  - X1: 3752
+    Y1: 2046
+    X2: 3804
+    Y2: 2094
+  - X1: 3680
+    Y1: 2045
+    X2: 3752
+    Y2: 2094
+  - X1: 3652
+    Y1: 2094
+    X2: 3812
+    Y2: 2274
+  - X1: 3649
+    Y1: 2256
+    X2: 3703
+    Y2: 2303
+  Music: Magincia
+  GoLocation:
+    X: 3714
+    Y: 2220
+    Z: 20
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3680
+    Y1: 2152
+    X2: 3704
+    Y2: 2160
+  - X1: 3720
+    Y1: 2216
+    X2: 3736
+    Y2: 2232
+  Parent:
+    Name: Magincia
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Buccaneer's Den
+  Priority: 50
+  Area:
+  - X1: 2612
+    Y1: 2057
+    X2: 2776
+    Y2: 2267
+  - X1: 2604
+    Y1: 2065
+    X2: 2612
+    Y2: 2254
+  Music: Bucsden
+  GoLocation:
+    X: 2706
+    Y: 2163
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2712
+    Y1: 2080
+    X2: 2728
+    Y2: 2096
+  - X1: 2712
+    Y1: 2096
+    X2: 2720
+    Y2: 2104
+  - X1: 2664
+    Y1: 2232
+    X2: 2688
+    Y2: 2240
+  - X1: 2672
+    Y1: 2240
+    X2: 2688
+    Y2: 2248
+  Parent:
+    Name: Buccaneer's Den
+    Map: Felucca
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Covetous
+  Priority: 50
+  Area:
+  - X1: 5376
+    Y1: 1793
+    X2: 5577
+    Y2: 2048
+  - X1: 5576
+    Y1: 1791
+    X2: 5633
+    Y2: 2048
+  Music: Dungeon9
+  GoLocation:
+    X: 5456
+    Y: 1862
+    Z: 0
+  Entrance:
+    X: 2499
+    Y: 916
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Deceit
+  Priority: 50
+  Area:
+  - X1: 5122
+    Y1: 518
+    X2: 5370
+    Y2: 770
+  Music: Dungeon9
+  GoLocation:
+    X: 5187
+    Y: 635
+    Z: 0
+  Entrance:
+    X: 4111
+    Y: 429
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Despise
+  Priority: 50
+  Area:
+  - X1: 5377
+    Y1: 516
+    X2: 5631
+    Y2: 1022
+  Music: Dungeon9
+  GoLocation:
+    X: 5501
+    Y: 570
+    Z: 59
+  Entrance:
+    X: 1296
+    Y: 1082
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Destard
+  Priority: 50
+  Area:
+  - X1: 5120
+    Y1: 770
+    X2: 5371
+    Y2: 1028
+  Music: Dungeon9
+  GoLocation:
+    X: 5243
+    Y: 1004
+    Z: 0
+  Entrance:
+    X: 1176
+    Y: 2635
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Hythloth
+  Priority: 50
+  Area:
+  - X1: 5898
+    Y1: 2
+    X2: 6136
+    Y2: 246
+  Music: Dungeon9
+  GoLocation:
+    X: 5905
+    Y: 22
+    Z: 44
+  Entrance:
+    X: 4722
+    Y: 3814
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Khaldun
+  Priority: 50
+  Area:
+  - X1: 5381
+    Y1: 1284
+    X2: 5628
+    Y2: 1509
+  Music: Dungeon9
+  GoLocation:
+    X: 5571
+    Y: 1302
+    Z: 0
+  Entrance:
+    X: 5882
+    Y: 3819
+    Z: 0
+- Type: JailRegion
+  Map: Felucca
+  Name: Jail
+  Priority: 50
+  Area:
+  - X1: 5271
+    Y1: 1159
+    X2: 5312
+    Y2: 1192
+  GoLocation:
+    X: 5275
+    Y: 1163
+    Z: 0
+- Type: GreenAcresRegion
+  Map: Felucca
+  Name: Green Acres
+  Priority: 1
+  Area:
+  - X1: 5376
+    Y1: 512
+    X2: 6143
+    Y2: 1279
+  GoLocation:
+    X: 5445
+    Y: 1153
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Shame
+  Priority: 50
+  Area:
+  - X1: 5377
+    Y1: 2
+    X2: 5634
+    Y2: 262
+  - X1: 5635
+    Y1: 2
+    X2: 5895
+    Y2: 126
+  Music: Dungeon9
+  GoLocation:
+    X: 5395
+    Y: 126
+    Z: 0
+  Entrance:
+    X: 512
+    Y: 1559
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Wrong
+  Priority: 50
+  Area:
+  - X1: 5633
+    Y1: 511
+    X2: 5886
+    Y2: 1021
+  Music: Dungeon9
+  GoLocation:
+    X: 5825
+    Y: 599
+    Z: 0
+  Entrance:
+    X: 2042
+    Y: 226
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Cave 1
+  Priority: 50
+  Area:
+  - X1: 2373
+    Y1: 900
+    X2: 2395
+    Y2: 928
+  - X1: 2395
+    Y1: 903
+    X2: 2409
+    Y2: 919
+  - X1: 2373
+    Y1: 928
+    X2: 2383
+    Y2: 937
+  - X1: 2359
+    Y1: 927
+    X2: 2373
+    Y2: 945
+  GoLocation:
+    X: 2367
+    Y: 942
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Cave 2
+  Priority: 50
+  Area:
+  - X1: 1887
+    Y1: 354
+    X2: 1920
+    Y2: 377
+  GoLocation:
+    X: 1903
+    Y: 365
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Cave 3
+  Priority: 50
+  Area:
+  - X1: 1925
+    Y1: 307
+    X2: 1943
+    Y2: 325
+  GoLocation:
+    X: 1934
+    Y: 316
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Cave 4
+  Priority: 50
+  Area:
+  - X1: 2323
+    Y1: 809
+    X2: 2368
+    Y2: 851
+  GoLocation:
+    X: 2345
+    Y: 830
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Britain Mine 1
+  Priority: 50
+  Area:
+  - X1: 1436
+    Y1: 1215
+    X2: 1465
+    Y2: 1252
+  GoLocation:
+    X: 1443
+    Y: 1228
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Britain Mine 2
+  Priority: 50
+  Area:
+  - X1: 1611
+    Y1: 1175
+    X2: 1662
+    Y2: 1204
+  GoLocation:
+    X: 1629
+    Y: 1189
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Minoc Cave 1
+  Priority: 50
+  Area:
+  - X1: 2406
+    Y1: 168
+    X2: 2428
+    Y2: 184
+  GoLocation:
+    X: 2426
+    Y: 177
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Minoc Cave 2
+  Priority: 50
+  Area:
+  - X1: 2418
+    Y1: 81
+    X2: 2442
+    Y2: 113
+  GoLocation:
+    X: 2440
+    Y: 94
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Minoc Cave 3
+  Priority: 50
+  Area:
+  - X1: 2447
+    Y1: 39
+    X2: 2489
+    Y2: 67
+  GoLocation:
+    X: 2471
+    Y: 64
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Minoc Mine
+  Priority: 50
+  Area:
+  - X1: 2556
+    Y1: 501
+    X2: 2562
+    Y2: 504
+  - X1: 2556
+    Y1: 474
+    X2: 2582
+    Y2: 501
+  GoLocation:
+    X: 2558
+    Y: 499
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Avatar Isle Cave
+  Priority: 50
+  Area:
+  - X1: 4594
+    Y1: 3807
+    X2: 4617
+    Y2: 3824
+  GoLocation:
+    X: 4605
+    Y: 3815
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Ice Isle Cave 1
+  Priority: 50
+  Area:
+  - X1: 4018
+    Y1: 421
+    X2: 4067
+    Y2: 470
+  GoLocation:
+    X: 4054
+    Y: 440
+    Z: 3
+- Type: BaseRegion
+  Map: Felucca
+  Name: Ice Isle Cave 2
+  Priority: 50
+  Area:
+  - X1: 4002
+    Y1: 310
+    X2: 4045
+    Y2: 351
+  - X1: 4005
+    Y1: 298
+    X2: 4027
+    Y2: 310
+  GoLocation:
+    X: 4030
+    Y: 325
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: North Territory Cave
+  Priority: 50
+  Area:
+  - X1: 1973
+    Y1: 251
+    X2: 1994
+    Y2: 274
+  GoLocation:
+    X: 1984
+    Y: 262
+    Z: 8
+- Type: BaseRegion
+  Map: Felucca
+  Name: Yew Cave
+  Priority: 50
+  Area:
+  - X1: 766
+    Y1: 1683
+    X2: 778
+    Y2: 1697
+  GoLocation:
+    X: 773
+    Y: 1684
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: North Territory Mine 1
+  Priority: 50
+  Area:
+  - X1: 1713
+    Y1: 1055
+    X2: 1753
+    Y2: 1080
+  GoLocation:
+    X: 1723
+    Y: 1065
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: North Territory Mine 2
+  Priority: 50
+  Area:
+  - X1: 1604
+    Y1: 958
+    X2: 1650
+    Y2: 1009
+  GoLocation:
+    X: 1638
+    Y: 974
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: Mt Kendall
+  Priority: 50
+  Area:
+  - X1: 2552
+    Y1: 448
+    X2: 2623
+    Y2: 507
+  - X1: 2547
+    Y1: 380
+    X2: 2590
+    Y2: 448
+  - X1: 2590
+    Y1: 413
+    X2: 2623
+    Y2: 448
+  GoLocation:
+    X: 2593
+    Y: 477
+    Z: 60
+- Type: BaseRegion
+  Map: Felucca
+  Name: Covetous Mine
+  Priority: 50
+  Area:
+  - X1: 2429
+    Y1: 866
+    X2: 2448
+    Y2: 911
+  - X1: 2448
+    Y1: 879
+    X2: 2475
+    Y2: 907
+  - X1: 2456
+    Y1: 907
+    X2: 2475
+    Y2: 941
+  GoLocation:
+    X: 2445
+    Y: 880
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Terathan Keep
+  Priority: 50
+  Area:
+  - X1: 5404
+    Y1: 3099
+    X2: 5481
+    Y2: 3167
+  - X1: 5120
+    Y1: 1530
+    X2: 5374
+    Y2: 1788
+  Music: Dungeon9
+  GoLocation:
+    X: 5451
+    Y: 3143
+    Z: -60
+  Entrance:
+    X: 5426
+    Y: 3120
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Fire
+  Priority: 50
+  Area:
+  - X1: 5635
+    Y1: 1285
+    X2: 5880
+    Y2: 1520
+  Music: Dungeon9
+  GoLocation:
+    X: 5760
+    Y: 2908
+    Z: 15
+  Entrance:
+    X: 2922
+    Y: 3402
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Ice
+  Priority: 50
+  Area:
+  - X1: 5668
+    Y1: 130
+    X2: 5888
+    Y2: 268
+  - X1: 5800
+    Y1: 319
+    X2: 5863
+    Y2: 384
+  - X1: 5654
+    Y1: 300
+    X2: 5708
+    Y2: 340
+  Music: Dungeon9
+  GoLocation:
+    X: 5210
+    Y: 2322
+    Z: 30
+  Entrance:
+    X: 1996
+    Y: 80
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: Delucia
+  Priority: 50
+  Area:
+  - X1: 5123
+    Y1: 3942
+    X2: 5315
+    Y2: 4064
+  - X1: 5147
+    Y1: 4064
+    X2: 5272
+    Y2: 4084
+  - X1: 5235
+    Y1: 3930
+    X2: 5315
+    Y2: 3942
+  GoLocation:
+    X: 5228
+    Y: 3978
+    Z: 37
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5194
+    Y1: 4053
+    X2: 5204
+    Y2: 4073
+  Parent:
+    Name: Delucia
+    Map: Felucca
+- Type: TownRegion
+  Map: Felucca
+  Name: Papua
+  Priority: 50
+  Area:
+  - X1: 5639
+    Y1: 3095
+    X2: 5831
+    Y2: 3318
+  - X1: 5831
+    Y1: 3237
+    X2: 5851
+    Y2: 3267
+  GoLocation:
+    X: 5769
+    Y: 3176
+    Z: 0
+- Type: TownRegion
+  Map: Felucca
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5757
+    Y1: 3150
+    X2: 5781
+    Y2: 3174
+  Parent:
+    Name: Papua
+    Map: Felucca
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Wrong Entrance
+  Priority: 50
+  Area:
+  - X1: 1939
+    Y1: 215
+    X2: 2073
+    Y2: 352
+  Music: Mountn_a
+  GoLocation:
+    X: 2043
+    Y: 236
+    Z: 13
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Covetous Entrance
+  Priority: 50
+  Area:
+  - X1: 2433
+    Y1: 846
+    X2: 2561
+    Y2: 974
+  Music: Vesper
+  GoLocation:
+    X: 2499
+    Y: 918
+    Z: 0
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Despise Entrance
+  Priority: 50
+  Area:
+  - X1: 1289
+    Y1: 1064
+    X2: 1321
+    Y2: 1101
+  GoLocation:
+    X: 1298
+    Y: 1081
+    Z: 0
+- Type: NoHousingRegion
+  Map: Felucca
+  Name: Despise Passage
+  Priority: 50
+  Area:
+  - X1: 1338
+    Y1: 1060
+    X2: 1389
+    Y2: 1122
+  - X1: 1354
+    Y1: 1122
+    X2: 1396
+    Y2: 1243
+  - X1: 1349
+    Y1: 1122
+    X2: 1354
+    Y2: 1224
+  GoLocation:
+    X: 1380
+    Y: 1114
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Misc Dungeons
+  Priority: 50
+  Area:
+  - X1: 5886
+    Y1: 1281
+    X2: 6143
+    Y2: 1535
+  Music: Dungeon9
+  GoLocation:
+    X: 6032
+    Y: 1499
+    Z: 0
+  Entrance:
+    X: 1492
+    Y: 1641
+    Z: 0
+- Type: DungeonRegion
+  Map: Felucca
+  Name: Orc Cave
+  Priority: 50
+  Area:
+  - X1: 5281
+    Y1: 1283
+    X2: 5373
+    Y2: 1386
+  - X1: 5267
+    Y1: 1955
+    X2: 5364
+    Y2: 2046
+  - X1: 5127
+    Y1: 1941
+    X2: 5164
+    Y2: 2024
+  Music: Dungeon9
+  GoLocation:
+    X: 5137
+    Y: 2015
+    Z: 0
+  Entrance:
+    X: 1014
+    Y: 1434
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Cotton Field in Moonglow
+  Priority: 50
+  Area:
+  - X1: 4557
+    Y1: 1471
+    X2: 4577
+    Y2: 1481
+  RuneName: A Cotton Field in Moonglow
+  GoLocation:
+    X: 4567
+    Y: 1475
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Wheatfield in Skara Brae 1
+  Priority: 50
+  Area:
+  - X1: 796
+    Y1: 2152
+    X2: 832
+    Y2: 2176
+  RuneName: A Wheatfield in Skara Brae
+  GoLocation:
+    X: 813
+    Y: 2163
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Carrot Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2251
+    X2: 832
+    Y2: 2259
+  GoLocation:
+    X: 823
+    Y: 2254
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: An Onion Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2261
+    X2: 832
+    Y2: 2269
+  GoLocation:
+    X: 823
+    Y: 2264
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Cabbage Field in Skara Brae 1
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2271
+    X2: 832
+    Y2: 2279
+  GoLocation:
+    X: 823
+    Y: 2264
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Cabbage Field in Skara Brae 2
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2281
+    X2: 832
+    Y2: 2289
+  GoLocation:
+    X: 823
+    Y: 2274
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Wheatfield in Skara Brae 2
+  Priority: 50
+  Area:
+  - X1: 835
+    Y1: 2344
+    X2: 851
+    Y2: 2360
+  GoLocation:
+    X: 843
+    Y: 2352
+    Z: 0
+- Type: BaseRegion
+  Map: Felucca
+  Name: A Cotton Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2344
+    X2: 832
+    Y2: 2368
+  GoLocation:
+    X: 823
+    Y: 2355
+    Z: 0
+- Type: GuardedRegion
+  Map: Trammel
+  Name: Moongates
+  Priority: 50
+  Area:
+  - X1: 1330
+    Y1: 1991
+    X2: 1343
+    Y2: 2004
+  - X1: 1494
+    Y1: 3767
+    X2: 1506
+    Y2: 3778
+  - X1: 2694
+    Y1: 685
+    X2: 2709
+    Y2: 701
+  - X1: 1823
+    Y1: 2943
+    X2: 1834
+    Y2: 2954
+  - X1: 761
+    Y1: 741
+    X2: 780
+    Y2: 762
+  - X1: 638
+    Y1: 2062
+    X2: 650
+    Y2: 2073
+  - X1: 4459
+    Y1: 1276
+    X2: 4475
+    Y2: 1292
+  - X1: 3554
+    Y1: 2132
+    X2: 3572
+    Y2: 2150
+- Type: TownRegion
+  Map: Trammel
+  Name: The Heartwood
+  Priority: 50
+  Area:
+  - X1: 6911
+    Y1: 255
+    X2: 7168
+    Y2: 512
+  Music: ElfCity
+  GoLocation:
+    X: 6984
+    Y: 337
+    Z: 0
+  Entrance:
+    X: 535
+    Y: 995
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Sanctuary
+  Priority: 50
+  Area:
+  - X1: 6144
+    Y1: 0
+    X2: 6399
+    Y2: 255
+  Music: Dungeon9
+  GoLocation:
+    X: 6174
+    Y: 23
+    Z: 0
+  Entrance:
+    X: 762
+    Y: 1645
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: The Painted Caves
+  Priority: 50
+  Area:
+  - X1: 6240
+    Y1: 850
+    X2: 6315
+    Y2: 920
+  Music: Dungeon9
+  GoLocation:
+    X: 6308
+    Y: 892
+    Z: -1
+  Entrance:
+    X: 1716
+    Y: 892
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: The Prism of Light
+  Priority: 50
+  Area:
+  - X1: 6400
+    Y1: 0
+    X2: 6621
+    Y2: 255
+  Music: Dungeon9
+  GoLocation:
+    X: 6474
+    Y: 188
+    Z: 0
+  Entrance:
+    X: 3784
+    Y: 1097
+    Z: 14
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Blighted Grove
+  Priority: 50
+  Area:
+  - X1: 6440
+    Y1: 820
+    X2: 6600
+    Y2: 970
+  Music: MelisandesLair
+  GoLocation:
+    X: 6478
+    Y: 863
+    Z: 11
+  Entrance:
+    X: 587
+    Y: 1641
+    Z: -1
+- Type: DungeonRegion
+  Map: Trammel
+  Name: The Palace of Paroxysmus
+  Priority: 50
+  Area:
+  - X1: 6191
+    Y1: 311
+    X2: 6561
+    Y2: 671
+  Music: ParoxysmusLair
+  GoLocation:
+    X: 6222
+    Y: 335
+    Z: 60
+  Entrance:
+    X: 5574
+    Y: 3024
+    Z: 31
+- Type: BaseRegion
+  Map: Trammel
+  Name: Bravehorn's drinking pool
+  Priority: 50
+  Area:
+  - X1: 1302
+    Y1: 2331
+    X2: 1340
+    Y2: 2353
+- Type: BaseRegion
+  Map: Trammel
+  Name: Huntsman's Forest
+  Priority: 50
+  Area:
+  - X1: 1595
+    Y1: 550
+    X2: 1715
+    Y2: 670
+- Type: TownRegion
+  Map: Trammel
+  Name: Cove
+  Priority: 50
+  Area:
+  - X1: 2200
+    Y1: 1110
+    X2: 2250
+    Y2: 1160
+  - X1: 2200
+    Y1: 1160
+    X2: 2286
+    Y2: 1246
+  Music: Cove
+  GoLocation:
+    X: 2275
+    Y: 1210
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: Britain
+  Priority: 50
+  Area:
+  - X1: 1416
+    Y1: 1498
+    X2: 1740
+    Y2: 1777
+  - X1: 1500
+    Y1: 1408
+    X2: 1546
+    Y2: 1498
+  - X1: 1385
+    Y1: 1538
+    X2: 1416
+    Y2: 1777
+  - X1: 1416
+    Y1: 1777
+    X2: 1740
+    Y2: 1837
+  - X1: 1385
+    Y1: 1777
+    X2: 1416
+    Y2: 1907
+  - X1: 1093
+    Y1: 1538
+    X2: 1385
+    Y2: 1907
+  Music: Britain1
+  GoLocation:
+    X: 1495
+    Y: 1629
+    Z: 10
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1492
+    Y1: 1602
+    X2: 1500
+    Y2: 1621
+  - X1: 1500
+    Y1: 1610
+    X2: 1508
+    Y2: 1626
+  - X1: 1576
+    Y1: 1584
+    X2: 1600
+    Y2: 1600
+  - X1: 1456
+    Y1: 1512
+    X2: 1472
+    Y2: 1528
+  - X1: 1472
+    Y1: 1512
+    X2: 1480
+    Y2: 1520
+  - X1: 1424
+    Y1: 1712
+    X2: 1432
+    Y2: 1736
+  - X1: 1432
+    Y1: 1712
+    X2: 1440
+    Y2: 1724
+  - X1: 1486
+    Y1: 1684
+    X2: 1494
+    Y2: 1692
+  - X1: 1494
+    Y1: 1676
+    X2: 1502
+    Y2: 1700
+  - X1: 1608
+    Y1: 1584
+    X2: 1632
+    Y2: 1592
+  - X1: 1616
+    Y1: 1576
+    X2: 1624
+    Y2: 1584
+  - X1: 1544
+    Y1: 1760
+    X2: 1560
+    Y2: 1776
+  - X1: 1560
+    Y1: 1760
+    X2: 1568
+    Y2: 1768
+  Parent:
+    Name: Britain
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1120
+    Y1: 1776
+    X2: 1152
+    Y2: 1808
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1135
+    Y: 1791
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1184
+    Y1: 1808
+    X2: 1216
+    Y2: 1840
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1199
+    Y: 1823
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Britain 3
+  Priority: 50
+  Area:
+  - X1: 1216
+    Y1: 1872
+    X2: 1248
+    Y2: 1904
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1231
+    Y: 1887
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Carrot Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1208
+    Y1: 1712
+    X2: 1224
+    Y2: 1736
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1215
+    Y: 1723
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: An Onion Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1224
+    Y1: 1712
+    X2: 1240
+    Y2: 1736
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1231
+    Y: 1723
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Cabbage Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1176
+    Y1: 1672
+    X2: 1192
+    Y2: 1695
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1183
+    Y: 1683
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Turnip Field in Britain 1
+  Priority: 50
+  Area:
+  - X1: 1192
+    Y1: 1672
+    X2: 1208
+    Y2: 1696
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1199
+    Y: 1683
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Britain 4
+  Priority: 50
+  Area:
+  - X1: 1104
+    Y1: 1608
+    X2: 1136
+    Y2: 1640
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1120
+    Y: 1624
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Britain 5
+  Priority: 50
+  Area:
+  - X1: 1136
+    Y1: 1560
+    X2: 1168
+    Y2: 1592
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1152
+    Y: 1576
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Turnip Field in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1208
+    Y1: 1592
+    X2: 1224
+    Y2: 1616
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1216
+    Y: 1604
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Carrot Field in Britain 2
+  Priority: 50
+  Area:
+  - X1: 1224
+    Y1: 1592
+    X2: 1240
+    Y2: 1616
+  Parent:
+    Name: Britain
+    Map: Trammel
+  GoLocation:
+    X: 1232
+    Y: 1604
+    Z: 0
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Britain Graveyard
+  Priority: 50
+  Area:
+  - X1: 1333
+    Y1: 1441
+    X2: 1417
+    Y2: 1523
+  GoLocation:
+    X: 1384
+    Y: 1492
+    Z: 10
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Jhelom Islands
+  Priority: 50
+  Area:
+  - X1: 1111
+    Y1: 3567
+    X2: 1144
+    Y2: 3588
+  - X1: 1078
+    Y1: 3588
+    X2: 1202
+    Y2: 3709
+  - X1: 1224
+    Y1: 3592
+    X2: 1533
+    Y2: 4065
+  Music: Jhelom
+  GoLocation:
+    X: 1383
+    Y: 3815
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: Jhelom
+  Priority: 50
+  Area:
+  - X1: 1303
+    Y1: 3670
+    X2: 1492
+    Y2: 3895
+  - X1: 1338
+    Y1: 3895
+    X2: 1412
+    Y2: 3923
+  - X1: 1383
+    Y1: 3951
+    X2: 1492
+    Y2: 4045
+  Parent:
+    Name: Jhelom Islands
+    Map: Trammel
+  GoLocation:
+    X: 1383
+    Y: 3815
+    Z: 0
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1352
+    Y1: 3800
+    X2: 1368
+    Y2: 3832
+  - X1: 1368
+    Y1: 3808
+    X2: 1376
+    Y2: 3824
+  - X1: 1432
+    Y1: 3768
+    X2: 1464
+    Y2: 3776
+  - X1: 1440
+    Y1: 3776
+    X2: 1464
+    Y2: 3784
+  Parent:
+    Name: Jhelom
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Minoc
+  Priority: 50
+  Area:
+  - X1: 2411
+    Y1: 366
+    X2: 2546
+    Y2: 607
+  - X1: 2548
+    Y1: 495
+    X2: 2620
+    Y2: 550
+  - X1: 2564
+    Y1: 585
+    X2: 2567
+    Y2: 627
+  - X1: 2567
+    Y1: 585
+    X2: 2628
+    Y2: 646
+  - X1: 2499
+    Y1: 627
+    X2: 2567
+    Y2: 690
+  Music: Minoc
+  GoLocation:
+    X: 2466
+    Y: 544
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2457
+    Y1: 397
+    X2: 2497
+    Y2: 405
+  - X1: 2465
+    Y1: 405
+    X2: 2473
+    Y2: 413
+  - X1: 2481
+    Y1: 405
+    X2: 2489
+    Y2: 413
+  Parent:
+    Name: Minoc
+    Map: Trammel
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Haven Island
+  Priority: 50
+  Area:
+  - X1: 3314
+    Y1: 2345
+    X2: 3814
+    Y2: 3095
+  GoLocation:
+    X: 3627
+    Y: 2606
+    Z: 0
+- Type: GuardedRegion
+  Map: Trammel
+  Name: New Haven Moongate
+  Priority: 50
+  Area:
+  - X1: 3446
+    Y1: 2674
+    X2: 3456
+    Y2: 2684
+  Parent:
+    Name: Haven Island
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: New Haven
+  Priority: 50
+  Area:
+  - X1: 3416
+    Y1: 2480
+    X2: 3545
+    Y2: 2648
+  Music: Ocllo
+  Parent:
+    Name: Haven Island
+    Map: Trammel
+  RuneName: New Haven
+  MinExpansion: ML
+  GoLocation:
+    X: 3503
+    Y: 2574
+    Z: 14
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Alchemist
+  Priority: 50
+  Area:
+  - X1: 3457
+    Y1: 2563
+    X2: 3466
+    Y2: 2572
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: The Little Shop of Alchemy in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Bard
+  Priority: 50
+  Area:
+  - X1: 3410
+    Y1: 2598
+    X2: 3419
+    Y2: 2607
+  - X1: 3419
+    Y1: 2599
+    X2: 3421
+    Y2: 2606
+  - X1: 3408
+    Y1: 2607
+    X2: 3415
+    Y2: 2612
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: the Bardic Guild in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Warrior's Guild Hall
+  Priority: 50
+  Area:
+  - X1: 3520
+    Y1: 2528
+    X2: 3543
+    Y2: 2552
+  - X1: 3520
+    Y1: 2552
+    X2: 3534
+    Y2: 2563
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: the Warrior Guild Hall in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Warrior
+  Priority: 50
+  Area:
+  - X1: 3523
+    Y1: 2546
+    X2: 3529
+    Y2: 2562
+  - X1: 3529
+    Y1: 2550
+    X2: 3533
+    Y2: 2562
+  Parent:
+    Name: Warrior's Guild Hall
+    Map: Trammel
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Bowyer
+  Priority: 50
+  Area:
+  - X1: 3529
+    Y1: 2531
+    X2: 3541
+    Y2: 2550
+  Parent:
+    Name: Warrior's Guild Hall
+    Map: Trammel
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Tailor
+  Priority: 50
+  Area:
+  - X1: 3492
+    Y1: 2546
+    X2: 3502
+    Y2: 2557
+  - X1: 3502
+    Y1: 2546
+    X2: 3505
+    Y2: 2550
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: A Stitch In Time in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Carpenter
+  Priority: 50
+  Area:
+  - X1: 3439
+    Y1: 2632
+    X2: 3448
+    Y2: 2643
+  - X1: 3440
+    Y1: 2643
+    X2: 3447
+    Y2: 2648
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: Carpenters of New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Mapmaker
+  Priority: 50
+  Area:
+  - X1: 3490
+    Y1: 2588
+    X2: 3497
+    Y2: 2595
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: Mapmakers of New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Mage
+  Priority: 50
+  Area:
+  - X1: 3464
+    Y1: 2488
+    X2: 3491
+    Y2: 2504
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: New Haven Magery School
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Inn
+  Priority: 50
+  Area:
+  - X1: 3493
+    Y1: 2513
+    X2: 3503
+    Y2: 2523
+  - X1: 3503
+    Y1: 2513
+    X2: 3510
+    Y2: 2530
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: the Bountiful Harvest Inn in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Docks
+  Priority: 50
+  Area:
+  - X1: 3500
+    Y1: 2592
+    X2: 3508
+    Y2: 2617
+  - X1: 3508
+    Y1: 2592
+    X2: 3516
+    Y2: 2599
+  - X1: 3516
+    Y1: 2592
+    X2: 3524
+    Y2: 2608
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: the docks in New Haven
+  MinExpansion: ML
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the New Haven Bank
+  Priority: 50
+  Area:
+  - X1: 3479
+    Y1: 2565
+    X2: 3492
+    Y2: 2580
+  Parent:
+    Name: New Haven
+    Map: Trammel
+  RuneName: the First Bank of New Haven
+  MinExpansion: ML
+- Type: TownRegion
+  Map: Trammel
+  Name: Haven
+  Priority: 50
+  Area:
+  - X1: 3590
+    Y1: 2460
+    X2: 3708
+    Y2: 2685
+  - X1: 3568
+    Y1: 2552
+    X2: 3590
+    Y2: 2631
+  - X1: 3708
+    Y1: 2558
+    X2: 3761
+    Y2: 2712
+  - X1: 3695
+    Y1: 2685
+    X2: 3708
+    Y2: 2712
+  Music: Ocllo
+  Parent:
+    Name: Haven Island
+    Map: Trammel
+  RuneName: Haven City
+  MaxExpansion: SE
+  GoLocation:
+    X: 3650
+    Y: 2519
+    Z: 0
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Woodsman in Haven
+  Priority: 50
+  Area:
+  - X1: 3736
+    Y1: 2680
+    X2: 3744
+    Y2: 2696
+  - X1: 3744
+    Y1: 2680
+    X2: 3752
+    Y2: 2688
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Woodsman in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Prime Cut Butcher Shop in Haven
+  Priority: 50
+  Area:
+  - X1: 3704
+    Y1: 2648
+    X2: 3720
+    Y2: 2656
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Prime Cut Butcher Shop in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3728
+    Y1: 2632
+    X2: 3736
+    Y2: 2640
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: a farm in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3704
+    Y1: 2584
+    X2: 3712
+    Y2: 2592
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: a farm in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3736
+    Y1: 2561
+    X2: 3744
+    Y2: 2568
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: a farm in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Mapmakers of Haven
+  Priority: 50
+  Area:
+  - X1: 3624
+    Y1: 2632
+    X2: 3640
+    Y2: 2640
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: Mapmakers of Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Haven Blacksmith
+  Priority: 50
+  Area:
+  - X1: 3641
+    Y1: 2613
+    X2: 3646
+    Y2: 2624
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Haven Blacksmith
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Second Bank of Haven
+  Priority: 50
+  Area:
+  - X1: 3615
+    Y1: 2614
+    X2: 3631
+    Y2: 2623
+  - X1: 3615
+    Y1: 2609
+    X2: 3624
+    Y2: 2614
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Second Bank of Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Uzeraan's Mansion
+  Priority: 50
+  Area:
+  - X1: 3583
+    Y1: 2567
+    X2: 3608
+    Y2: 2608
+  - X1: 3608
+    Y1: 2572
+    X2: 3613
+    Y2: 2603
+  - X1: 3572
+    Y1: 2592
+    X2: 3583
+    Y2: 2603
+  - X1: 3575
+    Y1: 2582
+    X2: 3583
+    Y2: 2592
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: Uzeraan's Mansion
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3592
+    Y1: 2595
+    X2: 3612
+    Y2: 2599
+  - X1: 3595
+    Y1: 2599
+    X2: 3612
+    Y2: 2602
+  - X1: 3595
+    Y1: 2602
+    X2: 3607
+    Y2: 2607
+  Parent:
+    Name: Uzeraan's Mansion
+    Map: Trammel
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Last Chance Provisioners in Haven
+  Priority: 50
+  Area:
+  - X1: 3666
+    Y1: 2592
+    X2: 3681
+    Y2: 2600
+  - X1: 3673
+    Y1: 2587
+    X2: 3681
+    Y2: 2592
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: Last Chance Provisioners in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Healers of Haven
+  Priority: 50
+  Area:
+  - X1: 3659
+    Y1: 2577
+    X2: 3674
+    Y2: 2584
+  - X1: 3661
+    Y1: 2576
+    X2: 3672
+    Y2: 2577
+  - X1: 3663
+    Y1: 2575
+    X2: 3670
+    Y2: 2576
+  - X1: 3661
+    Y1: 2584
+    X2: 3672
+    Y2: 2585
+  - X1: 3663
+    Y1: 2585
+    X2: 3670
+    Y2: 2586
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Healers of Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Little Shop of Magic in Haven
+  Priority: 50
+  Area:
+  - X1: 3623
+    Y1: 2565
+    X2: 3642
+    Y2: 2577
+  - X1: 3623
+    Y1: 2577
+    X2: 3628
+    Y2: 2581
+  - X1: 3637
+    Y1: 2577
+    X2: 3642
+    Y2: 2581
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Little Shop of Magic in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Shakin' Bakery in Haven
+  Priority: 50
+  Area:
+  - X1: 3624
+    Y1: 2528
+    X2: 3632
+    Y2: 2552
+  - X1: 3632
+    Y1: 2528
+    X2: 3640
+    Y2: 2536
+  - X1: 3632
+    Y1: 2544
+    X2: 3640
+    Y2: 2552
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Shakin' Bakery in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Bardic Guild in Haven
+  Priority: 50
+  Area:
+  - X1: 3672
+    Y1: 2528
+    X2: 3679
+    Y2: 2544
+  - X1: 3655
+    Y1: 2528
+    X2: 3672
+    Y2: 2536
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Bardic Guild in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Carpenters of Haven
+  Priority: 50
+  Area:
+  - X1: 3632
+    Y1: 2496
+    X2: 3648
+    Y2: 2504
+  - X1: 3640
+    Y1: 2504
+    X2: 3648
+    Y2: 2512
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: Carpenters of Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Haven Clockworks and Tinker Shop
+  Priority: 50
+  Area:
+  - X1: 3656
+    Y1: 2504
+    X2: 3672
+    Y2: 2512
+  - X1: 3664
+    Y1: 2495
+    X2: 3672
+    Y2: 2504
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: Haven Clockworks and Tinker Shop
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Haven Thieves' Guild
+  Priority: 50
+  Area:
+  - X1: 3688
+    Y1: 2504
+    X2: 3696
+    Y2: 2520
+  - X1: 3696
+    Y1: 2504
+    X2: 3704
+    Y2: 2512
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Haven Thieves' Guild
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: A Stitch in Time in Haven
+  Priority: 50
+  Area:
+  - X1: 3688
+    Y1: 2464
+    X2: 3696
+    Y2: 2488
+  - X1: 3680
+    Y1: 2472
+    X2: 3704
+    Y2: 2480
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: A Stitch in Time in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Haven Public Library
+  Priority: 50
+  Area:
+  - X1: 3608
+    Y1: 2464
+    X2: 3616
+    Y2: 2480
+  - X1: 3616
+    Y1: 2472
+    X2: 3624
+    Y2: 2480
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Haven Public Library
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Gentle Rest Inn in New Haven
+  Priority: 50
+  Area:
+  - X1: 3493
+    Y1: 2513
+    X2: 3509
+    Y2: 2520
+  - X1: 3503
+    Y1: 2513
+    X2: 3510
+    Y2: 2529
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Gentle Rest Inn in New Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: The Albatross Bar and Grill in Haven
+  Priority: 50
+  Area:
+  - X1: 3664
+    Y1: 2640
+    X2: 3672
+    Y2: 2656
+  - X1: 3672
+    Y1: 2648
+    X2: 3680
+    Y2: 2656
+  Music: Tavern01
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: The Albatross Bar and Grill in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Proving Grounds in Haven
+  Priority: 50
+  Area:
+  - X1: 3728
+    Y1: 2575
+    X2: 3736
+    Y2: 2592
+  - X1: 3736
+    Y1: 2575
+    X2: 3737
+    Y2: 2582
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Proving Grounds in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Bullseye Marksmen in Haven
+  Priority: 50
+  Area:
+  - X1: 3742
+    Y1: 2575
+    X2: 3750
+    Y2: 2586
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Bullseye Marksmen in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the docks in Haven
+  Priority: 50
+  Area:
+  - X1: 3645
+    Y1: 2657
+    X2: 3672
+    Y2: 2666
+  - X1: 3645
+    Y1: 2666
+    X2: 3651
+    Y2: 2684
+  - X1: 3659
+    Y1: 2666
+    X2: 3665
+    Y2: 2684
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the docks in Haven
+  MaxExpansion: SE
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: the Mystic Mines of Haven
+  Priority: 50
+  Area:
+  - X1: 3752
+    Y1: 2698
+    X2: 3757
+    Y2: 2707
+  Parent:
+    Name: Haven
+    Map: Trammel
+  RuneName: the Mystic Mines of Haven
+  MaxExpansion: SE
+- Type: TownRegion
+  Map: Trammel
+  Name: Trinsic
+  Priority: 50
+  Area:
+  - X1: 1856
+    Y1: 2636
+    X2: 1931
+    Y2: 2664
+  - X1: 1816
+    Y1: 2664
+    X2: 2099
+    Y2: 2895
+  - X1: 2099
+    Y1: 2782
+    X2: 2117
+    Y2: 2807
+  - X1: 1970
+    Y1: 2895
+    X2: 2017
+    Y2: 2927
+  - X1: 1796
+    Y1: 2696
+    X2: 1816
+    Y2: 2763
+  - X1: 1800
+    Y1: 2796
+    X2: 1816
+    Y2: 2848
+  Music: Trinsic
+  GoLocation:
+    X: 1867
+    Y: 2780
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 1834
+    Y1: 2728
+    X2: 1856
+    Y2: 2744
+  - X1: 2024
+    Y1: 2784
+    X2: 2040
+    Y2: 2804
+  - X1: 2026
+    Y1: 2804
+    X2: 2040
+    Y2: 2806
+  - X1: 2024
+    Y1: 2806
+    X2: 2040
+    Y2: 2813
+  - X1: 1923
+    Y1: 2786
+    X2: 1935
+    Y2: 2808
+  - X1: 1935
+    Y1: 2786
+    X2: 1942
+    Y2: 2800
+  Parent:
+    Name: Trinsic
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Vesper
+  Priority: 50
+  Area:
+  - X1: 2893
+    Y1: 598
+    X2: 3014
+    Y2: 648
+  - X1: 2816
+    Y1: 648
+    X2: 3065
+    Y2: 1013
+  - X1: 2734
+    Y1: 944
+    X2: 2816
+    Y2: 948
+  - X1: 2728
+    Y1: 948
+    X2: 2816
+    Y2: 1001
+  Music: Vesper
+  GoLocation:
+    X: 2899
+    Y: 676
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2952
+    Y1: 864
+    X2: 2968
+    Y2: 896
+  - X1: 2968
+    Y1: 872
+    X2: 2976
+    Y2: 888
+  - X1: 2776
+    Y1: 952
+    X2: 2792
+    Y2: 984
+  - X1: 2768
+    Y1: 960
+    X2: 2776
+    Y2: 976
+  - X1: 2892
+    Y1: 901
+    X2: 2908
+    Y2: 920
+  - X1: 2908
+    Y1: 904
+    X2: 2916
+    Y2: 912
+  Parent:
+    Name: Vesper
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Yew
+  Priority: 50
+  Area:
+  - X1: 92
+    Y1: 656
+    X2: 441
+    Y2: 881
+  - X1: 441
+    Y1: 746
+    X2: 657
+    Y2: 881
+  - X1: 258
+    Y1: 881
+    X2: 657
+    Y2: 1261
+  - X1: 657
+    Y1: 922
+    X2: 699
+    Y2: 1229
+  - X1: 657
+    Y1: 806
+    X2: 674
+    Y2: 834
+  - X1: 718
+    Y1: 874
+    X2: 756
+    Y2: 896
+  Music: Yew
+  GoLocation:
+    X: 546
+    Y: 992
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 600
+    Y1: 808
+    X2: 624
+    Y2: 832
+  Parent:
+    Name: Yew
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: A Field of Sheep in Yew 1
+  Priority: 50
+  Area:
+  - X1: 664
+    Y1: 928
+    X2: 686
+    Y2: 950
+  Parent:
+    Name: Yew
+    Map: Trammel
+  RuneName: A Field of Sheep in Yew
+  GoLocation:
+    X: 675
+    Y: 939
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Field of Sheep in Yew 2
+  Priority: 50
+  Area:
+  - X1: 664
+    Y1: 1168
+    X2: 686
+    Y2: 1190
+  Parent:
+    Name: Yew
+    Map: Trammel
+  RuneName: A Field of Sheep in Yew
+  GoLocation:
+    X: 675
+    Y: 1179
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Farm in Yew
+  Priority: 50
+  Area:
+  - X1: 560
+    Y1: 1088
+    X2: 582
+    Y2: 1110
+  Parent:
+    Name: Yew
+    Map: Trammel
+  RuneName: A Farm in Yew
+  GoLocation:
+    X: 571
+    Y: 1099
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Yew 1
+  Priority: 50
+  Area:
+  - X1: 560
+    Y1: 1232
+    X2: 576
+    Y2: 1248
+  Parent:
+    Name: Yew
+    Map: Trammel
+  RuneName: A Wheatfield in Yew
+  GoLocation:
+    X: 567
+    Y: 1239
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: A Wheatfield in Yew 2
+  Priority: 50
+  Area:
+  - X1: 368
+    Y1: 1176
+    X2: 382
+    Y2: 1208
+  Parent:
+    Name: Yew
+    Map: Trammel
+  RuneName: A Wheatfield in Yew
+  GoLocation:
+    X: 375
+    Y: 1191
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: Wind
+  Priority: 50
+  Area:
+  - X1: 5294
+    Y1: 19
+    X2: 5366
+    Y2: 139
+  - X1: 5132
+    Y1: 58
+    X2: 5213
+    Y2: 126
+  - X1: 5197
+    Y1: 126
+    X2: 5252
+    Y2: 204
+  - X1: 5132
+    Y1: 3
+    X2: 5202
+    Y2: 58
+  - X1: 5252
+    Y1: 112
+    X2: 5294
+    Y2: 170
+  - X1: 5213
+    Y1: 98
+    X2: 5252
+    Y2: 126
+  - X1: 5279
+    Y1: 57
+    X2: 5294
+    Y2: 112
+  - X1: 5252
+    Y1: 170
+    X2: 5284
+    Y2: 178
+  - X1: 5286
+    Y1: 25
+    X2: 5294
+    Y2: 57
+  - X1: 5252
+    Y1: 178
+    X2: 5272
+    Y2: 183
+  - X1: 5252
+    Y1: 183
+    X2: 5262
+    Y2: 193
+  Music: Wind
+  GoLocation:
+    X: 5223
+    Y: 190
+    Z: 5
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5159
+    Y1: 15
+    X2: 5184
+    Y2: 24
+  - X1: 5159
+    Y1: 24
+    X2: 5168
+    Y2: 40
+  - X1: 5175
+    Y1: 24
+    X2: 5184
+    Y2: 32
+  - X1: 5212
+    Y1: 159
+    X2: 5221
+    Y2: 183
+  - X1: 5221
+    Y1: 171
+    X2: 5228
+    Y2: 183
+  - X1: 5206
+    Y1: 164
+    X2: 5212
+    Y2: 179
+  - X1: 5303
+    Y1: 28
+    X2: 5319
+    Y2: 42
+  Parent:
+    Name: Wind
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Serpent's Hold
+  Priority: 50
+  Area:
+  - X1: 2868
+    Y1: 3324
+    X2: 3073
+    Y2: 3519
+  Music: Serpents
+  GoLocation:
+    X: 3010
+    Y: 3371
+    Z: 15
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2960
+    Y1: 3400
+    X2: 2976
+    Y2: 3416
+  - X1: 2968
+    Y1: 3416
+    X2: 2976
+    Y2: 3432
+  - X1: 3008
+    Y1: 3450
+    X2: 3022
+    Y2: 3464
+  Parent:
+    Name: Serpent's Hold
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Skara Brae
+  Priority: 50
+  Area:
+  - X1: 538
+    Y1: 2107
+    X2: 688
+    Y2: 2297
+  Music: Skarabra
+  GoLocation:
+    X: 632
+    Y: 2233
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 600
+    Y1: 2232
+    X2: 616
+    Y2: 2256
+  - X1: 592
+    Y1: 2240
+    X2: 600
+    Y2: 2256
+  - X1: 616
+    Y1: 2240
+    X2: 624
+    Y2: 2256
+  - X1: 552
+    Y1: 2168
+    X2: 568
+    Y2: 2192
+  - X1: 568
+    Y1: 2168
+    X2: 576
+    Y2: 2176
+  Parent:
+    Name: Skara Brae
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Nujel'm
+  Priority: 50
+  Area:
+  - X1: 3475
+    Y1: 1000
+    X2: 3835
+    Y2: 1435
+  Music: Nujelm
+  GoLocation:
+    X: 3732
+    Y: 1279
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3736
+    Y1: 1184
+    X2: 3752
+    Y2: 1207
+  - X1: 3728
+    Y1: 1192
+    X2: 3736
+    Y2: 1207
+  - X1: 3728
+    Y1: 1288
+    X2: 3751
+    Y2: 1303
+  - X1: 3728
+    Y1: 1303
+    X2: 3744
+    Y2: 1312
+  - X1: 3728
+    Y1: 1312
+    X2: 3740
+    Y2: 1320
+  - X1: 3728
+    Y1: 1320
+    X2: 3744
+    Y2: 1343
+  - X1: 3744
+    Y1: 1328
+    X2: 3751
+    Y2: 1343
+  - X1: 3760
+    Y1: 1216
+    X2: 3772
+    Y2: 1240
+  - X1: 3772
+    Y1: 1220
+    X2: 3776
+    Y2: 1236
+  - X1: 3776
+    Y1: 1224
+    X2: 3784
+    Y2: 1232
+  - X1: 3728
+    Y1: 1248
+    X2: 3744
+    Y2: 1272
+  - X1: 3744
+    Y1: 1248
+    X2: 3752
+    Y2: 1256
+  - X1: 3744
+    Y1: 1264
+    X2: 3752
+    Y2: 1272
+  Parent:
+    Name: Nujel'm
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Moonglow
+  Priority: 50
+  Area:
+  - X1: 4535
+    Y1: 844
+    X2: 4555
+    Y2: 847
+  - X1: 4530
+    Y1: 847
+    X2: 4561
+    Y2: 908
+  - X1: 4521
+    Y1: 914
+    X2: 4577
+    Y2: 963
+  - X1: 4278
+    Y1: 915
+    X2: 4332
+    Y2: 934
+  - X1: 4283
+    Y1: 944
+    X2: 4336
+    Y2: 1017
+  - X1: 4377
+    Y1: 1015
+    X2: 4436
+    Y2: 1052
+  - X1: 4367
+    Y1: 1050
+    X2: 4509
+    Y2: 1195
+  - X1: 4539
+    Y1: 1036
+    X2: 4566
+    Y2: 1054
+  - X1: 4517
+    Y1: 1053
+    X2: 4540
+    Y2: 1075
+  - X1: 4389
+    Y1: 1198
+    X2: 4436
+    Y2: 1237
+  - X1: 4466
+    Y1: 1211
+    X2: 4498
+    Y2: 1236
+  - X1: 4700
+    Y1: 1108
+    X2: 4717
+    Y2: 1126
+  - X1: 4656
+    Y1: 1127
+    X2: 4682
+    Y2: 1140
+  - X1: 4678
+    Y1: 1162
+    X2: 4703
+    Y2: 1187
+  - X1: 4613
+    Y1: 1196
+    X2: 4636
+    Y2: 1218
+  - X1: 4646
+    Y1: 1212
+    X2: 4660
+    Y2: 1229
+  - X1: 4677
+    Y1: 1214
+    X2: 4703
+    Y2: 1236
+  - X1: 4622
+    Y1: 1316
+    X2: 4644
+    Y2: 1340
+  - X1: 4487
+    Y1: 1353
+    X2: 4546
+    Y2: 1374
+  - X1: 4477
+    Y1: 1374
+    X2: 4546
+    Y2: 1409
+  - X1: 4659
+    Y1: 1387
+    X2: 4699
+    Y2: 1427
+  - X1: 4549
+    Y1: 1482
+    X2: 4578
+    Y2: 1509
+  - X1: 4405
+    Y1: 1451
+    X2: 4428
+    Y2: 1474
+  - X1: 4483
+    Y1: 1468
+    X2: 4504
+    Y2: 1481
+  Music: Moonglow
+  GoLocation:
+    X: 4442
+    Y: 1172
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: The Scholar's Inn
+  Priority: 50
+  Area:
+  - X1: 4384
+    Y1: 1152
+    X2: 4392
+    Y2: 1176
+  - X1: 4392
+    Y1: 1160
+    X2: 4408
+    Y2: 1168
+  - X1: 4400
+    Y1: 1152
+    X2: 4408
+    Y2: 1160
+  - X1: 4480
+    Y1: 1056
+    X2: 4488
+    Y2: 1072
+  - X1: 4488
+    Y1: 1060
+    X2: 4492
+    Y2: 1068
+  - X1: 4476
+    Y1: 1060
+    X2: 4480
+    Y2: 1068
+  Parent:
+    Name: Moonglow
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Magincia
+  Priority: 50
+  Area:
+  - X1: 3653
+    Y1: 2046
+    X2: 3680
+    Y2: 2094
+  - X1: 3752
+    Y1: 2046
+    X2: 3804
+    Y2: 2094
+  - X1: 3680
+    Y1: 2045
+    X2: 3752
+    Y2: 2094
+  - X1: 3652
+    Y1: 2094
+    X2: 3812
+    Y2: 2274
+  - X1: 3649
+    Y1: 2256
+    X2: 3703
+    Y2: 2303
+  Music: Magincia
+  GoLocation:
+    X: 3714
+    Y: 2220
+    Z: 20
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 3680
+    Y1: 2152
+    X2: 3704
+    Y2: 2160
+  - X1: 3720
+    Y1: 2216
+    X2: 3736
+    Y2: 2232
+  Parent:
+    Name: Magincia
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Buccaneer's Den
+  Priority: 50
+  Area:
+  - X1: 2612
+    Y1: 2057
+    X2: 2776
+    Y2: 2267
+  - X1: 2604
+    Y1: 2065
+    X2: 2612
+    Y2: 2254
+  Music: Bucsden
+  GoLocation:
+    X: 2706
+    Y: 2163
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2712
+    Y1: 2080
+    X2: 2728
+    Y2: 2096
+  - X1: 2712
+    Y1: 2096
+    X2: 2720
+    Y2: 2104
+  - X1: 2664
+    Y1: 2232
+    X2: 2688
+    Y2: 2240
+  - X1: 2672
+    Y1: 2240
+    X2: 2688
+    Y2: 2248
+  Parent:
+    Name: Buccaneer's Den
+    Map: Trammel
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Covetous
+  Priority: 50
+  Area:
+  - X1: 5376
+    Y1: 1793
+    X2: 5577
+    Y2: 2048
+  - X1: 5576
+    Y1: 1791
+    X2: 5633
+    Y2: 2048
+  Music: Dungeon9
+  GoLocation:
+    X: 5456
+    Y: 1862
+    Z: 0
+  Entrance:
+    X: 2499
+    Y: 916
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Deceit
+  Priority: 50
+  Area:
+  - X1: 5122
+    Y1: 518
+    X2: 5370
+    Y2: 770
+  Music: Dungeon9
+  GoLocation:
+    X: 5187
+    Y: 635
+    Z: 0
+  Entrance:
+    X: 4111
+    Y: 429
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Despise
+  Priority: 50
+  Area:
+  - X1: 5377
+    Y1: 516
+    X2: 5631
+    Y2: 1022
+  Music: Dungeon9
+  GoLocation:
+    X: 5501
+    Y: 570
+    Z: 59
+  Entrance:
+    X: 1296
+    Y: 1082
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Destard
+  Priority: 50
+  Area:
+  - X1: 5120
+    Y1: 770
+    X2: 5371
+    Y2: 1028
+  Music: Dungeon9
+  GoLocation:
+    X: 5243
+    Y: 1004
+    Z: 0
+  Entrance:
+    X: 1176
+    Y: 2635
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Hythloth
+  Priority: 50
+  Area:
+  - X1: 5898
+    Y1: 2
+    X2: 6136
+    Y2: 246
+  Music: Dungeon9
+  GoLocation:
+    X: 5905
+    Y: 22
+    Z: 44
+  Entrance:
+    X: 4722
+    Y: 3814
+    Z: 0
+- Type: JailRegion
+  Map: Trammel
+  Name: Jail
+  Priority: 50
+  Area:
+  - X1: 5271
+    Y1: 1159
+    X2: 5312
+    Y2: 1192
+  GoLocation:
+    X: 5275
+    Y: 1163
+    Z: 0
+- Type: GreenAcresRegion
+  Map: Trammel
+  Name: Green Acres
+  Priority: 1
+  Area:
+  - X1: 5376
+    Y1: 512
+    X2: 6143
+    Y2: 1279
+  GoLocation:
+    X: 5445
+    Y: 1153
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Shame
+  Priority: 50
+  Area:
+  - X1: 5377
+    Y1: 2
+    X2: 5634
+    Y2: 262
+  - X1: 5635
+    Y1: 2
+    X2: 5895
+    Y2: 126
+  Music: Dungeon9
+  GoLocation:
+    X: 5395
+    Y: 126
+    Z: 0
+  Entrance:
+    X: 512
+    Y: 1559
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Wrong
+  Priority: 50
+  Area:
+  - X1: 5633
+    Y1: 511
+    X2: 5886
+    Y2: 1021
+  Music: Dungeon9
+  GoLocation:
+    X: 5825
+    Y: 599
+    Z: 0
+  Entrance:
+    X: 2042
+    Y: 226
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Cave 1
+  Priority: 50
+  Area:
+  - X1: 2373
+    Y1: 900
+    X2: 2395
+    Y2: 928
+  - X1: 2395
+    Y1: 903
+    X2: 2409
+    Y2: 919
+  - X1: 2373
+    Y1: 928
+    X2: 2383
+    Y2: 937
+  - X1: 2359
+    Y1: 927
+    X2: 2373
+    Y2: 945
+  GoLocation:
+    X: 2367
+    Y: 942
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Cave 2
+  Priority: 50
+  Area:
+  - X1: 1887
+    Y1: 354
+    X2: 1920
+    Y2: 377
+  GoLocation:
+    X: 1903
+    Y: 365
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Cave 3
+  Priority: 50
+  Area:
+  - X1: 1925
+    Y1: 307
+    X2: 1943
+    Y2: 325
+  GoLocation:
+    X: 1934
+    Y: 316
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Cave 4
+  Priority: 50
+  Area:
+  - X1: 2323
+    Y1: 809
+    X2: 2368
+    Y2: 851
+  GoLocation:
+    X: 2345
+    Y: 830
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Britain Mine 1
+  Priority: 50
+  Area:
+  - X1: 1436
+    Y1: 1215
+    X2: 1465
+    Y2: 1252
+  GoLocation:
+    X: 1443
+    Y: 1228
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Britain Mine 2
+  Priority: 50
+  Area:
+  - X1: 1611
+    Y1: 1175
+    X2: 1662
+    Y2: 1204
+  GoLocation:
+    X: 1629
+    Y: 1189
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Minoc Cave 1
+  Priority: 50
+  Area:
+  - X1: 2406
+    Y1: 168
+    X2: 2428
+    Y2: 184
+  GoLocation:
+    X: 2426
+    Y: 177
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Minoc Cave 2
+  Priority: 50
+  Area:
+  - X1: 2418
+    Y1: 81
+    X2: 2442
+    Y2: 113
+  GoLocation:
+    X: 2440
+    Y: 94
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Minoc Cave 3
+  Priority: 50
+  Area:
+  - X1: 2447
+    Y1: 39
+    X2: 2489
+    Y2: 67
+  GoLocation:
+    X: 2471
+    Y: 64
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Minoc Mine
+  Priority: 50
+  Area:
+  - X1: 2556
+    Y1: 501
+    X2: 2562
+    Y2: 504
+  - X1: 2556
+    Y1: 474
+    X2: 2582
+    Y2: 501
+  GoLocation:
+    X: 2558
+    Y: 499
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Avatar Isle Cave
+  Priority: 50
+  Area:
+  - X1: 4594
+    Y1: 3807
+    X2: 4617
+    Y2: 3824
+  GoLocation:
+    X: 4605
+    Y: 3815
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Ice Isle Cave 1
+  Priority: 50
+  Area:
+  - X1: 4018
+    Y1: 421
+    X2: 4067
+    Y2: 470
+  GoLocation:
+    X: 4054
+    Y: 440
+    Z: 3
+- Type: BaseRegion
+  Map: Trammel
+  Name: Ice Isle Cave 2
+  Priority: 50
+  Area:
+  - X1: 4002
+    Y1: 310
+    X2: 4045
+    Y2: 351
+  - X1: 4005
+    Y1: 298
+    X2: 4027
+    Y2: 310
+  GoLocation:
+    X: 4030
+    Y: 325
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: North Territory Cave
+  Priority: 50
+  Area:
+  - X1: 1973
+    Y1: 251
+    X2: 1994
+    Y2: 274
+  GoLocation:
+    X: 1984
+    Y: 262
+    Z: 8
+- Type: BaseRegion
+  Map: Trammel
+  Name: Yew Cave
+  Priority: 50
+  Area:
+  - X1: 766
+    Y1: 1683
+    X2: 778
+    Y2: 1697
+  GoLocation:
+    X: 773
+    Y: 1684
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: North Territory Mine 1
+  Priority: 50
+  Area:
+  - X1: 1713
+    Y1: 1055
+    X2: 1753
+    Y2: 1080
+  GoLocation:
+    X: 1723
+    Y: 1065
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: North Territory Mine 2
+  Priority: 50
+  Area:
+  - X1: 1604
+    Y1: 958
+    X2: 1650
+    Y2: 1009
+  GoLocation:
+    X: 1638
+    Y: 974
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: Mt Kendall
+  Priority: 50
+  Area:
+  - X1: 2552
+    Y1: 448
+    X2: 2623
+    Y2: 507
+  - X1: 2547
+    Y1: 380
+    X2: 2590
+    Y2: 448
+  - X1: 2590
+    Y1: 413
+    X2: 2623
+    Y2: 448
+  GoLocation:
+    X: 2593
+    Y: 477
+    Z: 60
+- Type: BaseRegion
+  Map: Trammel
+  Name: Covetous Mine
+  Priority: 50
+  Area:
+  - X1: 2429
+    Y1: 866
+    X2: 2448
+    Y2: 911
+  - X1: 2448
+    Y1: 879
+    X2: 2475
+    Y2: 907
+  - X1: 2456
+    Y1: 907
+    X2: 2475
+    Y2: 941
+  GoLocation:
+    X: 2445
+    Y: 880
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Terathan Keep
+  Priority: 50
+  Area:
+  - X1: 5404
+    Y1: 3099
+    X2: 5481
+    Y2: 3167
+  - X1: 5120
+    Y1: 1530
+    X2: 5374
+    Y2: 1788
+  Music: Dungeon9
+  GoLocation:
+    X: 5451
+    Y: 3143
+    Z: -60
+  Entrance:
+    X: 5426
+    Y: 3120
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Fire
+  Priority: 50
+  Area:
+  - X1: 5635
+    Y1: 1285
+    X2: 5880
+    Y2: 1520
+  Music: Dungeon9
+  GoLocation:
+    X: 5760
+    Y: 2908
+    Z: 15
+  Entrance:
+    X: 2922
+    Y: 3402
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Ice
+  Priority: 50
+  Area:
+  - X1: 5668
+    Y1: 130
+    X2: 5888
+    Y2: 268
+  - X1: 5800
+    Y1: 319
+    X2: 5863
+    Y2: 384
+  - X1: 5654
+    Y1: 300
+    X2: 5708
+    Y2: 340
+  Music: Dungeon9
+  GoLocation:
+    X: 5210
+    Y: 2322
+    Z: 30
+  Entrance:
+    X: 1996
+    Y: 80
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: Delucia
+  Priority: 50
+  Area:
+  - X1: 5123
+    Y1: 3942
+    X2: 5315
+    Y2: 4064
+  - X1: 5147
+    Y1: 4064
+    X2: 5272
+    Y2: 4084
+  - X1: 5235
+    Y1: 3930
+    X2: 5315
+    Y2: 3942
+  GoLocation:
+    X: 5228
+    Y: 3978
+    Z: 37
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5194
+    Y1: 4053
+    X2: 5204
+    Y2: 4073
+  Parent:
+    Name: Delucia
+    Map: Trammel
+- Type: TownRegion
+  Map: Trammel
+  Name: Papua
+  Priority: 50
+  Area:
+  - X1: 5639
+    Y1: 3095
+    X2: 5831
+    Y2: 3318
+  - X1: 5831
+    Y1: 3237
+    X2: 5851
+    Y2: 3267
+  GoLocation:
+    X: 5769
+    Y: 3176
+    Z: 0
+- Type: TownRegion
+  Map: Trammel
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 5757
+    Y1: 3150
+    X2: 5781
+    Y2: 3174
+  Parent:
+    Name: Papua
+    Map: Trammel
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Wrong Entrance
+  Priority: 50
+  Area:
+  - X1: 1939
+    Y1: 215
+    X2: 2073
+    Y2: 352
+  Music: Mountn_a
+  GoLocation:
+    X: 2043
+    Y: 236
+    Z: 13
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Covetous Entrance
+  Priority: 50
+  Area:
+  - X1: 2433
+    Y1: 846
+    X2: 2561
+    Y2: 974
+  Music: Vesper
+  GoLocation:
+    X: 2499
+    Y: 918
+    Z: 0
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Despise Entrance
+  Priority: 50
+  Area:
+  - X1: 1289
+    Y1: 1064
+    X2: 1321
+    Y2: 1101
+  GoLocation:
+    X: 1298
+    Y: 1081
+    Z: 0
+- Type: NoHousingRegion
+  Map: Trammel
+  Name: Despise Passage
+  Priority: 50
+  Area:
+  - X1: 1338
+    Y1: 1060
+    X2: 1389
+    Y2: 1122
+  - X1: 1354
+    Y1: 1122
+    X2: 1396
+    Y2: 1243
+  - X1: 1349
+    Y1: 1122
+    X2: 1354
+    Y2: 1224
+  GoLocation:
+    X: 1380
+    Y: 1114
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Misc Dungeons
+  Priority: 50
+  Area:
+  - X1: 5886
+    Y1: 1281
+    X2: 6143
+    Y2: 1535
+  Music: Dungeon9
+  GoLocation:
+    X: 6032
+    Y: 1499
+    Z: 0
+  Entrance:
+    X: 1492
+    Y: 1641
+    Z: 0
+- Type: DungeonRegion
+  Map: Trammel
+  Name: Orc Cave
+  Priority: 50
+  Area:
+  - X1: 5281
+    Y1: 1283
+    X2: 5373
+    Y2: 1386
+  - X1: 5267
+    Y1: 1955
+    X2: 5364
+    Y2: 2046
+  - X1: 5127
+    Y1: 1941
+    X2: 5164
+    Y2: 2024
+  Music: Dungeon9
+  GoLocation:
+    X: 5137
+    Y: 2015
+    Z: 0
+  Entrance:
+    X: 1014
+    Y: 1434
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Cotton Field in Moonglow
+  Priority: 50
+  Area:
+  - X1: 4557
+    Y1: 1471
+    X2: 4577
+    Y2: 1481
+  RuneName: A Cotton Field in Moonglow
+  GoLocation:
+    X: 4567
+    Y: 1475
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Wheatfield in Skara Brae 1
+  Priority: 50
+  Area:
+  - X1: 796
+    Y1: 2152
+    X2: 832
+    Y2: 2176
+  RuneName: A Wheatfield in Skara Brae
+  GoLocation:
+    X: 813
+    Y: 2163
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Carrot Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2251
+    X2: 832
+    Y2: 2259
+  GoLocation:
+    X: 823
+    Y: 2254
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: An Onion Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2261
+    X2: 832
+    Y2: 2269
+  GoLocation:
+    X: 823
+    Y: 2264
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Cabbage Field in Skara Brae 1
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2271
+    X2: 832
+    Y2: 2279
+  GoLocation:
+    X: 823
+    Y: 2264
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Cabbage Field in Skara Brae 2
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2281
+    X2: 832
+    Y2: 2289
+  GoLocation:
+    X: 823
+    Y: 2274
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Wheatfield in Skara Brae 2
+  Priority: 50
+  Area:
+  - X1: 835
+    Y1: 2344
+    X2: 851
+    Y2: 2360
+  GoLocation:
+    X: 843
+    Y: 2352
+    Z: 0
+- Type: BaseRegion
+  Map: Trammel
+  Name: A Cotton Field in Skara Brae
+  Priority: 50
+  Area:
+  - X1: 816
+    Y1: 2344
+    X2: 832
+    Y2: 2368
+  GoLocation:
+    X: 823
+    Y: 2355
+    Z: 0
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Twisted Weald
+  Priority: 50
+  Area:
+  - X1: 2107
+    Y1: 1145
+    X2: 2254
+    Y2: 1280
+  Music: DreadHornArea
+  GoLocation:
+    X: 2189
+    Y: 1253
+    Z: 0
+  Entrance:
+    X: 1450
+    Y: 1473
+    Z: -23
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Sheep Farm
+  Priority: 50
+  Area:
+  - X1: 1298
+    Y1: 1307
+    X2: 1336
+    Y2: 1344
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Valor
+  Priority: 37
+  Area:
+  - X1: 512
+    Y1: 200
+    X2: 544
+    Y2: 232
+  GoLocation:
+    X: 539
+    Y: 221
+    Z: -36
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Chaos Shrine
+  Priority: 50
+  Area:
+  - X1: 1736
+    Y1: 224
+    X2: 1760
+    Y2: 248
+  GoLocation:
+    X: 1748
+    Y: 236
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Sacrifice
+  Priority: 50
+  Area:
+  - X1: 1160
+    Y1: 1280
+    X2: 1192
+    Y2: 1296
+  GoLocation:
+    X: 1196
+    Y: 1290
+    Z: -25
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Honesty
+  Priority: 37
+  Area:
+  - X1: 712
+    Y1: 1344
+    X2: 736
+    Y2: 1376
+  GoLocation:
+    X: 725
+    Y: 1355
+    Z: -61
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Compassion
+  Priority: 50
+  Area:
+  - X1: 1200
+    Y1: 448
+    X2: 1232
+    Y2: 488
+  GoLocation:
+    X: 1223
+    Y: 475
+    Z: -16
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Spirituality
+  Priority: 50
+  Area:
+  - X1: 1520
+    Y1: 1336
+    X2: 1536
+    Y2: 1352
+  GoLocation:
+    X: 1528
+    Y: 1344
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Humility
+  Priority: 50
+  Area:
+  - X1: 272
+    Y1: 1008
+    X2: 296
+    Y2: 1024
+  GoLocation:
+    X: 284
+    Y: 1016
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of Honor
+  Priority: 50
+  Area:
+  - X1: 736
+    Y1: 712
+    X2: 760
+    Y2: 744
+  GoLocation:
+    X: 748
+    Y: 728
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Terort Skitas
+  Priority: 11
+  Area:
+  - X1: 528
+    Y1: 376
+    X2: 624
+    Y2: 464
+  GoLocation:
+    X: 568
+    Y: 430
+    Z: 41
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Gargoyle City
+  Priority: 50
+  Area:
+  - X1: 824
+    Y1: 552
+    X2: 856
+    Y2: 728
+  - X1: 752
+    Y1: 576
+    X2: 824
+    Y2: 704
+  - X1: 856
+    Y1: 576
+    X2: 904
+    Y2: 704
+  - X1: 904
+    Y1: 624
+    X2: 928
+    Y2: 656
+  GoLocation:
+    X: 840
+    Y: 571
+    Z: 0
+- Type: TownRegion
+  Map: Ilshenar
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 827
+    Y1: 694
+    X2: 853
+    Y2: 727
+  Parent:
+    Name: Gargoyle City
+    Map: Ilshenar
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Pormir Harm
+  Priority: 50
+  Area:
+  - X1: 736
+    Y1: 480
+    X2: 768
+    Y2: 504
+  Music: Stones2
+  GoLocation:
+    X: 745
+    Y: 492
+    Z: -66
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Pormir Felwis
+  Priority: 50
+  Area:
+  - X1: 472
+    Y1: 336
+    X2: 512
+    Y2: 368
+  GoLocation:
+    X: 472
+    Y: 352
+    Z: -78
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Cyclops Temple
+  Priority: 50
+  Area:
+  - X1: 880
+    Y1: 1256
+    X2: 936
+    Y2: 1368
+  GoLocation:
+    X: 901
+    Y: 1297
+    Z: -71
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Rat Fort
+  Priority: 50
+  Area:
+  - X1: 616
+    Y1: 792
+    X2: 672
+    Y2: 848
+  GoLocation:
+    X: 642
+    Y: 845
+    Z: -58
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Rat Fort Cellar
+  Priority: 50
+  Area:
+  - X1: 160
+    Y1: 736
+    X2: 192
+    Y2: 768
+  GoLocation:
+    X: 171
+    Y: 750
+    Z: -28
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance to Central Ilshenar 1
+  Priority: 50
+  Area:
+  - X1: 1136
+    Y1: 584
+    X2: 1152
+    Y2: 600
+  GoLocation:
+    X: 1141
+    Y: 594
+    Z: -80
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance to Central Ilshenar 2
+  Priority: 50
+  Area:
+  - X1: 1232
+    Y1: 576
+    X2: 1240
+    Y2: 592
+  GoLocation:
+    X: 1238
+    Y: 583
+    Z: -19
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Montor
+  Priority: 41
+  Area:
+  - X1: 1576
+    Y1: 272
+    X2: 1720
+    Y2: 368
+  - X1: 1616
+    Y1: 200
+    X2: 1696
+    Y2: 272
+  - X1: 1696
+    Y1: 144
+    X2: 1736
+    Y2: 272
+  - X1: 1736
+    Y1: 144
+    X2: 1768
+    Y2: 208
+  GoLocation:
+    X: 1646
+    Y: 319
+    Z: 48
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Termir Flam
+  Priority: 40
+  Area:
+  - X1: 1520
+    Y1: 368
+    X2: 1752
+    Y2: 496
+  - X1: 1520
+    Y1: 296
+    X2: 1576
+    Y2: 368
+  - X1: 1752
+    Y1: 440
+    X2: 1776
+    Y2: 480
+  GoLocation:
+    X: 1636
+    Y: 432
+    Z: 0
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Ancient Citadel
+  Priority: 11
+  Area:
+  - X1: 1448
+    Y1: 496
+    X2: 1552
+    Y2: 600
+  GoLocation:
+    X: 1516
+    Y: 542
+    Z: 85
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Alexandretta's Bowl
+  Priority: 41
+  Area:
+  - X1: 1272
+    Y1: 352
+    X2: 1440
+    Y2: 592
+  GoLocation:
+    X: 1396
+    Y: 432
+    Z: -17
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance to Rock Dungeon
+  Priority: 2
+  Area:
+  - X1: 1784
+    Y1: 560
+    X2: 1792
+    Y2: 576
+  GoLocation:
+    X: 1784
+    Y: 568
+    Z: 100
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Rock Dungeon
+  Priority: 2
+  Area:
+  - X1: 2176
+    Y1: 288
+    X2: 2200
+    Y2: 328
+  - X1: 2088
+    Y1: 8
+    X2: 2248
+    Y2: 184
+  GoLocation:
+    X: 2187
+    Y: 316
+    Z: -7
+  Entrance:
+    X: 1788
+    Y: 571
+    Z: 0
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Lenmir Anfinmotas
+  Priority: 5
+  Area:
+  - X1: 1560
+    Y1: 792
+    X2: 1792
+    Y2: 912
+  GoLocation:
+    X: 1673
+    Y: 876
+    Z: -25
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance to Spider Cave
+  Priority: 2
+  Area:
+  - X1: 1400
+    Y1: 896
+    X2: 1440
+    Y2: 920
+  GoLocation:
+    X: 1418
+    Y: 915
+    Z: -19
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Spider Cave
+  Priority: 50
+  Area:
+  - X1: 1752
+    Y1: 952
+    X2: 1864
+    Y2: 1000
+  - X1: 1480
+    Y1: 864
+    X2: 1528
+    Y2: 896
+  GoLocation:
+    X: 1785
+    Y: 991
+    Z: -28
+  Entrance:
+    X: 1420
+    Y: 910
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Twin Oaks
+  Priority: 48
+  Area:
+  - X1: 1536
+    Y1: 1032
+    X2: 1584
+    Y2: 1072
+  GoLocation:
+    X: 1560
+    Y: 1052
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: ''
+  Priority: 48
+  Area:
+  - X1: 1546
+    Y1: 1037
+    X2: 1567
+    Y2: 1057
+  Parent:
+    Name: Twin Oaks
+    Map: Ilshenar
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Reg Volon
+  Priority: 50
+  Area:
+  - X1: 1328
+    Y1: 1008
+    X2: 1408
+    Y2: 1120
+  GoLocation:
+    X: 1363
+    Y: 1055
+    Z: -13
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Spectre Dungeon
+  Priority: 2
+  Area:
+  - X1: 1360
+    Y1: 1030
+    X2: 1366
+    Y2: 1034
+  GoLocation:
+    X: 1363
+    Y: 1033
+    Z: -8
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Spectre Dungeon
+  Priority: 2
+  Area:
+  - X1: 1936
+    Y1: 1000
+    X2: 2032
+    Y2: 1120
+  GoLocation:
+    X: 1983
+    Y: 1107
+    Z: -18
+  Entrance:
+    X: 1362
+    Y: 1031
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Blood Dungeon
+  Priority: 2
+  Area:
+  - X1: 1736
+    Y1: 1224
+    X2: 1760
+    Y2: 1240
+  GoLocation:
+    X: 1747
+    Y: 1227
+    Z: -1
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Blood Dungeon
+  Priority: 2
+  Area:
+  - X1: 2032
+    Y1: 808
+    X2: 2200
+    Y2: 1064
+  GoLocation:
+    X: 2114
+    Y: 839
+    Z: -28
+  Entrance:
+    X: 1745
+    Y: 1236
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Mushroom Cave
+  Priority: 2
+  Area:
+  - X1: 1448
+    Y1: 1320
+    X2: 1464
+    Y2: 1336
+  GoLocation:
+    X: 1460
+    Y: 1329
+    Z: -25
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Mushroom Cave
+  Priority: 11
+  Area:
+  - X1: 1392
+    Y1: 1448
+    X2: 1496
+    Y2: 1568
+  GoLocation:
+    X: 1476
+    Y: 1494
+    Z: -28
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Lake Shire
+  Priority: 48
+  Area:
+  - X1: 1144
+    Y1: 1072
+    X2: 1264
+    Y2: 1200
+  GoLocation:
+    X: 1212
+    Y: 1144
+    Z: -25
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Rat Cave
+  Priority: 2
+  Area:
+  - X1: 1024
+    Y1: 1152
+    X2: 1032
+    Y2: 1160
+  GoLocation:
+    X: 1031
+    Y: 1154
+    Z: -24
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Rat Cave Territory
+  Priority: 2
+  Area:
+  - X1: 1144
+    Y1: 1440
+    X2: 1368
+    Y2: 1584
+  GoLocation:
+    X: 1345
+    Y: 1511
+    Z: -3
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Ratman Cave
+  Priority: 2
+  Area:
+  - X1: 1264
+    Y1: 1448
+    X2: 1360
+    Y2: 1576
+  - X1: 1152
+    Y1: 1456
+    X2: 1256
+    Y2: 1560
+  GoLocation:
+    X: 1348
+    Y: 1511
+    Z: -3
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Bet-Lem Reg
+  Priority: 48
+  Area:
+  - X1: 1232
+    Y1: 936
+    X2: 1272
+    Y2: 984
+  GoLocation:
+    X: 1238
+    Y: 974
+    Z: -34
+- Type: TownRegion
+  Map: Ilshenar
+  Name: Mistas
+  Priority: 48
+  Area:
+  - X1: 744
+    Y1: 984
+    X2: 912
+    Y2: 1152
+  - X1: 744
+    Y1: 1152
+    X2: 792
+    Y2: 1176
+  GoLocation:
+    X: 818
+    Y: 1073
+    Z: -30
+- Type: TownRegion
+  Map: Ilshenar
+  Name: ''
+  Priority: 48
+  Area:
+  - X1: 752
+    Y1: 1131
+    X2: 768
+    Y2: 1152
+  Parent:
+    Name: Mistas
+    Map: Ilshenar
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Serpentine Passage
+  Priority: 2
+  Area:
+  - X1: 800
+    Y1: 864
+    X2: 816
+    Y2: 880
+  GoLocation:
+    X: 808
+    Y: 872
+    Z: 5
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Serpentine Passage
+  Priority: 11
+  Area:
+  - X1: 368
+    Y1: 1488
+    X2: 560
+    Y2: 1592
+  GoLocation:
+    X: 533
+    Y: 1526
+    Z: -25
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Ankh Dungeon
+  Priority: 2
+  Area:
+  - X1: 0
+    Y1: 1248
+    X2: 176
+    Y2: 1592
+  - X1: 568
+    Y1: 1152
+    X2: 584
+    Y2: 1160
+  GoLocation:
+    X: 156
+    Y: 1484
+    Z: -28
+  Entrance:
+    X: 668
+    Y: 928
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Kirin passage
+  Priority: 11
+  Area:
+  - X1: 0
+    Y1: 800
+    X2: 192
+    Y2: 1200
+  GoLocation:
+    X: 11
+    Y: 881
+    Z: -29
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Lizards Passage
+  Priority: 2
+  Area:
+  - X1: 312
+    Y1: 1328
+    X2: 320
+    Y2: 1336
+  GoLocation:
+    X: 314
+    Y: 1331
+    Z: -37
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Wisp Dungeon
+  Priority: 2
+  Area:
+  - X1: 616
+    Y1: 1480
+    X2: 704
+    Y2: 1576
+  - X1: 704
+    Y1: 1544
+    X2: 728
+    Y2: 1576
+  - X1: 704
+    Y1: 1480
+    X2: 744
+    Y2: 1520
+  - X1: 816
+    Y1: 1448
+    X2: 912
+    Y2: 1584
+  - X1: 944
+    Y1: 1416
+    X2: 1000
+    Y2: 1456
+  - X1: 912
+    Y1: 1456
+    X2: 1024
+    Y2: 1584
+  - X1: 832
+    Y1: 1424
+    X2: 880
+    Y2: 1448
+  - X1: 744
+    Y1: 1504
+    X2: 816
+    Y2: 1584
+  - X1: 744
+    Y1: 1456
+    X2: 800
+    Y2: 1504
+  GoLocation:
+    X: 628
+    Y: 1524
+    Z: -28
+  Entrance:
+    X: 652
+    Y: 1301
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Lizard Passage
+  Priority: 11
+  Area:
+  - X1: 256
+    Y1: 1560
+    X2: 336
+    Y2: 1592
+  GoLocation:
+    X: 285
+    Y: 1585
+    Z: -27
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Exodus Dungeon
+  Priority: 50
+  Area:
+  - X1: 1832
+    Y1: 16
+    X2: 2080
+    Y2: 216
+  GoLocation:
+    X: 1966
+    Y: 117
+    Z: -28
+  Entrance:
+    X: 827
+    Y: 777
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Lizard Man's Huts
+  Priority: 48
+  Area:
+  - X1: 264
+    Y1: 1280
+    X2: 320
+    Y2: 1376
+  GoLocation:
+    X: 298
+    Y: 1336
+    Z: -24
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Nox Tereg
+  Priority: 50
+  Area:
+  - X1: 344
+    Y1: 1112
+    X2: 488
+    Y2: 1240
+  GoLocation:
+    X: 416
+    Y: 1176
+    Z: 0
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Sorcerer's Dungeon
+  Priority: 2
+  Area:
+  - X1: 368
+    Y1: 0
+    X2: 488
+    Y2: 120
+  - X1: 200
+    Y1: 0
+    X2: 368
+    Y2: 112
+  - X1: 256
+    Y1: 120
+    X2: 288
+    Y2: 152
+  - X1: 48
+    Y1: 0
+    X2: 184
+    Y2: 136
+  - X1: 224
+    Y1: 112
+    X2: 248
+    Y2: 144
+  GoLocation:
+    X: 429
+    Y: 108
+    Z: -28
+  Entrance:
+    X: 546
+    Y: 455
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Entrance Ancient Lair
+  Priority: 50
+  Area:
+  - X1: 936
+    Y1: 488
+    X2: 944
+    Y2: 496
+  GoLocation:
+    X: 940
+    Y: 503
+    Z: -30
+- Type: DungeonRegion
+  Map: Ilshenar
+  Name: Ancient Lair
+  Priority: 2
+  Area:
+  - X1: 24
+    Y1: 664
+    X2: 136
+    Y2: 760
+  GoLocation:
+    X: 86
+    Y: 744
+    Z: -28
+  Entrance:
+    X: 938
+    Y: 494
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp
+  Priority: 50
+  Area:
+  - X1: 480
+    Y1: 520
+    X2: 536
+    Y2: 568
+  GoLocation:
+    X: 504
+    Y: 536
+    Z: -60
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 1
+  Priority: 50
+  Area:
+  - X1: 1480
+    Y1: 600
+    X2: 1536
+    Y2: 640
+  GoLocation:
+    X: 1508
+    Y: 620
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 2
+  Priority: 48
+  Area:
+  - X1: 1592
+    Y1: 528
+    X2: 1632
+    Y2: 568
+  GoLocation:
+    X: 1612
+    Y: 548
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: ''
+  Priority: 48
+  Area:
+  - X1: 1617
+    Y1: 546
+    X2: 1629
+    Y2: 554
+  Parent:
+    Name: Gypsy Camp 2
+    Map: Ilshenar
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Juka Camp
+  Priority: 50
+  Area:
+  - X1: 1192
+    Y1: 656
+    X2: 1304
+    Y2: 792
+  GoLocation:
+    X: 1248
+    Y: 724
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 3
+  Priority: 50
+  Area:
+  - X1: 928
+    Y1: 408
+    X2: 968
+    Y2: 448
+  GoLocation:
+    X: 948
+    Y: 428
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 4
+  Priority: 50
+  Area:
+  - X1: 840
+    Y1: 440
+    X2: 880
+    Y2: 488
+  GoLocation:
+    X: 860
+    Y: 464
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 5
+  Priority: 50
+  Area:
+  - X1: 1216
+    Y1: 520
+    X2: 1240
+    Y2: 568
+  - X1: 1248
+    Y1: 568
+    X2: 1264
+    Y2: 592
+  GoLocation:
+    X: 1228
+    Y: 544
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Gypsy Camp 6
+  Priority: 50
+  Area:
+  - X1: 1376
+    Y1: 416
+    X2: 1408
+    Y2: 448
+  GoLocation:
+    X: 1392
+    Y: 432
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Lord Blackthorn's Ilshenar Castle
+  Priority: 50
+  Area:
+  - X1: 1048
+    Y1: 616
+    X2: 1120
+    Y2: 688
+  - X1: 1080
+    Y1: 688
+    X2: 1104
+    Y2: 712
+  GoLocation:
+    X: 1084
+    Y: 652
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Shrine of the Virtues
+  Priority: 50
+  Area:
+  - X1: 1072
+    Y1: 376
+    X2: 1136
+    Y2: 432
+  GoLocation:
+    X: 1104
+    Y: 404
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Pass of Karnaugh
+  Priority: 50
+  Area:
+  - X1: 848
+    Y1: 288
+    X2: 968
+    Y2: 336
+  - X1: 936
+    Y1: 232
+    X2: 968
+    Y2: 288
+  - X1: 968
+    Y1: 248
+    X2: 1088
+    Y2: 304
+  - X1: 1000
+    Y1: 304
+    X2: 1024
+    Y2: 320
+  - X1: 1048
+    Y1: 304
+    X2: 1184
+    Y2: 360
+  - X1: 1184
+    Y1: 336
+    X2: 1248
+    Y2: 392
+  GoLocation:
+    X: 908
+    Y: 312
+    Z: 0
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: Vinculum Inn
+  Priority: 50
+  Area:
+  - X1: 658
+    Y1: 654
+    X2: 671
+    Y2: 678
+  GoLocation:
+    X: 656
+    Y: 666
+    Z: -36
+- Type: BaseRegion
+  Map: Ilshenar
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 658
+    Y1: 654
+    X2: 671
+    Y2: 678
+  Parent:
+    Name: Vinculum Inn
+    Map: Ilshenar
+- Type: NoHousingRegion
+  Map: Malas
+  Name: Ilse of the Divide
+  Priority: 50
+  Area:
+  - X1: 1532
+    Y1: 857
+    X2: 1832
+    Y2: 1057
+  GoLocation:
+    X: 1731
+    Y: 981
+    Z: -79
+- Type: DungeonRegion
+  Map: Malas
+  Name: Bedlam
+  Priority: 50
+  Area:
+  - X1: 75
+    Y1: 1590
+    X2: 210
+    Y2: 1760
+  Music: GrizzleDungeon
+  GoLocation:
+    X: 117
+    Y: 1681
+    Z: 0
+  Entrance:
+    X: 2068
+    Y: 1372
+    Z: -75
+- Type: DungeonRegion
+  Map: Malas
+  Name: The Citadel
+  Priority: 50
+  Area:
+  - X1: 60
+    Y1: 1855
+    X2: 195
+    Y2: 1990
+  Music: Dungeon9
+  GoLocation:
+    X: 106
+    Y: 1884
+    Z: 0
+  Entrance:
+    X: 1349
+    Y: 769
+    Z: 14
+- Type: TownRegion
+  Map: Malas
+  Name: Luna
+  Priority: 50
+  Area:
+  - X1: 945
+    Y1: 490
+    X2: 1036
+    Y2: 551
+  Music: Tavern04
+  GoLocation:
+    X: 989
+    Y: 520
+    Z: -50
+- Type: TownRegion
+  Map: Malas
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 986
+    Y1: 509
+    X2: 1004
+    Y2: 530
+  Parent:
+    Name: Luna
+    Map: Malas
+- Type: TownRegion
+  Map: Malas
+  Name: Umbra
+  Priority: 50
+  Area:
+  - X1: 2042
+    Y1: 1265
+    X2: 2090
+    Y2: 1278
+  - X1: 1960
+    Y1: 1278
+    X2: 2106
+    Y2: 1413
+  - X1: 2004
+    Y1: 1413
+    X2: 2040
+    Y2: 1419
+  GoLocation:
+    X: 2049
+    Y: 1344
+    Z: -85
+- Type: TownRegion
+  Map: Malas
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 2031
+    Y1: 1311
+    X2: 2046
+    Y2: 1325
+  Parent:
+    Name: Umbra
+    Map: Malas
+- Type: DungeonRegion
+  Map: Malas
+  Name: Labyrinth
+  Priority: 50
+  Area:
+  - X1: 256
+    Y1: 1795
+    X2: 499
+    Y2: 2025
+  Music: Dungeon9
+  GoLocation:
+    X: 336
+    Y: 1970
+    Z: 0
+  Entrance:
+    X: 1731
+    Y: 981
+    Z: -79
+- Type: DungeonRegion
+  Map: Malas
+  Name: Doom
+  Priority: 50
+  Area:
+  - X1: 256
+    Y1: 0
+    X2: 512
+    Y2: 304
+  Music: Dungeon9
+  GoLocation:
+    X: 2366
+    Y: 1268
+    Z: -85
+  Entrance:
+    X: 2357
+    Y: 1268
+    Z: 0
+- Type: DungeonRegion
+  Map: Malas
+  Name: Doom Gauntlet
+  Priority: 50
+  Area:
+  - X1: 256
+    Y1: 304
+    X2: 512
+    Y2: 560
+  Music: Dungeon9
+  GoLocation:
+    X: 429
+    Y: 340
+    Z: -1
+  Entrance:
+    X: 2357
+    Y: 1268
+    Z: 0
+- Type: BaseRegion
+  Map: Malas
+  Name: Orc Fortress
+  Priority: 50
+  Area:
+  - X1: 1295
+    Y1: 1189
+    X2: 1395
+    Y2: 1294
+  GoLocation:
+    X: 1340
+    Y: 1226
+    Z: -90
+- Type: NoHousingRegion
+  Map: Malas
+  Name: Crystal Cave Entrance
+  Priority: 50
+  Area:
+  - X1: 1176
+    Y1: 509
+    X2: 1219
+    Y2: 522
+  GoLocation:
+    X: 1195
+    Y: 515
+    Z: -90
+- Type: NoHousingRegion
+  Map: Malas
+  Name: Protected Island
+  Priority: 50
+  Area:
+  - X1: 1976
+    Y1: 101
+    X2: 2448
+    Y2: 345
+  - X1: 2051
+    Y1: 345
+    X2: 2356
+    Y2: 382
+  - X1: 2026
+    Y1: 345
+    X2: 2051
+    Y2: 370
+  - X1: 2069
+    Y1: 382
+    X2: 2144
+    Y2: 396
+  - X1: 2254
+    Y1: 382
+    X2: 2352
+    Y2: 420
+  - X1: 2222
+    Y1: 382
+    X2: 2254
+    Y2: 402
+  GoLocation:
+    X: 2104
+    Y: 380
+    Z: -90
+- Type: NoHousingRegion
+  Map: Malas
+  Name: Grand Arena
+  Priority: 50
+  Area:
+  - X1: 919
+    Y1: 622
+    X2: 962
+    Y2: 652
+  GoLocation:
+    X: 961
+    Y: 637
+    Z: -90
+- Type: BaseRegion
+  Map: Malas
+  Name: Hanse's Hostel
+  Priority: 50
+  Area:
+  - X1: 1049
+    Y1: 1420
+    X2: 1062
+    Y2: 1445
+  - X1: 1062
+    Y1: 1420
+    X2: 1065
+    Y2: 1431
+  - X1: 1062
+    Y1: 1439
+    X2: 1065
+    Y2: 1445
+  GoLocation:
+    X: 1063
+    Y: 1435
+    Z: -90
+- Type: DungeonRegion
+  Map: Malas
+  Name: Yomotsu Mines
+  Priority: 50
+  Area:
+  - X1: 0
+    Y1: 0
+    X2: 129
+    Y2: 129
+  Music: TokunoDungeon
+  GoLocation:
+    X: 6
+    Y: 118
+    Z: 0
+  Entrance:
+    X: 259
+    Y: 783
+    Z: 0
+- Type: DungeonRegion
+  Map: Malas
+  Name: Fan Dancer's Dojo
+  Priority: 50
+  Area:
+  - X1: 40
+    Y1: 320
+    X2: 210
+    Y2: 720
+  Music: TokunoDungeon
+  GoLocation:
+    X: 71
+    Y: 337
+    Z: 0
+  Entrance:
+    X: 977
+    Y: 223
+    Z: 0
+- Type: BaseRegion
+  Map: Malas
+  Name: Samurai start location
+  Priority: 50
+  Area:
+  - X1: 320
+    Y1: 690
+    X2: 435
+    Y2: 790
+  Music: Zento
+- Type: BaseRegion
+  Map: Malas
+  Name: Ninja start location
+  Priority: 50
+  Area:
+  - X1: 360
+    Y1: 795
+    X2: 440
+    Y2: 835
+  Music: Zento
+- Type: BaseRegion
+  Map: Malas
+  Name: Ninja cave
+  Priority: 50
+  Area:
+  - X1: 360
+    Y1: 960
+    X2: 460
+    Y2: 1175
+- Type: GuardedRegion
+  Map: Tokuno
+  Name: Moongates
+  Priority: 50
+  Area:
+  - X1: 1167
+    Y1: 996
+    X2: 1171
+    Y2: 1000
+  - X1: 799
+    Y1: 1201
+    X2: 805
+    Y2: 1207
+  - X1: 267
+    Y1: 625
+    X2: 274
+    Y2: 632
+- Type: TownRegion
+  Map: Tokuno
+  Name: Zento
+  Priority: 50
+  Area:
+  - X1: 656
+    Y1: 1192
+    X2: 816
+    Y2: 1320
+  Music: Zento
+  GoLocation:
+    X: 736
+    Y: 1256
+    Z: 30
+- Type: TownRegion
+  Map: Tokuno
+  Name: ''
+  Priority: 50
+  Area:
+  - X1: 674
+    Y1: 1203
+    X2: 699
+    Y2: 1219
+  Parent:
+    Name: Zento
+    Map: Tokuno
+- Type: NoHousingRegion
+  Map: Tokuno
+  Name: Fan Dancer's Dojo
+  Priority: 50
+  Area:
+  - X1: 969
+    Y1: 194
+    X2: 992
+    Y2: 224
+  GoLocation:
+    X: 977
+    Y: 223
+    Z: 23
+- Type: NoHousingRegion
+  Map: Tokuno
+  Name: Bushido Dojo
+  Priority: 50
+  Area:
+  - X1: 283
+    Y1: 361
+    X2: 351
+    Y2: 463
+  GoLocation:
+    X: 320
+    Y: 408
+    Z: 32
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Abyss
+  Priority: 50
+  Area:
+  - X1: 301
+    Y1: 328
+    X2: 1076
+    Y2: 802
+  - X1: 780
+    Y1: 32
+    X2: 1076
+    Y2: 328
+  - X1: 436
+    Y1: 802
+    X2: 740
+    Y2: 980
+  - X1: 754
+    Y1: 881
+    X2: 862
+    Y2: 974
+  - X1: 756
+    Y1: 1049
+    X2: 860
+    Y2: 1142
+  - X1: 756
+    Y1: 1214
+    X2: 861
+    Y2: 1313
+  - X1: 0
+    Y1: 684
+    X2: 134
+    Y2: 860
+  - X1: 0
+    Y1: 485
+    X2: 134
+    Y2: 647
+  - X1: 0
+    Y1: 286
+    X2: 137
+    Y2: 445
+  - X1: 254
+    Y1: 70
+    X2: 500
+    Y2: 253
+  Music: StygianAbyss
+  GoLocation:
+    X: 946
+    Y: 72
+    Z: 72
+- Type: BaseRegion
+  Map: TerMur
+  Name: Abyssal Lair
+  Priority: 50
+  Area:
+  - X1: 931
+    Y1: 314
+    X2: 1031
+    Y2: 454
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 985
+    Y: 366
+    Z: -11
+- Type: BaseRegion
+  Map: TerMur
+  Name: Medusas Lair
+  Priority: 100
+  Area:
+  - X1: 764
+    Y1: 894
+    X2: 833
+    Y2: 983
+  - X1: 816
+    Y1: 749
+    X2: 829
+    Y2: 765
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 771
+    Y: 928
+    Z: 0
+- Type: BaseRegion
+  Map: TerMur
+  Name: NPC Encampment
+  Priority: 100
+  Area:
+  - X1: 1087
+    Y1: 1127
+    X2: 1096
+    Y2: 1133
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 1090
+    Y: 1130
+    Z: -42
+  Entrance:
+    X: 1090
+    Y: 1132
+    Z: 0
+- Type: BaseRegion
+  Map: TerMur
+  Name: Cavern of the Discarded
+  Priority: 50
+  Area:
+  - X1: 887
+    Y1: 475
+    X2: 1000
+    Y2: 575
+  - X1: 926
+    Y1: 533
+    X2: 971
+    Y2: 553
+  - X1: 928
+    Y1: 543
+    X2: 970
+    Y2: 573
+  - X1: 929
+    Y1: 536
+    X2: 970
+    Y2: 564
+  - X1: 936
+    Y1: 559
+    X2: 972
+    Y2: 573
+  - X1: 938
+    Y1: 541
+    X2: 958
+    Y2: 572
+  - X1: 961
+    Y1: 527
+    X2: 983
+    Y2: 559
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 912
+    Y: 501
+    Z: -12
+- Type: BaseRegion
+  Map: TerMur
+  Name: Chamber of Virtue
+  Priority: 50
+  Area:
+  - X1: 739
+    Y1: 465
+    X2: 760
+    Y2: 486
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 747
+    Y: 474
+    Z: -17
+- Type: BaseRegion
+  Map: TerMur
+  Name: Crimson Veins
+  Priority: 50
+  Area:
+  - X1: 931
+    Y1: 135
+    X2: 996
+    Y2: 200
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 974
+    Y: 164
+    Z: -11
+- Type: BaseRegion
+  Map: TerMur
+  Name: Enslaved Goblins
+  Priority: 50
+  Area:
+  - X1: 538
+    Y1: 806
+    X2: 613
+    Y2: 856
+  - X1: 539
+    Y1: 790
+    X2: 614
+    Y2: 840
+  - X1: 553
+    Y1: 791
+    X2: 613
+    Y2: 841
+  - X1: 560
+    Y1: 796
+    X2: 581
+    Y2: 817
+  - X1: 570
+    Y1: 773
+    X2: 613
+    Y2: 857
+  - X1: 571
+    Y1: 788
+    X2: 596
+    Y2: 813
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 581
+    Y: 815
+    Z: -45
+- Type: BaseRegion
+  Map: TerMur
+  Name: Fairy Dragon Lair
+  Priority: 50
+  Area:
+  - X1: 849
+    Y1: 254
+    X2: 916
+    Y2: 297
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 888
+    Y: 277
+    Z: 3
+- Type: BaseRegion
+  Map: TerMur
+  Name: Fire Temple Ruins
+  Priority: 50
+  Area:
+  - X1: 474
+    Y1: 766
+    X2: 563
+    Y2: 789
+  - X1: 485
+    Y1: 760
+    X2: 553
+    Y2: 789
+  - X1: 495
+    Y1: 750
+    X2: 560
+    Y2: 779
+  - X1: 506
+    Y1: 750
+    X2: 572
+    Y2: 782
+  - X1: 520
+    Y1: 739
+    X2: 584
+    Y2: 771
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 519
+    Y: 765
+    Z: -92
+- Type: BaseRegion
+  Map: TerMur
+  Name: Fractured City
+  Priority: 50
+  Area:
+  - X1: 664
+    Y1: 439
+    X2: 731
+    Y2: 527
+  - X1: 726
+    Y1: 505
+    X2: 771
+    Y2: 527
+  - X1: 712
+    Y1: 402
+    X2: 820
+    Y2: 460
+  - X1: 720
+    Y1: 504
+    X2: 746
+    Y2: 527
+  - X1: 771
+    Y1: 460
+    X2: 810
+    Y2: 518
+  - X1: 808
+    Y1: 480
+    X2: 820
+    Y2: 512
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 780
+    Y: 445
+    Z: -15
+- Type: BaseRegion
+  Map: TerMur
+  Name: Lands of the Lich
+  Priority: 50
+  Area:
+  - X1: 499
+    Y1: 575
+    X2: 570
+    Y2: 695
+  - X1: 554
+    Y1: 600
+    X2: 628
+    Y2: 642
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 538
+    Y: 656
+    Z: 8
+- Type: BaseRegion
+  Map: TerMur
+  Name: Lava Caldera
+  Priority: 50
+  Area:
+  - X1: 553
+    Y1: 860
+    X2: 639
+    Y2: 948
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 587
+    Y: 895
+    Z: -73
+- Type: BaseRegion
+  Map: TerMur
+  Name: Passage of Tears
+  Priority: 50
+  Area:
+  - X1: 638
+    Y1: 530
+    X2: 738
+    Y2: 635
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 685
+    Y: 579
+    Z: -15
+- Type: BaseRegion
+  Map: TerMur
+  Name: Secret Garden
+  Priority: 50
+  Area:
+  - X1: 413
+    Y1: 678
+    X2: 489
+    Y2: 749
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 462
+    Y: 719
+    Z: 22
+- Type: BaseRegion
+  Map: TerMur
+  Name: Serpents Lair
+  Priority: 50
+  Area:
+  - X1: 681
+    Y1: 679
+    X2: 849
+    Y2: 790
+  - X1: 703
+    Y1: 656
+    X2: 850
+    Y2: 789
+  - X1: 785
+    Y1: 640
+    X2: 850
+    Y2: 775
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 711
+    Y: 720
+    Z: -11
+- Type: BaseRegion
+  Map: TerMur
+  Name: Silver Sapling
+  Priority: 50
+  Area:
+  - X1: 311
+    Y1: 582
+    X2: 379
+    Y2: 650
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 341
+    Y: 619
+    Z: 26
+- Type: BaseRegion
+  Map: TerMur
+  Name: Skeletal Dragon
+  Priority: 50
+  Area:
+  - X1: 643
+    Y1: 809
+    X2: 698
+    Y2: 872
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 675
+    Y: 828
+    Z: -109
+- Type: BaseRegion
+  Map: TerMur
+  Name: Sutek the Mage
+  Priority: 50
+  Area:
+  - X1: 901
+    Y1: 574
+    X2: 954
+    Y2: 614
+  Parent:
+    Name: Abyss
+    Map: TerMur
+  GoLocation:
+    X: 924
+    Y: 595
+    Z: -14
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Underworld
+  Priority: 50
+  Area:
+  - X1: 898
+    Y1: 808
+    X2: 1280
+    Y2: 1231
+  Music: HumanLevel
+  GoLocation:
+    X: 1128
+    Y: 1207
+    Z: -2
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Atoll Bend
+  Priority: 50
+  Area:
+  - X1: 1027
+    Y1: 3311
+    X2: 1224
+    Y2: 3514
+  GoLocation:
+    X: 1118
+    Y: 3408
+    Z: -42
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Chicken Chase
+  Priority: 50
+  Area:
+  - X1: 448
+    Y1: 3352
+    X2: 613
+    Y2: 3480
+  Rune: Chicken Chase
+  GoLocation:
+    X: 560
+    Y: 3412
+    Z: 37
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Fishermans Reach
+  Priority: 50
+  Area:
+  - X1: 547
+    Y1: 2835
+    X2: 745
+    Y2: 3102
+  GoLocation:
+    X: 631
+    Y: 3035
+    Z: 36
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Gated Isle
+  Priority: 50
+  Area:
+  - X1: 603
+    Y1: 3836
+    X2: 815
+    Y2: 4043
+  GoLocation:
+    X: 703
+    Y: 3934
+    Z: -31
+- Type: DungeonRegion
+  Map: TerMur
+  Name: High Plain
+  Priority: 50
+  Area:
+  - X1: 748
+    Y1: 2843
+    X2: 981
+    Y2: 3050
+  GoLocation:
+    X: 863
+    Y: 2931
+    Z: 38
+- Type: BaseRegion
+  Map: TerMur
+  Name: Holy City
+  Priority: 50
+  Area:
+  - X1: 922
+    Y1: 3838
+    X2: 1071
+    Y2: 3965
+  Music: Holycity
+  GoLocation:
+    X: 997
+    Y: 3869
+    Z: -42
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Kepetch Waste
+  Priority: 50
+  Area:
+  - X1: 356
+    Y1: 3143
+    X2: 523
+    Y2: 3224
+  GoLocation:
+    X: 447
+    Y: 3188
+    Z: 20
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Lost Settlement
+  Priority: 50
+  Area:
+  - X1: 454
+    Y1: 3708
+    X2: 648
+    Y2: 3957
+  GoLocation:
+    X: 526
+    Y: 3822
+    Z: -44
+- Type: GuardedRegion
+  Map: TerMur
+  Name: Moongates
+  Priority: 50
+  Area:
+  - X1: 852
+    Y1: 3525
+    X2: 867
+    Y2: 3540
+  - X1: 925
+    Y1: 3988
+    X2: 940
+    Y2: 4003
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Northern Steppes
+  Priority: 50
+  Area:
+  - X1: 694
+    Y1: 3020
+    X2: 954
+    Y2: 3148
+  GoLocation:
+    X: 822
+    Y: 3063
+    Z: 61
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Raptor Island
+  Priority: 50
+  Area:
+  - X1: 712
+    Y1: 3765
+    X2: 879
+    Y2: 3829
+  - X1: 728
+    Y1: 3809
+    X2: 839
+    Y2: 3923
+  - X1: 769
+    Y1: 3721
+    X2: 972
+    Y2: 3768
+  - X1: 808
+    Y1: 3692
+    X2: 930
+    Y2: 3732
+  GoLocation:
+    X: 816
+    Y: 3778
+    Z: -42
+- Type: TownRegion
+  Map: TerMur
+  Name: Royal City
+  Priority: 50
+  Area:
+  - X1: 624
+    Y1: 3296
+    X2: 927
+    Y2: 3583
+  Music: RoyalCity
+  GoLocation:
+    X: 750
+    Y: 3440
+    Z: -20
+- Type: BaseRegion
+  Map: TerMur
+  Name: Queen's Palace
+  Priority: 0
+  Area:
+  - X1: 717
+    Y1: 3339
+    X2: 785
+    Y2: 3412
+  Music: QueenPalace
+  Parent:
+    Name: Royal City
+    Map: TerMur
+  GoLocation:
+    X: 748
+    Y: 3357
+    Z: 55
+- Type: BaseRegion
+  Map: TerMur
+  Name: Royal City Inn
+  Priority: 0
+  Area:
+  - X1: 724
+    Y1: 3463
+    X2: 761
+    Y2: 3483
+  - X1: 747
+    Y1: 3480
+    X2: 760
+    Y2: 3493
+  Parent:
+    Name: Royal City
+    Map: TerMur
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Royal Park
+  Priority: 50
+  Area:
+  - X1: 632
+    Y1: 3233
+    X2: 808
+    Y2: 3268
+  - X1: 753
+    Y1: 3161
+    X2: 990
+    Y2: 3292
+  GoLocation:
+    X: 711
+    Y: 3255
+    Z: -42
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Slith Valley
+  Priority: 50
+  Area:
+  - X1: 1028
+    Y1: 3263
+    X2: 1221
+    Y2: 3404
+  GoLocation:
+    X: 1078
+    Y: 3331
+    Z: -42
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Spider Island
+  Priority: 50
+  Area:
+  - X1: 1063
+    Y1: 3695
+    X2: 1181
+    Y2: 3779
+  GoLocation:
+    X: 1115
+    Y: 3730
+    Z: -42
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Stygian Dragon Lair
+  Priority: 50
+  Area:
+  - X1: 258
+    Y1: 90
+    X2: 489
+    Y2: 245
+  Music: StygianDragon
+  GoLocation:
+    X: 367
+    Y: 155
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Talon Point
+  Priority: 50
+  Area:
+  - X1: 632
+    Y1: 3830
+    X2: 730
+    Y2: 3885
+  - X1: 629
+    Y1: 3786
+    X2: 705
+    Y2: 3826
+  - X1: 656
+    Y1: 3750
+    X2: 707
+    Y2: 3791
+  GoLocation:
+    X: 676
+    Y: 3831
+    Z: -39
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Toxic Desert
+  Priority: 50
+  Area:
+  - X1: 1010
+    Y1: 2929
+    X2: 1156
+    Y2: 3049
+  Rune: Toxic Desert
+  GoLocation:
+    X: 1047
+    Y: 2980
+    Z: 62
+  Entrance:
+    X: 1051
+    Y: 3022
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Void Island
+  Priority: 50
+  Area:
+  - X1: 314
+    Y1: 3473
+    X2: 581
+    Y2: 3699
+  GoLocation:
+    X: 440
+    Y: 3577
+    Z: 38
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Volcano
+  Priority: 50
+  Area:
+  - X1: 298
+    Y1: 2895
+    X2: 499
+    Y2: 3117
+  GoLocation:
+    X: 407
+    Y: 3010
+    Z: -24
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Walled Circus
+  Priority: 50
+  Area:
+  - X1: 291
+    Y1: 3207
+    X2: 445
+    Y2: 3354
+  GoLocation:
+    X: 370
+    Y: 3273
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Waterfall Point
+  Priority: 50
+  Area:
+  - X1: 635
+    Y1: 2862
+    X2: 731
+    Y2: 2926
+  GoLocation:
+    X: 661
+    Y: 2894
+    Z: 39
+- Type: BaseRegion
+  Map: TerMur
+  Name: Shrine of Singularity
+  Priority: 50
+  Area:
+  - X1: 978
+    Y1: 3786
+    X2: 1018
+    Y2: 3838
+  Music: CodexShrine
+  GoLocation:
+    X: 995
+    Y: 3806
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Great Ape Lair
+  Priority: 100
+  Area:
+  - X1: 832
+    Y1: 1363
+    X2: 938
+    Y2: 1474
+  GoLocation:
+    X: 926
+    Y: 1464
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Zipactriotl Lair
+  Priority: 100
+  Area:
+  - X1: 831
+    Y1: 2239
+    X2: 959
+    Y2: 2367
+  GoLocation:
+    X: 896
+    Y: 2304
+    Z: -19
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Myrmidex Queen Lair
+  Priority: 100
+  Area:
+  - X1: 704
+    Y1: 2248
+    X2: 828
+    Y2: 2363
+  GoLocation:
+    X: 766
+    Y: 2306
+    Z: 0
+- Type: DungeonRegion
+  Map: TerMur
+  Name: Kotl City
+  Priority: 50
+  Area:
+  - X1: 435
+    Y1: 2270
+    X2: 675
+    Y2: 2490
+  GoLocation:
+    X: 542
+    Y: 2473
+    Z: 0
