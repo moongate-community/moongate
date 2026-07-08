@@ -115,6 +115,10 @@ await ConsoleApp.RunAsync(
 
                 container.Register<ISkillService, SkillService>(Reuse.Singleton);
                 container.RegisterDataLoader<SkillLoader>();
+
+                container.Register<IProfessionService, ProfessionService>(Reuse.Singleton);
+                container.RegisterDataLoader<ProfessionsLoader>(10);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
