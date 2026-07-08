@@ -1,0 +1,40 @@
+using Moongate.Server.Services;
+using Moongate.UO.Data.Names;
+
+namespace Moongate.Tests.Server;
+
+public class NameServiceTests
+{
+    private static NameList List(string type, params string[] names)
+    {
+        return new NameList { Type = type, Names = [.. names] };
+    }
+
+    [Fact]
+    public void Register_ThenGetByType_IsCaseInsensitive()
+    {
+        var service = new NameService();
+        service.Register(List("orc", "Grok", "Zug"));
+
+        Assert.Equal(1, service.Count);
+        Assert.Equal(2, service.GetByType("ORC")!.Names.Count);
+    }
+
+    [Fact]
+    public void GetByType_Unknown_ReturnsNull()
+    {
+        var service = new NameService();
+
+        Assert.Null(service.GetByType("nope"));
+    }
+
+    [Fact]
+    public void All_IsOrderedByType()
+    {
+        var service = new NameService();
+        service.Register(List("male"));
+        service.Register(List("female"));
+
+        Assert.Equal(new[] { "female", "male" }, service.All.Select(l => l.Type).ToArray());
+    }
+}
