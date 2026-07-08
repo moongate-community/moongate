@@ -28,7 +28,7 @@ await ConsoleApp.RunAsync(
     async (string rootDirectory = null, bool showHeader = true, string? uoDirectory = null, CancellationToken ct = default)
         =>
     {
-        rootDirectory = (rootDirectory ?? "~/.moongate").ResolvePathAndEnvs();
+        rootDirectory = (rootDirectory ?? "$HOME/projects/personal/Moongate/moongate").ResolvePathAndEnvs();
         uoDirectory = (uoDirectory ?? "~/uo").ResolvePathAndEnvs();
 
         if (showHeader)
@@ -100,6 +100,8 @@ await ConsoleApp.RunAsync(
                 // Priority 100 so it starts after the event bus and the Lua forwarder are up,
                 // ensuring subscribers actually receive the FilesLoadedEvent.
                 container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
+
+                container.RegisterStdService<ISkillService, SkillService>();
 
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(

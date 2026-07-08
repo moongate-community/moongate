@@ -58,4 +58,49 @@ public class SkillServiceTests
 
         Assert.Equal(new[] { 0, 1, 2 }, service.All.Select(d => d.Id).ToArray());
     }
+
+    [Fact]
+    public void LoadFromFile_RegistersEveryDefinition()
+    {
+        var service = NewService();
+        var yaml =
+            "- Id: 0\n  Name: Alchemy\n  PrimaryStat: Int\n  SecondaryStat: Dex\n" +
+            "- Id: 1\n  Name: Anatomy\n  PrimaryStat: Int\n  SecondaryStat: Str\n";
+        var path = Path.Combine(Path.GetTempPath(), "mg-skills-load-" + Guid.NewGuid().ToString("N") + ".yaml");
+        File.WriteAllText(path, yaml);
+
+        try
+        {
+            service.LoadFromFile(path);
+
+            Assert.Equal(2, service.Count);
+            Assert.Equal("Alchemy", service.GetById(0)!.Name);
+            Assert.Equal(Stat.Str, service.GetByName("Anatomy")!.SecondaryStat);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void SeedAndLoad_WhenFileMissing_WritesDefaultAndLoadsIt()
+    {
+        var service = NewService();
+        var dataDir = Path.Combine(Path.GetTempPath(), "mg-skills-seed-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(dataDir);
+
+        try
+        {
+            service.SeedAndLoad(dataDir);
+
+            Assert.True(File.Exists(Path.Combine(dataDir, "skills.yaml")));
+            Assert.True(service.Count >= 6);
+            Assert.Equal("Alchemy", service.GetById(0)!.Name);
+        }
+        finally
+        {
+            Directory.Delete(dataDir, true);
+        }
+    }
 }
