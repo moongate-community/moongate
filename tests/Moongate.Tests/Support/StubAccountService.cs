@@ -2,11 +2,11 @@ using Moongate.Network.Types;
 using Moongate.Server.Data;
 using Moongate.Server.Interfaces;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Tests.Support;
 
 /// <summary>
-/// Placeholder account service pending real persistence: accepts any non-empty
-/// username and password, denies everything else with incorrect-credentials.
+/// Test double for <see cref="IAccountService"/>: accepts any non-empty username and
+/// password, denies everything else with incorrect-credentials.
 /// </summary>
 public sealed class StubAccountService : IAccountService
 {

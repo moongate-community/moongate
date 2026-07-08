@@ -86,7 +86,7 @@ await ConsoleApp.RunAsync(
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
 
-                container.Register<IAccountService, StubAccountService>(Reuse.Singleton);
+                container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.RegisterInstance<IPendingLoginStore>(
                     new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
                 );

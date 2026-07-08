@@ -1,5 +1,5 @@
 using Moongate.Network.Types;
-using Moongate.Server.Services;
+using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Server;
 

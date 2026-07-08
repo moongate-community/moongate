@@ -3,6 +3,7 @@ using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Types;
+using Moongate.UO.Data.Version;
 using Serilog;
 using SquidStd.Network.Client;
 using SquidStd.Network.Spans;
@@ -24,6 +25,8 @@ public sealed class PlayerSession : ISeedTarget
 
     public SessionStateType State { get; private set; }
 
+    public ClientVersion Version { get; private set; }
+
     public uint? Seed { get; private set; }
 
     public string? Username { get; private set; }
@@ -44,6 +47,14 @@ public sealed class PlayerSession : ISeedTarget
         lock (_stateSync)
         {
             State = state;
+        }
+    }
+
+    public void SetVersion(ClientVersion version)
+    {
+        lock (_stateSync)
+        {
+            Version = version;
         }
     }
 
