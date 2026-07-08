@@ -594,3 +594,4 @@ benchmarks/.compare
 /moongate/
 # Runtime persistence (world snapshot + journal + persisted entities)
 /moongate_root/saves/
+/moongate_root/data/
