@@ -22,6 +22,7 @@ public sealed class DataLoaderService : IDataLoaderService, ISquidStdService
     {
         foreach (var loader in _loaders)
         {
+            _logger.Debug("Executing loader {loader}", loader.GetType().Name);
             await loader.LoadAsync(ct);
         }
 
