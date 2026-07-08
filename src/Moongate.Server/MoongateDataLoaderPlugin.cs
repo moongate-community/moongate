@@ -48,11 +48,14 @@ public class MoongateDataLoaderPlugin : ISquidStdPlugin
         container.Register<IContainerGumpService, ContainerGumpService>(Reuse.Singleton);
         container.RegisterDataLoader<ContainerGumpsLoader>(90);
 
+        container.Register<IStartingCityService, StartingCityService>(Reuse.Singleton);
+        container.RegisterDataLoader<StartingCitiesLoader>(100);
+
         container.RegisterDataLoaderService();
     }
 
     public PluginMetadata Metadata
-        => new PluginMetadata()
+        => new()
         {
             Id = "moongate.dataloaders.plugin",
             Version = new Version(VersionUtils.GetVersion(typeof(MoongateDataLoaderPlugin).Assembly)),
