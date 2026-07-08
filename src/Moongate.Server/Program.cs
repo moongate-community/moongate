@@ -119,6 +119,9 @@ await ConsoleApp.RunAsync(
                 container.Register<IProfessionService, ProfessionService>(Reuse.Singleton);
                 container.RegisterDataLoader<ProfessionsLoader>(10);
 
+                container.Register<ILocationService, LocationService>(Reuse.Singleton);
+                container.RegisterDataLoader<LocationsLoader>(20);
+
                 container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();

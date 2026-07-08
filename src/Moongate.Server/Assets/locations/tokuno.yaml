@@ -1,0 +1,98 @@
+Name: Tokuno
+Categories:
+- Name: Tokuno Islands
+  Categories:
+  - Name: Towns
+    Categories:
+    - Name: Zento
+      Locations:
+      - Name: Zento Moongate
+        X: 802
+        Y: 1204
+        Z: 25
+      - Name: Zento Bank
+        X: 735
+        Y: 1255
+        Z: 30
+  - Name: Dungeons
+    Categories:
+    - Name: Fan Dancer's Dojo
+      Locations:
+      - Name: Entrance
+        X: 977
+        Y: 218
+        Z: 23
+    - Name: Yomotsu Mines
+      Locations:
+      - Name: Entrance
+        X: 259
+        Y: 785
+        Z: 64
+  - Name: Sites
+    Categories:
+    - Name: Makoto-Jima
+      Locations:
+      - Name: Moongate
+        X: 802
+        Y: 1204
+        Z: 25
+      - Name: Shrine
+        X: 718
+        Y: 1161
+        Z: 25
+      - Name: The Waste
+        X: 724
+        Y: 943
+        Z: 42
+    - Name: Isamu-Jima
+      Locations:
+      - Name: Moongate
+        X: 1169
+        Y: 998
+        Z: 41
+      - Name: Shrine
+        X: 1047
+        Y: 512
+        Z: 15
+      - Name: Lotus Lakes
+        X: 1066
+        Y: 817
+        Z: 20
+      - Name: Mount Sho
+        X: 1159
+        Y: 696
+        Z: 70
+      - Name: Dragon Valley
+        X: 948
+        Y: 432
+        Z: 8
+      - Name: Winter Spur
+        X: 926
+        Y: 162
+        Z: 34
+    - Name: Homare-Jima
+      Locations:
+      - Name: Moongate
+        X: 270
+        Y: 628
+        Z: 15
+      - Name: Shrine
+        X: 295
+        Y: 712
+        Z: 55
+      - Name: Field of Echoes
+        X: 160
+        Y: 654
+        Z: 36
+      - Name: Crane Marsh
+        X: 232
+        Y: 1107
+        Z: 10
+      - Name: Bushido Dojo
+        X: 334
+        Y: 407
+        Z: 32
+      - Name: Kitsune Woods
+        X: 523
+        Y: 520
+        Z: 32
