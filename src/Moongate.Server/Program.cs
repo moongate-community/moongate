@@ -28,7 +28,18 @@ await ConsoleApp.RunAsync(
     async (string rootDirectory = null, bool showHeader = true, string? uoDirectory = null, CancellationToken ct = default)
         =>
     {
-        rootDirectory = (rootDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), "moongate_root")).ResolvePathAndEnvs();
+        rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT");
+
+        if (string.IsNullOrEmpty(rootDirectory))
+        {
+            rootDirectory = (rootDirectory ?? Path.Combine(Directory.GetCurrentDirectory(), "moongate_root"))
+                .ResolvePathAndEnvs();
+        }
+        else
+        {
+            rootDirectory = rootDirectory.ResolvePathAndEnvs();
+        }
+
         uoDirectory = (uoDirectory ?? "~/uo").ResolvePathAndEnvs();
 
         if (showHeader)
@@ -82,7 +93,6 @@ await ConsoleApp.RunAsync(
         stdBootstrap.ConfigureServices(
             container =>
             {
-
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
 

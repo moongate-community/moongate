@@ -24,21 +24,9 @@ public sealed class SkillService : ISkillService, ISquidStdService
         _directories = directories;
     }
 
-    public IReadOnlyList<SkillDefinition> All
-    {
-        get
-        {
-            return _byId.Values.OrderBy(definition => definition.Id).ToList();
-        }
-    }
+    public IReadOnlyList<SkillDefinition> All => [.. _byId.Values.OrderBy(definition => definition.Id)];
 
-    public int Count
-    {
-        get
-        {
-            return _byId.Count;
-        }
-    }
+    public int Count => _byId.Count;
 
     public void Register(SkillDefinition definition)
     {
@@ -48,12 +36,12 @@ public sealed class SkillService : ISkillService, ISquidStdService
 
     public SkillDefinition? GetById(int id)
     {
-        return _byId.TryGetValue(id, out var definition) ? definition : null;
+        return _byId.GetValueOrDefault(id);
     }
 
     public SkillDefinition? GetByName(string name)
     {
-        return _byName.TryGetValue(name, out var definition) ? definition : null;
+        return _byName.GetValueOrDefault(name);
     }
 
     public void LoadFromFile(string path)
