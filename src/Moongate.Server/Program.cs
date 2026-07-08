@@ -6,7 +6,9 @@ using Moongate.Scripting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
+using Moongate.Server.Extensions;
 using Moongate.Server.Interfaces;
+using Moongate.Server.Loaders;
 using Moongate.Server.Services;
 using Moongate.Server.Services.Network;
 using SquidStd.Abstractions.Extensions.Config;
@@ -111,7 +113,9 @@ await ConsoleApp.RunAsync(
                 // ensuring subscribers actually receive the FilesLoadedEvent.
                 container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
 
-                container.RegisterStdService<ISkillService, SkillService>();
+                container.Register<ISkillService, SkillService>(Reuse.Singleton);
+                container.RegisterDataLoader<SkillLoader>();
+                container.RegisterDataLoaderService();
 
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(
