@@ -205,3 +205,49 @@
   ColdIntensity: 5
   HeatChance: 20
   HeatIntensity: 35
+- Id: 9
+  Name: Intense Rain
+  RainChance: 100
+  RainIntensity:
+    Min: 60
+    Max: 100
+  RainTempDrop: 5
+  SnowChance: 0
+  SnowIntensity:
+    Min: 0
+    Max: 0
+  SnowThreshold: 0
+  StormChance: 60
+  StormIntensity:
+    Min: 80
+    Max: 100
+  StormTempDrop: 10
+  MaxTemp: 25
+  MinTemp: 10
+  ColdChance: 0
+  ColdIntensity: 0
+  HeatChance: 80
+  HeatIntensity: 35
+- Id: 10
+  Name: Intense Snow
+  RainChance: 0
+  RainIntensity:
+    Min: 0
+    Max: 0
+  RainTempDrop: 0
+  SnowChance: 90
+  SnowIntensity:
+    Min: 90
+    Max: 100
+  SnowThreshold: 5
+  StormChance: 40
+  StormIntensity:
+    Min: 43
+    Max: 60
+  StormTempDrop: 10
+  MaxTemp: 10
+  MinTemp: 4
+  ColdChance: 90
+  ColdIntensity: 1
+  HeatChance: 0
+  HeatIntensity: 0

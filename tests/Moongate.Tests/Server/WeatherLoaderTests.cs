@@ -22,9 +22,11 @@ public class WeatherLoaderTests
             await loader.LoadAsync();
 
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "weather.yaml")));
-            Assert.Equal(9, weather.Count);
+            Assert.Equal(11, weather.Count);
             var desert = weather.All.Single(w => w.Name == "Desert");
             Assert.True(desert.RainIntensity.Max >= desert.RainIntensity.Min);
+            Assert.Equal("Intense Rain", weather.GetById(9)!.Name);
+            Assert.Equal("Intense Snow", weather.GetById(10)!.Name);
         }
         finally
         {
