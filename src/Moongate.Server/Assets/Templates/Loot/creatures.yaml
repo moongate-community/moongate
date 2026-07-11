@@ -1,0 +1,631 @@
+- Id: creature.agapite_elemental
+  Name: AgapiteElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.air_elemental
+  Name: AirElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: clumsy_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ancient_lich
+  Name: AncientLich
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ancient_wyrm
+  Name: AncientWyrm
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.bronze_elemental
+  Name: BronzeElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.centaur
+  Name: Centaur
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.chaos_dragoon_elite
+  Name: ChaosDragoonElite
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.copper_elemental
+  Name: CopperElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.corrosive_slime
+  Name: CorrosiveSlime
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.crystal_lattice_seeker
+  Name: CrystalLatticeSeeker
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.daemon
+  Name: Daemon
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.dark_guardian
+  Name: DarkGuardian
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.dragon
+  Name: Dragon
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.dull_copper_elemental
+  Name: DullCopperElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.elite_ninja
+  Name: EliteNinja
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ethereal_warrior
+  Name: EtherealWarrior
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.fire_gargoyle
+  Name: FireGargoyle
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.golden_elemental
+  Name: GoldenElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.greater_dragon
+  Name: GreaterDragon
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.harrower_tentacles
+  Name: HarrowerTentacles
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: summon_air_elemental_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: summon_air_elemental_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ice_fiend
+  Name: IceFiend
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.imp
+  Name: Imp
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.meer_eternal
+  Name: MeerEternal
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: summon_air_elemental_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: summon_air_elemental_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.meer_mage
+  Name: MeerMage
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.mound_of_maggots
+  Name: MoundOfMaggots
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ophidian_archmage
+  Name: OphidianArchmage
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ophidian_matriarch
+  Name: OphidianMatriarch
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.ophidian_warrior
+  Name: OphidianWarrior
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.pixie
+  Name: Pixie
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: clumsy_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.plague_spawn
+  Name: PlagueSpawn
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.rai_ju
+  Name: RaiJu
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.revenant_lion
+  Name: RevenantLion
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.shadow_iron_elemental
+  Name: ShadowIronElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.shadow_wyrm
+  Name: ShadowWyrm
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.silver_serpent
+  Name: SilverSerpent
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.skeletal_dragon
+  Name: SkeletalDragon
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.slime
+  Name: Slime
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.stone_harpy
+  Name: StoneHarpy
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.succubus
+  Name: Succubus
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arch_cure_scroll
+    Amount: 1
+    Chance: 1.0
+- Id: creature.valorite_elemental
+  Name: ValoriteElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+- Id: creature.verite_elemental
+  Name: VeriteElemental
+  Category: loot
+  Description: ''
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: amber
+    Amount: 1
+    Chance: 1.0

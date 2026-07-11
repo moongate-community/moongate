@@ -1,0 +1,35 @@
+- Id: creature.yomotsu_priest
+  Name: YomotsuPriest
+  Category: loot
+  Description: Creature-specific loot for YomotsuPriest.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: green_gourd
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: executioners_axe
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: long_pants
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: short_pants
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: shoes
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: sandals
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: boots
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: thigh_boots
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0

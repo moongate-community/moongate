@@ -1,0 +1,23 @@
+- Id: creature.bog_thing
+  Name: BogThing
+  Category: loot
+  Description: Creature-specific loot for BogThing.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: board
+    Amount: 10
+    Chance: 1.0
+  - ItemTemplateId: log
+    Amount: 10
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 3
+    Chance: 1.0

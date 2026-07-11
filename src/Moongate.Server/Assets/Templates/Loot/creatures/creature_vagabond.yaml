@@ -1,0 +1,11 @@
+- Id: creature.vagabond
+  Name: Vagabond
+  Category: loot
+  Description: Creature-specific loot for Vagabond.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: gold
+    Amount: 150
+    Chance: 1.0

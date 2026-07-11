@@ -1,0 +1,14 @@
+- Id: creature.lava_serpent
+  Name: LavaSerpent
+  Category: loot
+  Description: Creature-specific loot for LavaSerpent.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: sulfurous_ash
+    Amount: 3
+    Chance: 1.0
+  - ItemTemplateId: bone
+    Amount: 1
+    Chance: 1.0

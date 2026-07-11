@@ -1,0 +1,11 @@
+- Id: creature.black_solen_warrior
+  Name: BlackSolenWarrior
+  Category: loot
+  Description: Creature-specific loot for BlackSolenWarrior.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: bracelet_of_binding
+    Amount: 1
+    Chance: 1.0

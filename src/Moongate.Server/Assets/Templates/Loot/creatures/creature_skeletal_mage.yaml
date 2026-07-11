@@ -1,0 +1,14 @@
+- Id: creature.skeletal_mage
+  Name: SkeletalMage
+  Category: loot
+  Description: Creature-specific loot for SkeletalMage.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: bone
+    Amount: 1
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 3
+    Chance: 1.0

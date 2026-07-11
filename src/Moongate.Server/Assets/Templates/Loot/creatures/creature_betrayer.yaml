@@ -1,0 +1,14 @@
+- Id: creature.betrayer
+  Name: Betrayer
+  Category: loot
+  Description: Creature-specific loot for Betrayer.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: power_crystal
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: blackthorn_welcome_book
+    Amount: 1
+    Chance: 1.0

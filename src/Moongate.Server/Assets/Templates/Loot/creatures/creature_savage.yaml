@@ -1,0 +1,14 @@
+- Id: creature.savage
+  Name: Savage
+  Category: loot
+  Description: Creature-specific loot for Savage.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: tribal_berry
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: bola_ball
+    Amount: 1
+    Chance: 1.0

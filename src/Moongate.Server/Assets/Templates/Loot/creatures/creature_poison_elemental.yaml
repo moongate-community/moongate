@@ -1,0 +1,14 @@
+- Id: creature.poison_elemental
+  Name: PoisonElemental
+  Category: loot
+  Description: Creature-specific loot for PoisonElemental.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: nightshade
+    Amount: 4
+    Chance: 1.0
+  - ItemTemplateId: lesser_poison_potion
+    Amount: 1
+    Chance: 1.0

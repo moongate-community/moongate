@@ -1,0 +1,11 @@
+- Id: creature.ogre_lord
+  Name: OgreLord
+  Category: loot
+  Description: Creature-specific loot for OgreLord.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: club
+    Amount: 1
+    Chance: 1.0

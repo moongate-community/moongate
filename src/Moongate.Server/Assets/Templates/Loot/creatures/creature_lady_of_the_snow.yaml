@@ -1,0 +1,17 @@
+- Id: creature.lady_of_the_snow
+  Name: LadyOfTheSnow
+  Category: loot
+  Description: Creature-specific loot for LadyOfTheSnow.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: necklace
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 3
+    Chance: 1.0

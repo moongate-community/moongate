@@ -1,0 +1,11 @@
+- Id: creature.golem_controller
+  Name: GolemController
+  Category: loot
+  Description: Creature-specific loot for GolemController.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: arcane_gem
+    Amount: 1
+    Chance: 1.0

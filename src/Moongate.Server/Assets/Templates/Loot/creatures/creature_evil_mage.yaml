@@ -1,0 +1,11 @@
+- Id: creature.evil_mage
+  Name: EvilMage
+  Category: loot
+  Description: Creature-specific loot for EvilMage.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTag: reagents
+    Amount: 6
+    Chance: 1.0

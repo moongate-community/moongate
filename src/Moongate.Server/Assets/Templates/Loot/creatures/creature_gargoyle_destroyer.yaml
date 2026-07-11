@@ -1,0 +1,11 @@
+- Id: creature.gargoyle_destroyer
+  Name: GargoyleDestroyer
+  Category: loot
+  Description: Creature-specific loot for GargoyleDestroyer.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: gargoyles_pickaxe
+    Amount: 1
+    Chance: 1.0

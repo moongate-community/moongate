@@ -1,0 +1,17 @@
+- Id: creature.yomotsu_elder
+  Name: YomotsuElder
+  Category: loot
+  Description: Creature-specific loot for YomotsuElder.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: green_gourd
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: executioners_axe
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0

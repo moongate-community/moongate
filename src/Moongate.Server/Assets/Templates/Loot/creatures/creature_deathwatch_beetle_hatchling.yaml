@@ -1,0 +1,26 @@
+- Id: creature.deathwatch_beetle_hatchling
+  Name: DeathwatchBeetleHatchling
+  Category: loot
+  Description: Creature-specific loot for DeathwatchBeetleHatchling.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: leather_gorget
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: leather_gloves
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: leather_arms
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: leather_legs
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: leather_cap
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: leather_chest
+    Amount: 1
+    Chance: 1.0

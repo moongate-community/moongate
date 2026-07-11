@@ -1,0 +1,17 @@
+- Id: creature.giant_black_widow
+  Name: GiantBlackWidow
+  Category: loot
+  Description: Creature-specific loot for GiantBlackWidow.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: spiders_silk
+    Amount: 5
+    Chance: 1.0
+  - ItemTemplateId: lesser_poison_potion
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: lesser_poison_potion
+    Amount: 1
+    Chance: 1.0

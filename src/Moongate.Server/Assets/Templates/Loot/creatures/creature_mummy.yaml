@@ -1,0 +1,17 @@
+- Id: creature.mummy
+  Name: Mummy
+  Category: loot
+  Description: Creature-specific loot for Mummy.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: garlic
+    Amount: 5
+    Chance: 1.0
+  - ItemTemplateId: bandage
+    Amount: 10
+    Chance: 1.0
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0

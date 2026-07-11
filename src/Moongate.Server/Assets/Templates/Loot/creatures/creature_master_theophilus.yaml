@@ -1,0 +1,17 @@
+- Id: creature.master_theophilus
+  Name: MasterTheophilus
+  Category: loot
+  Description: Creature-specific loot for MasterTheophilus.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTag: reagents
+    Amount: 7
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 7
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 8
+    Chance: 1.0

@@ -1,0 +1,14 @@
+- Id: creature.ice_elemental
+  Name: IceElemental
+  Category: loot
+  Description: Creature-specific loot for IceElemental.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: black_pearl
+    Amount: 1
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 3
+    Chance: 1.0

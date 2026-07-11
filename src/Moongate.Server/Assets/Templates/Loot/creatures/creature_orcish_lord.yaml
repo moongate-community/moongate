@@ -1,0 +1,17 @@
+- Id: creature.orcish_lord
+  Name: OrcishLord
+  Category: loot
+  Description: Creature-specific loot for OrcishLord.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: ringmail_chest
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: bola_ball
+    Amount: 1
+    Chance: 1.0
+  - ItemTag: reagents
+    Amount: 1
+    Chance: 1.0

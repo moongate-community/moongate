@@ -1,0 +1,20 @@
+- Id: creature.golem
+  Name: Golem
+  Category: loot
+  Description: Creature-specific loot for Golem.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: power_crystal
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: clockwork_assembly
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: arcane_gem
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: gears
+    Amount: 1
+    Chance: 1.0

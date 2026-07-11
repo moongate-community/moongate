@@ -1,0 +1,14 @@
+- Id: creature.kraken
+  Name: Kraken
+  Category: loot
+  Description: Creature-specific loot for Kraken.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: message_in_a_bottle
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: special_fishing_net
+    Amount: 1
+    Chance: 1.0

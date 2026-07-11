@@ -1,0 +1,11 @@
+- Id: creature.vorpal_bunny
+  Name: VorpalBunny
+  Category: loot
+  Description: Creature-specific loot for VorpalBunny.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: brightly_colored_eggs
+    Amount: 1
+    Chance: 1.0

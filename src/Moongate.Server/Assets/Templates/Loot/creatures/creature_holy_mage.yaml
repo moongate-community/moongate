@@ -1,0 +1,11 @@
+- Id: creature.holy_mage
+  Name: HolyMage
+  Category: loot
+  Description: Creature-specific loot for HolyMage.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: gold
+    Amount: 150
+    Chance: 1.0

@@ -1,0 +1,11 @@
+- Id: creature.serpentine_dragon
+  Name: SerpentineDragon
+  Category: loot
+  Description: Creature-specific loot for SerpentineDragon.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: seed
+    Amount: 1
+    Chance: 1.0

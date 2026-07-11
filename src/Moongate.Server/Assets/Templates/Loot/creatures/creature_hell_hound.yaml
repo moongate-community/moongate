@@ -1,0 +1,11 @@
+- Id: creature.hell_hound
+  Name: HellHound
+  Category: loot
+  Description: Creature-specific loot for HellHound.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: sulfurous_ash
+    Amount: 5
+    Chance: 1.0

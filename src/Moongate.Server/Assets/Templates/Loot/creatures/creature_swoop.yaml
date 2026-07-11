@@ -1,0 +1,11 @@
+- Id: creature.swoop
+  Name: Swoop
+  Category: loot
+  Description: Creature-specific loot for Swoop.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTag: reagents
+    Amount: 4
+    Chance: 1.0

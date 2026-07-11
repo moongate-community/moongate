@@ -1,0 +1,14 @@
+- Id: creature.ronin
+  Name: Ronin
+  Category: loot
+  Description: Creature-specific loot for Ronin.
+  Mode: Additive
+  Rolls: 1
+  NoDropWeight: 0
+  Entries:
+  - ItemTemplateId: wakizashi
+    Amount: 1
+    Chance: 1.0
+  - ItemTemplateId: longsword
+    Amount: 1
+    Chance: 1.0
