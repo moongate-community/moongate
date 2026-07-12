@@ -1,9 +1,9 @@
 using Moongate.Server.Data.Internal;
+using Moongate.Server.Internal;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Services;
 using Serilog;
 using SquidStd.Core.Directories;
-using SquidStd.Core.Utils;
 
 namespace Moongate.Server.Loaders;
 
@@ -36,7 +36,12 @@ public sealed class LootTemplatesLoader : IDataLoader
 
         if (!directoryExists)
         {
-            SeedDefaults(lootDirectory);
+            EmbeddedResourceDirectorySeeder.SeedAtomic(
+                typeof(LootTemplatesLoader).Assembly,
+                EmbeddedDirectory,
+                EmbeddedNamespace,
+                lootDirectory
+            );
         }
 
         var files = Directory.GetFiles(lootDirectory, "*.yaml", SearchOption.AllDirectories)
@@ -78,55 +83,5 @@ public sealed class LootTemplatesLoader : IDataLoader
         );
 
         return ValueTask.CompletedTask;
-    }
-
-    private static void SeedDefaults(string lootDirectory)
-    {
-        var assembly = typeof(LootTemplatesLoader).Assembly;
-        var normalizedLootDirectory = Path.GetFullPath(lootDirectory);
-        var parentDirectory = Path.GetDirectoryName(normalizedLootDirectory)!;
-        var temporaryDirectory = Path.Combine(parentDirectory, $".loot-{Guid.NewGuid():N}.tmp");
-        var temporaryDirectoryPrefix = temporaryDirectory + Path.DirectorySeparatorChar;
-        var resources = ResourceUtils.GetEmbeddedResourceNames(assembly, EmbeddedDirectory)
-            .Where(resourceName => resourceName.StartsWith(EmbeddedNamespace + ".", StringComparison.Ordinal))
-            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase);
-
-        Directory.CreateDirectory(parentDirectory);
-
-        try
-        {
-            Directory.CreateDirectory(temporaryDirectory);
-
-            foreach (var resourceName in resources)
-            {
-                var relativePath = ResourceUtils.ConvertResourceNameToPath(resourceName, EmbeddedNamespace);
-                var destination = Path.GetFullPath(Path.Combine(temporaryDirectory, relativePath));
-
-                if (string.Equals(destination, temporaryDirectory, StringComparison.Ordinal) ||
-                    !destination.StartsWith(temporaryDirectoryPrefix, StringComparison.Ordinal))
-                {
-                    throw new InvalidDataException(
-                        $"Embedded loot resource '{resourceName}' resolves outside loot root '{normalizedLootDirectory}'."
-                    );
-                }
-
-                Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-                File.WriteAllBytes(
-                    destination,
-                    ResourceUtils.GetEmbeddedResourceByteArray(assembly, resourceName).ToArray()
-                );
-            }
-
-            Directory.Move(temporaryDirectory, normalizedLootDirectory);
-        }
-        catch
-        {
-            if (Directory.Exists(temporaryDirectory))
-            {
-                Directory.Delete(temporaryDirectory, true);
-            }
-
-            throw;
-        }
     }
 }

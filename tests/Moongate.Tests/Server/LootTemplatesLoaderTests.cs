@@ -1,3 +1,4 @@
+using System.Reflection;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services;
 using Moongate.UO.Data.Items;
@@ -78,6 +79,49 @@ public class LootTemplatesLoaderTests
             Assert.Equal(collisionContents, File.ReadAllText(lootDirectory));
             Assert.Empty(Directory.GetDirectories(templatesDirectory, ".loot-*.tmp"));
             Assert.Equal(0, lootTemplates.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public void EmbeddedResourceDirectorySeeder_SeedAtomic_WhenDestinationCollides_CleansDerivedTemporaryDirectory()
+    {
+        var root = NewRoot();
+        var destinationDirectory = Path.Combine(root, "archive");
+        const string collisionContents = "destination-directory-collision";
+
+        Directory.CreateDirectory(root);
+        File.WriteAllText(destinationDirectory, collisionContents);
+
+        try
+        {
+            var seederType = typeof(LootTemplatesLoader).Assembly.GetType(
+                "Moongate.Server.Internal.EmbeddedResourceDirectorySeeder"
+            );
+            Assert.NotNull(seederType);
+
+            var seedAtomic = seederType.GetMethod("SeedAtomic");
+            Assert.NotNull(seedAtomic);
+
+            var exception = Assert.Throws<TargetInvocationException>(
+                () => seedAtomic.Invoke(
+                    null,
+                    [
+                        typeof(LootTemplatesLoader).Assembly,
+                        "Assets/Templates/Loot",
+                        "Moongate.Server.Assets.Templates.Loot",
+                        destinationDirectory
+                    ]
+                )
+            );
+
+            Assert.IsType<IOException>(exception.InnerException);
+            Assert.True(File.Exists(destinationDirectory));
+            Assert.Equal(collisionContents, File.ReadAllText(destinationDirectory));
+            Assert.Empty(Directory.GetDirectories(root, ".archive-*.tmp"));
         }
         finally
         {
