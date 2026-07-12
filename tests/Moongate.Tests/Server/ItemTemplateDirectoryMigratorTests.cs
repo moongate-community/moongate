@@ -309,6 +309,80 @@ public class ItemTemplateDirectoryMigratorTests
         }
     }
 
+    [Fact]
+    public void Migrate_ClaimMutationBeforeDelete_IsRejected()
+    {
+        var paths = NewPaths();
+        var legacyBytes = WriteLegacy(paths.LegacyFile, CurrentLegacyYaml());
+        var mutationRejected = false;
+
+        try
+        {
+            SetMigrationCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "BeforeLegacyDelete")
+                    {
+                        mutationRejected = IsWriteDenied(path, "unbacked-claim-bytes\n");
+                    }
+                }
+            );
+
+            Migrate(paths);
+
+            Assert.True(mutationRejected);
+            Assert.False(File.Exists(paths.LegacyFile));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
+            AssertNoOwnedDataTemporaryFiles(paths.Root);
+        }
+        finally
+        {
+            SetMigrationCheckpoint(null);
+            Directory.Delete(paths.Root, true);
+        }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Migrate_FinalBackupLease_BlocksMutationThroughCleanup(bool reuseExistingBackup)
+    {
+        var paths = NewPaths();
+        var legacyBytes = WriteLegacy(paths.LegacyFile, CurrentLegacyYaml());
+
+        if (reuseExistingBackup)
+        {
+            File.WriteAllBytes(paths.BackupFile, legacyBytes);
+        }
+
+        var mutationRejected = false;
+
+        try
+        {
+            SetMigrationCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "AfterBackupLeaseAcquired" && path == paths.BackupFile)
+                    {
+                        mutationRejected = IsWriteDenied(path, "mutated-backup\n");
+                    }
+                }
+            );
+
+            Migrate(paths);
+
+            Assert.True(mutationRejected);
+            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
+            Assert.False(File.Exists(paths.LegacyFile));
+            Assert.True(Directory.Exists(paths.TargetDirectory));
+        }
+        finally
+        {
+            SetMigrationCheckpoint(null);
+            Directory.Delete(paths.Root, true);
+        }
+    }
+
     private static ItemTemplateMigrationResult Migrate(
         (string Root, string LegacyFile, string BackupFile, string TargetDirectory) paths
     )
@@ -485,5 +559,18 @@ public class ItemTemplateDirectoryMigratorTests
         }
 
         field.SetValue(null, checkpoint);
+    }
+
+    private static bool IsWriteDenied(string file, string contents)
+    {
+        try
+        {
+            File.WriteAllText(file, contents);
+            return false;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return true;
+        }
     }
 }

@@ -34,6 +34,7 @@ public static class ItemTemplateDirectoryMigrator
         Directory.CreateDirectory(parentDirectory);
 
         var legacySnapshot = CreateImmutableSnapshot(legacyFile, "migration-snapshot");
+        (FileStream Stream, UnixFileMode? UnixMode)? backupLease = null;
 
         try
         {
@@ -47,7 +48,12 @@ public static class ItemTemplateDirectoryMigrator
                 temporaryDirectory
             );
 
-            PublishBackupAtomic(legacySnapshot.File, backupFile);
+            backupLease = PublishBackupAtomic(
+                legacySnapshot.File,
+                legacySnapshot.Lease,
+                backupFile
+            );
+            Checkpoint("AfterBackupLeaseAcquired", backupFile);
 
             try
             {
@@ -59,7 +65,11 @@ public static class ItemTemplateDirectoryMigrator
                 throw;
             }
 
-            DeleteLegacyIfSnapshotMatches(legacyFile, legacySnapshot.File);
+            DeleteLegacyIfSnapshotMatches(
+                legacyFile,
+                legacySnapshot.File,
+                legacySnapshot.Lease
+            );
 
             return new ItemTemplateMigrationResult(
                 migrationData.StandardCount,
@@ -75,6 +85,11 @@ public static class ItemTemplateDirectoryMigrator
         }
         finally
         {
+            if (backupLease is not null)
+            {
+                ReleaseProtectedReadLease(backupFile, backupLease.Value);
+            }
+
             legacySnapshot.Lease.Dispose();
             File.Delete(legacySnapshot.File);
         }
@@ -113,6 +128,60 @@ public static class ItemTemplateDirectoryMigrator
         return Path.Combine(directory, $".{fileName}-{Guid.NewGuid():N}.{purpose}.tmp");
     }
 
+    internal static string CreateLegacyClaimPath(string legacyFile)
+    {
+        return CreateOwnedSiblingPath(legacyFile, "legacy-claim");
+    }
+
+    internal static (FileStream Stream, UnixFileMode? UnixMode) OpenProtectedReadLease(
+        string file,
+        bool allowDelete
+    )
+    {
+        var stream = new FileStream(
+            file,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read | (allowDelete ? FileShare.Delete : 0),
+            CopyBufferSize,
+            FileOptions.SequentialScan
+        );
+        UnixFileMode? unixMode = null;
+
+        try
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                unixMode = File.GetUnixFileMode(file);
+                File.SetUnixFileMode(
+                    file,
+                    unixMode.Value &
+                    ~(UnixFileMode.UserWrite | UnixFileMode.GroupWrite | UnixFileMode.OtherWrite)
+                );
+            }
+
+            return (stream, unixMode);
+        }
+        catch
+        {
+            stream.Dispose();
+            throw;
+        }
+    }
+
+    internal static void ReleaseProtectedReadLease(
+        string file,
+        (FileStream Stream, UnixFileMode? UnixMode) lease
+    )
+    {
+        lease.Stream.Dispose();
+
+        if (!OperatingSystem.IsWindows() && lease.UnixMode is not null && File.Exists(file))
+        {
+            File.SetUnixFileMode(file, lease.UnixMode.Value);
+        }
+    }
+
     internal static bool FilesEqual(string leftFile, string rightFile)
     {
         using var left = new FileStream(
@@ -131,6 +200,14 @@ public static class ItemTemplateDirectoryMigrator
             CopyBufferSize,
             FileOptions.SequentialScan
         );
+
+        return StreamsEqual(left, right);
+    }
+
+    internal static bool StreamsEqual(FileStream left, FileStream right)
+    {
+        left.Position = 0;
+        right.Position = 0;
 
         if (left.Length != right.Length)
         {
@@ -310,16 +387,15 @@ public static class ItemTemplateDirectoryMigrator
         }
     }
 
-    private static void PublishBackupAtomic(string legacySnapshot, string backupFile)
+    private static (FileStream Stream, UnixFileMode? UnixMode) PublishBackupAtomic(
+        string legacySnapshot,
+        FileStream snapshotLease,
+        string backupFile
+    )
     {
         if (File.Exists(backupFile))
         {
-            if (!FilesEqual(backupFile, legacySnapshot))
-            {
-                throw DifferentBackup();
-            }
-
-            return;
+            return AcquireVerifiedBackupLease(backupFile, snapshotLease);
         }
 
         var temporaryBackup = CreateOwnedSiblingPath(backupFile, "publish");
@@ -346,11 +422,11 @@ public static class ItemTemplateDirectoryMigrator
             }
             catch (IOException) when (File.Exists(backupFile))
             {
-                if (!FilesEqual(backupFile, legacySnapshot))
-                {
-                    throw DifferentBackup();
-                }
             }
+
+            temporaryBackupLease.Dispose();
+            temporaryBackupLease = null;
+            return AcquireVerifiedBackupLease(backupFile, snapshotLease);
         }
         finally
         {
@@ -359,15 +435,36 @@ public static class ItemTemplateDirectoryMigrator
         }
     }
 
-    private static void DeleteLegacyIfSnapshotMatches(string legacyFile, string legacySnapshot)
+    private static (FileStream Stream, UnixFileMode? UnixMode) AcquireVerifiedBackupLease(
+        string backupFile,
+        FileStream snapshotLease
+    )
+    {
+        var backupLease = OpenProtectedReadLease(backupFile, allowDelete: false);
+
+        if (StreamsEqual(backupLease.Stream, snapshotLease))
+        {
+            return backupLease;
+        }
+
+        ReleaseProtectedReadLease(backupFile, backupLease);
+        throw DifferentBackup();
+    }
+
+    private static void DeleteLegacyIfSnapshotMatches(
+        string legacyFile,
+        string legacySnapshot,
+        FileStream snapshotLease
+    )
     {
         if (!File.Exists(legacyFile) || !FilesEqual(legacyFile, legacySnapshot))
         {
             return;
         }
 
-        var claimedLegacy = CreateOwnedSiblingPath(legacyFile, "delete-claim");
+        var claimedLegacy = CreateLegacyClaimPath(legacyFile);
         var claimed = false;
+        (FileStream Stream, UnixFileMode? UnixMode)? claimedLease = null;
 
         try
         {
@@ -375,18 +472,30 @@ public static class ItemTemplateDirectoryMigrator
             File.Move(legacyFile, claimedLegacy, overwrite: false);
             claimed = true;
 
-            if (!FilesEqual(claimedLegacy, legacySnapshot))
+            claimedLease = OpenProtectedReadLease(claimedLegacy, allowDelete: true);
+
+            if (!StreamsEqual(claimedLease.Value.Stream, snapshotLease))
             {
+                ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
+                claimedLease = null;
                 RestoreClaim(claimedLegacy, legacyFile);
                 claimed = false;
                 return;
             }
 
+            Checkpoint("BeforeLegacyDelete", claimedLegacy);
             File.Delete(claimedLegacy);
+            ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
+            claimedLease = null;
             claimed = false;
         }
         catch
         {
+            if (claimedLease is not null)
+            {
+                ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
+            }
+
             if (claimed && File.Exists(claimedLegacy) && !File.Exists(legacyFile))
             {
                 File.Move(claimedLegacy, legacyFile, overwrite: false);

@@ -225,6 +225,140 @@ public class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadAsync_RecoveryDeleteCheckpoint_ProtectsClaimAndBackup()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        File.WriteAllText(legacyFile, legacyYaml);
+        File.WriteAllText(backupFile, legacyYaml);
+        var claimMutationRejected = false;
+        var backupMutationRejected = false;
+        var service = new ItemTemplateService();
+
+        try
+        {
+            SetRecoveryCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "BeforeRecoveryDelete")
+                    {
+                        claimMutationRejected = IsWriteDenied(path, "unbacked-claim-bytes\n");
+                        backupMutationRejected = IsWriteDenied(backupFile, "mutated-backup\n");
+                    }
+                }
+            );
+
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.True(claimMutationRejected);
+            Assert.True(backupMutationRejected);
+            Assert.Equal(legacyYaml, File.ReadAllText(backupFile));
+            Assert.False(File.Exists(legacyFile));
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+        }
+        finally
+        {
+            SetRecoveryCheckpoint(null);
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_MatchingHiddenLegacyClaim_DeletesVerifiedClaim()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var backupFile = Path.Combine(dataDirectory, "item_templates.yaml.migrated.bak");
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        File.WriteAllText(backupFile, legacyYaml);
+        var claimFile = WriteOwnedLegacyClaim(dataDirectory, legacyYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.False(File.Exists(claimFile));
+            Assert.False(File.Exists(Path.Combine(dataDirectory, "item_templates.yaml")));
+            Assert.Equal(legacyYaml, File.ReadAllText(backupFile));
+            Assert.Equal(1, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_DifferentHiddenLegacyClaim_RestoresCanonicalLegacy()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var backupYaml = Item(id: "legacy_item", name: "Legacy Item");
+        var differingYaml = Item(id: "changed_item", name: "Changed Item");
+        File.WriteAllText(backupFile, backupYaml);
+        var claimFile = WriteOwnedLegacyClaim(dataDirectory, differingYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.False(File.Exists(claimFile));
+            Assert.Equal(differingYaml, File.ReadAllText(legacyFile));
+            Assert.Equal(backupYaml, File.ReadAllText(backupFile));
+            Assert.Equal(1, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_AmbiguousLegacyClaimState_LeavesAllFiles()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        var claimYaml = Item(id: "claimed_item", name: "Claimed Item");
+        File.WriteAllText(legacyFile, legacyYaml);
+        File.WriteAllText(backupFile, legacyYaml);
+        var claimFile = WriteOwnedLegacyClaim(dataDirectory, claimYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
+            Assert.Equal(claimYaml, File.ReadAllText(claimFile));
+            Assert.Equal(legacyYaml, File.ReadAllText(backupFile));
+            Assert.Equal(1, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
     public async Task LoadAsync_TargetAndDifferentStaleLegacy_LeavesBothFiles()
     {
         var root = NewRoot();
@@ -657,5 +791,28 @@ public class ItemTemplatesLoaderTests
         }
 
         field.SetValue(null, checkpoint);
+    }
+
+    private static string WriteOwnedLegacyClaim(string dataDirectory, string yaml)
+    {
+        var claimFile = Path.Combine(
+            dataDirectory,
+            $".item_templates.yaml-{Guid.NewGuid():N}.legacy-claim.tmp"
+        );
+        File.WriteAllText(claimFile, yaml);
+        return claimFile;
+    }
+
+    private static bool IsWriteDenied(string file, string contents)
+    {
+        try
+        {
+            File.WriteAllText(file, contents);
+            return false;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            return true;
+        }
     }
 }
