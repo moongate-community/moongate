@@ -187,6 +187,103 @@ public class ItemTemplatesLoaderTests
     }
 
     [Theory]
+    [InlineData(".nan")]
+    [InlineData(".inf")]
+    [InlineData(".Inf")]
+    [InlineData(".INF")]
+    [InlineData("+.inf")]
+    [InlineData("-.inf")]
+    public async Task LoadAsync_WhenWeightIsNonFinite_RegistersNothing(string weight)
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "non-finite-weight.yaml", Item(extra: $"  Weight: {weight}\n"));
+        var service = new ItemTemplateService();
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
+
+            Assert.Contains("non-finite-weight.yaml", exception.Message);
+            Assert.Contains("'item'", exception.Message);
+            Assert.Contains("Weight", exception.Message);
+            Assert.Contains("finite", exception.Message);
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_WhenSecondParamsValueIsNull_ReportsKeyWithoutFakeIndex()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(
+            root,
+            "params.yaml",
+            Item(
+                extra: "  Params:\n" +
+                       "    valid:\n" +
+                       "      Type: string\n" +
+                       "      Value: value\n" +
+                       "    broken: null\n"
+            )
+        );
+        var service = new ItemTemplateService();
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
+
+            Assert.Contains("params.yaml", exception.Message);
+            Assert.Contains("Params[broken]", exception.Message);
+            Assert.DoesNotContain("value at index", exception.Message);
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Theory]
+    [MemberData(nameof(StrictNullDocuments))]
+    public async Task LoadAsync_WhenGuardedPropertyIsNull_ReportsPropertyAndLeavesRegistryEmpty(
+        string yaml,
+        string property
+    )
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "strict-null.yaml", yaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
+
+            Assert.Contains("strict-null.yaml", exception.Message);
+            Assert.Contains("'item'", exception.Message);
+            Assert.Contains(property, exception.Message);
+            Assert.Contains("null", exception.Message);
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Theory]
     [MemberData(nameof(InvalidCollectionDocuments))]
     public async Task LoadAsync_WhenCollectionContainsNull_ReportsCollectionAndIndex(
         string yaml,
@@ -277,8 +374,29 @@ public class ItemTemplatesLoaderTests
         {
             { Item(tags: "  - null\n"), "Tags" },
             { Item(extra: "  LootTables:\n  - null\n"), "LootTables" },
-            { Item(extra: "  Container:\n    Contents:\n    - null\n"), "Container.Contents" },
-            { Item(extra: "  Params:\n    broken: null\n"), "Params" }
+            { Item(extra: "  Container:\n    Contents:\n    - null\n"), "Container.Contents" }
+        };
+    }
+
+    public static TheoryData<string, string> StrictNullDocuments()
+    {
+        return new TheoryData<string, string>
+        {
+            { Item(itemId: null), "ItemId" },
+            { Item(extra: "  Hue: null\n"), "Hue" },
+            { Item(extra: "  GoldValue: null\n"), "GoldValue" },
+            { Item(extra: "  Weight: null\n"), "Weight" },
+            { Item(extra: "  IsMovable: null\n"), "IsMovable" },
+            { Item(rarity: "null"), "Rarity" },
+            { Item(extra: "  Equip:\n    Layer: null\n"), "Equip.Layer" },
+            { Item(extra: "  Weapon:\n    LowDamage: null\n"), "Weapon.LowDamage" },
+            { Item(extra: "  Weapon:\n    HighDamage: null\n"), "Weapon.HighDamage" },
+            { Item(extra: "  Weapon:\n    Speed: null\n"), "Weapon.Speed" },
+            { Item(extra: "  Weapon:\n    BaseRange: null\n"), "Weapon.BaseRange" },
+            { Item(extra: "  Weapon:\n    MaxRange: null\n"), "Weapon.MaxRange" },
+            { Item(extra: "  Weapon:\n    HitSound: null\n"), "Weapon.HitSound" },
+            { Item(extra: "  Weapon:\n    MissSound: null\n"), "Weapon.MissSound" },
+            { Item(extra: "  FlippableItemIds: [null]\n"), "FlippableItemIds" }
         };
     }
 

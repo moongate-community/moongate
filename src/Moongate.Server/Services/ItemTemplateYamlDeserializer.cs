@@ -323,7 +323,7 @@ internal static class ItemTemplateYamlDeserializer
                 templateIndex,
                 templateId,
                 $"{property}[{dictionaryKey}]",
-                "has a null value at index 0"
+                "has a null value"
             );
         }
     }

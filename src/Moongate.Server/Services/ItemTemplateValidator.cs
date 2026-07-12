@@ -25,6 +25,7 @@ internal static class ItemTemplateValidator
             ValidateNonNegative(source, template.ItemId, nameof(ItemTemplate.ItemId));
             ValidateNonNegative(source, template.Hue, nameof(ItemTemplate.Hue));
             ValidateNonNegative(source, template.GoldValue, nameof(ItemTemplate.GoldValue));
+            ValidateFinite(source, template.Weight, nameof(ItemTemplate.Weight));
             ValidateNonNegative(source, template.Weight, nameof(ItemTemplate.Weight));
             ValidateValues(source, template.FlippableItemIds, nameof(ItemTemplate.FlippableItemIds));
             ValidateEquip(source, template.Equip);
@@ -106,6 +107,14 @@ internal static class ItemTemplateValidator
         if (value < 0)
         {
             throw Error(source, property, $"{property} cannot be negative.");
+        }
+    }
+
+    private static void ValidateFinite(ItemTemplateSource source, double value, string property)
+    {
+        if (!double.IsFinite(value))
+        {
+            throw Error(source, property, $"{property} must be finite.");
         }
     }
 
