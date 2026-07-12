@@ -1,3 +1,4 @@
+using System.Reflection;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services;
 using Moongate.Ultima.Types;
@@ -27,6 +28,37 @@ public class ItemTemplatesLoaderTests
             Assert.Contains(service.All, template => template.Weapon is not null && template.Equip is not null);
             Assert.Contains(service.All, template => template.Equip is not null && template.Equip.Layer != LayerType.None);
             Assert.Equal("items.training_dummy", service.GetById("training_dummy_east")!.ScriptId);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_TargetMissingAndLegacyPresent_MigratesMergedTree()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var legacyYaml = Item(id: "apple", name: "Loader Apple Override", category: "Food", itemId: 2512) +
+                         Item(id: "loader_custom", name: "Loader Custom");
+        File.WriteAllText(legacyFile, legacyYaml);
+        var legacyBytes = File.ReadAllBytes(legacyFile);
+        var service = new ItemTemplateService();
+        var itemsDirectory = Path.Combine(root, "templates", "items");
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1665, service.Count);
+            Assert.Equal("Loader Apple Override", service.GetById("apple")!.Name);
+            Assert.Equal("Loader Custom", service.GetById("loader_custom")!.Name);
+            Assert.Equal(50, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
+            Assert.False(File.Exists(legacyFile));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(legacyFile + ".migrated.bak"));
         }
         finally
         {
@@ -105,6 +137,89 @@ public class ItemTemplatesLoaderTests
         }
         finally
         {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Theory]
+    [InlineData("BeforeRecoveryComparison")]
+    [InlineData("BeforeRecoveryDelete")]
+    public async Task LoadAsync_RecoveryIoFailure_LeavesFilesAndLoadsTarget(string failingCheckpoint)
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        File.WriteAllText(legacyFile, legacyYaml);
+        File.WriteAllText(backupFile, legacyYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            SetRecoveryCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == failingCheckpoint && path.StartsWith(dataDirectory, StringComparison.Ordinal))
+                    {
+                        throw new IOException($"Injected recovery failure at {checkpoint}.");
+                    }
+                }
+            );
+
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+            Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
+            Assert.Equal(legacyYaml, File.ReadAllText(backupFile));
+        }
+        finally
+        {
+            SetRecoveryCheckpoint(null);
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_RecoveryLegacyReplacedBeforeClaim_DoesNotDeleteReplacement()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var originalYaml = Item(id: "legacy_item", name: "Legacy Item");
+        var replacementYaml = Item(id: "replacement_item", name: "Replacement Item");
+        File.WriteAllText(legacyFile, originalYaml);
+        File.WriteAllText(backupFile, originalYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            SetRecoveryCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "BeforeRecoveryLegacyClaim" && path == legacyFile)
+                    {
+                        File.WriteAllText(legacyFile, replacementYaml);
+                    }
+                }
+            );
+
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+            Assert.Equal(replacementYaml, File.ReadAllText(legacyFile));
+            Assert.Equal(originalYaml, File.ReadAllText(backupFile));
+        }
+        finally
+        {
+            SetRecoveryCheckpoint(null);
             Directory.Delete(root, true);
         }
     }
@@ -522,5 +637,25 @@ public class ItemTemplatesLoaderTests
     private static string ContainerWith(string property, int value)
     {
         return $"  Container:\n    {property}: {value}\n";
+    }
+
+    private static void SetRecoveryCheckpoint(Action<string, string>? checkpoint)
+    {
+        var field = typeof(ItemTemplatesLoader).GetField(
+            "_recoveryCheckpointForTests",
+            BindingFlags.NonPublic | BindingFlags.Static
+        );
+
+        if (field is null)
+        {
+            if (checkpoint is not null)
+            {
+                throw new InvalidOperationException("Recovery checkpoint seam is missing.");
+            }
+
+            return;
+        }
+
+        field.SetValue(null, checkpoint);
     }
 }

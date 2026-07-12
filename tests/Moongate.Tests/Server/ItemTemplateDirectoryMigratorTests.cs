@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Moongate.Server.Data.Internal;
 using Moongate.Server.Internal;
@@ -5,7 +6,9 @@ using Moongate.Server.Loaders;
 using Moongate.Server.Services;
 using Moongate.UO.Data.Items;
 using SquidStd.Core.Directories;
+using SquidStd.Core.Utils;
 using SquidStd.Core.Yaml;
+using YamlDotNet.Serialization;
 
 namespace Moongate.Tests.Server;
 
@@ -32,6 +35,7 @@ public class ItemTemplateDirectoryMigratorTests
             Assert.False(File.Exists(paths.LegacyFile));
             Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
             AssertNoTemporaryDirectory(paths.Root);
+            AssertStandardFileMembership(paths.TargetDirectory);
 
             var service = await LoadMigratedTemplates(paths.Root);
             Assert.Equal(1664, service.Count);
@@ -94,12 +98,9 @@ public class ItemTemplateDirectoryMigratorTests
     {
         var paths = NewPaths();
         var legacyYaml = CurrentLegacyYaml() +
-                         "- Id: custom_runtime_item\n" +
-                         "  Name: Custom Runtime Item\n" +
-                         "  Category: Custom\n" +
-                         "  ItemId: 1\n" +
-                         "  Rarity: Common\n" +
-                         "  Tags: []\n";
+                         CustomItem("zeta_custom") +
+                         CustomItem("Alpha_custom") +
+                         CustomItem("beta_Custom");
         var legacyBytes = WriteLegacy(paths.LegacyFile, legacyYaml);
 
         try
@@ -109,19 +110,21 @@ public class ItemTemplateDirectoryMigratorTests
             var customTemplates = YamlUtils.DeserializeFromFile<ItemTemplate[]>(customFile)!;
 
             Assert.Equal(1664, result.StandardCount);
-            Assert.Equal(1, result.CustomCount);
+            Assert.Equal(3, result.CustomCount);
             Assert.Equal(50, result.FileCount);
             Assert.Equal(50, Directory.GetFiles(paths.TargetDirectory, "*.yaml", SearchOption.AllDirectories).Length);
             Assert.Equal(
-                customTemplates.Select(template => template.Id).OrderBy(id => id, StringComparer.OrdinalIgnoreCase),
+                ["Alpha_custom", "beta_Custom", "zeta_custom"],
                 customTemplates.Select(template => template.Id)
             );
             Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
             Assert.False(File.Exists(paths.LegacyFile));
 
             var service = await LoadMigratedTemplates(paths.Root);
-            Assert.Equal(1665, service.Count);
-            Assert.Equal("Custom Runtime Item", service.GetById("custom_runtime_item")!.Name);
+            Assert.Equal(1667, service.Count);
+            Assert.NotNull(service.GetById("Alpha_custom"));
+            Assert.NotNull(service.GetById("beta_Custom"));
+            Assert.NotNull(service.GetById("zeta_custom"));
         }
         finally
         {
@@ -234,6 +237,78 @@ public class ItemTemplateDirectoryMigratorTests
         }
     }
 
+    [Fact]
+    public async Task Migrate_LegacyReplacedBeforeCleanup_DoesNotDeleteReplacement()
+    {
+        var paths = NewPaths();
+        var currentYaml = CurrentLegacyYaml();
+        var snapshotYaml = ReplaceAppleName(currentYaml, "Snapshot Apple");
+        var replacementYaml = ReplaceAppleName(currentYaml, "Replacement Apple");
+        var snapshotBytes = WriteLegacy(paths.LegacyFile, snapshotYaml);
+        var replacementBytes = Encoding.UTF8.GetBytes(replacementYaml);
+
+        try
+        {
+            SetMigrationCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "BeforeLegacyClaim" && path == paths.LegacyFile)
+                    {
+                        File.WriteAllBytes(paths.LegacyFile, replacementBytes);
+                    }
+                }
+            );
+
+            Migrate(paths);
+
+            Assert.Equal(replacementBytes, File.ReadAllBytes(paths.LegacyFile));
+            Assert.Equal(snapshotBytes, File.ReadAllBytes(paths.BackupFile));
+            AssertNoOwnedDataTemporaryFiles(paths.Root);
+
+            var service = await LoadMigratedTemplates(paths.Root);
+            Assert.Equal("Snapshot Apple", service.GetById("apple")!.Name);
+        }
+        finally
+        {
+            SetMigrationCheckpoint(null);
+            Directory.Delete(paths.Root, true);
+        }
+    }
+
+    [Fact]
+    public void Migrate_BackupPublishFailure_LeavesNoPartialBackupAndCleansOwnedTemps()
+    {
+        var paths = NewPaths();
+        var legacyBytes = WriteLegacy(paths.LegacyFile, CurrentLegacyYaml());
+
+        try
+        {
+            SetMigrationCheckpoint(
+                (checkpoint, path) =>
+                {
+                    if (checkpoint == "BeforeBackupPublish" && path == paths.BackupFile)
+                    {
+                        throw new IOException("Injected backup publication failure.");
+                    }
+                }
+            );
+
+            var exception = Assert.Throws<IOException>(() => Migrate(paths));
+
+            Assert.Equal("Injected backup publication failure.", exception.Message);
+            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.LegacyFile));
+            Assert.False(File.Exists(paths.BackupFile));
+            Assert.False(Directory.Exists(paths.TargetDirectory));
+            AssertNoTemporaryDirectory(paths.Root);
+            AssertNoOwnedDataTemporaryFiles(paths.Root);
+        }
+        finally
+        {
+            SetMigrationCheckpoint(null);
+            Directory.Delete(paths.Root, true);
+        }
+    }
+
     private static ItemTemplateMigrationResult Migrate(
         (string Root, string LegacyFile, string BackupFile, string TargetDirectory) paths
     )
@@ -303,6 +378,32 @@ public class ItemTemplateDirectoryMigratorTests
         return builder.ToString();
     }
 
+    private static string ReplaceAppleName(string yaml, string name)
+    {
+        var replaced = yaml.Replace(
+            "- Id: apple\n  Name: Apple\n",
+            $"- Id: apple\n  Name: {name}\n",
+            StringComparison.Ordinal
+        );
+
+        if (replaced == yaml)
+        {
+            throw new InvalidOperationException("Apple template was not found in the legacy fixture.");
+        }
+
+        return replaced;
+    }
+
+    private static string CustomItem(string id)
+    {
+        return $"- Id: {id}\n" +
+               $"  Name: {id}\n" +
+               "  Category: Custom\n" +
+               "  ItemId: 1\n" +
+               "  Rarity: Common\n" +
+               "  Tags: []\n";
+    }
+
     private static string RemoveTemplate(string yaml, string id)
     {
         var marker = $"- Id: {id}\n";
@@ -326,5 +427,63 @@ public class ItemTemplateDirectoryMigratorTests
         {
             Assert.Empty(Directory.GetDirectories(templatesDirectory, ".items-*.tmp"));
         }
+    }
+
+    private static void AssertNoOwnedDataTemporaryFiles(string root)
+    {
+        var dataDirectory = Path.Combine(root, "data");
+
+        if (Directory.Exists(dataDirectory))
+        {
+            Assert.Empty(Directory.GetFiles(dataDirectory, ".*.tmp"));
+        }
+    }
+
+    private static void AssertStandardFileMembership(string targetDirectory)
+    {
+        var assembly = typeof(ItemTemplatesLoader).Assembly;
+        var deserializer = new DeserializerBuilder().Build();
+        var resourceNames = assembly.GetManifestResourceNames()
+            .Where(name => name.StartsWith(EmbeddedNamespace + ".", StringComparison.Ordinal))
+            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        Assert.Equal(49, resourceNames.Length);
+
+        foreach (var resourceName in resourceNames)
+        {
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            Assert.NotNull(stream);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            var embedded = deserializer.Deserialize<ItemTemplate[]>(reader.ReadToEnd());
+            var relativePath = ResourceUtils.ConvertResourceNameToPath(resourceName, EmbeddedNamespace);
+            var generated = YamlUtils.DeserializeFromFile<ItemTemplate[]>(
+                Path.Combine(targetDirectory, relativePath)
+            )!;
+
+            Assert.Equal(
+                embedded.Select(template => template.Id),
+                generated.Select(template => template.Id)
+            );
+        }
+    }
+
+    private static void SetMigrationCheckpoint(Action<string, string>? checkpoint)
+    {
+        var field = typeof(ItemTemplateDirectoryMigrator).GetField(
+            "_checkpointForTests",
+            BindingFlags.NonPublic | BindingFlags.Static
+        );
+
+        if (field is null)
+        {
+            if (checkpoint is not null)
+            {
+                throw new InvalidOperationException("Migration checkpoint seam is missing.");
+            }
+
+            return;
+        }
+
+        field.SetValue(null, checkpoint);
     }
 }

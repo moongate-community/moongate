@@ -13,6 +13,8 @@ public sealed class ItemTemplatesLoader : IDataLoader
     private const string EmbeddedDirectory = "Assets/Templates/Items";
     private const string EmbeddedNamespace = "Moongate.Server.Assets.Templates.Items";
 
+    private static Action<string, string>? _recoveryCheckpointForTests = null;
+
     private readonly ILogger _logger = Log.ForContext<ItemTemplatesLoader>();
     private readonly IItemTemplateService _templates;
     private readonly DirectoriesConfig _directories;
@@ -107,23 +109,130 @@ public sealed class ItemTemplatesLoader : IDataLoader
 
     private void FinalizeMigrationCleanup(string legacyFile, string backupFile, string itemsDirectory)
     {
-        if (File.Exists(backupFile) &&
-            File.ReadAllBytes(backupFile).AsSpan().SequenceEqual(File.ReadAllBytes(legacyFile)))
+        if (!File.Exists(backupFile))
         {
-            File.Delete(legacyFile);
+            WarnUnsafeRecovery(legacyFile, itemsDirectory);
+            return;
+        }
+
+        (string File, FileStream Lease)? backupSnapshot = null;
+        string? claimedLegacy = null;
+
+        try
+        {
+            backupSnapshot = ItemTemplateDirectoryMigrator.CreateImmutableSnapshot(
+                backupFile,
+                "recovery-snapshot"
+            );
+
+            RecoveryCheckpoint("BeforeRecoveryComparison", legacyFile);
+
+            if (!ItemTemplateDirectoryMigrator.FilesEqual(legacyFile, backupSnapshot.Value.File))
+            {
+                WarnUnsafeRecovery(legacyFile, itemsDirectory);
+                return;
+            }
+
+            claimedLegacy = ItemTemplateDirectoryMigrator.CreateOwnedSiblingPath(
+                legacyFile,
+                "recovery-claim"
+            );
+            RecoveryCheckpoint("BeforeRecoveryLegacyClaim", legacyFile);
+            File.Move(legacyFile, claimedLegacy, overwrite: false);
+
+            if (!ItemTemplateDirectoryMigrator.FilesEqual(claimedLegacy, backupSnapshot.Value.File))
+            {
+                var restored = TryRestoreRecoveryClaim(claimedLegacy, legacyFile);
+                WarnUnsafeRecovery(legacyFile, itemsDirectory, restored ? null : claimedLegacy);
+                claimedLegacy = restored ? null : claimedLegacy;
+                return;
+            }
+
+            RecoveryCheckpoint("BeforeRecoveryDelete", claimedLegacy);
+            File.Delete(claimedLegacy);
+            claimedLegacy = null;
             _logger.Information(
                 "Finalized item template migration cleanup for {LegacyPath}; target is {TargetPath}",
                 legacyFile,
                 itemsDirectory
             );
-            return;
         }
+        catch (Exception exception) when (IsFileIoFailure(exception))
+        {
+            var restored = TryRestoreRecoveryClaim(claimedLegacy, legacyFile);
+            _logger.Warning(
+                exception,
+                "Unable to finalize item template migration cleanup for {LegacyPath}; " +
+                "continuing with administrator-owned target {TargetPath}. Legacy claim retained at {ClaimPath}",
+                legacyFile,
+                itemsDirectory,
+                restored ? null : claimedLegacy
+            );
+        }
+        finally
+        {
+            if (backupSnapshot is not null)
+            {
+                backupSnapshot.Value.Lease.Dispose();
 
+                try
+                {
+                    File.Delete(backupSnapshot.Value.File);
+                }
+                catch (Exception exception) when (IsFileIoFailure(exception))
+                {
+                    _logger.Warning(
+                        exception,
+                        "Unable to remove owned item template recovery snapshot {SnapshotPath}",
+                        backupSnapshot.Value.File
+                    );
+                }
+            }
+        }
+    }
+
+    private void WarnUnsafeRecovery(string legacyFile, string itemsDirectory, string? claimPath = null)
+    {
         _logger.Warning(
             "Item template target {TargetPath} already exists; leaving legacy source {LegacyPath} " +
-            "because no byte-identical migration backup is available",
+            "because no byte-identical migration backup snapshot can be safely claimed. " +
+            "Legacy claim retained at {ClaimPath}",
             itemsDirectory,
-            legacyFile
+            legacyFile,
+            claimPath
         );
+    }
+
+    private static bool TryRestoreRecoveryClaim(string? claimedFile, string legacyFile)
+    {
+        if (claimedFile is null || !File.Exists(claimedFile))
+        {
+            return true;
+        }
+
+        if (File.Exists(legacyFile))
+        {
+            return false;
+        }
+
+        try
+        {
+            File.Move(claimedFile, legacyFile, overwrite: false);
+            return true;
+        }
+        catch (Exception exception) when (IsFileIoFailure(exception))
+        {
+            return false;
+        }
+    }
+
+    private static bool IsFileIoFailure(Exception exception)
+    {
+        return exception is IOException or UnauthorizedAccessException;
+    }
+
+    private static void RecoveryCheckpoint(string checkpoint, string path)
+    {
+        _recoveryCheckpointForTests?.Invoke(checkpoint, path);
     }
 }
