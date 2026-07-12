@@ -1,18 +1,18 @@
+using Moongate.Server.Data.Internal;
 using Moongate.Server.Interfaces;
-using Moongate.UO.Data.Items;
+using Moongate.Server.Internal;
+using Moongate.Server.Services;
 using Serilog;
 using SquidStd.Core.Directories;
-using SquidStd.Core.Utils;
-using SquidStd.Core.Yaml;
 
 namespace Moongate.Server.Loaders;
 
-/// <summary>
-/// Loads item templates into <see cref="IItemTemplateService" /> at startup: seeds the embedded
-/// <c>item_templates.yaml</c> into the data directory if missing, then parses and registers it.
-/// </summary>
+/// <summary>Seeds and loads item templates from the recursive item template directory.</summary>
 public sealed class ItemTemplatesLoader : IDataLoader
 {
+    private const string EmbeddedDirectory = "Assets/Templates/Items";
+    private const string EmbeddedNamespace = "Moongate.Server.Assets.Templates.Items";
+
     private readonly ILogger _logger = Log.ForContext<ItemTemplatesLoader>();
     private readonly IItemTemplateService _templates;
     private readonly DirectoriesConfig _directories;
@@ -25,24 +25,56 @@ public sealed class ItemTemplatesLoader : IDataLoader
 
     public ValueTask LoadAsync(CancellationToken ct = default)
     {
-        var dataDirectory = _directories.RegisterDirectory("data");
-        var path = Path.Combine(dataDirectory, "item_templates.yaml");
+        var templatesDirectory = _directories.RegisterDirectory("templates");
+        var itemsDirectory = Path.Combine(templatesDirectory, "items");
+        var directoryExists = Directory.Exists(itemsDirectory);
 
-        if (!File.Exists(path))
+        if (!directoryExists)
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(ItemTemplatesLoader).Assembly, "Assets/item_templates.yaml");
-            File.WriteAllText(path, seed);
-            _logger.Information("Seeded default item_templates.yaml at {Path}", path);
+            EmbeddedResourceDirectorySeeder.SeedAtomic(
+                typeof(ItemTemplatesLoader).Assembly,
+                EmbeddedDirectory,
+                EmbeddedNamespace,
+                itemsDirectory
+            );
         }
 
-        var templates = YamlUtils.DeserializeFromFile<ItemTemplate[]>(path) ?? [];
+        var files = Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories)
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
-        foreach (var template in templates)
+        if (files.Length == 0)
         {
-            _templates.Register(template);
+            if (directoryExists)
+            {
+                _logger.Warning("No item template YAML files found in existing directory {Path}", itemsDirectory);
+            }
+
+            return ValueTask.CompletedTask;
         }
 
-        _logger.Information("Loaded {Count} item template(s) from {Path}", templates.Length, path);
+        var sources = new List<ItemTemplateSource>();
+
+        foreach (var file in files)
+        {
+            var relativePath = Path.GetRelativePath(itemsDirectory, file);
+            var templates = ItemTemplateYamlDeserializer.DeserializeFromFile(file, relativePath);
+            sources.AddRange(templates.Select(template => new ItemTemplateSource(relativePath, template)));
+        }
+
+        ItemTemplateValidator.Validate(sources);
+
+        foreach (var source in sources)
+        {
+            _templates.Register(source.Template);
+        }
+
+        _logger.Information(
+            "Loaded {TemplateCount} item template(s) from {YamlFileCount} YAML file(s) in {Path}",
+            sources.Count,
+            files.Length,
+            itemsDirectory
+        );
 
         return ValueTask.CompletedTask;
     }

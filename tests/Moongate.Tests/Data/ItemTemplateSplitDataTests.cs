@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Moongate.UO.Data.Items;
 using SquidStd.Core.Yaml;
 
@@ -31,12 +30,10 @@ public class ItemTemplateSplitDataTests
         };
 
     [Fact]
-    public void SplitTemplates_AreSemanticallyEquivalentToTheMonolith()
+    public void SplitTemplates_HaveExpectedFilesCountsAndMemberships()
     {
         var repositoryRoot = FindRepositoryRoot();
-        var monolithPath = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Assets", "item_templates.yaml");
         var splitRoot = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Assets", "Templates", "Items");
-        var monolithItems = YamlUtils.DeserializeFromFile<ItemTemplate[]>(monolithPath)!;
         var splitFiles = Directory.GetFiles(splitRoot, "*.yaml", SearchOption.AllDirectories)
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -49,9 +46,6 @@ public class ItemTemplateSplitDataTests
         Assert.Equal(49, splitFiles.Length);
         Assert.Equal(1664, splitItems.Length);
         Assert.Equal(1664, splitItems.Select(item => item.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count());
-        Assert.Equal(
-            monolithItems.Select(item => item.Id).OrderBy(id => id, StringComparer.OrdinalIgnoreCase),
-            splitItems.Select(item => item.Id).OrderBy(id => id, StringComparer.OrdinalIgnoreCase));
 
         Assert.Equal(
             ExpectedCounts.Keys.OrderBy(path => path, StringComparer.OrdinalIgnoreCase),
@@ -65,15 +59,6 @@ public class ItemTemplateSplitDataTests
         Assert.Contains(splitByFile["food.yaml"], item => item.Id == "apple");
         Assert.Contains(splitByFile["base/static.yaml"], item => item.Id == "static");
         Assert.Contains(splitByFile["gm/gm_body.yaml"], item => item.Id == "gm_body_bag");
-
-        var splitItemsById = splitItems.ToDictionary(item => item.Id, StringComparer.OrdinalIgnoreCase);
-
-        foreach (var monolithItem in monolithItems)
-        {
-            Assert.Equal(
-                JsonSerializer.Serialize(monolithItem),
-                JsonSerializer.Serialize(splitItemsById[monolithItem.Id]));
-        }
     }
 
     private static string FindRepositoryRoot()
@@ -82,7 +67,9 @@ public class ItemTemplateSplitDataTests
 
         while (directory is not null)
         {
-            if (File.Exists(Path.Combine(directory.FullName, "src", "Moongate.Server", "Assets", "item_templates.yaml")))
+            if (Directory.Exists(
+                    Path.Combine(directory.FullName, "src", "Moongate.Server", "Assets", "Templates", "Items")
+                ))
             {
                 return directory.FullName;
             }
