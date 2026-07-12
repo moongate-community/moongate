@@ -1,0 +1,896 @@
+- Id: arrow
+  Name: Arrow
+  Category: Resources
+  Description: ''
+  ItemId: 3903
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: bark_fragment
+  Name: Bark Fragment
+  Category: Resources
+  Description: ''
+  ItemId: 12687
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: bat_wing
+  Name: Bat Wing
+  Category: Resources
+  Description: ''
+  ItemId: 3960
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: big_fish
+  Name: Big Fish
+  Category: Resources
+  Description: ''
+  ItemId: 2508
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: black_pearl
+  Name: Black Pearl
+  Category: Resources
+  Description: ''
+  ItemId: 3962
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: blight
+  Name: Blight
+  Category: Resources
+  Description: ''
+  ItemId: 12675
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: bloodmoss
+  Name: Bloodmoss
+  Category: Resources
+  Description: ''
+  ItemId: 3963
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: blue_diamond
+  Name: Blue Diamond
+  Category: Resources
+  Description: ''
+  ItemId: 12696
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: bolt
+  Name: Bolt
+  Category: Resources
+  Description: ''
+  ItemId: 7163
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: bolt_of_cloth
+  Name: Bolt Of Cloth
+  Category: Resources
+  Description: ''
+  ItemId: 3989
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: bone
+  Name: Bone
+  Category: Resources
+  Description: ''
+  ItemId: 3966
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: brilliant_amber
+  Name: Brilliant Amber
+  Category: Resources
+  Description: ''
+  ItemId: 12697
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: captured_essence
+  Name: Captured Essence
+  Category: Resources
+  Description: ''
+  ItemId: 12686
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: cloth
+  Name: Cloth
+  Category: Resources
+  Description: ''
+  ItemId: 5990
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: corruption
+  Name: Corruption
+  Category: Resources
+  Description: ''
+  ItemId: 12676
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: cotton
+  Name: Cotton
+  Category: Resources
+  Description: ''
+  ItemId: 3577
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: daemon_blood
+  Name: Daemon Blood
+  Category: Resources
+  Description: ''
+  ItemId: 3965
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: daemon_bone
+  Name: Daemon Bone
+  Category: Resources
+  Description: ''
+  ItemId: 3968
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: dark_sapphire
+  Name: Dark Sapphire
+  Category: Resources
+  Description: ''
+  ItemId: 12690
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: dark_yarn
+  Name: Dark Yarn
+  Category: Resources
+  Description: ''
+  ItemId: 3613
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: dead_wood
+  Name: Dead Wood
+  Category: Resources
+  Description: ''
+  ItemId: 3984
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: diseased_bark
+  Name: Diseased Bark
+  Category: Resources
+  Description: ''
+  ItemId: 12683
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: dragons_blood
+  Name: Dragons Blood
+  Category: Resources
+  Description: ''
+  ItemId: 16503
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: dread_horn_mane
+  Name: Dread Horn Mane
+  Category: Resources
+  Description: ''
+  ItemId: 12682
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: ecru_citrine
+  Name: Ecru Citrine
+  Category: Resources
+  Description: ''
+  ItemId: 12693
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: eye_of_the_travesty
+  Name: Eye Of The Travesty
+  Category: Resources
+  Description: ''
+  ItemId: 12685
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: feather
+  Name: Feather
+  Category: Resources
+  Description: ''
+  ItemId: 7121
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: fire_ruby
+  Name: Fire Ruby
+  Category: Resources
+  Description: ''
+  ItemId: 12695
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: fish
+  Name: Fish
+  Category: Resources
+  Description: ''
+  ItemId: 4
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: flax
+  Name: Flax
+  Category: Resources
+  Description: ''
+  ItemId: 6812
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: garlic
+  Name: Garlic
+  Category: Resources
+  Description: ''
+  ItemId: 3972
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: ginseng
+  Name: Ginseng
+  Category: Resources
+  Description: ''
+  ItemId: 3973
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: grave_dust
+  Name: Grave Dust
+  Category: Resources
+  Description: ''
+  ItemId: 3983
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: grizzled_bones
+  Name: Grizzled Bones
+  Category: Resources
+  Description: ''
+  ItemId: 12684
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: lard_of_paroxysmus
+  Name: Lard Of Paroxysmus
+  Category: Resources
+  Description: ''
+  ItemId: 12681
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: light_yarn
+  Name: Light Yarn
+  Category: Resources
+  Description: ''
+  ItemId: 3614
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: light_yarn_unraveled
+  Name: Light Yarn Unraveled
+  Category: Resources
+  Description: ''
+  ItemId: 3615
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: luminescent_fungi
+  Name: Luminescent Fungi
+  Category: Resources
+  Description: ''
+  ItemId: 12689
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: mandrake_root
+  Name: Mandrake Root
+  Category: Resources
+  Description: ''
+  ItemId: 3974
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: muculent
+  Name: Muculent
+  Category: Resources
+  Description: ''
+  ItemId: 12680
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: nightshade
+  Name: Nightshade
+  Category: Resources
+  Description: ''
+  ItemId: 3976
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: nox_crystal
+  Name: Nox Crystal
+  Category: Resources
+  Description: ''
+  ItemId: 3982
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: parasitic_plant
+  Name: Parasitic Plant
+  Category: Resources
+  Description: ''
+  ItemId: 12688
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: peculiar_fish
+  Name: Peculiar Fish
+  Category: Resources
+  Description: ''
+  ItemId: 66
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: perfect_emerald
+  Name: Perfect Emerald
+  Category: Resources
+  Description: ''
+  ItemId: 12692
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: pig_iron
+  Name: Pig Iron
+  Category: Resources
+  Description: ''
+  ItemId: 3978
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: pristine_dread_horn
+  Name: Pristine Dread Horn
+  Category: Resources
+  Description: ''
+  ItemId: 12634
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: prized_fish
+  Name: Prized Fish
+  Category: Resources
+  Description: ''
+  ItemId: 51
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: putrefication
+  Name: Putrefication
+  Category: Resources
+  Description: ''
+  ItemId: 12678
+  Hue: 883
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: scourge
+  Name: Scourge
+  Category: Resources
+  Description: ''
+  ItemId: 12677
+  Hue: 150
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: shaft
+  Name: Shaft
+  Category: Resources
+  Description: ''
+  ItemId: 7124
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: spiders_silk
+  Name: Spiders Silk
+  Category: Resources
+  Description: ''
+  ItemId: 3981
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: spool_of_thread
+  Name: Spool Of Thread
+  Category: Resources
+  Description: ''
+  ItemId: 4000
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: sulfurous_ash
+  Name: Sulfurous Ash
+  Category: Resources
+  Description: ''
+  ItemId: 3980
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - reagents
+- Id: switch_item
+  Name: Switch Item
+  Category: Resources
+  Description: ''
+  ItemId: 12127
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: taint
+  Name: Taint
+  Category: Resources
+  Description: ''
+  ItemId: 12679
+  Hue: 731
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: tainted_wool
+  Name: Tainted Wool
+  Category: Resources
+  Description: ''
+  ItemId: 4127
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: truly_rare_fish
+  Name: Truly Rare Fish
+  Category: Resources
+  Description: ''
+  ItemId: 76
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: turquoise
+  Name: Turquoise
+  Category: Resources
+  Description: ''
+  ItemId: 12691
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: uncut_cloth
+  Name: Uncut Cloth
+  Category: Resources
+  Description: ''
+  ItemId: 5991
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+  - flippable
+- Id: white_pearl
+  Name: White Pearl
+  Category: Resources
+  Description: ''
+  ItemId: 12694
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: wondrous_fish
+  Name: Wondrous Fish
+  Category: Resources
+  Description: ''
+  ItemId: 86
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources
+- Id: wool
+  Name: Wool
+  Category: Resources
+  Description: ''
+  ItemId: 3576
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - resources

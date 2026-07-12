@@ -1,0 +1,152 @@
+- Id: teleporter
+  Name: Teleporter
+  Category: Structure
+  Description: Generic teleporter template.
+  ItemId: 7107
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - worldgen
+- Id: moongate
+  Name: Moongate
+  Category: Structure
+  Description: ''
+  ItemId: 3948
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - moongate
+  - teleport
+  - worldgen
+- Id: keyword_teleporter
+  Name: Keyword Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 7107
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - keyword
+  - worldgen
+- Id: skill_teleporter
+  Name: Skill Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 7107
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - skill
+  - worldgen
+- Id: blue_ninja_quest_teleporter
+  Name: Blue Ninja Quest Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 1308
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - quest
+  - ninja
+  - worldgen
+- Id: green_ninja_quest_teleporter
+  Name: Green Ninja Quest Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 1308
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - quest
+  - ninja
+  - worldgen
+- Id: white_ninja_quest_teleporter
+  Name: White Ninja Quest Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 1308
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - quest
+  - ninja
+  - worldgen
+- Id: khaldun_pit_teleporter
+  Name: Khaldun Pit Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 1339
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - khaldun
+  - worldgen
+- Id: dark_tides_teleporter
+  Name: Dark Tides Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 6178
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - quest
+  - worldgen
+- Id: uzeraan_turmoil_teleporter
+  Name: Uzeraan Turmoil Teleporter
+  Category: Structure
+  Description: ''
+  ItemId: 6178
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.teleport
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - teleport
+  - quest
+  - worldgen

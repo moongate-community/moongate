@@ -1,0 +1,58 @@
+- Id: seed
+  Name: Seed
+  Category: Loot Support
+  Description: Imported support item for ModernUO loot conversion.
+  ItemId: 3535
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - loot_support
+  - seeds
+- Id: metal_chest
+  Name: Metal Chest
+  Category: Containers
+  Description: Imported support item for ModernUO loot conversion.
+  ItemId: 2475
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - containers
+  - loot_support
+  Container:
+    WeightMax: 40000
+    MaxItems: 125
+    GumpId: 72
+    ContainerLayoutId: metal_chest
+- Id: gargoyles_pickaxe
+  Name: Gargoyle's Pickaxe
+  Category: Skill Items
+  Description: Imported support item for ModernUO loot conversion.
+  ItemId: 3717
+  Hue: 0
+  GoldValue: 0
+  Weight: 11.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - skill items
+  - loot_support
+  - flippable
+  FlippableItemIds:
+  - 3717
+  - 3718
+  Weapon:
+    LowDamage: 1
+    HighDamage: 15
+    Speed: 35

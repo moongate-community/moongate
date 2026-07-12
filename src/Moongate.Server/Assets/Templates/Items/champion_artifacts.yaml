@@ -1,0 +1,182 @@
+- Id: artifact_large_vase
+  Name: Artifact Large Vase
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 2887
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: artifact_vase
+  Name: Artifact Vase
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 2888
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: dirt_patch
+  Name: Dirt Patch
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 2323
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: embroidered_oak_leaf_cloak
+  Name: Embroidered Oak Leaf Cloak
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 9860
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: evil_idol_skull
+  Name: Evil Idol Skull
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 7960
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: lava_tile
+  Name: Lava Tile
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 4846
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: skull_pole
+  Name: Skull Pole
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 8708
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: swamp_tile
+  Name: Swamp Tile
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 12813
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: tattered_ancient_mummy_wrapping
+  Name: Tattered Ancient Mummy Wrapping
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 3617
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: the_most_knowledge_person
+  Name: The Most Knowledge Person
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 9860
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: the_robe_of_britannia_ari
+  Name: The Robe Of Britannia Ari
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 9860
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: water_tile
+  Name: Water Tile
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 13422
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts
+- Id: wind_spirit
+  Name: Wind Spirit
+  Category: Champion Artifacts
+  Description: ''
+  ItemId: 7967
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - champion artifacts

@@ -1,0 +1,30 @@
+- Id: map_item
+  Name: Map Item
+  Category: Maps
+  Description: ''
+  ItemId: 5356
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - maps
+  - flippable
+- Id: treasure_map
+  Name: Treasure Map
+  Category: Maps
+  Description: ''
+  ItemId: 5356
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - maps
+  - flippable

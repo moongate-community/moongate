@@ -1,0 +1,142 @@
+- Id: bloodwood_spirit
+  Name: Bloodwood Spirit
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 12122
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: candelabra_of_souls
+  Name: Candelabra Of Souls
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 2854
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: ghost_ship_anchor
+  Name: Ghost Ship Anchor
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 5367
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: gold_bricks
+  Name: Gold Bricks
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 7147
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: pads_of_the_cu_sidhe
+  Name: Pads Of The Cu Sidhe
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 1150
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: robe_of_the_eclipse
+  Name: Robe Of The Eclipse
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 7939
+  Hue: 0
+  GoldValue: 0
+  Weight: 3.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+  - flippable
+- Id: robe_of_the_equinox
+  Name: Robe Of The Equinox
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 7940
+  Hue: 0
+  GoldValue: 0
+  Weight: 3.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+  - flippable
+- Id: ship_model_of_the_hms_cape
+  Name: Ship Model Of The HMS Cape
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 5363
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: totem_of_void
+  Name: Totem Of Void
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 12123
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor artifacts
+- Id: ship_model_of_the_hmscape
+  Name: Ship Model Of The HMSCape
+  Category: Minor Artifacts
+  Description: ''
+  ItemId: 5363
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - minor_artifacts

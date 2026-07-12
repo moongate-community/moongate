@@ -1,0 +1,112 @@
+- Id: barkeep_contract
+  Name: Barkeep Contract
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: clothing_bless_deed
+  Name: Clothing Bless Deed
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: commodity_deed
+  Name: Commodity Deed
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: hair_restyling_deed
+  Name: Hair Restyling Deed
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: holiday_tree_deed
+  Name: Holiday Tree Deed
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: name_change_deed
+  Name: Name Change Deed
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: new_player_ticket
+  Name: New Player Ticket
+  Category: Deeds
+  Description: ''
+  ItemId: 5359
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds
+- Id: vendor_rental_contract
+  Name: Vendor Rental Contract
+  Category: Deeds
+  Description: ''
+  ItemId: 5360
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - deeds

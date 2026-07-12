@@ -1,0 +1,1937 @@
+- Id: apple
+  Name: Apple
+  Category: Food
+  Description: ''
+  ItemId: 2512
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: apple_pie
+  Name: Apple Pie
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: awase_miso_soup
+  Name: Awase Miso Soup
+  Category: Food
+  Description: ''
+  ItemId: 10320
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: bacon
+  Name: Bacon
+  Category: Food
+  Description: ''
+  ItemId: 2425
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: banana
+  Name: Banana
+  Category: Food
+  Description: ''
+  ItemId: 5919
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: bananas
+  Name: Bananas
+  Category: Food
+  Description: ''
+  ItemId: 5921
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: bento_box
+  Name: Bento Box
+  Category: Food
+  Description: ''
+  ItemId: 10294
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: bottle_ale
+  Name: Bottle Of Ale
+  Category: Food
+  Description: ''
+  ItemId: 2463
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: bottle_liquor
+  Name: Bottle Of Liquor
+  Category: Food
+  Description: ''
+  ItemId: 2459
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: bottle_wine
+  Name: Bottle Of Wine
+  Category: Food
+  Description: ''
+  ItemId: 2503
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: bowl_flour
+  Name: Bowl Flour
+  Category: Food
+  Description: ''
+  ItemId: 2590
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: bread_loaf
+  Name: Bread Loaf
+  Category: Food
+  Description: ''
+  ItemId: 4155
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: brightly_colored_eggs
+  Name: Brightly Colored Eggs
+  Category: Food
+  Description: ''
+  ItemId: 2485
+  Hue: 3
+  GoldValue: 0
+  Weight: 0.5
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cabbage
+  Name: Cabbage
+  Category: Food
+  Description: ''
+  ItemId: 3195
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: cake
+  Name: Cake
+  Category: Food
+  Description: ''
+  ItemId: 2537
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cake_mix
+  Name: Cake Mix
+  Category: Food
+  Description: ''
+  ItemId: 4159
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cantaloupe
+  Name: Cantaloupe
+  Category: Food
+  Description: ''
+  ItemId: 3193
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: carrot
+  Name: Carrot
+  Category: Food
+  Description: ''
+  ItemId: 3192
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: cheese_pizza
+  Name: Cheese Pizza
+  Category: Food
+  Description: ''
+  ItemId: 4160
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cheese_slice
+  Name: Cheese Slice
+  Category: Food
+  Description: ''
+  ItemId: 2428
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cheese_wedge
+  Name: Cheese Wedge
+  Category: Food
+  Description: ''
+  ItemId: 2429
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cheese_wheel
+  Name: Cheese Wheel
+  Category: Food
+  Description: ''
+  ItemId: 2430
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: chicken_leg
+  Name: Chicken Leg
+  Category: Food
+  Description: ''
+  ItemId: 5640
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cocoa_butter
+  Name: Cocoa Butter
+  Category: Food
+  Description: ''
+  ItemId: 4164
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cocoa_liquor
+  Name: Cocoa Liquor
+  Category: Food
+  Description: ''
+  ItemId: 4159
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cocoa_pulp
+  Name: Cocoa Pulp
+  Category: Food
+  Description: ''
+  ItemId: 3964
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: coconut
+  Name: Coconut
+  Category: Food
+  Description: ''
+  ItemId: 5926
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cooked_bird
+  Name: Cooked Bird
+  Category: Food
+  Description: ''
+  ItemId: 2487
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cookie_mix
+  Name: Cookie Mix
+  Category: Food
+  Description: ''
+  ItemId: 4159
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: cookies
+  Name: Cookies
+  Category: Food
+  Description: ''
+  ItemId: 5643
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: dark_chocolate
+  Name: Dark Chocolate
+  Category: Food
+  Description: ''
+  ItemId: 3856
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: dates
+  Name: Dates
+  Category: Food
+  Description: ''
+  ItemId: 5927
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: dough
+  Name: Dough
+  Category: Food
+  Description: ''
+  ItemId: 4157
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: ear_of_corn
+  Name: Ear Of Corn
+  Category: Food
+  Description: ''
+  ItemId: 3201
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: easter_eggs
+  Name: Easter Eggs
+  Category: Food
+  Description: ''
+  ItemId: 2485
+  Hue: 3
+  GoldValue: 0
+  Weight: 0.5
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: eggs
+  Name: Eggs
+  Category: Food
+  Description: ''
+  ItemId: 2485
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: eggshells
+  Name: Eggshells
+  Category: Food
+  Description: ''
+  ItemId: 2484
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.5
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: empty_bento_box
+  Name: Empty Bento Box
+  Category: Food
+  Description: ''
+  ItemId: 10292
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: empty_pewter_bowl
+  Name: Empty Pewter Bowl
+  Category: Food
+  Description: ''
+  ItemId: 5629
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: empty_pewter_tub
+  Name: Empty Pewter Tub
+  Category: Food
+  Description: ''
+  ItemId: 5635
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: empty_wooden_bowl
+  Name: Empty Wooden Bowl
+  Category: Food
+  Description: ''
+  ItemId: 5624
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: empty_wooden_tub
+  Name: Empty Wooden Tub
+  Category: Food
+  Description: ''
+  ItemId: 5637
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: fish_steak
+  Name: Fish Steak
+  Category: Food
+  Description: ''
+  ItemId: 2427
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: french_bread
+  Name: French Bread
+  Category: Food
+  Description: ''
+  ItemId: 2444
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: fried_eggs
+  Name: Fried Eggs
+  Category: Food
+  Description: ''
+  ItemId: 2486
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: fruit_basket
+  Name: Fruit Basket
+  Category: Food
+  Description: ''
+  ItemId: 2451
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: fruit_pie
+  Name: Fruit Pie
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: glass
+  Name: Glass
+  Category: Food
+  Description: ''
+  ItemId: 8065
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: glass_bottle
+  Name: Glass Bottle
+  Category: Food
+  Description: ''
+  ItemId: 3627
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.3
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: glass_cider
+  Name: Glass Of Cider
+  Category: Food
+  Description: ''
+  ItemId: 8061
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: glass_liquor
+  Name: Glass Of Liquor
+  Category: Food
+  Description: ''
+  ItemId: 8069
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: glass_milk
+  Name: Glass Of Milk
+  Category: Food
+  Description: ''
+  ItemId: 8073
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: glass_water
+  Name: Glass Of Water
+  Category: Food
+  Description: ''
+  ItemId: 8081
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: glass_wine
+  Name: Glass Of Wine
+  Category: Food
+  Description: ''
+  ItemId: 8077
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: grapes
+  Name: Grapes
+  Category: Food
+  Description: ''
+  ItemId: 2513
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: green_gourd
+  Name: Green Gourd
+  Category: Food
+  Description: ''
+  ItemId: 3174
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: green_tea
+  Name: Green Tea
+  Category: Food
+  Description: ''
+  ItemId: 10316
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: green_tea_basket
+  Name: Green Tea Basket
+  Category: Food
+  Description: ''
+  ItemId: 10315
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: ham
+  Name: Ham
+  Category: Food
+  Description: ''
+  ItemId: 2505
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: honeydew_melon
+  Name: Honeydew Melon
+  Category: Food
+  Description: ''
+  ItemId: 3188
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: jar_honey
+  Name: Jar Honey
+  Category: Food
+  Description: ''
+  ItemId: 2540
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: lamb_leg
+  Name: Lamb Leg
+  Category: Food
+  Description: ''
+  ItemId: 5642
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: lemon
+  Name: Lemon
+  Category: Food
+  Description: ''
+  ItemId: 5928
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: lemons
+  Name: Lemons
+  Category: Food
+  Description: ''
+  ItemId: 5929
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: lettuce
+  Name: Lettuce
+  Category: Food
+  Description: ''
+  ItemId: 3184
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: lime
+  Name: Lime
+  Category: Food
+  Description: ''
+  ItemId: 5930
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: limes
+  Name: Limes
+  Category: Food
+  Description: ''
+  ItemId: 5931
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: meat_pie
+  Name: Meat Pie
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: milk_chocolate
+  Name: Milk Chocolate
+  Category: Food
+  Description: ''
+  ItemId: 3864
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: miso_soup
+  Name: Miso Soup
+  Category: Food
+  Description: ''
+  ItemId: 10317
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: muffins
+  Name: Muffins
+  Category: Food
+  Description: ''
+  ItemId: 2539
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: mug_ale
+  Name: Mug Of Ale
+  Category: Food
+  Description: ''
+  ItemId: 2542
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: onion
+  Name: Onion
+  Category: Food
+  Description: ''
+  ItemId: 3181
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: open_coconut
+  Name: Open Coconut
+  Category: Food
+  Description: ''
+  ItemId: 5923
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: peach
+  Name: Peach
+  Category: Food
+  Description: ''
+  ItemId: 2514
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: peach_cobbler
+  Name: Peach Cobbler
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pear
+  Name: Pear
+  Category: Food
+  Description: ''
+  ItemId: 2452
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pewter_bowl_of_carrots
+  Name: Pewter Bowl Of Carrots
+  Category: Food
+  Description: ''
+  ItemId: 5630
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pewter_bowl_of_corn
+  Name: Pewter Bowl Of Corn
+  Category: Food
+  Description: ''
+  ItemId: 5631
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pewter_bowl_of_lettuce
+  Name: Pewter Bowl Of Lettuce
+  Category: Food
+  Description: ''
+  ItemId: 5632
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pewter_bowl_of_peas
+  Name: Pewter Bowl Of Peas
+  Category: Food
+  Description: ''
+  ItemId: 5633
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pewter_bowl_of_potatos
+  Name: Pewter Bowl Of Potatos
+  Category: Food
+  Description: ''
+  ItemId: 5634
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: pitcher_ale
+  Name: Pitcher Of Ale
+  Category: Food
+  Description: ''
+  ItemId: 8085
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pitcher_cider
+  Name: Pitcher Of Cider
+  Category: Food
+  Description: ''
+  ItemId: 8087
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pitcher_liquor
+  Name: Pitcher Of Liquor
+  Category: Food
+  Description: ''
+  ItemId: 8089
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pitcher_milk
+  Name: Pitcher Of Milk
+  Category: Food
+  Description: ''
+  ItemId: 2544
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pitcher_water
+  Name: Pitcher Of Water
+  Category: Food
+  Description: ''
+  ItemId: 8093
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pitcher_wine
+  Name: Pitcher Of Wine
+  Category: Food
+  Description: ''
+  ItemId: 8091
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.beverage
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - beverage
+- Id: pumpkin
+  Name: Pumpkin
+  Category: Food
+  Description: ''
+  ItemId: 3178
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: pumpkin_pie
+  Name: Pumpkin Pie
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: quiche
+  Name: Quiche
+  Category: Food
+  Description: ''
+  ItemId: 4161
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: raw_bird
+  Name: Raw Bird
+  Category: Food
+  Description: ''
+  ItemId: 2489
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: raw_chicken_leg
+  Name: Raw Chicken Leg
+  Category: Food
+  Description: ''
+  ItemId: 5639
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: raw_fish_steak
+  Name: Raw Fish Steak
+  Category: Food
+  Description: ''
+  ItemId: 2426
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: raw_lamb_leg
+  Name: Raw Lamb Leg
+  Category: Food
+  Description: ''
+  ItemId: 5641
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: raw_ribs
+  Name: Raw Ribs
+  Category: Food
+  Description: ''
+  ItemId: 2545
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: red_miso_soup
+  Name: Red Miso Soup
+  Category: Food
+  Description: ''
+  ItemId: 10319
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: ribs
+  Name: Ribs
+  Category: Food
+  Description: ''
+  ItemId: 2546
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: roast_pig
+  Name: Roast Pig
+  Category: Food
+  Description: ''
+  ItemId: 2491
+  Hue: 0
+  GoldValue: 0
+  Weight: 45.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sack_flour
+  Name: Sack Flour
+  Category: Food
+  Description: ''
+  ItemId: 4153
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sack_of_sugar
+  Name: Sack Of Sugar
+  Category: Food
+  Description: ''
+  ItemId: 4153
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sausage
+  Name: Sausage
+  Category: Food
+  Description: ''
+  ItemId: 2496
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sausage_pizza
+  Name: Sausage Pizza
+  Category: Food
+  Description: ''
+  ItemId: 4160
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sheaf_of_hay
+  Name: Sheaf Of Hay
+  Category: Food
+  Description: ''
+  ItemId: 3894
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: slab_of_bacon
+  Name: Slab Of Bacon
+  Category: Food
+  Description: ''
+  ItemId: 2422
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: small_pumpkin
+  Name: Small Pumpkin
+  Category: Food
+  Description: ''
+  ItemId: 3180
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: small_watermelon
+  Name: Small Watermelon
+  Category: Food
+  Description: ''
+  ItemId: 3165
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: split_coconut
+  Name: Split Coconut
+  Category: Food
+  Description: ''
+  ItemId: 5925
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: squash
+  Name: Squash
+  Category: Food
+  Description: ''
+  ItemId: 3186
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: sushi_platter
+  Name: Sushi Platter
+  Category: Food
+  Description: ''
+  ItemId: 10304
+  Hue: 0
+  GoldValue: 0
+  Weight: 3.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sushi_rolls
+  Name: Sushi Rolls
+  Category: Food
+  Description: ''
+  ItemId: 10302
+  Hue: 0
+  GoldValue: 0
+  Weight: 3.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: sweet_dough
+  Name: Sweet Dough
+  Category: Food
+  Description: ''
+  ItemId: 4157
+  Hue: 150
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: turnip
+  Name: Turnip
+  Category: Food
+  Description: ''
+  ItemId: 3386
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable
+- Id: unbaked_apple_pie
+  Name: Unbaked Apple Pie
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: unbaked_fruit_pie
+  Name: Unbaked Fruit Pie
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: unbaked_meat_pie
+  Name: Unbaked Meat Pie
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: unbaked_peach_cobbler
+  Name: Unbaked Peach Cobbler
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: unbaked_pumpkin_pie
+  Name: Unbaked Pumpkin Pie
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: unbaked_quiche
+  Name: Unbaked Quiche
+  Category: Food
+  Description: ''
+  ItemId: 4162
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: uncooked_cheese_pizza
+  Name: Uncooked Cheese Pizza
+  Category: Food
+  Description: ''
+  ItemId: 4227
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: uncooked_sausage_pizza
+  Name: Uncooked Sausage Pizza
+  Category: Food
+  Description: ''
+  ItemId: 4227
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: vanilla
+  Name: Vanilla
+  Category: Food
+  Description: ''
+  ItemId: 3626
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wasabi
+  Name: Wasabi
+  Category: Food
+  Description: ''
+  ItemId: 9448
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wasabi_clumps
+  Name: Wasabi Clumps
+  Category: Food
+  Description: ''
+  ItemId: 9451
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: watermelon
+  Name: Watermelon
+  Category: Food
+  Description: ''
+  ItemId: 3164
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wheat_sheaf
+  Name: Wheat Sheaf
+  Category: Food
+  Description: ''
+  ItemId: 7869
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: white_chocolate
+  Name: White Chocolate
+  Category: Food
+  Description: ''
+  ItemId: 3857
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: white_miso_soup
+  Name: White Miso Soup
+  Category: Food
+  Description: ''
+  ItemId: 10318
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl
+  Name: Wooden Bowl
+  Category: Food
+  Description: ''
+  ItemId: 5624
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_carrots
+  Name: Wooden Bowl Of Carrots
+  Category: Food
+  Description: ''
+  ItemId: 5625
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_corn
+  Name: Wooden Bowl Of Corn
+  Category: Food
+  Description: ''
+  ItemId: 5626
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_lettuce
+  Name: Wooden Bowl Of Lettuce
+  Category: Food
+  Description: ''
+  ItemId: 5627
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_peas
+  Name: Wooden Bowl Of Peas
+  Category: Food
+  Description: ''
+  ItemId: 5628
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_stew
+  Name: Wooden Bowl Of Stew
+  Category: Food
+  Description: ''
+  ItemId: 5636
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: wooden_bowl_of_tomato_soup
+  Name: Wooden Bowl Of Tomato Soup
+  Category: Food
+  Description: ''
+  ItemId: 5638
+  Hue: 0
+  GoldValue: 0
+  Weight: 2.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+- Id: yellow_gourd
+  Name: Yellow Gourd
+  Category: Food
+  Description: ''
+  ItemId: 3172
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: items.food
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - food
+  - flippable

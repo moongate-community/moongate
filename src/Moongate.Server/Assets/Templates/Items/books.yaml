@@ -1,0 +1,628 @@
+- Id: arms_and_weapons_primer
+  Name: Arms And Weapons Primer
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: arms_and_weapons_primer
+- Id: birds_of_britannia
+  Name: Birds Of Britannia
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: birds_of_britannia
+- Id: blackthorn_welcome_book
+  Name: A Welcome
+  Category: Books
+  Description: ''
+  ItemId: 4081
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: blackthorn_welcome_book
+- Id: blue_book
+  Name: Blue Book
+  Category: Books
+  Description: ''
+  ItemId: 4082
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Params:
+    writable:
+      Type: string
+      Value: 'true'
+    pages:
+      Type: string
+      Value: '40'
+- Id: bold_stranger
+  Name: Bold Stranger
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: bold_stranger
+- Id: britannian_flora
+  Name: Britannian Flora
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: britannian_flora
+- Id: brown_book
+  Name: Brown Book
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Params:
+    writable:
+      Type: string
+      Value: 'true'
+    pages:
+      Type: string
+      Value: '20'
+- Id: burning_of_trinsic
+  Name: Burning Of Trinsic
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: burning_of_trinsic
+- Id: call_to_anarchy
+  Name: Call To Anarchy
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: call_to_anarchy
+- Id: children_tales_vol2
+  Name: Children Tales Vol2
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: children_tales_vol2
+- Id: deceit_dungeon_of_horror
+  Name: Deceit Dungeon Of Horror
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: deceit_dungeon_of_horror
+- Id: dimensional_travel
+  Name: Dimensional Travel
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: dimensional_travel
+- Id: diversity_of_our_land
+  Name: Diversity Of Our Land
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: diversity_of_our_land
+- Id: drakovs_journal
+  Name: Drakov's Journal
+  Category: Books
+  Description: ''
+  ItemId: 4082
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: drakovs_journal
+- Id: ethical_hedonism
+  Name: Ethical Hedonism
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: ethical_hedonism
+- Id: fropoz_journal
+  Name: Journal
+  Category: Books
+  Description: ''
+  ItemId: 4081
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: fropoz_journal
+- Id: grammar_of_orcish
+  Name: Grammar Of Orcish
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: grammar_of_orcish
+- Id: guide_to_guilds
+  Name: Guide To Guilds
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: guide_to_guilds
+- Id: kabur_journal
+  Name: Journal
+  Category: Books
+  Description: ''
+  ItemId: 4081
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: kabur_journal
+- Id: life_of_a_travelling_minstrel
+  Name: Life Of A Travelling Minstrel
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: life_of_a_travelling_minstrel
+- Id: major_trade_association
+  Name: Major Trade Association
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: major_trade_association
+- Id: my_story
+  Name: My Story
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: my_story
+- Id: new_aquarium_book
+  Name: Your New Aquarium
+  Category: Books
+  Description: ''
+  ItemId: 4082
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: new_aquarium_book
+- Id: quest_of_virtues
+  Name: Quest Of Virtues
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: quest_of_virtues
+- Id: rankings_of_trades
+  Name: Rankings Of Trades
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: rankings_of_trades
+- Id: red_book
+  Name: Red Book
+  Category: Books
+  Description: ''
+  ItemId: 4081
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Params:
+    writable:
+      Type: string
+      Value: 'true'
+    pages:
+      Type: string
+      Value: '20'
+- Id: regarding_llamas
+  Name: Regarding Llamas
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: regarding_llamas
+- Id: song_of_samlethe
+  Name: Song Of Samlethe
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: song_of_samlethe
+- Id: tale_of_three_tribes
+  Name: Tale Of Three Tribes
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: tale_of_three_tribes
+- Id: tales_of_vesper_vol1
+  Name: Tales Of Vesper Vol1
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: tales_of_vesper_vol1
+- Id: talking_to_wisps
+  Name: Talking To Wisps
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: talking_to_wisps
+- Id: taming_dragons
+  Name: Taming Dragons
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: taming_dragons
+- Id: tan_book
+  Name: Tan Book
+  Category: Books
+  Description: ''
+  ItemId: 4080
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Params:
+    writable:
+      Type: string
+      Value: 'true'
+    pages:
+      Type: string
+      Value: '20'
+- Id: the_fight
+  Name: The Fight
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: the_fight
+- Id: translated_gargoyle_journal
+  Name: Translated Journal
+  Category: Books
+  Description: ''
+  ItemId: 4082
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: translated_gargoyle_journal
+- Id: treatise_on_alchemy
+  Name: Treatise On Alchemy
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: treatise_on_alchemy
+- Id: virtue_book
+  Name: Virtue Book
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: virtue_book
+- Id: wild_girl_of_the_forest
+  Name: Wild Girl Of The Forest
+  Category: Books
+  Description: ''
+  ItemId: 4079
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - books
+  Book:
+    BookId: wild_girl_of_the_forest

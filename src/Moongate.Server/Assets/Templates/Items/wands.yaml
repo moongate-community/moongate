@@ -1,0 +1,154 @@
+- Id: clumsy_wand
+  Name: Clumsy Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: feeble_wand
+  Name: Feeble Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: fireball_wand
+  Name: Fireball Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: greater_heal_wand
+  Name: Greater Heal Wand
+  Category: Wands
+  Description: ''
+  ItemId: 1
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: harm_wand
+  Name: Harm Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: heal_wand
+  Name: Heal Wand
+  Category: Wands
+  Description: ''
+  ItemId: 10
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: id_wand
+  Name: ID Wand
+  Category: Wands
+  Description: ''
+  ItemId: 25
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: lightning_wand
+  Name: Lightning Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: magic_arrow_wand
+  Name: Magic Arrow Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: mana_drain_wand
+  Name: Mana Drain Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands
+- Id: weakness_wand
+  Name: Weakness Wand
+  Category: Wands
+  Description: ''
+  ItemId: 5
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - wands

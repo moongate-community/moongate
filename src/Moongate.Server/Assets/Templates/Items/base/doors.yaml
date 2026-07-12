@@ -1,0 +1,300 @@
+- Id: door
+  Name: Door
+  Category: Structure
+  Description: Generic door template (ModernUO base door id range starts at 0x0675).
+  ItemId: 1653
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - modernuo
+  - worldgen
+- Id: barred_metal_door
+  Name: Barred Metal Door
+  Category: Structure
+  Description: ''
+  ItemId: 1669
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: barred_metal_door_2
+  Name: Barred Metal Door 2
+  Category: Structure
+  Description: ''
+  ItemId: 8173
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: dark_wood_door
+  Name: Dark Wood Door
+  Category: Structure
+  Description: ''
+  ItemId: 1701
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: dark_wood_gate
+  Name: Dark Wood Gate
+  Category: Structure
+  Description: ''
+  ItemId: 2150
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - gate
+  - decoration
+  - modernuo
+- Id: iron_gate
+  Name: Iron Gate
+  Category: Structure
+  Description: ''
+  ItemId: 2084
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - gate
+  - decoration
+  - modernuo
+- Id: iron_gate_short
+  Name: Iron Gate Short
+  Category: Structure
+  Description: ''
+  ItemId: 2124
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - gate
+  - decoration
+  - modernuo
+- Id: light_wood_door
+  Name: Light Wood Door
+  Category: Structure
+  Description: ''
+  ItemId: 1749
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: light_wood_gate
+  Name: Light Wood Gate
+  Category: Structure
+  Description: ''
+  ItemId: 2105
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - gate
+  - decoration
+  - modernuo
+- Id: metal_door
+  Name: Metal Door
+  Category: Structure
+  Description: ''
+  ItemId: 1653
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: metal_door_2
+  Name: Metal Door 2
+  Category: Structure
+  Description: ''
+  ItemId: 1733
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: rattan_door
+  Name: Rattan Door
+  Category: Structure
+  Description: ''
+  ItemId: 1685
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_dungeon_door
+  Name: Secret Dungeon Door
+  Category: Structure
+  Description: ''
+  ItemId: 788
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_stone_door_1
+  Name: Secret Stone Door 1
+  Category: Structure
+  Description: ''
+  ItemId: 232
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_stone_door_2
+  Name: Secret Stone Door 2
+  Category: Structure
+  Description: ''
+  ItemId: 804
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_stone_door_3
+  Name: Secret Stone Door 3
+  Category: Structure
+  Description: ''
+  ItemId: 852
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_wooden_door
+  Name: Secret Wooden Door
+  Category: Structure
+  Description: ''
+  ItemId: 820
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: medium_wood_door
+  Name: Medium Wood Door
+  Category: Structure
+  Description: ''
+  ItemId: 1717
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: strong_wood_door
+  Name: Strong Wood Door
+  Category: Structure
+  Description: ''
+  ItemId: 1765
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo
+- Id: secret_light_wood_door
+  Name: Secret Light Wood Door
+  Category: Structure
+  Description: ''
+  ItemId: 836
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: items.door
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - door
+  - decoration
+  - modernuo

@@ -1,0 +1,34 @@
+- Id: writable_book
+  Name: Writable Book
+  Category: Books
+  Description: Blank writable book with empty title, author, and pages.
+  ItemId: 4080
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - book
+  - writable
+  Params:
+    writable:
+      Type: string
+      Value: 'true'
+- Id: welcome_book
+  Name: Welcome To Moongate
+  Category: Books
+  Description: Read-only welcome book rendered from templates/books/welcome_player.txt.
+  ItemId: 4080
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - book
+  - moongate
+  Book:
+    BookId: welcome_player

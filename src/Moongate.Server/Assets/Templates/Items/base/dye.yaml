@@ -1,0 +1,15 @@
+- Id: dye_box
+  Name: Dye Box
+  Category: Skill Items
+  Description: Test dye box using the dye tub art.
+  ItemId: 4011
+  Hue: 0
+  GoldValue: 0
+  Weight: 10.0
+  ScriptId: items.dye_box
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - test
+  - skill items
+  - dye

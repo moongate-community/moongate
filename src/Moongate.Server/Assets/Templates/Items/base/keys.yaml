@@ -1,0 +1,15 @@
+- Id: key
+  Name: Key
+  Category: Utility
+  Description: ''
+  ItemId: 4110
+  Hue: 2000
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - key
+  - lock
+  - utility

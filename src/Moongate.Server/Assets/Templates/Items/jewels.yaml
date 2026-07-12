@@ -1,0 +1,201 @@
+- Id: beads
+  Name: Beads
+  Category: Jewels
+  Description: ''
+  ItemId: 4235
+  Hue: 0
+  GoldValue: 0
+  Weight: 1.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+- Id: gold_bead_necklace
+  Name: Gold Bead Necklace
+  Category: Jewels
+  Description: ''
+  ItemId: 4233
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Neck
+    HitPoints: 0
+- Id: gold_bracelet
+  Name: Gold Bracelet
+  Category: Jewels
+  Description: ''
+  ItemId: 4230
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Bracelet
+    HitPoints: 0
+- Id: gold_earrings
+  Name: Gold Earrings
+  Category: Jewels
+  Description: ''
+  ItemId: 4231
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Earrings
+    HitPoints: 0
+- Id: gold_necklace
+  Name: Gold Necklace
+  Category: Jewels
+  Description: ''
+  ItemId: 4232
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Neck
+    HitPoints: 0
+- Id: gold_ring
+  Name: Gold Ring
+  Category: Jewels
+  Description: ''
+  ItemId: 4234
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Ring
+    HitPoints: 0
+- Id: necklace
+  Name: Necklace
+  Category: Jewels
+  Description: ''
+  ItemId: 4229
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Neck
+    HitPoints: 0
+- Id: silver_bead_necklace
+  Name: Silver Bead Necklace
+  Category: Jewels
+  Description: ''
+  ItemId: 7941
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Neck
+    HitPoints: 0
+- Id: silver_bracelet
+  Name: Silver Bracelet
+  Category: Jewels
+  Description: ''
+  ItemId: 7942
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Bracelet
+    HitPoints: 0
+- Id: silver_earrings
+  Name: Silver Earrings
+  Category: Jewels
+  Description: ''
+  ItemId: 7943
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Earrings
+    HitPoints: 0
+- Id: silver_necklace
+  Name: Silver Necklace
+  Category: Jewels
+  Description: ''
+  ItemId: 7944
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Neck
+    HitPoints: 0
+- Id: silver_ring
+  Name: Silver Ring
+  Category: Jewels
+  Description: ''
+  ItemId: 7945
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.1
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - jewels
+  Equip:
+    Layer: Ring
+    HitPoints: 0

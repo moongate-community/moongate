@@ -1,0 +1,181 @@
+- Id: bronze_shield
+  Name: Bronze Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7026
+  Hue: 0
+  GoldValue: 0
+  Weight: 6.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 30
+    StrengthReq: 35
+- Id: buckler
+  Name: Buckler
+  Category: Shields
+  Description: ''
+  ItemId: 7027
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 50
+    StrengthReq: 20
+- Id: chaos_shield
+  Name: Chaos Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7107
+  Hue: 0
+  GoldValue: 0
+  Weight: 4.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 125
+    StrengthReq: 95
+- Id: gargish_wooden_shield
+  Name: Gargish Wooden Shield
+  Category: Shields
+  Description: ''
+  ItemId: 16896
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  - flippable
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 25
+    StrengthReq: 20
+- Id: heater_shield
+  Name: Heater Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7030
+  Hue: 0
+  GoldValue: 0
+  Weight: 8.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 65
+    StrengthReq: 90
+- Id: metal_kite_shield
+  Name: Metal Kite Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7028
+  Hue: 0
+  GoldValue: 0
+  Weight: 7.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 60
+    StrengthReq: 45
+- Id: metal_shield
+  Name: Metal Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7035
+  Hue: 0
+  GoldValue: 0
+  Weight: 6.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 65
+    StrengthReq: 45
+- Id: order_shield
+  Name: Order Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7108
+  Hue: 0
+  GoldValue: 0
+  Weight: 7.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 125
+    StrengthReq: 95
+- Id: wooden_kite_shield
+  Name: Wooden Kite Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7033
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 65
+    StrengthReq: 20
+- Id: wooden_shield
+  Name: Wooden Shield
+  Category: Shields
+  Description: ''
+  ItemId: 7034
+  Hue: 0
+  GoldValue: 0
+  Weight: 5.0
+  ScriptId: none
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - modernuo
+  - shields
+  Equip:
+    Layer: TwoHanded
+    HitPoints: 25
+    StrengthReq: 20

@@ -1,0 +1,15 @@
+- Id: brick
+  Name: Brick
+  Category: Test Category
+  Description: Test item template.
+  ItemId: 8094
+  Hue: 2000
+  GoldValue: 2
+  Weight: 1.0
+  ScriptId: brick
+  IsMovable: true
+  Rarity: Common
+  Tags:
+  - test
+  - test2
+  Dyeable: true

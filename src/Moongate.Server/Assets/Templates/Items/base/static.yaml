@@ -1,0 +1,15 @@
+- Id: static
+  Name: Static
+  Category: World
+  Description: Generic world static item template used for decoration imports.
+  ItemId: 1
+  Hue: 0
+  GoldValue: 0
+  Weight: 0.0
+  ScriptId: none
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - static
+  - worldgen
+  - decoration
