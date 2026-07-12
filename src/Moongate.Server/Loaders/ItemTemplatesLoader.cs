@@ -13,7 +13,7 @@ public sealed class ItemTemplatesLoader : IDataLoader
     private const string EmbeddedDirectory = "Assets/Templates/Items";
     private const string EmbeddedNamespace = "Moongate.Server.Assets.Templates.Items";
 
-    private static Action<string, string>? _recoveryCheckpointForTests = null;
+    private static Action<string>? _recoveryIoFailureForTests = null;
 
     private readonly ILogger _logger = Log.ForContext<ItemTemplatesLoader>();
     private readonly IItemTemplateService _templates;
@@ -62,7 +62,7 @@ public sealed class ItemTemplatesLoader : IDataLoader
                 itemsDirectory
             );
         }
-        else
+        else if (File.Exists(legacyFile))
         {
             FinalizeMigrationCleanup(legacyFile, backupFile, itemsDirectory);
         }
@@ -109,139 +109,24 @@ public sealed class ItemTemplatesLoader : IDataLoader
 
     private void FinalizeMigrationCleanup(string legacyFile, string backupFile, string itemsDirectory)
     {
-        var legacyExists = File.Exists(legacyFile);
-        var hiddenClaims = GetOwnedLegacyClaims(legacyFile);
-
-        if (!legacyExists && hiddenClaims.Length == 0)
-        {
-            return;
-        }
-
-        if (hiddenClaims.Length > 1 || (legacyExists && hiddenClaims.Length > 0))
-        {
-            _logger.Warning(
-                "Ambiguous item template migration cleanup state for {LegacyPath}: " +
-                "canonical legacy exists={LegacyExists}, hidden claim count={ClaimCount}. " +
-                "Leaving all files and continuing with administrator-owned target {TargetPath}",
-                legacyFile,
-                legacyExists,
-                hiddenClaims.Length,
-                itemsDirectory
-            );
-            return;
-        }
-
         if (!File.Exists(backupFile))
         {
             WarnUnsafeRecovery(legacyFile, itemsDirectory);
             return;
         }
 
-        (string File, FileStream Lease)? backupSnapshot = null;
-        (FileStream Stream, UnixFileMode? UnixMode)? backupLease = null;
-        (FileStream Stream, UnixFileMode? UnixMode)? claimedLease = null;
-        string? claimedLegacy = null;
-
         try
         {
-            backupLease = ItemTemplateDirectoryMigrator.OpenProtectedReadLease(
-                backupFile,
-                allowDelete: false
-            );
-            backupSnapshot = ItemTemplateDirectoryMigrator.CreateImmutableSnapshot(
-                backupFile,
-                "recovery-snapshot"
-            );
+            InjectRecoveryIoFailure("compare");
 
-            if (!ItemTemplateDirectoryMigrator.StreamsEqual(
-                    backupLease.Value.Stream,
-                    backupSnapshot.Value.Lease
-                ))
+            if (!ItemTemplateDirectoryMigrator.FilesEqual(legacyFile, backupFile))
             {
                 WarnUnsafeRecovery(legacyFile, itemsDirectory);
                 return;
             }
 
-            if (!legacyExists)
-            {
-                claimedLegacy = hiddenClaims[0];
-                claimedLease = ItemTemplateDirectoryMigrator.OpenProtectedReadLease(
-                    claimedLegacy,
-                    allowDelete: true
-                );
-
-                if (ItemTemplateDirectoryMigrator.StreamsEqual(
-                        claimedLease.Value.Stream,
-                        backupSnapshot.Value.Lease
-                    ))
-                {
-                    RecoveryCheckpoint("BeforeRecoveryDelete", claimedLegacy);
-                    File.Delete(claimedLegacy);
-                    ReleaseRecoveryLease(
-                        claimedLegacy,
-                        claimedLease.Value
-                    );
-                    claimedLease = null;
-                    claimedLegacy = null;
-                    _logger.Information(
-                        "Removed verified hidden item template legacy claim {ClaimPath}; target is {TargetPath}",
-                        hiddenClaims[0],
-                        itemsDirectory
-                    );
-                    return;
-                }
-
-                ReleaseRecoveryLease(
-                    claimedLegacy,
-                    claimedLease.Value
-                );
-                claimedLease = null;
-                var restored = TryRestoreRecoveryClaim(claimedLegacy, legacyFile);
-                WarnUnsafeRecovery(legacyFile, itemsDirectory, restored ? null : claimedLegacy);
-                claimedLegacy = restored ? null : claimedLegacy;
-                return;
-            }
-
-            RecoveryCheckpoint("BeforeRecoveryComparison", legacyFile);
-
-            if (!ItemTemplateDirectoryMigrator.FilesEqual(legacyFile, backupSnapshot.Value.File))
-            {
-                WarnUnsafeRecovery(legacyFile, itemsDirectory);
-                return;
-            }
-
-            claimedLegacy = ItemTemplateDirectoryMigrator.CreateLegacyClaimPath(legacyFile);
-            RecoveryCheckpoint("BeforeRecoveryLegacyClaim", legacyFile);
-            File.Move(legacyFile, claimedLegacy, overwrite: false);
-            claimedLease = ItemTemplateDirectoryMigrator.OpenProtectedReadLease(
-                claimedLegacy,
-                allowDelete: true
-            );
-
-            if (!ItemTemplateDirectoryMigrator.StreamsEqual(
-                    claimedLease.Value.Stream,
-                    backupSnapshot.Value.Lease
-                ))
-            {
-                ReleaseRecoveryLease(
-                    claimedLegacy,
-                    claimedLease.Value
-                );
-                claimedLease = null;
-                var restored = TryRestoreRecoveryClaim(claimedLegacy, legacyFile);
-                WarnUnsafeRecovery(legacyFile, itemsDirectory, restored ? null : claimedLegacy);
-                claimedLegacy = restored ? null : claimedLegacy;
-                return;
-            }
-
-            RecoveryCheckpoint("BeforeRecoveryDelete", claimedLegacy);
-            File.Delete(claimedLegacy);
-            ReleaseRecoveryLease(
-                claimedLegacy,
-                claimedLease.Value
-            );
-            claimedLease = null;
-            claimedLegacy = null;
+            InjectRecoveryIoFailure("delete");
+            File.Delete(legacyFile);
             _logger.Information(
                 "Finalized item template migration cleanup for {LegacyPath}; target is {TargetPath}",
                 legacyFile,
@@ -250,133 +135,24 @@ public sealed class ItemTemplatesLoader : IDataLoader
         }
         catch (Exception exception) when (IsFileIoFailure(exception))
         {
-            if (claimedLease is not null && claimedLegacy is not null)
-            {
-                ReleaseRecoveryLease(
-                    claimedLegacy,
-                    claimedLease.Value
-                );
-                claimedLease = null;
-            }
-
-            var restored = TryRestoreRecoveryClaim(claimedLegacy, legacyFile);
             _logger.Warning(
                 exception,
                 "Unable to finalize item template migration cleanup for {LegacyPath}; " +
-                "continuing with administrator-owned target {TargetPath}. Legacy claim retained at {ClaimPath}",
+                "continuing with administrator-owned target {TargetPath}",
                 legacyFile,
-                itemsDirectory,
-                restored ? null : claimedLegacy
-            );
-        }
-        finally
-        {
-            if (claimedLease is not null && claimedLegacy is not null)
-            {
-                ReleaseRecoveryLease(
-                    claimedLegacy,
-                    claimedLease.Value
-                );
-            }
-
-            if (backupSnapshot is not null)
-            {
-                backupSnapshot.Value.Lease.Dispose();
-
-                try
-                {
-                    File.Delete(backupSnapshot.Value.File);
-                }
-                catch (Exception exception) when (IsFileIoFailure(exception))
-                {
-                    _logger.Warning(
-                        exception,
-                        "Unable to remove owned item template recovery snapshot {SnapshotPath}",
-                        backupSnapshot.Value.File
-                    );
-                }
-            }
-
-            if (backupLease is not null)
-            {
-                ReleaseRecoveryLease(
-                    backupFile,
-                    backupLease.Value
-                );
-            }
-        }
-    }
-
-    private static string[] GetOwnedLegacyClaims(string legacyFile)
-    {
-        var directory = Path.GetDirectoryName(Path.GetFullPath(legacyFile))!;
-        var fileName = Path.GetFileName(legacyFile);
-        var purposes = new[] { "legacy-claim", "delete-claim", "recovery-claim" };
-
-        return purposes
-            .SelectMany(
-                purpose => Directory.GetFiles(
-                    directory,
-                    $".{fileName}-*.{purpose}.tmp",
-                    SearchOption.TopDirectoryOnly
-                )
-            )
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-    }
-
-    private void ReleaseRecoveryLease(
-        string file,
-        (FileStream Stream, UnixFileMode? UnixMode) lease
-    )
-    {
-        try
-        {
-            ItemTemplateDirectoryMigrator.ReleaseProtectedReadLease(file, lease);
-        }
-        catch (Exception exception) when (IsFileIoFailure(exception))
-        {
-            _logger.Warning(
-                exception,
-                "Unable to restore file mode after item template recovery lease for {Path}",
-                file
+                itemsDirectory
             );
         }
     }
 
-    private void WarnUnsafeRecovery(string legacyFile, string itemsDirectory, string? claimPath = null)
+    private void WarnUnsafeRecovery(string legacyFile, string itemsDirectory)
     {
         _logger.Warning(
             "Item template target {TargetPath} already exists; leaving legacy source {LegacyPath} " +
-            "because no byte-identical migration backup snapshot can be safely claimed. " +
-            "Legacy claim retained at {ClaimPath}",
+            "because no byte-identical migration backup is available",
             itemsDirectory,
-            legacyFile,
-            claimPath
+            legacyFile
         );
-    }
-
-    private static bool TryRestoreRecoveryClaim(string? claimedFile, string legacyFile)
-    {
-        if (claimedFile is null || !File.Exists(claimedFile))
-        {
-            return true;
-        }
-
-        if (File.Exists(legacyFile))
-        {
-            return false;
-        }
-
-        try
-        {
-            File.Move(claimedFile, legacyFile, overwrite: false);
-            return true;
-        }
-        catch (Exception exception) when (IsFileIoFailure(exception))
-        {
-            return false;
-        }
     }
 
     private static bool IsFileIoFailure(Exception exception)
@@ -384,8 +160,8 @@ public sealed class ItemTemplatesLoader : IDataLoader
         return exception is IOException or UnauthorizedAccessException;
     }
 
-    private static void RecoveryCheckpoint(string checkpoint, string path)
+    private static void InjectRecoveryIoFailure(string phase)
     {
-        _recoveryCheckpointForTests?.Invoke(checkpoint, path);
+        _recoveryIoFailureForTests?.Invoke(phase);
     }
 }

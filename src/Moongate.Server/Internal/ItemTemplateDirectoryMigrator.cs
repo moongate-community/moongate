@@ -2,6 +2,7 @@ using System.Reflection;
 using Moongate.Server.Data.Internal;
 using Moongate.Server.Services;
 using Moongate.UO.Data.Items;
+using Serilog;
 using SquidStd.Core.Utils;
 
 namespace Moongate.Server.Internal;
@@ -10,7 +11,8 @@ public static class ItemTemplateDirectoryMigrator
 {
     private const int CopyBufferSize = 81920;
 
-    private static Action<string, string>? _checkpointForTests = null;
+    private static readonly ILogger Logger = Log.ForContext(typeof(ItemTemplateDirectoryMigrator));
+    private static Action<string>? _ioFailureForTests = null;
 
     public static ItemTemplateMigrationResult Migrate(
         Assembly assembly,
@@ -25,6 +27,8 @@ public static class ItemTemplateDirectoryMigrator
         var parentDirectory = Path.GetDirectoryName(normalizedTarget)!;
         var directoryName = Path.GetFileName(normalizedTarget);
         var temporaryDirectory = Path.Combine(parentDirectory, $".{directoryName}-{Guid.NewGuid():N}.tmp");
+        var temporaryPrefix = temporaryDirectory + Path.DirectorySeparatorChar;
+        var legacySnapshot = CreateOwnedSiblingPath(legacyFile, "snapshot");
 
         if (Directory.Exists(normalizedTarget))
         {
@@ -33,226 +37,9 @@ public static class ItemTemplateDirectoryMigrator
 
         Directory.CreateDirectory(parentDirectory);
 
-        var legacySnapshot = CreateImmutableSnapshot(legacyFile, "migration-snapshot");
-        (FileStream Stream, UnixFileMode? UnixMode)? backupLease = null;
-
         try
         {
-            var migrationData = BuildMigrationDirectory(
-                assembly,
-                embeddedDirectory,
-                embeddedNamespace,
-                legacyFile,
-                legacySnapshot.File,
-                normalizedTarget,
-                temporaryDirectory
-            );
-
-            backupLease = PublishBackupAtomic(
-                legacySnapshot.File,
-                legacySnapshot.Lease,
-                backupFile
-            );
-            Checkpoint("AfterBackupLeaseAcquired", backupFile);
-
-            try
-            {
-                Directory.Move(temporaryDirectory, normalizedTarget);
-            }
-            catch
-            {
-                DeleteDirectoryIfExists(temporaryDirectory);
-                throw;
-            }
-
-            DeleteLegacyIfSnapshotMatches(
-                legacyFile,
-                legacySnapshot.File,
-                legacySnapshot.Lease
-            );
-
-            return new ItemTemplateMigrationResult(
-                migrationData.StandardCount,
-                migrationData.CustomCount,
-                migrationData.FileCount,
-                backupFile
-            );
-        }
-        catch
-        {
-            DeleteDirectoryIfExists(temporaryDirectory);
-            throw;
-        }
-        finally
-        {
-            if (backupLease is not null)
-            {
-                ReleaseProtectedReadLease(backupFile, backupLease.Value);
-            }
-
-            legacySnapshot.Lease.Dispose();
-            File.Delete(legacySnapshot.File);
-        }
-    }
-
-    internal static (string File, FileStream Lease) CreateImmutableSnapshot(string sourceFile, string purpose)
-    {
-        var snapshotFile = CreateOwnedSiblingPath(sourceFile, purpose);
-
-        try
-        {
-            CopyToDurableFile(sourceFile, snapshotFile, FileShare.None).Dispose();
-
-            var lease = new FileStream(
-                snapshotFile,
-                FileMode.Open,
-                FileAccess.Read,
-                FileShare.Read,
-                CopyBufferSize,
-                FileOptions.SequentialScan
-            );
-            return (snapshotFile, lease);
-        }
-        catch
-        {
-            File.Delete(snapshotFile);
-            throw;
-        }
-    }
-
-    internal static string CreateOwnedSiblingPath(string file, string purpose)
-    {
-        var normalizedFile = Path.GetFullPath(file);
-        var directory = Path.GetDirectoryName(normalizedFile)!;
-        var fileName = Path.GetFileName(normalizedFile);
-        return Path.Combine(directory, $".{fileName}-{Guid.NewGuid():N}.{purpose}.tmp");
-    }
-
-    internal static string CreateLegacyClaimPath(string legacyFile)
-    {
-        return CreateOwnedSiblingPath(legacyFile, "legacy-claim");
-    }
-
-    internal static (FileStream Stream, UnixFileMode? UnixMode) OpenProtectedReadLease(
-        string file,
-        bool allowDelete
-    )
-    {
-        var stream = new FileStream(
-            file,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.Read | (allowDelete ? FileShare.Delete : 0),
-            CopyBufferSize,
-            FileOptions.SequentialScan
-        );
-        UnixFileMode? unixMode = null;
-
-        try
-        {
-            if (!OperatingSystem.IsWindows())
-            {
-                unixMode = File.GetUnixFileMode(file);
-                File.SetUnixFileMode(
-                    file,
-                    unixMode.Value &
-                    ~(UnixFileMode.UserWrite | UnixFileMode.GroupWrite | UnixFileMode.OtherWrite)
-                );
-            }
-
-            return (stream, unixMode);
-        }
-        catch
-        {
-            stream.Dispose();
-            throw;
-        }
-    }
-
-    internal static void ReleaseProtectedReadLease(
-        string file,
-        (FileStream Stream, UnixFileMode? UnixMode) lease
-    )
-    {
-        lease.Stream.Dispose();
-
-        if (!OperatingSystem.IsWindows() && lease.UnixMode is not null && File.Exists(file))
-        {
-            File.SetUnixFileMode(file, lease.UnixMode.Value);
-        }
-    }
-
-    internal static bool FilesEqual(string leftFile, string rightFile)
-    {
-        using var left = new FileStream(
-            leftFile,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.ReadWrite | FileShare.Delete,
-            CopyBufferSize,
-            FileOptions.SequentialScan
-        );
-        using var right = new FileStream(
-            rightFile,
-            FileMode.Open,
-            FileAccess.Read,
-            FileShare.ReadWrite | FileShare.Delete,
-            CopyBufferSize,
-            FileOptions.SequentialScan
-        );
-
-        return StreamsEqual(left, right);
-    }
-
-    internal static bool StreamsEqual(FileStream left, FileStream right)
-    {
-        left.Position = 0;
-        right.Position = 0;
-
-        if (left.Length != right.Length)
-        {
-            return false;
-        }
-
-        var leftBuffer = new byte[CopyBufferSize];
-        var rightBuffer = new byte[CopyBufferSize];
-
-        while (true)
-        {
-            var leftRead = left.Read(leftBuffer, 0, leftBuffer.Length);
-            var rightRead = right.Read(rightBuffer, 0, rightBuffer.Length);
-
-            if (leftRead != rightRead)
-            {
-                return false;
-            }
-
-            if (leftRead == 0)
-            {
-                return true;
-            }
-
-            if (!leftBuffer.AsSpan(0, leftRead).SequenceEqual(rightBuffer.AsSpan(0, rightRead)))
-            {
-                return false;
-            }
-        }
-    }
-
-    private static (int StandardCount, int CustomCount, int FileCount) BuildMigrationDirectory(
-        Assembly assembly,
-        string embeddedDirectory,
-        string embeddedNamespace,
-        string legacyFile,
-        string legacySnapshot,
-        string normalizedTarget,
-        string temporaryDirectory
-    )
-    {
-        var temporaryPrefix = temporaryDirectory + Path.DirectorySeparatorChar;
-
-        try
-        {
+            CopyToDurableFile(legacyFile, legacySnapshot);
             Directory.CreateDirectory(temporaryDirectory);
 
             var resources = ResourceUtils.GetEmbeddedResourceNames(assembly, embeddedDirectory)
@@ -320,7 +107,10 @@ public static class ItemTemplateDirectoryMigrator
             ItemTemplateValidator.Validate(defaultSources);
 
             var legacyRelativePath = Path.GetFileName(legacyFile);
-            var legacyTemplates = ItemTemplateYamlDeserializer.DeserializeFromFile(legacySnapshot, legacyRelativePath);
+            var legacyTemplates = ItemTemplateYamlDeserializer.DeserializeFromFile(
+                legacySnapshot,
+                legacyRelativePath
+            );
             var legacySources = legacyTemplates
                 .Select(template => new ItemTemplateSource(legacyRelativePath, template))
                 .ToArray();
@@ -378,150 +168,145 @@ public static class ItemTemplateDirectoryMigrator
 
             ItemTemplateValidator.Validate(generatedSources);
 
-            return (defaultSources.Count, customTemplates.Length, generatedFiles.Length);
+            PublishBackup(legacySnapshot, backupFile);
+
+            Directory.Move(temporaryDirectory, normalizedTarget);
+            TryDeleteLegacyAfterCommit(legacyFile, legacySnapshot);
+
+            return new ItemTemplateMigrationResult(
+                defaultSources.Count,
+                customTemplates.Length,
+                generatedFiles.Length,
+                backupFile
+            );
         }
         catch
         {
-            DeleteDirectoryIfExists(temporaryDirectory);
+            if (Directory.Exists(temporaryDirectory))
+            {
+                Directory.Delete(temporaryDirectory, true);
+            }
+
             throw;
+        }
+        finally
+        {
+            TryDeleteOwnedTemporaryFile(legacySnapshot);
         }
     }
 
-    private static (FileStream Stream, UnixFileMode? UnixMode) PublishBackupAtomic(
-        string legacySnapshot,
-        FileStream snapshotLease,
-        string backupFile
-    )
+    internal static bool FilesEqual(string leftFile, string rightFile)
+    {
+        using var left = new FileStream(
+            leftFile,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            CopyBufferSize,
+            FileOptions.SequentialScan
+        );
+        using var right = new FileStream(
+            rightFile,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            CopyBufferSize,
+            FileOptions.SequentialScan
+        );
+
+        if (left.Length != right.Length)
+        {
+            return false;
+        }
+
+        var leftBuffer = new byte[CopyBufferSize];
+        var rightBuffer = new byte[CopyBufferSize];
+
+        while (true)
+        {
+            var leftRead = left.Read(leftBuffer, 0, leftBuffer.Length);
+            var rightRead = right.Read(rightBuffer, 0, rightBuffer.Length);
+
+            if (leftRead != rightRead)
+            {
+                return false;
+            }
+
+            if (leftRead == 0)
+            {
+                return true;
+            }
+
+            if (!leftBuffer.AsSpan(0, leftRead).SequenceEqual(rightBuffer.AsSpan(0, rightRead)))
+            {
+                return false;
+            }
+        }
+    }
+
+    private static void PublishBackup(string legacySnapshot, string backupFile)
     {
         if (File.Exists(backupFile))
         {
-            return AcquireVerifiedBackupLease(backupFile, snapshotLease);
+            if (!FilesEqual(backupFile, legacySnapshot))
+            {
+                throw new InvalidDataException(
+                    "Existing item template migration backup differs from legacy source."
+                );
+            }
+
+            return;
         }
 
         var temporaryBackup = CreateOwnedSiblingPath(backupFile, "publish");
-        FileStream? temporaryBackupLease = null;
 
         try
         {
-            temporaryBackupLease = CopyToDurableFile(
-                legacySnapshot,
-                temporaryBackup,
-                FileShare.Read | FileShare.Delete
-            );
+            CopyToDurableFile(legacySnapshot, temporaryBackup);
 
             if (!FilesEqual(temporaryBackup, legacySnapshot))
             {
                 throw new InvalidDataException("Temporary item template migration backup verification failed.");
             }
 
-            Checkpoint("BeforeBackupPublish", backupFile);
-
-            try
-            {
-                File.Move(temporaryBackup, backupFile, overwrite: false);
-            }
-            catch (IOException) when (File.Exists(backupFile))
-            {
-            }
-
-            temporaryBackupLease.Dispose();
-            temporaryBackupLease = null;
-            return AcquireVerifiedBackupLease(backupFile, snapshotLease);
+            InjectIoFailure("backup-publish");
+            File.Move(temporaryBackup, backupFile, overwrite: false);
         }
         finally
         {
-            temporaryBackupLease?.Dispose();
-            File.Delete(temporaryBackup);
+            TryDeleteOwnedTemporaryFile(temporaryBackup);
         }
     }
 
-    private static (FileStream Stream, UnixFileMode? UnixMode) AcquireVerifiedBackupLease(
-        string backupFile,
-        FileStream snapshotLease
-    )
+    private static void TryDeleteLegacyAfterCommit(string legacyFile, string legacySnapshot)
     {
-        var backupLease = OpenProtectedReadLease(backupFile, allowDelete: false);
-
-        if (StreamsEqual(backupLease.Stream, snapshotLease))
-        {
-            return backupLease;
-        }
-
-        ReleaseProtectedReadLease(backupFile, backupLease);
-        throw DifferentBackup();
-    }
-
-    private static void DeleteLegacyIfSnapshotMatches(
-        string legacyFile,
-        string legacySnapshot,
-        FileStream snapshotLease
-    )
-    {
-        if (!File.Exists(legacyFile) || !FilesEqual(legacyFile, legacySnapshot))
-        {
-            return;
-        }
-
-        var claimedLegacy = CreateLegacyClaimPath(legacyFile);
-        var claimed = false;
-        (FileStream Stream, UnixFileMode? UnixMode)? claimedLease = null;
-
         try
         {
-            Checkpoint("BeforeLegacyClaim", legacyFile);
-            File.Move(legacyFile, claimedLegacy, overwrite: false);
-            claimed = true;
+            InjectIoFailure("legacy-compare");
 
-            claimedLease = OpenProtectedReadLease(claimedLegacy, allowDelete: true);
-
-            if (!StreamsEqual(claimedLease.Value.Stream, snapshotLease))
+            if (!FilesEqual(legacyFile, legacySnapshot))
             {
-                ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
-                claimedLease = null;
-                RestoreClaim(claimedLegacy, legacyFile);
-                claimed = false;
+                Logger.Warning(
+                    "Leaving legacy item template source {LegacyPath} because it differs from the migration snapshot",
+                    legacyFile
+                );
                 return;
             }
 
-            Checkpoint("BeforeLegacyDelete", claimedLegacy);
-            File.Delete(claimedLegacy);
-            ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
-            claimedLease = null;
-            claimed = false;
+            InjectIoFailure("legacy-delete");
+            File.Delete(legacyFile);
         }
-        catch
+        catch (Exception exception) when (IsFileIoFailure(exception))
         {
-            if (claimedLease is not null)
-            {
-                ReleaseProtectedReadLease(claimedLegacy, claimedLease.Value);
-            }
-
-            if (claimed && File.Exists(claimedLegacy) && !File.Exists(legacyFile))
-            {
-                File.Move(claimedLegacy, legacyFile, overwrite: false);
-            }
-
-            throw;
-        }
-    }
-
-    private static void RestoreClaim(string claimedFile, string originalFile)
-    {
-        if (File.Exists(originalFile))
-        {
-            throw new IOException(
-                $"Changed legacy item template data was retained at '{claimedFile}' because '{originalFile}' now exists."
+            Logger.Warning(
+                exception,
+                "Unable to remove legacy item template source {LegacyPath} after target commit; leaving it in place",
+                legacyFile
             );
         }
-
-        File.Move(claimedFile, originalFile, overwrite: false);
     }
 
-    private static FileStream CopyToDurableFile(
-        string sourceFile,
-        string destinationFile,
-        FileShare destinationShare
-    )
+    private static void CopyToDurableFile(string sourceFile, string destinationFile)
     {
         using var source = new FileStream(
             sourceFile,
@@ -531,47 +316,45 @@ public static class ItemTemplateDirectoryMigrator
             CopyBufferSize,
             FileOptions.SequentialScan
         );
-        var destination = new FileStream(
+        using var destination = new FileStream(
             destinationFile,
             FileMode.CreateNew,
-            FileAccess.ReadWrite,
-            destinationShare,
+            FileAccess.Write,
+            FileShare.None,
             CopyBufferSize,
             FileOptions.WriteThrough
         );
+        source.CopyTo(destination, CopyBufferSize);
+        destination.Flush(flushToDisk: true);
+    }
 
+    private static string CreateOwnedSiblingPath(string file, string purpose)
+    {
+        var normalizedFile = Path.GetFullPath(file);
+        var directory = Path.GetDirectoryName(normalizedFile)!;
+        var fileName = Path.GetFileName(normalizedFile);
+        return Path.Combine(directory, $".{fileName}-{Guid.NewGuid():N}.{purpose}.tmp");
+    }
+
+    private static void TryDeleteOwnedTemporaryFile(string file)
+    {
         try
         {
-            source.CopyTo(destination, CopyBufferSize);
-            destination.Flush(flushToDisk: true);
-            destination.Position = 0;
-            return destination;
+            File.Delete(file);
         }
-        catch
+        catch (Exception exception) when (IsFileIoFailure(exception))
         {
-            destination.Dispose();
-            File.Delete(destinationFile);
-            throw;
+            Logger.Warning(exception, "Unable to remove owned item template temporary file {Path}", file);
         }
     }
 
-    private static InvalidDataException DifferentBackup()
+    private static bool IsFileIoFailure(Exception exception)
     {
-        return new InvalidDataException(
-            "Existing item template migration backup differs from legacy source."
-        );
+        return exception is IOException or UnauthorizedAccessException;
     }
 
-    private static void DeleteDirectoryIfExists(string directory)
+    private static void InjectIoFailure(string phase)
     {
-        if (Directory.Exists(directory))
-        {
-            Directory.Delete(directory, true);
-        }
-    }
-
-    private static void Checkpoint(string checkpoint, string path)
-    {
-        _checkpointForTests?.Invoke(checkpoint, path);
+        _ioFailureForTests?.Invoke(phase);
     }
 }

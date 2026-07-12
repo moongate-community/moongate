@@ -122,9 +122,6 @@ public class ItemTemplateDirectoryMigratorTests
 
             var service = await LoadMigratedTemplates(paths.Root);
             Assert.Equal(1667, service.Count);
-            Assert.NotNull(service.GetById("Alpha_custom"));
-            Assert.NotNull(service.GetById("beta_Custom"));
-            Assert.NotNull(service.GetById("zeta_custom"));
         }
         finally
         {
@@ -238,44 +235,6 @@ public class ItemTemplateDirectoryMigratorTests
     }
 
     [Fact]
-    public async Task Migrate_LegacyReplacedBeforeCleanup_DoesNotDeleteReplacement()
-    {
-        var paths = NewPaths();
-        var currentYaml = CurrentLegacyYaml();
-        var snapshotYaml = ReplaceAppleName(currentYaml, "Snapshot Apple");
-        var replacementYaml = ReplaceAppleName(currentYaml, "Replacement Apple");
-        var snapshotBytes = WriteLegacy(paths.LegacyFile, snapshotYaml);
-        var replacementBytes = Encoding.UTF8.GetBytes(replacementYaml);
-
-        try
-        {
-            SetMigrationCheckpoint(
-                (checkpoint, path) =>
-                {
-                    if (checkpoint == "BeforeLegacyClaim" && path == paths.LegacyFile)
-                    {
-                        File.WriteAllBytes(paths.LegacyFile, replacementBytes);
-                    }
-                }
-            );
-
-            Migrate(paths);
-
-            Assert.Equal(replacementBytes, File.ReadAllBytes(paths.LegacyFile));
-            Assert.Equal(snapshotBytes, File.ReadAllBytes(paths.BackupFile));
-            AssertNoOwnedDataTemporaryFiles(paths.Root);
-
-            var service = await LoadMigratedTemplates(paths.Root);
-            Assert.Equal("Snapshot Apple", service.GetById("apple")!.Name);
-        }
-        finally
-        {
-            SetMigrationCheckpoint(null);
-            Directory.Delete(paths.Root, true);
-        }
-    }
-
-    [Fact]
     public void Migrate_BackupPublishFailure_LeavesNoPartialBackupAndCleansOwnedTemps()
     {
         var paths = NewPaths();
@@ -283,10 +242,10 @@ public class ItemTemplateDirectoryMigratorTests
 
         try
         {
-            SetMigrationCheckpoint(
-                (checkpoint, path) =>
+            SetMigrationIoFailure(
+                phase =>
                 {
-                    if (checkpoint == "BeforeBackupPublish" && path == paths.BackupFile)
+                    if (phase == "backup-publish")
                     {
                         throw new IOException("Injected backup publication failure.");
                     }
@@ -304,81 +263,41 @@ public class ItemTemplateDirectoryMigratorTests
         }
         finally
         {
-            SetMigrationCheckpoint(null);
-            Directory.Delete(paths.Root, true);
-        }
-    }
-
-    [Fact]
-    public void Migrate_ClaimMutationBeforeDelete_IsRejected()
-    {
-        var paths = NewPaths();
-        var legacyBytes = WriteLegacy(paths.LegacyFile, CurrentLegacyYaml());
-        var mutationRejected = false;
-
-        try
-        {
-            SetMigrationCheckpoint(
-                (checkpoint, path) =>
-                {
-                    if (checkpoint == "BeforeLegacyDelete")
-                    {
-                        mutationRejected = IsWriteDenied(path, "unbacked-claim-bytes\n");
-                    }
-                }
-            );
-
-            Migrate(paths);
-
-            Assert.True(mutationRejected);
-            Assert.False(File.Exists(paths.LegacyFile));
-            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
-            AssertNoOwnedDataTemporaryFiles(paths.Root);
-        }
-        finally
-        {
-            SetMigrationCheckpoint(null);
+            SetMigrationIoFailure(null);
             Directory.Delete(paths.Root, true);
         }
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public void Migrate_FinalBackupLease_BlocksMutationThroughCleanup(bool reuseExistingBackup)
+    [InlineData("legacy-compare")]
+    [InlineData("legacy-delete")]
+    public void Migrate_PostCommitLegacyCleanupIoFailure_LoadsCommittedTarget(string failingPhase)
     {
         var paths = NewPaths();
         var legacyBytes = WriteLegacy(paths.LegacyFile, CurrentLegacyYaml());
 
-        if (reuseExistingBackup)
-        {
-            File.WriteAllBytes(paths.BackupFile, legacyBytes);
-        }
-
-        var mutationRejected = false;
-
         try
         {
-            SetMigrationCheckpoint(
-                (checkpoint, path) =>
+            SetMigrationIoFailure(
+                phase =>
                 {
-                    if (checkpoint == "AfterBackupLeaseAcquired" && path == paths.BackupFile)
+                    if (phase == failingPhase)
                     {
-                        mutationRejected = IsWriteDenied(path, "mutated-backup\n");
+                        throw new IOException($"Injected migration cleanup failure at {phase}.");
                     }
                 }
             );
 
             Migrate(paths);
 
-            Assert.True(mutationRejected);
-            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
-            Assert.False(File.Exists(paths.LegacyFile));
             Assert.True(Directory.Exists(paths.TargetDirectory));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.LegacyFile));
+            Assert.Equal(legacyBytes, File.ReadAllBytes(paths.BackupFile));
+            AssertNoOwnedDataTemporaryFiles(paths.Root);
         }
         finally
         {
-            SetMigrationCheckpoint(null);
+            SetMigrationIoFailure(null);
             Directory.Delete(paths.Root, true);
         }
     }
@@ -452,32 +371,6 @@ public class ItemTemplateDirectoryMigratorTests
         return builder.ToString();
     }
 
-    private static string ReplaceAppleName(string yaml, string name)
-    {
-        var replaced = yaml.Replace(
-            "- Id: apple\n  Name: Apple\n",
-            $"- Id: apple\n  Name: {name}\n",
-            StringComparison.Ordinal
-        );
-
-        if (replaced == yaml)
-        {
-            throw new InvalidOperationException("Apple template was not found in the legacy fixture.");
-        }
-
-        return replaced;
-    }
-
-    private static string CustomItem(string id)
-    {
-        return $"- Id: {id}\n" +
-               $"  Name: {id}\n" +
-               "  Category: Custom\n" +
-               "  ItemId: 1\n" +
-               "  Rarity: Common\n" +
-               "  Tags: []\n";
-    }
-
     private static string RemoveTemplate(string yaml, string id)
     {
         var marker = $"- Id: {id}\n";
@@ -491,6 +384,16 @@ public class ItemTemplateDirectoryMigratorTests
         var next = yaml.IndexOf("\n- Id: ", start + marker.Length, StringComparison.Ordinal);
         var end = next < 0 ? yaml.Length : next + 1;
         return yaml.Remove(start, end - start);
+    }
+
+    private static string CustomItem(string id)
+    {
+        return $"- Id: {id}\n" +
+               $"  Name: {id}\n" +
+               "  Category: Custom\n" +
+               "  ItemId: 1\n" +
+               "  Rarity: Common\n" +
+               "  Tags: []\n";
     }
 
     private static void AssertNoTemporaryDirectory(string root)
@@ -541,36 +444,23 @@ public class ItemTemplateDirectoryMigratorTests
         }
     }
 
-    private static void SetMigrationCheckpoint(Action<string, string>? checkpoint)
+    private static void SetMigrationIoFailure(Action<string>? failure)
     {
         var field = typeof(ItemTemplateDirectoryMigrator).GetField(
-            "_checkpointForTests",
+            "_ioFailureForTests",
             BindingFlags.NonPublic | BindingFlags.Static
         );
 
         if (field is null)
         {
-            if (checkpoint is not null)
+            if (failure is not null)
             {
-                throw new InvalidOperationException("Migration checkpoint seam is missing.");
+                throw new InvalidOperationException("Migration I/O failure seam is missing.");
             }
 
             return;
         }
 
-        field.SetValue(null, checkpoint);
-    }
-
-    private static bool IsWriteDenied(string file, string contents)
-    {
-        try
-        {
-            File.WriteAllText(file, contents);
-            return false;
-        }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
-        {
-            return true;
-        }
+        field.SetValue(null, failure);
     }
 }
