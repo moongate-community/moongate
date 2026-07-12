@@ -12,6 +12,7 @@ using YamlDotNet.Serialization;
 
 namespace Moongate.Tests.Server;
 
+[Collection("ItemTemplateMigration")]
 public class ItemTemplateDirectoryMigratorTests
 {
     private const string EmbeddedDirectory = "Assets/Templates/Items";

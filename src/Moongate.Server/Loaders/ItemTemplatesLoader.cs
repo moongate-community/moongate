@@ -46,10 +46,12 @@ public sealed class ItemTemplatesLoader : IDataLoader
             );
             _logger.Information(
                 "Migrated {StandardCount} standard and {CustomCount} custom item template(s) " +
-                "into {FileCount} YAML file(s); backup retained at {BackupPath}",
+                "from {LegacyPath} into {FileCount} YAML file(s) at {TargetPath}; backup retained at {BackupPath}",
                 migrationResult.StandardCount,
                 migrationResult.CustomCount,
                 migrationResult.FileCount,
+                legacyFile,
+                itemsDirectory,
                 migrationResult.BackupPath
             );
         }

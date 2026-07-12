@@ -6,6 +6,7 @@ using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server;
 
+[Collection("ItemTemplateMigration")]
 public class ItemTemplatesLoaderTests
 {
     [Fact]
