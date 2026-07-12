@@ -49,8 +49,8 @@ public sealed class ItemTemplatesLoader : IDataLoader
                 "from {LegacyPath} into {FileCount} YAML file(s) at {TargetPath}; backup retained at {BackupPath}",
                 migrationResult.StandardCount,
                 migrationResult.CustomCount,
-                migrationResult.FileCount,
                 legacyFile,
+                migrationResult.FileCount,
                 itemsDirectory,
                 migrationResult.BackupPath
             );
