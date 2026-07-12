@@ -80,6 +80,90 @@ public class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadAsync_TargetAndMatchingStaleLegacy_FinalizesCleanup()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        File.WriteAllText(legacyFile, legacyYaml);
+        File.WriteAllText(backupFile, legacyYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.Equal("Target Item", service.GetById("target_item")!.Name);
+            Assert.Null(service.GetById("legacy_item"));
+            Assert.False(File.Exists(legacyFile));
+            Assert.True(File.Exists(backupFile));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_TargetAndDifferentStaleLegacy_LeavesBothFiles()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var backupFile = legacyFile + ".migrated.bak";
+        File.WriteAllText(legacyFile, Item(id: "legacy_item", name: "Legacy Item"));
+        File.WriteAllText(backupFile, Item(id: "backup_item", name: "Backup Item"));
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+            Assert.True(File.Exists(legacyFile));
+            Assert.True(File.Exists(backupFile));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_TargetAndLegacyWithoutBackup_LeavesLegacyUntouched()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        File.WriteAllText(legacyFile, Item(id: "legacy_item", name: "Legacy Item"));
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+            Assert.True(File.Exists(legacyFile));
+            Assert.False(File.Exists(legacyFile + ".migrated.bak"));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
     public async Task LoadAsync_WhenSecondFileIsInvalid_RegistersNothing()
     {
         var root = NewRoot();
