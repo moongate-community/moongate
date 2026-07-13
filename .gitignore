@@ -595,3 +595,6 @@ benchmarks/.compare
 # Runtime persistence (world snapshot + journal + persisted entities)
 /moongate_root/saves/
 /moongate_root/data/
+
+# CodeGraph index (never commit)
+.codegraph/
