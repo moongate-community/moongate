@@ -57,6 +57,7 @@ public sealed class GameServerLoginHandler : IPacketHandler<GameServerLoginPacke
         }
         var characters = _characterService.GetPlayerCharacters(accountId.Value).Select(s => s.Name);
 
+        context.Session.Send(new SupportFeaturesPacket(FeatureFlagType.Modern));
         context.Session.Send(
             new CharacterListPacket([.. characters], _cities.All, CharacterSlots, CharacterListFlagType.Modern)
         );

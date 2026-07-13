@@ -113,6 +113,31 @@ public class LoginFlowIntegrationTests
         throw new TimeoutException($"No response (expected 0x{expectedFirstByte:X2}).");
     }
 
+    private static byte[] ReadBytes(Socket socket, int minCount)
+    {
+        var buffer = new byte[512];
+        var total = 0;
+
+        for (var attempt = 0; attempt < 50 && total < minCount; attempt++)
+        {
+            if (socket.Available > 0)
+            {
+                total += socket.Receive(buffer, total, buffer.Length - total, SocketFlags.None);
+            }
+            else
+            {
+                Thread.Sleep(20);
+            }
+        }
+
+        if (total < minCount)
+        {
+            throw new TimeoutException($"Expected at least {minCount} bytes, received {total}.");
+        }
+
+        return buffer.AsSpan(0, total).ToArray();
+    }
+
     [Fact]
     public async Task FullLogin_SeedToRedirect_ReturnsServerListThenGameServer()
     {
@@ -173,10 +198,12 @@ public class LoginFlowIntegrationTests
             Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
             socket.Send(gameLogin);
 
-            var charList = ReadResponse(socket, 0xA9);
+            // The game login replies with support features (0xB9, 5 bytes) then the character list (0xA9).
+            var response = ReadBytes(socket, 9);
 
-            Assert.Equal(0xA9, charList[0]);
-            Assert.Equal(7, charList[3]); // slot count
+            Assert.Equal(0xB9, response[0]);
+            Assert.Equal(0xA9, response[5]);
+            Assert.Equal(7, response[8]); // slot count (0xA9 + length ushort + slot count)
         }
         finally
         {
