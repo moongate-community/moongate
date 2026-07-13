@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Weather;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// In-memory registry of weather profiles, queryable by id. Populated at startup by

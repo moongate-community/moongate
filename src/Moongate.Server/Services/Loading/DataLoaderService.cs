@@ -2,7 +2,7 @@ using Moongate.Server.Interfaces;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Loading;
 
 /// <summary>
 /// Executes the registered <see cref="IDataLoader" />s once at startup. The loaders are handed in

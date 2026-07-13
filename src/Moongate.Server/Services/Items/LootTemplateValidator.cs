@@ -3,7 +3,7 @@ using Moongate.UO.Data.Items;
 using Moongate.UO.Data.Loot;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 internal static class LootTemplateValidator
 {

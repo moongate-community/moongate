@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.StartingCities;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// In-memory registry of character-creation starting cities, ordered by client index. Populated at

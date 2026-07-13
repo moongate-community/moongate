@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Locations;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// In-memory registry of per-facet travel/location trees. Populated at startup by

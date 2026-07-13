@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Scripting.Modules;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Game;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Scripting.Lua.Data.Config;

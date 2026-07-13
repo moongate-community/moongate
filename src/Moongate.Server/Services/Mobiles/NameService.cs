@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Names;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Mobiles;
 
 /// <summary>
 /// In-memory registry of name pools, queryable by type. Populated at startup by

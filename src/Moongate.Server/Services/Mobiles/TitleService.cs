@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Titles;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Mobiles;
 
 /// <summary>
 /// Fame/karma noble-title lookup table. Populated at startup by

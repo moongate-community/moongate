@@ -2,7 +2,7 @@ using DryIoc;
 using Moongate.Server;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Loaders;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Items;
 using SquidStd.Core.Directories;
 using SquidStd.Plugin.Abstractions.Data;
 

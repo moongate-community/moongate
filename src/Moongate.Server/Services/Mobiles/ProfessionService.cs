@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Professions;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Mobiles;
 
 /// <summary>
 /// In-memory registry of profession presets, queryable by name. Populated at startup by

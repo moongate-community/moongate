@@ -3,7 +3,7 @@ using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces;
 using SquidStd.Network.Client;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Accounts;
 
 /// <summary>In-memory session registry keyed by <see cref="SquidStdTcpClient.SessionId" />.</summary>
 public sealed class SessionManager : ISessionManager

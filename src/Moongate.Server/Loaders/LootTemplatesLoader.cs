@@ -1,7 +1,7 @@
 using Moongate.Server.Data.Internal;
 using Moongate.Server.Internal;
 using Moongate.Server.Interfaces;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Items;
 using Serilog;
 using SquidStd.Core.Directories;
 

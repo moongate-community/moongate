@@ -7,7 +7,7 @@ using Serilog;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Accounts;
 
 public class AccountService : IAccountService
 {

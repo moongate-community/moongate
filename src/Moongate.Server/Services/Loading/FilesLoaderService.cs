@@ -5,7 +5,7 @@ using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Events;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Loading;
 
 /// <summary>
 /// Points the Ultima file locator at the configured client directory on startup and announces

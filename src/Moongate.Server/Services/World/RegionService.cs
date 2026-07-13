@@ -2,7 +2,7 @@ using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Regions;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// In-memory registry of map regions. Populated at startup by

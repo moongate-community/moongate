@@ -1,5 +1,5 @@
 using Moongate.Server.Data;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Accounts;
 
 namespace Moongate.Tests.Server;
 

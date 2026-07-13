@@ -2,7 +2,7 @@ using Moongate.UO.Data.Items;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 internal static class ItemTemplateYamlDeserializer
 {

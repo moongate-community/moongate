@@ -5,7 +5,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Data.Events;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Network;
 using Moongate.Tests.Support;
 using SquidStd.Core.Interfaces.Events;

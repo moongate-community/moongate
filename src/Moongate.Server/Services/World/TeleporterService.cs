@@ -2,7 +2,7 @@ using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Teleporters;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// In-memory registry of teleporters. Populated at startup by

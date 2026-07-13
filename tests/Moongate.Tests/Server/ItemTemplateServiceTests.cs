@@ -1,4 +1,4 @@
-using Moongate.Server.Services;
+using Moongate.Server.Services.Items;
 using Moongate.UO.Data.Items;
 
 namespace Moongate.Tests.Server;

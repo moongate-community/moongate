@@ -2,7 +2,7 @@ using Moongate.Core.Interfaces;
 using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Core.Interfaces.Timing;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Game;
 
 /// <summary>
 /// Server-side <see cref="IGameLoopContext" />: bundles the SquidStd main-thread dispatcher and

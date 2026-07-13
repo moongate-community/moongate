@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Loot;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 public sealed class LootTemplateService : ILootTemplateService
 {

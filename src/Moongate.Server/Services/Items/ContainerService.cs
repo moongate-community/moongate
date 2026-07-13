@@ -1,7 +1,7 @@
 using Moongate.Server.Interfaces;
 using Moongate.UO.Data.Containers;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 /// <summary>
 /// In-memory registry of container definitions, queryable by id. Populated at startup by

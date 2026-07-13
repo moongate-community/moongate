@@ -3,7 +3,7 @@ using System.Text;
 using Moongate.Server.Data.Internal;
 using Moongate.Server.Internal;
 using Moongate.Server.Loaders;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Items;
 using Moongate.UO.Data.Items;
 using SquidStd.Core.Directories;
 using SquidStd.Core.Utils;

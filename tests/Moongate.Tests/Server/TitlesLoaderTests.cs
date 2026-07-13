@@ -1,5 +1,5 @@
 using Moongate.Server.Loaders;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Mobiles;
 using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server;

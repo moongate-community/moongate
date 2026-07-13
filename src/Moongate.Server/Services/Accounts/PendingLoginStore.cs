@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using Moongate.Server.Data;
 using Moongate.Server.Interfaces;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Accounts;
 
 /// <summary>In-memory auth-key store with a TTL sweep. Keys are single-use.</summary>
 public sealed class PendingLoginStore : IPendingLoginStore

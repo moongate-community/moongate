@@ -1,7 +1,7 @@
 using Moongate.Server.Data.Internal;
 using Moongate.UO.Data.Items;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 internal static class ItemTemplateValidator
 {

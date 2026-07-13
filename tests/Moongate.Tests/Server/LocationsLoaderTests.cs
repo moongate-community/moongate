@@ -1,5 +1,5 @@
 using Moongate.Server.Loaders;
-using Moongate.Server.Services;
+using Moongate.Server.Services.World;
 using Moongate.UO.Data.Locations;
 using SquidStd.Core.Directories;
 

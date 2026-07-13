@@ -1,6 +1,6 @@
 using System.Reflection;
 using Moongate.Server.Data.Internal;
-using Moongate.Server.Services;
+using Moongate.Server.Services.Items;
 using Moongate.UO.Data.Items;
 using Serilog;
 using SquidStd.Core.Utils;

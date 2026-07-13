@@ -2,7 +2,7 @@ using System.Text;
 using Moongate.UO.Data.Items;
 using YamlDotNet.Serialization;
 
-namespace Moongate.Server.Services;
+namespace Moongate.Server.Services.Items;
 
 public static class ItemTemplateYamlSerializer
 {
