@@ -10,10 +10,10 @@ public class CharacterService : ICharacterService
     private readonly IEntityStore<MobileEntity, Serial> _mobileStore;
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
 
-    public CharacterService(IEntityStore<MobileEntity, Serial> mobileStore, IEntityStore<AccountEntity, Serial> accountStore)
+    public CharacterService(IPersistenceService persistenceService)
     {
-        _mobileStore = mobileStore;
-        _accountStore = accountStore;
+        _mobileStore = persistenceService.GetStore<MobileEntity, Serial>();
+        _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
     }
 
     public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
@@ -25,6 +25,6 @@ public class CharacterService : ICharacterService
             return [];
         }
 
-        return [.. account.MobileIds.Select(mobileId => _mobileStore.GetByIdAsync(mobileId).Result)];
+        return [.. _mobileStore.Query().Where(mobile => account.MobileIds.Contains(mobile.Id))];
     }
 }
