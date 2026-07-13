@@ -97,6 +97,12 @@ public sealed class PlayerSession : ISeedTarget
         _ = SendInternalAsync(bytes);
     }
 
+    /// <summary>Closes the underlying connection, dropping this session (fire-and-forget).</summary>
+    public void Disconnect()
+    {
+        _ = _client.CloseAsync();
+    }
+
     private async Task SendInternalAsync(byte[] bytes)
     {
         try
