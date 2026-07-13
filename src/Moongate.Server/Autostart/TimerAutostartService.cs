@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Serilog;
 using SquidStd.Core.Interfaces.Timing;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -25,12 +26,17 @@ public class TimerAutostartService
         // Example: Initialize a timer that runs every 5 minutes
         _timerService.RegisterTimer(
             "persistence_save",
-            TimeSpan.FromMinutes(10),
+            TimeSpan.FromSeconds(300),
             async () =>
             {
+                var start = Stopwatch.GetTimestamp();
+                _logger.Information("Start saving snapshot...");
                 await _persistenceService
                     .SaveSnapshotAsync();
-
+                _logger.Information(
+                    "Snapshot saved in {ElapsedMilliseconds} milliseconds.",
+                    Stopwatch.GetElapsedTime(start)
+                );
             }
         );
 
