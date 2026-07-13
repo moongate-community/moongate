@@ -1,4 +1,3 @@
-using System.Reflection;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using Moongate.Ultima.Types;
@@ -6,7 +5,7 @@ using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server;
 
-[Collection("ItemTemplateMigration")]
+[Collection("ItemTemplateSeeding")]
 public class ItemTemplatesLoaderTests
 {
     [Fact]
@@ -37,7 +36,7 @@ public class ItemTemplatesLoaderTests
     }
 
     [Fact]
-    public async Task LoadAsync_TargetMissingAndLegacyPresent_MigratesMergedTree()
+    public async Task LoadAsync_TargetMissingAndLegacyPresent_SeedsEmbeddedAndLeavesLegacyUntouched()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
@@ -46,7 +45,6 @@ public class ItemTemplatesLoaderTests
         var legacyYaml = Item(id: "apple", name: "Loader Apple Override", category: "Food", itemId: 2512) +
                          Item(id: "loader_custom", name: "Loader Custom");
         File.WriteAllText(legacyFile, legacyYaml);
-        var legacyBytes = File.ReadAllBytes(legacyFile);
         var service = new ItemTemplateService();
         var itemsDirectory = Path.Combine(root, "templates", "items");
 
@@ -54,12 +52,42 @@ public class ItemTemplatesLoaderTests
         {
             await new ItemTemplatesLoader(service, directories).LoadAsync();
 
-            Assert.Equal(1665, service.Count);
-            Assert.Equal("Loader Apple Override", service.GetById("apple")!.Name);
-            Assert.Equal("Loader Custom", service.GetById("loader_custom")!.Name);
-            Assert.Equal(50, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
-            Assert.False(File.Exists(legacyFile));
-            Assert.Equal(legacyBytes, File.ReadAllBytes(legacyFile + ".migrated.bak"));
+            // The obsolete monolithic file is ignored: the embedded assets are seeded verbatim and the
+            // legacy file is neither migrated nor deleted.
+            Assert.Equal(1664, service.Count);
+            Assert.Null(service.GetById("loader_custom"));
+            Assert.NotEqual("Loader Apple Override", service.GetById("apple")!.Name);
+            Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
+            Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
+            Assert.False(File.Exists(legacyFile + ".migrated.bak"));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_TargetPresentAndLegacyPresent_IgnoresLegacyAndLoadsTarget()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        var dataDirectory = directories.RegisterDirectory("data");
+        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
+        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        File.WriteAllText(legacyFile, legacyYaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.Equal(1, service.Count);
+            Assert.NotNull(service.GetById("target_item"));
+            Assert.Null(service.GetById("legacy_item"));
+            Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
+            Assert.False(File.Exists(legacyFile + ".migrated.bak"));
         }
         finally
         {
@@ -105,132 +133,6 @@ public class ItemTemplatesLoaderTests
 
             Assert.Empty(Directory.EnumerateFiles(itemsDirectory, "*", SearchOption.AllDirectories));
             Assert.Equal(0, service.Count);
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Fact]
-    public async Task LoadAsync_TargetAndMatchingStaleLegacy_FinalizesCleanup()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
-        var dataDirectory = directories.RegisterDirectory("data");
-        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var backupFile = legacyFile + ".migrated.bak";
-        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
-        File.WriteAllText(legacyFile, legacyYaml);
-        File.WriteAllText(backupFile, legacyYaml);
-        var service = new ItemTemplateService();
-
-        try
-        {
-            await new ItemTemplatesLoader(service, directories).LoadAsync();
-
-            Assert.Equal(1, service.Count);
-            Assert.Equal("Target Item", service.GetById("target_item")!.Name);
-            Assert.Null(service.GetById("legacy_item"));
-            Assert.False(File.Exists(legacyFile));
-            Assert.True(File.Exists(backupFile));
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Theory]
-    [InlineData("compare")]
-    [InlineData("delete")]
-    public async Task LoadAsync_RecoveryIoFailure_LeavesFilesAndLoadsTarget(string failingPhase)
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
-        var dataDirectory = directories.RegisterDirectory("data");
-        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var backupFile = legacyFile + ".migrated.bak";
-        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
-        File.WriteAllText(legacyFile, legacyYaml);
-        File.WriteAllText(backupFile, legacyYaml);
-        var service = new ItemTemplateService();
-
-        try
-        {
-            SetRecoveryIoFailure(
-                phase =>
-                {
-                    if (phase == failingPhase)
-                    {
-                        throw new IOException($"Injected recovery failure at {phase}.");
-                    }
-                }
-            );
-
-            await new ItemTemplatesLoader(service, directories).LoadAsync();
-
-            Assert.Equal(1, service.Count);
-            Assert.NotNull(service.GetById("target_item"));
-            Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
-            Assert.Equal(legacyYaml, File.ReadAllText(backupFile));
-        }
-        finally
-        {
-            SetRecoveryIoFailure(null);
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Fact]
-    public async Task LoadAsync_TargetAndDifferentStaleLegacy_LeavesBothFiles()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
-        var dataDirectory = directories.RegisterDirectory("data");
-        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var backupFile = legacyFile + ".migrated.bak";
-        File.WriteAllText(legacyFile, Item(id: "legacy_item", name: "Legacy Item"));
-        File.WriteAllText(backupFile, Item(id: "backup_item", name: "Backup Item"));
-        var service = new ItemTemplateService();
-
-        try
-        {
-            await new ItemTemplatesLoader(service, directories).LoadAsync();
-
-            Assert.Equal(1, service.Count);
-            Assert.NotNull(service.GetById("target_item"));
-            Assert.True(File.Exists(legacyFile));
-            Assert.True(File.Exists(backupFile));
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Fact]
-    public async Task LoadAsync_TargetAndLegacyWithoutBackup_LeavesLegacyUntouched()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
-        var dataDirectory = directories.RegisterDirectory("data");
-        var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        File.WriteAllText(legacyFile, Item(id: "legacy_item", name: "Legacy Item"));
-        var service = new ItemTemplateService();
-
-        try
-        {
-            await new ItemTemplatesLoader(service, directories).LoadAsync();
-
-            Assert.Equal(1, service.Count);
-            Assert.NotNull(service.GetById("target_item"));
-            Assert.True(File.Exists(legacyFile));
-            Assert.False(File.Exists(legacyFile + ".migrated.bak"));
         }
         finally
         {
@@ -597,25 +499,5 @@ public class ItemTemplatesLoaderTests
     private static string ContainerWith(string property, int value)
     {
         return $"  Container:\n    {property}: {value}\n";
-    }
-
-    private static void SetRecoveryIoFailure(Action<string>? failure)
-    {
-        var field = typeof(ItemTemplatesLoader).GetField(
-            "_recoveryIoFailureForTests",
-            BindingFlags.NonPublic | BindingFlags.Static
-        );
-
-        if (field is null)
-        {
-            if (failure is not null)
-            {
-                throw new InvalidOperationException("Recovery I/O failure seam is missing.");
-            }
-
-            return;
-        }
-
-        field.SetValue(null, failure);
     }
 }

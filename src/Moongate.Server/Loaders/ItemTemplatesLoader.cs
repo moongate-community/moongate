@@ -13,8 +13,6 @@ public sealed class ItemTemplatesLoader : IDataLoader
     private const string EmbeddedDirectory = "Assets/Templates/Items";
     private const string EmbeddedNamespace = "Moongate.Server.Assets.Templates.Items";
 
-    private static Action<string>? _recoveryIoFailureForTests = null;
-
     private readonly ILogger _logger = Log.ForContext<ItemTemplatesLoader>();
     private readonly IItemTemplateService _templates;
     private readonly DirectoriesConfig _directories;
@@ -29,33 +27,21 @@ public sealed class ItemTemplatesLoader : IDataLoader
     {
         var dataDirectory = _directories.RegisterDirectory("data");
         var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var backupFile = legacyFile + ".migrated.bak";
         var templatesDirectory = _directories.RegisterDirectory("templates");
         var itemsDirectory = Path.Combine(templatesDirectory, "items");
         var directoryExists = Directory.Exists(itemsDirectory);
 
-        if (!directoryExists && File.Exists(legacyFile))
+        if (File.Exists(legacyFile))
         {
-            var migrationResult = ItemTemplateDirectoryMigrator.Migrate(
-                typeof(ItemTemplatesLoader).Assembly,
-                EmbeddedDirectory,
-                EmbeddedNamespace,
+            _logger.Warning(
+                "Ignoring obsolete monolithic item template file {LegacyPath}; item templates now ship as split " +
+                "YAML under {TargetPath}. Convert it offline into the embedded assets if it still holds custom items",
                 legacyFile,
-                backupFile,
                 itemsDirectory
             );
-            _logger.Information(
-                "Migrated {StandardCount} standard and {CustomCount} custom item template(s) " +
-                "from {LegacyPath} into {FileCount} YAML file(s) at {TargetPath}; backup retained at {BackupPath}",
-                migrationResult.StandardCount,
-                migrationResult.CustomCount,
-                legacyFile,
-                migrationResult.FileCount,
-                itemsDirectory,
-                migrationResult.BackupPath
-            );
         }
-        else if (!directoryExists)
+
+        if (!directoryExists)
         {
             EmbeddedResourceDirectorySeeder.SeedAtomic(
                 typeof(ItemTemplatesLoader).Assembly,
@@ -63,10 +49,6 @@ public sealed class ItemTemplatesLoader : IDataLoader
                 EmbeddedNamespace,
                 itemsDirectory
             );
-        }
-        else if (File.Exists(legacyFile))
-        {
-            FinalizeMigrationCleanup(legacyFile, backupFile, itemsDirectory);
         }
 
         var files = Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories)
@@ -107,63 +89,5 @@ public sealed class ItemTemplatesLoader : IDataLoader
         );
 
         return ValueTask.CompletedTask;
-    }
-
-    private void FinalizeMigrationCleanup(string legacyFile, string backupFile, string itemsDirectory)
-    {
-        if (!File.Exists(backupFile))
-        {
-            WarnUnsafeRecovery(legacyFile, itemsDirectory);
-            return;
-        }
-
-        try
-        {
-            InjectRecoveryIoFailure("compare");
-
-            if (!ItemTemplateDirectoryMigrator.FilesEqual(legacyFile, backupFile))
-            {
-                WarnUnsafeRecovery(legacyFile, itemsDirectory);
-                return;
-            }
-
-            InjectRecoveryIoFailure("delete");
-            File.Delete(legacyFile);
-            _logger.Information(
-                "Finalized item template migration cleanup for {LegacyPath}; target is {TargetPath}",
-                legacyFile,
-                itemsDirectory
-            );
-        }
-        catch (Exception exception) when (IsFileIoFailure(exception))
-        {
-            _logger.Warning(
-                exception,
-                "Unable to finalize item template migration cleanup for {LegacyPath}; " +
-                "continuing with administrator-owned target {TargetPath}",
-                legacyFile,
-                itemsDirectory
-            );
-        }
-    }
-
-    private void WarnUnsafeRecovery(string legacyFile, string itemsDirectory)
-    {
-        _logger.Warning(
-            "Item template target {TargetPath} already exists; leaving legacy source {LegacyPath} " +
-            "because no byte-identical migration backup is available",
-            itemsDirectory,
-            legacyFile
-        );
-    }
-
-    private static bool IsFileIoFailure(Exception exception)
-    {
-        return exception is IOException or UnauthorizedAccessException;
-    }
-
-    private static void InjectRecoveryIoFailure(string phase)
-    {
-        _recoveryIoFailureForTests?.Invoke(phase);
     }
 }
