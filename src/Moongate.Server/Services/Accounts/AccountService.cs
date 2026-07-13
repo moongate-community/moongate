@@ -36,7 +36,7 @@ public class AccountService : IAccountService
             return new AccountAuthResult { Success = false, Reason = LoginDeniedReasonType.AccountBlocked };
         }
 
-        return new AccountAuthResult { Success = true };
+        return new AccountAuthResult { Success = true, Username = account.Username };
     }
 
     public Serial? GetAccountIdByUsername(string username)
