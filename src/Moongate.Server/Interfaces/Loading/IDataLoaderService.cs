@@ -1,4 +1,4 @@
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Loading;
 
 /// <summary>
 /// Runs every registered <see cref="IDataLoader" /> once at startup, in priority order.

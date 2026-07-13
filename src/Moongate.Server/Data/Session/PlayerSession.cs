@@ -2,7 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Types;
 using Moongate.UO.Data.Version;
 using Serilog;

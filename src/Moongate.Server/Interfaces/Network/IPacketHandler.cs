@@ -1,7 +1,7 @@
 using Moongate.Network.Interfaces;
 using Moongate.Server.Data;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Network;
 
 /// <summary>
 /// Handles a decoded packet of type <typeparamref name="TPacket" /> for a session. Runs on the

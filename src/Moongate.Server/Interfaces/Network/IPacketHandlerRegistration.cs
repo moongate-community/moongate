@@ -1,4 +1,4 @@
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Network;
 
 /// <summary>
 /// A packet handler that registers itself with the network service at startup. Lets the

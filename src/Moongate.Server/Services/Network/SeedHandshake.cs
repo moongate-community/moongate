@@ -1,5 +1,5 @@
 using System.Buffers.Binary;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Types;
 
 namespace Moongate.Server.Services.Network;

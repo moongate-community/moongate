@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Loading;
 using Moongate.Server.Services.Loading;
 
 namespace Moongate.Tests.Server;

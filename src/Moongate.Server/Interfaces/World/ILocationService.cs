@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Locations;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.World;
 
 /// <summary>In-memory registry of per-facet travel/location trees, queryable by facet name.</summary>
 public interface ILocationService

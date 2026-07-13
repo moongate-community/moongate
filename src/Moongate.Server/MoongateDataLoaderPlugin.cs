@@ -1,6 +1,8 @@
 using DryIoc;
 using Moongate.Server.Extensions;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Interfaces.World;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Loading;

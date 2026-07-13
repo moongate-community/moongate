@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Text;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Handlers;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Network;

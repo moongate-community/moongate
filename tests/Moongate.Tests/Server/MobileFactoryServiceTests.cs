@@ -1,16 +1,36 @@
+using Moongate.Core.Geometry;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Incoming;
-using Moongate.Server.Handlers;
+using Moongate.Server.Services.Mobiles;
+using Moongate.Server.Services.World;
+using Moongate.UO.Data.StartingCities;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
-public class CharacterCreationHandlerTests
+public class MobileFactoryServiceTests
 {
-    [Fact]
-    public void CreateCharacter_MapsIdentityStatsAndAppearanceHues()
+    private static StartingCityService Cities()
     {
-        var packet = new CharacterCreationPacket(
+        var service = new StartingCityService();
+
+        // index 0
+        service.Register(new StartingCity
+        {
+            City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
+        });
+        // index 1
+        service.Register(new StartingCity
+        {
+            City = "Moonglow", Building = "Inn", Description = 2, X = 4408, Y = 1168, Z = 0, Map = MapType.Felucca
+        });
+
+        return service;
+    }
+
+    private static CharacterCreationPacket Packet(short startingCityIndex)
+    {
+        return new CharacterCreationPacket(
             Slot: 0,
             Name: "Freydis",
             ClientFlags: 0,
@@ -26,12 +46,16 @@ public class CharacterCreationHandlerTests
             HairHue: 0x044E,
             FacialHairStyle: 0x2040,
             FacialHairHue: 0x0450,
-            StartingCityIndex: 0,
+            StartingCityIndex: startingCityIndex,
             ShirtHue: 0x0765,
             PantsHue: 0x0766
         );
+    }
 
-        var character = CharacterCreationHandler.CreateCharacter(packet);
+    [Fact]
+    public void CreatePlayerMobile_MapsIdentityStatsAppearanceHuesSkillsAndStartingLocation()
+    {
+        var character = new MobileFactoryService(Cities()).CreatePlayerMobile(Packet(startingCityIndex: 1));
 
         Assert.Equal("Freydis", character.Name);
         Assert.Equal(GenderType.Female, character.Gender);
@@ -52,5 +76,19 @@ public class CharacterCreationHandlerTests
         Assert.Equal(300, character.Skills[2]);
         Assert.Equal(200, character.Skills[3]);
         Assert.False(character.Skills.ContainsKey(0));
+
+        // Starting location taken from the city at index 1 (Moonglow / Felucca).
+        Assert.Equal((int)MapType.Felucca, character.MapId);
+        Assert.Equal(new Point3D(4408, 1168, 0), character.Position);
+    }
+
+    [Fact]
+    public void CreatePlayerMobile_OutOfRangeCityIndex_FallsBackToFirstCity()
+    {
+        var character = new MobileFactoryService(Cities()).CreatePlayerMobile(Packet(startingCityIndex: 99));
+
+        // Falls back to the city at index 0 (Britain / Trammel).
+        Assert.Equal((int)MapType.Trammel, character.MapId);
+        Assert.Equal(new Point3D(1602, 1591, 20), character.Position);
     }
 }

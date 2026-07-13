@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Containers;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Items;
 
 /// <summary>In-memory registry of container definitions, queryable by id.</summary>
 public interface IContainerService

@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Containers;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Items;
 
 /// <summary>In-memory registry of container gump layouts, queryable by gump id or item id.</summary>
 public interface IContainerGumpService

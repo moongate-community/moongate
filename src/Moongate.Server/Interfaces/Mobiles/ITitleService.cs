@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Titles;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Mobiles;
 
 /// <summary>Fame/karma noble-title lookup table.</summary>
 public interface ITitleService

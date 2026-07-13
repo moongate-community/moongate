@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Loading;
 
 namespace Moongate.Server.Data.Internal;
 

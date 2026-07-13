@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Names;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Mobiles;
 
 /// <summary>In-memory registry of name pools, queryable by type.</summary>
 public interface INameService

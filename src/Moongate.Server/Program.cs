@@ -4,23 +4,29 @@ using Moongate.Core.Interfaces;
 using Moongate.Persistence;
 using Moongate.Scripting;
 using Moongate.Server;
+using Moongate.Server.Autostart;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
 using Moongate.Server.Extensions;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Loading;
+using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
+using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Data.EventLoop;
 using SquidStd.Core.Data.Jobs;
 using SquidStd.Core.Data.Timing;
 using SquidStd.Core.Extensions.Directories;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Extensions;
 using SquidStd.Services.Core.Extensions;
@@ -104,6 +110,9 @@ await ConsoleApp.RunAsync(
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+                container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+
+                container.Register<TimerAutostartService>(Reuse.Singleton);
 
                 container.RegisterInstance<IPendingLoginStore>(
                     new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
@@ -141,6 +150,17 @@ await ConsoleApp.RunAsync(
                 );
 
                 container.RegisterEventBusService();
+
+                var eventBus = container.Resolve<IEventBus>();
+
+                eventBus.Subscribe<EngineStartedEvent>(
+                    (_, _) =>
+                    {
+                        container.Resolve<TimerAutostartService>().InitDefaultTimers();
+
+                        return Task.CompletedTask;
+                    }
+                );
 
                 return container;
             }

@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.World;
 using Moongate.UO.Data.Signs;
 using Moongate.UO.Data.Types;
 

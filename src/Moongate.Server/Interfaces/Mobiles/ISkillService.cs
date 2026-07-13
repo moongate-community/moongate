@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Skills;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Mobiles;
 
 /// <summary>
 /// In-memory registry of skill definitions loaded from data/skills.yaml, queryable by id or name.

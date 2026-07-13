@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Loot;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Items;
 
 /// <summary>Stores loaded loot templates for case-insensitive lookup.</summary>
 public interface ILootTemplateService

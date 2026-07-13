@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Professions;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Mobiles;
 
 /// <summary>In-memory registry of profession presets, queryable by name.</summary>
 public interface IProfessionService

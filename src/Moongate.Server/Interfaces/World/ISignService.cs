@@ -1,7 +1,7 @@
 using Moongate.UO.Data.Signs;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.World;
 
 /// <summary>In-memory registry of world sign placements.</summary>
 public interface ISignService

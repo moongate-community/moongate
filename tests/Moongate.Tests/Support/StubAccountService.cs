@@ -1,7 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Types;
 using Moongate.Server.Data;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Accounts;
 
 namespace Moongate.Tests.Support;
 

@@ -1,6 +1,6 @@
 using Moongate.Server.Data;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Accounts;
 
 /// <summary>
 /// Correlates a login to the client's game-port reconnect via a single-use, expiring auth key.

@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Moongate.Server.Data;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Accounts;
 
 namespace Moongate.Server.Services.Accounts;
 

@@ -2,7 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Accounts;
 using Serilog;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;

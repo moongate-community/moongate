@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.World;
 using Moongate.UO.Data.Weather;
 
 namespace Moongate.Server.Services.World;

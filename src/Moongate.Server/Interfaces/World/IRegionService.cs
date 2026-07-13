@@ -1,7 +1,7 @@
 using Moongate.UO.Data.Regions;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.World;
 
 /// <summary>In-memory registry of map regions.</summary>
 public interface IRegionService

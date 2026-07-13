@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Items;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Items;
 
 /// <summary>In-memory registry of item templates, queryable by id.</summary>
 public interface IItemTemplateService

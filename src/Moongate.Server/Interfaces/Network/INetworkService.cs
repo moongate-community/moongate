@@ -1,6 +1,6 @@
 using Moongate.Network.Interfaces;
 
-namespace Moongate.Server.Interfaces;
+namespace Moongate.Server.Interfaces.Network;
 
 /// <summary>Owns the session-aware packet dispatch table and exposes the bound listener port.</summary>
 public interface INetworkService

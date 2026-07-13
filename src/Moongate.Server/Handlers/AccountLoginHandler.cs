@@ -3,7 +3,8 @@ using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Server.Data;
 using Moongate.Server.Data.Config;
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Interfaces.Network;
 
 namespace Moongate.Server.Handlers;
 

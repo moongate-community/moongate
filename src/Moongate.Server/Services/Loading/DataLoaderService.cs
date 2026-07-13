@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces;
+using Moongate.Server.Interfaces.Loading;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 
