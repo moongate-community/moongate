@@ -13,6 +13,7 @@ using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Network.Client;
+using SquidStd.Network.Data;
 using SquidStd.Network.Data.Events;
 using SquidStd.Network.Server;
 using SquidStd.Network.Spans;
@@ -86,7 +87,12 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
 
 
         var endpoint = new IPEndPoint(IPAddress.Parse(_config.Network.Address), _config.Network.Port);
-        _server = new SquidTcpServer(endpoint, new UoPacketFramer());
+        // UoSeedFramer is stateful per connection (it consumes the raw game-server seed), so hand each
+        // accepted client its own instance instead of sharing one.
+        _server = new SquidTcpServer(
+            endpoint,
+            connectionPipelineFactory: () => new ConnectionPipeline(Framer: new UoSeedFramer())
+        );
 
         _server.OnClientConnect += OnClientConnect;
         _server.OnClientDisconnect += OnClientDisconnect;
