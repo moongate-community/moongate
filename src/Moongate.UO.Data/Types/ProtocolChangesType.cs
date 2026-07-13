@@ -5,7 +5,7 @@ namespace Moongate.UO.Data.Types;
 /// version aggregates every change up to and including that client release.
 /// </summary>
 [Flags]
-public enum ProtocolChanges
+public enum ProtocolChangesType
 {
     None = 0x00000000,
     NewSpellbook = 0x00000001,

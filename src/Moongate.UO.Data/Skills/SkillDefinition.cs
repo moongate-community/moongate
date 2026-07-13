@@ -30,7 +30,7 @@ public sealed class SkillDefinition
 
     public double GainFactor { get; set; }
 
-    public Stat PrimaryStat { get; set; }
+    public StatType PrimaryStat { get; set; }
 
-    public Stat SecondaryStat { get; set; }
+    public StatType SecondaryStat { get; set; }
 }

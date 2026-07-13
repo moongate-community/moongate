@@ -26,7 +26,7 @@ public class ProfessionsLoaderTests
             Assert.Equal(7, professions.Count);
             var mage = professions.GetByName("Mage")!;
             Assert.Equal(4, mage.Skills.Count);
-            Assert.Equal(45, mage.Stats.Single(s => s.Type == Stat.Int).Value);
+            Assert.Equal(45, mage.Stats.Single(s => s.Type == StatType.Int).Value);
         }
         finally
         {

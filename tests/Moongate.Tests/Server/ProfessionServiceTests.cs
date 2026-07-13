@@ -14,7 +14,7 @@ public class ProfessionServiceTests
             TrueName = name,
             Type = "Profession",
             Skills = [new ProfessionSkill { Name = "Magery", Value = 30 }],
-            Stats = [new ProfessionStat { Type = Stat.Int, Value = 45 }]
+            Stats = [new ProfessionStat { Type = StatType.Int, Value = 45 }]
         };
     }
 
@@ -26,7 +26,7 @@ public class ProfessionServiceTests
 
         Assert.Equal(1, service.Count);
         Assert.Equal("Mage", service.GetByName("mage")!.Name);
-        Assert.Equal(Stat.Int, service.GetByName("Mage")!.Stats[0].Type);
+        Assert.Equal(StatType.Int, service.GetByName("Mage")!.Stats[0].Type);
     }
 
     [Fact]

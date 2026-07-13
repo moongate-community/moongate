@@ -39,8 +39,8 @@ public class SkillDefinitionYamlTests
             Assert.Equal(0.05, def.IntScale, 5);
             Assert.Equal(0.5, def.DexGain, 5);
             Assert.Equal(1, def.GainFactor, 5);
-            Assert.Equal(Stat.Int, def.PrimaryStat);
-            Assert.Equal(Stat.Dex, def.SecondaryStat);
+            Assert.Equal(StatType.Int, def.PrimaryStat);
+            Assert.Equal(StatType.Dex, def.SecondaryStat);
         }
         finally
         {

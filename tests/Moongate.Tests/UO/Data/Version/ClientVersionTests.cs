@@ -91,8 +91,8 @@ public class ClientVersionTests
     [Fact]
     public void ProtocolChanges_MapsToTheMatchingBracket()
     {
-        Assert.Equal(ProtocolChanges.Version70610, ClientVersion.Version70654.ProtocolChanges);
-        Assert.Equal(ProtocolChanges.Version7090, ClientVersion.Version7090.ProtocolChanges);
-        Assert.Equal(ProtocolChanges.Version7000, ClientVersion.Version7000.ProtocolChanges);
+        Assert.Equal(ProtocolChangesType.Version70610, ClientVersion.Version70654.ProtocolChangesType);
+        Assert.Equal(ProtocolChangesType.Version7090, ClientVersion.Version7090.ProtocolChangesType);
+        Assert.Equal(ProtocolChangesType.Version7000, ClientVersion.Version7000.ProtocolChangesType);
     }
 }

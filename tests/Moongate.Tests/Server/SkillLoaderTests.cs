@@ -25,7 +25,7 @@ public class SkillLoaderTests
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "skills.yaml")));
             Assert.Equal(58, skills.Count);
             Assert.Equal("Alchemy", skills.GetById(0)!.Name);
-            Assert.Equal(Stat.Dex, skills.GetByName("Alchemy")!.SecondaryStat);
+            Assert.Equal(StatType.Dex, skills.GetByName("Alchemy")!.SecondaryStat);
         }
         finally
         {
@@ -52,7 +52,7 @@ public class SkillLoaderTests
             await loader.LoadAsync();
 
             Assert.Equal(2, skills.Count);
-            Assert.Equal(Stat.Str, skills.GetByName("Anatomy")!.SecondaryStat);
+            Assert.Equal(StatType.Str, skills.GetByName("Anatomy")!.SecondaryStat);
         }
         finally
         {

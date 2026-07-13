@@ -43,27 +43,27 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
 
     public string SourceString { get; }
 
-    public ProtocolChanges ProtocolChanges
+    public ProtocolChangesType ProtocolChangesType
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => this switch
         {
-            var v when v.Type is ClientType.KR && v >= Version60142KR => ProtocolChanges.Version60142,
-            var v when v.Type is ClientType.KR                        => ProtocolChanges.Version6000,
-            var v when v >= Version70610                              => ProtocolChanges.Version70610,
-            var v when v >= Version70500                              => ProtocolChanges.Version70500,
-            var v when v >= Version704565                             => ProtocolChanges.Version704565,
-            var v when v >= Version70331                              => ProtocolChanges.Version70331,
-            var v when v >= Version70300                              => ProtocolChanges.Version70300,
-            var v when v >= Version70160                              => ProtocolChanges.Version70160,
-            var v when v >= Version70130                              => ProtocolChanges.Version70130,
-            var v when v >= Version7090                               => ProtocolChanges.Version7090,
-            var v when v >= Version7000                               => ProtocolChanges.Version7000,
-            var v when v >= Version60142                              => ProtocolChanges.Version60142,
-            var v when v >= Version6017                               => ProtocolChanges.Version6017,
-            var v when v >= Version6000                               => ProtocolChanges.Version6000,
-            var v when v >= Version502b                               => ProtocolChanges.Version502b,
-            _                                                         => ProtocolChanges.Version500a // We do not support versions lower than 5.0.0a
+            var v when v.Type is ClientType.KR && v >= Version60142KR => ProtocolChangesType.Version60142,
+            var v when v.Type is ClientType.KR                        => ProtocolChangesType.Version6000,
+            var v when v >= Version70610                              => ProtocolChangesType.Version70610,
+            var v when v >= Version70500                              => ProtocolChangesType.Version70500,
+            var v when v >= Version704565                             => ProtocolChangesType.Version704565,
+            var v when v >= Version70331                              => ProtocolChangesType.Version70331,
+            var v when v >= Version70300                              => ProtocolChangesType.Version70300,
+            var v when v >= Version70160                              => ProtocolChangesType.Version70160,
+            var v when v >= Version70130                              => ProtocolChangesType.Version70130,
+            var v when v >= Version7090                               => ProtocolChangesType.Version7090,
+            var v when v >= Version7000                               => ProtocolChangesType.Version7000,
+            var v when v >= Version60142                              => ProtocolChangesType.Version60142,
+            var v when v >= Version6017                               => ProtocolChangesType.Version6017,
+            var v when v >= Version6000                               => ProtocolChangesType.Version6000,
+            var v when v >= Version502b                               => ProtocolChangesType.Version502b,
+            _                                                         => ProtocolChangesType.Version500a // We do not support versions lower than 5.0.0a
         };
     }
 
@@ -167,22 +167,22 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
 
     public static int Compare(ClientVersion? a, ClientVersion? b)
     {
-        if (IsNull(a) && IsNull(b))
+        if (a is null && b is null)
         {
             return 0;
         }
 
-        if (IsNull(a))
+        if (a is null)
         {
             return -1;
         }
 
-        if (IsNull(b))
+        if (b is null)
         {
             return 1;
         }
 
-        return a!.CompareTo(b);
+        return a.CompareTo(b);
     }
 
     public int CompareTo(ClientVersion? o)

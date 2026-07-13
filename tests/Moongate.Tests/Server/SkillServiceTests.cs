@@ -13,7 +13,7 @@ public class SkillServiceTests
 
     private static SkillDefinition Def(int id, string name)
     {
-        return new SkillDefinition { Id = id, Name = name, PrimaryStat = Stat.Int, SecondaryStat = Stat.Dex };
+        return new SkillDefinition { Id = id, Name = name, PrimaryStat = StatType.Int, SecondaryStat = StatType.Dex };
     }
 
     [Fact]
