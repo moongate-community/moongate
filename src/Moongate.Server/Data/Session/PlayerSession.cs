@@ -84,6 +84,15 @@ public sealed class PlayerSession : ISeedTarget
     }
 
     /// <summary>
+    /// Turns on UO transport compression for outbound packets. The login handshake is sent in the
+    /// clear; the game server compresses everything from the character list onward.
+    /// </summary>
+    public void EnableCompression()
+    {
+        Compression.Enabled = true;
+    }
+
+    /// <summary>
     /// Serializes <paramref name="packet" /> on the calling (main game-loop) thread and hands the
     /// bytes to the client fire-and-forget, so the socket I/O never blocks the frame. The client's
     /// internal send lock keeps writes ordered per session.
