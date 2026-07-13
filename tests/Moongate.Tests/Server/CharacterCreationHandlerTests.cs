@@ -45,5 +45,12 @@ public class CharacterCreationHandlerTests
         Assert.Equal((ushort)0x044E, character.HairHue.Value);
         Assert.Equal((ushort)0x2040, character.FacialHairStyle);
         Assert.Equal((ushort)0x0450, character.FacialHairHue.Value);
+
+        // Four skill slots: three chosen (stored in tenths) and one unused (0,0) skipped.
+        Assert.Equal(3, character.Skills.Count);
+        Assert.Equal(500, character.Skills[1]);
+        Assert.Equal(300, character.Skills[2]);
+        Assert.Equal(200, character.Skills[3]);
+        Assert.False(character.Skills.ContainsKey(0));
     }
 }

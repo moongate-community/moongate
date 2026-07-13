@@ -23,6 +23,9 @@ public class MobileEntity : ISerialIdEntity
 
     public int Intelligence { get; set; }
 
+    /// <summary>Skill values keyed by skill id, stored in tenths (500 = 50.0).</summary>
+    public Dictionary<int, int> Skills { get; set; } = new();
+
     public Hue SkinHue { get; set; }
 
     public ushort HairStyle { get; set; }

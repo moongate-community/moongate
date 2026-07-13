@@ -38,7 +38,7 @@ public sealed class CharacterCreationHandler : IPacketHandler<CharacterCreationP
 
     public static MobileEntity CreateCharacter(CharacterCreationPacket packet)
     {
-        return new MobileEntity
+        var character = new MobileEntity
         {
             Name = packet.Name,
             Gender = packet.Gender,
@@ -53,6 +53,18 @@ public sealed class CharacterCreationHandler : IPacketHandler<CharacterCreationP
             FacialHairStyle = (ushort)packet.FacialHairStyle,
             FacialHairHue = new Hue((ushort)packet.FacialHairHue)
         };
+
+        foreach (var skill in packet.Skills)
+        {
+            if (skill.Value == 0)
+            {
+                continue; // unused starting-skill slot
+            }
+
+            character.Skills[skill.SkillId] = skill.Value * 10; // stored in tenths (50 -> 500)
+        }
+
+        return character;
     }
 
     public void Register(INetworkService network)
