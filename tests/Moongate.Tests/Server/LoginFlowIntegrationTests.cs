@@ -7,6 +7,9 @@ using Moongate.Server.Interfaces;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.World;
+using Moongate.UO.Data.StartingCities;
+using Moongate.UO.Data.Types;
 using Moongate.Tests.Support;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Interfaces.Threading;
@@ -53,11 +56,24 @@ public class LoginFlowIntegrationTests
         var accounts = new StubAccountService();
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
+        var cities = new StartingCityService();
+        cities.Register(new StartingCity
+        {
+            City = "Britain",
+            Building = "Castle British",
+            Description = 1075072,
+            X = 1495,
+            Y = 1629,
+            Z = 10,
+            Map = MapType.Trammel
+        });
+
         var handlers = new IPacketHandlerRegistration[]
         {
             new LoginSeedHandler(),
             new AccountLoginHandler(accounts, config),
-            new SelectServerHandler(pending, config)
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities)
         };
 
         var network = new NetworkService(sessions, config, handlers, eventBus, new InlineDispatcher());
@@ -119,6 +135,46 @@ public class LoginFlowIntegrationTests
             var redirect = ReadResponse(socket, 0x8C);
             Assert.Equal(0x8C, redirect[0]);
             Assert.Equal(11, redirect.Length);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task FullLogin_GameLogin_ReturnsCharacterList()
+    {
+        var config = LoopbackConfig();
+        var network = await StartServerAsync(config);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A;
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+            ReadResponse(socket, 0xA8);
+
+            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+            var redirect = ReadResponse(socket, 0x8C);
+            var authKey = System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+            var gameLogin = new byte[65];
+            gameLogin[0] = 0x91;
+            System.Buffers.Binary.BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+            Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
+            socket.Send(gameLogin);
+
+            var charList = ReadResponse(socket, 0xA9);
+
+            Assert.Equal(0xA9, charList[0]);
+            Assert.Equal(7, charList[3]); // slot count
         }
         finally
         {
