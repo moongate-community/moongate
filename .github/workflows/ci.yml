@@ -32,6 +32,11 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Test release scripts
+        run: |
+          ./scripts/test-semantic-release-prepare.sh
+          ./scripts/test-resolve-release-tags.sh
+
       - name: Restore
         run: dotnet restore Moongate.slnx
 

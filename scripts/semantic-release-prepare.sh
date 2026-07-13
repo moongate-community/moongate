@@ -9,18 +9,28 @@ fi
 version="$1"
 root_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 props_file="$root_dir/Directory.Build.props"
-version_count=$(grep -Ec '<Version>[^<]+</Version>' "$props_file" || true)
+declare -A versions=(
+  [Version]="$version"
+  [AssemblyVersion]="${version}.0"
+  [FileVersion]="${version}.0"
+  [InformationalVersion]="$version"
+)
 
-if [[ "$version_count" -ne 1 ]]; then
-  echo "Expected exactly one <Version> element in $props_file, found $version_count" >&2
-  exit 1
-fi
+for property in Version AssemblyVersion FileVersion InformationalVersion; do
+  property_count=$(grep -Ec "<${property}>[^<]+</${property}>" "$props_file" || true)
 
-sed -i -E "s#<Version>[^<]+</Version>#<Version>${version}</Version>#" "$props_file"
+  if [[ "$property_count" -ne 1 ]]; then
+    echo "Expected exactly one <${property}> element in $props_file, found $property_count" >&2
+    exit 1
+  fi
 
-if ! grep -Fq "<Version>${version}</Version>" "$props_file"; then
-  echo "Failed to update $props_file to version $version" >&2
-  exit 1
-fi
+  property_version="${versions[$property]}"
+  sed -i -E "s#<${property}>[^<]+</${property}>#<${property}>${property_version}</${property}>#" "$props_file"
+
+  if ! grep -Fq "<${property}>${property_version}</${property}>" "$props_file"; then
+    echo "Failed to update ${property} in $props_file to $property_version" >&2
+    exit 1
+  fi
+done
 
 echo "Updated Directory.Build.props to version $version"
