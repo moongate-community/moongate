@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces;
 using Moongate.Server.Types;
 using Moongate.UO.Data.Version;
@@ -30,6 +31,8 @@ public sealed class PlayerSession : ISeedTarget
     public uint? Seed { get; private set; }
 
     public string? Username { get; private set; }
+
+    public MobileEntity? Character { get; private set; }
 
     public UoCompressionMiddleware Compression { get; }
 
@@ -90,6 +93,15 @@ public sealed class PlayerSession : ISeedTarget
     public void EnableCompression()
     {
         Compression.Enabled = true;
+    }
+
+    /// <summary>Attaches the freshly created (or selected) character to this session.</summary>
+    public void SetCharacter(MobileEntity character)
+    {
+        lock (_stateSync)
+        {
+            Character = character;
+        }
     }
 
     /// <summary>

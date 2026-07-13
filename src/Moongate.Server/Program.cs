@@ -113,6 +113,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, AccountLoginHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, GameServerLoginHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, CharacterCreationHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
 
