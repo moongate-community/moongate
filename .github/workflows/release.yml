@@ -1,0 +1,248 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Existing release tag to republish, for example v0.2.0
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: moongate-community/moongate
+
+jobs:
+  gate:
+    name: Resolve release request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      should_release: ${{ steps.push_gate.outputs.result || steps.manual_gate.outputs.should_release }}
+      version: ${{ steps.manual_gate.outputs.version }}
+      release_ref: ${{ steps.manual_gate.outputs.release_ref }}
+
+    steps:
+      - name: Evaluate merged pull request
+        id: push_gate
+        if: github.event_name == 'push'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          result-encoding: string
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: pullRequests } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner,
+              repo,
+              commit_sha: context.sha,
+            });
+
+            const eligiblePullRequest = pullRequests.find((pullRequest) =>
+              pullRequest.merged_at !== null &&
+              pullRequest.base.ref === 'main' &&
+              pullRequest.labels.some((label) => label.name === 'release')
+            );
+
+            if (!eligiblePullRequest) {
+              core.notice(`No merged pull request with the release label is associated with ${context.sha}.`);
+              return 'false';
+            }
+
+            core.notice(`Release approved by pull request #${eligiblePullRequest.number}.`);
+            return 'true';
+
+      - name: Checkout tags for manual recovery
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Validate manual recovery tag
+        id: manual_gate
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$INPUT_VERSION" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Version must use exact vX.Y.Z format" >&2
+            exit 64
+          fi
+
+          if ! git show-ref --verify --quiet "refs/tags/$INPUT_VERSION"; then
+            echo "Tag $INPUT_VERSION does not exist" >&2
+            exit 1
+          fi
+
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "version=${INPUT_VERSION#v}" >> "$GITHUB_OUTPUT"
+          echo "release_ref=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+
+  verify:
+    name: Verify release candidate
+    needs: gate
+    if: needs.gate.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout release candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.gate.outputs.release_ref || github.sha }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Moongate.slnx
+
+      - name: Build
+        run: dotnet build Moongate.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Moongate.slnx --configuration Release --no-build
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Verify Docker image build
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: src/Moongate.Server/Dockerfile
+          platforms: linux/amd64
+          push: false
+          provenance: false
+          sbom: false
+
+  semantic_release:
+    name: Create semantic release
+    needs:
+      - gate
+      - verify
+    if: github.event_name == 'push' && needs.gate.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: read
+    outputs:
+      version: ${{ steps.semantic_release.outputs.version }}
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.10.0
+
+      - name: Configure release author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Run semantic-release
+        id: semantic_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          npx -y \
+            --package semantic-release@25.0.7 \
+            --package @semantic-release/changelog@6.0.3 \
+            --package @semantic-release/commit-analyzer@13.0.1 \
+            --package @semantic-release/exec@7.1.0 \
+            --package @semantic-release/git@10.0.1 \
+            --package @semantic-release/github@12.0.9 \
+            --package @semantic-release/release-notes-generator@14.1.1 \
+            --package conventional-changelog-conventionalcommits@10.2.1 \
+            semantic-release
+
+  publish:
+    name: Publish GHCR image
+    needs:
+      - gate
+      - verify
+      - semantic_release
+    if: >-
+      always() &&
+      needs.gate.outputs.should_release == 'true' &&
+      needs.verify.result == 'success' &&
+      (needs.semantic_release.result == 'success' || needs.semantic_release.result == 'skipped') &&
+      (needs.semantic_release.outputs.version != '' || needs.gate.outputs.version != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RELEASE_VERSION: ${{ needs.semantic_release.outputs.version || needs.gate.outputs.version }}
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Login to GHCR
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Resolve release commit tag
+        id: release_commit
+        run: echo "sha_tag=sha-$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate image metadata
+        id: metadata
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          context: git
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.RELEASE_VERSION }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.RELEASE_VERSION }}
+            type=semver,pattern={{major}},value=${{ env.RELEASE_VERSION }}
+            type=raw,value=latest
+            type=raw,value=${{ steps.release_commit.outputs.sha_tag }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: src/Moongate.Server/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          provenance: false
+          sbom: false
+
+      - name: Verify published manifest
+        run: docker buildx imagetools inspect "${REGISTRY}/${IMAGE_NAME}:${RELEASE_VERSION}"
