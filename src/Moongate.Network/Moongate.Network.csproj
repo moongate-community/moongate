@@ -12,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SquidStd.Network" Version="0.28.0" />
-      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.28.0" />
+      <PackageReference Include="SquidStd.Network" Version="0.31.0" />
+      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.31.0" />
     </ItemGroup>
 
 </Project>

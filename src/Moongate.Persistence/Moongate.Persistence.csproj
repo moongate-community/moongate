@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SquidStd.Persistence" Version="0.28.0" />
-      <PackageReference Include="SquidStd.Persistence.Abstractions" Version="0.28.0" />
-      <PackageReference Include="SquidStd.Persistence.MessagePack" Version="0.28.0" />
-      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.28.0" />
+      <PackageReference Include="SquidStd.Persistence" Version="0.31.0" />
+      <PackageReference Include="SquidStd.Persistence.Abstractions" Version="0.31.0" />
+      <PackageReference Include="SquidStd.Persistence.MessagePack" Version="0.31.0" />
+      <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.31.0" />
     </ItemGroup>
 
     <ItemGroup>
