@@ -31,6 +31,7 @@ jobs:
       should_release: ${{ steps.push_gate.outputs.result || steps.manual_gate.outputs.should_release }}
       version: ${{ steps.manual_gate.outputs.version }}
       release_ref: ${{ steps.push_range.outputs.release_ref || steps.manual_gate.outputs.release_ref }}
+      release_pull_requests: ${{ steps.push_gate.outputs.pull_requests }}
 
     steps:
       - name: Checkout current main
@@ -106,6 +107,7 @@ jobs:
             }
 
             const pullRequestNumbers = [...eligiblePullRequests.keys()].sort((a, b) => a - b);
+            core.setOutput('pull_requests', JSON.stringify(pullRequestNumbers));
             core.notice(`Release approved by pull request(s): ${pullRequestNumbers.map((number) => `#${number}`).join(', ')}.`);
             return 'true';
 
@@ -217,7 +219,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
-      pull-requests: read
+      pull-requests: write
     outputs:
       version: ${{ steps.semantic_release.outputs.version }}
 
@@ -259,6 +261,34 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           GH_TOKEN: ${{ github.token }}
         run: tools/release/node_modules/.bin/semantic-release
+
+      - name: Consume no-op release approvals
+        if: success() && steps.semantic_release.outputs.version == ''
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RELEASE_PULL_REQUESTS: ${{ needs.gate.outputs.release_pull_requests }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pullRequestNumbers = JSON.parse(process.env.RELEASE_PULL_REQUESTS || '[]');
+
+            for (const pullRequestNumber of pullRequestNumbers) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: pullRequestNumber,
+                  name: 'release',
+                });
+                core.notice(`Consumed release approval from pull request #${pullRequestNumber}.`);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.notice(`Release label is already absent from pull request #${pullRequestNumber}.`);
+                } else {
+                  throw error;
+                }
+              }
+            }
 
   reconcile_release:
     name: Reconcile GitHub release
@@ -340,7 +370,10 @@ jobs:
 
       - name: Resolve safe rolling tags
         id: rolling_tags
-        run: ./scripts/resolve-release-tags.sh "$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          ./scripts/resolve-release-tags.sh "$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Generate image metadata
         id: metadata

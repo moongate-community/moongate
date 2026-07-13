@@ -8,12 +8,18 @@ fi
 
 release_version="$1"
 stable_tag_pattern='^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+
+if ! git rev-parse --verify 'origin/main^{commit}' >/dev/null 2>&1; then
+  echo "origin/main is required to resolve release tags" >&2
+  exit 1
+fi
+
 mapfile -t stable_versions < <(
   while IFS= read -r tag; do
     if [[ "$tag" =~ $stable_tag_pattern ]]; then
       echo "${tag#v}"
     fi
-  done < <(git tag --list)
+  done < <(git tag --merged origin/main --list)
 )
 mapfile -t stable_versions < <(printf '%s\n' "${stable_versions[@]}" | sort -V)
 

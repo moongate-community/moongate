@@ -16,6 +16,11 @@ for tag in v0.1.0 v0.2.0 v0.2.1 v1.0.0; do
   git -C "$temp_dir" tag "$tag"
 done
 
+git -C "$temp_dir" update-ref refs/remotes/origin/main HEAD
+git -C "$temp_dir" commit --quiet --allow-empty -m off-main
+git -C "$temp_dir" tag v9.0.0
+git -C "$temp_dir" reset --quiet --hard HEAD^
+
 assert_output() {
   local version="$1"
   local expected_latest="$2"

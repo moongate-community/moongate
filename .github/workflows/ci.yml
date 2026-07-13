@@ -32,6 +32,16 @@ jobs:
         with:
           global-json-file: global.json
 
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.10.0
+
+      - name: Verify locked release tooling
+        run: |
+          npm ci --prefix tools/release --ignore-scripts
+          tools/release/node_modules/.bin/semantic-release --help >/dev/null
+
       - name: Test release scripts
         run: |
           ./scripts/test-semantic-release-prepare.sh
