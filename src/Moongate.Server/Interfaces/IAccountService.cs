@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Data;
 
 namespace Moongate.Server.Interfaces;
@@ -6,4 +7,7 @@ namespace Moongate.Server.Interfaces;
 public interface IAccountService
 {
     AccountAuthResult Authenticate(string username, string password);
+
+    Serial? GetAccountIdByUsername(string username);
+
 }

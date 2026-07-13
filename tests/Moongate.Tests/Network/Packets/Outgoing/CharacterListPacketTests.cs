@@ -22,7 +22,7 @@ public class CharacterListPacketTests
             Z = 10,
             Map = MapType.Trammel
         };
-        var packet = new CharacterListPacket(new[] { city }, 2, CharacterListFlagType.Modern);
+        var packet = new CharacterListPacket(new[] { "Squid" }, new[] { city }, 2, CharacterListFlagType.Modern);
 
         var writer = new SpanWriter(256, resize: true);
         packet.Write(ref writer);
@@ -32,7 +32,8 @@ public class CharacterListPacketTests
         Assert.Equal(220, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(1))); // 11 + 60*2 + 89*1
         Assert.Equal(220, b.Length);
         Assert.Equal(2, b[3]); // slot count
-        Assert.All(b.AsSpan(4, 120).ToArray(), x => Assert.Equal(0, x)); // two empty slots
+        Assert.Equal("Squid", Encoding.ASCII.GetString(b, 4, 30).TrimEnd('\0')); // slot 0 name
+        Assert.All(b.AsSpan(34, 90).ToArray(), x => Assert.Equal(0, x)); // slot 0 password + empty slot 1
         Assert.Equal(1, b[124]); // city count
         Assert.Equal(0, b[125]); // city index
         Assert.Equal("Britain", Encoding.ASCII.GetString(b, 126, 32).TrimEnd('\0'));

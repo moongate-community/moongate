@@ -7,6 +7,5 @@ public class MobileEntity : ISerialIdEntity
 {
     public Serial Id { get; set; }
 
-
-
+    public string Name { get; set; }
 }

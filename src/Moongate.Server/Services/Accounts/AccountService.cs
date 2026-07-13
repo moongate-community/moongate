@@ -38,4 +38,9 @@ public class AccountService : IAccountService
 
         return new AccountAuthResult { Success = true };
     }
+
+    public Serial? GetAccountIdByUsername(string username)
+    {
+        return _accountStore.Query().FirstOrDefault(s => s.Username == username)?.Id;
+    }
 }

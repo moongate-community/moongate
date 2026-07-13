@@ -6,10 +6,12 @@ using SquidStd.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing;
 
 /// <summary>
-/// Character list (0xA9): the character slots (empty until characters are persisted) followed by the
-/// starting cities, in the extended 7.0.13+ layout. Length is <c>11 + 60*SlotCount + 89*Cities.Count</c>.
+/// Character list (0xA9): the character slots followed by the starting cities, in the extended
+/// 7.0.13+ layout. The first <see cref="Characters" /> fill the slots by index; the rest stay empty.
+/// Length is <c>11 + 60*SlotCount + 89*Cities.Count</c>.
 /// </summary>
 public readonly record struct CharacterListPacket(
+    IReadOnlyList<string> Characters,
     IReadOnlyList<StartingCity> Cities,
     byte SlotCount,
     CharacterListFlagType Flags
@@ -29,7 +31,7 @@ public readonly record struct CharacterListPacket(
 
         for (var i = 0; i < SlotCount; i++)
         {
-            writer.WriteAscii(string.Empty, 30); // name
+            writer.WriteAscii(i < Characters.Count ? Characters[i] : string.Empty, 30); // name
             writer.WriteAscii(string.Empty, 30); // password
         }
 

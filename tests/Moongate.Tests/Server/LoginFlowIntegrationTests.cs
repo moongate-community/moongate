@@ -57,23 +57,25 @@ public class LoginFlowIntegrationTests
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
         var cities = new StartingCityService();
-        cities.Register(new StartingCity
-        {
-            City = "Britain",
-            Building = "Castle British",
-            Description = 1075072,
-            X = 1495,
-            Y = 1629,
-            Z = 10,
-            Map = MapType.Trammel
-        });
+        cities.Register(
+            new StartingCity
+            {
+                City = "Britain",
+                Building = "Castle British",
+                Description = 1075072,
+                X = 1495,
+                Y = 1629,
+                Z = 10,
+                Map = MapType.Trammel
+            }
+        );
 
         var handlers = new IPacketHandlerRegistration[]
         {
             new LoginSeedHandler(),
             new AccountLoginHandler(accounts, config),
             new SelectServerHandler(pending, config),
-            new GameServerLoginHandler(pending, cities)
+            new GameServerLoginHandler(pending, cities, accounts, new StubCharacterService())
         };
 
         var network = new NetworkService(sessions, config, handlers, eventBus, new InlineDispatcher());
@@ -217,18 +219,22 @@ public class LoginFlowIntegrationTests
 
         using var created = new ManualResetEventSlim();
         using var destroyed = new ManualResetEventSlim();
-        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
-        {
-            created.Set();
+        eventBus.Subscribe<SessionCreatedEvent>(
+            (_, _) =>
+            {
+                created.Set();
 
-            return Task.CompletedTask;
-        });
-        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
-        {
-            destroyed.Set();
+                return Task.CompletedTask;
+            }
+        );
+        eventBus.Subscribe<SessionDestroyedEvent>(
+            (_, _) =>
+            {
+                destroyed.Set();
 
-            return Task.CompletedTask;
-        });
+                return Task.CompletedTask;
+            }
+        );
 
         var network = await StartServerAsync(config, eventBus);
 
@@ -256,15 +262,17 @@ public class LoginFlowIntegrationTests
         var eventBus = new EventBusService();
 
         using var dispatched = new ManualResetEventSlim();
-        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
-        {
-            if (e.OpCode == 0x80)
+        eventBus.Subscribe<PacketDispatchedEvent>(
+            (e, _) =>
             {
-                dispatched.Set();
-            }
+                if (e.OpCode == 0x80)
+                {
+                    dispatched.Set();
+                }
 
-            return Task.CompletedTask;
-        });
+                return Task.CompletedTask;
+            }
+        );
 
         var network = await StartServerAsync(config, eventBus);
 

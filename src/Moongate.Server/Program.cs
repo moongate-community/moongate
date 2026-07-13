@@ -103,6 +103,8 @@ await ConsoleApp.RunAsync(
                 container.RegisterConfigSection<MoongateConfig>("moongate");
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
+                container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+
                 container.RegisterInstance<IPendingLoginStore>(
                     new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
                 );
@@ -113,8 +115,6 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, GameServerLoginHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
-
-
 
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(

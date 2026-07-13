@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Network.Types;
 using Moongate.Server.Data;
 using Moongate.Server.Interfaces;
@@ -18,5 +19,10 @@ public sealed class StubAccountService : IAccountService
         }
 
         return AccountAuthResult.Ok(username);
+    }
+
+    public Serial? GetAccountIdByUsername(string username)
+    {
+        return string.IsNullOrEmpty(username) ? null : new Serial(1);
     }
 }
