@@ -13,7 +13,7 @@ public readonly record struct ConnectToGameServerPacket(IPAddress Address, ushor
     public void Write(ref SpanWriter writer)
     {
         writer.Write(PacketId);
-        IpV4Writer.WriteReversed(ref writer, Address);
+        IpV4Writer.WriteNormal(ref writer, Address);
         writer.Write(Port);
         writer.Write(AuthKey);
     }

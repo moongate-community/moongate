@@ -4,8 +4,9 @@ using SquidStd.Network.Spans;
 namespace Moongate.Network.Helpers;
 
 /// <summary>
-/// Writes/reads an IPv4 address as 4 octets in reverse order, the byte order UO
-/// clients expect in the server list and game-server redirect packets.
+/// Writes/reads an IPv4 address as 4 octets. UO uses opposite byte orders in the
+/// two login packets: the server list (0xA8) expects the octets reversed, while
+/// the game-server redirect (0x8C) expects them in normal order.
 /// </summary>
 public static class IpV4Writer
 {
@@ -17,6 +18,16 @@ public static class IpV4Writer
         writer.Write(octets[2]);
         writer.Write(octets[1]);
         writer.Write(octets[0]);
+    }
+
+    public static void WriteNormal(ref SpanWriter writer, IPAddress address)
+    {
+        var octets = address.MapToIPv4().GetAddressBytes();
+
+        writer.Write(octets[0]);
+        writer.Write(octets[1]);
+        writer.Write(octets[2]);
+        writer.Write(octets[3]);
     }
 
     public static IPAddress ReadReversed(ref SpanReader reader)

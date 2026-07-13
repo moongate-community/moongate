@@ -23,6 +23,8 @@ public class LoginFlowPacketsTests
         Assert.Equal(46, bytes.Length);
         // name ascii starts at offset 8 (after index ushort at 6..7)
         Assert.Equal("Moongate", System.Text.Encoding.ASCII.GetString(bytes, 8, 8));
+        // IP at offset 42 (index 2 + name 32 + percentFull 1 + timezone 1), reversed: 1,0,0,127
+        Assert.Equal(new byte[] { 1, 0, 0, 127 }, bytes.AsSpan(42, 4).ToArray());
     }
 
     [Fact]
@@ -52,7 +54,7 @@ public class LoginFlowPacketsTests
     }
 
     [Fact]
-    public void ConnectToGameServer_AddressRoundTripsThroughReversedIp()
+    public void ConnectToGameServer_WritesAddressInNormalOrder()
     {
         var packet = new ConnectToGameServerPacket(IPAddress.Parse("192.168.1.50"), 2593, 1);
 
@@ -60,7 +62,8 @@ public class LoginFlowPacketsTests
         packet.Write(ref writer);
         var bytes = writer.Span.ToArray();
 
-        // reversed order: 50,1,168,192
-        Assert.Equal(new byte[] { 50, 1, 168, 192 }, bytes.AsSpan(1, 4).ToArray());
+        // The 0x8C redirect writes the IP in normal order (unlike the 0xA8 server list,
+        // which reverses it); otherwise the client dials a mangled address and cannot reconnect.
+        Assert.Equal(new byte[] { 192, 168, 1, 50 }, bytes.AsSpan(1, 4).ToArray());
     }
 }
