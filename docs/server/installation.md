@@ -10,9 +10,11 @@ The repository files establish the .NET requirement and a Linux container build.
 
 ## Build from source
 
-From a checkout of the repository:
+Check out the canonical repository, then restore and build from its root:
 
 ```bash
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
 dotnet restore Moongate.slnx
 dotnet build Moongate.slnx --configuration Release --no-restore
 ```

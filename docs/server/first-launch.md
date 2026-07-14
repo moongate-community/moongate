@@ -2,7 +2,7 @@
 
 ## Run from source
 
-Choose a writable server root and point the server at an existing Ultima Online client-data directory:
+From the repository root, choose a writable server root and point the server at an existing Ultima Online client-data directory:
 
 ```bash
 dotnet run --project src/Moongate.Server/Moongate.Server.csproj -- \
