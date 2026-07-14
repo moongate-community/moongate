@@ -36,4 +36,3 @@ Account authentication and username lookup query the account store. Character cr
 
 - `tests/Moongate.Tests/Core/Primitives/SerialTests.cs`
 - `tests/Moongate.Tests/Server/CharacterServiceTests.cs`
-

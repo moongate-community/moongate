@@ -36,4 +36,3 @@ Delays and intervals are converted from milliseconds to `TimeSpan`. Each closure
 ### Tests
 
 - `tests/Moongate.Tests/Scripting/GameLoopModuleTests.cs`
-

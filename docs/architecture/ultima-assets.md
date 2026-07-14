@@ -60,4 +60,3 @@ These classes form a decoding and presentation layer over client assets. They ar
 - `tests/Moongate.Tests/Ultima/ItemCatalogTests.cs`
 - `tests/Moongate.Tests/Ultima/PaperdollComposerTests.cs`
 - `tests/Moongate.Tests/Ultima/SyntheticAssetFixtureTests.cs`
-
