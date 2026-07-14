@@ -113,6 +113,7 @@ await ConsoleApp.RunAsync(
 
                 container.RegisterInstance<Random>(Random.Shared);
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+                container.Register<IItemService, ItemService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);
 
