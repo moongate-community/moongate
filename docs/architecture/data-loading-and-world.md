@@ -6,7 +6,7 @@ Moongate separates editable source data from runtime lookup services. Startup lo
 
 `MoongateDataLoaderPlugin` registers each `IDataLoader` as a singleton together with an integer priority. `RegisterDataLoaderService` resolves the registrations in ascending priority order, and `DataLoaderService.StartAsync` awaits each loader sequentially. An exception stops the loop and propagates from startup; shutdown has no corresponding unload step.
 
-The current order is skills (`0`), professions (`10`), locations (`20`), names (`30`), regions (`40`), weather (`50`), teleporters (`60`), containers (`70`), signs (`80`), container gumps (`90`), starting cities (`100`), titles (`110`), item templates (`120`), and loot templates (`130`). Item templates deliberately precede loot templates because loot validation resolves item ids and tags.
+The current order is skills (`0`), professions (`10`), locations (`20`), names (`30`), regions (`40`), weather (`50`), teleporters (`60`), containers (`70`), signs (`80`), container gumps (`90`), starting cities (`100`), titles (`110`), item templates (`120`), loot templates (`130`), and starting items (`140`). Item templates deliberately precede loot templates because loot validation resolves item ids and tags; starting items load last.
 
 `FilesLoaderService` is a separate lifecycle service at priority `100`. It points the static Ultima file locator at `MoongateConfig.UltimaDirectory`, counts located client-file paths, and publishes `FilesLoadedEvent`. The data-loader pipeline is registered with lifecycle priority `110`. These numeric registrations are the visible sequencing contract; no broader event-delivery guarantee is inferred.
 
@@ -24,6 +24,7 @@ The loaded services expose focused in-memory views rather than a general world o
 - Locations are grouped by facet name; regions, signs, and teleporters provide map-filtered views.
 - Weather profiles are keyed by id, while starting cities preserve registration order because the client uses that list index during character creation.
 - `MobileFactoryService` consumes a starting-city lookup to assign a new character's map and position, falling back to the first city for an out-of-range client index.
+- `StartingItemsService` resolves a new character's kit by merging the universal, body-specific, and top-skill entries; `CharacterService` uses it to equip and fill the starter backpack.
 
 Registration generally replaces dictionary entries sharing a key or appends to list-backed registries. The services do not advertise live file watching or reload semantics.
 
@@ -40,6 +41,7 @@ Registration generally replaces dictionary entries sharing a key or appends to l
 - `src/Moongate.Server/Services/Loading/FilesLoaderService.cs`
 - `src/Moongate.Server/Loaders/ItemTemplatesLoader.cs`
 - `src/Moongate.Server/Loaders/LootTemplatesLoader.cs`
+- `src/Moongate.Server/Loaders/StartingItemsLoader.cs`
 - `src/Moongate.Server/Loaders/LocationsLoader.cs`
 - `src/Moongate.Server/Services/Items/ItemTemplateYamlDeserializer.cs`
 - `src/Moongate.Server/Services/Items/ItemTemplateValidator.cs`
@@ -51,6 +53,7 @@ Registration generally replaces dictionary entries sharing a key or appends to l
 - `src/Moongate.Server/Services/World/StartingCityService.cs`
 - `src/Moongate.Server/Services/World/TeleporterService.cs`
 - `src/Moongate.Server/Services/World/WeatherService.cs`
+- `src/Moongate.Server/Services/World/StartingItemsService.cs`
 - `src/Moongate.Server/Services/Mobiles/MobileFactoryService.cs`
 - `src/Moongate.UO.Data/Items/ItemTemplate.cs`
 - `src/Moongate.UO.Data/Loot/LootTemplate.cs`

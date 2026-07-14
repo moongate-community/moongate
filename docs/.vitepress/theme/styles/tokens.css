@@ -13,6 +13,7 @@
   --mg-text: #f4f1e8;
   --mg-text-muted: #aaa8c1;
   --mg-grid: 4px;
+  --mg-font-display: "Press Start 2P", ui-monospace, "Cascadia Code", monospace;
   --vp-c-bg: var(--mg-midnight-900);
   --vp-c-bg-alt: var(--mg-midnight-950);
   --vp-c-bg-elv: var(--mg-midnight-800);
@@ -21,7 +22,7 @@
   --vp-c-text-2: var(--mg-text-muted);
   --vp-c-brand-1: var(--mg-moonglow-400);
   --vp-c-brand-2: #8bdcf0;
-  --vp-c-brand-3: var(--mg-periwinkle-400);
+  --vp-c-brand-3: var(--mg-periwinkle-300);
   --vp-c-divider: #45436c;
   --vp-c-gutter: var(--mg-midnight-950);
 }

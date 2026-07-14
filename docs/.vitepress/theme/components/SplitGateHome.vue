@@ -7,6 +7,19 @@ const operatorLinks = [
   { label: 'Operate', href: '/server/operations' },
   { label: 'Troubleshoot', href: '/server/troubleshooting' }
 ]
+
+function openSearch() {
+  const button = document.querySelector<HTMLElement>(
+    '.VPNavBarSearch button, .DocSearch-Button, .VPNavBarSearchButton'
+  )
+
+  if (button) {
+    button.click()
+    return
+  }
+
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: '/', bubbles: true }))
+}
 </script>
 
 <template>
@@ -14,8 +27,16 @@ const operatorLinks = [
     <header class="split-gate-home__hero">
       <img :src="withBase('/images/moongate-logo.png')" alt="Moongate pixel-art portal" width="220" height="220">
       <p class="mg-eyebrow">Ultima Online server emulator</p>
-      <h1>Choose your path.</h1>
-      <p>Operate a Moongate server or help build it.</p>
+      <h1>Moongate</h1>
+      <p>Choose your path — operate a shard or help build it.</p>
+      <button type="button" class="split-gate-home__search mg-pixel-frame" @click="openSearch">
+        <svg class="split-gate-home__search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">
+          <circle cx="11" cy="11" r="7" />
+          <line x1="16" y1="16" x2="21" y2="21" />
+        </svg>
+        <span>Search the docs</span>
+        <kbd>/</kbd>
+      </button>
     </header>
 
     <section class="split-gate" aria-label="Documentation paths">

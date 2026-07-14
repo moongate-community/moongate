@@ -8,7 +8,7 @@ Each built-in implements `ISquidStdPlugin`, exposes `PluginMetadata`, and implem
 
 The built-ins divide composition responsibilities as follows:
 
-- `MoongatePersistencePlugin` configures the save directory, serializer, persistence service, account/mobile entity registrations, serial generators, and default-account seeder.
+- `MoongatePersistencePlugin` configures the save directory, serializer, persistence service, account/mobile/item entity registrations, serial generators, and default-account seeder.
 - `MoongateScriptingPlugin` configures the Lua engine and Lua event bridge, then registers the `log` and `game` script modules.
 - `MoongateDataLoaderPlugin` registers the client-file locator service, YAML-backed definition registries and their ordered loaders, and the data-loader lifecycle service.
 
