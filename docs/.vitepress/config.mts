@@ -56,7 +56,12 @@ export default defineConfig({
             { text: 'Startup lifecycle', link: '/architecture/startup-lifecycle' },
             { text: 'Networking', link: '/architecture/networking' },
             { text: 'Login and sessions', link: '/architecture/login-and-sessions' },
-            { text: 'Game loop', link: '/architecture/game-loop' }
+            { text: 'Game loop', link: '/architecture/game-loop' },
+            { text: 'Persistence', link: '/architecture/persistence' },
+            { text: 'Data loading and world', link: '/architecture/data-loading-and-world' },
+            { text: 'Scripting', link: '/architecture/scripting' },
+            { text: 'Ultima client assets', link: '/architecture/ultima-assets' },
+            { text: 'Plugin boundaries', link: '/architecture/plugins' }
           ]
         }
       ]
