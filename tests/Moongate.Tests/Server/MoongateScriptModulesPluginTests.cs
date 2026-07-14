@@ -17,4 +17,15 @@ public class MoongateScriptModulesPluginTests
         var modules = container.Resolve<List<ScriptModuleData>>();
         Assert.Contains(modules, module => module.ModuleType == typeof(ItemModule));
     }
+
+    [Fact]
+    public void Configure_RegistersMobileModule()
+    {
+        var container = new Container();
+
+        new MoongateScriptModulesPlugin().Configure(container, new());
+
+        var modules = container.Resolve<List<ScriptModuleData>>();
+        Assert.Contains(modules, module => module.ModuleType == typeof(MobileModule));
+    }
 }

@@ -23,5 +23,6 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
     public void Configure(IContainer container, PluginContext context)
     {
         container.RegisterScriptModule<ItemModule>();
+        container.RegisterScriptModule<MobileModule>();
     }
 }
