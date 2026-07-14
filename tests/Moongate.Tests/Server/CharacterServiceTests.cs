@@ -4,17 +4,33 @@ using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
+using Moongate.UO.Data.Items;
 using Moongate.UO.Data.StartingCities;
 using Moongate.UO.Data.Types;
+using Moongate.Ultima.Types;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
 
 public class CharacterServiceTests
 {
+    private static ItemFactoryService ItemFactory()
+    {
+        var templates = new ItemTemplateService();
+        templates.Register(new ItemTemplate { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
+
+        return new ItemFactoryService(templates, new Random(1));
+    }
+
+    private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
+    {
+        return new CharacterService(persistence, new MobileFactoryService(Cities()), ItemFactory(), new ItemService(persistence), eventBus);
+    }
+
     private static CharacterCreationPacket Packet()
     {
         return new CharacterCreationPacket(
@@ -65,8 +81,7 @@ public class CharacterServiceTests
             return Task.CompletedTask;
         });
 
-        var factory = new MobileFactoryService(Cities());
-        var service = new CharacterService(persistence, factory, eventBus);
+        var service = Service(persistence, eventBus);
 
         var mobile = service.CreateCharacter(accountId, Packet());
 
@@ -94,11 +109,31 @@ public class CharacterServiceTests
     public void CreateCharacter_UnknownAccount_StillPersistsMobileWithoutLinking()
     {
         var persistence = new FakePersistenceService();
-        var service = new CharacterService(persistence, new MobileFactoryService(Cities()), new EventBusService());
+        var service = Service(persistence, new EventBusService());
 
         var mobile = service.CreateCharacter((Serial)999, Packet());
 
         Assert.NotEqual(Serial.Zero, mobile.Id);
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
+    }
+
+    [Fact]
+    public void CreateCharacter_GivesAndEquipsABackpack()
+    {
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new EventBusService());
+
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        // The mobile has a backpack serial, equipped on the Backpack layer.
+        Assert.NotEqual(Serial.Zero, mobile.BackpackId);
+        Assert.Equal(mobile.BackpackId, mobile.EquippedItemIds[LayerType.Backpack]);
+
+        // The backpack item is persisted and back-references the mobile.
+        var backpack = persistence.Store<ItemEntity>().GetById(mobile.BackpackId);
+        Assert.NotNull(backpack);
+        Assert.Equal(3701, backpack!.ItemId);
+        Assert.Equal(mobile.Id, backpack.EquippedMobileId);
+        Assert.Equal(LayerType.Backpack, backpack.EquippedLayer);
     }
 }

@@ -4,7 +4,9 @@ using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Ultima.Types;
 using Serilog;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -13,19 +15,31 @@ namespace Moongate.Server.Services.Accounts;
 
 public class CharacterService : ICharacterService
 {
+    private const string BackpackTemplateId = "backpack";
+
     private readonly IEntityStore<MobileEntity, Serial> _mobileStore;
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
     private readonly IMobileFactoryService _mobileFactory;
+    private readonly IItemFactoryService _itemFactory;
+    private readonly IItemService _itemService;
     private readonly IEventBus _eventBus;
 
     private readonly ILogger _logger =  Log.ForContext<CharacterService>();
 
 
-    public CharacterService(IPersistenceService persistenceService, IMobileFactoryService mobileFactory, IEventBus eventBus)
+    public CharacterService(
+        IPersistenceService persistenceService,
+        IMobileFactoryService mobileFactory,
+        IItemFactoryService itemFactory,
+        IItemService itemService,
+        IEventBus eventBus
+    )
     {
         _mobileStore = persistenceService.GetStore<MobileEntity, Serial>();
         _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
         _mobileFactory = mobileFactory;
+        _itemFactory = itemFactory;
+        _itemService = itemService;
         _eventBus = eventBus;
     }
 
@@ -58,6 +72,8 @@ public class CharacterService : ICharacterService
             _accountStore.UpsertAsync(account).WaitSync();
         }
 
+        GiveBackpack(mobile);
+
         _eventBus.Publish(new CharacterCreatedEvent(accountId, mobile.Id, mobile));
 
         _logger.Information(
@@ -73,5 +89,19 @@ public class CharacterService : ICharacterService
         );
 
         return mobile;
+    }
+
+    private void GiveBackpack(MobileEntity mobile)
+    {
+        var backpacks = _itemFactory.CreateFromTemplate(BackpackTemplateId);
+
+        if (backpacks.Count == 0)
+        {
+            _logger.Warning("Backpack template '{TemplateId}' not found; {Name} created without a backpack", BackpackTemplateId, mobile.Name);
+
+            return;
+        }
+
+        _itemService.Equip(mobile, backpacks[0], LayerType.Backpack);
     }
 }
