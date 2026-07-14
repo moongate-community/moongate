@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { withBase } from 'vitepress'
+
 const operatorLinks = [
   { label: 'Install', href: '/server/installation' },
   { label: 'Configure', href: '/server/configuration' },
@@ -10,7 +12,7 @@ const operatorLinks = [
 <template>
   <main class="split-gate-home">
     <header class="split-gate-home__hero">
-      <img src="/images/moongate-logo.png" alt="Moongate pixel-art portal" width="220" height="220">
+      <img :src="withBase('/images/moongate-logo.png')" alt="Moongate pixel-art portal" width="220" height="220">
       <p class="mg-eyebrow">Ultima Online server emulator</p>
       <h1>Choose your path.</h1>
       <p>Operate a Moongate server or help build it.</p>
@@ -22,17 +24,17 @@ const operatorLinks = [
         <h2>Server Operators</h2>
         <p>Install, configure, run, and troubleshoot your shard.</p>
         <nav aria-label="Server operator topics">
-          <a v-for="link in operatorLinks" :key="link.href" :href="link.href">{{ link.label }}</a>
+          <a v-for="link in operatorLinks" :key="link.href" :href="withBase(link.href)">{{ link.label }}</a>
         </nav>
-        <a class="mg-pixel-button" href="/server/">Open the server guide</a>
+        <a class="mg-pixel-button" :href="withBase('/server/')">Open the server guide</a>
       </article>
 
       <article class="split-gate__contributors mg-pixel-frame">
         <p class="mg-eyebrow">Secondary path</p>
         <h2>Contributors</h2>
         <p>Build, test, contribute, and understand Moongate's architecture.</p>
-        <a href="/contributors/">Contributor guide</a>
-        <a href="/architecture/">Architecture</a>
+        <a :href="withBase('/contributors/')">Contributor guide</a>
+        <a :href="withBase('/architecture/')">Architecture</a>
       </article>
     </section>
   </main>

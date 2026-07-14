@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
+  base: '/moongate/',
   lang: 'en-US',
   title: 'Moongate',
   description: 'Operator and contributor documentation for the Moongate Ultima Online server emulator.',

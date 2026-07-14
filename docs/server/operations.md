@@ -1,5 +1,9 @@
 # Operations
 
+::: danger Predictable administrator credentials
+At persistence initialization, the current seeder upserts an active administrator account with username `admin` and password `admin`, then logs both credentials at warning level and saves a snapshot. Do not expose the server to a public or untrusted network while this predictable account is enabled. This repository currently implements and documents no operator procedure for changing or disabling these credentials.
+:::
+
 ## Start the server
 
 From the repository root, start Moongate with a writable root and an existing Ultima client-data directory:

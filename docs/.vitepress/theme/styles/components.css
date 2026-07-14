@@ -165,11 +165,54 @@
 
 .split-gate__contributors .mg-eyebrow,
 .split-gate__contributors > a {
-  color: var(--mg-periwinkle-400);
+  color: var(--mg-periwinkle-300);
 }
 
 .split-gate__contributors > a + a {
   margin-top: 12px;
+}
+
+.mg-breadcrumbs {
+  margin-bottom: 24px;
+  color: var(--vp-c-text-2);
+  font-size: 0.875rem;
+}
+
+.mg-breadcrumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mg-breadcrumbs li {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.mg-breadcrumbs li + li::before {
+  margin-right: 8px;
+  color: var(--vp-c-divider);
+  content: '/';
+}
+
+.mg-breadcrumbs a {
+  color: var(--mg-periwinkle-300);
+  text-underline-offset: 3px;
+}
+
+.mg-breadcrumbs a:focus-visible {
+  border-radius: 2px;
+  outline: 3px solid var(--mg-starlight-100);
+  outline-offset: 3px;
+}
+
+.mg-breadcrumbs [aria-current='page'] {
+  overflow-wrap: anywhere;
+  color: var(--vp-c-text-1);
 }
 
 @media (max-width: 767px) {
@@ -192,5 +235,9 @@
 
   .split-gate article {
     padding: 24px;
+  }
+
+  .mg-breadcrumbs {
+    margin-bottom: 20px;
   }
 }
