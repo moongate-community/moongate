@@ -48,7 +48,18 @@ export default defineConfig({
           ]
         }
       ],
-      '/architecture/': [{ text: 'Architecture', items: [{ text: 'Overview', link: '/architecture/' }] }]
+      '/architecture/': [
+        {
+          text: 'Architecture',
+          items: [
+            { text: 'Overview', link: '/architecture/' },
+            { text: 'Startup lifecycle', link: '/architecture/startup-lifecycle' },
+            { text: 'Networking', link: '/architecture/networking' },
+            { text: 'Login and sessions', link: '/architecture/login-and-sessions' },
+            { text: 'Game loop', link: '/architecture/game-loop' }
+          ]
+        }
+      ]
     },
     outline: { level: [2, 3], label: 'On this page' },
     docFooter: { prev: 'Previous page', next: 'Next page' },
