@@ -81,6 +81,10 @@
   border-color: var(--vp-c-divider);
 }
 
+.vp-doc td code {
+  white-space: nowrap;
+}
+
 .vp-doc :not(pre) > code {
   color: var(--mg-starlight-100);
   background-color: var(--vp-c-bg-elv);
