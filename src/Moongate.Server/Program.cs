@@ -94,6 +94,7 @@ await ConsoleApp.RunAsync(
                 builder.FromDirectory("plugins");
                 builder.Add<MoongatePersistencePlugin>();
                 builder.Add<MoongateScriptingPlugin>();
+                builder.Add<MoongateScriptModulesPlugin>();
                 builder.Add<MoongateDataLoaderPlugin>();
             }
         );
