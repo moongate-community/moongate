@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Interfaces;
 using Moongate.Ultima.Maps;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -44,4 +45,10 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
     public ushort FacialHairStyle { get; set; }
 
     public Hue FacialHairHue { get; set; }
+
+    /// <summary>Serial of this mobile's backpack container; <see cref="Serial.Zero" /> when it has none.</summary>
+    public Serial BackpackId { get; set; }
+
+    /// <summary>Equipped item serials keyed by layer; the bank box lives on <see cref="LayerType.Bank" />.</summary>
+    public Dictionary<LayerType, Serial> EquippedItemIds { get; set; } = new();
 }
