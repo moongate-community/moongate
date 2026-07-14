@@ -23,7 +23,7 @@ public class ItemEntity : ISerialIdEntity, IPositionEntity
 
     public ItemRarityType Rarity { get; set; } = ItemRarityType.Common;
 
-    public AccountLevelType Visibility { get; set; } = AccountLevelType.User;
+    public AccountLevelType Visibility { get; set; } = AccountLevelType.Player;
 
     public string? Description { get; set; }
 

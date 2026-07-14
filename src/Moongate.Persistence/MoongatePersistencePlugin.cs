@@ -46,7 +46,14 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             (entity, id) => entity.Id = id,
             new MobileSerialGenerator()
         );
-
+        container.RegisterPersistedEntity<ItemEntity, Serial>(
+            3,
+            "items",
+            1,
+            entity => entity.Id,
+            (entity, id) => entity.Id = id,
+            new ItemSerialGenerator()
+        );
         container.RegisterPersistenceSeeder(
             async (service, token) =>
             {

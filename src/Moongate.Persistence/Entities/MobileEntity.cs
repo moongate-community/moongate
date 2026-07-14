@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Persistence.Interfaces;
 using Moongate.Ultima.Maps;
 using Moongate.UO.Data.Hues;
@@ -7,7 +8,7 @@ using Moongate.UO.Data.Types;
 
 namespace Moongate.Persistence.Entities;
 
-public class MobileEntity : ISerialIdEntity
+public class MobileEntity : ISerialIdEntity, IPositionEntity
 {
     public Serial Id { get; set; }
 
@@ -16,6 +17,8 @@ public class MobileEntity : ISerialIdEntity
     public int MapId { get; set; }
 
     public Point3D Position { get; set; }
+
+    public DirectionType Direction { get; set; }
 
     public GenderType Gender { get; set; }
 

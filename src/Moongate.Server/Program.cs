@@ -9,10 +9,12 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
 using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Game;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using SquidStd.Abstractions.Extensions.Config;
@@ -108,6 +110,9 @@ await ConsoleApp.RunAsync(
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
                 container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+
+                container.RegisterInstance<Random>(Random.Shared);
+                container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);
 
