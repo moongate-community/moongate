@@ -48,4 +48,3 @@ The scripting test proves that `game.post` defers execution until the dispatcher
 ### Tests
 
 - `tests/Moongate.Tests/Scripting/GameLoopModuleTests.cs`
-- `tests/Moongate.Tests/Server/LoginFlowIntegrationTests.cs`

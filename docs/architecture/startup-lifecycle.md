@@ -5,9 +5,10 @@
 ## Bootstrap order
 
 ```text
-resolve root and UO directories
+resolve root directory and CLI/default UO directory
   -> optionally print the embedded header
-  -> load YAML configuration and apply CLI UO-directory override
+  -> load YAML configuration
+  -> overwrite its UO directory with the resolved CLI/default value
   -> validate that an Ultima directory is configured
   -> create bootstrap metadata
   -> configure logging
@@ -17,7 +18,7 @@ resolve root and UO directories
   -> run the host until cancellation
 ```
 
-The root directory comes from the command argument, then `MOONGATE_ROOT`, then a `moongate_root` directory under the current directory. Paths are resolved before configuration is consumed. Configuration is loaded eagerly, the `moongate` section is obtained as a `MoongateConfig`, and the command-line UO directory override is applied before that same section is registered in the container.
+The root directory comes from the command argument, then `MOONGATE_ROOT`, then a `moongate_root` directory under the current directory. Before configuration is loaded, `uoDirectory` is resolved from the command argument or defaults to `~/uo`. That resolved value is non-empty in the ordinary path, so after loading YAML and obtaining its `MoongateConfig`, `Program.cs` unconditionally replaces the YAML `UltimaDirectory` with the resolved CLI value or the resolved `~/uo` default. The mutated configuration section is then registered in the container.
 
 Logging is configured before plugin registration so plugin-load and later startup messages can be emitted. The plugin list contains plugins discovered from `plugins` plus the built-in persistence, scripting, and data-loader plugins. This is registration order only; no claim is made here about plugin internals or their lifecycle order.
 

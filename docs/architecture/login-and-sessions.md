@@ -1,6 +1,6 @@
 # Login and sessions
 
-The implemented login uses two connections to the configured server endpoint. A short-lived auth key correlates the authenticated login-server session with the game-server reconnect.
+The Ultima protocol path represented by the framers uses a login connection followed by a game-server reconnect with a raw seed. A short-lived auth key is intended to correlate the authenticated login session with that reconnect. Current handler enforcement is looser: `GameServerLoginHandler` validates the auth key but does not require a new connection, a raw seed, or a particular session state.
 
 ## Implemented flow
 
@@ -15,7 +15,7 @@ login connection
     -> create single-use pending-login key
     -> send game-server redirect (0x8C)
 
-game connection
+intended game-server reconnect
   raw four-byte seed
     -> record seed and advance session to login phase
   GameServerLoginPacket (0x91)
@@ -32,17 +32,19 @@ game connection
 
 The opcode values above come from the corresponding packet declarations. They are included to connect the flow to packet traces, not as a complete protocol table.
 
+The diagram shows the intended wire sequence. The integration test covers seed, account login, redirect, auth-key game login, compression, and a returned character-list response, but it sends the game-login packet on the original socket without reconnecting or sending a raw seed. It therefore does not prove the two-connection transition end to end.
+
 ## Login connection
 
 The declared login-seed packet moves an awaiting session into the login phase before `LoginSeedHandler` parses it. The handler stores the packet seed and client version. If a local client version can be read and differs from the remote version, it disconnects; if no local version is available, it does not enforce a comparison.
 
 `AccountLoginHandler` delegates credentials to `IAccountService`. The current service queries persisted accounts, verifies the password hash, rejects missing credentials as bad credentials, and rejects inactive accounts as blocked. Success stores the username, changes the session state to authenticated, and returns a one-shard server list.
 
-`SelectServerHandler` creates a `PendingLogin` from the session username and returns the configured public address, configured game port, and generated auth key. The current handler does not inspect the selected shard index. `PendingLoginStore` uses distinct non-zero keys, removes a key on the first lookup, and rejects expired entries. `Program.cs` configures a 30-second lifetime.
+`SelectServerHandler` creates a `PendingLogin` from the session username and returns the configured public address, configured game port, and generated auth key. The current handler does not inspect the selected shard index. `PendingLoginStore` derives keys from an incrementing 32-bit counter and skips zero; keys are monotonic and non-zero over the practical pre-wrap range. It does not check for a live-key collision, and dictionary assignment can overwrite an entry after counter wrap. Lookup removes an entry on the first attempt and rejects it if expired. `Program.cs` configures a 30-second lifetime.
 
 ## Game connection and character list
 
-The redirect leads to a new connection and therefore a new `PlayerSession`. Its raw seed is framed and consumed separately before the game-server login packet. `GameServerLoginHandler` must successfully take the pending auth key; otherwise it sends a communication-problem denial. The key is the implemented handoff credential—the account and password fields carried by `GameServerLoginPacket` are parsed but are not re-authenticated by this handler.
+In the intended client flow, the redirect leads to a new connection and therefore a new `PlayerSession`; its raw seed is framed and consumed separately before the game-server login packet. The server does not enforce that topology in `GameServerLoginHandler`: a valid pending key can be consumed from the original authenticated session as well. The handler has no session-state check. If it cannot take the key, it sends a communication-problem denial. The key is the implemented handoff credential—the account and password fields carried by `GameServerLoginPacket` are parsed but are not re-authenticated by this handler.
 
 After a successful take, the handler restores the pending username, resolves its persisted account id, and stores it on the new session. A missing account is logged and raises an exception, which the network dispatch boundary logs and contains. It then obtains the account's character names, enables outbound compression, and sends modern feature flags followed by seven character slots and the registered starting cities.
 
@@ -84,6 +86,7 @@ This is the end of the implemented flow documented here. Character creation does
 ### Tests
 
 - `tests/Moongate.Tests/Server/LoginFlowIntegrationTests.cs`
+- `tests/Moongate.Tests/Server/CharacterServiceTests.cs`
 - `tests/Moongate.Tests/Server/PendingLoginStoreTests.cs`
 - `tests/Moongate.Tests/Server/SeedHandshakeTests.cs`
 - `tests/Moongate.Tests/Network/LoginFlowPacketsTests.cs`
