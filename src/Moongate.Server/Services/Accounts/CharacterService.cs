@@ -16,6 +16,7 @@ namespace Moongate.Server.Services.Accounts;
 public class CharacterService : ICharacterService
 {
     private const string BackpackTemplateId = "backpack";
+    private const string BankBoxTemplateId = "bank_box";
 
     private readonly IEntityStore<MobileEntity, Serial> _mobileStore;
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
@@ -72,7 +73,8 @@ public class CharacterService : ICharacterService
             _accountStore.UpsertAsync(account).WaitSync();
         }
 
-        GiveBackpack(mobile);
+        EquipContainer(mobile, BackpackTemplateId, LayerType.Backpack);
+        EquipContainer(mobile, BankBoxTemplateId, LayerType.Bank);
 
         _eventBus.Publish(new CharacterCreatedEvent(accountId, mobile.Id, mobile));
 
@@ -91,17 +93,17 @@ public class CharacterService : ICharacterService
         return mobile;
     }
 
-    private void GiveBackpack(MobileEntity mobile)
+    private void EquipContainer(MobileEntity mobile, string templateId, LayerType layer)
     {
-        var backpacks = _itemFactory.CreateFromTemplate(BackpackTemplateId);
+        var containers = _itemFactory.CreateFromTemplate(templateId);
 
-        if (backpacks.Count == 0)
+        if (containers.Count == 0)
         {
-            _logger.Warning("Backpack template '{TemplateId}' not found; {Name} created without a backpack", BackpackTemplateId, mobile.Name);
+            _logger.Warning("Container template '{TemplateId}' not found; {Name} created without it", templateId, mobile.Name);
 
             return;
         }
 
-        _itemService.Equip(mobile, backpacks[0], LayerType.Backpack);
+        _itemService.Equip(mobile, containers[0], layer);
     }
 }

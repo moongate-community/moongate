@@ -29,7 +29,7 @@ public class ItemLootDataLoaderPipelineTests
 
             await pipeline.ExecuteLoadersAsync();
 
-            Assert.Equal(1664, itemTemplates.Count);
+            Assert.Equal(1665, itemTemplates.Count);
             Assert.Equal(279, lootTemplates.Count);
             Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
             Assert.Equal(140, Directory.GetFiles(lootDirectory, "*.yaml", SearchOption.AllDirectories).Length);

@@ -9,7 +9,7 @@ namespace Moongate.Tests.Server;
 public class ItemTemplatesLoaderTests
 {
     [Fact]
-    public async Task LoadAsync_WhenMissing_Seeds49FilesAndRegisters1664()
+    public async Task LoadAsync_WhenMissing_Seeds49FilesAndRegisters1665()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
@@ -23,7 +23,7 @@ public class ItemTemplatesLoaderTests
             await loader.LoadAsync();
 
             Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
-            Assert.Equal(1664, service.Count);
+            Assert.Equal(1665, service.Count);
             Assert.Empty(Directory.GetDirectories(templatesDirectory, ".items-*.tmp"));
             Assert.Contains(service.All, template => template.Weapon is not null && template.Equip is not null);
             Assert.Contains(service.All, template => template.Equip is not null && template.Equip.Layer != LayerType.None);
@@ -54,7 +54,7 @@ public class ItemTemplatesLoaderTests
 
             // The obsolete monolithic file is ignored: the embedded assets are seeded verbatim and the
             // legacy file is neither migrated nor deleted.
-            Assert.Equal(1664, service.Count);
+            Assert.Equal(1665, service.Count);
             Assert.Null(service.GetById("loader_custom"));
             Assert.NotEqual("Loader Apple Override", service.GetById("apple")!.Name);
             Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);

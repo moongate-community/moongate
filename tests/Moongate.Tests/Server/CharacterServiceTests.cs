@@ -22,6 +22,7 @@ public class CharacterServiceTests
     {
         var templates = new ItemTemplateService();
         templates.Register(new ItemTemplate { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
+        templates.Register(new ItemTemplate { Id = "bank_box", Name = "Bank Box", Category = "Containers", ItemId = 2475 });
 
         return new ItemFactoryService(templates, new Random(1));
     }
@@ -135,5 +136,24 @@ public class CharacterServiceTests
         Assert.Equal(3701, backpack!.ItemId);
         Assert.Equal(mobile.Id, backpack.EquippedMobileId);
         Assert.Equal(LayerType.Backpack, backpack.EquippedLayer);
+    }
+
+    [Fact]
+    public void CreateCharacter_GivesAndEquipsABankBox()
+    {
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new EventBusService());
+
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        // The bank box is equipped on the Bank layer (no dedicated field on the mobile).
+        var bankBoxId = mobile.EquippedItemIds[LayerType.Bank];
+        Assert.NotEqual(Serial.Zero, bankBoxId);
+
+        var bankBox = persistence.Store<ItemEntity>().GetById(bankBoxId);
+        Assert.NotNull(bankBox);
+        Assert.Equal(2475, bankBox!.ItemId);
+        Assert.Equal(mobile.Id, bankBox.EquippedMobileId);
+        Assert.Equal(LayerType.Bank, bankBox.EquippedLayer);
     }
 }

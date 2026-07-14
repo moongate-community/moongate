@@ -39,6 +39,25 @@
     MaxItems: 125
     GumpId: 60
     ContainerLayoutId: backpack
+- Id: bank_box
+  Name: Bank Box
+  Category: Containers
+  Description: ''
+  ItemId: 2475
+  Hue: 0
+  GoldValue: 0
+  Weight: 3.0
+  ScriptId: none
+  IsMovable: false
+  Rarity: Common
+  Tags:
+  - modernuo
+  - containers
+  Container:
+    WeightMax: 1000000
+    MaxItems: 125
+    GumpId: 74
+    ContainerLayoutId: bank_box
 - Id: bag
   Name: Bag
   Category: Containers
