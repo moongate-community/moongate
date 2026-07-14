@@ -28,6 +28,19 @@
   border-right: var(--mg-grid) solid var(--vp-c-divider);
 }
 
+@media (max-width: 959px) {
+  .VPSidebar:not(.open) {
+    visibility: hidden;
+  }
+}
+
+@media (max-width: 767px) {
+  .vp-doc .header-anchor:focus-visible {
+    outline-offset: 0;
+    transform: translateX(var(--mg-grid));
+  }
+}
+
 .VPSidebarItem.is-active > .item .link > .text,
 .VPDocAsideOutline .outline-link.active {
   color: var(--vp-c-brand-1);
