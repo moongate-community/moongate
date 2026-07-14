@@ -25,7 +25,7 @@ The network service also reports `Total packet table: {PacketCount}`, `Total pac
 
 ## Persistence snapshots
 
-After the engine starts, Moongate registers `persistence_save` at a 300-second interval. Each timer invocation logs `Start saving snapshot...`, calls the persistence service, and, after that call completes, logs `Snapshot saved in {ElapsedMilliseconds} milliseconds.`
+After the engine starts, Moongate registers `persistence_save` at a 300-second interval. Each timer invocation logs `Start saving snapshot...`, calls the persistence service, and, after that call completes, logs `Snapshot saved in {ElapsedMilliseconds} milliseconds.` The implementation passes the `TimeSpan` returned by `Stopwatch.GetElapsedTime(start)` into `{ElapsedMilliseconds}`. The rendered duration is therefore mislabeled by the template and must not be interpreted as a numeric millisecond value.
 
 The persistence plugin stores snapshots under the root's registered `saves` directory. Its initial seeder also saves a snapshot after creating the default account. These are implemented persistence writes; the repository does not define operator backup, restore, or upgrade procedures.
 

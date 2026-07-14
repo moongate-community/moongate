@@ -2,19 +2,19 @@
 
 Each entry below pairs an observable signal with a code-backed cause and a safe corrective action. Placeholders in braces are copied from the logging templates.
 
-## Ultima directory is empty or unusable
+## Ultima directory is wrong, missing, or unusable
 
 **Signal:** startup raises `UODirectoryNotValidException` with `UltimaDirectory is not set in the config; clients will not be able to connect.` when the processed setting is empty.
 
-**Cause:** no non-empty `UltimaDirectory` reached service registration. Normally, `--uo-directory` supplies it or startup assigns the resolved form of `~/uo`.
+**Cause:** no non-empty `UltimaDirectory` reached service registration. This exception is normally unreachable for an ordinary invocation: when `--uo-directory` is absent, startup first resolves `~/uo` and assigns that non-empty value to `UltimaDirectory`.
 
 **Action:** pass `--uo-directory /absolute/path/to/ultima-client` and make sure that path contains client data you are entitled to use.
 
-**Signal:** `UO client files located in {Directory} ({FileCount} files)` renders an unexpected directory or a suspiciously low count.
+**Signal:** after the file locator returns, `UO client files located in {Directory} ({FileCount} files)` renders the selected directory and its count of non-empty resolved file paths.
 
-**Cause:** the file-loader log reports the configured directory and counts non-empty paths known to the Ultima file locator; it does not perform a complete asset-integrity check.
+**Cause:** Moongate performs no separate missing-directory or asset-integrity validation in this service. It calls the Ultima file locator, counts its non-empty resolved paths, and logs the result. The selected server code does not define exact error wording for a failure raised inside that locator.
 
-**Action:** verify the rendered directory, correct `--uo-directory`, and restart. Do not interpret this log alone as proof that all required client files exist.
+**Action:** verify the rendered directory and count, correct `--uo-directory`, and restart. Do not interpret this log alone as proof that the directory exists, is usable, or contains all required client files.
 
 ## Listener does not start
 
@@ -36,7 +36,7 @@ Each entry below pairs an observable signal with a code-backed cause and a safe 
 
 **Signal:** `Rejecting session {SessionId}: malformed seed handshake.` followed by connection closure.
 
-**Cause:** a session awaiting its seed received a malformed raw handshake. The verified rejection case is a zero raw seed; valid paths include a login-seed packet beginning with `0xEF` or a non-zero four-byte raw seed.
+**Cause:** a session awaiting its seed received an empty frame, a frame shorter than four bytes whose first byte is not `0xEF`, or a raw seed whose first four bytes decode to zero. A non-empty frame beginning with `0xEF` is passed through as a login-seed packet without a length check; a non-zero four-byte raw seed is captured and consumed.
 
 **Action:** confirm that the client speaks the expected Ultima login/game protocol and is connecting directly to the configured Moongate port. Repeated signals from unrelated traffic can be treated as protocol mismatch rather than an account failure.
 
@@ -60,7 +60,7 @@ Each entry below pairs an observable signal with a code-backed cause and a safe 
 
 **Signal:** `Start saving snapshot...` appears without the matching `Snapshot saved in {ElapsedMilliseconds} milliseconds.`
 
-**Cause:** the completion log is emitted only after `SaveSnapshotAsync()` returns. The timer callback contains no local recovery or retry behavior.
+**Cause:** the completion log is emitted only after `SaveSnapshotAsync()` returns. The timer callback contains no local recovery or retry behavior. It passes the `TimeSpan` returned by `Stopwatch.GetElapsedTime(start)` into `{ElapsedMilliseconds}`, so the rendered duration is mislabeled and must not be interpreted as numeric milliseconds.
 
 **Action:** retain the exception and persistence-service logs from that invocation and inspect the configured root's `saves` path and filesystem access. The current server code does not define an operator retry command, so do not claim a successful snapshot without the completion signal.
 
