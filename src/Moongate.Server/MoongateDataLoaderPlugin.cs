@@ -65,6 +65,9 @@ public class MoongateDataLoaderPlugin : ISquidStdPlugin
         container.Register<ILootTemplateService, LootTemplateService>(Reuse.Singleton);
         container.RegisterDataLoader<LootTemplatesLoader>(130);
 
+        container.Register<IStartingItemsService, StartingItemsService>(Reuse.Singleton);
+        container.RegisterDataLoader<StartingItemsLoader>(140);
+
         container.RegisterDataLoaderService();
     }
 
