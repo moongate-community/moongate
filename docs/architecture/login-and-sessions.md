@@ -46,7 +46,7 @@ The declared login-seed packet moves an awaiting session into the login phase be
 
 In the intended client flow, the redirect leads to a new connection and therefore a new `PlayerSession`; its raw seed is framed and consumed separately before the game-server login packet. The server does not enforce that topology in `GameServerLoginHandler`: a valid pending key can be consumed from the original authenticated session as well. The handler has no session-state check. If it cannot take the key, it sends a communication-problem denial. The key is the implemented handoff credential—the account and password fields carried by `GameServerLoginPacket` are parsed but are not re-authenticated by this handler.
 
-After a successful take, the handler restores the pending username, resolves its persisted account id, and stores it on the new session. A missing account is logged and raises an exception, which the network dispatch boundary logs and contains. It then obtains the account's character names, enables outbound compression, and sends modern feature flags followed by seven character slots and the registered starting cities.
+After a successful take, the handler restores the pending username, resolves its persisted account id, and stores it on `context.Session`. A missing account is logged and raises an exception, which the network dispatch boundary logs and contains. It then obtains the account's character names, enables outbound compression, and sends modern feature flags followed by seven character slots and the registered starting cities.
 
 ## Character creation boundary
 
