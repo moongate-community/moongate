@@ -7,7 +7,7 @@ export default defineConfig({
   description: 'Operator and contributor documentation for the Moongate Ultima Online server emulator.',
   cleanUrls: true,
   lastUpdated: true,
-  appearance: false,
+  appearance: 'force-dark',
   ignoreDeadLinks: false,
   themeConfig: {
     logo: '/images/moongate-logo.png',
