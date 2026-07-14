@@ -1,6 +1,6 @@
 # Data loading and world registries
 
-Moongate separates editable source data from runtime lookup services. Startup loaders read YAML from the configured root, seed embedded defaults when expected files or directories are absent, validate the loaded records, and populate singleton registries. The registries are runtime stores; they are not the source files and are not persistence stores.
+Moongate separates editable source data from runtime lookup services. Startup loaders read YAML from the configured root, seed embedded defaults when expected files or directories are absent, deserialize the data, and populate singleton registries. The item and loot template paths additionally perform explicit validation before registration. The registries are runtime stores; they are not the source files and are not persistence stores.
 
 ## Startup pipeline
 
@@ -66,4 +66,3 @@ Registration generally replaces dictionary entries sharing a key or appends to l
 - `tests/Moongate.Tests/Server/LocationsLoaderTests.cs`
 - `tests/Moongate.Tests/Server/RegionServiceTests.cs`
 - `tests/Moongate.Tests/Server/StartingCityServiceTests.cs`
-
