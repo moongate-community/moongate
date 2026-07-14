@@ -76,15 +76,24 @@ public class CharacterService : ICharacterService
             _accountStore.UpsertAsync(account).WaitSync();
         }
 
+        _eventBus.Publish(new CharacterCreatedEvent(accountId, mobile.Id, mobile));
+
         var backpack = EquipContainer(mobile, BackpackTemplateId, LayerType.Backpack);
-        EquipContainer(mobile, BankBoxTemplateId, LayerType.Bank);
+        var bank = EquipContainer(mobile, BankBoxTemplateId, LayerType.Bank);
 
         if (backpack is not null)
         {
             GiveStartingItems(mobile, backpack, packet);
         }
 
-        _eventBus.Publish(new CharacterCreatedEvent(accountId, mobile.Id, mobile));
+        _eventBus.Publish(
+            new CharacterReadyEvent(
+                accountId,
+                mobile,
+                backpack?.Id ?? Serial.Zero,
+                bank?.Id ?? Serial.Zero
+            )
+        );
 
         _logger.Information(
             "Character created for account {AccountId}: {Name} (serial {Serial}) gender {Gender} race {Race} " +

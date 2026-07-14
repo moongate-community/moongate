@@ -118,6 +118,35 @@ public class CharacterServiceTests
     }
 
     [Fact]
+    public void CreateCharacter_PublishesCharacterReadyEventWithContainerSerials()
+    {
+        var persistence = new FakePersistenceService();
+        var eventBus = new EventBusService();
+
+        CharacterReadyEvent? ready = null;
+        eventBus.Subscribe<CharacterReadyEvent>(
+            (evt, _) =>
+            {
+                ready = evt;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = Service(persistence, eventBus);
+
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        Assert.NotNull(ready);
+        Assert.Equal((Serial)5, ready!.AccountId);
+        Assert.Same(mobile, ready.Character);
+        Assert.Equal(mobile.BackpackId, ready.BackpackId);
+        Assert.NotEqual(Serial.Zero, ready.BackpackId);
+        Assert.Equal(mobile.EquippedItemIds[LayerType.Bank], ready.BankId);
+        Assert.NotEqual(Serial.Zero, ready.BankId);
+    }
+
+    [Fact]
     public void CreateCharacter_UnknownAccount_StillPersistsMobileWithoutLinking()
     {
         var persistence = new FakePersistenceService();
