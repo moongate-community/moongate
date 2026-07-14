@@ -7,11 +7,8 @@ on:
     paths:
       - .github/workflows/docs.yml
       - docs/**
-      - src/**/*.cs
-      - src/**/*.csproj
-      - Directory.Build.props
-      - dotnet-tools.json
-      - global.json
+      - package.json
+      - package-lock.json
   pull_request:
     branches:
       - develop
@@ -19,11 +16,8 @@ on:
     paths:
       - .github/workflows/docs.yml
       - docs/**
-      - src/**/*.cs
-      - src/**/*.csproj
-      - Directory.Build.props
-      - dotnet-tools.json
-      - global.json
+      - package.json
+      - package-lock.json
   workflow_dispatch:
 
 concurrency:
@@ -32,7 +26,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build DocFX site
+    name: Build VitePress site
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -42,22 +36,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          global-json-file: global.json
+          node-version: 24.10.0
+          cache: npm
 
-      - name: Restore local tools
-        run: dotnet tool restore
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build documentation
-        run: dotnet docfx docs/docfx.json
+        run: npm run docs:build
 
       - name: Upload GitHub Pages artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
-          path: docs/_site
+          path: docs/.vitepress/dist
 
   deploy:
     name: Deploy GitHub Pages
