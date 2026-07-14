@@ -30,7 +30,8 @@ export default defineConfig({
             { text: 'Configuration', link: '/server/configuration' },
             { text: 'First launch', link: '/server/first-launch' },
             { text: 'Operations', link: '/server/operations' },
-            { text: 'Troubleshooting', link: '/server/troubleshooting' }
+            { text: 'Troubleshooting', link: '/server/troubleshooting' },
+            { text: 'Current limitations', link: '/server/limitations' }
           ]
         }
       ],
