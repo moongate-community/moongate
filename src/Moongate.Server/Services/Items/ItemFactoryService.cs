@@ -58,7 +58,8 @@ public sealed class ItemFactoryService : IItemFactoryService
             ScriptId = template.ScriptId,
             Rarity = template.Rarity,
             Description = template.Description,
-            Amount = Math.Max(1, amount)
+            Amount = Math.Max(1, amount),
+            FlippableItemIds = template.FlippableItemIds is { Count: > 0 } ? [.. template.FlippableItemIds] : []
         };
 
     private IReadOnlyList<ItemEntity> CreateFromPool(IReadOnlyList<ItemTemplate> pool, int count, int amount, Hue? hue)

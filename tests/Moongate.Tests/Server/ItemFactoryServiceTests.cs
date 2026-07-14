@@ -80,6 +80,32 @@ public class ItemFactoryServiceTests
     public void CreateFromTemplate_UnknownId_ReturnsEmpty()
         => Assert.Empty(Factory().CreateFromTemplate("does_not_exist"));
 
+    [Fact]
+    public void CreateFromTemplate_CopiesFlippableItemIdsFromTemplate()
+    {
+        var item = Assert.Single(Factory().CreateFromTemplate("armoire"));
+        Assert.Equal(new[] { 2639, 2643 }, item.FlippableItemIds);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_NoFlippable_LeavesEmptyList()
+    {
+        var item = Assert.Single(Factory().CreateFromTemplate("dagger"));
+        Assert.Empty(item.FlippableItemIds);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_FlippableCopyIsIndependentOfTemplate()
+    {
+        var factory = Factory();
+        var item = Assert.Single(factory.CreateFromTemplate("armoire"));
+
+        item.FlippableItemIds.Add(9999);
+
+        var second = Assert.Single(factory.CreateFromTemplate("armoire"));
+        Assert.Equal(new[] { 2639, 2643 }, second.FlippableItemIds);
+    }
+
     private static ItemFactoryService Factory(int seed = 1)
         => new(Templates(), new(seed));
 
@@ -114,6 +140,14 @@ public class ItemFactoryServiceTests
             {
                 Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701,
                 Container = new() { GumpId = 60 }
+            }
+        );
+        service.Register(
+            new()
+            {
+                Id = "armoire", Name = "Armoire", Category = "Containers", ItemId = 2639,
+                FlippableItemIds = [2639, 2643],
+                Container = new() { GumpId = 74 }
             }
         );
 

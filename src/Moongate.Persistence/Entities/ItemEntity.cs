@@ -50,4 +50,7 @@ public class ItemEntity : ISerialIdEntity, IPositionEntity
 
     /// <summary>Serials of the items this container holds; each contained item is its own top-level store record.</summary>
     public List<Serial> ContainedItemIds { get; set; } = [];
+
+    /// <summary>Ordered orientation graphics this item can flip between; empty when the item has no flip variants.</summary>
+    public List<int> FlippableItemIds { get; set; } = [];
 }
