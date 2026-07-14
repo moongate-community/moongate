@@ -35,7 +35,19 @@ export default defineConfig({
           ]
         }
       ],
-      '/contributors/': [{ text: 'Contributors', items: [{ text: 'Overview', link: '/contributors/' }] }],
+      '/contributors/': [
+        {
+          text: 'Contributors',
+          items: [
+            { text: 'Overview', link: '/contributors/' },
+            { text: 'Development setup', link: '/contributors/development-setup' },
+            { text: 'Repository layout', link: '/contributors/repository-layout' },
+            { text: 'Build and test', link: '/contributors/build-and-test' },
+            { text: 'Conventions', link: '/contributors/conventions' },
+            { text: 'Contributing', link: '/contributors/contributing' }
+          ]
+        }
+      ],
       '/architecture/': [{ text: 'Architecture', items: [{ text: 'Overview', link: '/architecture/' }] }]
     },
     outline: { level: [2, 3], label: 'On this page' },
