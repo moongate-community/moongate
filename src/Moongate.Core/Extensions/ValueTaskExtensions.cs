@@ -22,4 +22,14 @@ public static class ValueTaskExtensions
             task.AsTask().GetAwaiter().GetResult();
         }
     }
+
+    /// <summary>
+    /// Blocks until <paramref name="task" /> completes and returns its result, consuming it only after
+    /// confirming completion (CA2012-safe). Overload of <see cref="WaitSync(ValueTask)" /> for value-returning
+    /// value tasks such as <c>RemoveAsync</c>.
+    /// </summary>
+    public static T WaitSync<T>(this ValueTask<T> task)
+    {
+        return task.IsCompleted ? task.GetAwaiter().GetResult() : task.AsTask().GetAwaiter().GetResult();
+    }
 }
