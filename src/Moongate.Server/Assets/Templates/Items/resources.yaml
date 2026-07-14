@@ -131,6 +131,15 @@
     Category: Resources
     Description: ''
     ItemId: 3989
+    FlippableItemIds:
+        - 3989
+        - 3990
+        - 3991
+        - 3992
+        - 3993
+        - 3994
+        - 3995
+        - 3996
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -188,6 +197,9 @@
     Category: Resources
     Description: ''
     ItemId: 5990
+    FlippableItemIds:
+        - 5990
+        - 5992
     Hue: 0
     GoldValue: 0
     Weight: 0.1
@@ -413,6 +425,9 @@
     Category: Resources
     Description: ''
     ItemId: 6812
+    FlippableItemIds:
+        - 6812
+        - 6813
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -656,6 +671,9 @@
     Category: Resources
     Description: ''
     ItemId: 12634
+    FlippableItemIds:
+        - 12634
+        - 12635
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -842,6 +860,9 @@
     Category: Resources
     Description: ''
     ItemId: 5991
+    FlippableItemIds:
+        - 5989
+        - 5991
     Hue: 0
     GoldValue: 0
     Weight: 0.1

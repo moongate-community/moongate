@@ -61,6 +61,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4015
+    FlippableItemIds:
+        - 4015
+        - 4016
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -146,6 +149,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4187
+    FlippableItemIds:
+        - 4187
+        - 4188
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -161,6 +167,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4177
+    FlippableItemIds:
+        - 4177
+        - 4178
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -205,6 +214,10 @@
     Category: Skill Items
     Description: ''
     ItemId: 2647
+    FlippableItemIds:
+        - 2647
+        - 2648
+        - 2649
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -276,6 +289,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 3722
+    FlippableItemIds:
+        - 3722
+        - 3721
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -291,6 +307,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 7127
+    FlippableItemIds:
+        - 7127
+        - 7130
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -306,6 +325,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4171
+    FlippableItemIds:
+        - 4171
+        - 4172
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -419,6 +441,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4173
+    FlippableItemIds:
+        - 4173
+        - 4174
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -434,6 +459,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4172
+    FlippableItemIds:
+        - 4171
+        - 4172
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -449,6 +477,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4175
+    FlippableItemIds:
+        - 4175
+        - 4176
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -604,6 +635,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4136
+    FlippableItemIds:
+        - 4136
+        - 4137
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -633,6 +667,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 3782
+    FlippableItemIds:
+        - 3782
+        - 3783
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -956,6 +993,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4130
+    FlippableItemIds:
+        - 4130
+        - 4131
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1000,6 +1040,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2548
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1015,6 +1060,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2548
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1030,6 +1080,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2549
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1059,6 +1114,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 10154
+    FlippableItemIds:
+        - 10154
+        - 10229
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1102,6 +1160,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4179
+    FlippableItemIds:
+        - 4179
+        - 4180
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1271,6 +1332,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4181
+    FlippableItemIds:
+        - 4181
+        - 4182
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1370,6 +1434,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4144
+    FlippableItemIds:
+        - 4144
+        - 4145
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1399,6 +1466,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2550
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1414,6 +1486,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2550
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1429,6 +1506,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2551
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1486,6 +1568,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 10128
+    FlippableItemIds:
+        - 10128
+        - 10203
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1579,6 +1664,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 7154
+    FlippableItemIds:
+        - 7154
+        - 7151
     Hue: 0
     GoldValue: 0
     Weight: 0.1
@@ -1595,6 +1683,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4225
+    FlippableItemIds:
+        - 4225
+        - 4226
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1625,6 +1716,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5372
+    FlippableItemIds:
+        - 5372
+        - 5371
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1640,6 +1734,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 7133
+    FlippableItemIds:
+        - 7133
+        - 7136
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1781,6 +1878,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4031
+    FlippableItemIds:
+        - 4031
+        - 4032
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1950,6 +2050,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4140
+    FlippableItemIds:
+        - 4140
+        - 4141
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1981,6 +2084,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4142
+    FlippableItemIds:
+        - 4142
+        - 4143
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2224,6 +2330,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4020
+    FlippableItemIds:
+        - 4021
+        - 4020
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -2298,6 +2407,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 7956
+    FlippableItemIds:
+        - 7956
+        - 7957
+        - 7958
+        - 7959
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2341,6 +2455,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2427,6 +2544,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4136
+    FlippableItemIds:
+        - 4136
+        - 4137
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2441,6 +2561,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4130
+    FlippableItemIds:
+        - 4130
+        - 4131
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2455,6 +2578,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5091
+    FlippableItemIds:
+        - 5091
+        - 5092
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2484,6 +2610,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4586
+    FlippableItemIds:
+        - 4586
+        - 4587
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2513,6 +2642,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4148
+    FlippableItemIds:
+        - 4148
+        - 4149
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2528,6 +2660,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 3999
+    FlippableItemIds:
+        - 3999
+        - 3998
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2557,6 +2692,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4031
+    FlippableItemIds:
+        - 4031
+        - 4032
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2600,6 +2738,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4185
+    FlippableItemIds:
+        - 4185
+        - 4186
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2629,6 +2770,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 10156
+    FlippableItemIds:
+        - 10156
+        - 10231
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2658,6 +2802,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4021
+    FlippableItemIds:
+        - 4021
+        - 4020
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2687,6 +2834,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5091
+    FlippableItemIds:
+        - 5091
+        - 5092
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2716,6 +2866,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4146
+    FlippableItemIds:
+        - 4146
+        - 4147
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2731,6 +2884,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5358
+    FlippableItemIds:
+        - 5357
+        - 5358
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2802,6 +2958,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2552
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2817,6 +2978,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2552
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2832,6 +2998,11 @@
     Category: Skill Items
     Description: ''
     ItemId: 2553
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2847,6 +3018,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4189
+    FlippableItemIds:
+        - 4189
+        - 4190
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2862,6 +3036,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 5365
+    FlippableItemIds:
+        - 5365
+        - 5366
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -2949,6 +3126,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 3718
+    FlippableItemIds:
+        - 3718
+        - 3717
     Hue: 0
     GoldValue: 0
     Weight: 11.0
@@ -3135,6 +3315,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 7866
+    FlippableItemIds:
+        - 7866
+        - 7867
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -3192,6 +3375,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 7864
+    FlippableItemIds:
+        - 7864
+        - 7865
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -3222,6 +3408,9 @@
     Category: Skill Items
     Description: ''
     ItemId: 4027
+    FlippableItemIds:
+        - 4027
+        - 4028
     Hue: 0
     GoldValue: 0
     Weight: 2.0

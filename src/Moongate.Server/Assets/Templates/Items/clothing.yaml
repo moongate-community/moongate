@@ -43,6 +43,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5441
+    FlippableItemIds:
+        - 5441
+        - 5442
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -84,6 +87,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5899
+    FlippableItemIds:
+        - 5899
+        - 5900
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -145,6 +151,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10127
+    FlippableItemIds:
+        - 10127
+        - 10202
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -166,6 +175,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10132
+    FlippableItemIds:
+        - 10132
+        - 10207
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -207,6 +219,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8059
+    FlippableItemIds:
+        - 8059
+        - 8060
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -228,6 +243,9 @@
     Category: Clothing
     Description: ''
     ItemId: 12228
+    FlippableItemIds:
+        - 12228
+        - 12666
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -269,6 +287,9 @@
     Category: Clothing
     Description: ''
     ItemId: 12227
+    FlippableItemIds:
+        - 12227
+        - 12665
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -311,6 +332,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7936
+    FlippableItemIds:
+        - 7936
+        - 7935
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -332,6 +356,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7933
+    FlippableItemIds:
+        - 7933
+        - 7934
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -373,6 +400,9 @@
     Category: Clothing
     Description: ''
     ItemId: 12218
+    FlippableItemIds:
+        - 12218
+        - 12660
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -394,6 +424,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10115
+    FlippableItemIds:
+        - 10115
+        - 10190
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -435,6 +468,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8966
+    FlippableItemIds:
+        - 8966
+        - 8965
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -456,6 +492,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8976
+    FlippableItemIds:
+        - 8976
+        - 8975
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -477,6 +516,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5437
+    FlippableItemIds:
+        - 5437
+        - 5438
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -498,6 +540,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8967
+    FlippableItemIds:
+        - 8967
+        - 8968
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -519,6 +564,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8970
+    FlippableItemIds:
+        - 8970
+        - 8969
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -540,6 +588,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8972
+    FlippableItemIds:
+        - 8972
+        - 8971
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -561,6 +612,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8974
+    FlippableItemIds:
+        - 8974
+        - 8973
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -582,6 +636,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10138
+    FlippableItemIds:
+        - 10138
+        - 10213
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -603,6 +660,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10140
+    FlippableItemIds:
+        - 10140
+        - 10215
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -624,6 +684,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5435
+    FlippableItemIds:
+        - 5435
+        - 5436
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -685,6 +748,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8095
+    FlippableItemIds:
+        - 8095
+        - 8096
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -706,6 +772,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10145
+    FlippableItemIds:
+        - 10145
+        - 10220
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -727,6 +796,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10137
+    FlippableItemIds:
+        - 10137
+        - 10212
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -748,6 +820,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10136
+    FlippableItemIds:
+        - 10136
+        - 10211
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -769,6 +844,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5431
+    FlippableItemIds:
+        - 5431
+        - 5432
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -790,6 +868,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5433
+    FlippableItemIds:
+        - 5433
+        - 5434
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -831,6 +912,9 @@
     Category: Clothing
     Description: ''
     ItemId: 12217
+    FlippableItemIds:
+        - 12217
+        - 12659
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -852,6 +936,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10114
+    FlippableItemIds:
+        - 10114
+        - 10189
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -893,6 +980,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10135
+    FlippableItemIds:
+        - 10135
+        - 10210
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -914,6 +1004,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10144
+    FlippableItemIds:
+        - 10144
+        - 10219
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -955,6 +1048,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7937
+    FlippableItemIds:
+        - 7937
+        - 7938
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -996,6 +1092,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7937
+    FlippableItemIds:
+        - 7937
+        - 7938
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1016,6 +1115,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7939
+    FlippableItemIds:
+        - 7939
+        - 7940
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1036,6 +1138,9 @@
     Category: Clothing
     Description: ''
     ItemId: 7939
+    FlippableItemIds:
+        - 7939
+        - 7940
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1056,6 +1161,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10134
+    FlippableItemIds:
+        - 10134
+        - 10209
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1077,6 +1185,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5901
+    FlippableItemIds:
+        - 5901
+        - 5902
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1118,6 +1229,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5399
+    FlippableItemIds:
+        - 5399
+        - 5400
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1139,6 +1253,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5903
+    FlippableItemIds:
+        - 5903
+        - 5904
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1160,6 +1277,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5422
+    FlippableItemIds:
+        - 5422
+        - 5423
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1181,6 +1301,9 @@
     Category: Clothing
     Description: ''
     ItemId: 5398
+    FlippableItemIds:
+        - 5398
+        - 5425
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -1242,6 +1365,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8189
+    FlippableItemIds:
+        - 8189
+        - 8190
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1283,6 +1409,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10139
+    FlippableItemIds:
+        - 10139
+        - 10214
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1365,6 +1494,9 @@
     Category: Clothing
     Description: ''
     ItemId: 8097
+    FlippableItemIds:
+        - 8097
+        - 8098
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -1386,6 +1518,9 @@
     Category: Clothing
     Description: ''
     ItemId: 10134
+    FlippableItemIds:
+        - 10134
+        - 10209
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1447,6 +1582,9 @@
     Category: Clothing
     Description: ''
     ItemId: 11112
+    FlippableItemIds:
+        - 11112
+        - 12639
     Hue: 0
     GoldValue: 0
     Weight: 4.0

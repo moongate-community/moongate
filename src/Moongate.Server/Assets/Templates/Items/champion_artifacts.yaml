@@ -45,6 +45,9 @@
     Category: Champion Artifacts
     Description: ''
     ItemId: 9860
+    FlippableItemIds:
+        - 9860
+        - 9859
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -129,6 +132,9 @@
     Category: Champion Artifacts
     Description: ''
     ItemId: 9860
+    FlippableItemIds:
+        - 9860
+        - 9859
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -143,6 +149,9 @@
     Category: Champion Artifacts
     Description: ''
     ItemId: 9860
+    FlippableItemIds:
+        - 9860
+        - 9859
     Hue: 0
     GoldValue: 0
     Weight: 0.0

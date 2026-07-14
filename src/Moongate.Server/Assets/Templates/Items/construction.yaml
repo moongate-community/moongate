@@ -3,6 +3,11 @@
     Category: Construction
     Description: ''
     ItemId: 2907
+    FlippableItemIds:
+        - 2907
+        - 2906
+        - 2908
+        - 2909
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -18,6 +23,12 @@
     Category: Construction
     Description: ''
     ItemId: 9424
+    FlippableItemIds:
+        - 9424
+        - 9425
+        - 9426
+        - 9427
+        - 9428
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -62,6 +73,11 @@
     Category: Construction
     Description: ''
     ItemId: 7857
+    FlippableItemIds:
+        - 7857
+        - 7858
+        - 7859
+        - 7860
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -91,6 +107,11 @@
     Category: Construction
     Description: ''
     ItemId: 11755
+    FlippableItemIds:
+        - 11755
+        - 11756
+        - 11757
+        - 11758
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -260,6 +281,9 @@
     Category: Construction
     Description: ''
     ItemId: 3095
+    FlippableItemIds:
+        - 3095
+        - 3096
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -451,6 +475,9 @@
     Category: Construction
     Description: ''
     ItemId: 5484
+    FlippableItemIds:
+        - 5484
+        - 5485
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -466,6 +493,9 @@
     Category: Construction
     Description: ''
     ItemId: 5502
+    FlippableItemIds:
+        - 5502
+        - 5503
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -481,6 +511,9 @@
     Category: Construction
     Description: ''
     ItemId: 5504
+    FlippableItemIds:
+        - 5504
+        - 5505
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -496,6 +529,9 @@
     Category: Construction
     Description: ''
     ItemId: 5486
+    FlippableItemIds:
+        - 5486
+        - 5487
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -511,6 +547,9 @@
     Category: Construction
     Description: ''
     ItemId: 5488
+    FlippableItemIds:
+        - 5488
+        - 5489
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -526,6 +565,9 @@
     Category: Construction
     Description: ''
     ItemId: 5490
+    FlippableItemIds:
+        - 5490
+        - 5491
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -541,6 +583,9 @@
     Category: Construction
     Description: ''
     ItemId: 5492
+    FlippableItemIds:
+        - 5492
+        - 5493
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -556,6 +601,9 @@
     Category: Construction
     Description: ''
     ItemId: 5494
+    FlippableItemIds:
+        - 5494
+        - 5495
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -571,6 +619,9 @@
     Category: Construction
     Description: ''
     ItemId: 5496
+    FlippableItemIds:
+        - 5496
+        - 5497
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -586,6 +637,9 @@
     Category: Construction
     Description: ''
     ItemId: 5498
+    FlippableItemIds:
+        - 5498
+        - 5499
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -601,6 +655,9 @@
     Category: Construction
     Description: ''
     ItemId: 5500
+    FlippableItemIds:
+        - 5500
+        - 5501
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -645,6 +702,10 @@
     Category: Construction
     Description: ''
     ItemId: 3941
+    FlippableItemIds:
+        - 3941
+        - 3943
+        - 3945
     Hue: 0
     GoldValue: 0
     Weight: 25.0
@@ -674,6 +735,9 @@
     Category: Construction
     Description: ''
     ItemId: 11741
+    FlippableItemIds:
+        - 11741
+        - 11742
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -689,6 +753,9 @@
     Category: Construction
     Description: ''
     ItemId: 11765
+    FlippableItemIds:
+        - 11765
+        - 11766
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -704,6 +771,11 @@
     Category: Construction
     Description: ''
     ItemId: 2895
+    FlippableItemIds:
+        - 2895
+        - 2894
+        - 2896
+        - 2897
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -803,6 +875,9 @@
     Category: Construction
     Description: ''
     ItemId: 3750
+    FlippableItemIds:
+        - 3750
+        - 3749
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -818,6 +893,9 @@
     Category: Construction
     Description: ''
     ItemId: 3751
+    FlippableItemIds:
+        - 3751
+        - 3752
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -847,6 +925,9 @@
     Category: Construction
     Description: ''
     ItemId: 2960
+    FlippableItemIds:
+        - 2960
+        - 2941
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -876,6 +957,9 @@
     Category: Construction
     Description: ''
     ItemId: 3746
+    FlippableItemIds:
+        - 3746
+        - 3745
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -891,6 +975,9 @@
     Category: Construction
     Description: ''
     ItemId: 3747
+    FlippableItemIds:
+        - 3747
+        - 3748
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -948,6 +1035,9 @@
     Category: Construction
     Description: ''
     ItemId: 12632
+    FlippableItemIds:
+        - 12632
+        - 12633
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -963,6 +1053,9 @@
     Category: Construction
     Description: ''
     ItemId: 2869
+    FlippableItemIds:
+        - 2869
+        - 2868
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -992,6 +1085,11 @@
     Category: Construction
     Description: ''
     ItemId: 11747
+    FlippableItemIds:
+        - 11747
+        - 11748
+        - 11749
+        - 11750
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1049,6 +1147,9 @@
     Category: Construction
     Description: ''
     ItemId: 3091
+    FlippableItemIds:
+        - 3091
+        - 3090
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1064,6 +1165,9 @@
     Category: Construction
     Description: ''
     ItemId: 3092
+    FlippableItemIds:
+        - 3092
+        - 3093
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1094,6 +1198,11 @@
     Category: Construction
     Description: ''
     ItemId: 3099
+    FlippableItemIds:
+        - 3099
+        - 3100
+        - 3102
+        - 3101
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1124,6 +1233,9 @@
     Category: Construction
     Description: ''
     ItemId: 3108
+    FlippableItemIds:
+        - 3108
+        - 3109
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1139,6 +1251,9 @@
     Category: Construction
     Description: ''
     ItemId: 3088
+    FlippableItemIds:
+        - 3088
+        - 3089
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1154,6 +1269,9 @@
     Category: Construction
     Description: ''
     ItemId: 3097
+    FlippableItemIds:
+        - 3097
+        - 3098
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1226,6 +1344,12 @@
     Category: Construction
     Description: ''
     ItemId: 9419
+    FlippableItemIds:
+        - 9419
+        - 9420
+        - 9421
+        - 9422
+        - 9423
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -1241,6 +1365,9 @@
     Category: Construction
     Description: ''
     ItemId: 3766
+    FlippableItemIds:
+        - 3766
+        - 3768
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1284,6 +1411,9 @@
     Category: Construction
     Description: ''
     ItemId: 5020
+    FlippableItemIds:
+        - 5020
+        - 4647
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1382,6 +1512,9 @@
     Category: Construction
     Description: ''
     ItemId: 4647
+    FlippableItemIds:
+        - 5020
+        - 4647
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1410,6 +1543,11 @@
     Category: Construction
     Description: ''
     ItemId: 4632
+    FlippableItemIds:
+        - 4632
+        - 4633
+        - 4634
+        - 4635
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -1481,6 +1619,9 @@
     Category: Construction
     Description: ''
     ItemId: 3771
+    FlippableItemIds:
+        - 3771
+        - 3772
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1650,6 +1791,9 @@
     Category: Construction
     Description: ''
     ItemId: 2867
+    FlippableItemIds:
+        - 2866
+        - 2867
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1693,6 +1837,9 @@
     Category: Construction
     Description: ''
     ItemId: 3743
+    FlippableItemIds:
+        - 3743
+        - 3784
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1708,6 +1855,9 @@
     Category: Construction
     Description: ''
     ItemId: 3815
+    FlippableItemIds:
+        - 3815
+        - 3785
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1723,6 +1873,11 @@
     Category: Construction
     Description: ''
     ItemId: 3117
+    FlippableItemIds:
+        - 3117
+        - 3119
+        - 3118
+        - 3120
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1738,6 +1893,9 @@
     Category: Construction
     Description: ''
     ItemId: 2861
+    FlippableItemIds:
+        - 2861
+        - 2860
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1753,6 +1911,11 @@
     Category: Construction
     Description: ''
     ItemId: 2903
+    FlippableItemIds:
+        - 2903
+        - 2902
+        - 2905
+        - 2904
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -1768,6 +1931,11 @@
     Category: Construction
     Description: ''
     ItemId: 2899
+    FlippableItemIds:
+        - 2899
+        - 2898
+        - 2900
+        - 2901
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -1783,6 +1951,11 @@
     Category: Construction
     Description: ''
     ItemId: 2862
+    FlippableItemIds:
+        - 2862
+        - 2863
+        - 2865
+        - 2864
     Hue: 0
     GoldValue: 0
     Weight: 15.0
@@ -1798,6 +1971,11 @@
     Category: Construction
     Description: ''
     ItemId: 2890
+    FlippableItemIds:
+        - 2890
+        - 2889
+        - 2891
+        - 2892
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1813,6 +1991,9 @@
     Category: Construction
     Description: ''
     ItemId: 2959
+    FlippableItemIds:
+        - 2959
+        - 2940
     Hue: 0
     GoldValue: 0
     Weight: 1.0

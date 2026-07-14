@@ -90,6 +90,9 @@
     Category: Training Items
     Description: Practice target for stealing training.
     ItemId: 7875
+    FlippableItemIds:
+        - 7872
+        - 7875
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -105,6 +108,9 @@
     Category: Training Items
     Description: Practice target for stealing training.
     ItemId: 7872
+    FlippableItemIds:
+        - 7872
+        - 7875
     Hue: 0
     GoldValue: 0
     Weight: 0.0

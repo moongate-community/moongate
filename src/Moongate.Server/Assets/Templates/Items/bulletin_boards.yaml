@@ -3,6 +3,9 @@
     Category: Bulletin Boards
     Description: ''
     ItemId: 7774
+    FlippableItemIds:
+        - 7774
+        - 7775
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -18,6 +21,9 @@
     Category: Bulletin Boards
     Description: Bulletin board test item.
     ItemId: 7774
+    FlippableItemIds:
+        - 7774
+        - 7775
     Hue: 0
     GoldValue: 0
     Weight: 0.0

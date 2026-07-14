@@ -3,6 +3,9 @@
     Category: TreasureChests
     Description: ''
     ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -17,6 +20,9 @@
     Category: TreasureChests
     Description: ''
     ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -31,6 +37,9 @@
     Category: TreasureChests
     Description: ''
     ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -45,6 +54,9 @@
     Category: TreasureChests
     Description: ''
     ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
     Hue: 0
     GoldValue: 0
     Weight: 0.0

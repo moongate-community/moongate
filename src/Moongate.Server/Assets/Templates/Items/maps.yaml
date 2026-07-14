@@ -3,6 +3,9 @@
     Category: Maps
     Description: ''
     ItemId: 5356
+    FlippableItemIds:
+        - 5355
+        - 5356
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -18,6 +21,9 @@
     Category: Maps
     Description: ''
     ItemId: 5356
+    FlippableItemIds:
+        - 5355
+        - 5356
     Hue: 0
     GoldValue: 0
     Weight: 1.0

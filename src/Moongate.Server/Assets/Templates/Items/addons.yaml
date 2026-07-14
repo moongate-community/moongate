@@ -31,6 +31,9 @@
     Category: Addons
     Description: ''
     ItemId: 2472
+    FlippableItemIds:
+        - 3712
+        - 2472
     Hue: 0
     GoldValue: 0
     Weight: 0.0

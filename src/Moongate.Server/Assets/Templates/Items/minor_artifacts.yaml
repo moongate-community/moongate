@@ -73,6 +73,9 @@
     Category: Minor Artifacts
     Description: ''
     ItemId: 7939
+    FlippableItemIds:
+        - 7939
+        - 7940
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -88,6 +91,9 @@
     Category: Minor Artifacts
     Description: ''
     ItemId: 7940
+    FlippableItemIds:
+        - 7939
+        - 7940
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -103,6 +109,9 @@
     Category: Minor Artifacts
     Description: ''
     ItemId: 5363
+    FlippableItemIds:
+        - 5363
+        - 5364
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -131,6 +140,9 @@
     Category: Minor Artifacts
     Description: ''
     ItemId: 5363
+    FlippableItemIds:
+        - 5363
+        - 5364
     Hue: 0
     GoldValue: 0
     Weight: 0.0

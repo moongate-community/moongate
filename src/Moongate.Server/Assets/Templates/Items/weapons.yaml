@@ -3,6 +3,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -32,6 +35,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -61,6 +67,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -90,6 +99,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -120,6 +132,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -151,6 +166,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3913
+    FlippableItemIds:
+        - 3913
+        - 3914
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -181,6 +199,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -212,6 +233,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3917
+    FlippableItemIds:
+        - 3917
+        - 3918
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -242,6 +266,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3911
+    FlippableItemIds:
+        - 3911
+        - 3912
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -272,6 +299,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3568
+    FlippableItemIds:
+        - 3569
+        - 3568
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -302,6 +332,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9917
+    FlippableItemIds:
+        - 9917
+        - 9927
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -332,6 +365,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2302
+    FlippableItemIds:
+        - 2302
+        - 16498
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -362,6 +398,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10152
+    FlippableItemIds:
+        - 10152
+        - 10227
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -392,6 +431,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9915
+    FlippableItemIds:
+        - 9915
+        - 9925
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -422,6 +464,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -480,6 +525,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5042
+    FlippableItemIds:
+        - 5042
+        - 5041
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -512,6 +560,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3934
+    FlippableItemIds:
+        - 3934
+        - 3935
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -542,6 +593,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5110
+    FlippableItemIds:
+        - 5110
+        - 5111
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -572,6 +626,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -601,6 +658,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -630,6 +690,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3779
+    FlippableItemIds:
+        - 3779
+        - 3778
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -660,6 +723,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5044
+    FlippableItemIds:
+        - 5044
+        - 5043
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -690,6 +756,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9922
+    FlippableItemIds:
+        - 9922
+        - 9932
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -722,6 +791,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -751,6 +823,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9921
+    FlippableItemIds:
+        - 9921
+        - 9931
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -781,6 +856,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3920
+    FlippableItemIds:
+        - 3920
+        - 3919
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -813,6 +891,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5185
+    FlippableItemIds:
+        - 5185
+        - 5184
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -872,6 +953,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3922
+    FlippableItemIds:
+        - 3922
+        - 3921
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -902,6 +986,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10153
+    FlippableItemIds:
+        - 10153
+        - 10228
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -932,6 +1019,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -961,6 +1051,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -991,6 +1084,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2307
+    FlippableItemIds:
+        - 2307
+        - 16494
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1021,6 +1117,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1050,6 +1149,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3915
+    FlippableItemIds:
+        - 3915
+        - 3916
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -1080,6 +1182,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9919
+    FlippableItemIds:
+        - 9919
+        - 9929
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1110,6 +1215,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2315
+    FlippableItemIds:
+        - 2315
+        - 16500
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1140,6 +1248,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2308
+    FlippableItemIds:
+        - 2308
+        - 16493
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1170,6 +1281,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2301
+    FlippableItemIds:
+        - 2301
+        - 16488
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1200,6 +1314,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -1232,6 +1349,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1262,6 +1382,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -1292,6 +1415,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1321,6 +1447,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3909
+    FlippableItemIds:
+        - 3909
+        - 3910
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -1351,6 +1480,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -1409,6 +1541,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -1440,6 +1575,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2312
+    FlippableItemIds:
+        - 2312
+        - 16501
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1470,6 +1608,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3568
+    FlippableItemIds:
+        - 3569
+        - 3568
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1499,6 +1640,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2309
+    FlippableItemIds:
+        - 2309
+        - 16496
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -1529,6 +1673,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2316
+    FlippableItemIds:
+        - 2316
+        - 16499
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1559,6 +1706,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5112
+    FlippableItemIds:
+        - 5112
+        - 5113
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1589,6 +1739,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -1618,6 +1771,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5182
+    FlippableItemIds:
+        - 5182
+        - 5183
     Hue: 0
     GoldValue: 0
     Weight: 16.0
@@ -1648,6 +1804,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5181
+    FlippableItemIds:
+        - 5181
+        - 5180
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -1678,6 +1837,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -1707,6 +1869,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3907
+    FlippableItemIds:
+        - 3907
+        - 3908
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -1737,6 +1902,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5117
+    FlippableItemIds:
+        - 5117
+        - 5116
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -1769,6 +1937,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -1798,6 +1969,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -1827,6 +2001,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -1856,6 +2033,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5042
+    FlippableItemIds:
+        - 5042
+        - 5041
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1888,6 +2068,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10157
+    FlippableItemIds:
+        - 10157
+        - 10232
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -1918,6 +2101,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5119
+    FlippableItemIds:
+        - 5119
+        - 5118
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1948,6 +2134,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -1977,6 +2166,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5121
+    FlippableItemIds:
+        - 5121
+        - 5120
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2007,6 +2199,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10151
+    FlippableItemIds:
+        - 10151
+        - 10226
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -2037,6 +2232,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9920
+    FlippableItemIds:
+        - 9920
+        - 9930
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -2067,6 +2265,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5115
+    FlippableItemIds:
+        - 5115
+        - 5114
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2097,6 +2298,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2127,6 +2331,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2156,6 +2363,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2187,6 +2397,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2218,6 +2431,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3937
+    FlippableItemIds:
+        - 3937
+        - 3936
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2248,6 +2464,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2277,6 +2496,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3932
+    FlippableItemIds:
+        - 3932
+        - 3933
     Hue: 0
     GoldValue: 0
     Weight: 14.0
@@ -2307,6 +2529,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2336,6 +2561,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -2365,6 +2593,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2394,6 +2625,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2452,6 +2686,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2484,6 +2721,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5179
+    FlippableItemIds:
+        - 5179
+        - 5178
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -2514,6 +2754,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2545,6 +2788,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10146
+    FlippableItemIds:
+        - 10146
+        - 10221
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -2575,6 +2821,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10158
+    FlippableItemIds:
+        - 10158
+        - 10233
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2605,6 +2854,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2634,6 +2886,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -2664,6 +2919,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3718
+    FlippableItemIds:
+        - 3718
+        - 3717
     Hue: 0
     GoldValue: 0
     Weight: 11.0
@@ -2694,6 +2952,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9918
+    FlippableItemIds:
+        - 9918
+        - 9928
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2724,6 +2985,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3719
+    FlippableItemIds:
+        - 3719
+        - 3720
     Hue: 0
     GoldValue: 0
     Weight: 11.0
@@ -2754,6 +3018,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3721
+    FlippableItemIds:
+        - 3722
+        - 3721
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -2784,6 +3051,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -2814,6 +3084,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2845,6 +3118,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9923
+    FlippableItemIds:
+        - 9923
+        - 9933
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -2877,6 +3153,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -2906,6 +3185,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2936,6 +3218,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2965,6 +3250,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2994,6 +3282,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10159
+    FlippableItemIds:
+        - 10159
+        - 10234
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -3024,6 +3315,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -3053,6 +3347,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9916
+    FlippableItemIds:
+        - 9916
+        - 9926
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3083,6 +3380,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5046
+    FlippableItemIds:
+        - 5046
+        - 5045
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3113,6 +3413,9 @@
     Category: Weapons
     Description: ''
     ItemId: 9914
+    FlippableItemIds:
+        - 9914
+        - 9924
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3143,6 +3446,9 @@
     Category: Weapons
     Description: ''
     ItemId: 2310
+    FlippableItemIds:
+        - 2310
+        - 16495
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -3173,6 +3479,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -3202,6 +3511,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3713
+    FlippableItemIds:
+        - 3713
+        - 3714
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -3232,6 +3544,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5123
+    FlippableItemIds:
+        - 5123
+        - 5122
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -3262,6 +3577,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -3291,6 +3609,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -3320,6 +3641,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3780
+    FlippableItemIds:
+        - 3780
+        - 3781
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -3350,6 +3674,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3410,6 +3737,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3938
+    FlippableItemIds:
+        - 3938
+        - 3939
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -3440,6 +3770,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3469,6 +3802,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10155
+    FlippableItemIds:
+        - 10155
+        - 10230
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3499,6 +3835,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10147
+    FlippableItemIds:
+        - 10147
+        - 10222
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -3529,6 +3868,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10150
+    FlippableItemIds:
+        - 10150
+        - 10225
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3559,6 +3901,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5048
+    FlippableItemIds:
+        - 5048
+        - 5047
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -3589,6 +3934,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3618,6 +3966,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3922
+    FlippableItemIds:
+        - 3922
+        - 3921
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -3647,6 +3998,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
     Hue: 0
     GoldValue: 0
     Weight: 12.0
@@ -3676,6 +4030,9 @@
     Category: Weapons
     Description: ''
     ItemId: 3938
+    FlippableItemIds:
+        - 3938
+        - 3939
     Hue: 837
     GoldValue: 0
     Weight: 7.0
@@ -3706,6 +4063,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -3735,6 +4095,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3764,6 +4127,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -3793,6 +4159,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3822,6 +4191,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -3851,6 +4223,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -3880,6 +4255,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5187
+    FlippableItemIds:
+        - 5187
+        - 5186
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -3910,6 +4288,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5049
+    FlippableItemIds:
+        - 5049
+        - 5050
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -3940,6 +4321,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10148
+    FlippableItemIds:
+        - 10148
+        - 10223
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -3970,6 +4354,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5040
+    FlippableItemIds:
+        - 5040
+        - 5039
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -4000,6 +4387,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -4030,6 +4420,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5125
+    FlippableItemIds:
+        - 5125
+        - 5124
     Hue: 0
     GoldValue: 0
     Weight: 9.0
@@ -4060,6 +4453,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5177
+    FlippableItemIds:
+        - 5177
+        - 5176
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -4090,6 +4486,9 @@
     Category: Weapons
     Description: ''
     ItemId: 5127
+    FlippableItemIds:
+        - 5127
+        - 5126
     Hue: 0
     GoldValue: 0
     Weight: 17.0
@@ -4120,6 +4519,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -4150,6 +4552,9 @@
     Category: Weapons
     Description: ''
     ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -4179,6 +4584,9 @@
     Category: Weapons
     Description: ''
     ItemId: 10149
+    FlippableItemIds:
+        - 10149
+        - 10224
     Hue: 0
     GoldValue: 0
     Weight: 9.0

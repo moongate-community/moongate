@@ -3,6 +3,9 @@
     Category: Special
     Description: ''
     ItemId: 5092
+    FlippableItemIds:
+        - 5091
+        - 5092
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -18,6 +21,9 @@
     Category: Special
     Description: ''
     ItemId: 5359
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -60,6 +66,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -102,6 +111,9 @@
     Category: Special
     Description: ''
     ItemId: 8296
+    FlippableItemIds:
+        - 8296
+        - 8314
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -285,6 +297,9 @@
     Category: Special
     Description: ''
     ItemId: 4015
+    FlippableItemIds:
+        - 4015
+        - 4016
     Hue: 0
     GoldValue: 0
     Weight: 20.0
@@ -300,6 +315,9 @@
     Category: Special
     Description: ''
     ItemId: 2474
+    FlippableItemIds:
+        - 2474
+        - 3709
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -328,6 +346,9 @@
     Category: Special
     Description: ''
     ItemId: 11001
+    FlippableItemIds:
+        - 11001
+        - 11005
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -343,6 +364,9 @@
     Category: Special
     Description: ''
     ItemId: 4179
+    FlippableItemIds:
+        - 4179
+        - 4180
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -862,6 +886,9 @@
     Category: Special
     Description: ''
     ItemId: 7151
+    FlippableItemIds:
+        - 7154
+        - 7151
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -876,6 +903,9 @@
     Category: Special
     Description: ''
     ItemId: 7151
+    FlippableItemIds:
+        - 7154
+        - 7151
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1184,6 +1214,9 @@
     Category: Special
     Description: ''
     ItemId: 9036
+    FlippableItemIds:
+        - 9036
+        - 9037
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1198,6 +1231,9 @@
     Category: Special
     Description: ''
     ItemId: 9037
+    FlippableItemIds:
+        - 9036
+        - 9037
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1464,6 +1500,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1604,6 +1643,9 @@
     Category: Special
     Description: ''
     ItemId: 7866
+    FlippableItemIds:
+        - 7866
+        - 7867
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1618,6 +1660,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1632,6 +1677,9 @@
     Category: Special
     Description: ''
     ItemId: 10944
+    FlippableItemIds:
+        - 10944
+        - 10947
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -1778,6 +1826,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1834,6 +1885,9 @@
     Category: Special
     Description: ''
     ItemId: 9860
+    FlippableItemIds:
+        - 9860
+        - 9859
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1863,6 +1917,9 @@
     Category: Special
     Description: ''
     ItemId: 3805
+    FlippableItemIds:
+        - 3805
+        - 3806
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2018,6 +2075,9 @@
     Category: Special
     Description: ''
     ItemId: 5062
+    FlippableItemIds:
+        - 5062
+        - 5070
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2117,6 +2177,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2131,6 +2194,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2173,6 +2239,9 @@
     Category: Special
     Description: ''
     ItemId: 12215
+    FlippableItemIds:
+        - 12215
+        - 12657
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2270,6 +2339,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2298,6 +2370,9 @@
     Category: Special
     Description: ''
     ItemId: 5099
+    FlippableItemIds:
+        - 5099
+        - 5106
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2327,6 +2402,9 @@
     Category: Special
     Description: ''
     ItemId: 9037
+    FlippableItemIds:
+        - 9036
+        - 9037
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2372,6 +2450,9 @@
     Category: Special
     Description: ''
     ItemId: 9068
+    FlippableItemIds:
+        - 9068
+        - 9069
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2387,6 +2468,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2402,6 +2486,9 @@
     Category: Special
     Description: ''
     ItemId: 17788
+    FlippableItemIds:
+        - 17788
+        - 17789
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2417,6 +2504,9 @@
     Category: Special
     Description: ''
     ItemId: 17786
+    FlippableItemIds:
+        - 17786
+        - 17787
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2432,6 +2522,9 @@
     Category: Special
     Description: ''
     ItemId: 17774
+    FlippableItemIds:
+        - 17774
+        - 17775
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2447,6 +2540,9 @@
     Category: Special
     Description: ''
     ItemId: 17784
+    FlippableItemIds:
+        - 17784
+        - 17785
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2505,6 +2601,9 @@
     Category: Special
     Description: ''
     ItemId: 5077
+    FlippableItemIds:
+        - 5077
+        - 5085
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2520,6 +2619,9 @@
     Category: Special
     Description: ''
     ItemId: 9038
+    FlippableItemIds:
+        - 9038
+        - 9039
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2647,6 +2749,9 @@
     Category: Special
     Description: ''
     ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
     Hue: 0
     GoldValue: 0
     Weight: 1.0

@@ -23,6 +23,9 @@
     Category: Armor
     Description: ''
     ItemId: 5198
+    FlippableItemIds:
+        - 5198
+        - 5203
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -44,6 +47,9 @@
     Category: Armor
     Description: ''
     ItemId: 5199
+    FlippableItemIds:
+        - 5199
+        - 5204
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -65,6 +71,9 @@
     Category: Armor
     Description: ''
     ItemId: 5200
+    FlippableItemIds:
+        - 5200
+        - 5205
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -86,6 +95,9 @@
     Category: Armor
     Description: ''
     ItemId: 5201
+    FlippableItemIds:
+        - 5201
+        - 5206
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -107,6 +119,9 @@
     Category: Armor
     Description: ''
     ItemId: 5202
+    FlippableItemIds:
+        - 5202
+        - 5207
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -128,6 +143,9 @@
     Category: Armor
     Description: ''
     ItemId: 5055
+    FlippableItemIds:
+        - 5055
+        - 5060
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -149,6 +167,9 @@
     Category: Armor
     Description: ''
     ItemId: 5051
+    FlippableItemIds:
+        - 5051
+        - 5056
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -190,6 +211,9 @@
     Category: Armor
     Description: ''
     ItemId: 5054
+    FlippableItemIds:
+        - 5054
+        - 5059
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -211,6 +235,9 @@
     Category: Armor
     Description: ''
     ItemId: 11118
+    FlippableItemIds:
+        - 11118
+        - 12645
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -252,6 +279,9 @@
     Category: Armor
     Description: ''
     ItemId: 5198
+    FlippableItemIds:
+        - 5198
+        - 5203
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -273,6 +303,9 @@
     Category: Armor
     Description: ''
     ItemId: 5199
+    FlippableItemIds:
+        - 5199
+        - 5204
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -294,6 +327,9 @@
     Category: Armor
     Description: ''
     ItemId: 5200
+    FlippableItemIds:
+        - 5200
+        - 5205
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -315,6 +351,9 @@
     Category: Armor
     Description: ''
     ItemId: 5201
+    FlippableItemIds:
+        - 5201
+        - 5206
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -336,6 +375,9 @@
     Category: Armor
     Description: ''
     ItemId: 5202
+    FlippableItemIds:
+        - 5202
+        - 5207
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -377,6 +419,9 @@
     Category: Armor
     Description: ''
     ItemId: 9815
+    FlippableItemIds:
+        - 9815
+        - 9816
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -398,6 +443,9 @@
     Category: Armor
     Description: ''
     ItemId: 9793
+    FlippableItemIds:
+        - 9793
+        - 9794
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -419,6 +467,9 @@
     Category: Armor
     Description: ''
     ItemId: 9795
+    FlippableItemIds:
+        - 9795
+        - 9796
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -440,6 +491,9 @@
     Category: Armor
     Description: ''
     ItemId: 9797
+    FlippableItemIds:
+        - 9797
+        - 9798
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -461,6 +515,9 @@
     Category: Armor
     Description: ''
     ItemId: 9799
+    FlippableItemIds:
+        - 9799
+        - 9800
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -502,6 +559,9 @@
     Category: Armor
     Description: ''
     ItemId: 11117
+    FlippableItemIds:
+        - 11117
+        - 12644
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -523,6 +583,9 @@
     Category: Armor
     Description: ''
     ItemId: 12235
+    FlippableItemIds:
+        - 12235
+        - 12673
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -544,6 +607,9 @@
     Category: Armor
     Description: ''
     ItemId: 7174
+    FlippableItemIds:
+        - 7174
+        - 7175
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -565,6 +631,9 @@
     Category: Armor
     Description: ''
     ItemId: 7172
+    FlippableItemIds:
+        - 7172
+        - 7173
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -586,6 +655,9 @@
     Category: Armor
     Description: ''
     ItemId: 7170
+    FlippableItemIds:
+        - 7170
+        - 7171
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -927,6 +999,9 @@
     Category: Armor
     Description: ''
     ItemId: 17790
+    FlippableItemIds:
+        - 17790
+        - 17791
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1268,6 +1343,9 @@
     Category: Armor
     Description: ''
     ItemId: 11120
+    FlippableItemIds:
+        - 11120
+        - 12647
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1329,6 +1407,9 @@
     Category: Armor
     Description: ''
     ItemId: 11124
+    FlippableItemIds:
+        - 11124
+        - 12651
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1350,6 +1431,9 @@
     Category: Armor
     Description: ''
     ItemId: 11129
+    FlippableItemIds:
+        - 11129
+        - 12656
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1371,6 +1455,9 @@
     Category: Armor
     Description: ''
     ItemId: 11125
+    FlippableItemIds:
+        - 11125
+        - 12652
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1392,6 +1479,9 @@
     Category: Armor
     Description: ''
     ItemId: 11126
+    FlippableItemIds:
+        - 11126
+        - 12653
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1413,6 +1503,9 @@
     Category: Armor
     Description: ''
     ItemId: 11128
+    FlippableItemIds:
+        - 11128
+        - 12655
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -1434,6 +1527,9 @@
     Category: Armor
     Description: ''
     ItemId: 11127
+    FlippableItemIds:
+        - 11127
+        - 12654
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -1455,6 +1551,9 @@
     Category: Armor
     Description: ''
     ItemId: 12232
+    FlippableItemIds:
+        - 12232
+        - 12670
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1476,6 +1575,9 @@
     Category: Armor
     Description: ''
     ItemId: 12229
+    FlippableItemIds:
+        - 12229
+        - 12667
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1537,6 +1639,9 @@
     Category: Armor
     Description: ''
     ItemId: 12233
+    FlippableItemIds:
+        - 12233
+        - 12671
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1558,6 +1663,9 @@
     Category: Armor
     Description: ''
     ItemId: 12234
+    FlippableItemIds:
+        - 12234
+        - 12672
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1579,6 +1687,9 @@
     Category: Armor
     Description: ''
     ItemId: 5069
+    FlippableItemIds:
+        - 5069
+        - 5061
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1600,6 +1711,9 @@
     Category: Armor
     Description: ''
     ItemId: 7178
+    FlippableItemIds:
+        - 7178
+        - 7179
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1621,6 +1735,9 @@
     Category: Armor
     Description: ''
     ItemId: 7609
+    FlippableItemIds:
+        - 7609
+        - 7610
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -1642,6 +1759,9 @@
     Category: Armor
     Description: ''
     ItemId: 5068
+    FlippableItemIds:
+        - 5068
+        - 5075
     Hue: 0
     GoldValue: 0
     Weight: 6.0
@@ -1683,6 +1803,9 @@
     Category: Armor
     Description: ''
     ItemId: 5062
+    FlippableItemIds:
+        - 5062
+        - 5070
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -1783,6 +1906,9 @@
     Category: Armor
     Description: ''
     ItemId: 5067
+    FlippableItemIds:
+        - 5067
+        - 5074
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -1904,6 +2030,9 @@
     Category: Armor
     Description: ''
     ItemId: 7168
+    FlippableItemIds:
+        - 7168
+        - 7169
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -1925,6 +2054,9 @@
     Category: Armor
     Description: ''
     ItemId: 7176
+    FlippableItemIds:
+        - 7176
+        - 7177
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2026,6 +2158,9 @@
     Category: Armor
     Description: ''
     ItemId: 5136
+    FlippableItemIds:
+        - 5136
+        - 5143
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2067,6 +2202,9 @@
     Category: Armor
     Description: ''
     ItemId: 5141
+    FlippableItemIds:
+        - 5141
+        - 5142
     Hue: 0
     GoldValue: 0
     Weight: 10.0
@@ -2108,6 +2246,9 @@
     Category: Armor
     Description: ''
     ItemId: 5140
+    FlippableItemIds:
+        - 5140
+        - 5144
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2229,6 +2370,9 @@
     Category: Armor
     Description: ''
     ItemId: 5137
+    FlippableItemIds:
+        - 5137
+        - 5146
     Hue: 0
     GoldValue: 0
     Weight: 7.0
@@ -2290,6 +2434,9 @@
     Category: Armor
     Description: ''
     ItemId: 5084
+    FlippableItemIds:
+        - 5084
+        - 5076
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -2311,6 +2458,9 @@
     Category: Armor
     Description: ''
     ItemId: 5083
+    FlippableItemIds:
+        - 5083
+        - 5090
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2332,6 +2482,9 @@
     Category: Armor
     Description: ''
     ItemId: 5077
+    FlippableItemIds:
+        - 5077
+        - 5085
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2373,6 +2526,9 @@
     Category: Armor
     Description: ''
     ItemId: 5082
+    FlippableItemIds:
+        - 5082
+        - 5089
     Hue: 0
     GoldValue: 0
     Weight: 3.0
@@ -2394,6 +2550,9 @@
     Category: Armor
     Description: ''
     ItemId: 11121
+    FlippableItemIds:
+        - 11121
+        - 12648
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2415,6 +2574,9 @@
     Category: Armor
     Description: ''
     ItemId: 5102
+    FlippableItemIds:
+        - 5102
+        - 5103
     Hue: 0
     GoldValue: 0
     Weight: 15.0
@@ -2436,6 +2598,9 @@
     Category: Armor
     Description: ''
     ItemId: 5100
+    FlippableItemIds:
+        - 5100
+        - 5101
     Hue: 0
     GoldValue: 0
     Weight: 15.0
@@ -2457,6 +2622,9 @@
     Category: Armor
     Description: ''
     ItemId: 5099
+    FlippableItemIds:
+        - 5099
+        - 5106
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2478,6 +2646,9 @@
     Category: Armor
     Description: ''
     ItemId: 5104
+    FlippableItemIds:
+        - 5104
+        - 5105
     Hue: 0
     GoldValue: 0
     Weight: 15.0
@@ -2499,6 +2670,9 @@
     Category: Armor
     Description: ''
     ItemId: 11119
+    FlippableItemIds:
+        - 11119
+        - 12646
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2560,6 +2734,9 @@
     Category: Armor
     Description: ''
     ItemId: 5084
+    FlippableItemIds:
+        - 5084
+        - 5076
     Hue: 0
     GoldValue: 0
     Weight: 4.0
@@ -2581,6 +2758,9 @@
     Category: Armor
     Description: ''
     ItemId: 7180
+    FlippableItemIds:
+        - 7180
+        - 7181
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2602,6 +2782,9 @@
     Category: Armor
     Description: ''
     ItemId: 5083
+    FlippableItemIds:
+        - 5083
+        - 5090
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2643,6 +2826,9 @@
     Category: Armor
     Description: ''
     ItemId: 5077
+    FlippableItemIds:
+        - 5077
+        - 5085
     Hue: 0
     GoldValue: 0
     Weight: 1.0
@@ -2724,6 +2910,9 @@
     Category: Armor
     Description: ''
     ItemId: 5082
+    FlippableItemIds:
+        - 5082
+        - 5089
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2785,6 +2974,9 @@
     Category: Armor
     Description: ''
     ItemId: 11122
+    FlippableItemIds:
+        - 11122
+        - 12649
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2806,6 +2998,9 @@
     Category: Armor
     Description: ''
     ItemId: 11123
+    FlippableItemIds:
+        - 11123
+        - 12650
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2827,6 +3022,9 @@
     Category: Armor
     Description: ''
     ItemId: 11116
+    FlippableItemIds:
+        - 11116
+        - 12643
     Hue: 0
     GoldValue: 0
     Weight: 5.0
@@ -2848,6 +3046,9 @@
     Category: Armor
     Description: ''
     ItemId: 11111
+    FlippableItemIds:
+        - 11111
+        - 12638
     Hue: 0
     GoldValue: 0
     Weight: 8.0
@@ -2869,6 +3070,9 @@
     Category: Armor
     Description: ''
     ItemId: 11114
+    FlippableItemIds:
+        - 11114
+        - 12641
     Hue: 0
     GoldValue: 0
     Weight: 2.0
@@ -2890,6 +3094,9 @@
     Category: Armor
     Description: ''
     ItemId: 11113
+    FlippableItemIds:
+        - 11113
+        - 12640
     Hue: 0
     GoldValue: 0
     Weight: 0.0
@@ -2911,6 +3118,9 @@
     Category: Armor
     Description: ''
     ItemId: 11115
+    FlippableItemIds:
+        - 11115
+        - 12642
     Hue: 0
     GoldValue: 0
     Weight: 8.0

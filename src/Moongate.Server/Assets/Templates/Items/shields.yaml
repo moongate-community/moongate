@@ -57,6 +57,9 @@
     Category: Shields
     Description: ''
     ItemId: 16896
+    FlippableItemIds:
+        - 16896
+        - 16903
     Hue: 0
     GoldValue: 0
     Weight: 5.0

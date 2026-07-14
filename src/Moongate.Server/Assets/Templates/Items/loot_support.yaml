@@ -18,6 +18,9 @@
     Category: Containers
     Description: Imported support item for ModernUO loot conversion.
     ItemId: 2475
+    FlippableItemIds:
+        - 2475
+        - 3708
     Hue: 0
     GoldValue: 0
     Weight: 2.0

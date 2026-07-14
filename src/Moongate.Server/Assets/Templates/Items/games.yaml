@@ -3,6 +3,9 @@
     Category: Games
     Description: ''
     ItemId: 3612
+    FlippableItemIds:
+        - 3612
+        - 4013
     Hue: 0
     GoldValue: 0
     Weight: 0.0
