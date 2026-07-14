@@ -9,7 +9,9 @@ using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Items;
+using Moongate.UO.Data.Skills;
 using Moongate.UO.Data.StartingCities;
+using Moongate.UO.Data.StartingItems;
 using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
 using SquidStd.Services.Core.Services;
@@ -18,18 +20,61 @@ namespace Moongate.Tests.Server;
 
 public class CharacterServiceTests
 {
-    private static ItemFactoryService ItemFactory()
+    private static ItemTemplateService Templates()
     {
         var templates = new ItemTemplateService();
         templates.Register(new ItemTemplate { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
         templates.Register(new ItemTemplate { Id = "bank_box", Name = "Bank Box", Category = "Containers", ItemId = 2475 });
+        templates.Register(new ItemTemplate { Id = "dagger", Name = "Dagger", Category = "Weapons", ItemId = 3921 });
+        templates.Register(new ItemTemplate
+        {
+            Id = "shirt", Name = "Shirt", Category = "Clothing", ItemId = 5399,
+            Equip = new EquipSpec { Layer = LayerType.Shirt }
+        });
 
-        return new ItemFactoryService(templates, new Random(1));
+        return templates;
+    }
+
+    private static StartingItemsService StartingItems()
+    {
+        var service = new StartingItemsService();
+        service.Load(new StartingItemsData
+        {
+            All = new StartingItemKit { Pack = [new StartingItemEntry { Item = "dagger" }] },
+            ByBody =
+            {
+                ["Elf/Female"] = new StartingItemKit { Equip = [new StartingItemEntry { Item = "shirt", Hue = "shirt" }] }
+            }
+        });
+
+        return service;
+    }
+
+    private static SkillService Skills()
+    {
+        var service = new SkillService();
+        service.Register(new SkillDefinition { Id = 1, Name = "Anatomy" });
+
+        return service;
     }
 
     private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
     {
-        return new CharacterService(persistence, new MobileFactoryService(Cities()), ItemFactory(), new ItemService(persistence), eventBus);
+        var templates = Templates();
+        var random = new Random(1);
+        var factory = new ItemFactoryService(templates, random);
+
+        return new CharacterService(
+            persistence,
+            new MobileFactoryService(Cities()),
+            factory,
+            new ItemService(persistence),
+            templates,
+            StartingItems(),
+            Skills(),
+            random,
+            eventBus
+        );
     }
 
     private static CharacterCreationPacket Packet()
@@ -155,5 +200,25 @@ public class CharacterServiceTests
         Assert.Equal(2475, bankBox!.ItemId);
         Assert.Equal(mobile.Id, bankBox.EquippedMobileId);
         Assert.Equal(LayerType.Bank, bankBox.EquippedLayer);
+    }
+
+    [Fact]
+    public void CreateCharacter_GrantsResolvedStartingKit()
+    {
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new EventBusService());
+
+        // Packet: Elf/Female -> ByBody equips the shirt; All -> dagger in the backpack.
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        var itemService = new ItemService(persistence);
+
+        var contents = itemService.GetContents(mobile.BackpackId);
+        Assert.Contains(contents, item => item.ItemId == 3921); // dagger from All.Pack
+
+        var equipped = itemService.GetEquipped(mobile);
+        var shirt = Assert.Single(equipped.Where(item => item.ItemId == 5399)); // shirt from ByBody Elf/Female
+        Assert.Equal(LayerType.Shirt, shirt.EquippedLayer);
+        Assert.Equal((ushort)0x0765, shirt.Hue.Value); // Hue "shirt" resolved to packet.ShirtHue
     }
 }
