@@ -28,6 +28,7 @@ export default defineConfig({
             { text: 'Overview', link: '/server/' },
             { text: 'Installation', link: '/server/installation' },
             { text: 'Configuration', link: '/server/configuration' },
+            { text: 'First launch', link: '/server/first-launch' },
             { text: 'Operations', link: '/server/operations' },
             { text: 'Troubleshooting', link: '/server/troubleshooting' }
           ]
