@@ -21,7 +21,18 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/moongate-community/moongate' }
     ],
     sidebar: {
-      '/server/': [{ text: 'Server Guide', items: [{ text: 'Overview', link: '/server/' }] }],
+      '/server/': [
+        {
+          text: 'Server Guide',
+          items: [
+            { text: 'Overview', link: '/server/' },
+            { text: 'Installation', link: '/server/installation' },
+            { text: 'Configuration', link: '/server/configuration' },
+            { text: 'Operations', link: '/server/operations' },
+            { text: 'Troubleshooting', link: '/server/troubleshooting' }
+          ]
+        }
+      ],
       '/contributors/': [{ text: 'Contributors', items: [{ text: 'Overview', link: '/contributors/' }] }],
       '/architecture/': [{ text: 'Architecture', items: [{ text: 'Overview', link: '/architecture/' }] }]
     },
