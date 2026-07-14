@@ -1,11 +1,10 @@
 ---
-_layout: landing
+layout: page
+title: Moongate Documentation
+description: Operate, contribute to, and understand the Moongate server.
+sidebar: false
+aside: false
+pageClass: moongate-home
 ---
 
-# This is the **HOMEPAGE**.
-
-Refer to [Markdown](http://daringfireball.net/projects/markdown/) for how to write markdown files.
-
-## Quick Start Notes:
-
-1. Add images to the *images* folder if the file is referencing an image.
+<SplitGateHome />

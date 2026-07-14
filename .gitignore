@@ -572,13 +572,10 @@ crashlytics-build.properties
 coverage/*
 /definizions.lua
 
-# DocFX generated documentation
-docs/_site/
-docs/obj/
-docs/api/
-docs/log.txt
-**/.manifest
-.tools
+# VitePress generated documentation
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+node_modules/
 
 # Source Generator - auto-generated files (regenerated on build)
 src/**/Generated/
