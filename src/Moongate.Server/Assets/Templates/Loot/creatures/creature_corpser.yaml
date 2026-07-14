@@ -1,17 +1,17 @@
-- Id: creature.corpser
-  Name: Corpser
-  Category: loot
-  Description: Creature-specific loot for Corpser.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: board
-    Amount: 10
-    Chance: 1.0
-  - ItemTemplateId: log
-    Amount: 10
-    Chance: 1.0
-  - ItemTemplateId: mandrake_root
-    Amount: 3
-    Chance: 1.0
+-   Id: creature.corpser
+    Name: Corpser
+    Category: loot
+    Description: Creature-specific loot for Corpser.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: board
+            Amount: 10
+            Chance: 1.0
+        -   ItemTemplateId: log
+            Amount: 10
+            Chance: 1.0
+        -   ItemTemplateId: mandrake_root
+            Amount: 3
+            Chance: 1.0

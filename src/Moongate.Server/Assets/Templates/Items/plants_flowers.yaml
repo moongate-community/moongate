@@ -1,182 +1,182 @@
-- Id: large_empty_pot
-  Name: Large Empty Pot
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4551
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus
-  Name: Potted Cactus
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7695
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus1
-  Name: Potted Cactus1
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7696
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus2
-  Name: Potted Cactus2
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7697
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus3
-  Name: Potted Cactus3
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7698
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus4
-  Name: Potted Cactus4
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7699
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_cactus5
-  Name: Potted Cactus5
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 7700
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_plant
-  Name: Potted Plant
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4554
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_plant1
-  Name: Potted Plant1
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4555
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_plant2
-  Name: Potted Plant2
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4556
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_tree
-  Name: Potted Tree
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4552
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: potted_tree1
-  Name: Potted Tree1
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4553
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
-- Id: small_empty_pot
-  Name: Small Empty Pot
-  Category: PlantsFlowers
-  Description: ''
-  ItemId: 4550
-  Hue: 0
-  GoldValue: 0
-  Weight: 100.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - plants_flowers
+-   Id: large_empty_pot
+    Name: Large Empty Pot
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus
+    Name: Potted Cactus
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7695
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus1
+    Name: Potted Cactus1
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7696
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus2
+    Name: Potted Cactus2
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7697
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus3
+    Name: Potted Cactus3
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7698
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus4
+    Name: Potted Cactus4
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7699
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_cactus5
+    Name: Potted Cactus5
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 7700
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_plant
+    Name: Potted Plant
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4554
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_plant1
+    Name: Potted Plant1
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4555
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_plant2
+    Name: Potted Plant2
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4556
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_tree
+    Name: Potted Tree
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4552
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: potted_tree1
+    Name: Potted Tree1
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4553
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers
+-   Id: small_empty_pot
+    Name: Small Empty Pot
+    Category: PlantsFlowers
+    Description: ''
+    ItemId: 4550
+    Hue: 0
+    GoldValue: 0
+    Weight: 100.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - plants_flowers

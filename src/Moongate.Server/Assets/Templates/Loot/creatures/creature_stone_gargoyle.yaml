@@ -1,14 +1,14 @@
-- Id: creature.stone_gargoyle
-  Name: StoneGargoyle
-  Category: loot
-  Description: Creature-specific loot for StoneGargoyle.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: iron_ingot
-    Amount: 12
-    Chance: 1.0
-  - ItemTemplateId: gargoyles_pickaxe
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.stone_gargoyle
+    Name: StoneGargoyle
+    Category: loot
+    Description: Creature-specific loot for StoneGargoyle.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: iron_ingot
+            Amount: 12
+            Chance: 1.0
+        -   ItemTemplateId: gargoyles_pickaxe
+            Amount: 1
+            Chance: 1.0

@@ -34,6 +34,20 @@ public enum FeatureFlagType
     /// Constant modern (7.x, Endless Journey) feature set with six and seven character slots
     /// enabled. Moongate targets modern clients only, so this is the fixed set advertised at login.
     /// </summary>
-    Modern = Lbr | Aos | LiveAccount | Se | Ml | NinthAge | Sa | Gothic | Rustic | Hs | Tol | Jungle |
-             Shadowguard | Ej | SixthCharacterSlot | SeventhCharacterSlot
+    Modern = Lbr |
+             Aos |
+             LiveAccount |
+             Se |
+             Ml |
+             NinthAge |
+             Sa |
+             Gothic |
+             Rustic |
+             Hs |
+             Tol |
+             Jungle |
+             Shadowguard |
+             Ej |
+             SixthCharacterSlot |
+             SeventhCharacterSlot
 }

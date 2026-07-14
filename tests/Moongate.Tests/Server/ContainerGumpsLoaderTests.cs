@@ -6,9 +6,6 @@ namespace Moongate.Tests.Server;
 
 public class ContainerGumpsLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-cgumps-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersAll()
     {
@@ -23,6 +20,7 @@ public class ContainerGumpsLoaderTests
 
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "container_gumps.yaml")));
             Assert.Equal(32, gumps.Count);
+
             // gump 0x9 (=9) maps item 0x2006 (=8198)
             Assert.Equal(9, gumps.GetByItemId(8198)!.GumpId);
         }
@@ -58,4 +56,7 @@ public class ContainerGumpsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-cgumps-" + Guid.NewGuid().ToString("N"));
 }

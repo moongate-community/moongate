@@ -5,7 +5,6 @@ using Moongate.Server.Interfaces.Loading;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using SquidStd.Core.Directories;
-using SquidStd.Plugin.Abstractions.Data;
 
 namespace Moongate.Tests.Server;
 
@@ -18,7 +17,7 @@ public class MoongateDataLoaderPluginTests
         var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(root, []));
 
-        new MoongateDataLoaderPlugin().Configure(container, new PluginContext());
+        new MoongateDataLoaderPlugin().Configure(container, new());
 
         var service = container.Resolve<ILootTemplateService>();
         var loaders = container.Resolve<IReadOnlyList<IDataLoader>>();

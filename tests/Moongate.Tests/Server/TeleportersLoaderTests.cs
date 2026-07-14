@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class TeleportersLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-tele-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersTeleporters()
     {
@@ -58,4 +55,7 @@ public class TeleportersLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-tele-" + Guid.NewGuid().ToString("N"));
 }

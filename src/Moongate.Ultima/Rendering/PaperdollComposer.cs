@@ -9,9 +9,9 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Rendering;
 
 /// <summary>
-/// Stateless paperdoll compositor over <see cref="Gumps"/>, <see cref="Hues"/> and
-/// <see cref="TileData"/>: background, hued body, hair/beard and worn equipment,
-/// blitted in <see cref="PaperdollDrawOrder"/> priority.
+/// Stateless paperdoll compositor over <see cref="Gumps" />, <see cref="Hues" /> and
+/// <see cref="TileData" />: background, hued body, hair/beard and worn equipment,
+/// blitted in <see cref="PaperdollDrawOrder" /> priority.
 /// </summary>
 public sealed class PaperdollComposer : IPaperdollComposer
 {
@@ -53,7 +53,14 @@ public sealed class PaperdollComposer : IPaperdollComposer
             layers.Add((PaperdollDrawOrder.BodyPriority, body));
 
             AddGenderGump(layers, owned, request.HairStyle, request.HairHue, LayerType.Hair, request.Female);
-            AddGenderGump(layers, owned, request.FacialHairStyle, request.FacialHairHue, LayerType.FacialHair, request.Female);
+            AddGenderGump(
+                layers,
+                owned,
+                request.FacialHairStyle,
+                request.FacialHairHue,
+                LayerType.FacialHair,
+                request.Female
+            );
             AddEquipment(layers, owned, request);
 
             using var canvas = new UltimaBitmap(CanvasWidth, CanvasHeight);
@@ -75,7 +82,10 @@ public sealed class PaperdollComposer : IPaperdollComposer
     }
 
     private static void AddEquipment(
-        List<(int Priority, UltimaBitmap Bitmap)> layers, List<UltimaBitmap> owned, PaperdollRequest request)
+        List<(int Priority, UltimaBitmap Bitmap)> layers,
+        List<UltimaBitmap> owned,
+        PaperdollRequest request
+    )
     {
         var table = TileData.ItemTable;
 
@@ -120,8 +130,13 @@ public sealed class PaperdollComposer : IPaperdollComposer
     }
 
     private static void AddGenderGump(
-        List<(int Priority, UltimaBitmap Bitmap)> layers, List<UltimaBitmap> owned,
-        int style, ushort hue, LayerType layer, bool female)
+        List<(int Priority, UltimaBitmap Bitmap)> layers,
+        List<UltimaBitmap> owned,
+        int style,
+        ushort hue,
+        LayerType layer,
+        bool female
+    )
     {
         if (style <= 0)
         {

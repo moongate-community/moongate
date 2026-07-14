@@ -7,9 +7,9 @@ namespace Moongate.Network.Framing;
 
 /// <summary>
 /// Cuts UO packets out of the accumulated TCP stream: byte 0 is the packet id,
-/// the size comes from <see cref="PacketLengths"/> (fixed) or from the big-endian
+/// the size comes from <see cref="PacketLengths" /> (fixed) or from the big-endian
 /// ushort at bytes 1-2 (variable). Unknown ids and impossible lengths throw
-/// <see cref="UoFramingException"/> — the session layer disconnects the client.
+/// <see cref="UoFramingException" /> — the session layer disconnects the client.
 /// Stateless: safe to call repeatedly while the buffer grows.
 /// </summary>
 public sealed class UoPacketFramer : INetFramer
@@ -41,7 +41,6 @@ public sealed class UoPacketFramer : INetFramer
             }
 
             frameLength = declared;
-
 
             return true;
         }

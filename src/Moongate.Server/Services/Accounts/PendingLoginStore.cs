@@ -24,7 +24,7 @@ public sealed class PendingLoginStore : IPendingLoginStore
     public uint Create(PendingLogin login)
     {
         var key = NextKey();
-        _entries[key] = new Entry(login, _nowMilliseconds() + _ttlMilliseconds);
+        _entries[key] = new(login, _nowMilliseconds() + _ttlMilliseconds);
 
         return key;
     }

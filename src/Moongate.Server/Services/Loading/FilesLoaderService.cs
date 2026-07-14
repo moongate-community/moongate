@@ -40,7 +40,5 @@ public sealed class FilesLoaderService : ISquidStdService
     }
 
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        return ValueTask.CompletedTask;
-    }
+        => ValueTask.CompletedTask;
 }

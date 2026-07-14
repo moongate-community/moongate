@@ -68,7 +68,5 @@ public sealed class GameServerLoginHandler : IPacketHandler<GameServerLoginPacke
     }
 
     public void Register(INetworkService network)
-    {
-        network.RegisterHandler(this);
-    }
+        => network.RegisterHandler(this);
 }

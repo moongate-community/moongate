@@ -1499,7 +1499,14 @@ public sealed class Map
     /// <param name="statics">Include statics in rendering</param>
     /// <param name="altitudeMode">Altitude rendering mode</param>
     /// <returns>Rendered bitmap</returns>
-    public UltimaBitmap GetImageWithAltitude(int x, int y, int width, int height, bool statics, MapAltitudeModeType altitudeMode)
+    public UltimaBitmap GetImageWithAltitude(
+        int x,
+        int y,
+        int width,
+        int height,
+        bool statics,
+        MapAltitudeModeType altitudeMode
+    )
     {
         var bmp = new UltimaBitmap(width << 3, height << 3);
 

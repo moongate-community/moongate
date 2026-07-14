@@ -46,7 +46,7 @@ public sealed class Light
             return _cache[index];
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var extra, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out var extra, out _);
 
         if (stream == null)
         {
@@ -109,7 +109,7 @@ public sealed class Light
             return null;
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var extra, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out var extra, out _);
 
         if (stream == null)
         {
@@ -257,7 +257,7 @@ public sealed class Light
             return true;
         }
 
-        var stream = _fileIndex.Seek(index, out var _, out var extra, out var _);
+        var stream = _fileIndex.Seek(index, out _, out var extra, out _);
 
         if (stream == null)
         {

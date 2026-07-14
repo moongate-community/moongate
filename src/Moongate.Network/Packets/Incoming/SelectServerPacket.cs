@@ -12,6 +12,6 @@ public readonly record struct SelectServerPacket(ushort ShardIndex) : IIncomingP
     {
         reader.ReadByte(); // packet id
 
-        return new SelectServerPacket(reader.ReadUInt16());
+        return new(reader.ReadUInt16());
     }
 }

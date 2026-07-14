@@ -1,7 +1,7 @@
 using Moongate.Server.Data.Internal;
-using Moongate.Server.Internal;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Loading;
+using Moongate.Server.Internal;
 using Moongate.Server.Services.Items;
 using Serilog;
 using SquidStd.Core.Directories;
@@ -46,8 +46,8 @@ public sealed class LootTemplatesLoader : IDataLoader
         }
 
         var files = Directory.GetFiles(lootDirectory, "*.yaml", SearchOption.AllDirectories)
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+                             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                             .ToArray();
 
         if (files.Length == 0)
         {

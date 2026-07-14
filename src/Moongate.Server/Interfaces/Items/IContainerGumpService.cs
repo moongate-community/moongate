@@ -11,12 +11,12 @@ public interface IContainerGumpService
     /// <summary>Number of registered gump layouts.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a gump layout, indexed by gump id.</summary>
-    void Register(ContainerGumpLayout layout);
-
     /// <summary>Returns the gump layout with the given gump id, or null.</summary>
     ContainerGumpLayout? GetByGumpId(int gumpId);
 
     /// <summary>Returns the gump layout used by the given container item id, or null.</summary>
     ContainerGumpLayout? GetByItemId(int itemId);
+
+    /// <summary>Adds or replaces a gump layout, indexed by gump id.</summary>
+    void Register(ContainerGumpLayout layout);
 }

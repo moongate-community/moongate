@@ -1,70 +1,70 @@
-- Id: enchanted_switch
-  Name: Enchanted Switch
-  Category: Talismans
-  Description: ''
-  ItemId: 12124
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - talismans
-- Id: hollow_prism
-  Name: Hollow Prism
-  Category: Talismans
-  Description: ''
-  ItemId: 12125
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - talismans
-- Id: jeweled_filigree
-  Name: Jeweled Filigree
-  Category: Talismans
-  Description: ''
-  ItemId: 12126
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - talismans
-- Id: runed_prism
-  Name: Runed Prism
-  Category: Talismans
-  Description: ''
-  ItemId: 12119
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - talismans
-- Id: runed_switch
-  Name: Runed Switch
-  Category: Talismans
-  Description: ''
-  ItemId: 12129
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - talismans
+-   Id: enchanted_switch
+    Name: Enchanted Switch
+    Category: Talismans
+    Description: ''
+    ItemId: 12124
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - talismans
+-   Id: hollow_prism
+    Name: Hollow Prism
+    Category: Talismans
+    Description: ''
+    ItemId: 12125
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - talismans
+-   Id: jeweled_filigree
+    Name: Jeweled Filigree
+    Category: Talismans
+    Description: ''
+    ItemId: 12126
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - talismans
+-   Id: runed_prism
+    Name: Runed Prism
+    Category: Talismans
+    Description: ''
+    ItemId: 12119
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - talismans
+-   Id: runed_switch
+    Name: Runed Switch
+    Category: Talismans
+    Description: ''
+    ItemId: 12129
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - talismans

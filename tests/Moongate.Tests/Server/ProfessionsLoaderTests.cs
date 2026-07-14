@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class ProfessionsLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-prof-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersAllProfessions()
     {
@@ -59,4 +56,7 @@ public class ProfessionsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-prof-" + Guid.NewGuid().ToString("N"));
 }

@@ -10,9 +10,7 @@ public sealed class StartingItemsService : IStartingItemsService
     private StartingItemsData _data = new();
 
     public void Load(StartingItemsData data)
-    {
-        _data = data;
-    }
+        => _data = data;
 
     public StartingItemKit Resolve(RaceType race, GenderType gender, IReadOnlyList<string> topSkillNames)
     {

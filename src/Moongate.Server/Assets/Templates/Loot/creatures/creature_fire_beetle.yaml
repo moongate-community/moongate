@@ -1,11 +1,11 @@
-- Id: creature.fire_beetle
-  Name: FireBeetle
-  Category: loot
-  Description: Creature-specific loot for FireBeetle.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: iron_ingot
-    Amount: 2
-    Chance: 1.0
+-   Id: creature.fire_beetle
+    Name: FireBeetle
+    Category: loot
+    Description: Creature-specific loot for FireBeetle.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: iron_ingot
+            Amount: 2
+            Chance: 1.0

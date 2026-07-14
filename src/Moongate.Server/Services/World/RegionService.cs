@@ -17,13 +17,9 @@ public sealed class RegionService : IRegionService
 
     public int Count => _regions.Count;
 
-    public void Register(RegionDefinition region)
-    {
-        _regions.Add(region);
-    }
-
     public IReadOnlyList<RegionDefinition> ForMap(MapType map)
-    {
-        return [.. _regions.Where(region => region.Map == map)];
-    }
+        => [.. _regions.Where(region => region.Map == map)];
+
+    public void Register(RegionDefinition region)
+        => _regions.Add(region);
 }

@@ -15,13 +15,9 @@ public sealed class LocationService : ILocationService
 
     public int Count => _byFacet.Count;
 
-    public void Register(LocationCategory facet)
-    {
-        _byFacet[facet.Name] = facet;
-    }
-
     public LocationCategory? GetFacet(string name)
-    {
-        return _byFacet.GetValueOrDefault(name);
-    }
+        => _byFacet.GetValueOrDefault(name);
+
+    public void Register(LocationCategory facet)
+        => _byFacet[facet.Name] = facet;
 }

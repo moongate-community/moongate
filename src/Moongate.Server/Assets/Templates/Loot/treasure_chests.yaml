@@ -1,549 +1,549 @@
-- Id: treasure_map.level_0
-  Name: Treasure Map Level 0
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 50
-    AmountMax: 100
-  - ItemTemplateId: treasure_map
-    Amount: 1
-    Chance: 0.75
-- Id: treasure_map.level_1.gems
-  Name: Treasure Map Level 1 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 3
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_1.gold
-  Name: Treasure Map Level 1 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 1000
-    Chance: 1.0
-- Id: treasure_map.level_1.reagents
-  Name: Treasure Map Level 1 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 3
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_1.scrolls
-  Name: Treasure Map Level 1 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 5
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
-- Id: treasure_map.level_2.gems
-  Name: Treasure Map Level 2 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 6
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_2.gold
-  Name: Treasure Map Level 2 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 2000
-    Chance: 1.0
-- Id: treasure_map.level_2.reagents
-  Name: Treasure Map Level 2 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 6
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_2.scrolls
-  Name: Treasure Map Level 2 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 10
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
-- Id: treasure_map.level_3.gems
-  Name: Treasure Map Level 3 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 9
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_3.gold
-  Name: Treasure Map Level 3 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 3000
-    Chance: 1.0
-- Id: treasure_map.level_3.reagents
-  Name: Treasure Map Level 3 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 9
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_3.scrolls
-  Name: Treasure Map Level 3 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 15
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
-- Id: treasure_map.level_4.gems
-  Name: Treasure Map Level 4 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 12
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_4.gold
-  Name: Treasure Map Level 4 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 4000
-    Chance: 1.0
-- Id: treasure_map.level_4.reagents
-  Name: Treasure Map Level 4 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 12
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_4.scrolls
-  Name: Treasure Map Level 4 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 20
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
-- Id: treasure_map.level_5.gems
-  Name: Treasure Map Level 5 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 15
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_5.gold
-  Name: Treasure Map Level 5 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 5000
-    Chance: 1.0
-- Id: treasure_map.level_5.reagents
-  Name: Treasure Map Level 5 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 15
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_5.scrolls
-  Name: Treasure Map Level 5 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 25
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
-- Id: treasure_map.level_6.gems
-  Name: Treasure Map Level 6 Gems
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 18
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: amber
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: amethyst
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: citrine
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: diamond
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: emerald
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: ruby
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: star_sapphire
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: tourmaline
-    Amount: 1
-- Id: treasure_map.level_6.gold
-  Name: Treasure Map Level 6 Gold
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Amount: 6000
-    Chance: 1.0
-- Id: treasure_map.level_6.reagents
-  Name: Treasure Map Level 6 Reagents
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 18
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: black_pearl
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: bloodmoss
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: garlic
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: ginseng
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: mandrake_root
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: nightshade
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: spiders_silk
-    Amount: 50
-  - Weight: 1
-    ItemTemplateId: sulfurous_ash
-    Amount: 50
-- Id: treasure_map.level_6.scrolls
-  Name: Treasure Map Level 6 Scrolls
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 30
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTag: skill items
-    Amount: 1
+-   Id: treasure_map.level_0
+    Name: Treasure Map Level 0
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 50
+            AmountMax: 100
+        -   ItemTemplateId: treasure_map
+            Amount: 1
+            Chance: 0.75
+-   Id: treasure_map.level_1.gems
+    Name: Treasure Map Level 1 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 3
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_1.gold
+    Name: Treasure Map Level 1 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 1000
+            Chance: 1.0
+-   Id: treasure_map.level_1.reagents
+    Name: Treasure Map Level 1 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 3
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_1.scrolls
+    Name: Treasure Map Level 1 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 5
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1
+-   Id: treasure_map.level_2.gems
+    Name: Treasure Map Level 2 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 6
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_2.gold
+    Name: Treasure Map Level 2 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 2000
+            Chance: 1.0
+-   Id: treasure_map.level_2.reagents
+    Name: Treasure Map Level 2 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 6
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_2.scrolls
+    Name: Treasure Map Level 2 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 10
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1
+-   Id: treasure_map.level_3.gems
+    Name: Treasure Map Level 3 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 9
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_3.gold
+    Name: Treasure Map Level 3 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 3000
+            Chance: 1.0
+-   Id: treasure_map.level_3.reagents
+    Name: Treasure Map Level 3 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 9
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_3.scrolls
+    Name: Treasure Map Level 3 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 15
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1
+-   Id: treasure_map.level_4.gems
+    Name: Treasure Map Level 4 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 12
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_4.gold
+    Name: Treasure Map Level 4 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 4000
+            Chance: 1.0
+-   Id: treasure_map.level_4.reagents
+    Name: Treasure Map Level 4 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 12
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_4.scrolls
+    Name: Treasure Map Level 4 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 20
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1
+-   Id: treasure_map.level_5.gems
+    Name: Treasure Map Level 5 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 15
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_5.gold
+    Name: Treasure Map Level 5 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 5000
+            Chance: 1.0
+-   Id: treasure_map.level_5.reagents
+    Name: Treasure Map Level 5 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 15
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_5.scrolls
+    Name: Treasure Map Level 5 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 25
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1
+-   Id: treasure_map.level_6.gems
+    Name: Treasure Map Level 6 Gems
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 18
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: amber
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: amethyst
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: citrine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: diamond
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: emerald
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ruby
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: star_sapphire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tourmaline
+            Amount: 1
+-   Id: treasure_map.level_6.gold
+    Name: Treasure Map Level 6 Gold
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 6000
+            Chance: 1.0
+-   Id: treasure_map.level_6.reagents
+    Name: Treasure Map Level 6 Reagents
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 18
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: black_pearl
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: bloodmoss
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: garlic
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: ginseng
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: mandrake_root
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: nightshade
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: spiders_silk
+            Amount: 50
+        -   Weight: 1
+            ItemTemplateId: sulfurous_ash
+            Amount: 50
+-   Id: treasure_map.level_6.scrolls
+    Name: Treasure Map Level 6 Scrolls
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 30
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTag: skill items
+            Amount: 1

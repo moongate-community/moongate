@@ -7,9 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="SquidStd.Core" Version="0.33.1" />
+        <PackageReference Include="SquidStd.Core" Version="0.33.1"/>
     </ItemGroup>
 
-   
 
 </Project>

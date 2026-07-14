@@ -1,11 +1,11 @@
-- Id: creature.leviathan
-  Name: Leviathan
-  Category: loot
-  Description: Creature-specific loot for Leviathan.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: message_in_a_bottle
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.leviathan
+    Name: Leviathan
+    Category: loot
+    Description: Creature-specific loot for Leviathan.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: message_in_a_bottle
+            Amount: 1
+            Chance: 1.0

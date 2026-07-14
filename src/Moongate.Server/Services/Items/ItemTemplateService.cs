@@ -15,13 +15,9 @@ public sealed class ItemTemplateService : IItemTemplateService
 
     public int Count => _byId.Count;
 
-    public void Register(ItemTemplate template)
-    {
-        _byId[template.Id] = template;
-    }
-
     public ItemTemplate? GetById(string id)
-    {
-        return _byId.GetValueOrDefault(id);
-    }
+        => _byId.GetValueOrDefault(id);
+
+    public void Register(ItemTemplate template)
+        => _byId[template.Id] = template;
 }

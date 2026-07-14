@@ -1,696 +1,696 @@
-- Id: brazier
-  Name: Brazier
-  Category: Lights
-  Description: ''
-  ItemId: 3633
-  Hue: 0
-  GoldValue: 0
-  Weight: 20.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-- Id: brazier_tall
-  Name: Brazier Tall
-  Category: Lights
-  Description: ''
-  ItemId: 6570
-  Hue: 0
-  GoldValue: 0
-  Weight: 25.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-- Id: candelabra
-  Name: Candelabra
-  Category: Lights
-  Description: ''
-  ItemId: 2599
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B1D'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A27'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: candelabra_stand
-  Name: Candelabra Stand
-  Category: Lights
-  Description: ''
-  ItemId: 2601
-  Hue: 0
-  GoldValue: 0
-  Weight: 20.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B26'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A29'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: candle
-  Name: Candle
-  Category: Lights
-  Description: ''
-  ItemId: 2600
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0A0F'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A28'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-  Equip:
-    Layer: TwoHanded
-- Id: candle_large
-  Name: Candle Large
-  Category: Lights
-  Description: ''
-  ItemId: 2598
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B1A'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A26'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: candle_long
-  Name: Candle Long
-  Category: Lights
-  Description: ''
-  ItemId: 5171
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x1430'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x1433'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: candle_short
-  Name: Candle Short
-  Category: Lights
-  Description: ''
-  ItemId: 5167
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x142C'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x142F'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: candle_skull
-  Name: Candle Skull
-  Category: Lights
-  Description: ''
-  ItemId: 6227
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x1858'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x1853'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: dark_source
-  Name: Dark Source
-  Category: Lights
-  Description: ''
-  ItemId: 5702
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Equip:
-    Layer: TwoHanded
-- Id: hanging_lantern
-  Name: Hanging Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 2589
-  Hue: 0
-  GoldValue: 0
-  Weight: 40.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0A1A'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A1D'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: heating_stand
-  Name: Heating Stand
-  Category: Lights
-  Description: ''
-  ItemId: 6217
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x184A'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x1849'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: lamp_post1
-  Name: Lamp Post1
-  Category: Lights
-  Description: ''
-  ItemId: 2849
-  Hue: 0
-  GoldValue: 0
-  Weight: 40.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B20'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0B21'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: lamp_post2
-  Name: Lamp Post2
-  Category: Lights
-  Description: ''
-  ItemId: 2851
-  Hue: 0
-  GoldValue: 0
-  Weight: 40.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B22'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0B23'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: lamp_post3
-  Name: Lamp Post3
-  Category: Lights
-  Description: ''
-  ItemId: 2853
-  Hue: 0
-  GoldValue: 0
-  Weight: 40.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0B24'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0B25'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: lantern
-  Name: Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 2597
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0A22'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A25'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-  Equip:
-    Layer: TwoHanded
-- Id: light_source
-  Name: Light Source
-  Category: Lights
-  Description: ''
-  ItemId: 5703
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Equip:
-    Layer: TwoHanded
-- Id: paper_lantern
-  Name: Paper Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 9406
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x24BD'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x24BE'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: red_hanging_lantern
-  Name: Red Hanging Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 9410
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x24C1'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x24C4'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: round_paper_lantern
-  Name: Round Paper Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 9418
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x24C9'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x24CA'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: shoji_lantern
-  Name: Shoji Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 9404
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x24BB'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x24BC'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: torch
-  Name: Torch
-  Category: Lights
-  Description: ''
-  ItemId: 3947
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0A12'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0F6B'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0054'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x04BB'
-  Equip:
-    Layer: TwoHanded
-- Id: wall_sconce
-  Name: Wall Sconce
-  Category: Lights
-  Description: ''
-  ItemId: 2555
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x09FD'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A00'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: wall_torch
-  Name: Wall Torch
-  Category: Lights
-  Description: ''
-  ItemId: 2565
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x0A07'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x0A0A'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
-- Id: white_hanging_lantern
-  Name: White Hanging Lantern
-  Category: Lights
-  Description: ''
-  ItemId: 9414
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: items.light_source
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - lights
-  Params:
-    light_lit_item_id:
-      Type: String
-      Value: '0x24C5'
-    light_unlit_item_id:
-      Type: String
-      Value: '0x24C8'
-    light_burning:
-      Type: String
-      Value: 'false'
-    light_toggle_sound_on:
-      Type: String
-      Value: '0x0047'
-    light_toggle_sound_off:
-      Type: String
-      Value: '0x03BE'
+-   Id: brazier
+    Name: Brazier
+    Category: Lights
+    Description: ''
+    ItemId: 3633
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+-   Id: brazier_tall
+    Name: Brazier Tall
+    Category: Lights
+    Description: ''
+    ItemId: 6570
+    Hue: 0
+    GoldValue: 0
+    Weight: 25.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+-   Id: candelabra
+    Name: Candelabra
+    Category: Lights
+    Description: ''
+    ItemId: 2599
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B1D'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A27'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: candelabra_stand
+    Name: Candelabra Stand
+    Category: Lights
+    Description: ''
+    ItemId: 2601
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B26'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A29'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: candle
+    Name: Candle
+    Category: Lights
+    Description: ''
+    ItemId: 2600
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0A0F'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A28'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+    Equip:
+        Layer: TwoHanded
+-   Id: candle_large
+    Name: Candle Large
+    Category: Lights
+    Description: ''
+    ItemId: 2598
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B1A'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A26'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: candle_long
+    Name: Candle Long
+    Category: Lights
+    Description: ''
+    ItemId: 5171
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x1430'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x1433'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: candle_short
+    Name: Candle Short
+    Category: Lights
+    Description: ''
+    ItemId: 5167
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x142C'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x142F'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: candle_skull
+    Name: Candle Skull
+    Category: Lights
+    Description: ''
+    ItemId: 6227
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x1858'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x1853'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: dark_source
+    Name: Dark Source
+    Category: Lights
+    Description: ''
+    ItemId: 5702
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Equip:
+        Layer: TwoHanded
+-   Id: hanging_lantern
+    Name: Hanging Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 2589
+    Hue: 0
+    GoldValue: 0
+    Weight: 40.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0A1A'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A1D'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: heating_stand
+    Name: Heating Stand
+    Category: Lights
+    Description: ''
+    ItemId: 6217
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x184A'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x1849'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: lamp_post1
+    Name: Lamp Post1
+    Category: Lights
+    Description: ''
+    ItemId: 2849
+    Hue: 0
+    GoldValue: 0
+    Weight: 40.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B20'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0B21'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: lamp_post2
+    Name: Lamp Post2
+    Category: Lights
+    Description: ''
+    ItemId: 2851
+    Hue: 0
+    GoldValue: 0
+    Weight: 40.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B22'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0B23'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: lamp_post3
+    Name: Lamp Post3
+    Category: Lights
+    Description: ''
+    ItemId: 2853
+    Hue: 0
+    GoldValue: 0
+    Weight: 40.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0B24'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0B25'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: lantern
+    Name: Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 2597
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0A22'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A25'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+    Equip:
+        Layer: TwoHanded
+-   Id: light_source
+    Name: Light Source
+    Category: Lights
+    Description: ''
+    ItemId: 5703
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Equip:
+        Layer: TwoHanded
+-   Id: paper_lantern
+    Name: Paper Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 9406
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x24BD'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x24BE'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: red_hanging_lantern
+    Name: Red Hanging Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 9410
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x24C1'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x24C4'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: round_paper_lantern
+    Name: Round Paper Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 9418
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x24C9'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x24CA'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: shoji_lantern
+    Name: Shoji Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 9404
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x24BB'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x24BC'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: torch
+    Name: Torch
+    Category: Lights
+    Description: ''
+    ItemId: 3947
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0A12'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0F6B'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0054'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x04BB'
+    Equip:
+        Layer: TwoHanded
+-   Id: wall_sconce
+    Name: Wall Sconce
+    Category: Lights
+    Description: ''
+    ItemId: 2555
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x09FD'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A00'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: wall_torch
+    Name: Wall Torch
+    Category: Lights
+    Description: ''
+    ItemId: 2565
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x0A07'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x0A0A'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'
+-   Id: white_hanging_lantern
+    Name: White Hanging Lantern
+    Category: Lights
+    Description: ''
+    ItemId: 9414
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.light_source
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - lights
+    Params:
+        light_lit_item_id:
+            Type: String
+            Value: '0x24C5'
+        light_unlit_item_id:
+            Type: String
+            Value: '0x24C8'
+        light_burning:
+            Type: String
+            Value: 'false'
+        light_toggle_sound_on:
+            Type: String
+            Value: '0x0047'
+        light_toggle_sound_off:
+            Type: String
+            Value: '0x03BE'

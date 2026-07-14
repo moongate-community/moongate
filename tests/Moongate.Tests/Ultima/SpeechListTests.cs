@@ -8,9 +8,27 @@ namespace Moongate.Tests.Ultima;
 public class SpeechListTests
 {
     [Fact]
+    public void Initialize_NoSpeechFile_YieldsEmptyList()
+    {
+        var dir = UltimaFixtures.CreateClientDirectory(("unrelated.txt", [0x00]));
+
+        try
+        {
+            Files.SetDirectory(dir);
+            SpeechList.Initialize();
+
+            Assert.Empty(SpeechList.Entries);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
     public void Initialize_SpeechFixture_ParsesIdKeywordAndOrder()
     {
-        var speech = UltimaFixtures.BuildSpeech(((short)5, "*hello*"), ((short)9, "*goodbye*"));
+        var speech = UltimaFixtures.BuildSpeech((5, "*hello*"), (9, "*goodbye*"));
         var dir = UltimaFixtures.CreateClientDirectory(("speech.mul", speech));
 
         try
@@ -27,24 +45,6 @@ public class SpeechListTests
             Assert.Equal(9, SpeechList.Entries[1].Id);
             Assert.Equal("*goodbye*", SpeechList.Entries[1].KeyWord);
             Assert.Equal(1, SpeechList.Entries[1].Order);
-        }
-        finally
-        {
-            Directory.Delete(dir, true);
-        }
-    }
-
-    [Fact]
-    public void Initialize_NoSpeechFile_YieldsEmptyList()
-    {
-        var dir = UltimaFixtures.CreateClientDirectory(("unrelated.txt", [0x00]));
-
-        try
-        {
-            Files.SetDirectory(dir);
-            SpeechList.Initialize();
-
-            Assert.Empty(SpeechList.Entries);
         }
         finally
         {

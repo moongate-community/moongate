@@ -6,9 +6,6 @@ namespace Moongate.Tests.Server;
 
 public class NamesLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-names-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersAllLists()
     {
@@ -56,4 +53,7 @@ public class NamesLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-names-" + Guid.NewGuid().ToString("N"));
 }

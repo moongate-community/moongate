@@ -5,24 +5,17 @@ namespace Moongate.Tests.Network;
 public class PacketHandlerRegistryTests
 {
     [Fact]
-    public void TryDispatch_RegisteredHandler_ReceivesWholePacket()
+    public void Register_DuplicateId_Throws()
     {
         var registry = new PacketHandlerRegistry();
-        byte[]? received = null;
+        registry.Register(0x02, _ => { });
 
-        registry.Register(0x02, packet => received = packet.ToArray());
-
-        var frame = new byte[] { 0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00 };
-
-        Assert.True(registry.TryDispatch(frame));
-        Assert.Equal(frame, received);
+        Assert.Throws<InvalidOperationException>(() => registry.Register(0x02, _ => { }));
     }
 
     [Fact]
-    public void TryDispatch_NoHandler_ReturnsFalse()
-    {
-        Assert.False(new PacketHandlerRegistry().TryDispatch([0x73, 0x00]));
-    }
+    public void Register_NullHandler_Throws()
+        => Assert.Throws<ArgumentNullException>(() => new PacketHandlerRegistry().Register(0x02, null!));
 
     [Fact]
     public void TryDispatch_EmptyPacket_ReturnsFalse()
@@ -34,17 +27,20 @@ public class PacketHandlerRegistryTests
     }
 
     [Fact]
-    public void Register_DuplicateId_Throws()
-    {
-        var registry = new PacketHandlerRegistry();
-        registry.Register(0x02, _ => { });
-
-        Assert.Throws<InvalidOperationException>(() => registry.Register(0x02, _ => { }));
-    }
+    public void TryDispatch_NoHandler_ReturnsFalse()
+        => Assert.False(new PacketHandlerRegistry().TryDispatch([0x73, 0x00]));
 
     [Fact]
-    public void Register_NullHandler_Throws()
+    public void TryDispatch_RegisteredHandler_ReceivesWholePacket()
     {
-        Assert.Throws<ArgumentNullException>(() => new PacketHandlerRegistry().Register(0x02, null!));
+        var registry = new PacketHandlerRegistry();
+        byte[]? received = null;
+
+        registry.Register(0x02, packet => received = packet.ToArray());
+
+        var frame = new byte[] { 0x02, 0x01, 0x05, 0x00, 0x00, 0x00, 0x00 };
+
+        Assert.True(registry.TryDispatch(frame));
+        Assert.Equal(frame, received);
     }
 }

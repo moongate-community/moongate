@@ -15,13 +15,9 @@ public sealed class ProfessionService : IProfessionService
 
     public int Count => _byName.Count;
 
-    public void Register(ProfessionDefinition definition)
-    {
-        _byName[definition.Name] = definition;
-    }
-
     public ProfessionDefinition? GetByName(string name)
-    {
-        return _byName.GetValueOrDefault(name);
-    }
+        => _byName.GetValueOrDefault(name);
+
+    public void Register(ProfessionDefinition definition)
+        => _byName[definition.Name] = definition;
 }

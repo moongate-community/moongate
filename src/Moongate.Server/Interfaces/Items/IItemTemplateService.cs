@@ -11,9 +11,9 @@ public interface IItemTemplateService
     /// <summary>Number of registered item templates.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces an item template, indexed by id.</summary>
-    void Register(ItemTemplate template);
-
     /// <summary>Returns the item template with the given id (case-insensitive), or null.</summary>
     ItemTemplate? GetById(string id);
+
+    /// <summary>Adds or replaces an item template, indexed by id.</summary>
+    void Register(ItemTemplate template);
 }

@@ -39,7 +39,7 @@ public static class Sounds
     /// <param name="soundId"></param>
     /// <returns></returns>
     public static UoSound GetSound(int soundId)
-        => GetSound(soundId, out var _);
+        => GetSound(soundId, out _);
 
     /// <summary>
     /// Returns <see cref="UoSound" /> of ID with bool translated in .def
@@ -66,7 +66,7 @@ public static class Sounds
             return _cache[soundId];
         }
 
-        var stream = _fileIndex.Seek(soundId, out var length, out var _, out var _);
+        var stream = _fileIndex.Seek(soundId, out var length, out _, out _);
 
         if (_fileIndex[soundId].Lookup < 0 || length <= 0)
         {
@@ -76,7 +76,7 @@ public static class Sounds
             }
 
             translated = true;
-            stream = _fileIndex.Seek(soundId, out length, out var _, out var _);
+            stream = _fileIndex.Seek(soundId, out length, out _, out _);
         }
 
         if (stream == null)
@@ -147,7 +147,7 @@ public static class Sounds
         }
         else
         {
-            var stream = _fileIndex.Seek(soundId, out var length, out var _, out var _);
+            var stream = _fileIndex.Seek(soundId, out var length, out _, out _);
 
             if (_fileIndex[soundId].Lookup < 0 || length <= 0)
             {
@@ -156,7 +156,7 @@ public static class Sounds
                     return 0;
                 }
 
-                stream = _fileIndex.Seek(soundId, out length, out var _, out var _);
+                stream = _fileIndex.Seek(soundId, out length, out _, out _);
             }
 
             if (stream == null)
@@ -373,7 +373,7 @@ public static class Sounds
 
             for (var i = 0; i < 0xFFF; ++i)
             {
-                if (!IsValidSound(i, out var name, out var _))
+                if (!IsValidSound(i, out var name, out _))
                 {
                     continue;
                 }

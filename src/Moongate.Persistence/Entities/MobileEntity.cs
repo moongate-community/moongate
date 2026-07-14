@@ -2,7 +2,6 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Interfaces;
-using Moongate.Ultima.Maps;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;

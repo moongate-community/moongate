@@ -16,11 +16,6 @@ public sealed class TitleService : ITitleService
 
     public int Count => _groups.Count;
 
-    public void Register(FameTitleGroup group)
-    {
-        _groups.Add(group);
-    }
-
     public string GetTitle(string name, int fame, int karma, bool female)
     {
         for (var i = 0; i < _groups.Count; i++)
@@ -49,4 +44,7 @@ public sealed class TitleService : ITitleService
 
         return name;
     }
+
+    public void Register(FameTitleGroup group)
+        => _groups.Add(group);
 }

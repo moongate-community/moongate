@@ -1,6 +1,6 @@
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Items;
 using Moongate.UO.Data.Types;
-using Moongate.Ultima.Types;
 using SquidStd.Core.Yaml;
 
 namespace Moongate.Tests.Data;

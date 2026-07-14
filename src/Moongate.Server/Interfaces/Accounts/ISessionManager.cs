@@ -6,11 +6,10 @@ namespace Moongate.Server.Interfaces.Accounts;
 /// <summary>Owns the live client sessions keyed by connection id.</summary>
 public interface ISessionManager
 {
+    int Count { get; }
     PlayerSession GetOrCreate(SquidStdTcpClient client);
-
-    bool TryGet(long sessionId, out PlayerSession session);
 
     void Remove(long sessionId);
 
-    int Count { get; }
+    bool TryGet(long sessionId, out PlayerSession session);
 }

@@ -62,6 +62,18 @@ internal static class LootTemplateValidator
         }
     }
 
+    private static InvalidDataException Error(
+        LootTemplateSource source,
+        string message,
+        int? entryIndex = null
+    )
+    {
+        var templateId = string.IsNullOrWhiteSpace(source.Template.Id) ? "<unknown>" : source.Template.Id;
+        var entry = entryIndex.HasValue ? $", entry {entryIndex.Value}" : "";
+
+        return new($"{source.RelativePath}: loot '{templateId}'{entry}: {message}");
+    }
+
     private static void ValidateEntry(
         LootTemplateSource source,
         LootTemplateEntry entry,
@@ -156,16 +168,5 @@ internal static class LootTemplateValidator
         {
             throw Error(source, "Additive entry cannot define Weight.", entryIndex);
         }
-    }
-
-    private static InvalidDataException Error(
-        LootTemplateSource source,
-        string message,
-        int? entryIndex = null
-    )
-    {
-        var templateId = string.IsNullOrWhiteSpace(source.Template.Id) ? "<unknown>" : source.Template.Id;
-        var entry = entryIndex.HasValue ? $", entry {entryIndex.Value}" : "";
-        return new InvalidDataException($"{source.RelativePath}: loot '{templateId}'{entry}: {message}");
     }
 }

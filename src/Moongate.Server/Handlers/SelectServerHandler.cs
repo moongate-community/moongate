@@ -22,7 +22,7 @@ public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>, IP
 
     public void Handle(SelectServerPacket packet, in PacketContext context)
     {
-        var authKey = _pendingLogins.Create(new PendingLogin(context.Session.Username ?? string.Empty));
+        var authKey = _pendingLogins.Create(new(context.Session.Username ?? string.Empty));
 
         context.Session.Send(
             new ConnectToGameServerPacket(
@@ -34,7 +34,5 @@ public sealed class SelectServerHandler : IPacketHandler<SelectServerPacket>, IP
     }
 
     public void Register(INetworkService network)
-    {
-        network.RegisterHandler(this);
-    }
+        => network.RegisterHandler(this);
 }

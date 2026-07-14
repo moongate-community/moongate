@@ -17,6 +17,16 @@ namespace Moongate.Server;
 
 public class MoongateDataLoaderPlugin : ISquidStdPlugin
 {
+    public PluginMetadata Metadata
+        => new()
+        {
+            Id = "moongate.dataloaders.plugin",
+            Version = new(VersionUtils.GetVersion(typeof(MoongateDataLoaderPlugin).Assembly)),
+            Author = "squid",
+            Name = "Moongate Data Loaders",
+            Description = "Moongate data loaders plugin"
+        };
+
     public void Configure(IContainer container, PluginContext context)
     {
         // Priority 100 so it starts after the event bus and the Lua forwarder are up,
@@ -70,14 +80,4 @@ public class MoongateDataLoaderPlugin : ISquidStdPlugin
 
         container.RegisterDataLoaderService();
     }
-
-    public PluginMetadata Metadata
-        => new()
-        {
-            Id = "moongate.dataloaders.plugin",
-            Version = new Version(VersionUtils.GetVersion(typeof(MoongateDataLoaderPlugin).Assembly)),
-            Author = "squid",
-            Name = "Moongate Data Loaders",
-            Description = "Moongate data loaders plugin",
-        };
 }

@@ -1,11 +1,11 @@
-- Id: creature.dread_spider
-  Name: DreadSpider
-  Category: loot
-  Description: Creature-specific loot for DreadSpider.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: spiders_silk
-    Amount: 8
-    Chance: 1.0
+-   Id: creature.dread_spider
+    Name: DreadSpider
+    Category: loot
+    Description: Creature-specific loot for DreadSpider.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: spiders_silk
+            Amount: 8
+            Chance: 1.0

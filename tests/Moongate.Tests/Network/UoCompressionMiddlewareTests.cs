@@ -6,6 +6,17 @@ namespace Moongate.Tests.Network;
 public class UoCompressionMiddlewareTests
 {
     [Fact]
+    public async Task ProcessAsync_Inbound_IsNeverCompressed()
+    {
+        var middleware = new UoCompressionMiddleware { Enabled = true };
+        var data = new byte[] { 0x00, 0x00, 0x00 };
+
+        var result = await middleware.ProcessAsync(null, data);
+
+        Assert.Equal(data, result.ToArray());
+    }
+
+    [Fact]
     public async Task ProcessSendAsync_Disabled_PassesThroughUnchanged()
     {
         var middleware = new UoCompressionMiddleware();
@@ -38,16 +49,5 @@ public class UoCompressionMiddlewareTests
         var result = await middleware.ProcessSendAsync(null, ReadOnlyMemory<byte>.Empty);
 
         Assert.True(result.IsEmpty);
-    }
-
-    [Fact]
-    public async Task ProcessAsync_Inbound_IsNeverCompressed()
-    {
-        var middleware = new UoCompressionMiddleware { Enabled = true };
-        var data = new byte[] { 0x00, 0x00, 0x00 };
-
-        var result = await middleware.ProcessAsync(null, data);
-
-        Assert.Equal(data, result.ToArray());
     }
 }

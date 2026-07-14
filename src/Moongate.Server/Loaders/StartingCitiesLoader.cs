@@ -31,7 +31,10 @@ public sealed class StartingCitiesLoader : IDataLoader
 
         if (!File.Exists(path))
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(StartingCitiesLoader).Assembly, "Assets/starting_cities.yaml");
+            var seed = ResourceUtils.GetEmbeddedResourceString(
+                typeof(StartingCitiesLoader).Assembly,
+                "Assets/starting_cities.yaml"
+            );
             File.WriteAllText(path, seed);
             _logger.Information("Seeded default starting_cities.yaml at {Path}", path);
         }

@@ -16,6 +16,9 @@ public interface IGameLoopContext
     /// <summary>Schedules one-shot and recurring timer callbacks on the loop.</summary>
     ITimerService Timers { get; }
 
+    /// <summary>Cancels a scheduled timer by id. Returns true when a timer was removed.</summary>
+    bool Cancel(string timerId);
+
     /// <summary>Runs <paramref name="action" /> on the game-loop thread on the next frame.</summary>
     void Post(Action action);
 
@@ -31,7 +34,4 @@ public interface IGameLoopContext
     /// </summary>
     /// <returns>The timer id, usable with <see cref="Cancel" />.</returns>
     string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null);
-
-    /// <summary>Cancels a scheduled timer by id. Returns true when a timer was removed.</summary>
-    bool Cancel(string timerId);
 }

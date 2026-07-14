@@ -17,7 +17,7 @@ public sealed class AnimIdx
     {
         Palette = new ushort[PaletteCapacity];
 
-        var stream = fileIndex.Seek(index, out var length, out var extra, out var _);
+        var stream = fileIndex.Seek(index, out var length, out var extra, out _);
 
         if (stream == null || length < 1)
         {

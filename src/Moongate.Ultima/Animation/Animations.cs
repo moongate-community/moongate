@@ -132,7 +132,7 @@ public static class Animations
 
         GetFileIndex(body, action, direction, fileType, out var fileIndex, out var index);
 
-        var stream = fileIndex.Seek(index, out var length, out var _, out var _);
+        var stream = fileIndex.Seek(index, out var length, out _, out _);
 
         if (stream == null)
         {
@@ -215,7 +215,7 @@ public static class Animations
     {
         GetFileIndex(body, action, direction, fileType, out var fileIndex, out var index);
 
-        var stream = fileIndex.Seek(index, out var _, out var _, out var _);
+        var stream = fileIndex.Seek(index, out _, out _, out _);
 
         if (stream == null)
         {
@@ -384,7 +384,7 @@ public static class Animations
 
         GetFileIndex(body, action, direction, fileType, out var fileIndex, out var index);
 
-        var valid = fileIndex.Valid(index, out var length, out var _, out var _);
+        var valid = fileIndex.Valid(index, out var length, out _, out _);
 
         return valid && length >= 1;
     }
@@ -406,7 +406,7 @@ public static class Animations
 
         GetFileIndex(body, action, dir, fileType, out var fileIndex, out var index);
 
-        var stream = fileIndex.Seek(index, out var length, out var _, out var _);
+        var stream = fileIndex.Seek(index, out var length, out _, out _);
 
         var def = !(stream == null || length == 0);
 
@@ -527,7 +527,7 @@ public static class Animations
         int hue,
         bool isUop
     )
-        => (long)(body & 0xFFFFF) |
+        => body & 0xFFFFF |
            ((long)(action & 0x7F) << 20) |
            ((long)(direction & 0x7) << 27) |
            ((long)(fileType & 0x7) << 30) |

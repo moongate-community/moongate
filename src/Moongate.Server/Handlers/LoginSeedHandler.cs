@@ -43,7 +43,5 @@ public sealed class LoginSeedHandler : IPacketHandler<LoginSeedPacket>, IPacketH
     }
 
     public void Register(INetworkService network)
-    {
-        network.RegisterHandler(this);
-    }
+        => network.RegisterHandler(this);
 }

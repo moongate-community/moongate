@@ -6,7 +6,7 @@ namespace Moongate.Network.Protocol;
 /// <summary>
 /// Static catalog of every documented UO packet: name, direction and size per id,
 /// mirrored 1:1 from the POL packet guide (https://docs.polserver.com/packets/index.php).
-/// Sizes stay consistent with <see cref="PacketLengths"/> for every id (locked by a test).
+/// Sizes stay consistent with <see cref="PacketLengths" /> for every id (locked by a test).
 /// </summary>
 public static class PacketsInfo
 {
@@ -16,9 +16,7 @@ public static class PacketsInfo
     public static int Count { get; } = _table.Count(static entry => entry is not null);
 
     public static PacketInfo? GetPacket(byte packetId)
-    {
-        return _table[packetId];
-    }
+        => _table[packetId];
 
     private static void Add(
         PacketInfo?[] table,
@@ -27,15 +25,13 @@ public static class PacketsInfo
         PacketDirectionType direction,
         short size
     )
-    {
-        table[id] = new PacketInfo
+        => table[id] = new()
         {
             Id = id,
             Name = name,
             Direction = direction,
             Size = size
         };
-    }
 
     private static PacketInfo?[] BuildTable()
     {
@@ -138,7 +134,13 @@ public static class PacketsInfo
         Add(table, 0x6E, "CharacterAnimation", PacketDirectionType.Output, 14);
         Add(table, 0x6F, "SecureTrading", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
         Add(table, 0x70, "GraphicalEffect", PacketDirectionType.Output, 28);
-        Add(table, 0x71, "BulletinBoardMessages", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
+        Add(
+            table,
+            0x71,
+            "BulletinBoardMessages",
+            PacketDirectionType.Input | PacketDirectionType.Output,
+            PacketLengths.Variable
+        );
         Add(table, 0x72, "RequestWarMode", PacketDirectionType.Input | PacketDirectionType.Output, 5);
         Add(table, 0x73, "PingMessage", PacketDirectionType.Input | PacketDirectionType.Output, 2);
         Add(table, 0x74, "OpenBuyWindow", PacketDirectionType.Output, PacketLengths.Variable);
@@ -163,7 +165,13 @@ public static class PacketsInfo
         Add(table, 0x97, "MovePlayer", PacketDirectionType.Output, 2);
         Add(table, 0x98, "AllNames", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
         Add(table, 0x99, "GiveBoatHousePlacementView", PacketDirectionType.Input | PacketDirectionType.Output, 26);
-        Add(table, 0x9A, "ConsoleEntryPrompt", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
+        Add(
+            table,
+            0x9A,
+            "ConsoleEntryPrompt",
+            PacketDirectionType.Input | PacketDirectionType.Output,
+            PacketLengths.Variable
+        );
         Add(table, 0x9B, "RequestHelp", PacketDirectionType.Input, 258);
         Add(table, 0x9C, "RequestAssistance", PacketDirectionType.Output, 53);
         Add(table, 0x9E, "SellList", PacketDirectionType.Output, PacketLengths.Variable);
@@ -191,7 +199,13 @@ public static class PacketsInfo
         Add(table, 0xB5, "OpenChatWindow", PacketDirectionType.Input, 64);
         Add(table, 0xB6, "SendHelpTipRequest", PacketDirectionType.Input, 9);
         Add(table, 0xB7, "HelpTipData", PacketDirectionType.Output, PacketLengths.Variable);
-        Add(table, 0xB8, "RequestCharProfile", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
+        Add(
+            table,
+            0xB8,
+            "RequestCharProfile",
+            PacketDirectionType.Input | PacketDirectionType.Output,
+            PacketLengths.Variable
+        );
         Add(table, 0xB9, "EnableLockedClientFeatures", PacketDirectionType.Output, 5);
         Add(table, 0xBA, "QuestArrow", PacketDirectionType.Output, 10);
         Add(table, 0xBB, "UltimaMessenger", PacketDirectionType.Input | PacketDirectionType.Output, 9);
@@ -217,13 +231,25 @@ public static class PacketsInfo
         Add(table, 0xCA, "GetUserServerPing", PacketDirectionType.Input | PacketDirectionType.Output, 6);
         Add(table, 0xCB, "GlobalQueCount", PacketDirectionType.Output, 7);
         Add(table, 0xCC, "ClilocMessageAffix", PacketDirectionType.Output, PacketLengths.Variable);
-        Add(table, 0xD0, "ConfigurationFile", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
+        Add(
+            table,
+            0xD0,
+            "ConfigurationFile",
+            PacketDirectionType.Input | PacketDirectionType.Output,
+            PacketLengths.Variable
+        );
         Add(table, 0xD1, "LogoutStatus", PacketDirectionType.Input | PacketDirectionType.Output, 2);
         Add(table, 0xD2, "Extended0x20", PacketDirectionType.Output, 25);
         Add(table, 0xD3, "Extended0x78", PacketDirectionType.Output, PacketLengths.Variable);
         Add(table, 0xD4, "BookHeaderNew", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
         Add(table, 0xD6, "MegaCliloc", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
-        Add(table, 0xD7, "GenericAosCommands", PacketDirectionType.Input | PacketDirectionType.Output, PacketLengths.Variable);
+        Add(
+            table,
+            0xD7,
+            "GenericAosCommands",
+            PacketDirectionType.Input | PacketDirectionType.Output,
+            PacketLengths.Variable
+        );
         Add(table, 0xD8, "SendCustomHouse", PacketDirectionType.Output, PacketLengths.Variable);
         Add(table, 0xD9, "SpyOnClient", PacketDirectionType.Input, PacketLengths.Variable);
         Add(table, 0xDB, "CharacterTransferLog", PacketDirectionType.Output, PacketLengths.Variable);

@@ -31,7 +31,10 @@ public sealed class ContainerGumpsLoader : IDataLoader
 
         if (!File.Exists(path))
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(ContainerGumpsLoader).Assembly, "Assets/container_gumps.yaml");
+            var seed = ResourceUtils.GetEmbeddedResourceString(
+                typeof(ContainerGumpsLoader).Assembly,
+                "Assets/container_gumps.yaml"
+            );
             File.WriteAllText(path, seed);
             _logger.Information("Seeded default container_gumps.yaml at {Path}", path);
         }

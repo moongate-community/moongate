@@ -30,12 +30,8 @@ public sealed class DataLoaderService : IDataLoaderService, ISquidStdService
     }
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        await ExecuteLoadersAsync(cancellationToken);
-    }
+        => await ExecuteLoadersAsync(cancellationToken);
 
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        return ValueTask.CompletedTask;
-    }
+        => ValueTask.CompletedTask;
 }

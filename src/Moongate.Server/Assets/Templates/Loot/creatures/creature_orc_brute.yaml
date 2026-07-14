@@ -1,17 +1,17 @@
-- Id: creature.orc_brute
-  Name: OrcBrute
-  Category: loot
-  Description: Creature-specific loot for OrcBrute.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: iron_ingot
-    Amount: 10
-    Chance: 1.0
-  - ItemTemplateId: orcish_kin_mask
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: bola_ball
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.orc_brute
+    Name: OrcBrute
+    Category: loot
+    Description: Creature-specific loot for OrcBrute.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: iron_ingot
+            Amount: 10
+            Chance: 1.0
+        -   ItemTemplateId: orcish_kin_mask
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bola_ball
+            Amount: 1
+            Chance: 1.0

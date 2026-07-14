@@ -6,9 +6,13 @@ namespace Moongate.Tests.Server;
 
 public class RegionServiceTests
 {
-    private static RegionDefinition Region(MapType map, string name)
+    [Fact]
+    public void ForMap_Unknown_IsEmpty()
     {
-        return new RegionDefinition { Type = "TownRegion", Map = map, Name = name };
+        var service = new RegionService();
+        service.Register(Region(MapType.Felucca, "Britain"));
+
+        Assert.Empty(service.ForMap(MapType.Malas));
     }
 
     [Fact]
@@ -23,12 +27,6 @@ public class RegionServiceTests
         Assert.Equal("Britain", service.ForMap(MapType.Felucca)[0].Name);
     }
 
-    [Fact]
-    public void ForMap_Unknown_IsEmpty()
-    {
-        var service = new RegionService();
-        service.Register(Region(MapType.Felucca, "Britain"));
-
-        Assert.Empty(service.ForMap(MapType.Malas));
-    }
+    private static RegionDefinition Region(MapType map, string name)
+        => new() { Type = "TownRegion", Map = map, Name = name };
 }

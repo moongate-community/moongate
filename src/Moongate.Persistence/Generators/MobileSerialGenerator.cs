@@ -8,9 +8,5 @@ public class MobileSerialGenerator : IIdGenerator<Serial>
     public Serial Initial => (Serial)Serial.MinMobile;
 
     public Serial Next(Serial current)
-    {
-        return (Serial)(current + 1);
-    }
-
-
+        => (Serial)(current + 1);
 }

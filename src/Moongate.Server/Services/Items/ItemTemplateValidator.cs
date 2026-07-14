@@ -34,6 +34,58 @@ internal static class ItemTemplateValidator
         }
     }
 
+    private static InvalidDataException Error(ItemTemplateSource source, string property, string message)
+    {
+        var templateId = string.IsNullOrWhiteSpace(source.Template.Id) ? "<unknown>" : source.Template.Id;
+
+        return new($"{source.RelativePath}: item '{templateId}', property '{property}': {message}");
+    }
+
+    private static void ValidateContainer(ItemTemplateSource source, ContainerSpec? container)
+    {
+        if (container is null)
+        {
+            return;
+        }
+
+        ValidateNonNegative(source, container.WeightMax, "Container.WeightMax");
+        ValidateNonNegative(source, container.MaxItems, "Container.MaxItems");
+        ValidateNonNegative(source, container.GumpId, "Container.GumpId");
+        ValidateNonNegative(source, container.WeightReduction, "Container.WeightReduction");
+        ValidateNonNegative(source, container.QuiverDamageIncrease, "Container.QuiverDamageIncrease");
+        ValidateNonNegative(source, container.LowerAmmoCost, "Container.LowerAmmoCost");
+        ValidateNonNegative(source, container.DefenseChanceIncrease, "Container.DefenseChanceIncrease");
+    }
+
+    private static void ValidateEquip(ItemTemplateSource source, EquipSpec? equip)
+    {
+        if (equip is null)
+        {
+            return;
+        }
+
+        ValidateNonNegative(source, equip.HitPoints, "Equip.HitPoints");
+        ValidateNonNegative(source, equip.StrengthReq, "Equip.StrengthReq");
+        ValidateNonNegative(source, equip.DexterityReq, "Equip.DexterityReq");
+        ValidateNonNegative(source, equip.IntelligenceReq, "Equip.IntelligenceReq");
+    }
+
+    private static void ValidateFinite(ItemTemplateSource source, double value, string property)
+    {
+        if (!double.IsFinite(value))
+        {
+            throw Error(source, property, $"{property} must be finite.");
+        }
+    }
+
+    private static void ValidateNonNegative(ItemTemplateSource source, double? value, string property)
+    {
+        if (value < 0)
+        {
+            throw Error(source, property, $"{property} cannot be negative.");
+        }
+    }
+
     private static void ValidateRequired(ItemTemplateSource source, string? value, string property)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -55,19 +107,6 @@ internal static class ItemTemplateValidator
         }
     }
 
-    private static void ValidateEquip(ItemTemplateSource source, EquipSpec? equip)
-    {
-        if (equip is null)
-        {
-            return;
-        }
-
-        ValidateNonNegative(source, equip.HitPoints, "Equip.HitPoints");
-        ValidateNonNegative(source, equip.StrengthReq, "Equip.StrengthReq");
-        ValidateNonNegative(source, equip.DexterityReq, "Equip.DexterityReq");
-        ValidateNonNegative(source, equip.IntelligenceReq, "Equip.IntelligenceReq");
-    }
-
     private static void ValidateWeapon(ItemTemplateSource source, WeaponSpec? weapon)
     {
         if (weapon is null)
@@ -84,45 +123,5 @@ internal static class ItemTemplateValidator
         ValidateNonNegative(source, weapon.MissSound, "Weapon.MissSound");
         ValidateNonNegative(source, weapon.Ammo, "Weapon.Ammo");
         ValidateNonNegative(source, weapon.AmmoFx, "Weapon.AmmoFx");
-    }
-
-    private static void ValidateContainer(ItemTemplateSource source, ContainerSpec? container)
-    {
-        if (container is null)
-        {
-            return;
-        }
-
-        ValidateNonNegative(source, container.WeightMax, "Container.WeightMax");
-        ValidateNonNegative(source, container.MaxItems, "Container.MaxItems");
-        ValidateNonNegative(source, container.GumpId, "Container.GumpId");
-        ValidateNonNegative(source, container.WeightReduction, "Container.WeightReduction");
-        ValidateNonNegative(source, container.QuiverDamageIncrease, "Container.QuiverDamageIncrease");
-        ValidateNonNegative(source, container.LowerAmmoCost, "Container.LowerAmmoCost");
-        ValidateNonNegative(source, container.DefenseChanceIncrease, "Container.DefenseChanceIncrease");
-    }
-
-    private static void ValidateNonNegative(ItemTemplateSource source, double? value, string property)
-    {
-        if (value < 0)
-        {
-            throw Error(source, property, $"{property} cannot be negative.");
-        }
-    }
-
-    private static void ValidateFinite(ItemTemplateSource source, double value, string property)
-    {
-        if (!double.IsFinite(value))
-        {
-            throw Error(source, property, $"{property} must be finite.");
-        }
-    }
-
-    private static InvalidDataException Error(ItemTemplateSource source, string property, string message)
-    {
-        var templateId = string.IsNullOrWhiteSpace(source.Template.Id) ? "<unknown>" : source.Template.Id;
-        return new InvalidDataException(
-            $"{source.RelativePath}: item '{templateId}', property '{property}': {message}"
-        );
     }
 }

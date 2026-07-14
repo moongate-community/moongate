@@ -31,7 +31,8 @@ public sealed class TeleportersLoader : IDataLoader
 
         if (!File.Exists(path))
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(TeleportersLoader).Assembly, "Assets/teleporters.yaml");
+            var seed =
+                ResourceUtils.GetEmbeddedResourceString(typeof(TeleportersLoader).Assembly, "Assets/teleporters.yaml");
             File.WriteAllText(path, seed);
             _logger.Information("Seeded default teleporters.yaml at {Path}", path);
         }

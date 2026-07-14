@@ -1,8 +1,8 @@
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// An immutable axis-aligned tile rectangle. <see cref="Start"/> is inclusive,
-/// <see cref="End"/> is exclusive.
+/// An immutable axis-aligned tile rectangle. <see cref="Start" /> is inclusive,
+/// <see cref="End" /> is exclusive.
 /// </summary>
 public readonly struct Rectangle2D : IEquatable<Rectangle2D>
 {
@@ -35,42 +35,26 @@ public readonly struct Rectangle2D : IEquatable<Rectangle2D>
     }
 
     public bool Contains(Point2D p)
-    {
-        return p.X >= X && p.X < X + Width && p.Y >= Y && p.Y < Y + Height;
-    }
+        => p.X >= X && p.X < X + Width && p.Y >= Y && p.Y < Y + Height;
 
     public bool Contains(Point3D p)
-    {
-        return Contains(p.ToPoint2D());
-    }
+        => Contains(p.ToPoint2D());
 
     public bool Equals(Rectangle2D other)
-    {
-        return X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
-    }
+        => X == other.X && Y == other.Y && Width == other.Width && Height == other.Height;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Rectangle2D other && Equals(other);
-    }
+        => obj is Rectangle2D other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y, Width, Height);
-    }
+        => HashCode.Combine(X, Y, Width, Height);
 
     public static bool operator ==(Rectangle2D left, Rectangle2D right)
-    {
-        return left.Equals(right);
-    }
+        => left.Equals(right);
 
     public static bool operator !=(Rectangle2D left, Rectangle2D right)
-    {
-        return !left.Equals(right);
-    }
+        => !left.Equals(right);
 
     public override string ToString()
-    {
-        return $"({X}, {Y})+({Width}, {Height})";
-    }
+        => $"({X}, {Y})+({Width}, {Height})";
 }

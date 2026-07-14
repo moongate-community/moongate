@@ -17,11 +17,11 @@ public class HueTests
     {
         var hue = new Hue(0x1E);
 
-        Assert.Equal(new Hue(0x1E), hue);
-        Assert.NotEqual(new Hue(0x1F), hue);
+        Assert.Equal(new(0x1E), hue);
+        Assert.NotEqual(new(0x1F), hue);
         Assert.True(new Hue(0x1E) == hue);
         Assert.False(new Hue(0x1E) != hue);
-        Assert.Equal((ushort)0x1E, (ushort)hue);
+        Assert.Equal((ushort)0x1E, hue);
         Assert.Equal(hue, (Hue)0x1E);
     }
 }

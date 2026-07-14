@@ -11,8 +11,23 @@ public class SeedHandshakeTests
         public SessionStateType State { get; private set; } = SessionStateType.AwaitingSeed;
         public uint? Seed { get; private set; }
 
-        public void SetState(SessionStateType state) => State = state;
-        public void SetSeed(uint seed) => Seed = seed;
+        public void SetSeed(uint seed)
+            => Seed = seed;
+
+        public void SetState(SessionStateType state)
+            => State = state;
+    }
+
+    [Fact]
+    public void Process_AlreadyPastAwaitingSeed_PassesThrough()
+    {
+        var target = new FakeSeedTarget();
+        target.SetState(SessionStateType.Login);
+
+        var result = SeedHandshake.Process(target, [0x80, 1, 2], out var consumed);
+
+        Assert.Equal(SeedHandshakeResultType.PassThrough, result);
+        Assert.Equal(0, consumed);
     }
 
     [Fact]
@@ -48,17 +63,5 @@ public class SeedHandshakeTests
         var result = SeedHandshake.Process(target, [0x00, 0x00, 0x00, 0x00], out _);
 
         Assert.Equal(SeedHandshakeResultType.Reject, result);
-    }
-
-    [Fact]
-    public void Process_AlreadyPastAwaitingSeed_PassesThrough()
-    {
-        var target = new FakeSeedTarget();
-        target.SetState(SessionStateType.Login);
-
-        var result = SeedHandshake.Process(target, [0x80, 1, 2], out var consumed);
-
-        Assert.Equal(SeedHandshakeResultType.PassThrough, result);
-        Assert.Equal(0, consumed);
     }
 }

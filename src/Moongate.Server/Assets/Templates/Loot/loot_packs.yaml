@@ -1,418 +1,418 @@
-- Id: loot_pack.aos_average
-  Name: AosAverage
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 55
-    AmountMax: 100
-- Id: loot_pack.aos_filthy_rich
-  Name: AosFilthyRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 202
-    AmountMax: 400
-- Id: loot_pack.aos_meager
-  Name: AosMeager
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 23
-    AmountMax: 50
-- Id: loot_pack.aos_poor
-  Name: AosPoor
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 11
-    AmountMax: 20
-- Id: loot_pack.aos_rich
-  Name: AosRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 160
-    AmountMax: 250
-- Id: loot_pack.aos_super_boss
-  Name: AosSuperBoss
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 505
-    AmountMax: 1000
-- Id: loot_pack.aos_ultra_rich
-  Name: AosUltraRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 505
-    AmountMax: 1000
-- Id: loot_pack.average
-  Name: Average
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 108
-    AmountMax: 180
-- Id: loot_pack.filthy_rich
-  Name: FilthyRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 403
-    AmountMax: 700
-- Id: loot_pack.gems
-  Name: Gems
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: amber
-    Amount: 1
-    Chance: 1.0
-- Id: loot_pack.high_scrolls
-  Name: HighScrolls
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: summon_air_elemental_scroll
-    Amount: 1
-    Chance: 1.0
-- Id: loot_pack.low_scrolls
-  Name: LowScrolls
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: clumsy_scroll
-    Amount: 1
-    Chance: 1.0
-- Id: loot_pack.meager
-  Name: Meager
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 44
-    AmountMax: 80
-- Id: loot_pack.med_scrolls
-  Name: MedScrolls
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: arch_cure_scroll
-    Amount: 1
-    Chance: 1.0
-- Id: loot_pack.ml_rich
-  Name: MlRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 454
-    AmountMax: 650
-- Id: loot_pack.old_average
-  Name: OldAverage
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 60
-    AmountMax: 150
-- Id: loot_pack.old_filthy_rich
-  Name: OldFilthyRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 402
-    AmountMax: 650
-- Id: loot_pack.old_meager
-  Name: OldMeager
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 30
-    AmountMax: 75
-- Id: loot_pack.old_poor
-  Name: OldPoor
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 1
-    AmountMax: 25
-- Id: loot_pack.old_rich
-  Name: OldRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 260
-    AmountMax: 350
-- Id: loot_pack.old_super_boss
-  Name: OldSuperBoss
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 505
-    AmountMax: 1000
-- Id: loot_pack.old_ultra_rich
-  Name: OldUltraRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 505
-    AmountMax: 1000
-- Id: loot_pack.poor
-  Name: Poor
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 22
-    AmountMax: 40
-- Id: loot_pack.potions
-  Name: Potions
-  Category: loot
-  Description: ''
-  Mode: Weighted
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - Weight: 1
-    ItemTemplateId: agility_potion
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: strength_potion
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: refresh_potion
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: lesser_cure_potion
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: lesser_heal_potion
-    Amount: 1
-  - Weight: 1
-    ItemTemplateId: lesser_poison_potion
-    Amount: 1
-- Id: loot_pack.rich
-  Name: Rich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 240
-    AmountMax: 375
-- Id: loot_pack.se_average
-  Name: SeAverage
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 108
-    AmountMax: 180
-- Id: loot_pack.se_filthy_rich
-  Name: SeFilthyRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 403
-    AmountMax: 700
-- Id: loot_pack.se_meager
-  Name: SeMeager
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 44
-    AmountMax: 80
-- Id: loot_pack.se_poor
-  Name: SePoor
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 22
-    AmountMax: 40
-- Id: loot_pack.se_rich
-  Name: SeRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 240
-    AmountMax: 375
-- Id: loot_pack.se_super_boss
-  Name: SeSuperBoss
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 810
-    AmountMax: 1800
-- Id: loot_pack.se_ultra_rich
-  Name: SeUltraRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 606
-    AmountMax: 1200
-- Id: loot_pack.super_boss
-  Name: SuperBoss
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 810
-    AmountMax: 1800
-- Id: loot_pack.ultra_rich
-  Name: UltraRich
-  Category: loot
-  Description: ''
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: gold
-    Chance: 1.0
-    AmountMin: 606
-    AmountMax: 1200
+-   Id: loot_pack.aos_average
+    Name: AosAverage
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 55
+            AmountMax: 100
+-   Id: loot_pack.aos_filthy_rich
+    Name: AosFilthyRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 202
+            AmountMax: 400
+-   Id: loot_pack.aos_meager
+    Name: AosMeager
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 23
+            AmountMax: 50
+-   Id: loot_pack.aos_poor
+    Name: AosPoor
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 11
+            AmountMax: 20
+-   Id: loot_pack.aos_rich
+    Name: AosRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 160
+            AmountMax: 250
+-   Id: loot_pack.aos_super_boss
+    Name: AosSuperBoss
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 505
+            AmountMax: 1000
+-   Id: loot_pack.aos_ultra_rich
+    Name: AosUltraRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 505
+            AmountMax: 1000
+-   Id: loot_pack.average
+    Name: Average
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 108
+            AmountMax: 180
+-   Id: loot_pack.filthy_rich
+    Name: FilthyRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 403
+            AmountMax: 700
+-   Id: loot_pack.gems
+    Name: Gems
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: amber
+            Amount: 1
+            Chance: 1.0
+-   Id: loot_pack.high_scrolls
+    Name: HighScrolls
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: summon_air_elemental_scroll
+            Amount: 1
+            Chance: 1.0
+-   Id: loot_pack.low_scrolls
+    Name: LowScrolls
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: clumsy_scroll
+            Amount: 1
+            Chance: 1.0
+-   Id: loot_pack.meager
+    Name: Meager
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 44
+            AmountMax: 80
+-   Id: loot_pack.med_scrolls
+    Name: MedScrolls
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: arch_cure_scroll
+            Amount: 1
+            Chance: 1.0
+-   Id: loot_pack.ml_rich
+    Name: MlRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 454
+            AmountMax: 650
+-   Id: loot_pack.old_average
+    Name: OldAverage
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 60
+            AmountMax: 150
+-   Id: loot_pack.old_filthy_rich
+    Name: OldFilthyRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 402
+            AmountMax: 650
+-   Id: loot_pack.old_meager
+    Name: OldMeager
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 30
+            AmountMax: 75
+-   Id: loot_pack.old_poor
+    Name: OldPoor
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 1
+            AmountMax: 25
+-   Id: loot_pack.old_rich
+    Name: OldRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 260
+            AmountMax: 350
+-   Id: loot_pack.old_super_boss
+    Name: OldSuperBoss
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 505
+            AmountMax: 1000
+-   Id: loot_pack.old_ultra_rich
+    Name: OldUltraRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 505
+            AmountMax: 1000
+-   Id: loot_pack.poor
+    Name: Poor
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 22
+            AmountMax: 40
+-   Id: loot_pack.potions
+    Name: Potions
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: agility_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: strength_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: refresh_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_cure_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_heal_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_poison_potion
+            Amount: 1
+-   Id: loot_pack.rich
+    Name: Rich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 240
+            AmountMax: 375
+-   Id: loot_pack.se_average
+    Name: SeAverage
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 108
+            AmountMax: 180
+-   Id: loot_pack.se_filthy_rich
+    Name: SeFilthyRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 403
+            AmountMax: 700
+-   Id: loot_pack.se_meager
+    Name: SeMeager
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 44
+            AmountMax: 80
+-   Id: loot_pack.se_poor
+    Name: SePoor
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 22
+            AmountMax: 40
+-   Id: loot_pack.se_rich
+    Name: SeRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 240
+            AmountMax: 375
+-   Id: loot_pack.se_super_boss
+    Name: SeSuperBoss
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 810
+            AmountMax: 1800
+-   Id: loot_pack.se_ultra_rich
+    Name: SeUltraRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 606
+            AmountMax: 1200
+-   Id: loot_pack.super_boss
+    Name: SuperBoss
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 810
+            AmountMax: 1800
+-   Id: loot_pack.ultra_rich
+    Name: UltraRich
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 606
+            AmountMax: 1200

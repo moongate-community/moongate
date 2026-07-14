@@ -35,12 +35,13 @@ public class ItemTemplateSplitDataTests
         var repositoryRoot = FindRepositoryRoot();
         var splitRoot = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Assets", "Templates", "Items");
         var splitFiles = Directory.GetFiles(splitRoot, "*.yaml", SearchOption.AllDirectories)
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+                                  .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                                  .ToArray();
         var splitByFile = splitFiles.ToDictionary(
             path => Path.GetRelativePath(splitRoot, path).Replace(Path.DirectorySeparatorChar, '/'),
             path => YamlUtils.DeserializeFromFile<ItemTemplate[]>(path) ?? [],
-            StringComparer.OrdinalIgnoreCase);
+            StringComparer.OrdinalIgnoreCase
+        );
         var splitItems = splitByFile.Values.SelectMany(items => items).ToArray();
 
         Assert.Equal(49, splitFiles.Length);
@@ -49,7 +50,8 @@ public class ItemTemplateSplitDataTests
 
         Assert.Equal(
             ExpectedCounts.Keys.OrderBy(path => path, StringComparer.OrdinalIgnoreCase),
-            splitByFile.Keys.OrderBy(path => path, StringComparer.OrdinalIgnoreCase));
+            splitByFile.Keys.OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+        );
 
         foreach (var (path, expectedCount) in ExpectedCounts)
         {
@@ -67,9 +69,7 @@ public class ItemTemplateSplitDataTests
 
         while (directory is not null)
         {
-            if (Directory.Exists(
-                    Path.Combine(directory.FullName, "src", "Moongate.Server", "Assets", "Templates", "Items")
-                ))
+            if (Directory.Exists(Path.Combine(directory.FullName, "src", "Moongate.Server", "Assets", "Templates", "Items")))
             {
                 return directory.FullName;
             }

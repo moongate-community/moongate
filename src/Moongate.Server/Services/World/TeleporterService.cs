@@ -17,13 +17,9 @@ public sealed class TeleporterService : ITeleporterService
 
     public int Count => _teleporters.Count;
 
-    public void Register(TeleporterDefinition teleporter)
-    {
-        _teleporters.Add(teleporter);
-    }
-
     public IReadOnlyList<TeleporterDefinition> ForMap(MapType map)
-    {
-        return [.. _teleporters.Where(teleporter => teleporter.Src.Map == map)];
-    }
+        => [.. _teleporters.Where(teleporter => teleporter.Src.Map == map)];
+
+    public void Register(TeleporterDefinition teleporter)
+        => _teleporters.Add(teleporter);
 }

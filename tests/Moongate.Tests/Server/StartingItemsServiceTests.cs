@@ -1,31 +1,10 @@
 using Moongate.Server.Services.World;
-using Moongate.UO.Data.StartingItems;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
 public class StartingItemsServiceTests
 {
-    private static StartingItemsService Service()
-    {
-        var service = new StartingItemsService();
-        service.Load(new StartingItemsData
-        {
-            All = new StartingItemKit { Pack = [new StartingItemEntry { Item = "dagger" }] },
-            ByBody =
-            {
-                ["Human/Male"] = new StartingItemKit { Equip = [new StartingItemEntry { Item = "shirt" }] }
-            },
-            BySkill =
-            {
-                ["Blacksmithy"] = new StartingItemKit { Pack = [new StartingItemEntry { Item = "iron_ingot", Amount = 50 }] },
-                ["Magery"] = new StartingItemKit { Equip = [new StartingItemEntry { Item = "robe" }] }
-            }
-        });
-
-        return service;
-    }
-
     [Fact]
     public void Resolve_MergesAllBodyAndTopSkills()
     {
@@ -42,8 +21,30 @@ public class StartingItemsServiceTests
     {
         var kit = Service().Resolve(RaceType.Gargoyle, GenderType.Female, ["Nonexistent"]);
 
-        Assert.Single(kit.Pack);                 // only All's dagger
+        Assert.Single(kit.Pack); // only All's dagger
         Assert.Empty(kit.Equip);
         Assert.Equal("dagger", kit.Pack[0].Item);
+    }
+
+    private static StartingItemsService Service()
+    {
+        var service = new StartingItemsService();
+        service.Load(
+            new()
+            {
+                All = new() { Pack = [new() { Item = "dagger" }] },
+                ByBody =
+                {
+                    ["Human/Male"] = new() { Equip = [new() { Item = "shirt" }] }
+                },
+                BySkill =
+                {
+                    ["Blacksmithy"] = new() { Pack = [new() { Item = "iron_ingot", Amount = 50 }] },
+                    ["Magery"] = new() { Equip = [new() { Item = "robe" }] }
+                }
+            }
+        );
+
+        return service;
     }
 }

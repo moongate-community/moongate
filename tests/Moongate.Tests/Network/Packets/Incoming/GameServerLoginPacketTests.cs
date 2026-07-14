@@ -1,3 +1,4 @@
+using System.Text;
 using Moongate.Network.Packets.Incoming;
 using SquidStd.Network.Spans;
 
@@ -14,8 +15,8 @@ public class GameServerLoginPacketTests
         buffer[2] = 0x22;
         buffer[3] = 0x33;
         buffer[4] = 0x44; // authKey big-endian
-        System.Text.Encoding.ASCII.GetBytes("squid").CopyTo(buffer.AsSpan(5));
-        System.Text.Encoding.ASCII.GetBytes("secret").CopyTo(buffer.AsSpan(35));
+        Encoding.ASCII.GetBytes("squid").CopyTo(buffer.AsSpan(5));
+        Encoding.ASCII.GetBytes("secret").CopyTo(buffer.AsSpan(35));
 
         var reader = new SpanReader(buffer);
         var packet = GameServerLoginPacket.Read(ref reader);

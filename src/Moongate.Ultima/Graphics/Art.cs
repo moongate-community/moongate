@@ -61,7 +61,7 @@ public static class Art
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetLand(int index)
-        => GetLand(index, out var _);
+        => GetLand(index, out _);
 
     /// <summary>
     /// Returns Bitmap of LandTile (with Cache) and verdata bool
@@ -89,7 +89,7 @@ public static class Art
             return cached;
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out patched);
+        var stream = _fileIndex.Seek(index, out var length, out _, out patched);
 
         if (stream == null)
         {
@@ -156,7 +156,7 @@ public static class Art
     {
         index &= 0x3FFF;
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out _, out _);
 
         if (stream == null)
         {
@@ -175,7 +175,7 @@ public static class Art
         index = GetLegalItemId(index);
         index += 0x4000;
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out _, out _);
 
         if (stream == null)
         {
@@ -195,7 +195,7 @@ public static class Art
     /// <param name="checkMaxId"></param>
     /// <returns></returns>
     public static UltimaBitmap GetStatic(int index, bool checkMaxId = true)
-        => GetStatic(index, out var _, checkMaxId);
+        => GetStatic(index, out _, checkMaxId);
 
     /// <summary>
     /// Returns Bitmap of Static (with Cache) and verdata bool
@@ -226,7 +226,7 @@ public static class Art
             return cached;
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out patched);
+        var stream = _fileIndex.Seek(index, out var length, out _, out patched);
 
         if (stream == null)
         {
@@ -270,7 +270,7 @@ public static class Art
             return true;
         }
 
-        return _fileIndex.Valid(index, out var _, out var _, out var _);
+        return _fileIndex.Valid(index, out _, out _, out _);
     }
 
     /// <summary>
@@ -293,7 +293,7 @@ public static class Art
             return true;
         }
 
-        var stream = _fileIndex.Seek(index, out var _, out var _, out var _);
+        var stream = _fileIndex.Seek(index, out _, out _, out _);
 
         if (stream == null)
         {

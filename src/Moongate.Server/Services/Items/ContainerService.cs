@@ -15,13 +15,9 @@ public sealed class ContainerService : IContainerService
 
     public int Count => _byId.Count;
 
-    public void Register(ContainerDefinition container)
-    {
-        _byId[container.Id] = container;
-    }
-
     public ContainerDefinition? GetById(string id)
-    {
-        return _byId.GetValueOrDefault(id);
-    }
+        => _byId.GetValueOrDefault(id);
+
+    public void Register(ContainerDefinition container)
+        => _byId[container.Id] = container;
 }

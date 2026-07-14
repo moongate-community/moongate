@@ -17,6 +17,6 @@ public readonly record struct GameServerLoginPacket(uint AuthKey, string Account
         var account = reader.ReadAscii(30);
         var password = reader.ReadAscii(30);
 
-        return new GameServerLoginPacket(authKey, account, password);
+        return new(authKey, account, password);
     }
 }

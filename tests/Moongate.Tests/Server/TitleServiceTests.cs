@@ -1,29 +1,15 @@
 using Moongate.Server.Services.Mobiles;
-using Moongate.UO.Data.Titles;
 
 namespace Moongate.Tests.Server;
 
 public class TitleServiceTests
 {
-    private static TitleService BuildRealisticTable()
+    [Fact]
+    public void GetTitle_EmptyTable_ReturnsName()
     {
         var service = new TitleService();
-        service.Register(new FameTitleGroup
-        {
-            Fame = 1249,
-            Karma = [new() { Karma = 624, Title = "{0}" }, new() { Karma = 10000, Title = "The Trustworthy {0}" }]
-        });
-        service.Register(new FameTitleGroup
-        {
-            Fame = 10000,
-            Karma =
-            [
-                new() { Karma = -10000, Title = "The Dread {1} {0}" },
-                new() { Karma = 624, Title = "{1} {0}" },
-                new() { Karma = 10000, Title = "The Glorious {1} {0}" }
-            ]
-        });
-        return service;
+
+        Assert.Equal("Bob", service.GetTitle("Bob", 5000, 5000, false));
     }
 
     [Fact]
@@ -31,15 +17,7 @@ public class TitleServiceTests
     {
         var service = BuildRealisticTable();
 
-        Assert.Equal("Bob", service.GetTitle("Bob", 0, 0, female: false));
-    }
-
-    [Fact]
-    public void GetTitle_TopFameTopKarma_Female_UsesLady()
-    {
-        var service = BuildRealisticTable();
-
-        Assert.Equal("The Glorious Lady Bob", service.GetTitle("Bob", 15000, 15000, female: true));
+        Assert.Equal("Bob", service.GetTitle("Bob", 0, 0, false));
     }
 
     [Fact]
@@ -47,14 +25,40 @@ public class TitleServiceTests
     {
         var service = BuildRealisticTable();
 
-        Assert.Equal("The Dread Lord Bob", service.GetTitle("Bob", 15000, -10000, female: false));
+        Assert.Equal("The Dread Lord Bob", service.GetTitle("Bob", 15000, -10000, false));
     }
 
     [Fact]
-    public void GetTitle_EmptyTable_ReturnsName()
+    public void GetTitle_TopFameTopKarma_Female_UsesLady()
+    {
+        var service = BuildRealisticTable();
+
+        Assert.Equal("The Glorious Lady Bob", service.GetTitle("Bob", 15000, 15000, true));
+    }
+
+    private static TitleService BuildRealisticTable()
     {
         var service = new TitleService();
+        service.Register(
+            new()
+            {
+                Fame = 1249,
+                Karma = [new() { Karma = 624, Title = "{0}" }, new() { Karma = 10000, Title = "The Trustworthy {0}" }]
+            }
+        );
+        service.Register(
+            new()
+            {
+                Fame = 10000,
+                Karma =
+                [
+                    new() { Karma = -10000, Title = "The Dread {1} {0}" },
+                    new() { Karma = 624, Title = "{1} {0}" },
+                    new() { Karma = 10000, Title = "The Glorious {1} {0}" }
+                ]
+            }
+        );
 
-        Assert.Equal("Bob", service.GetTitle("Bob", 5000, 5000, female: false));
+        return service;
     }
 }

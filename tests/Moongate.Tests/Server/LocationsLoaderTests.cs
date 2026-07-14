@@ -7,25 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class LocationsLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-loc-" + Guid.NewGuid().ToString("N"));
-
-    private static IEnumerable<LocationEntry> AllEntries(LocationCategory node)
-    {
-        foreach (var entry in node.Locations)
-        {
-            yield return entry;
-        }
-
-        foreach (var child in node.Categories)
-        {
-            foreach (var entry in AllEntries(child))
-            {
-                yield return entry;
-            }
-        }
-    }
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersAllFacets()
     {
@@ -79,4 +60,23 @@ public class LocationsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static IEnumerable<LocationEntry> AllEntries(LocationCategory node)
+    {
+        foreach (var entry in node.Locations)
+        {
+            yield return entry;
+        }
+
+        foreach (var child in node.Categories)
+        {
+            foreach (var entry in AllEntries(child))
+            {
+                yield return entry;
+            }
+        }
+    }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-loc-" + Guid.NewGuid().ToString("N"));
 }

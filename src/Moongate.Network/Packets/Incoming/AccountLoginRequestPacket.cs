@@ -17,6 +17,6 @@ public readonly record struct AccountLoginRequestPacket(string Account, string P
         var password = reader.ReadAscii(30);
         var nextLoginKey = reader.ReadByte();
 
-        return new AccountLoginRequestPacket(account, password, nextLoginKey);
+        return new(account, password, nextLoginKey);
     }
 }

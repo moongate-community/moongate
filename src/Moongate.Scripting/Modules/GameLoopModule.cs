@@ -20,29 +20,21 @@ public sealed class GameLoopModule
         _context = context;
     }
 
+    [ScriptFunction("cancel", "Cancels a scheduled timer by its id. Returns true when removed.")]
+    public bool Cancel(string timerId)
+        => _context.Cancel(timerId);
+
     [ScriptFunction("post", "Runs the callback on the game-loop thread on the next frame.")]
     public void Post(Closure callback)
-    {
-        _context.Post(() => Invoke(callback));
-    }
+        => _context.Post(() => Invoke(callback));
 
     [ScriptFunction("schedule", "Runs the callback once after delayMs; returns the timer id.")]
     public string Schedule(string name, double delayMs, Closure callback)
-    {
-        return _context.Schedule(name, TimeSpan.FromMilliseconds(delayMs), () => Invoke(callback));
-    }
+        => _context.Schedule(name, TimeSpan.FromMilliseconds(delayMs), () => Invoke(callback));
 
     [ScriptFunction("schedule_repeating", "Runs the callback every intervalMs; returns the timer id.")]
     public string ScheduleRepeating(string name, double intervalMs, Closure callback)
-    {
-        return _context.ScheduleRepeating(name, TimeSpan.FromMilliseconds(intervalMs), () => Invoke(callback));
-    }
-
-    [ScriptFunction("cancel", "Cancels a scheduled timer by its id. Returns true when removed.")]
-    public bool Cancel(string timerId)
-    {
-        return _context.Cancel(timerId);
-    }
+        => _context.ScheduleRepeating(name, TimeSpan.FromMilliseconds(intervalMs), () => Invoke(callback));
 
     private void Invoke(Closure callback)
     {

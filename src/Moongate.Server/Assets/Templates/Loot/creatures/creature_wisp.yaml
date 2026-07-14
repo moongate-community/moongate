@@ -1,11 +1,11 @@
-- Id: creature.wisp
-  Name: Wisp
-  Category: loot
-  Description: Creature-specific loot for Wisp.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: seed
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.wisp
+    Name: Wisp
+    Category: loot
+    Description: Creature-specific loot for Wisp.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

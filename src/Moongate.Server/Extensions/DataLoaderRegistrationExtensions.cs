@@ -22,9 +22,7 @@ public static class DataLoaderRegistrationExtensions
         where T : class, IDataLoader
     {
         container.Register<T>(Reuse.Singleton);
-        container.AddToRegisterTypedList(
-            new DataLoaderRegistration(priority, static resolver => resolver.Resolve<T>())
-        );
+        container.AddToRegisterTypedList(new DataLoaderRegistration(priority, static resolver => resolver.Resolve<T>()));
 
         return container;
     }
@@ -44,8 +42,8 @@ public static class DataLoaderRegistrationExtensions
                 return recorded is null
                            ? []
                            : recorded.OrderBy(registration => registration.Priority)
-                               .Select(registration => registration.Resolve(resolver))
-                               .ToList();
+                                     .Select(registration => registration.Resolve(resolver))
+                                     .ToList();
             },
             Reuse.Singleton
         );

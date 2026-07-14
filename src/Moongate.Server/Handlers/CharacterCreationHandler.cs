@@ -26,11 +26,8 @@ public sealed class CharacterCreationHandler : IPacketHandler<CharacterCreationP
         var character = _characterService.CreateCharacter(context.Session.AccountId, packet);
 
         context.Session.SetCharacter(character);
-
     }
 
     public void Register(INetworkService network)
-    {
-        network.RegisterHandler(this);
-    }
+        => network.RegisterHandler(this);
 }

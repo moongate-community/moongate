@@ -16,9 +16,8 @@ using System.Xml;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
-using SixLabors.ImageSharp;
-
 using Moongate.Ultima.Types;
+using SixLabors.ImageSharp;
 
 namespace Moongate.Ultima.Multi;
 

@@ -16,6 +16,16 @@ namespace Moongate.Persistence;
 
 public class MoongatePersistencePlugin : ISquidStdPlugin
 {
+    public PluginMetadata Metadata
+        => new()
+        {
+            Id = "moongate.persistence.plugin",
+            Version = new(VersionUtils.GetVersion(typeof(MoongatePersistencePlugin).Assembly)),
+            Author = "squid",
+            Name = "Moongate Persistence",
+            Description = "Moongate persistence plugin"
+        };
+
     public void Configure(IContainer container, PluginContext context)
     {
         var persistenceConfig = new PersistenceConfig();
@@ -59,7 +69,7 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             {
                 var accountStore = service.GetStore<AccountEntity, Serial>();
 
-                var accountEntity = new AccountEntity()
+                var accountEntity = new AccountEntity
                 {
                     Username = "admin",
                     PasswordHash = HashUtils.HashPassword("admin"),
@@ -76,14 +86,4 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             }
         );
     }
-
-    public PluginMetadata Metadata
-        => new()
-        {
-            Id = "moongate.persistence.plugin",
-            Version = new Version(VersionUtils.GetVersion(typeof(MoongatePersistencePlugin).Assembly)),
-            Author = "squid",
-            Name = "Moongate Persistence",
-            Description = "Moongate persistence plugin",
-        };
 }

@@ -17,13 +17,9 @@ public sealed class SignService : ISignService
 
     public int Count => _signs.Count;
 
-    public void Register(SignEntry sign)
-    {
-        _signs.Add(sign);
-    }
-
     public IReadOnlyList<SignEntry> ForMap(MapType map)
-    {
-        return [.. _signs.Where(sign => sign.Map == map)];
-    }
+        => [.. _signs.Where(sign => sign.Map == map)];
+
+    public void Register(SignEntry sign)
+        => _signs.Add(sign);
 }

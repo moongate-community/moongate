@@ -1,16 +1,16 @@
-- Id: ethereal_horse_token
-  Name: Ethereal Horse Statuette
-  Category: Mounts
-  Description: Reusable mount token that calls and dismisses a personal ethereal horse.
-  ItemId: 8413
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: items.ethereal_horse
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - mount
-  - ethereal
-  - token
-  LootType: Blessed
+-   Id: ethereal_horse_token
+    Name: Ethereal Horse Statuette
+    Category: Mounts
+    Description: Reusable mount token that calls and dismisses a personal ethereal horse.
+    ItemId: 8413
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.ethereal_horse
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - mount
+        - ethereal
+        - token
+    LootType: Blessed

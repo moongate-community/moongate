@@ -1,11 +1,11 @@
-- Id: creature.ratman_mage
-  Name: RatmanMage
-  Category: loot
-  Description: Creature-specific loot for RatmanMage.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTag: reagents
-    Amount: 6
-    Chance: 1.0
+-   Id: creature.ratman_mage
+    Name: RatmanMage
+    Category: loot
+    Description: Creature-specific loot for RatmanMage.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTag: reagents
+            Amount: 6
+            Chance: 1.0

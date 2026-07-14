@@ -13,17 +13,11 @@ public sealed class SessionManager : ISessionManager
     public int Count => _sessions.Count;
 
     public PlayerSession GetOrCreate(SquidStdTcpClient client)
-    {
-        return _sessions.GetOrAdd(client.SessionId, _ => new PlayerSession(client));
-    }
-
-    public bool TryGet(long sessionId, out PlayerSession session)
-    {
-        return _sessions.TryGetValue(sessionId, out session!);
-    }
+        => _sessions.GetOrAdd(client.SessionId, _ => new(client));
 
     public void Remove(long sessionId)
-    {
-        _sessions.TryRemove(sessionId, out _);
-    }
+        => _sessions.TryRemove(sessionId, out _);
+
+    public bool TryGet(long sessionId, out PlayerSession session)
+        => _sessions.TryGetValue(sessionId, out session!);
 }

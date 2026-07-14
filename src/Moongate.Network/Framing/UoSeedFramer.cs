@@ -4,11 +4,10 @@ namespace Moongate.Network.Framing;
 
 /// <summary>
 /// Per-connection framer that resolves the UO connection-opening seed before delegating to
-/// <see cref="UoPacketFramer"/>. New clients open the login connection with a 0xEF login-seed
+/// <see cref="UoPacketFramer" />. New clients open the login connection with a 0xEF login-seed
 /// packet (a normal id-prefixed packet), but the game-server reconnect after the 0x8C redirect
 /// opens with a raw 4-byte seed that carries no packet id. That seed is emitted as its own frame
 /// so the seed handshake can consume it before the 0x91 game login is parsed.
-///
 /// Stateful: it MUST be created fresh per client (via the server's connection-pipeline factory),
 /// never shared.
 /// </summary>
@@ -23,7 +22,7 @@ public sealed class UoSeedFramer : INetFramer
 
     public UoSeedFramer()
     {
-        _packetFramer = new UoPacketFramer();
+        _packetFramer = new();
     }
 
     public bool TryReadFrame(ReadOnlySpan<byte> buffer, out int frameLength)

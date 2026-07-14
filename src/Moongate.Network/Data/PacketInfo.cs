@@ -12,6 +12,6 @@ public sealed record PacketInfo
 
     public PacketDirectionType Direction { get; init; }
 
-    /// <summary>Fixed size in bytes, or <see cref="PacketLengths.Variable"/>.</summary>
+    /// <summary>Fixed size in bytes, or <see cref="PacketLengths.Variable" />.</summary>
     public short Size { get; init; }
 }

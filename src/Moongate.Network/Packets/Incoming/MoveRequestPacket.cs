@@ -16,6 +16,6 @@ public readonly record struct MoveRequestPacket(DirectionType Direction, byte Se
         var sequence = reader.ReadByte();
         var fastwalkKey = reader.ReadUInt32();
 
-        return new MoveRequestPacket(direction, sequence, fastwalkKey);
+        return new(direction, sequence, fastwalkKey);
     }
 }

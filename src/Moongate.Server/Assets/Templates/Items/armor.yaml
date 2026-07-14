@@ -1,2929 +1,2929 @@
-- Id: bascinet
-  Name: Bascinet
-  Category: Armor
-  Description: ''
-  ItemId: 5132
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: bone_arms
-  Name: Bone Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5198
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 30
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: bone_chest
-  Name: Bone Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5199
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 30
-    StrengthReq: 60
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: bone_gloves
-  Name: Bone Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5200
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 30
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: bone_helm
-  Name: Bone Helm
-  Category: Armor
-  Description: ''
-  ItemId: 5201
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 30
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: bone_legs
-  Name: Bone Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5202
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 30
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: chain_chest
-  Name: Chain Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5055
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 60
-    StrengthReq: 60
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: chain_coif
-  Name: Chain Coif
-  Category: Armor
-  Description: ''
-  ItemId: 5051
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 60
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: chain_hatsuburi
-  Name: Chain Hatsuburi
-  Category: Armor
-  Description: ''
-  ItemId: 10100
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 75
-    StrengthReq: 50
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: chain_legs
-  Name: Chain Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5054
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 60
-    StrengthReq: 60
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: circlet
-  Name: Circlet
-  Category: Armor
-  Description: ''
-  ItemId: 11118
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: close_helm
-  Name: Close Helm
-  Category: Armor
-  Description: ''
-  ItemId: 5128
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: daemon_arms
-  Name: Daemon Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5198
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 255
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: daemon_chest
-  Name: Daemon Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5199
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 255
-    StrengthReq: 60
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: daemon_gloves
-  Name: Daemon Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5200
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 255
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: daemon_helm
-  Name: Daemon Helm
-  Category: Armor
-  Description: ''
-  ItemId: 5201
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 255
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: daemon_legs
-  Name: Daemon Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5202
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 255
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: decorative_plate_kabuto
-  Name: Decorative Plate Kabuto
-  Category: Armor
-  Description: ''
-  ItemId: 10104
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 75
-    StrengthReq: 70
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: dragon_arms
-  Name: Dragon Arms
-  Category: Armor
-  Description: ''
-  ItemId: 9815
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: dragon_chest
-  Name: Dragon Chest
-  Category: Armor
-  Description: ''
-  ItemId: 9793
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: dragon_gloves
-  Name: Dragon Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 9795
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: dragon_helm
-  Name: Dragon Helm
-  Category: Armor
-  Description: ''
-  ItemId: 9797
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: dragon_legs
-  Name: Dragon Legs
-  Category: Armor
-  Description: ''
-  ItemId: 9799
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: elven_glasses
-  Name: Elven Glasses
-  Category: Armor
-  Description: ''
-  ItemId: 12216
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 48
-    StrengthReq: 45
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: female_elven_plate_chest
-  Name: Female Elven Plate Chest
-  Category: Armor
-  Description: ''
-  ItemId: 11117
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 65
-    StrengthReq: 95
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: female_leaf_chest
-  Name: Female Leaf Chest
-  Category: Armor
-  Description: ''
-  ItemId: 12235
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: female_leather_chest
-  Name: Female Leather Chest
-  Category: Armor
-  Description: ''
-  ItemId: 7174
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 40
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: female_plate_chest
-  Name: Female Plate Chest
-  Category: Armor
-  Description: ''
-  ItemId: 7172
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 65
-    StrengthReq: 95
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: female_studded_chest
-  Name: Female Studded Chest
-  Category: Armor
-  Description: ''
-  ItemId: 7170
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 35
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_arms_type1
-  Name: Gargish Cloth Arms Type1
-  Category: Armor
-  Description: ''
-  ItemId: 1028
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_arms_type2
-  Name: Gargish Cloth Arms Type2
-  Category: Armor
-  Description: ''
-  ItemId: 1027
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_chest_type1
-  Name: Gargish Cloth Chest Type1
-  Category: Armor
-  Description: ''
-  ItemId: 1030
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_chest_type2
-  Name: Gargish Cloth Chest Type2
-  Category: Armor
-  Description: ''
-  ItemId: 1029
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_kilt_type1
-  Name: Gargish Cloth Kilt Type1
-  Category: Armor
-  Description: ''
-  ItemId: 1032
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_kilt_type2
-  Name: Gargish Cloth Kilt Type2
-  Category: Armor
-  Description: ''
-  ItemId: 1031
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_legs_type1
-  Name: Gargish Cloth Legs Type1
-  Category: Armor
-  Description: ''
-  ItemId: 1034
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_cloth_legs_type2
-  Name: Gargish Cloth Legs Type2
-  Category: Armor
-  Description: ''
-  ItemId: 1033
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_arms_type1
-  Name: Gargish Leather Arms Type1
-  Category: Armor
-  Description: ''
-  ItemId: 769
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_arms_type2
-  Name: Gargish Leather Arms Type2
-  Category: Armor
-  Description: ''
-  ItemId: 770
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_chest_type1
-  Name: Gargish Leather Chest Type1
-  Category: Armor
-  Description: ''
-  ItemId: 772
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_chest_type2
-  Name: Gargish Leather Chest Type2
-  Category: Armor
-  Description: ''
-  ItemId: 771
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_kilt_type1
-  Name: Gargish Leather Kilt Type1
-  Category: Armor
-  Description: ''
-  ItemId: 785
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_kilt_type2
-  Name: Gargish Leather Kilt Type2
-  Category: Armor
-  Description: ''
-  ItemId: 784
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_legs_type1
-  Name: Gargish Leather Legs Type1
-  Category: Armor
-  Description: ''
-  ItemId: 773
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_legs_type2
-  Name: Gargish Leather Legs Type2
-  Category: Armor
-  Description: ''
-  ItemId: 774
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_leather_wing_armor
-  Name: Gargish Leather Wing Armor
-  Category: Armor
-  Description: ''
-  ItemId: 17790
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 0
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_arms_type1
-  Name: Gargish Stone Arms Type1
-  Category: Armor
-  Description: ''
-  ItemId: 644
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_arms_type2
-  Name: Gargish Stone Arms Type2
-  Category: Armor
-  Description: ''
-  ItemId: 643
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_chest_type1
-  Name: Gargish Stone Chest Type1
-  Category: Armor
-  Description: ''
-  ItemId: 646
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_chest_type2
-  Name: Gargish Stone Chest Type2
-  Category: Armor
-  Description: ''
-  ItemId: 645
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_kilt_type1
-  Name: Gargish Stone Kilt Type1
-  Category: Armor
-  Description: ''
-  ItemId: 648
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_kilt_type2
-  Name: Gargish Stone Kilt Type2
-  Category: Armor
-  Description: ''
-  ItemId: 647
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_legs_type1
-  Name: Gargish Stone Legs Type1
-  Category: Armor
-  Description: ''
-  ItemId: 650
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_stone_legs_type2
-  Name: Gargish Stone Legs Type2
-  Category: Armor
-  Description: ''
-  ItemId: 649
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_arms_type1
-  Name: Gargish Studded Arms Type1
-  Category: Armor
-  Description: ''
-  ItemId: 644
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_arms_type2
-  Name: Gargish Studded Arms Type2
-  Category: Armor
-  Description: ''
-  ItemId: 643
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_chest_type1
-  Name: Gargish Studded Chest Type1
-  Category: Armor
-  Description: ''
-  ItemId: 646
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_chest_type2
-  Name: Gargish Studded Chest Type2
-  Category: Armor
-  Description: ''
-  ItemId: 645
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_kilt_type1
-  Name: Gargish Studded Kilt Type1
-  Category: Armor
-  Description: ''
-  ItemId: 648
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_kilt_type2
-  Name: Gargish Studded Kilt Type2
-  Category: Armor
-  Description: ''
-  ItemId: 647
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_legs_type1
-  Name: Gargish Studded Legs Type1
-  Category: Armor
-  Description: ''
-  ItemId: 650
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gargish_studded_legs_type2
-  Name: Gargish Studded Legs Type2
-  Category: Armor
-  Description: ''
-  ItemId: 649
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: gemmed_circlet
-  Name: Gemmed Circlet
-  Category: Armor
-  Description: ''
-  ItemId: 11120
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 35
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: heavy_plate_jingasa
-  Name: Heavy Plate Jingasa
-  Category: Armor
-  Description: ''
-  ItemId: 10103
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 70
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: helmet
-  Name: Helmet
-  Category: Armor
-  Description: ''
-  ItemId: 5130
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 45
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_chest
-  Name: Hide Chest
-  Category: Armor
-  Description: ''
-  ItemId: 11124
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_female_chest
-  Name: Hide Female Chest
-  Category: Armor
-  Description: ''
-  ItemId: 11129
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 35
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_gloves
-  Name: Hide Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 11125
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 45
-    StrengthReq: 15
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_gorget
-  Name: Hide Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 11126
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Neck
-    HitPoints: 45
-    StrengthReq: 15
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_pants
-  Name: Hide Pants
-  Category: Armor
-  Description: ''
-  ItemId: 11128
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Pants
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: hide_pauldrons
-  Name: Hide Pauldrons
-  Category: Armor
-  Description: ''
-  ItemId: 11127
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 45
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_arms
-  Name: Leaf Arms
-  Category: Armor
-  Description: ''
-  ItemId: 12232
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 40
-    StrengthReq: 15
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_chest
-  Name: Leaf Chest
-  Category: Armor
-  Description: ''
-  ItemId: 12229
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_gloves
-  Name: Leaf Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 12230
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Gloves
-    HitPoints: 40
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_gorget
-  Name: Leaf Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 12231
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Neck
-    HitPoints: 40
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_legs
-  Name: Leaf Legs
-  Category: Armor
-  Description: ''
-  ItemId: 12233
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leaf_tonlet
-  Name: Leaf Tonlet
-  Category: Armor
-  Description: ''
-  ItemId: 12234
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 40
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_arms
-  Name: Leather Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5069
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_bustier_arms
-  Name: Leather Bustier Arms
-  Category: Armor
-  Description: ''
-  ItemId: 7178
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_cap
-  Name: Leather Cap
-  Category: Armor
-  Description: ''
-  ItemId: 7609
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_chest
-  Name: Leather Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5068
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 40
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_do
-  Name: Leather Do
-  Category: Armor
-  Description: ''
-  ItemId: 10182
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_gloves
-  Name: Leather Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5062
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Gloves
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_gorget
-  Name: Leather Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 5063
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Neck
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_haidate
-  Name: Leather Haidate
-  Category: Armor
-  Description: ''
-  ItemId: 10122
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_hiro_sode
-  Name: Leather Hiro Sode
-  Category: Armor
-  Description: ''
-  ItemId: 10110
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_jingasa
-  Name: Leather Jingasa
-  Category: Armor
-  Description: ''
-  ItemId: 10102
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 30
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_legs
-  Name: Leather Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5067
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_mempo
-  Name: Leather Mempo
-  Category: Armor
-  Description: ''
-  ItemId: 10106
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 40
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_ninja_hood
-  Name: Leather Ninja Hood
-  Category: Armor
-  Description: ''
-  ItemId: 10126
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 45
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_ninja_jacket
-  Name: Leather Ninja Jacket
-  Category: Armor
-  Description: ''
-  ItemId: 10131
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 65
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_ninja_mitts
-  Name: Leather Ninja Mitts
-  Category: Armor
-  Description: ''
-  ItemId: 10130
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Gloves
-    HitPoints: 25
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_ninja_pants
-  Name: Leather Ninja Pants
-  Category: Armor
-  Description: ''
-  ItemId: 10129
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Pants
-    HitPoints: 50
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_shorts
-  Name: Leather Shorts
-  Category: Armor
-  Description: ''
-  ItemId: 7168
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Pants
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_skirt
-  Name: Leather Skirt
-  Category: Armor
-  Description: ''
-  ItemId: 7176
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: OuterLegs
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: leather_suneate
-  Name: Leather Suneate
-  Category: Armor
-  Description: ''
-  ItemId: 10118
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Shoes
-    HitPoints: 40
-    StrengthReq: 20
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: light_plate_jingasa
-  Name: Light Plate Jingasa
-  Category: Armor
-  Description: ''
-  ItemId: 10113
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: norse_helm
-  Name: Norse Helm
-  Category: Armor
-  Description: ''
-  ItemId: 5134
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: orc_helm
-  Name: Orc Helm
-  Category: Armor
-  Description: ''
-  ItemId: 7947
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 50
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_arms
-  Name: Plate Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5136
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 65
-    StrengthReq: 80
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_battle_kabuto
-  Name: Plate Battle Kabuto
-  Category: Armor
-  Description: ''
-  ItemId: 10117
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 70
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_chest
-  Name: Plate Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5141
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 65
-    StrengthReq: 95
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_do
-  Name: Plate Do
-  Category: Armor
-  Description: ''
-  ItemId: 10109
-  Hue: 0
-  GoldValue: 0
-  Weight: 10.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 70
-    StrengthReq: 85
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_gloves
-  Name: Plate Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5140
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 65
-    StrengthReq: 70
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_gorget
-  Name: Plate Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 5139
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Neck
-    HitPoints: 65
-    StrengthReq: 45
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_haidate
-  Name: Plate Haidate
-  Category: Armor
-  Description: ''
-  ItemId: 10125
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 65
-    StrengthReq: 80
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_hatsuburi
-  Name: Plate Hatsuburi
-  Category: Armor
-  Description: ''
-  ItemId: 10101
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 75
-    StrengthReq: 65
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_helm
-  Name: Plate Helm
-  Category: Armor
-  Description: ''
-  ItemId: 5138
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 80
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_hiro_sode
-  Name: Plate Hiro Sode
-  Category: Armor
-  Description: ''
-  ItemId: 10112
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 75
-    StrengthReq: 75
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_legs
-  Name: Plate Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5137
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 65
-    StrengthReq: 90
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_mempo
-  Name: Plate Mempo
-  Category: Armor
-  Description: ''
-  ItemId: 10105
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 70
-    StrengthReq: 50
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: plate_suneate
-  Name: Plate Suneate
-  Category: Armor
-  Description: ''
-  ItemId: 10120
-  Hue: 0
-  GoldValue: 0
-  Weight: 7.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Shoes
-    HitPoints: 65
-    StrengthReq: 80
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ranger_arms
-  Name: Ranger Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5084
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ranger_chest
-  Name: Ranger Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5083
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 35
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ranger_gloves
-  Name: Ranger Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5077
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ranger_gorget
-  Name: Ranger Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 5078
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Neck
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ranger_legs
-  Name: Ranger Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5082
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 45
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: raven_helm
-  Name: Raven Helm
-  Category: Armor
-  Description: ''
-  ItemId: 11121
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ringmail_arms
-  Name: Ringmail Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5102
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ringmail_chest
-  Name: Ringmail Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5100
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ringmail_gloves
-  Name: Ringmail Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5099
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: ringmail_legs
-  Name: Ringmail Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5104
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 50
-    StrengthReq: 40
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: royal_circlet
-  Name: Royal Circlet
-  Category: Armor
-  Description: ''
-  ItemId: 11119
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 35
-    StrengthReq: 10
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: small_plate_jingasa
-  Name: Small Plate Jingasa
-  Category: Armor
-  Description: ''
-  ItemId: 10116
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 60
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: standard_plate_kabuto
-  Name: Standard Plate Kabuto
-  Category: Armor
-  Description: ''
-  ItemId: 10121
-  Hue: 0
-  GoldValue: 0
-  Weight: 6.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 70
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_arms
-  Name: Studded Arms
-  Category: Armor
-  Description: ''
-  ItemId: 5084
-  Hue: 0
-  GoldValue: 0
-  Weight: 4.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_bustier_arms
-  Name: Studded Bustier Arms
-  Category: Armor
-  Description: ''
-  ItemId: 7180
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 45
-    StrengthReq: 35
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_chest
-  Name: Studded Chest
-  Category: Armor
-  Description: ''
-  ItemId: 5083
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 45
-    StrengthReq: 35
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_do
-  Name: Studded Do
-  Category: Armor
-  Description: ''
-  ItemId: 10183
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 50
-    StrengthReq: 55
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_gloves
-  Name: Studded Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 5077
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_gorget
-  Name: Studded Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 5078
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Neck
-    HitPoints: 45
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_haidate
-  Name: Studded Haidate
-  Category: Armor
-  Description: ''
-  ItemId: 10123
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 45
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_hiro_sode
-  Name: Studded Hiro Sode
-  Category: Armor
-  Description: ''
-  ItemId: 10111
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Arms
-    HitPoints: 55
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_legs
-  Name: Studded Legs
-  Category: Armor
-  Description: ''
-  ItemId: 5082
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 45
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_mempo
-  Name: Studded Mempo
-  Category: Armor
-  Description: ''
-  ItemId: 10141
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Helm
-    HitPoints: 40
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: studded_suneate
-  Name: Studded Suneate
-  Category: Armor
-  Description: ''
-  ItemId: 10194
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  Equip:
-    Layer: Shoes
-    HitPoints: 50
-    StrengthReq: 30
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: vulture_helm
-  Name: Vulture Helm
-  Category: Armor
-  Description: ''
-  ItemId: 11122
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 65
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: winged_helm
-  Name: Winged Helm
-  Category: Armor
-  Description: ''
-  ItemId: 11123
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Helm
-    HitPoints: 55
-    StrengthReq: 25
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: woodland_arms
-  Name: Woodland Arms
-  Category: Armor
-  Description: ''
-  ItemId: 11116
-  Hue: 0
-  GoldValue: 0
-  Weight: 5.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Arms
-    HitPoints: 65
-    StrengthReq: 80
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: woodland_chest
-  Name: Woodland Chest
-  Category: Armor
-  Description: ''
-  ItemId: 11111
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerTorso
-    HitPoints: 65
-    StrengthReq: 95
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: woodland_gloves
-  Name: Woodland Gloves
-  Category: Armor
-  Description: ''
-  ItemId: 11114
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Gloves
-    HitPoints: 65
-    StrengthReq: 70
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: woodland_gorget
-  Name: Woodland Gorget
-  Category: Armor
-  Description: ''
-  ItemId: 11113
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: Neck
-    HitPoints: 65
-    StrengthReq: 45
-    DexterityReq: 0
-    IntelligenceReq: 0
-- Id: woodland_legs
-  Name: Woodland Legs
-  Category: Armor
-  Description: ''
-  ItemId: 11115
-  Hue: 0
-  GoldValue: 0
-  Weight: 8.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - armor
-  - flippable
-  Equip:
-    Layer: InnerLegs
-    HitPoints: 65
-    StrengthReq: 90
-    DexterityReq: 0
-    IntelligenceReq: 0
+-   Id: bascinet
+    Name: Bascinet
+    Category: Armor
+    Description: ''
+    ItemId: 5132
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bone_arms
+    Name: Bone Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5198
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 30
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bone_chest
+    Name: Bone Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5199
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 30
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bone_gloves
+    Name: Bone Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5200
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 30
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bone_helm
+    Name: Bone Helm
+    Category: Armor
+    Description: ''
+    ItemId: 5201
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bone_legs
+    Name: Bone Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5202
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 30
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: chain_chest
+    Name: Chain Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5055
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 60
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: chain_coif
+    Name: Chain Coif
+    Category: Armor
+    Description: ''
+    ItemId: 5051
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: chain_hatsuburi
+    Name: Chain Hatsuburi
+    Category: Armor
+    Description: ''
+    ItemId: 10100
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 75
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: chain_legs
+    Name: Chain Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5054
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 60
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: circlet
+    Name: Circlet
+    Category: Armor
+    Description: ''
+    ItemId: 11118
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: close_helm
+    Name: Close Helm
+    Category: Armor
+    Description: ''
+    ItemId: 5128
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: daemon_arms
+    Name: Daemon Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5198
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 255
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: daemon_chest
+    Name: Daemon Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5199
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 255
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: daemon_gloves
+    Name: Daemon Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5200
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 255
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: daemon_helm
+    Name: Daemon Helm
+    Category: Armor
+    Description: ''
+    ItemId: 5201
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 255
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: daemon_legs
+    Name: Daemon Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5202
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 255
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: decorative_plate_kabuto
+    Name: Decorative Plate Kabuto
+    Category: Armor
+    Description: ''
+    ItemId: 10104
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 75
+        StrengthReq: 70
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: dragon_arms
+    Name: Dragon Arms
+    Category: Armor
+    Description: ''
+    ItemId: 9815
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: dragon_chest
+    Name: Dragon Chest
+    Category: Armor
+    Description: ''
+    ItemId: 9793
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: dragon_gloves
+    Name: Dragon Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 9795
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: dragon_helm
+    Name: Dragon Helm
+    Category: Armor
+    Description: ''
+    ItemId: 9797
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: dragon_legs
+    Name: Dragon Legs
+    Category: Armor
+    Description: ''
+    ItemId: 9799
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: elven_glasses
+    Name: Elven Glasses
+    Category: Armor
+    Description: ''
+    ItemId: 12216
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 48
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_elven_plate_chest
+    Name: Female Elven Plate Chest
+    Category: Armor
+    Description: ''
+    ItemId: 11117
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 65
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_leaf_chest
+    Name: Female Leaf Chest
+    Category: Armor
+    Description: ''
+    ItemId: 12235
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_leather_chest
+    Name: Female Leather Chest
+    Category: Armor
+    Description: ''
+    ItemId: 7174
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 40
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_plate_chest
+    Name: Female Plate Chest
+    Category: Armor
+    Description: ''
+    ItemId: 7172
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 65
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_studded_chest
+    Name: Female Studded Chest
+    Category: Armor
+    Description: ''
+    ItemId: 7170
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_arms_type1
+    Name: Gargish Cloth Arms Type1
+    Category: Armor
+    Description: ''
+    ItemId: 1028
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_arms_type2
+    Name: Gargish Cloth Arms Type2
+    Category: Armor
+    Description: ''
+    ItemId: 1027
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_chest_type1
+    Name: Gargish Cloth Chest Type1
+    Category: Armor
+    Description: ''
+    ItemId: 1030
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_chest_type2
+    Name: Gargish Cloth Chest Type2
+    Category: Armor
+    Description: ''
+    ItemId: 1029
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_kilt_type1
+    Name: Gargish Cloth Kilt Type1
+    Category: Armor
+    Description: ''
+    ItemId: 1032
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_kilt_type2
+    Name: Gargish Cloth Kilt Type2
+    Category: Armor
+    Description: ''
+    ItemId: 1031
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_legs_type1
+    Name: Gargish Cloth Legs Type1
+    Category: Armor
+    Description: ''
+    ItemId: 1034
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_cloth_legs_type2
+    Name: Gargish Cloth Legs Type2
+    Category: Armor
+    Description: ''
+    ItemId: 1033
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_arms_type1
+    Name: Gargish Leather Arms Type1
+    Category: Armor
+    Description: ''
+    ItemId: 769
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_arms_type2
+    Name: Gargish Leather Arms Type2
+    Category: Armor
+    Description: ''
+    ItemId: 770
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_chest_type1
+    Name: Gargish Leather Chest Type1
+    Category: Armor
+    Description: ''
+    ItemId: 772
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_chest_type2
+    Name: Gargish Leather Chest Type2
+    Category: Armor
+    Description: ''
+    ItemId: 771
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_kilt_type1
+    Name: Gargish Leather Kilt Type1
+    Category: Armor
+    Description: ''
+    ItemId: 785
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_kilt_type2
+    Name: Gargish Leather Kilt Type2
+    Category: Armor
+    Description: ''
+    ItemId: 784
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_legs_type1
+    Name: Gargish Leather Legs Type1
+    Category: Armor
+    Description: ''
+    ItemId: 773
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_legs_type2
+    Name: Gargish Leather Legs Type2
+    Category: Armor
+    Description: ''
+    ItemId: 774
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_leather_wing_armor
+    Name: Gargish Leather Wing Armor
+    Category: Armor
+    Description: ''
+    ItemId: 17790
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 0
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_arms_type1
+    Name: Gargish Stone Arms Type1
+    Category: Armor
+    Description: ''
+    ItemId: 644
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_arms_type2
+    Name: Gargish Stone Arms Type2
+    Category: Armor
+    Description: ''
+    ItemId: 643
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_chest_type1
+    Name: Gargish Stone Chest Type1
+    Category: Armor
+    Description: ''
+    ItemId: 646
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_chest_type2
+    Name: Gargish Stone Chest Type2
+    Category: Armor
+    Description: ''
+    ItemId: 645
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_kilt_type1
+    Name: Gargish Stone Kilt Type1
+    Category: Armor
+    Description: ''
+    ItemId: 648
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_kilt_type2
+    Name: Gargish Stone Kilt Type2
+    Category: Armor
+    Description: ''
+    ItemId: 647
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_legs_type1
+    Name: Gargish Stone Legs Type1
+    Category: Armor
+    Description: ''
+    ItemId: 650
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_stone_legs_type2
+    Name: Gargish Stone Legs Type2
+    Category: Armor
+    Description: ''
+    ItemId: 649
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_arms_type1
+    Name: Gargish Studded Arms Type1
+    Category: Armor
+    Description: ''
+    ItemId: 644
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_arms_type2
+    Name: Gargish Studded Arms Type2
+    Category: Armor
+    Description: ''
+    ItemId: 643
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_chest_type1
+    Name: Gargish Studded Chest Type1
+    Category: Armor
+    Description: ''
+    ItemId: 646
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_chest_type2
+    Name: Gargish Studded Chest Type2
+    Category: Armor
+    Description: ''
+    ItemId: 645
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_kilt_type1
+    Name: Gargish Studded Kilt Type1
+    Category: Armor
+    Description: ''
+    ItemId: 648
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_kilt_type2
+    Name: Gargish Studded Kilt Type2
+    Category: Armor
+    Description: ''
+    ItemId: 647
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_legs_type1
+    Name: Gargish Studded Legs Type1
+    Category: Armor
+    Description: ''
+    ItemId: 650
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gargish_studded_legs_type2
+    Name: Gargish Studded Legs Type2
+    Category: Armor
+    Description: ''
+    ItemId: 649
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gemmed_circlet
+    Name: Gemmed Circlet
+    Category: Armor
+    Description: ''
+    ItemId: 11120
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 35
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: heavy_plate_jingasa
+    Name: Heavy Plate Jingasa
+    Category: Armor
+    Description: ''
+    ItemId: 10103
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 70
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: helmet
+    Name: Helmet
+    Category: Armor
+    Description: ''
+    ItemId: 5130
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_chest
+    Name: Hide Chest
+    Category: Armor
+    Description: ''
+    ItemId: 11124
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_female_chest
+    Name: Hide Female Chest
+    Category: Armor
+    Description: ''
+    ItemId: 11129
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_gloves
+    Name: Hide Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 11125
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 45
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_gorget
+    Name: Hide Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 11126
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Neck
+        HitPoints: 45
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_pants
+    Name: Hide Pants
+    Category: Armor
+    Description: ''
+    ItemId: 11128
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hide_pauldrons
+    Name: Hide Pauldrons
+    Category: Armor
+    Description: ''
+    ItemId: 11127
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 45
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_arms
+    Name: Leaf Arms
+    Category: Armor
+    Description: ''
+    ItemId: 12232
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 40
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_chest
+    Name: Leaf Chest
+    Category: Armor
+    Description: ''
+    ItemId: 12229
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_gloves
+    Name: Leaf Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 12230
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Gloves
+        HitPoints: 40
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_gorget
+    Name: Leaf Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 12231
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Neck
+        HitPoints: 40
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_legs
+    Name: Leaf Legs
+    Category: Armor
+    Description: ''
+    ItemId: 12233
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leaf_tonlet
+    Name: Leaf Tonlet
+    Category: Armor
+    Description: ''
+    ItemId: 12234
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 40
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_arms
+    Name: Leather Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5069
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_bustier_arms
+    Name: Leather Bustier Arms
+    Category: Armor
+    Description: ''
+    ItemId: 7178
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_cap
+    Name: Leather Cap
+    Category: Armor
+    Description: ''
+    ItemId: 7609
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_chest
+    Name: Leather Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5068
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 40
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_do
+    Name: Leather Do
+    Category: Armor
+    Description: ''
+    ItemId: 10182
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_gloves
+    Name: Leather Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5062
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Gloves
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_gorget
+    Name: Leather Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 5063
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Neck
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_haidate
+    Name: Leather Haidate
+    Category: Armor
+    Description: ''
+    ItemId: 10122
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_hiro_sode
+    Name: Leather Hiro Sode
+    Category: Armor
+    Description: ''
+    ItemId: 10110
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_jingasa
+    Name: Leather Jingasa
+    Category: Armor
+    Description: ''
+    ItemId: 10102
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_legs
+    Name: Leather Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5067
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_mempo
+    Name: Leather Mempo
+    Category: Armor
+    Description: ''
+    ItemId: 10106
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 40
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_ninja_hood
+    Name: Leather Ninja Hood
+    Category: Armor
+    Description: ''
+    ItemId: 10126
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 45
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_ninja_jacket
+    Name: Leather Ninja Jacket
+    Category: Armor
+    Description: ''
+    ItemId: 10131
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 65
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_ninja_mitts
+    Name: Leather Ninja Mitts
+    Category: Armor
+    Description: ''
+    ItemId: 10130
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Gloves
+        HitPoints: 25
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_ninja_pants
+    Name: Leather Ninja Pants
+    Category: Armor
+    Description: ''
+    ItemId: 10129
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Pants
+        HitPoints: 50
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_shorts
+    Name: Leather Shorts
+    Category: Armor
+    Description: ''
+    ItemId: 7168
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_skirt
+    Name: Leather Skirt
+    Category: Armor
+    Description: ''
+    ItemId: 7176
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: leather_suneate
+    Name: Leather Suneate
+    Category: Armor
+    Description: ''
+    ItemId: 10118
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Shoes
+        HitPoints: 40
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: light_plate_jingasa
+    Name: Light Plate Jingasa
+    Category: Armor
+    Description: ''
+    ItemId: 10113
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: norse_helm
+    Name: Norse Helm
+    Category: Armor
+    Description: ''
+    ItemId: 5134
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: orc_helm
+    Name: Orc Helm
+    Category: Armor
+    Description: ''
+    ItemId: 7947
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 50
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_arms
+    Name: Plate Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5136
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 65
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_battle_kabuto
+    Name: Plate Battle Kabuto
+    Category: Armor
+    Description: ''
+    ItemId: 10117
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 70
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_chest
+    Name: Plate Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5141
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 65
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_do
+    Name: Plate Do
+    Category: Armor
+    Description: ''
+    ItemId: 10109
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 70
+        StrengthReq: 85
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_gloves
+    Name: Plate Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5140
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 65
+        StrengthReq: 70
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_gorget
+    Name: Plate Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 5139
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Neck
+        HitPoints: 65
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_haidate
+    Name: Plate Haidate
+    Category: Armor
+    Description: ''
+    ItemId: 10125
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 65
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_hatsuburi
+    Name: Plate Hatsuburi
+    Category: Armor
+    Description: ''
+    ItemId: 10101
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 75
+        StrengthReq: 65
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_helm
+    Name: Plate Helm
+    Category: Armor
+    Description: ''
+    ItemId: 5138
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_hiro_sode
+    Name: Plate Hiro Sode
+    Category: Armor
+    Description: ''
+    ItemId: 10112
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 75
+        StrengthReq: 75
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_legs
+    Name: Plate Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5137
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 65
+        StrengthReq: 90
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_mempo
+    Name: Plate Mempo
+    Category: Armor
+    Description: ''
+    ItemId: 10105
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 70
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plate_suneate
+    Name: Plate Suneate
+    Category: Armor
+    Description: ''
+    ItemId: 10120
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Shoes
+        HitPoints: 65
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ranger_arms
+    Name: Ranger Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5084
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ranger_chest
+    Name: Ranger Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5083
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ranger_gloves
+    Name: Ranger Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5077
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ranger_gorget
+    Name: Ranger Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 5078
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Neck
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ranger_legs
+    Name: Ranger Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5082
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 45
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: raven_helm
+    Name: Raven Helm
+    Category: Armor
+    Description: ''
+    ItemId: 11121
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ringmail_arms
+    Name: Ringmail Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5102
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ringmail_chest
+    Name: Ringmail Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5100
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ringmail_gloves
+    Name: Ringmail Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5099
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ringmail_legs
+    Name: Ringmail Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5104
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 50
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: royal_circlet
+    Name: Royal Circlet
+    Category: Armor
+    Description: ''
+    ItemId: 11119
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 35
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: small_plate_jingasa
+    Name: Small Plate Jingasa
+    Category: Armor
+    Description: ''
+    ItemId: 10116
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 60
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: standard_plate_kabuto
+    Name: Standard Plate Kabuto
+    Category: Armor
+    Description: ''
+    ItemId: 10121
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 70
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_arms
+    Name: Studded Arms
+    Category: Armor
+    Description: ''
+    ItemId: 5084
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_bustier_arms
+    Name: Studded Bustier Arms
+    Category: Armor
+    Description: ''
+    ItemId: 7180
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 45
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_chest
+    Name: Studded Chest
+    Category: Armor
+    Description: ''
+    ItemId: 5083
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 45
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_do
+    Name: Studded Do
+    Category: Armor
+    Description: ''
+    ItemId: 10183
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 50
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_gloves
+    Name: Studded Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 5077
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_gorget
+    Name: Studded Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 5078
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Neck
+        HitPoints: 45
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_haidate
+    Name: Studded Haidate
+    Category: Armor
+    Description: ''
+    ItemId: 10123
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 45
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_hiro_sode
+    Name: Studded Hiro Sode
+    Category: Armor
+    Description: ''
+    ItemId: 10111
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Arms
+        HitPoints: 55
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_legs
+    Name: Studded Legs
+    Category: Armor
+    Description: ''
+    ItemId: 5082
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 45
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_mempo
+    Name: Studded Mempo
+    Category: Armor
+    Description: ''
+    ItemId: 10141
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Helm
+        HitPoints: 40
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: studded_suneate
+    Name: Studded Suneate
+    Category: Armor
+    Description: ''
+    ItemId: 10194
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+    Equip:
+        Layer: Shoes
+        HitPoints: 50
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: vulture_helm
+    Name: Vulture Helm
+    Category: Armor
+    Description: ''
+    ItemId: 11122
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 65
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: winged_helm
+    Name: Winged Helm
+    Category: Armor
+    Description: ''
+    ItemId: 11123
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 55
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_arms
+    Name: Woodland Arms
+    Category: Armor
+    Description: ''
+    ItemId: 11116
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Arms
+        HitPoints: 65
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_chest
+    Name: Woodland Chest
+    Category: Armor
+    Description: ''
+    ItemId: 11111
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 65
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_gloves
+    Name: Woodland Gloves
+    Category: Armor
+    Description: ''
+    ItemId: 11114
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Gloves
+        HitPoints: 65
+        StrengthReq: 70
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_gorget
+    Name: Woodland Gorget
+    Category: Armor
+    Description: ''
+    ItemId: 11113
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: Neck
+        HitPoints: 65
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_legs
+    Name: Woodland Legs
+    Category: Armor
+    Description: ''
+    ItemId: 11115
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - armor
+        - flippable
+    Equip:
+        Layer: InnerLegs
+        HitPoints: 65
+        StrengthReq: 90
+        DexterityReq: 0
+        IntelligenceReq: 0

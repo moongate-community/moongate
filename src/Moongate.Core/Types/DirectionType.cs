@@ -2,7 +2,7 @@ namespace Moongate.Core.Types;
 
 /// <summary>
 /// UO movement direction as sent on the wire. The low 3 bits encode the facing;
-/// bit 7 (<see cref="Running"/>) marks a running step.
+/// bit 7 (<see cref="Running" />) marks a running step.
 /// </summary>
 [Flags]
 public enum DirectionType : byte

@@ -1,17 +1,17 @@
-- Id: creature.whipping_vine
-  Name: WhippingVine
-  Category: loot
-  Description: Creature-specific loot for WhippingVine.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: executioners_cap
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: vines
-    Amount: 1
-    Chance: 1.0
-  - ItemTag: reagents
-    Amount: 3
-    Chance: 1.0
+-   Id: creature.whipping_vine
+    Name: WhippingVine
+    Category: loot
+    Description: Creature-specific loot for WhippingVine.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: executioners_cap
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: vines
+            Amount: 1
+            Chance: 1.0
+        -   ItemTag: reagents
+            Amount: 3
+            Chance: 1.0

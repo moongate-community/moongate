@@ -1,8 +1,8 @@
-using Moongate.Ultima.Interfaces;
 using System.Buffers;
 using Moongate.Ultima.Caching;
 using Moongate.Ultima.Helpers;
 using Moongate.Ultima.Imaging;
+using Moongate.Ultima.Interfaces;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Types;
 
@@ -239,7 +239,7 @@ public sealed class Gumps
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetGump(int index)
-        => GetGump(index, out var _);
+        => GetGump(index, out _);
 
     /// <summary>
     /// Returns Bitmap of index and if verdata patched
@@ -594,7 +594,7 @@ public sealed class Gumps
             return true;
         }
 
-        if (!_fileIndex.Valid(index, out var _, out var extra, out var _))
+        if (!_fileIndex.Valid(index, out _, out var extra, out _))
         {
             return false;
         }

@@ -7,7 +7,7 @@ public interface ISeedTarget
 {
     SessionStateType State { get; }
 
-    void SetState(SessionStateType state);
-
     void SetSeed(uint seed);
+
+    void SetState(SessionStateType state);
 }

@@ -11,9 +11,9 @@ public interface ILocationService
     /// <summary>Number of registered facets.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a facet root, indexed by name.</summary>
-    void Register(LocationCategory facet);
-
     /// <summary>Returns the facet root with the given name (case-insensitive), or null.</summary>
     LocationCategory? GetFacet(string name);
+
+    /// <summary>Adds or replaces a facet root, indexed by name.</summary>
+    void Register(LocationCategory facet);
 }

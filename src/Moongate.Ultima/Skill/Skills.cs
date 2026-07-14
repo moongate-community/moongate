@@ -46,7 +46,7 @@ public sealed class Skills
     /// <returns></returns>
     public static SkillInfo GetSkill(int index)
     {
-        var stream = _fileIndex.Seek(index, out var length, out var extra, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out var extra, out _);
 
         if (stream == null)
         {

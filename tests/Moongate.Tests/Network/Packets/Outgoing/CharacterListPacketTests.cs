@@ -24,18 +24,18 @@ public class CharacterListPacketTests
         };
         var packet = new CharacterListPacket(new[] { "Squid" }, new[] { city }, 2, CharacterListFlagType.Modern);
 
-        var writer = new SpanWriter(256, resize: true);
+        var writer = new SpanWriter(256, true);
         packet.Write(ref writer);
         var b = writer.Span.ToArray();
 
         Assert.Equal(0xA9, b[0]);
         Assert.Equal(220, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(1))); // 11 + 60*2 + 89*1
         Assert.Equal(220, b.Length);
-        Assert.Equal(2, b[3]); // slot count
+        Assert.Equal(2, b[3]);                                                   // slot count
         Assert.Equal("Squid", Encoding.ASCII.GetString(b, 4, 30).TrimEnd('\0')); // slot 0 name
-        Assert.All(b.AsSpan(34, 90).ToArray(), x => Assert.Equal(0, x)); // slot 0 password + empty slot 1
-        Assert.Equal(1, b[124]); // city count
-        Assert.Equal(0, b[125]); // city index
+        Assert.All(b.AsSpan(34, 90).ToArray(), x => Assert.Equal(0, x));         // slot 0 password + empty slot 1
+        Assert.Equal(1, b[124]);                                                 // city count
+        Assert.Equal(0, b[125]);                                                 // city index
         Assert.Equal("Britain", Encoding.ASCII.GetString(b, 126, 32).TrimEnd('\0'));
         Assert.Equal("Castle British", Encoding.ASCII.GetString(b, 158, 32).TrimEnd('\0'));
         Assert.Equal(1495, BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(190)));
@@ -44,6 +44,6 @@ public class CharacterListPacketTests
         Assert.Equal(1, BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(202))); // Trammel = 1
         Assert.Equal(1075072, BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(206)));
         Assert.Equal(0x11E8, BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(214))); // flags
-        Assert.Equal(-1, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(218))); // trailing
+        Assert.Equal(-1, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(218)));     // trailing
     }
 }

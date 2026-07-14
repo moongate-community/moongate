@@ -1,14 +1,14 @@
-- Id: creature.orcish_mage
-  Name: OrcishMage
-  Category: loot
-  Description: Creature-specific loot for OrcishMage.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: orcish_kin_mask
-    Amount: 1
-    Chance: 1.0
-  - ItemTag: reagents
-    Amount: 6
-    Chance: 1.0
+-   Id: creature.orcish_mage
+    Name: OrcishMage
+    Category: loot
+    Description: Creature-specific loot for OrcishMage.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: orcish_kin_mask
+            Amount: 1
+            Chance: 1.0
+        -   ItemTag: reagents
+            Amount: 6
+            Chance: 1.0

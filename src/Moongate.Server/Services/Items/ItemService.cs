@@ -20,6 +20,27 @@ public sealed class ItemService : IItemService
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
     }
 
+    public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
+    {
+        if (container.Id == Serial.Zero)
+        {
+            _items.UpsertAsync(container).WaitSync();
+        }
+
+        DetachFromCurrentLocation(item);
+
+        item.ParentContainerId = container.Id;
+        item.ContainerPosition = position;
+        _items.UpsertAsync(item).WaitSync();
+
+        if (!container.ContainedItemIds.Contains(item.Id))
+        {
+            container.ContainedItemIds.Add(item.Id);
+        }
+
+        _items.UpsertAsync(container).WaitSync();
+    }
+
     public Serial Create(ItemEntity item)
     {
         _items.UpsertAsync(item).WaitSync();
@@ -27,20 +48,8 @@ public sealed class ItemService : IItemService
         return item.Id;
     }
 
-    public void Save(ItemEntity item)
-    {
-        _items.UpsertAsync(item).WaitSync();
-    }
-
     public bool Delete(Serial itemId)
-    {
-        return _items.RemoveAsync(itemId).WaitSync();
-    }
-
-    public ItemEntity? GetById(Serial itemId)
-    {
-        return _items.GetById(itemId);
-    }
+        => _items.RemoveAsync(itemId).WaitSync();
 
     public void Equip(MobileEntity mobile, ItemEntity item, LayerType layer)
     {
@@ -64,6 +73,32 @@ public sealed class ItemService : IItemService
 
         _mobiles.UpsertAsync(mobile).WaitSync();
     }
+
+    public ItemEntity? GetById(Serial itemId)
+        => _items.GetById(itemId);
+
+    public IReadOnlyList<ItemEntity> GetContents(Serial containerId)
+    {
+        var container = _items.GetById(containerId);
+
+        return container is null ? [] : Resolve(container.ContainedItemIds);
+    }
+
+    public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
+        => Resolve(mobile.EquippedItemIds.Values);
+
+    public void RemoveFromContainer(ItemEntity container, ItemEntity item)
+    {
+        container.ContainedItemIds.Remove(item.Id);
+        _items.UpsertAsync(container).WaitSync();
+
+        item.ParentContainerId = Serial.Zero;
+        item.ContainerPosition = Point2D.Zero;
+        _items.UpsertAsync(item).WaitSync();
+    }
+
+    public void Save(ItemEntity item)
+        => _items.UpsertAsync(item).WaitSync();
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
     {
@@ -89,49 +124,6 @@ public sealed class ItemService : IItemService
         }
 
         return item;
-    }
-
-    public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
-    {
-        if (container.Id == Serial.Zero)
-        {
-            _items.UpsertAsync(container).WaitSync();
-        }
-
-        DetachFromCurrentLocation(item);
-
-        item.ParentContainerId = container.Id;
-        item.ContainerPosition = position;
-        _items.UpsertAsync(item).WaitSync();
-
-        if (!container.ContainedItemIds.Contains(item.Id))
-        {
-            container.ContainedItemIds.Add(item.Id);
-        }
-
-        _items.UpsertAsync(container).WaitSync();
-    }
-
-    public void RemoveFromContainer(ItemEntity container, ItemEntity item)
-    {
-        container.ContainedItemIds.Remove(item.Id);
-        _items.UpsertAsync(container).WaitSync();
-
-        item.ParentContainerId = Serial.Zero;
-        item.ContainerPosition = Point2D.Zero;
-        _items.UpsertAsync(item).WaitSync();
-    }
-
-    public IReadOnlyList<ItemEntity> GetContents(Serial containerId)
-    {
-        var container = _items.GetById(containerId);
-
-        return container is null ? [] : Resolve(container.ContainedItemIds);
-    }
-
-    public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
-    {
-        return Resolve(mobile.EquippedItemIds.Values);
     }
 
     private void DetachFromCurrentLocation(ItemEntity item)

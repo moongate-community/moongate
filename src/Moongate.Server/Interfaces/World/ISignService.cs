@@ -12,9 +12,9 @@ public interface ISignService
     /// <summary>Number of registered signs.</summary>
     int Count { get; }
 
-    /// <summary>Adds a sign to the registry.</summary>
-    void Register(SignEntry sign);
-
     /// <summary>Returns the signs on the given map.</summary>
     IReadOnlyList<SignEntry> ForMap(MapType map);
+
+    /// <summary>Adds a sign to the registry.</summary>
+    void Register(SignEntry sign);
 }

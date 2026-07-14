@@ -1,5 +1,4 @@
 using Moongate.Core.Primitives;
-using Moongate.Network.Data;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
@@ -8,107 +7,71 @@ using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
-using Moongate.UO.Data.Items;
-using Moongate.UO.Data.Skills;
-using Moongate.UO.Data.StartingCities;
-using Moongate.UO.Data.StartingItems;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
 
 public class CharacterServiceTests
 {
-    private static ItemTemplateService Templates()
+    [Fact]
+    public void CreateCharacter_GivesAndEquipsABackpack()
     {
-        var templates = new ItemTemplateService();
-        templates.Register(new ItemTemplate { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
-        templates.Register(new ItemTemplate { Id = "bank_box", Name = "Bank Box", Category = "Containers", ItemId = 2475 });
-        templates.Register(new ItemTemplate { Id = "dagger", Name = "Dagger", Category = "Weapons", ItemId = 3921 });
-        templates.Register(new ItemTemplate
-        {
-            Id = "shirt", Name = "Shirt", Category = "Clothing", ItemId = 5399,
-            Equip = new EquipSpec { Layer = LayerType.Shirt }
-        });
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new());
 
-        return templates;
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        // The mobile has a backpack serial, equipped on the Backpack layer.
+        Assert.NotEqual(Serial.Zero, mobile.BackpackId);
+        Assert.Equal(mobile.BackpackId, mobile.EquippedItemIds[LayerType.Backpack]);
+
+        // The backpack item is persisted and back-references the mobile.
+        var backpack = persistence.Store<ItemEntity>().GetById(mobile.BackpackId);
+        Assert.NotNull(backpack);
+        Assert.Equal(3701, backpack!.ItemId);
+        Assert.Equal(mobile.Id, backpack.EquippedMobileId);
+        Assert.Equal(LayerType.Backpack, backpack.EquippedLayer);
     }
 
-    private static StartingItemsService StartingItems()
+    [Fact]
+    public void CreateCharacter_GivesAndEquipsABankBox()
     {
-        var service = new StartingItemsService();
-        service.Load(new StartingItemsData
-        {
-            All = new StartingItemKit { Pack = [new StartingItemEntry { Item = "dagger" }] },
-            ByBody =
-            {
-                ["Elf/Female"] = new StartingItemKit { Equip = [new StartingItemEntry { Item = "shirt", Hue = "shirt" }] }
-            }
-        });
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new());
 
-        return service;
+        var mobile = service.CreateCharacter((Serial)5, Packet());
+
+        // The bank box is equipped on the Bank layer (no dedicated field on the mobile).
+        var bankBoxId = mobile.EquippedItemIds[LayerType.Bank];
+        Assert.NotEqual(Serial.Zero, bankBoxId);
+
+        var bankBox = persistence.Store<ItemEntity>().GetById(bankBoxId);
+        Assert.NotNull(bankBox);
+        Assert.Equal(2475, bankBox!.ItemId);
+        Assert.Equal(mobile.Id, bankBox.EquippedMobileId);
+        Assert.Equal(LayerType.Bank, bankBox.EquippedLayer);
     }
 
-    private static SkillService Skills()
+    [Fact]
+    public void CreateCharacter_GrantsResolvedStartingKit()
     {
-        var service = new SkillService();
-        service.Register(new SkillDefinition { Id = 1, Name = "Anatomy" });
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence, new());
 
-        return service;
-    }
+        // Packet: Elf/Female -> ByBody equips the shirt; All -> dagger in the backpack.
+        var mobile = service.CreateCharacter((Serial)5, Packet());
 
-    private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
-    {
-        var templates = Templates();
-        var random = new Random(1);
-        var factory = new ItemFactoryService(templates, random);
+        var itemService = new ItemService(persistence);
 
-        return new CharacterService(
-            persistence,
-            new MobileFactoryService(Cities()),
-            factory,
-            new ItemService(persistence),
-            templates,
-            StartingItems(),
-            Skills(),
-            random,
-            eventBus
-        );
-    }
+        var contents = itemService.GetContents(mobile.BackpackId);
+        Assert.Contains(contents, item => item.ItemId == 3921); // dagger from All.Pack
 
-    private static CharacterCreationPacket Packet()
-    {
-        return new CharacterCreationPacket(
-            Slot: 0,
-            Name: "Freydis",
-            ClientFlags: 0,
-            ProfessionId: 4,
-            Gender: GenderType.Female,
-            Race: RaceType.Elf,
-            Strength: 45,
-            Dexterity: 20,
-            Intelligence: 25,
-            Skills: [new CharacterSkill(1, 50)],
-            SkinHue: 0x03EA,
-            HairStyle: 0x203C,
-            HairHue: 0x044E,
-            FacialHairStyle: 0x2040,
-            FacialHairHue: 0x0450,
-            StartingCityIndex: 0,
-            ShirtHue: 0x0765,
-            PantsHue: 0x0766
-        );
-    }
-
-    private static StartingCityService Cities()
-    {
-        var service = new StartingCityService();
-        service.Register(new StartingCity
-        {
-            City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
-        });
-        return service;
+        var equipped = itemService.GetEquipped(mobile);
+        var shirt = Assert.Single(equipped.Where(item => item.ItemId == 5399)); // shirt from ByBody Elf/Female
+        Assert.Equal(LayerType.Shirt, shirt.EquippedLayer);
+        Assert.Equal((ushort)0x0765, shirt.Hue.Value); // Hue "shirt" resolved to packet.ShirtHue
     }
 
     [Fact]
@@ -117,15 +80,18 @@ public class CharacterServiceTests
         var persistence = new FakePersistenceService();
 
         var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new AccountEntity { Id = accountId, Username = "bob" });
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
 
         var eventBus = new EventBusService();
         CharacterCreatedEvent? published = null;
-        eventBus.Subscribe<CharacterCreatedEvent>((evt, _) =>
-        {
-            published = evt;
-            return Task.CompletedTask;
-        });
+        eventBus.Subscribe<CharacterCreatedEvent>(
+            (evt, _) =>
+            {
+                published = evt;
+
+                return Task.CompletedTask;
+            }
+        );
 
         var service = Service(persistence, eventBus);
 
@@ -155,7 +121,7 @@ public class CharacterServiceTests
     public void CreateCharacter_UnknownAccount_StillPersistsMobileWithoutLinking()
     {
         var persistence = new FakePersistenceService();
-        var service = Service(persistence, new EventBusService());
+        var service = Service(persistence, new());
 
         var mobile = service.CreateCharacter((Serial)999, Packet());
 
@@ -163,62 +129,99 @@ public class CharacterServiceTests
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
     }
 
-    [Fact]
-    public void CreateCharacter_GivesAndEquipsABackpack()
+    private static StartingCityService Cities()
     {
-        var persistence = new FakePersistenceService();
-        var service = Service(persistence, new EventBusService());
+        var service = new StartingCityService();
+        service.Register(
+            new()
+            {
+                City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
+            }
+        );
 
-        var mobile = service.CreateCharacter((Serial)5, Packet());
-
-        // The mobile has a backpack serial, equipped on the Backpack layer.
-        Assert.NotEqual(Serial.Zero, mobile.BackpackId);
-        Assert.Equal(mobile.BackpackId, mobile.EquippedItemIds[LayerType.Backpack]);
-
-        // The backpack item is persisted and back-references the mobile.
-        var backpack = persistence.Store<ItemEntity>().GetById(mobile.BackpackId);
-        Assert.NotNull(backpack);
-        Assert.Equal(3701, backpack!.ItemId);
-        Assert.Equal(mobile.Id, backpack.EquippedMobileId);
-        Assert.Equal(LayerType.Backpack, backpack.EquippedLayer);
+        return service;
     }
 
-    [Fact]
-    public void CreateCharacter_GivesAndEquipsABankBox()
+    private static CharacterCreationPacket Packet()
+        => new(
+            0,
+            "Freydis",
+            0,
+            4,
+            GenderType.Female,
+            RaceType.Elf,
+            45,
+            20,
+            25,
+            [new(1, 50)],
+            0x03EA,
+            0x203C,
+            0x044E,
+            0x2040,
+            0x0450,
+            0,
+            0x0765,
+            0x0766
+        );
+
+    private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
     {
-        var persistence = new FakePersistenceService();
-        var service = Service(persistence, new EventBusService());
+        var templates = Templates();
+        var random = new Random(1);
+        var factory = new ItemFactoryService(templates, random);
 
-        var mobile = service.CreateCharacter((Serial)5, Packet());
-
-        // The bank box is equipped on the Bank layer (no dedicated field on the mobile).
-        var bankBoxId = mobile.EquippedItemIds[LayerType.Bank];
-        Assert.NotEqual(Serial.Zero, bankBoxId);
-
-        var bankBox = persistence.Store<ItemEntity>().GetById(bankBoxId);
-        Assert.NotNull(bankBox);
-        Assert.Equal(2475, bankBox!.ItemId);
-        Assert.Equal(mobile.Id, bankBox.EquippedMobileId);
-        Assert.Equal(LayerType.Bank, bankBox.EquippedLayer);
+        return new(
+            persistence,
+            new MobileFactoryService(Cities()),
+            factory,
+            new ItemService(persistence),
+            templates,
+            StartingItems(),
+            Skills(),
+            random,
+            eventBus
+        );
     }
 
-    [Fact]
-    public void CreateCharacter_GrantsResolvedStartingKit()
+    private static SkillService Skills()
     {
-        var persistence = new FakePersistenceService();
-        var service = Service(persistence, new EventBusService());
+        var service = new SkillService();
+        service.Register(new() { Id = 1, Name = "Anatomy" });
 
-        // Packet: Elf/Female -> ByBody equips the shirt; All -> dagger in the backpack.
-        var mobile = service.CreateCharacter((Serial)5, Packet());
+        return service;
+    }
 
-        var itemService = new ItemService(persistence);
+    private static StartingItemsService StartingItems()
+    {
+        var service = new StartingItemsService();
+        service.Load(
+            new()
+            {
+                All = new() { Pack = [new() { Item = "dagger" }] },
+                ByBody =
+                {
+                    ["Elf/Female"] = new() { Equip = [new() { Item = "shirt", Hue = "shirt" }] }
+                }
+            }
+        );
 
-        var contents = itemService.GetContents(mobile.BackpackId);
-        Assert.Contains(contents, item => item.ItemId == 3921); // dagger from All.Pack
+        return service;
+    }
 
-        var equipped = itemService.GetEquipped(mobile);
-        var shirt = Assert.Single(equipped.Where(item => item.ItemId == 5399)); // shirt from ByBody Elf/Female
-        Assert.Equal(LayerType.Shirt, shirt.EquippedLayer);
-        Assert.Equal((ushort)0x0765, shirt.Hue.Value); // Hue "shirt" resolved to packet.ShirtHue
+    private static ItemTemplateService Templates()
+    {
+        var templates = new ItemTemplateService();
+        templates.Register(new() { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
+        templates.Register(new() { Id = "bank_box", Name = "Bank Box", Category = "Containers", ItemId = 2475 });
+        templates.Register(new() { Id = "dagger", Name = "Dagger", Category = "Weapons", ItemId = 3921 });
+        templates.Register(
+            new()
+            {
+                Id = "shirt", Name = "Shirt", Category = "Clothing", ItemId = 5399,
+                Equip = new() { Layer = LayerType.Shirt }
+            }
+        );
+
+        return templates;
     }
 }

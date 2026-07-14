@@ -16,19 +16,15 @@ public sealed class SkillService : ISkillService
 
     public int Count => _byId.Count;
 
+    public SkillDefinition? GetById(int id)
+        => _byId.GetValueOrDefault(id);
+
+    public SkillDefinition? GetByName(string name)
+        => _byName.GetValueOrDefault(name);
+
     public void Register(SkillDefinition definition)
     {
         _byId[definition.Id] = definition;
         _byName[definition.Name] = definition;
-    }
-
-    public SkillDefinition? GetById(int id)
-    {
-        return _byId.GetValueOrDefault(id);
-    }
-
-    public SkillDefinition? GetByName(string name)
-    {
-        return _byName.GetValueOrDefault(name);
     }
 }

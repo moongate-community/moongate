@@ -2,8 +2,8 @@ namespace Moongate.Core.Primitives;
 
 /// <summary>
 /// The identity of a UO entity on the wire. Mobiles live in
-/// [<see cref="MinMobile"/>, <see cref="MaxMobile"/>], items in
-/// [<see cref="MinItem"/>, <see cref="MaxItem"/>]; zero is "no entity".
+/// [<see cref="MinMobile" />, <see cref="MaxMobile" />], items in
+/// [<see cref="MinItem" />, <see cref="MaxItem" />]; zero is "no entity".
 /// </summary>
 public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
 {
@@ -27,68 +27,42 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
 
     public bool IsValid => Value != 0;
 
+    public int CompareTo(Serial other)
+        => Value.CompareTo(other.Value);
+
     public bool Equals(Serial other)
-    {
-        return Value == other.Value;
-    }
+        => Value == other.Value;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Serial other && Equals(other);
-    }
+        => obj is Serial other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
-    public int CompareTo(Serial other)
-    {
-        return Value.CompareTo(other.Value);
-    }
-
-    public static implicit operator uint(Serial serial)
-    {
-        return serial.Value;
-    }
-
-    public static explicit operator Serial(uint value)
-    {
-        return new Serial(value);
-    }
+        => Value.GetHashCode();
 
     public static bool operator ==(Serial left, Serial right)
-    {
-        return left.Value == right.Value;
-    }
+        => left.Value == right.Value;
 
-    public static bool operator !=(Serial left, Serial right)
-    {
-        return left.Value != right.Value;
-    }
-
-    public static bool operator <(Serial left, Serial right)
-    {
-        return left.Value < right.Value;
-    }
+    public static explicit operator Serial(uint value)
+        => new(value);
 
     public static bool operator >(Serial left, Serial right)
-    {
-        return left.Value > right.Value;
-    }
-
-    public static bool operator <=(Serial left, Serial right)
-    {
-        return left.Value <= right.Value;
-    }
+        => left.Value > right.Value;
 
     public static bool operator >=(Serial left, Serial right)
-    {
-        return left.Value >= right.Value;
-    }
+        => left.Value >= right.Value;
+
+    public static implicit operator uint(Serial serial)
+        => serial.Value;
+
+    public static bool operator !=(Serial left, Serial right)
+        => left.Value != right.Value;
+
+    public static bool operator <(Serial left, Serial right)
+        => left.Value < right.Value;
+
+    public static bool operator <=(Serial left, Serial right)
+        => left.Value <= right.Value;
 
     public override string ToString()
-    {
-        return $"0x{Value:X8}";
-    }
+        => $"0x{Value:X8}";
 }

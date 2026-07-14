@@ -10,14 +10,6 @@ namespace Moongate.Tests.Data;
 [Collection("ItemTemplateSeeding")]
 public class StartingItemsDataTests
 {
-    private static StartingItemsData LoadData()
-    {
-        var yaml = ResourceUtils.GetEmbeddedResourceString(
-            typeof(ItemTemplatesLoader).Assembly, "Assets/starting_items.yaml");
-
-        return YamlUtils.Deserialize<StartingItemsData>(yaml);
-    }
-
     [Fact]
     public void EmbeddedStartingItems_DeserializesWithContent()
     {
@@ -40,11 +32,13 @@ public class StartingItemsDataTests
             await new ItemTemplatesLoader(templates, directories).LoadAsync();
 
             var data = LoadData();
-            var referenced = data.All.Equip.Concat(data.All.Pack)
-                .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Select(entry => entry.Item)
-                .Distinct();
+            var referenced = data.All
+                                 .Equip
+                                 .Concat(data.All.Pack)
+                                 .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Select(entry => entry.Item)
+                                 .Distinct();
 
             foreach (var id in referenced)
             {
@@ -55,5 +49,15 @@ public class StartingItemsDataTests
         {
             Directory.Delete(root, true);
         }
+    }
+
+    private static StartingItemsData LoadData()
+    {
+        var yaml = ResourceUtils.GetEmbeddedResourceString(
+            typeof(ItemTemplatesLoader).Assembly,
+            "Assets/starting_items.yaml"
+        );
+
+        return YamlUtils.Deserialize<StartingItemsData>(yaml);
     }
 }

@@ -19,6 +19,6 @@ public readonly record struct LoginSeedPacket(uint Seed, uint Major, uint Minor,
         var revision = reader.ReadUInt32();
         var prototype = reader.ReadUInt32();
 
-        return new LoginSeedPacket(seed, major, minor, revision, prototype);
+        return new(seed, major, minor, revision, prototype);
     }
 }

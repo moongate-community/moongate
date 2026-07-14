@@ -1,491 +1,491 @@
-- Id: albino_courtesan_fish
-  Name: Albino Courtesan Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15108
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: albino_frog
-  Name: Albino Frog
-  Category: Aquarium
-  Description: ''
-  ItemId: 15117
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: aquarium_food
-  Name: Aquarium Food
-  Category: Aquarium
-  Description: ''
-  ItemId: 3836
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: brine_shrimp
-  Name: Brine Shrimp
-  Category: Aquarium
-  Description: ''
-  ItemId: 15121
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: britain_crown_fish
-  Name: Britain Crown Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15103
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: coral
-  Name: Coral
-  Category: Aquarium
-  Description: ''
-  ItemId: 15098
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: craftys_fishing_hat
-  Name: Craftys Fishing Hat
-  Category: Aquarium
-  Description: ''
-  ItemId: 5907
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: fandancer_fish
-  Name: Fandancer Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15106
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: fish_bones
-  Name: Fish Bones
-  Category: Aquarium
-  Description: ''
-  ItemId: 15116
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: fish_bowl
-  Name: Fish Bowl
-  Category: Aquarium
-  Description: ''
-  ItemId: 9244
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: full_moon_fish
-  Name: Full Moon Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15125
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: golden_broadtail
-  Name: Golden Broadtail
-  Category: Aquarium
-  Description: ''
-  ItemId: 15107
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: island_statue
-  Name: Island Statue
-  Category: Aquarium
-  Description: ''
-  ItemId: 15119
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: jellyfish
-  Name: Jellyfish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15118
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: killer_frog
-  Name: Killer Frog
-  Category: Aquarium
-  Description: ''
-  ItemId: 15117
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: long_claw_crab
-  Name: Long Claw Crab
-  Category: Aquarium
-  Description: ''
-  ItemId: 15100
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: makoto_courtesan_fish
-  Name: Makoto Courtesan Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15101
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: minoc_blue_fish
-  Name: Minoc Blue Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15102
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: nujelm_honey_fish
-  Name: Nujelm Honey Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15110
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: purple_frog
-  Name: Purple Frog
-  Category: Aquarium
-  Description: ''
-  ItemId: 15117
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: red_dart_fish
-  Name: Red Dart Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15104
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: sea_horse_fish
-  Name: Sea Horse Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15120
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: shell
-  Name: Shell
-  Category: Aquarium
-  Description: ''
-  ItemId: 2
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: shrimp
-  Name: Shrimp
-  Category: Aquarium
-  Description: ''
-  ItemId: 15124
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: small_mouth_sucker_fin
-  Name: Small Mouth Sucker Fin
-  Category: Aquarium
-  Description: ''
-  ItemId: 15105
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: speckled_crab
-  Name: Speckled Crab
-  Category: Aquarium
-  Description: ''
-  ItemId: 15100
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: spined_scratcher_fish
-  Name: Spined Scratcher Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15109
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: spotted_buccaneer
-  Name: Spotted Buccaneer
-  Category: Aquarium
-  Description: ''
-  ItemId: 15113
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: stripped_flake_fish
-  Name: Stripped Flake Fish
-  Category: Aquarium
-  Description: ''
-  ItemId: 15114
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: stripped_sosarian_swill
-  Name: Stripped Sosarian Swill
-  Category: Aquarium
-  Description: ''
-  ItemId: 15114
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: toy_boat
-  Name: Toy Boat
-  Category: Aquarium
-  Description: ''
-  ItemId: 5364
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-  - flippable
-- Id: vacation_wafer
-  Name: Vacation Wafer
-  Category: Aquarium
-  Description: ''
-  ItemId: 2419
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: vesper_reef_tiger
-  Name: Vesper Reef Tiger
-  Category: Aquarium
-  Description: ''
-  ItemId: 15112
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: waterlogged_boots
-  Name: Waterlogged Boots
-  Category: Aquarium
-  Description: ''
-  ItemId: 5905
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
-- Id: yellow_fin_bluebelly
-  Name: Yellow Fin Bluebelly
-  Category: Aquarium
-  Description: ''
-  ItemId: 15111
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - aquarium
+-   Id: albino_courtesan_fish
+    Name: Albino Courtesan Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15108
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: albino_frog
+    Name: Albino Frog
+    Category: Aquarium
+    Description: ''
+    ItemId: 15117
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: aquarium_food
+    Name: Aquarium Food
+    Category: Aquarium
+    Description: ''
+    ItemId: 3836
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: brine_shrimp
+    Name: Brine Shrimp
+    Category: Aquarium
+    Description: ''
+    ItemId: 15121
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: britain_crown_fish
+    Name: Britain Crown Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15103
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: coral
+    Name: Coral
+    Category: Aquarium
+    Description: ''
+    ItemId: 15098
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: craftys_fishing_hat
+    Name: Craftys Fishing Hat
+    Category: Aquarium
+    Description: ''
+    ItemId: 5907
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: fandancer_fish
+    Name: Fandancer Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15106
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: fish_bones
+    Name: Fish Bones
+    Category: Aquarium
+    Description: ''
+    ItemId: 15116
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: fish_bowl
+    Name: Fish Bowl
+    Category: Aquarium
+    Description: ''
+    ItemId: 9244
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: full_moon_fish
+    Name: Full Moon Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15125
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: golden_broadtail
+    Name: Golden Broadtail
+    Category: Aquarium
+    Description: ''
+    ItemId: 15107
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: island_statue
+    Name: Island Statue
+    Category: Aquarium
+    Description: ''
+    ItemId: 15119
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: jellyfish
+    Name: Jellyfish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15118
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: killer_frog
+    Name: Killer Frog
+    Category: Aquarium
+    Description: ''
+    ItemId: 15117
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: long_claw_crab
+    Name: Long Claw Crab
+    Category: Aquarium
+    Description: ''
+    ItemId: 15100
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: makoto_courtesan_fish
+    Name: Makoto Courtesan Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15101
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: minoc_blue_fish
+    Name: Minoc Blue Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15102
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: nujelm_honey_fish
+    Name: Nujelm Honey Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15110
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: purple_frog
+    Name: Purple Frog
+    Category: Aquarium
+    Description: ''
+    ItemId: 15117
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: red_dart_fish
+    Name: Red Dart Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15104
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: sea_horse_fish
+    Name: Sea Horse Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15120
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: shell
+    Name: Shell
+    Category: Aquarium
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: shrimp
+    Name: Shrimp
+    Category: Aquarium
+    Description: ''
+    ItemId: 15124
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: small_mouth_sucker_fin
+    Name: Small Mouth Sucker Fin
+    Category: Aquarium
+    Description: ''
+    ItemId: 15105
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: speckled_crab
+    Name: Speckled Crab
+    Category: Aquarium
+    Description: ''
+    ItemId: 15100
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: spined_scratcher_fish
+    Name: Spined Scratcher Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15109
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: spotted_buccaneer
+    Name: Spotted Buccaneer
+    Category: Aquarium
+    Description: ''
+    ItemId: 15113
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: stripped_flake_fish
+    Name: Stripped Flake Fish
+    Category: Aquarium
+    Description: ''
+    ItemId: 15114
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: stripped_sosarian_swill
+    Name: Stripped Sosarian Swill
+    Category: Aquarium
+    Description: ''
+    ItemId: 15114
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: toy_boat
+    Name: Toy Boat
+    Category: Aquarium
+    Description: ''
+    ItemId: 5364
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+        - flippable
+-   Id: vacation_wafer
+    Name: Vacation Wafer
+    Category: Aquarium
+    Description: ''
+    ItemId: 2419
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: vesper_reef_tiger
+    Name: Vesper Reef Tiger
+    Category: Aquarium
+    Description: ''
+    ItemId: 15112
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: waterlogged_boots
+    Name: Waterlogged Boots
+    Category: Aquarium
+    Description: ''
+    ItemId: 5905
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium
+-   Id: yellow_fin_bluebelly
+    Name: Yellow Fin Bluebelly
+    Category: Aquarium
+    Description: ''
+    ItemId: 15111
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - aquarium

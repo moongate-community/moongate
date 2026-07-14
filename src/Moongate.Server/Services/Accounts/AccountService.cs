@@ -28,19 +28,17 @@ public class AccountService : IAccountService
 
         if (account == null)
         {
-            return new AccountAuthResult { Success = false, Reason = LoginDeniedReasonType.BadCredentials };
+            return new() { Success = false, Reason = LoginDeniedReasonType.BadCredentials };
         }
 
         if (!account.IsActive)
         {
-            return new AccountAuthResult { Success = false, Reason = LoginDeniedReasonType.AccountBlocked };
+            return new() { Success = false, Reason = LoginDeniedReasonType.AccountBlocked };
         }
 
-        return new AccountAuthResult { Success = true, Username = account.Username };
+        return new() { Success = true, Username = account.Username };
     }
 
     public Serial? GetAccountIdByUsername(string username)
-    {
-        return _accountStore.Query().FirstOrDefault(s => s.Username == username)?.Id;
-    }
+        => _accountStore.Query().FirstOrDefault(s => s.Username == username)?.Id;
 }

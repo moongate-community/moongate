@@ -6,26 +6,15 @@ namespace Moongate.Tests.Server;
 
 public class SkillServiceTests
 {
-    private static SkillService NewService()
-    {
-        return new SkillService();
-    }
-
-    private static SkillDefinition Def(int id, string name)
-    {
-        return new SkillDefinition { Id = id, Name = name, PrimaryStat = StatType.Int, SecondaryStat = StatType.Dex };
-    }
-
     [Fact]
-    public void Register_ThenLookup_FindsByIdAndName()
+    public void All_IsOrderedById()
     {
         var service = NewService();
+        service.Register(Def(2, "Animal Lore"));
         service.Register(Def(0, "Alchemy"));
         service.Register(Def(1, "Anatomy"));
 
-        Assert.Equal(2, service.Count);
-        Assert.Equal("Alchemy", service.GetById(0)!.Name);
-        Assert.Equal(1, service.GetByName("Anatomy")!.Id);
+        Assert.Equal(new[] { 0, 1, 2 }, service.All.Select(d => d.Id).ToArray());
     }
 
     [Fact]
@@ -47,13 +36,20 @@ public class SkillServiceTests
     }
 
     [Fact]
-    public void All_IsOrderedById()
+    public void Register_ThenLookup_FindsByIdAndName()
     {
         var service = NewService();
-        service.Register(Def(2, "Animal Lore"));
         service.Register(Def(0, "Alchemy"));
         service.Register(Def(1, "Anatomy"));
 
-        Assert.Equal(new[] { 0, 1, 2 }, service.All.Select(d => d.Id).ToArray());
+        Assert.Equal(2, service.Count);
+        Assert.Equal("Alchemy", service.GetById(0)!.Name);
+        Assert.Equal(1, service.GetByName("Anatomy")!.Id);
     }
+
+    private static SkillDefinition Def(int id, string name)
+        => new() { Id = id, Name = name, PrimaryStat = StatType.Int, SecondaryStat = StatType.Dex };
+
+    private static SkillService NewService()
+        => new();
 }

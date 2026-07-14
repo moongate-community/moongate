@@ -1,9 +1,7 @@
-using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Mobiles;
 using Moongate.Server.Interfaces.World;
-using Moongate.UO.Data.Hues;
 
 namespace Moongate.Server.Services.Mobiles;
 
@@ -28,11 +26,11 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Strength = packet.Strength,
             Dexterity = packet.Dexterity,
             Intelligence = packet.Intelligence,
-            SkinHue = new Hue((ushort)packet.SkinHue),
+            SkinHue = new((ushort)packet.SkinHue),
             HairStyle = (ushort)packet.HairStyle,
-            HairHue = new Hue((ushort)packet.HairHue),
+            HairHue = new((ushort)packet.HairHue),
             FacialHairStyle = (ushort)packet.FacialHairStyle,
-            FacialHairHue = new Hue((ushort)packet.FacialHairHue)
+            FacialHairHue = new((ushort)packet.FacialHairHue)
         };
 
         foreach (var skill in packet.Skills)
@@ -46,13 +44,12 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         // Fall back to the first city when the client sends an out-of-range index.
-        var startingCity = _startingCityService.GetByIndex(packet.StartingCityIndex)
-                           ?? _startingCityService.GetByIndex(0);
+        var startingCity = _startingCityService.GetByIndex(packet.StartingCityIndex) ?? _startingCityService.GetByIndex(0);
 
         if (startingCity is not null)
         {
             character.MapId = (int)startingCity.Map;
-            character.Position = new Point3D(startingCity.X, startingCity.Y, startingCity.Z);
+            character.Position = new(startingCity.X, startingCity.Y, startingCity.Z);
         }
 
         return character;

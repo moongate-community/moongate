@@ -11,9 +11,9 @@ public interface IWeatherService
     /// <summary>Number of registered weather types.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a weather type, indexed by id.</summary>
-    void Register(WeatherType weather);
-
     /// <summary>Returns the weather type with the given id, or null.</summary>
     WeatherType? GetById(int id);
+
+    /// <summary>Adds or replaces a weather type, indexed by id.</summary>
+    void Register(WeatherType weather);
 }

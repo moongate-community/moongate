@@ -10,14 +10,14 @@ namespace Moongate.Network.Helpers;
 /// </summary>
 public static class IpV4Writer
 {
-    public static void WriteReversed(ref SpanWriter writer, IPAddress address)
+    public static IPAddress ReadReversed(ref SpanReader reader)
     {
-        var octets = address.MapToIPv4().GetAddressBytes();
+        var d = reader.ReadByte();
+        var c = reader.ReadByte();
+        var b = reader.ReadByte();
+        var a = reader.ReadByte();
 
-        writer.Write(octets[3]);
-        writer.Write(octets[2]);
-        writer.Write(octets[1]);
-        writer.Write(octets[0]);
+        return new(new[] { a, b, c, d });
     }
 
     public static void WriteNormal(ref SpanWriter writer, IPAddress address)
@@ -30,13 +30,13 @@ public static class IpV4Writer
         writer.Write(octets[3]);
     }
 
-    public static IPAddress ReadReversed(ref SpanReader reader)
+    public static void WriteReversed(ref SpanWriter writer, IPAddress address)
     {
-        var d = reader.ReadByte();
-        var c = reader.ReadByte();
-        var b = reader.ReadByte();
-        var a = reader.ReadByte();
+        var octets = address.MapToIPv4().GetAddressBytes();
 
-        return new IPAddress(new[] { a, b, c, d });
+        writer.Write(octets[3]);
+        writer.Write(octets[2]);
+        writer.Write(octets[1]);
+        writer.Write(octets[0]);
     }
 }

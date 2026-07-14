@@ -11,9 +11,9 @@ public interface IProfessionService
     /// <summary>Number of registered professions.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a profession, indexed by name.</summary>
-    void Register(ProfessionDefinition definition);
-
     /// <summary>Returns the profession with the given name (case-insensitive), or null.</summary>
     ProfessionDefinition? GetByName(string name);
+
+    /// <summary>Adds or replaces a profession, indexed by name.</summary>
+    void Register(ProfessionDefinition definition);
 }

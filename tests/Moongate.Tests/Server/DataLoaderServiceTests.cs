@@ -19,6 +19,7 @@ public class DataLoaderServiceTests
         public ValueTask LoadAsync(CancellationToken ct = default)
         {
             _log.Add(_name);
+
             return ValueTask.CompletedTask;
         }
     }
@@ -27,21 +28,6 @@ public class DataLoaderServiceTests
     {
         public ValueTask LoadAsync(CancellationToken ct = default)
             => throw new InvalidOperationException("boom");
-    }
-
-    [Fact]
-    public async Task ExecuteLoadersAsync_RunsLoadersInListOrder()
-    {
-        var log = new List<string>();
-        var service = new DataLoaderService([
-            new RecordingLoader("a", log),
-            new RecordingLoader("b", log),
-            new RecordingLoader("c", log)
-        ]);
-
-        await service.ExecuteLoadersAsync();
-
-        Assert.Equal(new[] { "a", "b", "c" }, log);
     }
 
     [Fact]
@@ -58,6 +44,23 @@ public class DataLoaderServiceTests
         var service = new DataLoaderService([new ThrowingLoader()]);
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.ExecuteLoadersAsync().AsTask());
+    }
+
+    [Fact]
+    public async Task ExecuteLoadersAsync_RunsLoadersInListOrder()
+    {
+        var log = new List<string>();
+        var service = new DataLoaderService(
+            [
+                new RecordingLoader("a", log),
+                new RecordingLoader("b", log),
+                new RecordingLoader("c", log)
+            ]
+        );
+
+        await service.ExecuteLoadersAsync();
+
+        Assert.Equal(new[] { "a", "b", "c" }, log);
     }
 
     [Fact]

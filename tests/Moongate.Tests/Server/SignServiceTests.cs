@@ -6,9 +6,13 @@ namespace Moongate.Tests.Server;
 
 public class SignServiceTests
 {
-    private static SignEntry Sign(MapType map, string label)
+    [Fact]
+    public void ForMap_Unknown_IsEmpty()
     {
-        return new SignEntry { Map = map, ItemId = 3032, X = 1, Y = 2, Z = 0, Label = label };
+        var service = new SignService();
+        service.Register(Sign(MapType.Felucca, "#1016093"));
+
+        Assert.Empty(service.ForMap(MapType.Tokuno));
     }
 
     [Fact]
@@ -23,12 +27,6 @@ public class SignServiceTests
         Assert.Equal("#1016093", service.ForMap(MapType.Felucca)[0].Label);
     }
 
-    [Fact]
-    public void ForMap_Unknown_IsEmpty()
-    {
-        var service = new SignService();
-        service.Register(Sign(MapType.Felucca, "#1016093"));
-
-        Assert.Empty(service.ForMap(MapType.Tokuno));
-    }
+    private static SignEntry Sign(MapType map, string label)
+        => new() { Map = map, ItemId = 3032, X = 1, Y = 2, Z = 0, Label = label };
 }

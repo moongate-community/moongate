@@ -18,8 +18,13 @@ internal static class EmbeddedResourceDirectorySeeder
         var temporaryDirectory = Path.Combine(parentDirectory, $".{directoryName}-{Guid.NewGuid():N}.tmp");
         var temporaryPrefix = temporaryDirectory + Path.DirectorySeparatorChar;
         var resources = ResourceUtils.GetEmbeddedResourceNames(assembly, embeddedDirectory)
-            .Where(resourceName => resourceName.StartsWith(embeddedNamespace + ".", StringComparison.Ordinal))
-            .OrderBy(name => name, StringComparer.OrdinalIgnoreCase);
+                                     .Where(
+                                         resourceName => resourceName.StartsWith(
+                                             embeddedNamespace + ".",
+                                             StringComparison.Ordinal
+                                         )
+                                     )
+                                     .OrderBy(name => name, StringComparer.OrdinalIgnoreCase);
 
         Directory.CreateDirectory(parentDirectory);
 

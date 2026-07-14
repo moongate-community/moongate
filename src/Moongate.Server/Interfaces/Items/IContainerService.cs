@@ -11,9 +11,9 @@ public interface IContainerService
     /// <summary>Number of registered container definitions.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a container definition, indexed by id.</summary>
-    void Register(ContainerDefinition container);
-
     /// <summary>Returns the container definition with the given id (case-insensitive), or null.</summary>
     ContainerDefinition? GetById(string id);
+
+    /// <summary>Adds or replaces a container definition, indexed by id.</summary>
+    void Register(ContainerDefinition container);
 }

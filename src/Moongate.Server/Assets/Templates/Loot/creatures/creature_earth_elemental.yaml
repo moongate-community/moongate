@@ -1,11 +1,11 @@
-- Id: creature.earth_elemental
-  Name: EarthElemental
-  Category: loot
-  Description: Creature-specific loot for EarthElemental.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: mandrake_root
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.earth_elemental
+    Name: EarthElemental
+    Category: loot
+    Description: Creature-specific loot for EarthElemental.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: mandrake_root
+            Amount: 1
+            Chance: 1.0

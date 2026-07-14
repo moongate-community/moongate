@@ -1,17 +1,17 @@
-- Id: creature.orc_bomber
-  Name: OrcBomber
-  Category: loot
-  Description: Creature-specific loot for OrcBomber.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: mortar_pestle
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: lesser_explosion_potion
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: bola_ball
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.orc_bomber
+    Name: OrcBomber
+    Category: loot
+    Description: Creature-specific loot for OrcBomber.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: mortar_pestle
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: lesser_explosion_potion
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bola_ball
+            Amount: 1
+            Chance: 1.0

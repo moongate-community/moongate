@@ -15,13 +15,9 @@ public sealed class WeatherService : IWeatherService
 
     public int Count => _byId.Count;
 
-    public void Register(WeatherType weather)
-    {
-        _byId[weather.Id] = weather;
-    }
-
     public WeatherType? GetById(int id)
-    {
-        return _byId.GetValueOrDefault(id);
-    }
+        => _byId.GetValueOrDefault(id);
+
+    public void Register(WeatherType weather)
+        => _byId[weather.Id] = weather;
 }

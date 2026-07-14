@@ -31,7 +31,8 @@ public sealed class ProfessionsLoader : IDataLoader
 
         if (!File.Exists(path))
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(ProfessionsLoader).Assembly, "Assets/professions.yaml");
+            var seed =
+                ResourceUtils.GetEmbeddedResourceString(typeof(ProfessionsLoader).Assembly, "Assets/professions.yaml");
             File.WriteAllText(path, seed);
             _logger.Information("Seeded default professions.yaml at {Path}", path);
         }

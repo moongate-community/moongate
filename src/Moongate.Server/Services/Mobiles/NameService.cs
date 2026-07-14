@@ -15,13 +15,9 @@ public sealed class NameService : INameService
 
     public int Count => _byType.Count;
 
-    public void Register(NameList list)
-    {
-        _byType[list.Type] = list;
-    }
-
     public NameList? GetByType(string type)
-    {
-        return _byType.GetValueOrDefault(type);
-    }
+        => _byType.GetValueOrDefault(type);
+
+    public void Register(NameList list)
+        => _byType[list.Type] = list;
 }

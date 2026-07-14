@@ -1,4 +1,5 @@
 using Moongate.Ultima.Io;
+
 namespace Moongate.Ultima.Interfaces;
 
 public interface IFileAccessor

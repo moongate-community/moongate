@@ -5,23 +5,9 @@ using Moongate.Ultima.Interfaces;
 
 namespace Moongate.Ultima.Rendering;
 
-/// <summary>Stateless facade over <see cref="Animations"/>.</summary>
+/// <summary>Stateless facade over <see cref="Animations" />.</summary>
 public sealed class BodyRenderer : IBodyRenderer
 {
-    public Stream? GetBodyImage(int body, int action = 0, int direction = 4, int frame = 0, ushort hue = 0)
-    {
-        ValidateArguments(direction, frame);
-
-        var frames = Load(body, action, direction, hue, frame == 0);
-
-        if (frames is null || frame >= frames.Length || frames[frame]?.Bitmap is null)
-        {
-            return null;
-        }
-
-        return ItemCatalog.EncodePng(frames[frame].Bitmap);
-    }
-
     public IReadOnlyList<BodyFrame> GetBodyFrames(int body, int action, int direction, ushort hue = 0)
     {
         ValidateArguments(direction, 0);
@@ -43,7 +29,7 @@ public sealed class BodyRenderer : IBodyRenderer
             }
 
             result.Add(
-                new BodyFrame
+                new()
                 {
                     Png = ItemCatalog.EncodePng(frame.Bitmap),
                     CenterX = frame.Center.X,
@@ -55,6 +41,20 @@ public sealed class BodyRenderer : IBodyRenderer
         }
 
         return result;
+    }
+
+    public Stream? GetBodyImage(int body, int action = 0, int direction = 4, int frame = 0, ushort hue = 0)
+    {
+        ValidateArguments(direction, frame);
+
+        var frames = Load(body, action, direction, hue, frame == 0);
+
+        if (frames is null || frame >= frames.Length || frames[frame]?.Bitmap is null)
+        {
+            return null;
+        }
+
+        return ItemCatalog.EncodePng(frames[frame].Bitmap);
     }
 
     private static AnimationFrame[]? Load(int body, int action, int direction, ushort hue, bool firstFrame)

@@ -1,26 +1,26 @@
-- Id: creature.exodus_minion
-  Name: ExodusMinion
-  Category: loot
-  Description: Creature-specific loot for ExodusMinion.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: power_crystal
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: arcane_gem
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: clockwork_assembly
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: power_crystal
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: arcane_gem
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: clockwork_assembly
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.exodus_minion
+    Name: ExodusMinion
+    Category: loot
+    Description: Creature-specific loot for ExodusMinion.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: power_crystal
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: arcane_gem
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: clockwork_assembly
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: power_crystal
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: arcane_gem
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: clockwork_assembly
+            Amount: 1
+            Chance: 1.0

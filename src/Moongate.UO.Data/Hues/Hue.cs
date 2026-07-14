@@ -19,42 +19,26 @@ public readonly struct Hue : IEquatable<Hue>
     public bool IsDefault => Value == 0;
 
     public bool Equals(Hue other)
-    {
-        return Value == other.Value;
-    }
+        => Value == other.Value;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Hue other && Equals(other);
-    }
+        => obj is Hue other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
-    public static implicit operator ushort(Hue hue)
-    {
-        return hue.Value;
-    }
-
-    public static explicit operator Hue(ushort value)
-    {
-        return new Hue(value);
-    }
+        => Value.GetHashCode();
 
     public static bool operator ==(Hue left, Hue right)
-    {
-        return left.Value == right.Value;
-    }
+        => left.Value == right.Value;
+
+    public static explicit operator Hue(ushort value)
+        => new(value);
+
+    public static implicit operator ushort(Hue hue)
+        => hue.Value;
 
     public static bool operator !=(Hue left, Hue right)
-    {
-        return left.Value != right.Value;
-    }
+        => left.Value != right.Value;
 
     public override string ToString()
-    {
-        return $"0x{Value:X4}";
-    }
+        => $"0x{Value:X4}";
 }

@@ -13,12 +13,12 @@ public interface ISkillService
     /// <summary>Number of registered skill definitions.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a skill definition, indexing it by id and by name.</summary>
-    void Register(SkillDefinition definition);
-
     /// <summary>Returns the definition with the given id, or null if none is registered.</summary>
     SkillDefinition? GetById(int id);
 
     /// <summary>Returns the definition with the given name (case-insensitive), or null if none.</summary>
     SkillDefinition? GetByName(string name);
+
+    /// <summary>Adds or replaces a skill definition, indexing it by id and by name.</summary>
+    void Register(SkillDefinition definition);
 }

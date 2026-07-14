@@ -9,5 +9,4 @@ public interface IAccountService
     AccountAuthResult Authenticate(string username, string password);
 
     Serial? GetAccountIdByUsername(string username);
-
 }

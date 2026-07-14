@@ -1,23 +1,23 @@
-- Id: creature.efreet
-  Name: Efreet
-  Category: loot
-  Description: Creature-specific loot for Efreet.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: daemon_arms
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: daemon_chest
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: daemon_gloves
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: daemon_legs
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: daemon_helm
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.efreet
+    Name: Efreet
+    Category: loot
+    Description: Creature-specific loot for Efreet.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: daemon_arms
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: daemon_chest
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: daemon_gloves
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: daemon_legs
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: daemon_helm
+            Amount: 1
+            Chance: 1.0

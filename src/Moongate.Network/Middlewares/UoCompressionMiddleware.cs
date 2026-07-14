@@ -26,9 +26,7 @@ public sealed class UoCompressionMiddleware : INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-    {
-        return ValueTask.FromResult(data);
-    }
+        => ValueTask.FromResult(data);
 
     /// <inheritdoc />
     public ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(

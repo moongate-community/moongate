@@ -12,9 +12,9 @@ public interface IRegionService
     /// <summary>Number of registered regions.</summary>
     int Count { get; }
 
-    /// <summary>Adds a region to the registry.</summary>
-    void Register(RegionDefinition region);
-
     /// <summary>Returns the regions on the given map.</summary>
     IReadOnlyList<RegionDefinition> ForMap(MapType map);
+
+    /// <summary>Adds a region to the registry.</summary>
+    void Register(RegionDefinition region);
 }

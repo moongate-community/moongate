@@ -1,11 +1,11 @@
-- Id: creature.horde_minion
-  Name: HordeMinion
-  Category: loot
-  Description: Creature-specific loot for HordeMinion.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: bone
-    Amount: 3
-    Chance: 1.0
+-   Id: creature.horde_minion
+    Name: HordeMinion
+    Category: loot
+    Description: Creature-specific loot for HordeMinion.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bone
+            Amount: 3
+            Chance: 1.0

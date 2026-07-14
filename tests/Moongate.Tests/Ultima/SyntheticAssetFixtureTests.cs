@@ -9,23 +9,33 @@ namespace Moongate.Tests.Ultima;
 public class SyntheticAssetFixtureTests
 {
     [Fact]
-    public unsafe void BuildStaticArt_IsDecodedByArtReader()
+    public unsafe void BuildAnim_IsDecodedByAnimationsReader()
     {
-        var (index, art) = UltimaFixtures.BuildStaticArt(0x10, 2, 2, 0xFC00);
-        var dir = UltimaFixtures.CreateClientDirectory(("artidx.mul", index), ("art.mul", art));
+        var (index, anim) = UltimaFixtures.BuildAnim(
+            1,
+            0,
+            1,
+            3,
+            2,
+            2,
+            1,
+            0x7C1F
+        );
+        var dir = UltimaFixtures.CreateClientDirectory(("anim.idx", index), ("anim.mul", anim));
 
         try
         {
             Files.SetDirectory(dir);
-            Art.Reload();
+            Animations.Reload();
 
-            using var bmp = Art.GetStatic(0x10);
+            var frames = Animations.GetAnimation(1, 0, 1, 1);
 
-            Assert.NotNull(bmp);
-            Assert.Equal(2, bmp.Width);
-            Assert.Equal(2, bmp.Height);
-            Assert.Equal(0xFC00, ((ushort*)bmp.Scan0)[0]);
-            Assert.Equal(0xFC00, ((ushort*)bmp.Scan0)[3]);
+            Assert.NotNull(frames);
+            Assert.Equal(3, frames.Length);
+            Assert.NotNull(frames[0].Bitmap);
+            Assert.Equal(2, frames[0].Bitmap.Width);
+            Assert.Equal(2, frames[0].Bitmap.Height);
+            Assert.Equal(0x7C1F, ((ushort*)frames[0].Bitmap.Scan0)[0] & 0x7FFF);
         }
         finally
         {
@@ -62,26 +72,23 @@ public class SyntheticAssetFixtureTests
     }
 
     [Fact]
-    public unsafe void BuildAnim_IsDecodedByAnimationsReader()
+    public unsafe void BuildStaticArt_IsDecodedByArtReader()
     {
-        var (index, anim) = UltimaFixtures.BuildAnim(
-            body: 1, action: 0, direction: 1, frameCount: 3, width: 2, height: 2,
-            paletteIndex: 1, paletteColor: 0x7C1F);
-        var dir = UltimaFixtures.CreateClientDirectory(("anim.idx", index), ("anim.mul", anim));
+        var (index, art) = UltimaFixtures.BuildStaticArt(0x10, 2, 2, 0xFC00);
+        var dir = UltimaFixtures.CreateClientDirectory(("artidx.mul", index), ("art.mul", art));
 
         try
         {
             Files.SetDirectory(dir);
-            Animations.Reload();
+            Art.Reload();
 
-            var frames = Animations.GetAnimation(1, 0, 1, 1);
+            using var bmp = Art.GetStatic(0x10);
 
-            Assert.NotNull(frames);
-            Assert.Equal(3, frames.Length);
-            Assert.NotNull(frames[0].Bitmap);
-            Assert.Equal(2, frames[0].Bitmap.Width);
-            Assert.Equal(2, frames[0].Bitmap.Height);
-            Assert.Equal(0x7C1F, ((ushort*)frames[0].Bitmap.Scan0)[0] & 0x7FFF);
+            Assert.NotNull(bmp);
+            Assert.Equal(2, bmp.Width);
+            Assert.Equal(2, bmp.Height);
+            Assert.Equal(0xFC00, ((ushort*)bmp.Scan0)[0]);
+            Assert.Equal(0xFC00, ((ushort*)bmp.Scan0)[3]);
         }
         finally
         {

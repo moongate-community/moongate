@@ -9,7 +9,7 @@ using SixLabors.ImageSharp;
 namespace Moongate.Ultima.Catalog;
 
 /// <summary>
-/// Stateless facade over <see cref="TileData"/>, <see cref="Art"/> and <see cref="Hues"/>.
+/// Stateless facade over <see cref="TileData" />, <see cref="Art" /> and <see cref="Hues" />.
 /// </summary>
 public sealed class ItemCatalog : IItemCatalog
 {
@@ -27,7 +27,7 @@ public sealed class ItemCatalog : IItemCatalog
         // cache-owned bitmap: never dispose (the LRU may hand it to other callers)
         var art = Art.GetStatic((int)itemId, false);
 
-        return new UoItemInfo
+        return new()
         {
             ItemId = itemId,
             Name = data.Name ?? string.Empty,

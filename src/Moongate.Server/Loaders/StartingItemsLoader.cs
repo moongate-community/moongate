@@ -31,7 +31,10 @@ public sealed class StartingItemsLoader : IDataLoader
 
         if (!File.Exists(path))
         {
-            var seed = ResourceUtils.GetEmbeddedResourceString(typeof(StartingItemsLoader).Assembly, "Assets/starting_items.yaml");
+            var seed = ResourceUtils.GetEmbeddedResourceString(
+                typeof(StartingItemsLoader).Assembly,
+                "Assets/starting_items.yaml"
+            );
             File.WriteAllText(path, seed);
             _logger.Information("Seeded default starting_items.yaml at {Path}", path);
         }

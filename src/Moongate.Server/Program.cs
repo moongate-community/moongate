@@ -21,9 +21,6 @@ using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
 using SquidStd.Core.Data.Bootstrap;
-using SquidStd.Core.Data.EventLoop;
-using SquidStd.Core.Data.Jobs;
-using SquidStd.Core.Data.Timing;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Utils;
@@ -111,7 +108,7 @@ await ConsoleApp.RunAsync(
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
                 container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
 
-                container.RegisterInstance<Random>(Random.Shared);
+                container.RegisterInstance(Random.Shared);
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
                 container.Register<IItemService, ItemService>(Reuse.Singleton);
 
@@ -130,13 +127,10 @@ await ConsoleApp.RunAsync(
                 container.RegisterStdService<INetworkService, NetworkService>();
 
                 container.RegisterMainThreadDispatcherService();
-                container.RegisterTimerWheelService(
-                    new TimerWheelConfig()
-                        { }
-                );
+                container.RegisterTimerWheelService(new());
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
                 container.RegisterEventLoop(
-                    new EventLoopConfig()
+                    new()
                     {
                         IdleSleepMs = 1,
                         IdleCpuEnabled = true,
@@ -145,10 +139,10 @@ await ConsoleApp.RunAsync(
                 );
 
                 container.RegisterJobSystemService(
-                    new JobsConfig()
+                    new()
                     {
                         ShutdownTimeoutSeconds = 5,
-                        WorkerThreadCount = Environment.ProcessorCount - 1,
+                        WorkerThreadCount = Environment.ProcessorCount - 1
                     }
                 );
 

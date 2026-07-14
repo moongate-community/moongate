@@ -105,7 +105,7 @@ public sealed class AnimationEdit
             return cache[index].Frames?.Count > 0;
         }
 
-        var valid = fileIndex.Valid(index, out var length, out var _, out var _);
+        var valid = fileIndex.Valid(index, out var length, out _, out _);
 
         return valid && length >= 1;
     }
@@ -113,7 +113,7 @@ public sealed class AnimationEdit
     public static void LoadFromVD(int fileType, int body, BinaryReader bin)
     {
         var cache = GetCache(fileType);
-        GetFileIndex(body, fileType, 0, 0, out var _, out var index);
+        GetFileIndex(body, fileType, 0, 0, out _, out var index);
         var animLength = Animations.GetAnimLength(body, fileType) * 5;
         var entries = new Entry3D[animLength];
 

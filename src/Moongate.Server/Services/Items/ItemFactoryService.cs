@@ -17,22 +17,6 @@ public sealed class ItemFactoryService : IItemFactoryService
         _random = random;
     }
 
-    public IReadOnlyList<ItemEntity> CreateFromTemplate(string templateId, int count = 1, int amount = 1, Hue? hue = null)
-    {
-        var template = _templates.GetById(templateId);
-
-        return template is null ? [] : Repeat(count, () => Build(template, amount, hue));
-    }
-
-    public IReadOnlyList<ItemEntity> CreateByTag(string tag, int count = 1, int amount = 1, Hue? hue = null)
-    {
-        var matches = _templates.All
-                                .Where(template => template.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
-                                .ToList();
-
-        return CreateFromPool(matches, count, amount, hue);
-    }
-
     public IReadOnlyList<ItemEntity> CreateByCategory(string category, int count = 1, int amount = 1, Hue? hue = null)
     {
         var matches = _templates.All
@@ -48,10 +32,37 @@ public sealed class ItemFactoryService : IItemFactoryService
         return CreateFromPool(matches, count, amount, hue);
     }
 
-    private IReadOnlyList<ItemEntity> CreateFromPool(IReadOnlyList<ItemTemplate> pool, int count, int amount, Hue? hue)
+    public IReadOnlyList<ItemEntity> CreateByTag(string tag, int count = 1, int amount = 1, Hue? hue = null)
     {
-        return pool.Count == 0 ? [] : Repeat(count, () => Build(pool[_random.Next(pool.Count)], amount, hue));
+        var matches = _templates.All
+                                .Where(template => template.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
+                                .ToList();
+
+        return CreateFromPool(matches, count, amount, hue);
     }
+
+    public IReadOnlyList<ItemEntity> CreateFromTemplate(string templateId, int count = 1, int amount = 1, Hue? hue = null)
+    {
+        var template = _templates.GetById(templateId);
+
+        return template is null ? [] : Repeat(count, () => Build(template, amount, hue));
+    }
+
+    private static ItemEntity Build(ItemTemplate template, int amount, Hue? hue)
+        => new()
+        {
+            ItemId = template.ItemId,
+            Hue = hue ?? new Hue((ushort)template.Hue),
+            GumpId = template.Container?.GumpId,
+            Name = template.Name,
+            ScriptId = template.ScriptId,
+            Rarity = template.Rarity,
+            Description = template.Description,
+            Amount = Math.Max(1, amount)
+        };
+
+    private IReadOnlyList<ItemEntity> CreateFromPool(IReadOnlyList<ItemTemplate> pool, int count, int amount, Hue? hue)
+        => pool.Count == 0 ? [] : Repeat(count, () => Build(pool[_random.Next(pool.Count)], amount, hue));
 
     private static IReadOnlyList<ItemEntity> Repeat(int count, Func<ItemEntity> build)
     {
@@ -63,20 +74,5 @@ public sealed class ItemFactoryService : IItemFactoryService
         }
 
         return result;
-    }
-
-    private static ItemEntity Build(ItemTemplate template, int amount, Hue? hue)
-    {
-        return new ItemEntity
-        {
-            ItemId = template.ItemId,
-            Hue = hue ?? new Hue((ushort)template.Hue),
-            GumpId = template.Container?.GumpId,
-            Name = template.Name,
-            ScriptId = template.ScriptId,
-            Rarity = template.Rarity,
-            Description = template.Description,
-            Amount = Math.Max(1, amount)
-        };
     }
 }

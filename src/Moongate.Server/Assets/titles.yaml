@@ -1,120 +1,120 @@
-- Fame: 1249
-  Karma:
-  - Karma: -10000
-    Title: The Outcast {0}
-  - Karma: -5000
-    Title: The Despicable {0}
-  - Karma: -2500
-    Title: The Scoundrel {0}
-  - Karma: -1250
-    Title: The Unsavory {0}
-  - Karma: -625
-    Title: The Rude {0}
-  - Karma: 624
-    Title: '{0}'
-  - Karma: 1249
-    Title: The Fair {0}
-  - Karma: 2499
-    Title: The Kind {0}
-  - Karma: 4999
-    Title: The Good {0}
-  - Karma: 9999
-    Title: The Honest {0}
-  - Karma: 10000
-    Title: The Trustworthy {0}
-- Fame: 2499
-  Karma:
-  - Karma: -10000
-    Title: The Wretched {0}
-  - Karma: -5000
-    Title: The Dastardly {0}
-  - Karma: -2500
-    Title: The Malicious {0}
-  - Karma: -1250
-    Title: The Dishonorable {0}
-  - Karma: -625
-    Title: The Disreputable {0}
-  - Karma: 624
-    Title: The Notable {0}
-  - Karma: 1249
-    Title: The Upstanding {0}
-  - Karma: 2499
-    Title: The Respectable {0}
-  - Karma: 4999
-    Title: The Honorable {0}
-  - Karma: 9999
-    Title: The Commendable {0}
-  - Karma: 10000
-    Title: The Estimable {0}
-- Fame: 4999
-  Karma:
-  - Karma: -10000
-    Title: The Nefarious {0}
-  - Karma: -5000
-    Title: The Wicked {0}
-  - Karma: -2500
-    Title: The Vile {0}
-  - Karma: -1250
-    Title: The Ignoble {0}
-  - Karma: -625
-    Title: The Notorious {0}
-  - Karma: 624
-    Title: The Prominent {0}
-  - Karma: 1249
-    Title: The Reputable {0}
-  - Karma: 2499
-    Title: The Proper {0}
-  - Karma: 4999
-    Title: The Admirable {0}
-  - Karma: 9999
-    Title: The Famed {0}
-  - Karma: 10000
-    Title: The Great {0}
-- Fame: 9999
-  Karma:
-  - Karma: -10000
-    Title: The Dread {0}
-  - Karma: -5000
-    Title: The Evil {0}
-  - Karma: -2500
-    Title: The Villainous {0}
-  - Karma: -1250
-    Title: The Sinister {0}
-  - Karma: -625
-    Title: The Infamous {0}
-  - Karma: 624
-    Title: The Renowned {0}
-  - Karma: 1249
-    Title: The Distinguished {0}
-  - Karma: 2499
-    Title: The Eminent {0}
-  - Karma: 4999
-    Title: The Noble {0}
-  - Karma: 9999
-    Title: The Illustrious {0}
-  - Karma: 10000
-    Title: The Glorious {0}
-- Fame: 10000
-  Karma:
-  - Karma: -10000
-    Title: The Dread {1} {0}
-  - Karma: -5000
-    Title: The Evil {1} {0}
-  - Karma: -2500
-    Title: The Dark {1} {0}
-  - Karma: -1250
-    Title: The Sinister {1} {0}
-  - Karma: -625
-    Title: The Dishonored {1} {0}
-  - Karma: 624
-    Title: '{1} {0}'
-  - Karma: 1249
-    Title: The Distinguished {1} {0}
-  - Karma: 2499
-    Title: The Eminent {1} {0}
-  - Karma: 4999
-    Title: The Noble {1} {0}
-  - Karma: 9999
-    Title: The Illustrious {1} {0}
-  - Karma: 10000
-    Title: The Glorious {1} {0}
+-   Fame: 1249
+    Karma:
+        -   Karma: -10000
+            Title: The Outcast {0}
+        -   Karma: -5000
+            Title: The Despicable {0}
+        -   Karma: -2500
+            Title: The Scoundrel {0}
+        -   Karma: -1250
+            Title: The Unsavory {0}
+        -   Karma: -625
+            Title: The Rude {0}
+        -   Karma: 624
+            Title: '{0}'
+        -   Karma: 1249
+            Title: The Fair {0}
+        -   Karma: 2499
+            Title: The Kind {0}
+        -   Karma: 4999
+            Title: The Good {0}
+        -   Karma: 9999
+            Title: The Honest {0}
+        -   Karma: 10000
+            Title: The Trustworthy {0}
+-   Fame: 2499
+    Karma:
+        -   Karma: -10000
+            Title: The Wretched {0}
+        -   Karma: -5000
+            Title: The Dastardly {0}
+        -   Karma: -2500
+            Title: The Malicious {0}
+        -   Karma: -1250
+            Title: The Dishonorable {0}
+        -   Karma: -625
+            Title: The Disreputable {0}
+        -   Karma: 624
+            Title: The Notable {0}
+        -   Karma: 1249
+            Title: The Upstanding {0}
+        -   Karma: 2499
+            Title: The Respectable {0}
+        -   Karma: 4999
+            Title: The Honorable {0}
+        -   Karma: 9999
+            Title: The Commendable {0}
+        -   Karma: 10000
+            Title: The Estimable {0}
+-   Fame: 4999
+    Karma:
+        -   Karma: -10000
+            Title: The Nefarious {0}
+        -   Karma: -5000
+            Title: The Wicked {0}
+        -   Karma: -2500
+            Title: The Vile {0}
+        -   Karma: -1250
+            Title: The Ignoble {0}
+        -   Karma: -625
+            Title: The Notorious {0}
+        -   Karma: 624
+            Title: The Prominent {0}
+        -   Karma: 1249
+            Title: The Reputable {0}
+        -   Karma: 2499
+            Title: The Proper {0}
+        -   Karma: 4999
+            Title: The Admirable {0}
+        -   Karma: 9999
+            Title: The Famed {0}
+        -   Karma: 10000
+            Title: The Great {0}
+-   Fame: 9999
+    Karma:
+        -   Karma: -10000
+            Title: The Dread {0}
+        -   Karma: -5000
+            Title: The Evil {0}
+        -   Karma: -2500
+            Title: The Villainous {0}
+        -   Karma: -1250
+            Title: The Sinister {0}
+        -   Karma: -625
+            Title: The Infamous {0}
+        -   Karma: 624
+            Title: The Renowned {0}
+        -   Karma: 1249
+            Title: The Distinguished {0}
+        -   Karma: 2499
+            Title: The Eminent {0}
+        -   Karma: 4999
+            Title: The Noble {0}
+        -   Karma: 9999
+            Title: The Illustrious {0}
+        -   Karma: 10000
+            Title: The Glorious {0}
+-   Fame: 10000
+    Karma:
+        -   Karma: -10000
+            Title: The Dread {1} {0}
+        -   Karma: -5000
+            Title: The Evil {1} {0}
+        -   Karma: -2500
+            Title: The Dark {1} {0}
+        -   Karma: -1250
+            Title: The Sinister {1} {0}
+        -   Karma: -625
+            Title: The Dishonored {1} {0}
+        -   Karma: 624
+            Title: '{1} {0}'
+        -   Karma: 1249
+            Title: The Distinguished {1} {0}
+        -   Karma: 2499
+            Title: The Eminent {1} {0}
+        -   Karma: 4999
+            Title: The Noble {1} {0}
+        -   Karma: 9999
+            Title: The Illustrious {1} {0}
+        -   Karma: 10000
+            Title: The Glorious {1} {0}

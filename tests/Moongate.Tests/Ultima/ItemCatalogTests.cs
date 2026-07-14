@@ -14,29 +14,6 @@ public class ItemCatalogTests
 {
     private const int ItemId = 0x10;
 
-    private static string CreateFixtureDirectory()
-    {
-        var tileData = UltimaFixtures.BuildTileData();
-        UltimaFixtures.SetItem(tileData, ItemId, (uint)(TileFlagType.Wearable | TileFlagType.PartialHue), 4, "test tunic");
-
-        var (artIndex, art) = UltimaFixtures.BuildStaticArt(ItemId, 2, 2, 0xFFFF); // white -> gray, huable
-        var hues = UltimaFixtures.BuildHues("Red", 0x7C00, 0, 0);
-
-        return UltimaFixtures.CreateClientDirectory(
-            ("tiledata.mul", tileData),
-            ("artidx.mul", artIndex),
-            ("art.mul", art),
-            ("hues.mul", hues)
-        );
-    }
-
-    private static void InitializeReaders()
-    {
-        Art.Reload();
-        TileData.Initialize();
-        Hues.Initialize();
-    }
-
     [Fact]
     public void GetItem_KnownId_ReturnsEnrichedInfo()
     {
@@ -76,6 +53,24 @@ public class ItemCatalogTests
             InitializeReaders();
 
             Assert.Null(new ItemCatalog().GetItem(uint.MaxValue));
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void GetItemImage_MissingArt_ReturnsNull()
+    {
+        var dir = CreateFixtureDirectory();
+
+        try
+        {
+            Files.SetDirectory(dir);
+            InitializeReaders();
+
+            Assert.Null(new ItemCatalog().GetItemImage(0x20)); // no art at this id
         }
         finally
         {
@@ -138,21 +133,26 @@ public class ItemCatalogTests
         }
     }
 
-    [Fact]
-    public void GetItemImage_MissingArt_ReturnsNull()
+    private static string CreateFixtureDirectory()
     {
-        var dir = CreateFixtureDirectory();
+        var tileData = UltimaFixtures.BuildTileData();
+        UltimaFixtures.SetItem(tileData, ItemId, (uint)(TileFlagType.Wearable | TileFlagType.PartialHue), 4, "test tunic");
 
-        try
-        {
-            Files.SetDirectory(dir);
-            InitializeReaders();
+        var (artIndex, art) = UltimaFixtures.BuildStaticArt(ItemId, 2, 2, 0xFFFF); // white -> gray, huable
+        var hues = UltimaFixtures.BuildHues("Red", 0x7C00, 0, 0);
 
-            Assert.Null(new ItemCatalog().GetItemImage(0x20)); // no art at this id
-        }
-        finally
-        {
-            Directory.Delete(dir, true);
-        }
+        return UltimaFixtures.CreateClientDirectory(
+            ("tiledata.mul", tileData),
+            ("artidx.mul", artIndex),
+            ("art.mul", art),
+            ("hues.mul", hues)
+        );
+    }
+
+    private static void InitializeReaders()
+    {
+        Art.Reload();
+        TileData.Initialize();
+        Hues.Initialize();
     }
 }

@@ -16,8 +16,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
-        <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj" />
-        <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj" />
+        <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -25,16 +25,16 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="SquidStd.Abstractions" Version="0.33.1" />
-        <PackageReference Include="SquidStd.Core" Version="0.33.1" />
-        <PackageReference Include="SquidStd.Plugin" Version="0.33.1" />
-        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.33.1" />
-        <PackageReference Include="SquidStd.Services.Core" Version="0.33.1" />
+        <PackageReference Include="SquidStd.Abstractions" Version="0.33.1"/>
+        <PackageReference Include="SquidStd.Core" Version="0.33.1"/>
+        <PackageReference Include="SquidStd.Plugin" Version="0.33.1"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.33.1"/>
+        <PackageReference Include="SquidStd.Services.Core" Version="0.33.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Assets\**\**" />
-      <EmbeddedResource Include="Assets\**\**" />
+        <None Remove="Assets\**\**"/>
+        <EmbeddedResource Include="Assets\**\**"/>
     </ItemGroup>
 
 </Project>

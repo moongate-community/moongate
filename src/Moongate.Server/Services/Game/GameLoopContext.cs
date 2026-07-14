@@ -20,23 +20,15 @@ public sealed class GameLoopContext : IGameLoopContext
         Timers = timers;
     }
 
+    public bool Cancel(string timerId)
+        => Timers.UnregisterTimer(timerId);
+
     public void Post(Action action)
-    {
-        Dispatcher.Post(action);
-    }
+        => Dispatcher.Post(action);
 
     public string Schedule(string name, TimeSpan delay, Action callback)
-    {
-        return Timers.RegisterTimer(name, delay, callback, repeat: false);
-    }
+        => Timers.RegisterTimer(name, delay, callback, repeat: false);
 
     public string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null)
-    {
-        return Timers.RegisterTimer(name, interval, callback, delay, repeat: true);
-    }
-
-    public bool Cancel(string timerId)
-    {
-        return Timers.UnregisterTimer(timerId);
-    }
+        => Timers.RegisterTimer(name, interval, callback, delay, true);
 }

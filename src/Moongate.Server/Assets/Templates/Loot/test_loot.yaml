@@ -1,51 +1,51 @@
-- Id: loot_test_chest_basic
-  Name: Loot Test Chest Basic
-  Category: Test
-  Description: Basic weighted loot table for first-open chest testing.
-  Mode: Weighted
-  Rolls: 2
-  NoDropWeight: 0
-  Entries:
-  - Weight: 5
-    ItemTemplateId: gold
-    Amount: 125
-  - Weight: 3
-    ItemTag: resources
-    Amount: 25
-  - Weight: 2
-    ItemTemplateId: lockpick
-    Amount: 5
-  - Weight: 1
-    ItemTemplateId: torch
-    Amount: 1
-- Id: undead.low
-  Name: Undead Low
-  Category: Undead
-  Description: Low-value additive corpse loot for test undead.
-  Mode: Weighted
-  Rolls: 1
-  NoDropWeight: 3
-  Entries:
-  - Weight: 5
-    ItemTemplateId: gold
-    Amount: 45
-  - Weight: 2
-    ItemTemplateId: bandage
-    Amount: 4
-- Id: undead.knight
-  Name: Undead Knight
-  Category: Undead
-  Description: Slightly richer additive corpse loot for skeletal knights.
-  Mode: Weighted
-  Rolls: 2
-  NoDropWeight: 1
-  Entries:
-  - Weight: 5
-    ItemTemplateId: gold
-    Amount: 90
-  - Weight: 2
-    ItemTemplateId: bandage
-    Amount: 6
-  - Weight: 1
-    ItemTag: weapons
-    Amount: 1
+-   Id: loot_test_chest_basic
+    Name: Loot Test Chest Basic
+    Category: Test
+    Description: Basic weighted loot table for first-open chest testing.
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 5
+            ItemTemplateId: gold
+            Amount: 125
+        -   Weight: 3
+            ItemTag: resources
+            Amount: 25
+        -   Weight: 2
+            ItemTemplateId: lockpick
+            Amount: 5
+        -   Weight: 1
+            ItemTemplateId: torch
+            Amount: 1
+-   Id: undead.low
+    Name: Undead Low
+    Category: Undead
+    Description: Low-value additive corpse loot for test undead.
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 3
+    Entries:
+        -   Weight: 5
+            ItemTemplateId: gold
+            Amount: 45
+        -   Weight: 2
+            ItemTemplateId: bandage
+            Amount: 4
+-   Id: undead.knight
+    Name: Undead Knight
+    Category: Undead
+    Description: Slightly richer additive corpse loot for skeletal knights.
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 1
+    Entries:
+        -   Weight: 5
+            ItemTemplateId: gold
+            Amount: 90
+        -   Weight: 2
+            ItemTemplateId: bandage
+            Amount: 6
+        -   Weight: 1
+            ItemTag: weapons
+            Amount: 1

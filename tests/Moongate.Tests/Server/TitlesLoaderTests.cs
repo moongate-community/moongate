@@ -6,9 +6,6 @@ namespace Moongate.Tests.Server;
 
 public class TitlesLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-titles-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndResolvesRealTitles()
     {
@@ -23,9 +20,9 @@ public class TitlesLoaderTests
 
             Assert.True(File.Exists(Path.Combine(directories.GetPath("data"), "titles.yaml")));
             Assert.Equal(5, titles.Count);
-            Assert.Equal("The Glorious Lord Bob", titles.GetTitle("Bob", 12000, 12000, female: false));
-            Assert.Equal("The Dread Lady Bob", titles.GetTitle("Bob", 12000, -10000, female: true));
-            Assert.Equal("Bob", titles.GetTitle("Bob", 0, 0, female: false));
+            Assert.Equal("The Glorious Lord Bob", titles.GetTitle("Bob", 12000, 12000, false));
+            Assert.Equal("The Dread Lady Bob", titles.GetTitle("Bob", 12000, -10000, true));
+            Assert.Equal("Bob", titles.GetTitle("Bob", 0, 0, false));
         }
         finally
         {
@@ -51,11 +48,14 @@ public class TitlesLoaderTests
             await loader.LoadAsync();
 
             Assert.Equal(1, titles.Count);
-            Assert.Equal("The Custom Lady Bob", titles.GetTitle("Bob", 99999, 99999, female: true));
+            Assert.Equal("The Custom Lady Bob", titles.GetTitle("Bob", 99999, 99999, true));
         }
         finally
         {
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-titles-" + Guid.NewGuid().ToString("N"));
 }

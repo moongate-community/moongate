@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Items;
+using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
@@ -33,9 +34,9 @@ internal static class ItemTemplateYamlDeserializer
     };
 
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-                                                        .WithDuplicateKeyChecking()
-                                                        .WithEnforceNullability()
-                                                        .Build();
+                                                         .WithDuplicateKeyChecking()
+                                                         .WithEnforceNullability()
+                                                         .Build();
 
     public static ItemTemplate[] DeserializeFromFile(string file, string relativePath)
     {
@@ -81,6 +82,176 @@ internal static class ItemTemplateYamlDeserializer
         }
 
         return [.. templates.Select(template => template!)];
+    }
+
+    private static YamlNode? GetValue(YamlMappingNode mapping, string property)
+    {
+        foreach (var (key, value) in mapping.Children)
+        {
+            if (key is YamlScalarNode { Value: { } propertyName } &&
+                string.Equals(propertyName, property, StringComparison.OrdinalIgnoreCase))
+            {
+                return value;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsYamlNull(YamlScalarNode scalar)
+        => scalar.Tag == "tag:yaml.org,2002:null" ||
+           scalar.Style == ScalarStyle.Plain &&
+           (string.IsNullOrEmpty(scalar.Value) ||
+            scalar.Value == "~" ||
+            string.Equals(scalar.Value, "null", StringComparison.OrdinalIgnoreCase));
+
+    private static InvalidDataException ShapeError(
+        int templateIndex,
+        string templateId,
+        string property,
+        string message
+    )
+        => new($"Item template element {templateIndex} ('{templateId}') property '{property}' {message}.");
+
+    private static void ValidateNestedNullCollectionElements(
+        YamlMappingNode template,
+        string parentProperty,
+        string collectionProperty,
+        int templateIndex,
+        string templateId
+    )
+    {
+        if (GetValue(template, parentProperty) is YamlMappingNode nested &&
+            GetValue(nested, collectionProperty) is YamlSequenceNode sequence)
+        {
+            for (var index = 0; index < sequence.Children.Count; index++)
+            {
+                if (sequence.Children[index] is YamlScalarNode scalar && IsYamlNull(scalar))
+                {
+                    throw ShapeError(
+                        templateIndex,
+                        templateId,
+                        $"{parentProperty}.{collectionProperty}",
+                        $"has a null element at index {index}"
+                    );
+                }
+            }
+        }
+    }
+
+    private static void ValidateNestedNullValueProperties(
+        YamlMappingNode template,
+        string property,
+        HashSet<string> valueProperties,
+        int templateIndex,
+        string templateId
+    )
+    {
+        if (GetValue(template, property) is YamlMappingNode nested)
+        {
+            ValidateNullValueProperties(nested, valueProperties, templateIndex, templateId, property);
+        }
+    }
+
+    private static void ValidateNullCollectionElements(
+        YamlMappingNode mapping,
+        string property,
+        int templateIndex,
+        string templateId
+    )
+    {
+        if (GetValue(mapping, property) is not YamlSequenceNode sequence)
+        {
+            return;
+        }
+
+        for (var index = 0; index < sequence.Children.Count; index++)
+        {
+            if (sequence.Children[index] is YamlScalarNode scalar && IsYamlNull(scalar))
+            {
+                throw ShapeError(templateIndex, templateId, property, $"has a null element at index {index}");
+            }
+        }
+    }
+
+    private static void ValidateNullDictionaryValues(
+        YamlMappingNode template,
+        string property,
+        int templateIndex,
+        string templateId
+    )
+    {
+        if (GetValue(template, property) is not YamlMappingNode dictionary)
+        {
+            return;
+        }
+
+        foreach (var (key, value) in dictionary.Children)
+        {
+            if (value is not YamlScalarNode scalar || !IsYamlNull(scalar))
+            {
+                continue;
+            }
+
+            var dictionaryKey = (key as YamlScalarNode)?.Value ?? "<unknown>";
+
+            throw ShapeError(
+                templateIndex,
+                templateId,
+                $"{property}[{dictionaryKey}]",
+                "has a null value"
+            );
+        }
+    }
+
+    private static void ValidateNullValueProperties(
+        YamlMappingNode mapping,
+        HashSet<string> properties,
+        int templateIndex,
+        string templateId,
+        string? prefix
+    )
+    {
+        foreach (var (key, value) in mapping.Children)
+        {
+            if (key is not YamlScalarNode { Value: { } propertyName } ||
+                !properties.Contains(propertyName) ||
+                value is not YamlScalarNode scalar ||
+                !IsYamlNull(scalar))
+            {
+                continue;
+            }
+
+            var qualifiedProperty = prefix is null ? propertyName : $"{prefix}.{propertyName}";
+
+            throw ShapeError(
+                templateIndex,
+                templateId,
+                qualifiedProperty,
+                "is null but is non-nullable"
+            );
+        }
+    }
+
+    private static void ValidateReferenceCollection<T>(
+        IReadOnlyList<T>? values,
+        int templateIndex,
+        string templateId,
+        string property
+    )
+    {
+        if (values is null)
+        {
+            return;
+        }
+
+        for (var index = 0; index < values.Count; index++)
+        {
+            if (values[index] is null)
+            {
+                throw ShapeError(templateIndex, templateId, property, $"element at index {index} is null");
+            }
+        }
     }
 
     private static void ValidateRepresentation(string yaml)
@@ -134,13 +305,31 @@ internal static class ItemTemplateYamlDeserializer
         }
     }
 
+    private static void ValidateRequiredCollection(
+        YamlMappingNode mapping,
+        string property,
+        int templateIndex,
+        string templateId
+    )
+    {
+        if (GetValue(mapping, property) is YamlScalarNode scalar && IsYamlNull(scalar))
+        {
+            throw ShapeError(templateIndex, templateId, property, "collection is null");
+        }
+    }
+
     private static void ValidateTemplateShape(ItemTemplate template, int templateIndex)
     {
         var templateId = string.IsNullOrWhiteSpace(template.Id) ? "<unknown>" : template.Id;
 
         if (!Enum.IsDefined(template.Rarity))
         {
-            throw ShapeError(templateIndex, templateId, nameof(ItemTemplate.Rarity), $"undefined value '{(int)template.Rarity}'");
+            throw ShapeError(
+                templateIndex,
+                templateId,
+                nameof(ItemTemplate.Rarity),
+                $"undefined value '{(int)template.Rarity}'"
+            );
         }
 
         if (template.Equip is not null && !Enum.IsDefined(template.Equip.Layer))
@@ -174,192 +363,5 @@ internal static class ItemTemplateYamlDeserializer
                 throw ShapeError(templateIndex, templateId, $"Params[{key}]", "value is null");
             }
         }
-    }
-
-    private static void ValidateReferenceCollection<T>(
-        IReadOnlyList<T>? values,
-        int templateIndex,
-        string templateId,
-        string property
-    )
-    {
-        if (values is null)
-        {
-            return;
-        }
-
-        for (var index = 0; index < values.Count; index++)
-        {
-            if (values[index] is null)
-            {
-                throw ShapeError(templateIndex, templateId, property, $"element at index {index} is null");
-            }
-        }
-    }
-
-    private static void ValidateNullValueProperties(
-        YamlMappingNode mapping,
-        HashSet<string> properties,
-        int templateIndex,
-        string templateId,
-        string? prefix
-    )
-    {
-        foreach (var (key, value) in mapping.Children)
-        {
-            if (key is not YamlScalarNode { Value: { } propertyName } ||
-                !properties.Contains(propertyName) ||
-                value is not YamlScalarNode scalar ||
-                !IsYamlNull(scalar))
-            {
-                continue;
-            }
-
-            var qualifiedProperty = prefix is null ? propertyName : $"{prefix}.{propertyName}";
-            throw ShapeError(
-                templateIndex,
-                templateId,
-                qualifiedProperty,
-                "is null but is non-nullable"
-            );
-        }
-    }
-
-    private static void ValidateNestedNullValueProperties(
-        YamlMappingNode template,
-        string property,
-        HashSet<string> valueProperties,
-        int templateIndex,
-        string templateId
-    )
-    {
-        if (GetValue(template, property) is YamlMappingNode nested)
-        {
-            ValidateNullValueProperties(nested, valueProperties, templateIndex, templateId, property);
-        }
-    }
-
-    private static void ValidateNullCollectionElements(
-        YamlMappingNode mapping,
-        string property,
-        int templateIndex,
-        string templateId
-    )
-    {
-        if (GetValue(mapping, property) is not YamlSequenceNode sequence)
-        {
-            return;
-        }
-
-        for (var index = 0; index < sequence.Children.Count; index++)
-        {
-            if (sequence.Children[index] is YamlScalarNode scalar && IsYamlNull(scalar))
-            {
-                throw ShapeError(templateIndex, templateId, property, $"has a null element at index {index}");
-            }
-        }
-    }
-
-    private static void ValidateRequiredCollection(
-        YamlMappingNode mapping,
-        string property,
-        int templateIndex,
-        string templateId
-    )
-    {
-        if (GetValue(mapping, property) is YamlScalarNode scalar && IsYamlNull(scalar))
-        {
-            throw ShapeError(templateIndex, templateId, property, "collection is null");
-        }
-    }
-
-    private static void ValidateNestedNullCollectionElements(
-        YamlMappingNode template,
-        string parentProperty,
-        string collectionProperty,
-        int templateIndex,
-        string templateId
-    )
-    {
-        if (GetValue(template, parentProperty) is YamlMappingNode nested &&
-            GetValue(nested, collectionProperty) is YamlSequenceNode sequence)
-        {
-            for (var index = 0; index < sequence.Children.Count; index++)
-            {
-                if (sequence.Children[index] is YamlScalarNode scalar && IsYamlNull(scalar))
-                {
-                    throw ShapeError(
-                        templateIndex,
-                        templateId,
-                        $"{parentProperty}.{collectionProperty}",
-                        $"has a null element at index {index}"
-                    );
-                }
-            }
-        }
-    }
-
-    private static void ValidateNullDictionaryValues(
-        YamlMappingNode template,
-        string property,
-        int templateIndex,
-        string templateId
-    )
-    {
-        if (GetValue(template, property) is not YamlMappingNode dictionary)
-        {
-            return;
-        }
-
-        foreach (var (key, value) in dictionary.Children)
-        {
-            if (value is not YamlScalarNode scalar || !IsYamlNull(scalar))
-            {
-                continue;
-            }
-
-            var dictionaryKey = (key as YamlScalarNode)?.Value ?? "<unknown>";
-            throw ShapeError(
-                templateIndex,
-                templateId,
-                $"{property}[{dictionaryKey}]",
-                "has a null value"
-            );
-        }
-    }
-
-    private static YamlNode? GetValue(YamlMappingNode mapping, string property)
-    {
-        foreach (var (key, value) in mapping.Children)
-        {
-            if (key is YamlScalarNode { Value: { } propertyName } &&
-                string.Equals(propertyName, property, StringComparison.OrdinalIgnoreCase))
-            {
-                return value;
-            }
-        }
-
-        return null;
-    }
-
-    private static InvalidDataException ShapeError(
-        int templateIndex,
-        string templateId,
-        string property,
-        string message
-    )
-    {
-        return new InvalidDataException(
-            $"Item template element {templateIndex} ('{templateId}') property '{property}' {message}."
-        );
-    }
-
-    private static bool IsYamlNull(YamlScalarNode scalar)
-    {
-        return scalar.Tag == "tag:yaml.org,2002:null" ||
-               (scalar.Style == YamlDotNet.Core.ScalarStyle.Plain &&
-                (string.IsNullOrEmpty(scalar.Value) ||
-                 scalar.Value == "~" ||
-                 string.Equals(scalar.Value, "null", StringComparison.OrdinalIgnoreCase)));
     }
 }

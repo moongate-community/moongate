@@ -1,76 +1,76 @@
-- Id: AnkhNorth
-  Name: Ankh
-  Category: Structure
-  Description: A resurrection ankh.
-  ItemId: 4
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.resurrection_shrine
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - ankh
-  - resurrection
-  - worldgen
-  Params:
-    resurrection_source:
-      Type: string
-      Value: ankh
-- Id: AnkhWest
-  Name: Ankh
-  Category: Structure
-  Description: A resurrection ankh.
-  ItemId: 3
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.resurrection_shrine
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - ankh
-  - resurrection
-  - worldgen
-  Params:
-    resurrection_source:
-      Type: string
-      Value: ankh
-- Id: RejuvinationAnkhNorth
-  Name: Rejuvenation Ankh
-  Category: Structure
-  Description: A resurrection ankh.
-  ItemId: 4
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.resurrection_shrine
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - ankh
-  - resurrection
-  - worldgen
-  Params:
-    resurrection_source:
-      Type: string
-      Value: ankh
-- Id: RejuvinationAnkhWest
-  Name: Rejuvenation Ankh
-  Category: Structure
-  Description: A resurrection ankh.
-  ItemId: 3
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.resurrection_shrine
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - ankh
-  - resurrection
-  - worldgen
-  Params:
-    resurrection_source:
-      Type: string
-      Value: ankh
+-   Id: AnkhNorth
+    Name: Ankh
+    Category: Structure
+    Description: A resurrection ankh.
+    ItemId: 4
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.resurrection_shrine
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - ankh
+        - resurrection
+        - worldgen
+    Params:
+        resurrection_source:
+            Type: string
+            Value: ankh
+-   Id: AnkhWest
+    Name: Ankh
+    Category: Structure
+    Description: A resurrection ankh.
+    ItemId: 3
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.resurrection_shrine
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - ankh
+        - resurrection
+        - worldgen
+    Params:
+        resurrection_source:
+            Type: string
+            Value: ankh
+-   Id: RejuvinationAnkhNorth
+    Name: Rejuvenation Ankh
+    Category: Structure
+    Description: A resurrection ankh.
+    ItemId: 4
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.resurrection_shrine
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - ankh
+        - resurrection
+        - worldgen
+    Params:
+        resurrection_source:
+            Type: string
+            Value: ankh
+-   Id: RejuvinationAnkhWest
+    Name: Rejuvenation Ankh
+    Category: Structure
+    Description: A resurrection ankh.
+    ItemId: 3
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.resurrection_shrine
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - ankh
+        - resurrection
+        - worldgen
+    Params:
+        resurrection_source:
+            Type: string
+            Value: ankh

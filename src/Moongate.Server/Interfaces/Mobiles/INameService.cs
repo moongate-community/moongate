@@ -11,9 +11,9 @@ public interface INameService
     /// <summary>Number of registered name lists.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a name list, indexed by type.</summary>
-    void Register(NameList list);
-
     /// <summary>Returns the name list with the given type (case-insensitive), or null.</summary>
     NameList? GetByType(string type);
+
+    /// <summary>Adds or replaces a name list, indexed by type.</summary>
+    void Register(NameList list);
 }

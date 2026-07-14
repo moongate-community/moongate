@@ -20,6 +20,13 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
         Y = y;
     }
 
+    public int CompareTo(Point2D other)
+    {
+        var byX = X.CompareTo(other.X);
+
+        return byX != 0 ? byX : Y.CompareTo(other.Y);
+    }
+
     public void Deconstruct(out int x, out int y)
     {
         x = X;
@@ -28,57 +35,29 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
 
     /// <summary>Chebyshev distance in tiles: <c>max(|dx|, |dy|)</c>.</summary>
     public int DistanceTo(Point2D other)
-    {
-        return Math.Max(Math.Abs(X - other.X), Math.Abs(Y - other.Y));
-    }
-
-    /// <summary>True when <paramref name="other"/> is within <paramref name="range"/> tiles.</summary>
-    public bool InRange(Point2D other, int range)
-    {
-        return DistanceTo(other) <= range;
-    }
+        => Math.Max(Math.Abs(X - other.X), Math.Abs(Y - other.Y));
 
     public bool Equals(Point2D other)
-    {
-        return X == other.X && Y == other.Y;
-    }
+        => X == other.X && Y == other.Y;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Point2D other && Equals(other);
-    }
+        => obj is Point2D other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return HashCode.Combine(X, Y);
-    }
+        => HashCode.Combine(X, Y);
 
-    public int CompareTo(Point2D other)
-    {
-        var byX = X.CompareTo(other.X);
-
-        return byX != 0 ? byX : Y.CompareTo(other.Y);
-    }
+    /// <summary>True when <paramref name="other" /> is within <paramref name="range" /> tiles.</summary>
+    public bool InRange(Point2D other, int range)
+        => DistanceTo(other) <= range;
 
     public static bool operator ==(Point2D left, Point2D right)
-    {
-        return left.Equals(right);
-    }
+        => left.Equals(right);
 
     public static bool operator !=(Point2D left, Point2D right)
-    {
-        return !left.Equals(right);
-    }
-
-    public override string ToString()
-    {
-        return $"({X}, {Y})";
-    }
+        => !left.Equals(right);
 
     public static Point2D Parse(string s, IFormatProvider? provider)
-    {
-        return Parse(s.AsSpan(), provider);
-    }
+        => Parse(s.AsSpan(), provider);
 
     public static Point2D Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
@@ -90,10 +69,11 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
         return result;
     }
 
+    public override string ToString()
+        => $"({X}, {Y})";
+
     public static bool TryParse(string? s, IFormatProvider? provider, out Point2D result)
-    {
-        return TryParse(s.AsSpan(), provider, out result);
-    }
+        => TryParse(s.AsSpan(), provider, out result);
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Point2D result)
     {
@@ -119,7 +99,7 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
             return false;
         }
 
-        result = new Point2D(x, y);
+        result = new(x, y);
 
         return true;
     }

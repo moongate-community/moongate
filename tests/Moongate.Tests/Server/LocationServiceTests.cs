@@ -5,13 +5,22 @@ namespace Moongate.Tests.Server;
 
 public class LocationServiceTests
 {
-    private static LocationCategory Facet(string name)
+    [Fact]
+    public void Facets_IsOrderedByName()
     {
-        return new LocationCategory
-        {
-            Name = name,
-            Locations = [new LocationEntry { Name = "Britain", X = 1592, Y = 1680, Z = 10 }]
-        };
+        var service = new LocationService();
+        service.Register(Facet("Trammel"));
+        service.Register(Facet("Felucca"));
+
+        Assert.Equal(new[] { "Felucca", "Trammel" }, service.Facets.Select(f => f.Name).ToArray());
+    }
+
+    [Fact]
+    public void GetFacet_Unknown_ReturnsNull()
+    {
+        var service = new LocationService();
+
+        Assert.Null(service.GetFacet("Nowhere"));
     }
 
     [Fact]
@@ -25,21 +34,10 @@ public class LocationServiceTests
         Assert.Equal(1592, service.GetFacet("Felucca")!.Locations[0].X);
     }
 
-    [Fact]
-    public void GetFacet_Unknown_ReturnsNull()
-    {
-        var service = new LocationService();
-
-        Assert.Null(service.GetFacet("Nowhere"));
-    }
-
-    [Fact]
-    public void Facets_IsOrderedByName()
-    {
-        var service = new LocationService();
-        service.Register(Facet("Trammel"));
-        service.Register(Facet("Felucca"));
-
-        Assert.Equal(new[] { "Felucca", "Trammel" }, service.Facets.Select(f => f.Name).ToArray());
-    }
+    private static LocationCategory Facet(string name)
+        => new()
+        {
+            Name = name,
+            Locations = [new() { Name = "Britain", X = 1592, Y = 1680, Z = 10 }]
+        };
 }

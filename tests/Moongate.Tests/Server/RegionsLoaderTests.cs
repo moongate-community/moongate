@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class RegionsLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-regions-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersRegions()
     {
@@ -58,4 +55,7 @@ public class RegionsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-regions-" + Guid.NewGuid().ToString("N"));
 }

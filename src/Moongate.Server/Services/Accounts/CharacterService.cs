@@ -34,8 +34,7 @@ public class CharacterService : ICharacterService
     private readonly Random _random;
     private readonly IEventBus _eventBus;
 
-    private readonly ILogger _logger =  Log.ForContext<CharacterService>();
-
+    private readonly ILogger _logger = Log.ForContext<CharacterService>();
 
     public CharacterService(
         IPersistenceService persistenceService,
@@ -59,19 +58,6 @@ public class CharacterService : ICharacterService
         _skills = skills;
         _random = random;
         _eventBus = eventBus;
-    }
-
-    public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
-    {
-        var account = _accountStore.Query().FirstOrDefault(a => a.Id == accountId);
-
-        if (account == null)
-        {
-            _logger.Warning("Account not found: {AccountId}", accountId);
-            return [];
-        }
-
-        return [.. _mobileStore.Query().Where(mobile => account.MobileIds.Contains(mobile.Id))];
     }
 
     public MobileEntity CreateCharacter(Serial accountId, CharacterCreationPacket packet)
@@ -115,13 +101,31 @@ public class CharacterService : ICharacterService
         return mobile;
     }
 
+    public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
+    {
+        var account = _accountStore.Query().FirstOrDefault(a => a.Id == accountId);
+
+        if (account == null)
+        {
+            _logger.Warning("Account not found: {AccountId}", accountId);
+
+            return [];
+        }
+
+        return [.. _mobileStore.Query().Where(mobile => account.MobileIds.Contains(mobile.Id))];
+    }
+
     private ItemEntity? EquipContainer(MobileEntity mobile, string templateId, LayerType layer)
     {
         var containers = _itemFactory.CreateFromTemplate(templateId);
 
         if (containers.Count == 0)
         {
-            _logger.Warning("Container template '{TemplateId}' not found; {Name} created without it", templateId, mobile.Name);
+            _logger.Warning(
+                "Container template '{TemplateId}' not found; {Name} created without it",
+                templateId,
+                mobile.Name
+            );
 
             return null;
         }
@@ -134,13 +138,13 @@ public class CharacterService : ICharacterService
     private void GiveStartingItems(MobileEntity mobile, ItemEntity backpack, CharacterCreationPacket packet)
     {
         var topSkillNames = packet.Skills
-            .Where(skill => skill.Value > 0)
-            .OrderByDescending(skill => skill.Value)
-            .Take(3)
-            .Select(skill => _skills.GetById(skill.SkillId)?.Name)
-            .Where(name => name is not null)
-            .Select(name => name!)
-            .ToList();
+                                  .Where(skill => skill.Value > 0)
+                                  .OrderByDescending(skill => skill.Value)
+                                  .Take(3)
+                                  .Select(skill => _skills.GetById(skill.SkillId)?.Name)
+                                  .Where(name => name is not null)
+                                  .Select(name => name!)
+                                  .ToList();
 
         var kit = _startingItems.Resolve(packet.Race, packet.Gender, topSkillNames);
 
@@ -178,6 +182,9 @@ public class CharacterService : ICharacterService
         }
     }
 
+    private Point2D RandomBackpackPosition()
+        => new(_random.Next(44, 140), _random.Next(65, 140));
+
     private Hue? ResolveHue(StartingItemEntry entry, CharacterCreationPacket packet)
     {
         if (string.IsNullOrEmpty(entry.Hue))
@@ -198,10 +205,5 @@ public class CharacterService : ICharacterService
         var text = entry.Hue.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ? entry.Hue[2..] : entry.Hue;
 
         return ushort.TryParse(text, NumberStyles.HexNumber, null, out var value) ? new Hue(value) : null;
-    }
-
-    private Point2D RandomBackpackPosition()
-    {
-        return new Point2D(_random.Next(44, 140), _random.Next(65, 140));
     }
 }

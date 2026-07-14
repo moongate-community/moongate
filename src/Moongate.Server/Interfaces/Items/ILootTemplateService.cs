@@ -11,9 +11,9 @@ public interface ILootTemplateService
     /// <summary>Number of registered templates.</summary>
     int Count { get; }
 
-    /// <summary>Adds or replaces a template by its case-insensitive ID.</summary>
-    void Register(LootTemplate lootTemplate);
-
     /// <summary>Returns a template by ID, or <c>null</c> when it is not registered.</summary>
     LootTemplate? GetById(string id);
+
+    /// <summary>Adds or replaces a template by its case-insensitive ID.</summary>
+    void Register(LootTemplate lootTemplate);
 }

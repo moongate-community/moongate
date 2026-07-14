@@ -8,32 +8,64 @@ namespace Moongate.Tests.Server;
 [Collection("ItemTemplateSeeding")]
 public class ItemTemplatesLoaderTests
 {
-    [Fact]
-    public async Task LoadAsync_WhenMissing_Seeds49FilesAndRegisters1665()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        var service = new ItemTemplateService();
-        var loader = new ItemTemplatesLoader(service, directories);
-        var templatesDirectory = Path.Combine(root, "templates");
-        var itemsDirectory = Path.Combine(templatesDirectory, "items");
-
-        try
+    public static TheoryData<string, string, string> IntrinsicallyInvalidDocuments()
+        => new()
         {
-            await loader.LoadAsync();
+            { Item("\" \""), "<unknown>", "Id" },
+            { Item(name: "\" \""), "item", "Name" },
+            { Item(category: "\" \""), "item", "Category" },
+            { Item(itemId: -1), "item", "ItemId" },
+            { Item(extra: "  Hue: -1\n"), "item", "Hue" },
+            { Item(extra: "  GoldValue: -1\n"), "item", "GoldValue" },
+            { Item(extra: "  Weight: -1\n"), "item", "Weight" },
+            { Item(extra: "  FlippableItemIds: [-1]\n"), "item", "FlippableItemIds[0]" },
+            { Item(extra: "  Equip:\n    HitPoints: -1\n"), "item", "Equip.HitPoints" },
+            { Item(extra: "  Equip:\n    StrengthReq: -1\n"), "item", "Equip.StrengthReq" },
+            { Item(extra: "  Equip:\n    DexterityReq: -1\n"), "item", "Equip.DexterityReq" },
+            { Item(extra: "  Equip:\n    IntelligenceReq: -1\n"), "item", "Equip.IntelligenceReq" },
+            { Item(extra: WeaponWith("LowDamage", -1)), "item", "Weapon.LowDamage" },
+            { Item(extra: WeaponWith("HighDamage", -1)), "item", "Weapon.HighDamage" },
+            { Item(extra: WeaponWith("Speed", -1)), "item", "Weapon.Speed" },
+            { Item(extra: WeaponWith("BaseRange", -1)), "item", "Weapon.BaseRange" },
+            { Item(extra: WeaponWith("MaxRange", -1)), "item", "Weapon.MaxRange" },
+            { Item(extra: WeaponWith("HitSound", -1)), "item", "Weapon.HitSound" },
+            { Item(extra: WeaponWith("MissSound", -1)), "item", "Weapon.MissSound" },
+            { Item(extra: WeaponWith("Ammo", -1)), "item", "Weapon.Ammo" },
+            { Item(extra: WeaponWith("AmmoFx", -1)), "item", "Weapon.AmmoFx" },
+            { Item(extra: ContainerWith("WeightMax", -1)), "item", "Container.WeightMax" },
+            { Item(extra: ContainerWith("MaxItems", -1)), "item", "Container.MaxItems" },
+            { Item(extra: ContainerWith("GumpId", -1)), "item", "Container.GumpId" },
+            { Item(extra: ContainerWith("WeightReduction", -1)), "item", "Container.WeightReduction" },
+            { Item(extra: ContainerWith("QuiverDamageIncrease", -1)), "item", "Container.QuiverDamageIncrease" },
+            { Item(extra: ContainerWith("LowerAmmoCost", -1)), "item", "Container.LowerAmmoCost" },
+            { Item(extra: ContainerWith("DefenseChanceIncrease", -1)), "item", "Container.DefenseChanceIncrease" }
+        };
 
-            Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
-            Assert.Equal(1665, service.Count);
-            Assert.Empty(Directory.GetDirectories(templatesDirectory, ".items-*.tmp"));
-            Assert.Contains(service.All, template => template.Weapon is not null && template.Equip is not null);
-            Assert.Contains(service.All, template => template.Equip is not null && template.Equip.Layer != LayerType.None);
-            Assert.Equal("items.training_dummy", service.GetById("training_dummy_east")!.ScriptId);
-        }
-        finally
+    public static TheoryData<string, string> InvalidCollectionDocuments()
+        => new()
         {
-            Directory.Delete(root, true);
-        }
-    }
+            { Item(tags: "  - null\n"), "Tags" },
+            { Item(extra: "  LootTables:\n  - null\n"), "LootTables" },
+            { Item(extra: "  Container:\n    Contents:\n    - null\n"), "Container.Contents" }
+        };
+
+    public static TheoryData<string, string> InvalidYamlDocuments()
+        => new()
+        {
+            { "- Id: broken\n  Tags: [", "expected" },
+            { Item() + "  UnknownProperty: true\n", "UnknownProperty" },
+            { Item().Replace("  Name: Item\n", "  Name: Item\n  Name: Duplicate\n", StringComparison.Ordinal), "duplicate" },
+            { string.Empty, "empty" },
+            { "null\n", "null" },
+            { "- null\n", "template element" },
+            { Item(tags: "null"), "Tags" },
+            { Item(tags: "  - null\n"), "Tags" },
+            { Item(rarity: "42"), "Rarity" },
+            { Item(extra: "  Equip:\n    Layer: 255\n"), "Layer" },
+            { Item(itemId: null), "ItemId" },
+            { Item(extra: "  Equip:\n    Layer: null\n"), "Layer" },
+            { Item(extra: "  Weapon:\n    LowDamage: null\n"), "LowDamage" }
+        };
 
     [Fact]
     public async Task LoadAsync_TargetMissingAndLegacyPresent_SeedsEmbeddedAndLeavesLegacyUntouched()
@@ -42,8 +74,8 @@ public class ItemTemplatesLoaderTests
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
         var dataDirectory = directories.RegisterDirectory("data");
         var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var legacyYaml = Item(id: "apple", name: "Loader Apple Override", category: "Food", itemId: 2512) +
-                         Item(id: "loader_custom", name: "Loader Custom");
+        var legacyYaml = Item("apple", "Loader Apple Override", "Food", 2512) +
+                         Item("loader_custom", "Loader Custom");
         File.WriteAllText(legacyFile, legacyYaml);
         var service = new ItemTemplateService();
         var itemsDirectory = Path.Combine(root, "templates", "items");
@@ -72,10 +104,10 @@ public class ItemTemplatesLoaderTests
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "target.yaml", Item(id: "target_item", name: "Target Item"));
+        WriteItem(root, "target.yaml", Item("target_item", "Target Item"));
         var dataDirectory = directories.RegisterDirectory("data");
         var legacyFile = Path.Combine(dataDirectory, "item_templates.yaml");
-        var legacyYaml = Item(id: "legacy_item", name: "Legacy Item");
+        var legacyYaml = Item("legacy_item", "Legacy Item");
         File.WriteAllText(legacyFile, legacyYaml);
         var service = new ItemTemplateService();
 
@@ -95,13 +127,68 @@ public class ItemTemplatesLoaderTests
         }
     }
 
+    [Theory, MemberData(nameof(InvalidCollectionDocuments))]
+    public async Task LoadAsync_WhenCollectionContainsNull_ReportsCollectionAndIndex(
+        string yaml,
+        string property
+    )
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "collections.yaml", yaml);
+        var service = new ItemTemplateService();
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
+
+            Assert.Contains("collections.yaml", exception.Message);
+            Assert.Contains("'item'", exception.Message);
+            Assert.Contains(property, exception.Message);
+            Assert.Contains("index 0", exception.Message);
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_WhenDuplicateIdDiffersOnlyByCase_RegistersNothing()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "a.yaml", Item("duplicate"));
+        WriteItem(root, "b.yaml", Item("DUPLICATE"));
+        var service = new ItemTemplateService();
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
+
+            Assert.Contains("b.yaml", exception.Message);
+            Assert.Contains("DUPLICATE", exception.Message);
+            Assert.Contains("Duplicate", exception.Message);
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
     [Fact]
     public async Task LoadAsync_WhenExistingDirectory_LoadsYamlRecursively()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "food.yaml", Item(id: "apple", name: "Apple"));
-        WriteItem(root, "nested/weapons.yaml", Item(id: "sword", name: "Sword"));
+        WriteItem(root, "food.yaml", Item("apple", "Apple"));
+        WriteItem(root, "nested/weapons.yaml", Item("sword", "Sword"));
         var service = new ItemTemplateService();
 
         try
@@ -140,23 +227,27 @@ public class ItemTemplatesLoaderTests
         }
     }
 
-    [Fact]
-    public async Task LoadAsync_WhenSecondFileIsInvalid_RegistersNothing()
+    [Theory, MemberData(nameof(StrictNullDocuments))]
+    public async Task LoadAsync_WhenGuardedPropertyIsNull_ReportsPropertyAndLeavesRegistryEmpty(
+        string yaml,
+        string property
+    )
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "a-valid.yaml", Item(id: "valid"));
-        WriteItem(root, "b-invalid.yaml", Item(id: "invalid", itemId: -1));
+        WriteItem(root, "strict-null.yaml", yaml);
         var service = new ItemTemplateService();
 
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
-            Assert.Contains("b-invalid.yaml", exception.Message);
-            Assert.Contains("invalid", exception.Message);
+            Assert.Contains("strict-null.yaml", exception.Message);
+            Assert.Contains("'item'", exception.Message);
+            Assert.Contains(property, exception.Message);
+            Assert.Contains("null", exception.Message);
             Assert.Equal(0, service.Count);
         }
         finally
@@ -165,60 +256,7 @@ public class ItemTemplatesLoaderTests
         }
     }
 
-    [Fact]
-    public async Task LoadAsync_WhenDuplicateIdDiffersOnlyByCase_RegistersNothing()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "a.yaml", Item(id: "duplicate"));
-        WriteItem(root, "b.yaml", Item(id: "DUPLICATE"));
-        var service = new ItemTemplateService();
-
-        try
-        {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
-
-            Assert.Contains("b.yaml", exception.Message);
-            Assert.Contains("DUPLICATE", exception.Message);
-            Assert.Contains("Duplicate", exception.Message);
-            Assert.Equal(0, service.Count);
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Theory]
-    [MemberData(nameof(InvalidYamlDocuments))]
-    public async Task LoadAsync_WhenYamlSchemaIsInvalid_ReportsRelativePath(string yaml, string expectedMessage)
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "nested/schema.yaml", yaml);
-        var service = new ItemTemplateService();
-
-        try
-        {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
-
-            Assert.Contains(Path.Combine("nested", "schema.yaml"), exception.Message);
-            Assert.NotNull(exception.InnerException);
-            Assert.Contains(expectedMessage, exception.InnerException.Message, StringComparison.OrdinalIgnoreCase);
-            Assert.Equal(0, service.Count);
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Theory]
-    [MemberData(nameof(IntrinsicallyInvalidDocuments))]
+    [Theory, MemberData(nameof(IntrinsicallyInvalidDocuments))]
     public async Task LoadAsync_WhenIntrinsicValueIsNegative_ReportsTemplateAndProperty(
         string yaml,
         string templateId,
@@ -233,8 +271,8 @@ public class ItemTemplatesLoaderTests
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
             Assert.Contains("validation.yaml", exception.Message);
             Assert.Contains(templateId, exception.Message);
@@ -247,30 +285,50 @@ public class ItemTemplatesLoaderTests
         }
     }
 
-    [Theory]
-    [InlineData(".nan")]
-    [InlineData(".inf")]
-    [InlineData(".Inf")]
-    [InlineData(".INF")]
-    [InlineData("+.inf")]
-    [InlineData("-.inf")]
-    public async Task LoadAsync_WhenWeightIsNonFinite_RegistersNothing(string weight)
+    [Fact]
+    public async Task LoadAsync_WhenMissing_Seeds49FilesAndRegisters1665()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "non-finite-weight.yaml", Item(extra: $"  Weight: {weight}\n"));
+        var service = new ItemTemplateService();
+        var loader = new ItemTemplatesLoader(service, directories);
+        var templatesDirectory = Path.Combine(root, "templates");
+        var itemsDirectory = Path.Combine(templatesDirectory, "items");
+
+        try
+        {
+            await loader.LoadAsync();
+
+            Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
+            Assert.Equal(1665, service.Count);
+            Assert.Empty(Directory.GetDirectories(templatesDirectory, ".items-*.tmp"));
+            Assert.Contains(service.All, template => template.Weapon is not null && template.Equip is not null);
+            Assert.Contains(service.All, template => template.Equip is not null && template.Equip.Layer != LayerType.None);
+            Assert.Equal("items.training_dummy", service.GetById("training_dummy_east")!.ScriptId);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
+    public async Task LoadAsync_WhenSecondFileIsInvalid_RegistersNothing()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "a-valid.yaml", Item("valid"));
+        WriteItem(root, "b-invalid.yaml", Item("invalid", itemId: -1));
         var service = new ItemTemplateService();
 
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
-            Assert.Contains("non-finite-weight.yaml", exception.Message);
-            Assert.Contains("'item'", exception.Message);
-            Assert.Contains("Weight", exception.Message);
-            Assert.Contains("finite", exception.Message);
+            Assert.Contains("b-invalid.yaml", exception.Message);
+            Assert.Contains("invalid", exception.Message);
             Assert.Equal(0, service.Count);
         }
         finally
@@ -300,8 +358,8 @@ public class ItemTemplatesLoaderTests
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
             Assert.Contains("params.yaml", exception.Message);
             Assert.Contains("Params[broken]", exception.Message);
@@ -314,28 +372,25 @@ public class ItemTemplatesLoaderTests
         }
     }
 
-    [Theory]
-    [MemberData(nameof(StrictNullDocuments))]
-    public async Task LoadAsync_WhenGuardedPropertyIsNull_ReportsPropertyAndLeavesRegistryEmpty(
-        string yaml,
-        string property
-    )
+    [Theory, InlineData(".nan"), InlineData(".inf"), InlineData(".Inf"), InlineData(".INF"), InlineData("+.inf"),
+     InlineData("-.inf")]
+    public async Task LoadAsync_WhenWeightIsNonFinite_RegistersNothing(string weight)
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "strict-null.yaml", yaml);
+        WriteItem(root, "non-finite-weight.yaml", Item(extra: $"  Weight: {weight}\n"));
         var service = new ItemTemplateService();
 
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
-            Assert.Contains("strict-null.yaml", exception.Message);
+            Assert.Contains("non-finite-weight.yaml", exception.Message);
             Assert.Contains("'item'", exception.Message);
-            Assert.Contains(property, exception.Message);
-            Assert.Contains("null", exception.Message);
+            Assert.Contains("Weight", exception.Message);
+            Assert.Contains("finite", exception.Message);
             Assert.Equal(0, service.Count);
         }
         finally
@@ -344,104 +399,33 @@ public class ItemTemplatesLoaderTests
         }
     }
 
-    [Theory]
-    [MemberData(nameof(InvalidCollectionDocuments))]
-    public async Task LoadAsync_WhenCollectionContainsNull_ReportsCollectionAndIndex(
-        string yaml,
-        string property
-    )
+    [Theory, MemberData(nameof(InvalidYamlDocuments))]
+    public async Task LoadAsync_WhenYamlSchemaIsInvalid_ReportsRelativePath(string yaml, string expectedMessage)
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        WriteItem(root, "collections.yaml", yaml);
+        WriteItem(root, "nested/schema.yaml", yaml);
         var service = new ItemTemplateService();
 
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-            );
+                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
+                            );
 
-            Assert.Contains("collections.yaml", exception.Message);
-            Assert.Contains("'item'", exception.Message);
-            Assert.Contains(property, exception.Message);
-            Assert.Contains("index 0", exception.Message);
+            Assert.Contains(Path.Combine("nested", "schema.yaml"), exception.Message);
+            Assert.NotNull(exception.InnerException);
+            Assert.Contains(expectedMessage, exception.InnerException.Message, StringComparison.OrdinalIgnoreCase);
             Assert.Equal(0, service.Count);
         }
         finally
         {
             Directory.Delete(root, true);
         }
-    }
-
-    public static TheoryData<string, string> InvalidYamlDocuments()
-    {
-        return new TheoryData<string, string>
-        {
-            { "- Id: broken\n  Tags: [", "expected" },
-            { Item() + "  UnknownProperty: true\n", "UnknownProperty" },
-            { Item().Replace("  Name: Item\n", "  Name: Item\n  Name: Duplicate\n", StringComparison.Ordinal), "duplicate" },
-            { string.Empty, "empty" },
-            { "null\n", "null" },
-            { "- null\n", "template element" },
-            { Item(tags: "null"), "Tags" },
-            { Item(tags: "  - null\n"), "Tags" },
-            { Item(rarity: "42"), "Rarity" },
-            { Item(extra: "  Equip:\n    Layer: 255\n"), "Layer" },
-            { Item(itemId: null), "ItemId" },
-            { Item(extra: "  Equip:\n    Layer: null\n"), "Layer" },
-            { Item(extra: "  Weapon:\n    LowDamage: null\n"), "LowDamage" }
-        };
-    }
-
-    public static TheoryData<string, string, string> IntrinsicallyInvalidDocuments()
-    {
-        return new TheoryData<string, string, string>
-        {
-            { Item(id: "\" \""), "<unknown>", "Id" },
-            { Item(name: "\" \""), "item", "Name" },
-            { Item(category: "\" \""), "item", "Category" },
-            { Item(itemId: -1), "item", "ItemId" },
-            { Item(extra: "  Hue: -1\n"), "item", "Hue" },
-            { Item(extra: "  GoldValue: -1\n"), "item", "GoldValue" },
-            { Item(extra: "  Weight: -1\n"), "item", "Weight" },
-            { Item(extra: "  FlippableItemIds: [-1]\n"), "item", "FlippableItemIds[0]" },
-            { Item(extra: "  Equip:\n    HitPoints: -1\n"), "item", "Equip.HitPoints" },
-            { Item(extra: "  Equip:\n    StrengthReq: -1\n"), "item", "Equip.StrengthReq" },
-            { Item(extra: "  Equip:\n    DexterityReq: -1\n"), "item", "Equip.DexterityReq" },
-            { Item(extra: "  Equip:\n    IntelligenceReq: -1\n"), "item", "Equip.IntelligenceReq" },
-            { Item(extra: WeaponWith("LowDamage", -1)), "item", "Weapon.LowDamage" },
-            { Item(extra: WeaponWith("HighDamage", -1)), "item", "Weapon.HighDamage" },
-            { Item(extra: WeaponWith("Speed", -1)), "item", "Weapon.Speed" },
-            { Item(extra: WeaponWith("BaseRange", -1)), "item", "Weapon.BaseRange" },
-            { Item(extra: WeaponWith("MaxRange", -1)), "item", "Weapon.MaxRange" },
-            { Item(extra: WeaponWith("HitSound", -1)), "item", "Weapon.HitSound" },
-            { Item(extra: WeaponWith("MissSound", -1)), "item", "Weapon.MissSound" },
-            { Item(extra: WeaponWith("Ammo", -1)), "item", "Weapon.Ammo" },
-            { Item(extra: WeaponWith("AmmoFx", -1)), "item", "Weapon.AmmoFx" },
-            { Item(extra: ContainerWith("WeightMax", -1)), "item", "Container.WeightMax" },
-            { Item(extra: ContainerWith("MaxItems", -1)), "item", "Container.MaxItems" },
-            { Item(extra: ContainerWith("GumpId", -1)), "item", "Container.GumpId" },
-            { Item(extra: ContainerWith("WeightReduction", -1)), "item", "Container.WeightReduction" },
-            { Item(extra: ContainerWith("QuiverDamageIncrease", -1)), "item", "Container.QuiverDamageIncrease" },
-            { Item(extra: ContainerWith("LowerAmmoCost", -1)), "item", "Container.LowerAmmoCost" },
-            { Item(extra: ContainerWith("DefenseChanceIncrease", -1)), "item", "Container.DefenseChanceIncrease" }
-        };
-    }
-
-    public static TheoryData<string, string> InvalidCollectionDocuments()
-    {
-        return new TheoryData<string, string>
-        {
-            { Item(tags: "  - null\n"), "Tags" },
-            { Item(extra: "  LootTables:\n  - null\n"), "LootTables" },
-            { Item(extra: "  Container:\n    Contents:\n    - null\n"), "Container.Contents" }
-        };
     }
 
     public static TheoryData<string, string> StrictNullDocuments()
-    {
-        return new TheoryData<string, string>
+        => new()
         {
             { Item(itemId: null), "ItemId" },
             { Item(extra: "  Hue: null\n"), "Hue" },
@@ -459,17 +443,9 @@ public class ItemTemplatesLoaderTests
             { Item(extra: "  Weapon:\n    MissSound: null\n"), "Weapon.MissSound" },
             { Item(extra: "  FlippableItemIds: [null]\n"), "FlippableItemIds" }
         };
-    }
 
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-items-" + Guid.NewGuid().ToString("N"));
-
-    private static void WriteItem(string root, string relativePath, string yaml)
-    {
-        var path = Path.Combine(root, "templates", "items", relativePath);
-        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-        File.WriteAllText(path, yaml);
-    }
+    private static string ContainerWith(string property, int value)
+        => $"  Container:\n    {property}: {value}\n";
 
     private static string Item(
         string id = "item",
@@ -488,16 +464,20 @@ public class ItemTemplatesLoaderTests
                    $"  Rarity: {rarity}\n";
 
         yaml += tags == "[]" || tags == "null" ? $"  Tags: {tags}\n" : "  Tags:\n" + tags;
+
         return yaml + extra;
     }
 
-    private static string WeaponWith(string property, int value)
-    {
-        return $"  Weapon:\n    {property}: {value}\n";
-    }
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-items-" + Guid.NewGuid().ToString("N"));
 
-    private static string ContainerWith(string property, int value)
+    private static string WeaponWith(string property, int value)
+        => $"  Weapon:\n    {property}: {value}\n";
+
+    private static void WriteItem(string root, string relativePath, string yaml)
     {
-        return $"  Container:\n    {property}: {value}\n";
+        var path = Path.Combine(root, "templates", "items", relativePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, yaml);
     }
 }

@@ -29,7 +29,5 @@ public static class ValueTaskExtensions
     /// value tasks such as <c>RemoveAsync</c>.
     /// </summary>
     public static T WaitSync<T>(this ValueTask<T> task)
-    {
-        return task.IsCompleted ? task.GetAwaiter().GetResult() : task.AsTask().GetAwaiter().GetResult();
-    }
+        => task.IsCompleted ? task.GetAwaiter().GetResult() : task.AsTask().GetAwaiter().GetResult();
 }

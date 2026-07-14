@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class SignsLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-signs-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersSigns()
     {
@@ -58,4 +55,7 @@ public class SignsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-signs-" + Guid.NewGuid().ToString("N"));
 }

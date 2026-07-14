@@ -6,9 +6,6 @@ namespace Moongate.Tests.Server;
 
 public class WeatherLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-weather-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersAllTypes()
     {
@@ -59,4 +56,7 @@ public class WeatherLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-weather-" + Guid.NewGuid().ToString("N"));
 }

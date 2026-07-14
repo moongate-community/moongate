@@ -1,475 +1,475 @@
-- Id: armoire
-  Name: Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 2639
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2639
-  - 2643
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 79
-- Id: backpack
-  Name: Backpack
-  Category: Containers
-  Description: ''
-  ItemId: 3701
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 60
-    ContainerLayoutId: backpack
-- Id: bank_box
-  Name: Bank Box
-  Category: Containers
-  Description: ''
-  ItemId: 2475
-  Hue: 0
-  GoldValue: 0
-  Weight: 3.0
-  ScriptId: none
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 1000000
-    MaxItems: 125
-    GumpId: 74
-    ContainerLayoutId: bank_box
-- Id: bag
-  Name: Bag
-  Category: Containers
-  Description: ''
-  ItemId: 3702
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 61
-    ContainerLayoutId: bag
-- Id: barrel
-  Name: Barrel
-  Category: Containers
-  Description: ''
-  ItemId: 3703
-  Hue: 0
-  GoldValue: 0
-  Weight: 25.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 62
-- Id: basket
-  Name: Basket
-  Category: Containers
-  Description: ''
-  ItemId: 2448
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 65
-- Id: cherry_armoire
-  Name: Cherry Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 10333
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10333
-  - 10334
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 263
-- Id: drawer
-  Name: Drawer
-  Category: Containers
-  Description: ''
-  ItemId: 2604
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2604
-  - 2612
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 81
-- Id: elegant_armoire
-  Name: Elegant Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 10329
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10329
-  - 10330
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 263
-- Id: empty_bookcase
-  Name: Empty Bookcase
-  Category: Containers
-  Description: ''
-  ItemId: 2717
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2717
-  - 2718
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 77
-- Id: fancy_armoire
-  Name: Fancy Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 2637
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2637
-  - 2641
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 78
-- Id: fancy_drawer
-  Name: Fancy Drawer
-  Category: Containers
-  Description: ''
-  ItemId: 2608
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2608
-  - 2616
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 72
-- Id: fancy_elven_armoire
-  Name: Fancy Elven Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 11527
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 11527
-  - 11528
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-- Id: full_bookcase
-  Name: Full Bookcase
-  Category: Containers
-  Description: ''
-  ItemId: 2711
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 2711
-  - 2713
-  - 2712
-  - 2714
-  - 2715
-  - 2716
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 77
-- Id: keg
-  Name: Keg
-  Category: Containers
-  Description: ''
-  ItemId: 3711
-  Hue: 0
-  GoldValue: 0
-  Weight: 15.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 62
-- Id: large_bag_ball
-  Name: Large Bag Ball
-  Category: Containers
-  Description: ''
-  ItemId: 8791
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 61
-- Id: maple_armoire
-  Name: Maple Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 10331
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10331
-  - 10332
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 262
-- Id: picnic_basket
-  Name: Picnic Basket
-  Category: Containers
-  Description: ''
-  ItemId: 3706
-  Hue: 0
-  GoldValue: 0
-  Weight: 2.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 63
-- Id: red_armoire
-  Name: Red Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 10327
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10327
-  - 10328
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 261
-- Id: short_cabinet
-  Name: Short Cabinet
-  Category: Containers
-  Description: ''
-  ItemId: 10263
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10263
-  - 10264
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 268
-- Id: simple_elven_armoire
-  Name: Simple Elven Armoire
-  Category: Containers
-  Description: ''
-  ItemId: 11525
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 11525
-  - 11526
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-- Id: small_bag_ball
-  Name: Small Bag Ball
-  Category: Containers
-  Description: ''
-  ItemId: 8790
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 61
-- Id: tall_cabinet
-  Name: Tall Cabinet
-  Category: Containers
-  Description: ''
-  ItemId: 10261
-  Hue: 0
-  GoldValue: 0
-  Weight: 1.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Common
-  Tags:
-  - modernuo
-  - containers
-  - flippable
-  FlippableItemIds:
-  - 10261
-  - 10262
-  Container:
-    WeightMax: 40000
-    MaxItems: 125
-    GumpId: 268
+-   Id: armoire
+    Name: Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 2639
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2639
+        - 2643
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 79
+-   Id: backpack
+    Name: Backpack
+    Category: Containers
+    Description: ''
+    ItemId: 3701
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 60
+        ContainerLayoutId: backpack
+-   Id: bank_box
+    Name: Bank Box
+    Category: Containers
+    Description: ''
+    ItemId: 2475
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 1000000
+        MaxItems: 125
+        GumpId: 74
+        ContainerLayoutId: bank_box
+-   Id: bag
+    Name: Bag
+    Category: Containers
+    Description: ''
+    ItemId: 3702
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 61
+        ContainerLayoutId: bag
+-   Id: barrel
+    Name: Barrel
+    Category: Containers
+    Description: ''
+    ItemId: 3703
+    Hue: 0
+    GoldValue: 0
+    Weight: 25.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 62
+-   Id: basket
+    Name: Basket
+    Category: Containers
+    Description: ''
+    ItemId: 2448
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 65
+-   Id: cherry_armoire
+    Name: Cherry Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 10333
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10333
+        - 10334
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 263
+-   Id: drawer
+    Name: Drawer
+    Category: Containers
+    Description: ''
+    ItemId: 2604
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2604
+        - 2612
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 81
+-   Id: elegant_armoire
+    Name: Elegant Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 10329
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10329
+        - 10330
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 263
+-   Id: empty_bookcase
+    Name: Empty Bookcase
+    Category: Containers
+    Description: ''
+    ItemId: 2717
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2717
+        - 2718
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 77
+-   Id: fancy_armoire
+    Name: Fancy Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 2637
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2637
+        - 2641
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 78
+-   Id: fancy_drawer
+    Name: Fancy Drawer
+    Category: Containers
+    Description: ''
+    ItemId: 2608
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2608
+        - 2616
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 72
+-   Id: fancy_elven_armoire
+    Name: Fancy Elven Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 11527
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 11527
+        - 11528
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+-   Id: full_bookcase
+    Name: Full Bookcase
+    Category: Containers
+    Description: ''
+    ItemId: 2711
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 2711
+        - 2713
+        - 2712
+        - 2714
+        - 2715
+        - 2716
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 77
+-   Id: keg
+    Name: Keg
+    Category: Containers
+    Description: ''
+    ItemId: 3711
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 62
+-   Id: large_bag_ball
+    Name: Large Bag Ball
+    Category: Containers
+    Description: ''
+    ItemId: 8791
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 61
+-   Id: maple_armoire
+    Name: Maple Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 10331
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10331
+        - 10332
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 262
+-   Id: picnic_basket
+    Name: Picnic Basket
+    Category: Containers
+    Description: ''
+    ItemId: 3706
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 63
+-   Id: red_armoire
+    Name: Red Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 10327
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10327
+        - 10328
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 261
+-   Id: short_cabinet
+    Name: Short Cabinet
+    Category: Containers
+    Description: ''
+    ItemId: 10263
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10263
+        - 10264
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 268
+-   Id: simple_elven_armoire
+    Name: Simple Elven Armoire
+    Category: Containers
+    Description: ''
+    ItemId: 11525
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 11525
+        - 11526
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+-   Id: small_bag_ball
+    Name: Small Bag Ball
+    Category: Containers
+    Description: ''
+    ItemId: 8790
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 61
+-   Id: tall_cabinet
+    Name: Tall Cabinet
+    Category: Containers
+    Description: ''
+    ItemId: 10261
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - containers
+        - flippable
+    FlippableItemIds:
+        - 10261
+        - 10262
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 268

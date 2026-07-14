@@ -12,13 +12,9 @@ public sealed class LootTemplateService : ILootTemplateService
 
     public int Count => _byId.Count;
 
-    public void Register(LootTemplate lootTemplate)
-    {
-        _byId[lootTemplate.Id] = lootTemplate;
-    }
-
     public LootTemplate? GetById(string id)
-    {
-        return _byId.GetValueOrDefault(id);
-    }
+        => _byId.GetValueOrDefault(id);
+
+    public void Register(LootTemplate lootTemplate)
+        => _byId[lootTemplate.Id] = lootTemplate;
 }

@@ -7,11 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class StartingItemsLoaderTests
 {
-    private static string NewRoot()
-    {
-        return Path.Combine(Path.GetTempPath(), "mg-startitems-" + Guid.NewGuid().ToString("N"));
-    }
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegisters()
     {
@@ -36,4 +31,7 @@ public class StartingItemsLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-startitems-" + Guid.NewGuid().ToString("N"));
 }

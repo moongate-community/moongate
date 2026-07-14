@@ -10,8 +10,8 @@ namespace Moongate.Network.Interfaces;
 public interface IIncomingPacket<TSelf> where TSelf : IIncomingPacket<TSelf>
 {
     /// <summary>The opcode (first byte) that identifies this packet.</summary>
-    static abstract byte PacketId { get; }
+    abstract static byte PacketId { get; }
 
     /// <summary>Reads the whole packet, id-first, from the reader.</summary>
-    static abstract TSelf Read(ref SpanReader reader);
+    abstract static TSelf Read(ref SpanReader reader);
 }

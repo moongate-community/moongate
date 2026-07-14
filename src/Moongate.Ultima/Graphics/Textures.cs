@@ -28,7 +28,7 @@ public sealed class Textures
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetTexture(int index)
-        => GetTexture(index, out var _);
+        => GetTexture(index, out _);
 
     /// <summary>
     /// Returns Bitmap of Texture with verdata bool
@@ -253,7 +253,7 @@ public sealed class Textures
             return true;
         }
 
-        var valid = _fileIndex.Valid(index, out var length, out var _, out var _);
+        var valid = _fileIndex.Valid(index, out var length, out _, out _);
 
         return valid && length != 0;
     }

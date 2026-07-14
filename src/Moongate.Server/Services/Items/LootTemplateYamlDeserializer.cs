@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Loot;
+using YamlDotNet.Core;
 using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
@@ -14,9 +15,9 @@ internal static class LootTemplateYamlDeserializer
     };
 
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-                                                        .WithDuplicateKeyChecking()
-                                                        .WithEnforceNullability()
-                                                        .Build();
+                                                         .WithDuplicateKeyChecking()
+                                                         .WithEnforceNullability()
+                                                         .Build();
 
     public static LootTemplate[] DeserializeFromFile(string file, string relativePath)
     {
@@ -84,6 +85,13 @@ internal static class LootTemplateYamlDeserializer
         return [.. templates.Select(template => template!)];
     }
 
+    private static bool IsYamlNull(YamlScalarNode scalar)
+        => scalar.Tag == "tag:yaml.org,2002:null" ||
+           scalar.Style == ScalarStyle.Plain &&
+           (string.IsNullOrEmpty(scalar.Value) ||
+            scalar.Value == "~" ||
+            string.Equals(scalar.Value, "null", StringComparison.OrdinalIgnoreCase));
+
     private static void ValidateNonNullableValueProperties(string yaml)
     {
         var yamlStream = new YamlStream();
@@ -118,14 +126,5 @@ internal static class LootTemplateYamlDeserializer
                 );
             }
         }
-    }
-
-    private static bool IsYamlNull(YamlScalarNode scalar)
-    {
-        return scalar.Tag == "tag:yaml.org,2002:null" ||
-               (scalar.Style == YamlDotNet.Core.ScalarStyle.Plain &&
-                (string.IsNullOrEmpty(scalar.Value) ||
-                 scalar.Value == "~" ||
-                 string.Equals(scalar.Value, "null", StringComparison.OrdinalIgnoreCase)));
     }
 }

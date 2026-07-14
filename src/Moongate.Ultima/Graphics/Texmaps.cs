@@ -22,19 +22,31 @@ public static class Texmaps
 
     /// <summary>Number of texture entries in the index.</summary>
     public static int GetCount()
-    {
-        return (int)(_fileIndex.IdxLength / 12);
-    }
+        => (int)(_fileIndex.IdxLength / 12);
 
-    /// <summary>Returns true when <paramref name="index" /> resolves to a stored texture.</summary>
-    public static bool IsValidIndex(int index)
+    /// <summary>Returns the raw 16-bit pixel bytes of texture <paramref name="index" /> and its square side.</summary>
+    public static byte[] GetRawTexmap(int index, out int size)
     {
+        size = 0;
+
         if (index < 0 || index >= TextureCount || _removed[index])
         {
-            return false;
+            return null;
         }
 
-        return _fileIndex.Valid(index, out var length, out var _, out var _) && length > 0;
+        var stream = _fileIndex.Seek(index, out var length, out _, out _);
+
+        if (stream == null || length <= 0)
+        {
+            return null;
+        }
+
+        size = length >= LargeTextureLength ? LargeTextureSize : SmallTextureSize;
+
+        var buffer = new byte[length];
+        stream.ReadExactly(buffer, 0, length);
+
+        return buffer;
     }
 
     /// <summary>Returns the texture <paramref name="index" /> as an opaque bitmap, or null when absent.</summary>
@@ -50,7 +62,7 @@ public static class Texmaps
             return _cache[index];
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out var _);
+        var stream = _fileIndex.Seek(index, out var length, out _, out _);
 
         if (stream == null || length <= 0)
         {
@@ -86,29 +98,23 @@ public static class Texmaps
         return bmp;
     }
 
-    /// <summary>Returns the raw 16-bit pixel bytes of texture <paramref name="index" /> and its square side.</summary>
-    public static byte[] GetRawTexmap(int index, out int size)
+    /// <summary>Returns true when <paramref name="index" /> resolves to a stored texture.</summary>
+    public static bool IsValidIndex(int index)
     {
-        size = 0;
-
         if (index < 0 || index >= TextureCount || _removed[index])
         {
-            return null;
+            return false;
         }
 
-        var stream = _fileIndex.Seek(index, out var length, out var _, out var _);
+        return _fileIndex.Valid(index, out var length, out _, out _) && length > 0;
+    }
 
-        if (stream == null || length <= 0)
-        {
-            return null;
-        }
-
-        size = length >= LargeTextureLength ? LargeTextureSize : SmallTextureSize;
-
-        var buffer = new byte[length];
-        stream.ReadExactly(buffer, 0, length);
-
-        return buffer;
+    /// <summary>Rebuilds the index against the current client directory and clears the cache.</summary>
+    public static void Reload()
+    {
+        _fileIndex = new("texidx.mul", "texmaps.mul", TextureCount, 10);
+        _cache = new UltimaBitmap[TextureCount];
+        _removed = new bool[TextureCount];
     }
 
     /// <summary>Marks texture <paramref name="index" /> as removed so later reads return null.</summary>
@@ -118,13 +124,5 @@ public static class Texmaps
         {
             _removed[index] = true;
         }
-    }
-
-    /// <summary>Rebuilds the index against the current client directory and clears the cache.</summary>
-    public static void Reload()
-    {
-        _fileIndex = new("texidx.mul", "texmaps.mul", TextureCount, 10);
-        _cache = new UltimaBitmap[TextureCount];
-        _removed = new bool[TextureCount];
     }
 }

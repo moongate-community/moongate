@@ -41,7 +41,5 @@ public class ItemLootDataLoaderPipelineTests
     }
 
     private static string NewRoot()
-    {
-        return Path.Combine(Path.GetTempPath(), "mg-item-loot-pipeline-" + Guid.NewGuid().ToString("N"));
-    }
+        => Path.Combine(Path.GetTempPath(), "mg-item-loot-pipeline-" + Guid.NewGuid().ToString("N"));
 }

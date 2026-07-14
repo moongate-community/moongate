@@ -6,9 +6,14 @@ namespace Moongate.Tests.Server;
 
 public class StartingCityServiceTests
 {
-    private static StartingCity City(string name)
+    [Fact]
+    public void GetByIndex_OutOfRange_ReturnsNull()
     {
-        return new StartingCity { City = name, Building = "Inn", Description = 1, X = 1, Y = 2, Z = 3, Map = MapType.Trammel };
+        var service = new StartingCityService();
+        service.Register(City("New Haven"));
+
+        Assert.Null(service.GetByIndex(-1));
+        Assert.Null(service.GetByIndex(1));
     }
 
     [Fact]
@@ -23,13 +28,6 @@ public class StartingCityServiceTests
         Assert.Equal("Britain", service.GetByIndex(1)!.City);
     }
 
-    [Fact]
-    public void GetByIndex_OutOfRange_ReturnsNull()
-    {
-        var service = new StartingCityService();
-        service.Register(City("New Haven"));
-
-        Assert.Null(service.GetByIndex(-1));
-        Assert.Null(service.GetByIndex(1));
-    }
+    private static StartingCity City(string name)
+        => new() { City = name, Building = "Inn", Description = 1, X = 1, Y = 2, Z = 3, Map = MapType.Trammel };
 }

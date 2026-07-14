@@ -1,253 +1,253 @@
-- Id: 0
-  Name: No Weather
-  RainChance: 0
-  RainIntensity:
-    Min: 0
-    Max: 0
-  RainTempDrop: 5
-  SnowChance: 0
-  SnowIntensity:
-    Min: 0
-    Max: 0
-  SnowThreshold: 0
-  StormChance: 0
-  StormIntensity:
-    Min: 0
-    Max: 0
-  StormTempDrop: 10
-  MaxTemp: 25
-  MinTemp: 15
-  ColdChance: 0
-  ColdIntensity: 0
-  HeatChance: 0
-  HeatIntensity: 0
-- Id: 1
-  Name: Desert
-  RainChance: 1
-  RainIntensity:
-    Min: 5
-    Max: 10
-  RainTempDrop: 5
-  SnowChance: 0
-  SnowIntensity:
-    Min: 0
-    Max: 0
-  SnowThreshold: 0
-  StormChance: 0
-  StormIntensity:
-    Min: 0
-    Max: 0
-  StormTempDrop: 10
-  MaxTemp: 30
-  MinTemp: 10
-  ColdChance: 0
-  ColdIntensity: 0
-  HeatChance: 80
-  HeatIntensity: 35
-- Id: 2
-  Name: Tropical
-  RainChance: 80
-  RainIntensity:
-    Min: 60
-    Max: 100
-  RainTempDrop: 5
-  SnowChance: 0
-  SnowIntensity:
-    Min: 0
-    Max: 0
-  SnowThreshold: 0
-  StormChance: 60
-  StormIntensity:
-    Min: 80
-    Max: 100
-  StormTempDrop: 10
-  MaxTemp: 30
-  MinTemp: 10
-  ColdChance: 0
-  ColdIntensity: 0
-  HeatChance: 80
-  HeatIntensity: 35
-- Id: 3
-  Name: Plains
-  RainChance: 20
-  RainIntensity:
-    Min: 30
-    Max: 80
-  RainTempDrop: 5
-  SnowChance: 10
-  SnowIntensity:
-    Min: 40
-    Max: 90
-  SnowThreshold: 10
-  StormChance: 20
-  StormIntensity:
-    Min: 50
-    Max: 80
-  StormTempDrop: 10
-  MaxTemp: 30
-  MinTemp: 5
-  ColdChance: 10
-  ColdIntensity: 2
-  HeatChance: 10
-  HeatIntensity: 35
-- Id: 4
-  Name: Northern Mountain
-  RainChance: 50
-  RainIntensity:
-    Min: 30
-    Max: 60
-  RainTempDrop: 5
-  SnowChance: 30
-  SnowIntensity:
-    Min: 80
-    Max: 100
-  SnowThreshold: 10
-  StormChance: 40
-  StormIntensity:
-    Min: 50
-    Max: 60
-  StormTempDrop: 10
-  MaxTemp: 25
-  MinTemp: 4
-  ColdChance: 20
-  ColdIntensity: 0
-  HeatChance: 10
-  HeatIntensity: 30
-- Id: 5
-  Name: Southern Mountain
-  RainChance: 20
-  RainIntensity:
-    Min: 15
-    Max: 30
-  RainTempDrop: 5
-  SnowChance: 10
-  SnowIntensity:
-    Min: 67
-    Max: 90
-  SnowThreshold: 15
-  StormChance: 40
-  StormIntensity:
-    Min: 43
-    Max: 60
-  StormTempDrop: 10
-  MaxTemp: 30
-  MinTemp: 10
-  ColdChance: 20
-  ColdIntensity: 5
-  HeatChance: 20
-  HeatIntensity: 35
-- Id: 6
-  Name: British
-  RainChance: 40
-  RainIntensity:
-    Min: 35
-    Max: 70
-  RainTempDrop: 5
-  SnowChance: 5
-  SnowIntensity:
-    Min: 20
-    Max: 100
-  SnowThreshold: 10
-  StormChance: 5
-  StormIntensity:
-    Min: 5
-    Max: 30
-  StormTempDrop: 10
-  MaxTemp: 25
-  MinTemp: 5
-  ColdChance: 10
-  ColdIntensity: 0
-  HeatChance: 10
-  HeatIntensity: 30
-- Id: 7
-  Name: Arctic
-  RainChance: 0
-  RainIntensity:
-    Min: 0
-    Max: 0
-  RainTempDrop: 0
-  SnowChance: 90
-  SnowIntensity:
-    Min: 90
-    Max: 100
-  SnowThreshold: 5
-  StormChance: 40
-  StormIntensity:
-    Min: 43
-    Max: 60
-  StormTempDrop: 10
-  MaxTemp: 10
-  MinTemp: 4
-  ColdChance: 90
-  ColdIntensity: 1
-  HeatChance: 0
-  HeatIntensity: 0
-- Id: 8
-  Name: Forest
-  RainChance: 20
-  RainIntensity:
-    Min: 5
-    Max: 10
-  RainTempDrop: 5
-  SnowChance: 5
-  SnowIntensity:
-    Min: 5
-    Max: 10
-  SnowThreshold: 5
-  StormChance: 5
-  StormIntensity:
-    Min: 4
-    Max: 6
-  StormTempDrop: 10
-  MaxTemp: 20
-  MinTemp: 5
-  ColdChance: 20
-  ColdIntensity: 5
-  HeatChance: 20
-  HeatIntensity: 35
-- Id: 9
-  Name: Intense Rain
-  RainChance: 100
-  RainIntensity:
-    Min: 60
-    Max: 100
-  RainTempDrop: 5
-  SnowChance: 0
-  SnowIntensity:
-    Min: 0
-    Max: 0
-  SnowThreshold: 0
-  StormChance: 60
-  StormIntensity:
-    Min: 80
-    Max: 100
-  StormTempDrop: 10
-  MaxTemp: 25
-  MinTemp: 10
-  ColdChance: 0
-  ColdIntensity: 0
-  HeatChance: 80
-  HeatIntensity: 35
-- Id: 10
-  Name: Intense Snow
-  RainChance: 0
-  RainIntensity:
-    Min: 0
-    Max: 0
-  RainTempDrop: 0
-  SnowChance: 90
-  SnowIntensity:
-    Min: 90
-    Max: 100
-  SnowThreshold: 5
-  StormChance: 40
-  StormIntensity:
-    Min: 43
-    Max: 60
-  StormTempDrop: 10
-  MaxTemp: 10
-  MinTemp: 4
-  ColdChance: 90
-  ColdIntensity: 1
-  HeatChance: 0
-  HeatIntensity: 0
+-   Id: 0
+    Name: No Weather
+    RainChance: 0
+    RainIntensity:
+        Min: 0
+        Max: 0
+    RainTempDrop: 5
+    SnowChance: 0
+    SnowIntensity:
+        Min: 0
+        Max: 0
+    SnowThreshold: 0
+    StormChance: 0
+    StormIntensity:
+        Min: 0
+        Max: 0
+    StormTempDrop: 10
+    MaxTemp: 25
+    MinTemp: 15
+    ColdChance: 0
+    ColdIntensity: 0
+    HeatChance: 0
+    HeatIntensity: 0
+-   Id: 1
+    Name: Desert
+    RainChance: 1
+    RainIntensity:
+        Min: 5
+        Max: 10
+    RainTempDrop: 5
+    SnowChance: 0
+    SnowIntensity:
+        Min: 0
+        Max: 0
+    SnowThreshold: 0
+    StormChance: 0
+    StormIntensity:
+        Min: 0
+        Max: 0
+    StormTempDrop: 10
+    MaxTemp: 30
+    MinTemp: 10
+    ColdChance: 0
+    ColdIntensity: 0
+    HeatChance: 80
+    HeatIntensity: 35
+-   Id: 2
+    Name: Tropical
+    RainChance: 80
+    RainIntensity:
+        Min: 60
+        Max: 100
+    RainTempDrop: 5
+    SnowChance: 0
+    SnowIntensity:
+        Min: 0
+        Max: 0
+    SnowThreshold: 0
+    StormChance: 60
+    StormIntensity:
+        Min: 80
+        Max: 100
+    StormTempDrop: 10
+    MaxTemp: 30
+    MinTemp: 10
+    ColdChance: 0
+    ColdIntensity: 0
+    HeatChance: 80
+    HeatIntensity: 35
+-   Id: 3
+    Name: Plains
+    RainChance: 20
+    RainIntensity:
+        Min: 30
+        Max: 80
+    RainTempDrop: 5
+    SnowChance: 10
+    SnowIntensity:
+        Min: 40
+        Max: 90
+    SnowThreshold: 10
+    StormChance: 20
+    StormIntensity:
+        Min: 50
+        Max: 80
+    StormTempDrop: 10
+    MaxTemp: 30
+    MinTemp: 5
+    ColdChance: 10
+    ColdIntensity: 2
+    HeatChance: 10
+    HeatIntensity: 35
+-   Id: 4
+    Name: Northern Mountain
+    RainChance: 50
+    RainIntensity:
+        Min: 30
+        Max: 60
+    RainTempDrop: 5
+    SnowChance: 30
+    SnowIntensity:
+        Min: 80
+        Max: 100
+    SnowThreshold: 10
+    StormChance: 40
+    StormIntensity:
+        Min: 50
+        Max: 60
+    StormTempDrop: 10
+    MaxTemp: 25
+    MinTemp: 4
+    ColdChance: 20
+    ColdIntensity: 0
+    HeatChance: 10
+    HeatIntensity: 30
+-   Id: 5
+    Name: Southern Mountain
+    RainChance: 20
+    RainIntensity:
+        Min: 15
+        Max: 30
+    RainTempDrop: 5
+    SnowChance: 10
+    SnowIntensity:
+        Min: 67
+        Max: 90
+    SnowThreshold: 15
+    StormChance: 40
+    StormIntensity:
+        Min: 43
+        Max: 60
+    StormTempDrop: 10
+    MaxTemp: 30
+    MinTemp: 10
+    ColdChance: 20
+    ColdIntensity: 5
+    HeatChance: 20
+    HeatIntensity: 35
+-   Id: 6
+    Name: British
+    RainChance: 40
+    RainIntensity:
+        Min: 35
+        Max: 70
+    RainTempDrop: 5
+    SnowChance: 5
+    SnowIntensity:
+        Min: 20
+        Max: 100
+    SnowThreshold: 10
+    StormChance: 5
+    StormIntensity:
+        Min: 5
+        Max: 30
+    StormTempDrop: 10
+    MaxTemp: 25
+    MinTemp: 5
+    ColdChance: 10
+    ColdIntensity: 0
+    HeatChance: 10
+    HeatIntensity: 30
+-   Id: 7
+    Name: Arctic
+    RainChance: 0
+    RainIntensity:
+        Min: 0
+        Max: 0
+    RainTempDrop: 0
+    SnowChance: 90
+    SnowIntensity:
+        Min: 90
+        Max: 100
+    SnowThreshold: 5
+    StormChance: 40
+    StormIntensity:
+        Min: 43
+        Max: 60
+    StormTempDrop: 10
+    MaxTemp: 10
+    MinTemp: 4
+    ColdChance: 90
+    ColdIntensity: 1
+    HeatChance: 0
+    HeatIntensity: 0
+-   Id: 8
+    Name: Forest
+    RainChance: 20
+    RainIntensity:
+        Min: 5
+        Max: 10
+    RainTempDrop: 5
+    SnowChance: 5
+    SnowIntensity:
+        Min: 5
+        Max: 10
+    SnowThreshold: 5
+    StormChance: 5
+    StormIntensity:
+        Min: 4
+        Max: 6
+    StormTempDrop: 10
+    MaxTemp: 20
+    MinTemp: 5
+    ColdChance: 20
+    ColdIntensity: 5
+    HeatChance: 20
+    HeatIntensity: 35
+-   Id: 9
+    Name: Intense Rain
+    RainChance: 100
+    RainIntensity:
+        Min: 60
+        Max: 100
+    RainTempDrop: 5
+    SnowChance: 0
+    SnowIntensity:
+        Min: 0
+        Max: 0
+    SnowThreshold: 0
+    StormChance: 60
+    StormIntensity:
+        Min: 80
+        Max: 100
+    StormTempDrop: 10
+    MaxTemp: 25
+    MinTemp: 10
+    ColdChance: 0
+    ColdIntensity: 0
+    HeatChance: 80
+    HeatIntensity: 35
+-   Id: 10
+    Name: Intense Snow
+    RainChance: 0
+    RainIntensity:
+        Min: 0
+        Max: 0
+    RainTempDrop: 0
+    SnowChance: 90
+    SnowIntensity:
+        Min: 90
+        Max: 100
+    SnowThreshold: 5
+    StormChance: 40
+    StormIntensity:
+        Min: 43
+        Max: 60
+    StormTempDrop: 10
+    MaxTemp: 10
+    MinTemp: 4
+    ColdChance: 90
+    ColdIntensity: 1
+    HeatChance: 0
+    HeatIntensity: 0

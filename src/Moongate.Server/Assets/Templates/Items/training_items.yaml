@@ -1,117 +1,117 @@
-- Id: training_dummy
-  Name: Training Dummy
-  Category: Training Items
-  Description: Practice target for melee weapon training.
-  ItemId: 4212
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.training_dummy
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - melee
-  - flippable
-  FlippableItemIds:
-  - 4212
-  - 4208
-- Id: training_dummy_east
-  Name: Training Dummy
-  Category: Training Items
-  Description: Practice target for melee weapon training.
-  ItemId: 4212
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.training_dummy
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - melee
-  - flippable
-  FlippableItemIds:
-  - 4212
-  - 4208
-- Id: training_dummy_south
-  Name: Training Dummy
-  Category: Training Items
-  Description: Practice target for melee weapon training.
-  ItemId: 4208
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.training_dummy
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - melee
-  - flippable
-  FlippableItemIds:
-  - 4212
-  - 4208
-- Id: archery_butte_east
-  Name: Archery Butte
-  Category: Training Items
-  Description: Practice target for bows and crossbows.
-  ItemId: 4106
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.archery_butte
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - archery
-- Id: archery_butte_south
-  Name: Archery Butte
-  Category: Training Items
-  Description: Practice target for bows and crossbows.
-  ItemId: 4107
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.archery_butte
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - archery
-- Id: pickpocket_dip_east
-  Name: Pickpocket Dip
-  Category: Training Items
-  Description: Practice target for stealing training.
-  ItemId: 7875
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.pickpocket_dip
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - stealing
-- Id: pickpocket_dip_south
-  Name: Pickpocket Dip
-  Category: Training Items
-  Description: Practice target for stealing training.
-  ItemId: 7872
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: items.pickpocket_dip
-  IsMovable: false
-  Rarity: Common
-  Tags:
-  - modernuo
-  - training
-  - stealing
+-   Id: training_dummy
+    Name: Training Dummy
+    Category: Training Items
+    Description: Practice target for melee weapon training.
+    ItemId: 4212
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.training_dummy
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - melee
+        - flippable
+    FlippableItemIds:
+        - 4212
+        - 4208
+-   Id: training_dummy_east
+    Name: Training Dummy
+    Category: Training Items
+    Description: Practice target for melee weapon training.
+    ItemId: 4212
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.training_dummy
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - melee
+        - flippable
+    FlippableItemIds:
+        - 4212
+        - 4208
+-   Id: training_dummy_south
+    Name: Training Dummy
+    Category: Training Items
+    Description: Practice target for melee weapon training.
+    ItemId: 4208
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.training_dummy
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - melee
+        - flippable
+    FlippableItemIds:
+        - 4212
+        - 4208
+-   Id: archery_butte_east
+    Name: Archery Butte
+    Category: Training Items
+    Description: Practice target for bows and crossbows.
+    ItemId: 4106
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.archery_butte
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - archery
+-   Id: archery_butte_south
+    Name: Archery Butte
+    Category: Training Items
+    Description: Practice target for bows and crossbows.
+    ItemId: 4107
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.archery_butte
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - archery
+-   Id: pickpocket_dip_east
+    Name: Pickpocket Dip
+    Category: Training Items
+    Description: Practice target for stealing training.
+    ItemId: 7875
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.pickpocket_dip
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - stealing
+-   Id: pickpocket_dip_south
+    Name: Pickpocket Dip
+    Category: Training Items
+    Description: Practice target for stealing training.
+    ItemId: 7872
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.pickpocket_dip
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - training
+        - stealing

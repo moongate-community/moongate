@@ -8,9 +8,7 @@ public class StaticTileTests
 {
     [Fact]
     public unsafe void Layout_Is7BytesPacked()
-    {
-        Assert.Equal(7, sizeof(StaticTile));
-    }
+        => Assert.Equal(7, sizeof(StaticTile));
 
     [Fact]
     public void MemoryMarshalRead_FromRawStaticsRecord_MapsAllMembers()
@@ -23,7 +21,7 @@ public class StaticTileTests
         raw[4] = unchecked((byte)-5);
         BinaryPrimitives.WriteInt16LittleEndian(raw.AsSpan(5), 33);
 
-        StaticTile tile = MemoryMarshal.Cast<byte, StaticTile>(raw)[0];
+        var tile = MemoryMarshal.Cast<byte, StaticTile>(raw)[0];
 
         Assert.Equal(0x0ECA, tile.Id);
         Assert.Equal(3, tile.X);
@@ -44,8 +42,8 @@ public class StaticTileTests
             Hue = -2
         };
 
-        Span<byte> raw = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref tile, 1));
-        StaticTile roundTripped = MemoryMarshal.Cast<byte, StaticTile>(raw)[0];
+        var raw = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref tile, 1));
+        var roundTripped = MemoryMarshal.Cast<byte, StaticTile>(raw)[0];
 
         Assert.Equal(0x1BC3, roundTripped.Id);
         Assert.Equal(7, roundTripped.X);

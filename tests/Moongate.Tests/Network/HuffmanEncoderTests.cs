@@ -5,16 +5,21 @@ namespace Moongate.Tests.Network;
 public class HuffmanEncoderTests
 {
     [Fact]
-    public void Compress_SingleZeroByte_ProducesKnownVector()
+    public void CalculateMaxCompressedSize_HugeInput_ReturnsZero()
+        => Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(int.MaxValue));
+
+    [Fact]
+    public void CalculateMaxCompressedSize_NonPositiveInput_ReturnsZero()
     {
-        // byte 0x00 -> code (2 bits, 0x000), terminal (4 bits, 0x00D), padded to one byte.
-        var output = new byte[16];
-
-        var written = HuffmanEncoder.Compress([0x00], output);
-
-        Assert.Equal(1, written);
-        Assert.Equal(0x34, output[0]);
+        Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(0));
+        Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(-5));
     }
+
+    [Fact]
+    public void CalculateMaxCompressedSize_TypicalInput_BoundsWorstCase()
+
+        // worst case 11 bits/byte + 4-bit terminal, rounded up to bytes.
+        => Assert.Equal((10 * 11 + 4 + 7) / 8, HuffmanEncoder.CalculateMaxCompressedSize(10));
 
     [Fact]
     public void Compress_EmptyInput_WritesOnlyTerminalCode()
@@ -43,6 +48,14 @@ public class HuffmanEncoderTests
     }
 
     [Fact]
+    public void Compress_OutputBufferTooSmall_ReturnsZero()
+    {
+        var input = new byte[64];
+
+        Assert.Equal(0, HuffmanEncoder.Compress(input, new byte[1]));
+    }
+
+    [Fact]
     public void Compress_RepetitiveInput_IsSmallerThanInput()
     {
         var input = new byte[256]; // all zeros compress to ~2 bits each
@@ -55,30 +68,14 @@ public class HuffmanEncoderTests
     }
 
     [Fact]
-    public void Compress_OutputBufferTooSmall_ReturnsZero()
+    public void Compress_SingleZeroByte_ProducesKnownVector()
     {
-        var input = new byte[64];
+        // byte 0x00 -> code (2 bits, 0x000), terminal (4 bits, 0x00D), padded to one byte.
+        var output = new byte[16];
 
-        Assert.Equal(0, HuffmanEncoder.Compress(input, new byte[1]));
-    }
+        var written = HuffmanEncoder.Compress([0x00], output);
 
-    [Fact]
-    public void CalculateMaxCompressedSize_NonPositiveInput_ReturnsZero()
-    {
-        Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(0));
-        Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(-5));
-    }
-
-    [Fact]
-    public void CalculateMaxCompressedSize_TypicalInput_BoundsWorstCase()
-    {
-        // worst case 11 bits/byte + 4-bit terminal, rounded up to bytes.
-        Assert.Equal((10 * 11 + 4 + 7) / 8, HuffmanEncoder.CalculateMaxCompressedSize(10));
-    }
-
-    [Fact]
-    public void CalculateMaxCompressedSize_HugeInput_ReturnsZero()
-    {
-        Assert.Equal(0, HuffmanEncoder.CalculateMaxCompressedSize(int.MaxValue));
+        Assert.Equal(1, written);
+        Assert.Equal(0x34, output[0]);
     }
 }

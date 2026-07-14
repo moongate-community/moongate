@@ -8,9 +8,9 @@ namespace Moongate.Tests.Ultima;
 public class TexmapsTests
 {
     [Fact]
-    public unsafe void GetTexmap_SmallFixture_ReturnsOpaque64Bitmap()
+    public void GetRawTexmap_ReturnsSizeAndRawData()
     {
-        var (idx, mul) = UltimaFixtures.BuildTexmap(0, 64, 0x1234);
+        var (idx, mul) = UltimaFixtures.BuildTexmap(0, 64, 0x1000);
         var dir = UltimaFixtures.CreateClientDirectory(("texidx.mul", idx), ("texmaps.mul", mul));
 
         try
@@ -18,12 +18,11 @@ public class TexmapsTests
             Files.SetDirectory(dir);
             Texmaps.Reload();
 
-            var bitmap = Texmaps.GetTexmap(0);
+            var raw = Texmaps.GetRawTexmap(0, out var size);
 
-            Assert.NotNull(bitmap);
-            Assert.Equal(64, bitmap.Width);
-            Assert.Equal(64, bitmap.Height);
-            Assert.Equal(0x9234, ((ushort*)bitmap.Scan0)[0]); // 0x1234 with the alpha bit forced on
+            Assert.NotNull(raw);
+            Assert.Equal(64, size);
+            Assert.Equal(64 * 64 * 2, raw.Length);
         }
         finally
         {
@@ -55,9 +54,9 @@ public class TexmapsTests
     }
 
     [Fact]
-    public void GetRawTexmap_ReturnsSizeAndRawData()
+    public unsafe void GetTexmap_SmallFixture_ReturnsOpaque64Bitmap()
     {
-        var (idx, mul) = UltimaFixtures.BuildTexmap(0, 64, 0x1000);
+        var (idx, mul) = UltimaFixtures.BuildTexmap(0, 64, 0x1234);
         var dir = UltimaFixtures.CreateClientDirectory(("texidx.mul", idx), ("texmaps.mul", mul));
 
         try
@@ -65,11 +64,12 @@ public class TexmapsTests
             Files.SetDirectory(dir);
             Texmaps.Reload();
 
-            var raw = Texmaps.GetRawTexmap(0, out var size);
+            var bitmap = Texmaps.GetTexmap(0);
 
-            Assert.NotNull(raw);
-            Assert.Equal(64, size);
-            Assert.Equal(64 * 64 * 2, raw.Length);
+            Assert.NotNull(bitmap);
+            Assert.Equal(64, bitmap.Width);
+            Assert.Equal(64, bitmap.Height);
+            Assert.Equal(0x9234, ((ushort*)bitmap.Scan0)[0]); // 0x1234 with the alpha bit forced on
         }
         finally
         {

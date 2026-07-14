@@ -32,13 +32,9 @@ public sealed class AccountLoginHandler : IPacketHandler<AccountLoginRequestPack
         }
 
         context.Session.MarkAuthenticated(result.Username);
-        context.Session.Send(
-            new ServerListPacket(_config.ShardName, IPAddress.Parse(_config.Network.PublicAddress))
-        );
+        context.Session.Send(new ServerListPacket(_config.ShardName, IPAddress.Parse(_config.Network.PublicAddress)));
     }
 
     public void Register(INetworkService network)
-    {
-        network.RegisterHandler(this);
-    }
+        => network.RegisterHandler(this);
 }

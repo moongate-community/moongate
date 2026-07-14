@@ -16,13 +16,9 @@ public sealed class StartingCityService : IStartingCityService
 
     public int Count => _cities.Count;
 
-    public void Register(StartingCity city)
-    {
-        _cities.Add(city);
-    }
-
     public StartingCity? GetByIndex(int index)
-    {
-        return index >= 0 && index < _cities.Count ? _cities[index] : null;
-    }
+        => index >= 0 && index < _cities.Count ? _cities[index] : null;
+
+    public void Register(StartingCity city)
+        => _cities.Add(city);
 }

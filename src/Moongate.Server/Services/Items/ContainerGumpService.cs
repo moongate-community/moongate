@@ -16,6 +16,12 @@ public sealed class ContainerGumpService : IContainerGumpService
 
     public int Count => _byGumpId.Count;
 
+    public ContainerGumpLayout? GetByGumpId(int gumpId)
+        => _byGumpId.GetValueOrDefault(gumpId);
+
+    public ContainerGumpLayout? GetByItemId(int itemId)
+        => _byItemId.GetValueOrDefault(itemId);
+
     public void Register(ContainerGumpLayout layout)
     {
         _byGumpId[layout.GumpId] = layout;
@@ -24,15 +30,5 @@ public sealed class ContainerGumpService : IContainerGumpService
         {
             _byItemId[itemId] = layout;
         }
-    }
-
-    public ContainerGumpLayout? GetByGumpId(int gumpId)
-    {
-        return _byGumpId.GetValueOrDefault(gumpId);
-    }
-
-    public ContainerGumpLayout? GetByItemId(int itemId)
-    {
-        return _byItemId.GetValueOrDefault(itemId);
     }
 }

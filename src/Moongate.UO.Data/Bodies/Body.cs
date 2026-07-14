@@ -14,54 +14,35 @@ public readonly struct Body : IEquatable<Body>
     }
 
     /// <summary>True for the male human/elf/gargoyle player bodies.</summary>
-    public bool IsMale =>
-        Value is 183 or 185 or 400 or 402 or 605 or 607 or 750 or 666 or 694;
+    public bool IsMale => Value is 183 or 185 or 400 or 402 or 605 or 607 or 750 or 666 or 694;
 
     /// <summary>True for the female human/elf/gargoyle player bodies.</summary>
-    public bool IsFemale =>
-        Value is 184 or 186 or 401 or 403 or 606 or 608 or 751 or 667 or 695 or 1253;
+    public bool IsFemale => Value is 184 or 186 or 401 or 403 or 606 or 608 or 751 or 667 or 695 or 1253;
 
     /// <summary>True for the ghost bodies shown when a player is dead.</summary>
-    public bool IsGhost =>
-        Value is 402 or 403 or 607 or 608 or 970;
+    public bool IsGhost => Value is 402 or 403 or 607 or 608 or 970;
 
     public bool Equals(Body other)
-    {
-        return Value == other.Value;
-    }
+        => Value == other.Value;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Body other && Equals(other);
-    }
+        => obj is Body other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
-
-    public static implicit operator int(Body body)
-    {
-        return body.Value;
-    }
-
-    public static explicit operator Body(int value)
-    {
-        return new Body(value);
-    }
+        => Value.GetHashCode();
 
     public static bool operator ==(Body left, Body right)
-    {
-        return left.Value == right.Value;
-    }
+        => left.Value == right.Value;
+
+    public static explicit operator Body(int value)
+        => new(value);
+
+    public static implicit operator int(Body body)
+        => body.Value;
 
     public static bool operator !=(Body left, Body right)
-    {
-        return left.Value != right.Value;
-    }
+        => left.Value != right.Value;
 
     public override string ToString()
-    {
-        return $"0x{Value:X4}";
-    }
+        => $"0x{Value:X4}";
 }

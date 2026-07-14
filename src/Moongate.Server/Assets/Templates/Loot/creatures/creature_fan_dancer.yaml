@@ -1,14 +1,14 @@
-- Id: creature.fan_dancer
-  Name: FanDancer
-  Category: loot
-  Description: Creature-specific loot for FanDancer.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: origami_paper
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: seed
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.fan_dancer
+    Name: FanDancer
+    Category: loot
+    Description: Creature-specific loot for FanDancer.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: origami_paper
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

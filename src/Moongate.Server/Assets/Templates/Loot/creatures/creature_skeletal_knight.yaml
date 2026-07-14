@@ -1,32 +1,32 @@
-- Id: creature.skeletal_knight
-  Name: SkeletalKnight
-  Category: loot
-  Description: Creature-specific loot for SkeletalKnight.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: plate_arms
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: plate_chest
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: plate_gloves
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: plate_gorget
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: plate_legs
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: plate_helm
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: scimitar
-    Amount: 1
-    Chance: 1.0
-  - ItemTemplateId: wooden_shield
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.skeletal_knight
+    Name: SkeletalKnight
+    Category: loot
+    Description: Creature-specific loot for SkeletalKnight.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: plate_arms
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: plate_chest
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: plate_gloves
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: plate_gorget
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: plate_legs
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: plate_helm
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: scimitar
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: wooden_shield
+            Amount: 1
+            Chance: 1.0

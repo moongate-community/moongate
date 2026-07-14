@@ -79,7 +79,7 @@ public sealed class Multis
     {
         try
         {
-            var stream = _fileIndex.Seek(index, out var length, out var _, out var _);
+            var stream = _fileIndex.Seek(index, out var length, out _, out _);
 
             if (stream == null)
             {

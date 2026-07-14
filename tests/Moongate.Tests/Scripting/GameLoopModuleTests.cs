@@ -4,7 +4,6 @@ using Moongate.Scripting.Modules;
 using Moongate.Server.Services.Game;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Interfaces.Threading;
-using SquidStd.Scripting.Lua.Data.Config;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
 using SquidStd.Scripting.Lua.Interfaces.Scripts;
 using SquidStd.Services.Core.Extensions;
@@ -21,9 +20,7 @@ public class GameLoopModuleTests
         var scripts = Path.Combine(root, "scripts");
         Directory.CreateDirectory(scripts);
 
-        var bootstrap = SquidStdBootstrap.Create(
-            new SquidStdOptions { ConfigName = "moongate", RootDirectory = root }
-        );
+        var bootstrap = SquidStdBootstrap.Create(new SquidStdOptions { ConfigName = "moongate", RootDirectory = root });
 
         bootstrap.ConfigureServices(
             container =>
@@ -31,7 +28,7 @@ public class GameLoopModuleTests
                 // RegisterCoreServices already provides IMainThreadDispatcher and ITimerService.
                 container.RegisterCoreServices();
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
-                container.RegisterLuaEngine(new LuaEngineConfig(root, scripts, "MoongateTests", "1.0.0"));
+                container.RegisterLuaEngine(new(root, scripts, "MoongateTests", "1.0.0"));
                 container.RegisterScriptModule<GameLoopModule>();
 
                 return container;

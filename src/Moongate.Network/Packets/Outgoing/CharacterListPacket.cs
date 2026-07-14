@@ -23,7 +23,7 @@ public readonly record struct CharacterListPacket(
 
     public void Write(ref SpanWriter writer)
     {
-        var length = 11 + (60 * SlotCount) + (89 * Cities.Count);
+        var length = 11 + 60 * SlotCount + 89 * Cities.Count;
 
         writer.Write(PacketId);
         writer.Write((ushort)length);
@@ -32,7 +32,7 @@ public readonly record struct CharacterListPacket(
         for (var i = 0; i < SlotCount; i++)
         {
             writer.WriteAscii(i < Characters.Count ? Characters[i] : string.Empty, 30); // name
-            writer.WriteAscii(string.Empty, 30); // password
+            writer.WriteAscii(string.Empty, 30);                                        // password
         }
 
         writer.Write((byte)Cities.Count);

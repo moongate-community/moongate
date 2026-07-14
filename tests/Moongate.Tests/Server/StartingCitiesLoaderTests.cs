@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class StartingCitiesLoaderTests
 {
-    private static string NewRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-startcity-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenMissing_SeedsAndRegistersInOrder()
     {
@@ -59,4 +56,7 @@ public class StartingCitiesLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-startcity-" + Guid.NewGuid().ToString("N"));
 }

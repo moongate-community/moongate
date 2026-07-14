@@ -2,7 +2,6 @@ using System.Net;
 using Moongate.Network.Framing;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Protocol;
-using Moongate.Server.Data;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
@@ -14,7 +13,6 @@ using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Network.Client;
-using SquidStd.Network.Data;
 using SquidStd.Network.Data.Events;
 using SquidStd.Network.Server;
 using SquidStd.Network.Spans;
@@ -55,6 +53,9 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         _mainThreadDispatcher = mainThreadDispatcher;
     }
 
+    public async ValueTask DisposeAsync()
+        => await StopAsync();
+
     public void RegisterHandler<TPacket>(IPacketHandler<TPacket> handler) where TPacket : IIncomingPacket<TPacket>
     {
         ArgumentNullException.ThrowIfNull(handler);
@@ -71,7 +72,7 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
                                 var reader = new SpanReader(packet);
                                 var decoded = TPacket.Read(ref reader);
 
-                                handler.Handle(decoded, new PacketContext(session));
+                                handler.Handle(decoded, new(session));
                             };
     }
 
@@ -86,13 +87,13 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         _logger.Information("Total packets info: {PacketCount}", PacketsInfo.Count);
         _logger.Information("Registering {Count} packet handlers", _handlerRegistrations.Count());
 
-
         var endpoint = new IPEndPoint(IPAddress.Parse(_config.Network.Address), _config.Network.Port);
+
         // UoSeedFramer is stateful per connection (it consumes the raw game-server seed), so hand each
         // accepted client its own instance instead of sharing one.
-        _server = new SquidTcpServer(
+        _server = new(
             endpoint,
-            connectionPipelineFactory: () => new ConnectionPipeline(Framer: new UoSeedFramer())
+            connectionPipelineFactory: () => new(Framer: new UoSeedFramer())
         );
 
         _server.OnClientConnect += OnClientConnect;
@@ -114,6 +115,35 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         await _server.StopAsync(cancellationToken);
         await _server.DisposeAsync();
         _server = null;
+    }
+
+    private void Dispatch(PlayerSession session, ReadOnlySpan<byte> frame)
+    {
+        var opCode = frame[0];
+        var handler = _handlers[opCode];
+
+        if (handler is null)
+        {
+            var info = PacketsInfo.GetPacket(opCode);
+            _logger.Warning(
+                "No handler for packet 0x{OpCode:X2} ({Name}) from session {SessionId} - not implemented yet",
+                opCode,
+                info?.Name ?? "Unknown",
+                session.SessionId
+            );
+
+            return;
+        }
+
+        try
+        {
+            handler(session, frame);
+            _eventBus.Publish(new PacketDispatchedEvent(session, opCode));
+        }
+        catch (Exception ex)
+        {
+            _logger.Error(ex, "Handler for 0x{OpCode:X2} threw for session {SessionId}", opCode, session.SessionId);
+        }
     }
 
     private void OnClientConnect(object? sender, SquidStdTcpClientEventArgs e)
@@ -148,6 +178,9 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         _mainThreadDispatcher.Post(() => ProcessInbound(session, client, bytes));
     }
 
+    private void OnException(object? sender, SquidStdTcpExceptionEventArgs e)
+        => _logger.Error(e.Exception, "Network exception");
+
     private void ProcessInbound(PlayerSession session, SquidStdTcpClient client, byte[] bytes)
     {
         ReadOnlySpan<byte> frame = bytes;
@@ -173,44 +206,5 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         }
 
         Dispatch(session, frame);
-    }
-
-    private void Dispatch(PlayerSession session, ReadOnlySpan<byte> frame)
-    {
-        var opCode = frame[0];
-        var handler = _handlers[opCode];
-
-        if (handler is null)
-        {
-            var info = PacketsInfo.GetPacket(opCode);
-            _logger.Warning(
-                "No handler for packet 0x{OpCode:X2} ({Name}) from session {SessionId} - not implemented yet",
-                opCode,
-                info?.Name ?? "Unknown",
-                session.SessionId
-            );
-
-            return;
-        }
-
-        try
-        {
-            handler(session, frame);
-            _eventBus.Publish(new PacketDispatchedEvent(session, opCode));
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Handler for 0x{OpCode:X2} threw for session {SessionId}", opCode, session.SessionId);
-        }
-    }
-
-    private void OnException(object? sender, SquidStdTcpExceptionEventArgs e)
-    {
-        _logger.Error(e.Exception, "Network exception");
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await StopAsync();
     }
 }

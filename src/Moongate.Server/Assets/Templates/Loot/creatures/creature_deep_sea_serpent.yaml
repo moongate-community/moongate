@@ -1,14 +1,14 @@
-- Id: creature.deep_sea_serpent
-  Name: DeepSeaSerpent
-  Category: loot
-  Description: Creature-specific loot for DeepSeaSerpent.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: sulfurous_ash
-    Amount: 4
-    Chance: 1.0
-  - ItemTemplateId: black_pearl
-    Amount: 4
-    Chance: 1.0
+-   Id: creature.deep_sea_serpent
+    Name: DeepSeaSerpent
+    Category: loot
+    Description: Creature-specific loot for DeepSeaSerpent.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: sulfurous_ash
+            Amount: 4
+            Chance: 1.0
+        -   ItemTemplateId: black_pearl
+            Amount: 4
+            Chance: 1.0

@@ -9,16 +9,20 @@ namespace Moongate.Tests.Server;
 
 public class ItemServiceTests
 {
-    private static (ItemService Service, FakePersistenceService Persistence) Build()
+    [Fact]
+    public void AddToContainer_SetsBothSidesAndClearsEquip()
     {
-        var persistence = new FakePersistenceService();
+        var (service, _) = Build();
+        var container = Item("Backpack", 3701);
+        var item = Item();
+        service.Create(container);
 
-        return (new ItemService(persistence), persistence);
-    }
+        service.AddToContainer(container, item, new(3, 4));
 
-    private static ItemEntity Item(string name = "Dagger", int itemId = 3921)
-    {
-        return new ItemEntity { Name = name, ItemId = itemId };
+        Assert.Equal(container.Id, item.ParentContainerId);
+        Assert.Equal(new(3, 4), item.ContainerPosition);
+        Assert.Equal(Serial.Zero, item.EquippedMobileId);
+        Assert.Contains(item.Id, container.ContainedItemIds);
     }
 
     [Fact]
@@ -35,19 +39,14 @@ public class ItemServiceTests
     }
 
     [Fact]
-    public void Equip_SetsBothSidesAndPersists()
+    public void Delete_RemovesFromStore()
     {
         var (service, persistence) = Build();
-        var mobile = new MobileEntity { Name = "Bob" };
         var item = Item();
+        var id = service.Create(item);
 
-        service.Equip(mobile, item, LayerType.OneHanded);
-
-        Assert.Equal(item.Id, mobile.EquippedItemIds[LayerType.OneHanded]);
-        Assert.Equal(mobile.Id, item.EquippedMobileId);
-        Assert.Equal(LayerType.OneHanded, item.EquippedLayer);
-        Assert.Equal(Serial.Zero, item.ParentContainerId);
-        Assert.NotNull(persistence.Store<ItemEntity>().GetById(item.Id));
+        Assert.True(service.Delete(id));
+        Assert.Null(persistence.Store<ItemEntity>().GetById(id));
     }
 
     [Fact]
@@ -71,7 +70,7 @@ public class ItemServiceTests
         var container = Item("Backpack", 3701);
         var item = Item();
         service.Create(container);
-        service.AddToContainer(container, item, new Point2D(1, 2));
+        service.AddToContainer(container, item, new(1, 2));
 
         service.Equip(mobile, item, LayerType.OneHanded);
 
@@ -81,59 +80,19 @@ public class ItemServiceTests
     }
 
     [Fact]
-    public void Unequip_ClearsBothSidesAndReturnsItem()
+    public void Equip_SetsBothSidesAndPersists()
     {
-        var (service, _) = Build();
+        var (service, persistence) = Build();
         var mobile = new MobileEntity { Name = "Bob" };
-        var pack = Item("Backpack", 3701);
-        service.Equip(mobile, pack, LayerType.Backpack);
-
-        var detached = service.Unequip(mobile, LayerType.Backpack);
-
-        Assert.Same(pack, detached);
-        Assert.False(mobile.EquippedItemIds.ContainsKey(LayerType.Backpack));
-        Assert.Equal(Serial.Zero, mobile.BackpackId);
-        Assert.Equal(Serial.Zero, pack.EquippedMobileId);
-        Assert.Null(pack.EquippedLayer);
-    }
-
-    [Fact]
-    public void Unequip_EmptyLayer_ReturnsNull()
-    {
-        var (service, _) = Build();
-
-        Assert.Null(service.Unequip(new MobileEntity { Name = "Bob" }, LayerType.OneHanded));
-    }
-
-    [Fact]
-    public void AddToContainer_SetsBothSidesAndClearsEquip()
-    {
-        var (service, _) = Build();
-        var container = Item("Backpack", 3701);
         var item = Item();
-        service.Create(container);
 
-        service.AddToContainer(container, item, new Point2D(3, 4));
+        service.Equip(mobile, item, LayerType.OneHanded);
 
-        Assert.Equal(container.Id, item.ParentContainerId);
-        Assert.Equal(new Point2D(3, 4), item.ContainerPosition);
-        Assert.Equal(Serial.Zero, item.EquippedMobileId);
-        Assert.Contains(item.Id, container.ContainedItemIds);
-    }
-
-    [Fact]
-    public void RemoveFromContainer_ClearsBothSides()
-    {
-        var (service, _) = Build();
-        var container = Item("Backpack", 3701);
-        var item = Item();
-        service.Create(container);
-        service.AddToContainer(container, item, new Point2D(1, 1));
-
-        service.RemoveFromContainer(container, item);
-
-        Assert.DoesNotContain(item.Id, container.ContainedItemIds);
+        Assert.Equal(item.Id, mobile.EquippedItemIds[LayerType.OneHanded]);
+        Assert.Equal(mobile.Id, item.EquippedMobileId);
+        Assert.Equal(LayerType.OneHanded, item.EquippedLayer);
         Assert.Equal(Serial.Zero, item.ParentContainerId);
+        Assert.NotNull(persistence.Store<ItemEntity>().GetById(item.Id));
     }
 
     [Fact]
@@ -166,13 +125,52 @@ public class ItemServiceTests
     }
 
     [Fact]
-    public void Delete_RemovesFromStore()
+    public void RemoveFromContainer_ClearsBothSides()
     {
-        var (service, persistence) = Build();
+        var (service, _) = Build();
+        var container = Item("Backpack", 3701);
         var item = Item();
-        var id = service.Create(item);
+        service.Create(container);
+        service.AddToContainer(container, item, new(1, 1));
 
-        Assert.True(service.Delete(id));
-        Assert.Null(persistence.Store<ItemEntity>().GetById(id));
+        service.RemoveFromContainer(container, item);
+
+        Assert.DoesNotContain(item.Id, container.ContainedItemIds);
+        Assert.Equal(Serial.Zero, item.ParentContainerId);
     }
+
+    [Fact]
+    public void Unequip_ClearsBothSidesAndReturnsItem()
+    {
+        var (service, _) = Build();
+        var mobile = new MobileEntity { Name = "Bob" };
+        var pack = Item("Backpack", 3701);
+        service.Equip(mobile, pack, LayerType.Backpack);
+
+        var detached = service.Unequip(mobile, LayerType.Backpack);
+
+        Assert.Same(pack, detached);
+        Assert.False(mobile.EquippedItemIds.ContainsKey(LayerType.Backpack));
+        Assert.Equal(Serial.Zero, mobile.BackpackId);
+        Assert.Equal(Serial.Zero, pack.EquippedMobileId);
+        Assert.Null(pack.EquippedLayer);
+    }
+
+    [Fact]
+    public void Unequip_EmptyLayer_ReturnsNull()
+    {
+        var (service, _) = Build();
+
+        Assert.Null(service.Unequip(new() { Name = "Bob" }, LayerType.OneHanded));
+    }
+
+    private static (ItemService Service, FakePersistenceService Persistence) Build()
+    {
+        var persistence = new FakePersistenceService();
+
+        return (new(persistence), persistence);
+    }
+
+    private static ItemEntity Item(string name = "Dagger", int itemId = 3921)
+        => new() { Name = name, ItemId = itemId };
 }

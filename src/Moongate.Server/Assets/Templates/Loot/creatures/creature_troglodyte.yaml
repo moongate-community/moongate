@@ -1,14 +1,14 @@
-- Id: creature.troglodyte
-  Name: Troglodyte
-  Category: loot
-  Description: Creature-specific loot for Troglodyte.
-  Mode: Additive
-  Rolls: 1
-  NoDropWeight: 0
-  Entries:
-  - ItemTemplateId: bandage
-    Amount: 5
-    Chance: 1.0
-  - ItemTemplateId: ribs
-    Amount: 1
-    Chance: 1.0
+-   Id: creature.troglodyte
+    Name: Troglodyte
+    Category: loot
+    Description: Creature-specific loot for Troglodyte.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bandage
+            Amount: 5
+            Chance: 1.0
+        -   ItemTemplateId: ribs
+            Amount: 1
+            Chance: 1.0

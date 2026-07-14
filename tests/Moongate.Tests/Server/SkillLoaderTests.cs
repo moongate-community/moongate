@@ -7,9 +7,6 @@ namespace Moongate.Tests.Server;
 
 public class SkillLoaderTests
 {
-    private static string NewDataRoot()
-        => Path.Combine(Path.GetTempPath(), "mg-skillloader-" + Guid.NewGuid().ToString("N"));
-
     [Fact]
     public async Task LoadAsync_WhenFileMissing_SeedsDefaultAndRegisters()
     {
@@ -59,4 +56,7 @@ public class SkillLoaderTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string NewDataRoot()
+        => Path.Combine(Path.GetTempPath(), "mg-skillloader-" + Guid.NewGuid().ToString("N"));
 }

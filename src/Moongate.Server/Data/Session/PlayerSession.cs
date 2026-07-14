@@ -41,8 +41,67 @@ public sealed class PlayerSession : ISeedTarget
         _client = client;
         SessionId = client.SessionId;
         State = SessionStateType.AwaitingSeed;
-        Compression = new UoCompressionMiddleware();
+        Compression = new();
         client.AddMiddleware(Compression);
+    }
+
+    /// <summary>Closes the underlying connection, dropping this session (fire-and-forget).</summary>
+    public void Disconnect()
+        => _ = _client.CloseAsync();
+
+    /// <summary>
+    /// Turns on UO transport compression for outbound packets. The login handshake is sent in the
+    /// clear; the game server compresses everything from the character list onward.
+    /// </summary>
+    public void EnableCompression()
+        => Compression.Enabled = true;
+
+    public void MarkAuthenticated(string username)
+    {
+        lock (_stateSync)
+        {
+            Username = username;
+            State = SessionStateType.Authenticated;
+        }
+    }
+
+    /// <summary>
+    /// Serializes <paramref name="packet" /> on the calling (main game-loop) thread and hands the
+    /// bytes to the client fire-and-forget, so the socket I/O never blocks the frame. The client's
+    /// internal send lock keeps writes ordered per session.
+    /// </summary>
+    public void Send<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+    {
+        var writer = new SpanWriter(InitialWriteBufferSize, true);
+        packet.Write(ref writer);
+        var bytes = writer.Span.ToArray();
+
+        _ = SendInternalAsync(bytes);
+    }
+
+    public void SetAccountId(Serial accountId)
+    {
+        lock (_stateSync)
+        {
+            AccountId = accountId;
+        }
+    }
+
+    /// <summary>Attaches the freshly created (or selected) character to this session.</summary>
+    public void SetCharacter(MobileEntity character)
+    {
+        lock (_stateSync)
+        {
+            Character = character;
+        }
+    }
+
+    public void SetSeed(uint seed)
+    {
+        lock (_stateSync)
+        {
+            Seed = seed;
+        }
     }
 
     public void SetState(SessionStateType state)
@@ -59,69 +118,6 @@ public sealed class PlayerSession : ISeedTarget
         {
             Version = version;
         }
-    }
-
-    public void SetSeed(uint seed)
-    {
-        lock (_stateSync)
-        {
-            Seed = seed;
-        }
-    }
-
-    public void SetAccountId(Serial accountId)
-    {
-        lock (_stateSync)
-        {
-            AccountId = accountId;
-        }
-    }
-
-    public void MarkAuthenticated(string username)
-    {
-        lock (_stateSync)
-        {
-            Username = username;
-            State = SessionStateType.Authenticated;
-        }
-    }
-
-    /// <summary>
-    /// Turns on UO transport compression for outbound packets. The login handshake is sent in the
-    /// clear; the game server compresses everything from the character list onward.
-    /// </summary>
-    public void EnableCompression()
-    {
-        Compression.Enabled = true;
-    }
-
-    /// <summary>Attaches the freshly created (or selected) character to this session.</summary>
-    public void SetCharacter(MobileEntity character)
-    {
-        lock (_stateSync)
-        {
-            Character = character;
-        }
-    }
-
-    /// <summary>
-    /// Serializes <paramref name="packet" /> on the calling (main game-loop) thread and hands the
-    /// bytes to the client fire-and-forget, so the socket I/O never blocks the frame. The client's
-    /// internal send lock keeps writes ordered per session.
-    /// </summary>
-    public void Send<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
-    {
-        var writer = new SpanWriter(InitialWriteBufferSize, resize: true);
-        packet.Write(ref writer);
-        var bytes = writer.Span.ToArray();
-
-        _ = SendInternalAsync(bytes);
-    }
-
-    /// <summary>Closes the underlying connection, dropping this session (fire-and-forget).</summary>
-    public void Disconnect()
-    {
-        _ = _client.CloseAsync();
     }
 
     private async Task SendInternalAsync(byte[] bytes)

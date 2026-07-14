@@ -4,26 +4,14 @@ namespace Moongate.Tests.Core.Primitives;
 
 public class SerialTests
 {
-    [Theory]
-    [InlineData(0x00000001u, true, false)]
-    [InlineData(0x3FFFFFFFu, true, false)]
-    [InlineData(0x40000000u, false, true)]
-    [InlineData(0x7FFFFFFFu, false, true)]
-    [InlineData(0x00000000u, false, false)]
-    [InlineData(0x80000000u, false, false)]
-    public void IsMobile_IsItem_FollowProtocolRanges(uint value, bool isMobile, bool isItem)
-    {
-        var serial = new Serial(value);
-
-        Assert.Equal(isMobile, serial.IsMobile);
-        Assert.Equal(isItem, serial.IsItem);
-    }
-
     [Fact]
-    public void IsValid_ZeroIsInvalid()
+    public void Conversions_RoundTripThroughUint()
     {
-        Assert.False(Serial.Zero.IsValid);
-        Assert.True(new Serial(1).IsValid);
+        var serial = (Serial)0x40000123u;
+        uint back = serial;
+
+        Assert.Equal(0x40000123u, back);
+        Assert.Equal(0x40000123u, serial.Value);
     }
 
     [Fact]
@@ -43,26 +31,25 @@ public class SerialTests
     }
 
     [Fact]
-    public void Conversions_RoundTripThroughUint()
-    {
-        var serial = (Serial)0x40000123u;
-        uint back = serial;
-
-        Assert.Equal(0x40000123u, back);
-        Assert.Equal(0x40000123u, serial.Value);
-    }
-
-    [Fact]
-    public void ToString_IsHexWith8Digits()
-    {
-        Assert.Equal("0x4000000A", new Serial(0x4000000Au).ToString());
-        Assert.Equal("0x00000001", new Serial(1).ToString());
-    }
-
-    [Fact]
     public void GetHashCode_EqualValues_AreEqual()
+        => Assert.Equal(new Serial(0x40000123u).GetHashCode(), new Serial(0x40000123u).GetHashCode());
+
+    [Theory, InlineData(0x00000001u, true, false), InlineData(0x3FFFFFFFu, true, false),
+     InlineData(0x40000000u, false, true), InlineData(0x7FFFFFFFu, false, true), InlineData(0x00000000u, false, false),
+     InlineData(0x80000000u, false, false)]
+    public void IsMobile_IsItem_FollowProtocolRanges(uint value, bool isMobile, bool isItem)
     {
-        Assert.Equal(new Serial(0x40000123u).GetHashCode(), new Serial(0x40000123u).GetHashCode());
+        var serial = new Serial(value);
+
+        Assert.Equal(isMobile, serial.IsMobile);
+        Assert.Equal(isItem, serial.IsItem);
+    }
+
+    [Fact]
+    public void IsValid_ZeroIsInvalid()
+    {
+        Assert.False(Serial.Zero.IsValid);
+        Assert.True(new Serial(1).IsValid);
     }
 
     [Fact]
@@ -72,5 +59,12 @@ public class SerialTests
         Assert.Equal(0x3FFFFFFFu, Serial.MaxMobile);
         Assert.Equal(0x40000000u, Serial.MinItem);
         Assert.Equal(0x7FFFFFFFu, Serial.MaxItem);
+    }
+
+    [Fact]
+    public void ToString_IsHexWith8Digits()
+    {
+        Assert.Equal("0x4000000A", new Serial(0x4000000Au).ToString());
+        Assert.Equal("0x00000001", new Serial(1).ToString());
     }
 }

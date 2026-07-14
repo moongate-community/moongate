@@ -1,1078 +1,1078 @@
-- Id: academic_books_artifact
-  Name: Academic Books Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7717
-  Hue: 2413
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: backpack_artifact
-  Name: Backpack Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 2482
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket1_artifact
-  Name: Basket1 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9437
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket2_artifact
-  Name: Basket2 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9431
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket3_north_artifact
-  Name: Basket3 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9434
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket3_west_artifact
-  Name: Basket3 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9433
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket4_artifact
-  Name: Basket4 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9432
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket5_north_artifact
-  Name: Basket5 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9435
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket5_west_artifact
-  Name: Basket5 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9436
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: basket6_artifact
-  Name: Basket6 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9429
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: bloody_water_artifact
-  Name: Bloody Water Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3619
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: books_face_down_artifact
-  Name: Books Face Down Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7713
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: books_north_artifact
-  Name: Books North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7716
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: books_west_artifact
-  Name: Books West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7717
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: bottle_artifact
-  Name: Bottle Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3624
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: bowl_artifact
-  Name: Bowl Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9438
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: bowls_horizontal_artifact
-  Name: Bowls Horizontal Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9440
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: bowls_vertical_artifact
-  Name: Bowls Vertical Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9439
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: brazier_artifact
-  Name: Brazier Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3633
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: cocoon_artifact
-  Name: Cocoon Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 4314
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: cups_artifact
-  Name: Cups Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9441
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: damaged_books_artifact
-  Name: Damaged Books Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3094
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: dolphin_left_artifact
-  Name: Dolphin Left Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10310
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: dolphin_right_artifact
-  Name: Dolphin Right Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10311
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: egg_case_artifact
-  Name: Egg Case Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 4313
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: fan_north_artifact
-  Name: Fan North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9225
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: fan_west_artifact
-  Name: Fan West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9226
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: flowers_artifact
-  Name: Flowers Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10314
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: gruesome_standard_artifact
-  Name: Gruesome Standard Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 1064
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: lamp_post_artifact
-  Name: Lamp Post Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 2852
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: leather_tunic_artifact
-  Name: Leather Tunic Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 5066
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: man_statuette_east_artifact
-  Name: Man Statuette East Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10313
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: man_statuette_south_artifact
-  Name: Man Statuette South Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10312
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting1_north_artifact
-  Name: Painting1 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9229
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting1_west_artifact
-  Name: Painting1 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9230
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting2_north_artifact
-  Name: Painting2 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9231
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting2_west_artifact
-  Name: Painting2 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9232
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting3_artifact
-  Name: Painting3 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9233
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting4_north_artifact
-  Name: Painting4 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9233
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting4_west_artifact
-  Name: Painting4 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9234
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting5_north_artifact
-  Name: Painting5 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9237
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting5_west_artifact
-  Name: Painting5 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9238
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting6_north_artifact
-  Name: Painting6 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9239
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: painting6_west_artifact
-  Name: Painting6 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9240
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: rock_artifact
-  Name: Rock Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 4963
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: ruined_painting_artifact
-  Name: Ruined Painting Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3116
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: saddle_artifact
-  Name: Saddle Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 3896
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sake_artifact
-  Name: Sake Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9442
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sculpture1_artifact
-  Name: Sculpture1 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9241
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sculpture2_artifact
-  Name: Sculpture2 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9243
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: skinned_deer_artifact
-  Name: Skinned Deer Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7825
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: skinned_goat_artifact
-  Name: Skinned Goat Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 7816
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: skull_candle_artifact
-  Name: Skull Candle Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 6232
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: stretched_hide_artifact
-  Name: Stretched Hide Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 4203
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: studded_leggings_artifact
-  Name: Studded Leggings Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 5080
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: studded_tunic_artifact
-  Name: Studded Tunic Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 5081
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display1_north_artifact
-  Name: Sword Display1 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10307
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display1_west_artifact
-  Name: Sword Display1 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10306
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display2_north_artifact
-  Name: Sword Display2 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10309
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display2_west_artifact
-  Name: Sword Display2 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10308
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display3_east_artifact
-  Name: Sword Display3 East Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10326
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display3_south_artifact
-  Name: Sword Display3 South Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10325
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display4_north_artifact
-  Name: Sword Display4 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10324
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display4_west_artifact
-  Name: Sword Display4 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10323
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display5_north_artifact
-  Name: Sword Display5 North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10322
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: sword_display5_west_artifact
-  Name: Sword Display5 West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 10321
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: tarot_cards_artifact
-  Name: Tarot Cards Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 4773
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: teapot_north_artifact
-  Name: Teapot North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9446
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: teapot_west_artifact
-  Name: Teapot West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9447
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: tower_lantern_artifact
-  Name: Tower Lantern Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9408
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: triple_fan_north_artifact
-  Name: Triple Fan North Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9227
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: triple_fan_west_artifact
-  Name: Triple Fan West Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9228
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: urn1_artifact
-  Name: Urn1 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9245
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: urn2_artifact
-  Name: Urn2 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9246
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: zen_rock1_artifact
-  Name: Zen Rock1 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9444
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: zen_rock2_artifact
-  Name: Zen Rock2 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9443
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
-- Id: zen_rock3_artifact
-  Name: Zen Rock3 Artifact
-  Category: Decoration Artifacts
-  Description: ''
-  ItemId: 9445
-  Hue: 0
-  GoldValue: 0
-  Weight: 0.0
-  ScriptId: none
-  IsMovable: true
-  Rarity: Artifact
-  Tags:
-  - modernuo
-  - decoration artifacts
+-   Id: academic_books_artifact
+    Name: Academic Books Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7717
+    Hue: 2413
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: backpack_artifact
+    Name: Backpack Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 2482
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket1_artifact
+    Name: Basket1 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9437
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket2_artifact
+    Name: Basket2 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9431
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket3_north_artifact
+    Name: Basket3 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9434
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket3_west_artifact
+    Name: Basket3 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9433
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket4_artifact
+    Name: Basket4 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9432
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket5_north_artifact
+    Name: Basket5 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9435
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket5_west_artifact
+    Name: Basket5 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9436
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: basket6_artifact
+    Name: Basket6 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9429
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: bloody_water_artifact
+    Name: Bloody Water Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3619
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: books_face_down_artifact
+    Name: Books Face Down Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7713
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: books_north_artifact
+    Name: Books North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7716
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: books_west_artifact
+    Name: Books West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7717
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: bottle_artifact
+    Name: Bottle Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3624
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: bowl_artifact
+    Name: Bowl Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9438
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: bowls_horizontal_artifact
+    Name: Bowls Horizontal Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9440
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: bowls_vertical_artifact
+    Name: Bowls Vertical Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9439
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: brazier_artifact
+    Name: Brazier Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3633
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: cocoon_artifact
+    Name: Cocoon Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 4314
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: cups_artifact
+    Name: Cups Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9441
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: damaged_books_artifact
+    Name: Damaged Books Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3094
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: dolphin_left_artifact
+    Name: Dolphin Left Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10310
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: dolphin_right_artifact
+    Name: Dolphin Right Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10311
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: egg_case_artifact
+    Name: Egg Case Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 4313
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: fan_north_artifact
+    Name: Fan North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9225
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: fan_west_artifact
+    Name: Fan West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9226
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: flowers_artifact
+    Name: Flowers Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10314
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: gruesome_standard_artifact
+    Name: Gruesome Standard Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 1064
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: lamp_post_artifact
+    Name: Lamp Post Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 2852
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: leather_tunic_artifact
+    Name: Leather Tunic Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 5066
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: man_statuette_east_artifact
+    Name: Man Statuette East Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10313
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: man_statuette_south_artifact
+    Name: Man Statuette South Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10312
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting1_north_artifact
+    Name: Painting1 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9229
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting1_west_artifact
+    Name: Painting1 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9230
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting2_north_artifact
+    Name: Painting2 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9231
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting2_west_artifact
+    Name: Painting2 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9232
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting3_artifact
+    Name: Painting3 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9233
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting4_north_artifact
+    Name: Painting4 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9233
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting4_west_artifact
+    Name: Painting4 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9234
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting5_north_artifact
+    Name: Painting5 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9237
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting5_west_artifact
+    Name: Painting5 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9238
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting6_north_artifact
+    Name: Painting6 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9239
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: painting6_west_artifact
+    Name: Painting6 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9240
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: rock_artifact
+    Name: Rock Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 4963
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: ruined_painting_artifact
+    Name: Ruined Painting Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3116
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: saddle_artifact
+    Name: Saddle Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 3896
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sake_artifact
+    Name: Sake Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9442
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sculpture1_artifact
+    Name: Sculpture1 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9241
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sculpture2_artifact
+    Name: Sculpture2 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9243
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: skinned_deer_artifact
+    Name: Skinned Deer Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7825
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: skinned_goat_artifact
+    Name: Skinned Goat Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 7816
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: skull_candle_artifact
+    Name: Skull Candle Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 6232
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: stretched_hide_artifact
+    Name: Stretched Hide Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 4203
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: studded_leggings_artifact
+    Name: Studded Leggings Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 5080
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: studded_tunic_artifact
+    Name: Studded Tunic Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 5081
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display1_north_artifact
+    Name: Sword Display1 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10307
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display1_west_artifact
+    Name: Sword Display1 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10306
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display2_north_artifact
+    Name: Sword Display2 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10309
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display2_west_artifact
+    Name: Sword Display2 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10308
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display3_east_artifact
+    Name: Sword Display3 East Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10326
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display3_south_artifact
+    Name: Sword Display3 South Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10325
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display4_north_artifact
+    Name: Sword Display4 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10324
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display4_west_artifact
+    Name: Sword Display4 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10323
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display5_north_artifact
+    Name: Sword Display5 North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10322
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: sword_display5_west_artifact
+    Name: Sword Display5 West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 10321
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: tarot_cards_artifact
+    Name: Tarot Cards Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 4773
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: teapot_north_artifact
+    Name: Teapot North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9446
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: teapot_west_artifact
+    Name: Teapot West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9447
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: tower_lantern_artifact
+    Name: Tower Lantern Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9408
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: triple_fan_north_artifact
+    Name: Triple Fan North Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9227
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: triple_fan_west_artifact
+    Name: Triple Fan West Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9228
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: urn1_artifact
+    Name: Urn1 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9245
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: urn2_artifact
+    Name: Urn2 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9246
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: zen_rock1_artifact
+    Name: Zen Rock1 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9444
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: zen_rock2_artifact
+    Name: Zen Rock2 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9443
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts
+-   Id: zen_rock3_artifact
+    Name: Zen Rock3 Artifact
+    Category: Decoration Artifacts
+    Description: ''
+    ItemId: 9445
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Artifact
+    Tags:
+        - modernuo
+        - decoration artifacts

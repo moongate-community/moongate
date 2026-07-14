@@ -78,7 +78,7 @@ public readonly record struct CharacterCreationPacket(
         var shirtHue = reader.ReadInt16();
         var pantsHue = reader.ReadInt16();
 
-        return new CharacterCreationPacket(
+        return new(
             slot,
             name,
             clientFlags,
@@ -101,16 +101,14 @@ public readonly record struct CharacterCreationPacket(
     }
 
     private static (GenderType Gender, RaceType Race) DecodeGenderRace(byte value)
-    {
-        return value switch
+        => value switch
         {
             0 or 2 => (GenderType.Male, RaceType.Human),
             1 or 3 => (GenderType.Female, RaceType.Human),
-            4 => (GenderType.Male, RaceType.Elf),
-            5 => (GenderType.Female, RaceType.Elf),
-            6 => (GenderType.Male, RaceType.Gargoyle),
-            7 => (GenderType.Female, RaceType.Gargoyle),
-            _ => (GenderType.Male, RaceType.Human)
+            4      => (GenderType.Male, RaceType.Elf),
+            5      => (GenderType.Female, RaceType.Elf),
+            6      => (GenderType.Male, RaceType.Gargoyle),
+            7      => (GenderType.Female, RaceType.Gargoyle),
+            _      => (GenderType.Male, RaceType.Human)
         };
-    }
 }
