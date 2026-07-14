@@ -164,6 +164,49 @@ public class ItemServiceTests
         Assert.Null(service.Unequip(new() { Name = "Bob" }, LayerType.OneHanded));
     }
 
+    [Fact]
+    public void Flip_CyclesToNextVariantAndPersists()
+    {
+        var (service, persistence) = Build();
+        var item = new ItemEntity { Name = "Armoire", ItemId = 2639, FlippableItemIds = [2639, 2643] };
+        service.Create(item);
+
+        Assert.True(service.Flip(item));
+        Assert.Equal(2643, item.ItemId);
+        Assert.Equal(2643, persistence.Store<ItemEntity>().GetById(item.Id)!.ItemId);
+    }
+
+    [Fact]
+    public void Flip_WrapsAroundToFirstVariant()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Armoire", ItemId = 2643, FlippableItemIds = [2639, 2643] };
+        service.Create(item);
+
+        Assert.True(service.Flip(item));
+        Assert.Equal(2639, item.ItemId);
+    }
+
+    [Fact]
+    public void Flip_ReturnsFalse_WhenFewerThanTwoVariants()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Dagger", ItemId = 3921, FlippableItemIds = [] };
+
+        Assert.False(service.Flip(item));
+        Assert.Equal(3921, item.ItemId);
+    }
+
+    [Fact]
+    public void Flip_ReturnsFalse_WhenCurrentIdNotInList()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Odd", ItemId = 100, FlippableItemIds = [2639, 2643] };
+
+        Assert.False(service.Flip(item));
+        Assert.Equal(100, item.ItemId);
+    }
+
     private static (ItemService Service, FakePersistenceService Persistence) Build()
     {
         var persistence = new FakePersistenceService();

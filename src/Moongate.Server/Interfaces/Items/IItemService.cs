@@ -20,6 +20,9 @@ public interface IItemService
     /// <summary>Equips an item onto a mobile at a layer, detaching it from any previous location.</summary>
     void Equip(MobileEntity mobile, ItemEntity item, LayerType layer);
 
+    /// <summary>Flips an item to its next orientation graphic (wrap-around); false when it has no flip variants.</summary>
+    bool Flip(ItemEntity item);
+
     /// <summary>Returns the item with the given serial, or null.</summary>
     ItemEntity? GetById(Serial itemId);
 

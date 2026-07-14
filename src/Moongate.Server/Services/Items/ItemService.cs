@@ -74,6 +74,26 @@ public sealed class ItemService : IItemService
         _mobiles.UpsertAsync(mobile).WaitSync();
     }
 
+    public bool Flip(ItemEntity item)
+    {
+        if (item.FlippableItemIds.Count < 2)
+        {
+            return false;
+        }
+
+        var index = item.FlippableItemIds.IndexOf(item.ItemId);
+
+        if (index < 0)
+        {
+            return false;
+        }
+
+        item.ItemId = item.FlippableItemIds[(index + 1) % item.FlippableItemIds.Count];
+        _items.UpsertAsync(item).WaitSync();
+
+        return true;
+    }
+
     public ItemEntity? GetById(Serial itemId)
         => _items.GetById(itemId);
 
