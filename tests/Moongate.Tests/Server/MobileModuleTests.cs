@@ -129,6 +129,19 @@ public class MobileModuleTests
     }
 
     [Fact]
+    public void SetSkill_AcceptsNumericId_AndUnifiesWithName()
+    {
+        var (module, _) = Build();
+        var serial = module.Create("Guard", 1, 0, 0, 0)!.Value;
+
+        // Lua passes an exposed SkillName constant as a number (double). 40 == Swordsmanship.
+        Assert.True(module.SetSkill(serial, 40d, 700));
+
+        Assert.Equal(700, module.GetSkill(serial, 40d));
+        Assert.Equal(700, module.GetSkill(serial, "Swordsmanship"));
+    }
+
+    [Fact]
     public void Delete_RemovesMobile()
     {
         var (module, persistence) = Build();

@@ -1,3 +1,4 @@
+using System.Globalization;
 using MoonSharp.Interpreter;
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
@@ -135,8 +136,8 @@ public sealed class MobileModule
         return true;
     }
 
-    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name, or 0.")]
-    public int GetSkill(uint serial, string skill)
+    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
+    public int GetSkill(uint serial, object skill)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
@@ -148,8 +149,8 @@ public sealed class MobileModule
         return mobile.Skills.GetValueOrDefault(skillId, 0);
     }
 
-    [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name; false on unknown serial/skill.")]
-    public bool SetSkill(uint serial, string skill, int value)
+    [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name or id; false on unknown serial/skill.")]
+    public bool SetSkill(uint serial, object skill, int value)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
@@ -188,25 +189,38 @@ public sealed class MobileModule
     public bool Delete(uint serial)
         => _mobiles.RemoveAsync((Serial)serial).WaitSync();
 
-    private static bool TryResolveSkill(string skill, out int skillId)
+    private static bool TryResolveSkill(object? skill, out int skillId)
     {
         skillId = 0;
 
-        if (string.IsNullOrWhiteSpace(skill))
+        switch (skill)
         {
-            return false;
+            // A skill name, in display form ("Animal Lore") or compact form ("AnimalLore").
+            case string name when !string.IsNullOrWhiteSpace(name):
+            {
+                var token = new string(name.Where(char.IsLetter).ToArray());
+
+                if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+                {
+                    return false;
+                }
+
+                skillId = (int)parsed;
+
+                return true;
+            }
+
+            // A numeric skill id, e.g. the value of an exposed SkillName enum constant.
+            case IConvertible convertible when skill is not string:
+            {
+                skillId = convertible.ToInt32(CultureInfo.InvariantCulture);
+
+                return skillId >= 0;
+            }
+
+            default:
+                return false;
         }
-
-        var token = new string(skill.Where(char.IsLetter).ToArray());
-
-        if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
-        {
-            return false;
-        }
-
-        skillId = (int)parsed;
-
-        return true;
     }
 
     private static void ApplyInt(Table fields, string key, Action<int> apply)

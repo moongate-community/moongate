@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Server.Scripting;
+using Moongate.UO.Data.Types;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
@@ -24,5 +25,7 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
     {
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();
+
+        container.RegisterScriptEnum<SkillName>();
     }
 }
