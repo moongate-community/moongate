@@ -65,7 +65,11 @@ mobile.delete(serial)                        -> boolean
 
 `mobile.set` reads the keys it recognises from `fields` and ignores the rest: `name`, `str`, `dex`, `int`, `profession`, `map`, `hair_style`, `facial_hair_style`, `skin_hue`, `hair_hue`, `facial_hair_hue`, and the string-valued `gender`, `race`, and `direction` (parsed case-insensitively; an unrecognised value leaves the field unchanged).
 
-`skillName` is a skill's name — either its display form (`"Animal Lore"`) or the compact form (`"AnimalLore"`); punctuation and spaces are ignored and matching is case-insensitive. Skill values are stored in tenths (`500` = 50.0). Names correspond to the `SkillName` identifiers; the balancing rules live in `data/skills.yaml`.
+`skillName` accepts either a name string — its display form (`"Animal Lore"`) or the compact form (`"AnimalLore"`), punctuation- and case-insensitive — or a numeric skill id. The `SkillName` enum is exposed to Lua as the read-only global `skill_name`, so `skill_name.Swordsmanship` (a number) is the recommended, typo-safe way to name a skill. Skill values are stored in tenths (`500` = 50.0); the balancing rules live in `data/skills.yaml`.
+
+### Exposed enums
+
+`MoongateScriptModulesPlugin` also exposes the `SkillName` enum to Lua as a read-only, case-insensitive global table named `skill_name`, mapping each member to its numeric id (for example `skill_name.Swordsmanship == 40`). Reading an undefined member yields `nil`, and the table cannot be extended. Enums are registered with `container.RegisterScriptEnum<T>()`.
 
 ### Example: spawn and outfit a guard
 
@@ -84,9 +88,10 @@ game.post(function()
         skin_hue = 1002,
     })
 
-    -- Combat skills, referenced by name (values are in tenths: 900 = 90.0).
-    mobile.set_skill(guard, "Swordsmanship", 900)
-    mobile.set_skill(guard, "Tactics", 850)
+    -- Combat skills (values are in tenths: 900 = 90.0). Reference them via the exposed
+    -- skill_name enum constant, or by name string — both work.
+    mobile.set_skill(guard, skill_name.Swordsmanship, 900)
+    mobile.set_skill(guard, skill_name.Tactics, 850)
     mobile.set_skill(guard, "Parrying", 800)
 
     -- Give the guard a weapon and equip it.
