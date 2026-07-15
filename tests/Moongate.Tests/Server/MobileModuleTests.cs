@@ -97,15 +97,35 @@ public class MobileModuleTests
     }
 
     [Fact]
-    public void Skills_SetGetAndList()
+    public void Skills_SetGetAndList_ByName()
     {
         var (module, _) = Build();
         var serial = module.Create("Guard", 1, 100, 200, 5)!.Value;
 
-        Assert.True(module.SetSkill(serial, 1, 55));
-        Assert.Equal(55, module.GetSkill(serial, 1));
-        Assert.Equal(0, module.GetSkill(serial, 2));
-        Assert.Equal(55, module.Skills(serial)![1]);
+        Assert.True(module.SetSkill(serial, "Swordsmanship", 550));
+        Assert.Equal(550, module.GetSkill(serial, "Swordsmanship"));
+        Assert.Equal(0, module.GetSkill(serial, "Tactics"));
+        Assert.Equal(550, module.Skills(serial)!["Swordsmanship"]);
+    }
+
+    [Fact]
+    public void SetSkill_AcceptsDisplayNameWithSpaces()
+    {
+        var (module, _) = Build();
+        var serial = module.Create("Tamer", 1, 0, 0, 0)!.Value;
+
+        Assert.True(module.SetSkill(serial, "Animal Lore", 300));
+        Assert.Equal(300, module.GetSkill(serial, "AnimalLore"));
+    }
+
+    [Fact]
+    public void SetSkill_UnknownSkillName_ReturnsFalse()
+    {
+        var (module, _) = Build();
+        var serial = module.Create("Guard", 1, 0, 0, 0)!.Value;
+
+        Assert.False(module.SetSkill(serial, "Jumping", 100));
+        Assert.Equal(0, module.GetSkill(serial, "Jumping"));
     }
 
     [Fact]

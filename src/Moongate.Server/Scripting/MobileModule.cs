@@ -135,20 +135,25 @@ public sealed class MobileModule
         return true;
     }
 
-    [ScriptFunction("get_skill", "Returns the skill value for the mobile, or 0.")]
-    public int GetSkill(uint serial, int skillId)
+    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name, or 0.")]
+    public int GetSkill(uint serial, string skill)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
-        return mobile is null ? 0 : mobile.Skills.GetValueOrDefault(skillId, 0);
+        if (mobile is null || !TryResolveSkill(skill, out var skillId))
+        {
+            return 0;
+        }
+
+        return mobile.Skills.GetValueOrDefault(skillId, 0);
     }
 
-    [ScriptFunction("set_skill", "Sets a skill value on the mobile; false on unknown serial.")]
-    public bool SetSkill(uint serial, int skillId, int value)
+    [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name; false on unknown serial/skill.")]
+    public bool SetSkill(uint serial, string skill, int value)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
-        if (mobile is null)
+        if (mobile is null || !TryResolveSkill(skill, out var skillId))
         {
             return false;
         }
@@ -159,17 +164,50 @@ public sealed class MobileModule
         return true;
     }
 
-    [ScriptFunction("skills", "Returns the mobile's skill values keyed by skill id, or nil.")]
-    public Dictionary<int, int>? Skills(uint serial)
+    [ScriptFunction("skills", "Returns the mobile's skill values keyed by skill name, or nil.")]
+    public Dictionary<string, int>? Skills(uint serial)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
-        return mobile is null ? null : new(mobile.Skills);
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        var skills = new Dictionary<string, int>();
+
+        foreach (var (skillId, value) in mobile.Skills)
+        {
+            skills[((SkillName)skillId).ToString()] = value;
+        }
+
+        return skills;
     }
 
     [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
     public bool Delete(uint serial)
         => _mobiles.RemoveAsync((Serial)serial).WaitSync();
+
+    private static bool TryResolveSkill(string skill, out int skillId)
+    {
+        skillId = 0;
+
+        if (string.IsNullOrWhiteSpace(skill))
+        {
+            return false;
+        }
+
+        var token = new string(skill.Where(char.IsLetter).ToArray());
+
+        if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+        {
+            return false;
+        }
+
+        skillId = (int)parsed;
+
+        return true;
+    }
 
     private static void ApplyInt(Table fields, string key, Action<int> apply)
     {
