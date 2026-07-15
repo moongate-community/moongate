@@ -45,6 +45,15 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
 
     public Hue FacialHairHue { get; set; }
 
+    /// <summary>The body graphic id; for non-player mobiles it comes from the spawn template.</summary>
+    public int Body { get; set; }
+
+    /// <summary>Lua brain script id for the future AI system; empty when none.</summary>
+    public string BrainScriptId { get; set; } = string.Empty;
+
+    /// <summary>Loot table id for the future loot-on-death system; empty when none.</summary>
+    public string LootTableId { get; set; } = string.Empty;
+
     /// <summary>Serial of this mobile's backpack container; <see cref="Serial.Zero" /> when it has none.</summary>
     public Serial BackpackId { get; set; }
 
