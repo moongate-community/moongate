@@ -9,13 +9,13 @@ namespace Moongate.Server.Scripting;
 /// </summary>
 public static class LoopGuard
 {
-    public static void Warn(ILoopThread loopThread, string operation)
+    public static void Warn(ILoopThread loopThread, string operation, ILogger? logger = null)
     {
         if (!loopThread.IsOnLoopThread)
         {
-            // Resolve the logger at call time (not a cached static) so it honours the current
-            // Log.Logger configuration; the off-loop path is rare, so the cost is negligible.
-            Log.ForContext(typeof(LoopGuard))
+            // Default to the ambient Serilog logger, resolved at call time so it honours the current
+            // Log.Logger configuration; tests pass their own logger to avoid mutating global state.
+            (logger ?? Log.ForContext(typeof(LoopGuard)))
                 .Warning("{Operation} called off the game-loop thread; world mutation must run on the loop", operation);
         }
     }

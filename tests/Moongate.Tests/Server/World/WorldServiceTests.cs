@@ -15,8 +15,8 @@ namespace Moongate.Tests.Server.World;
 
 public class WorldServiceTests
 {
-    private static WorldService Service(StubItemService items)
-        => new(items, new StubEventBus());
+    private static WorldService Service(StubItemService items, TimeProvider? time = null)
+        => new(items, new StubEventBus(), time ?? TimeProvider.System);
 
     private static byte[] Serialize(IOutgoingPacket packet)
     {
@@ -73,6 +73,16 @@ public class WorldServiceTests
 
         Assert.Equal(0xBC, season[0]);
         Assert.Equal((byte)SeasonType.Spring, season[1]);
+    }
+
+    [Fact]
+    public void BuildSequence_GameTimeComesFromTheTimeProvider()
+    {
+        var time = new FixedTimeProvider(new DateTimeOffset(2026, 1, 1, 13, 37, 45, TimeSpan.Zero));
+
+        var gameTime = Serialize(Service(new StubItemService([]), time).BuildSequence(Player())[12]); // 0x5B is last
+
+        Assert.Equal(new byte[] { 0x5B, 13, 37, 45 }, gameTime);
     }
 
     [Fact]

@@ -35,11 +35,13 @@ public sealed class WorldService : IWorldService
 
     private readonly IItemService _items;
     private readonly IEventBus _eventBus;
+    private readonly TimeProvider _timeProvider;
 
-    public WorldService(IItemService items, IEventBus eventBus)
+    public WorldService(IItemService items, IEventBus eventBus, TimeProvider timeProvider)
     {
         _items = items;
         _eventBus = eventBus;
+        _timeProvider = timeProvider;
     }
 
     public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
@@ -64,6 +66,7 @@ public sealed class WorldService : IWorldService
         var position = mobile.Position;
         var body = (ushort)mobile.Body;
         var flags = GetBodyFlags(mobile);
+        var now = _timeProvider.GetLocalNow();
 
         return
         [
@@ -108,7 +111,7 @@ public sealed class WorldService : IWorldService
             BuildStatus(mobile),
             new WarModePacket(false),
             new LoginCompletePacket(),
-            new GameTimePacket(0, 0, 0)
+            new GameTimePacket((byte)now.Hour, (byte)now.Minute, (byte)now.Second)
         ];
     }
 

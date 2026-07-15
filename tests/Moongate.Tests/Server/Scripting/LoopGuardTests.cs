@@ -11,17 +11,8 @@ public class LoopGuardTests
     public void Warn_OffLoop_EmitsWarning()
     {
         var sink = new ListSink();
-        var original = Log.Logger;
-        Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
 
-        try
-        {
-            LoopGuard.Warn(new StubLoopThread(false), "mobile.create");
-        }
-        finally
-        {
-            Log.Logger = original;
-        }
+        LoopGuard.Warn(new StubLoopThread(false), "mobile.create", LoggerFor(sink));
 
         Assert.Contains(sink.Events, e => e.Level == LogEventLevel.Warning);
     }
@@ -30,20 +21,16 @@ public class LoopGuardTests
     public void Warn_OnLoop_DoesNotWarn()
     {
         var sink = new ListSink();
-        var original = Log.Logger;
-        Log.Logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
 
-        try
-        {
-            LoopGuard.Warn(new StubLoopThread(true), "mobile.create");
-        }
-        finally
-        {
-            Log.Logger = original;
-        }
+        LoopGuard.Warn(new StubLoopThread(true), "mobile.create", LoggerFor(sink));
 
         Assert.DoesNotContain(sink.Events, e => e.Level == LogEventLevel.Warning);
     }
+
+    // A private logger writing to a per-test sink, so nothing touches the global Log.Logger and
+    // parallel tests can never write into this sink (which would race the assertions below).
+    private static ILogger LoggerFor(ListSink sink)
+        => new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
 
     private sealed class ListSink : Serilog.Core.ILogEventSink
     {
