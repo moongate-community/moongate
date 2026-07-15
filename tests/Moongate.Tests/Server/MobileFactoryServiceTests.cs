@@ -171,6 +171,34 @@ public class MobileFactoryServiceTests
     }
 
     [Fact]
+    public void CreateFromTemplate_VariantLoot_OverridesTemplateOtherwiseInherits()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Guard",
+                LootTableId = "guard.base",
+                Variants =
+                [
+                    new() { Name = "rich", LootTableId = "guard.rich" },
+                    new() { Name = "plain" }
+                ]
+            }
+        );
+        var factory = Factory(templates);
+
+        var loots = Enumerable.Range(0, 40)
+                              .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
+                              .ToHashSet();
+
+        Assert.Contains("guard.rich", loots);  // variant override wins
+        Assert.Contains("guard.base", loots);  // variant without loot inherits the template
+        Assert.Equal(2, loots.Count);
+    }
+
+    [Fact]
     public void CreateFromTemplate_ResolvesEquipment()
     {
         var templates = new MobileTemplateService();

@@ -98,7 +98,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Dexterity = template.Dexterity,
             Intelligence = template.Intelligence,
             BrainScriptId = template.BrainScript ?? string.Empty,
-            LootTableId = template.LootTableId ?? string.Empty
+            LootTableId = variant?.LootTableId ?? template.LootTableId ?? string.Empty
         };
 
         ApplyAppearance(mobile, template.Appearance, variant?.Appearance);

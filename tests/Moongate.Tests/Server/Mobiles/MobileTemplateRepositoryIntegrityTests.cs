@@ -16,11 +16,13 @@ public class MobileTemplateRepositoryIntegrityTests
         var directories = new DirectoriesConfig(root, []);
         var items = new ItemTemplateService();
         var mobiles = new MobileTemplateService();
+        var loot = new LootTemplateService();
 
         try
         {
             await new ItemTemplatesLoader(items, directories).LoadAsync();
             await new MobileTemplatesLoader(mobiles, directories).LoadAsync();
+            await new LootTemplatesLoader(loot, items, directories).LoadAsync();
 
             Assert.NotEmpty(mobiles.All);
 
@@ -51,6 +53,25 @@ public class MobileTemplateRepositoryIntegrityTests
                         items.GetById(entry.Item) is not null,
                         $"Unknown item template '{entry.Item}' referenced by mobile template '{template.Id}'"
                     );
+                }
+
+                if (!string.IsNullOrEmpty(template.LootTableId))
+                {
+                    Assert.True(
+                        loot.GetById(template.LootTableId) is not null,
+                        $"Unknown loot table '{template.LootTableId}' referenced by mobile template '{template.Id}'"
+                    );
+                }
+
+                foreach (var variant in template.Variants)
+                {
+                    if (!string.IsNullOrEmpty(variant.LootTableId))
+                    {
+                        Assert.True(
+                            loot.GetById(variant.LootTableId) is not null,
+                            $"Unknown loot table '{variant.LootTableId}' in variant '{variant.Name}' of mobile template '{template.Id}'"
+                        );
+                    }
                 }
             }
         }
