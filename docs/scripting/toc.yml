@@ -1,5 +1,15 @@
 - name: Overview
   href: index.md
+- name: Guides
+  items:
+    - name: How scripting works
+      href: guides/how-scripting-works.md
+    - name: Items
+      href: guides/items.md
+    - name: Mobiles
+      href: guides/mobiles.md
+    - name: Loot
+      href: guides/loot.md
 - name: Reference
   items:
     - name: log

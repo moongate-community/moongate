@@ -9,7 +9,7 @@ _layout: landing
   Build your shard with Lua scripts and YAML data — no C# required.</p>
   <ul class="mg-hero-nav">
     <li>Get started</li>
-    <li>Scripting</li>
+    <li><a href="scripting/index.md">Scripting</a></li>
   </ul>
 </div>
 
