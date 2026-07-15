@@ -8,7 +8,7 @@ _layout: landing
   <p>A modern, KISS Ultima Online server emulator on .NET.<br/>
   Build your shard with Lua scripts and YAML data — no C# required.</p>
   <ul class="mg-hero-nav">
-    <li>Get started</li>
+    <li><a href="getting-started/index.md">Get started</a></li>
     <li><a href="scripting/index.md">Scripting</a></li>
   </ul>
 </div>
