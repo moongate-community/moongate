@@ -6,6 +6,7 @@ using Moongate.Scripting;
 using Moongate.Server;
 using Moongate.Server.Autostart;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Accounts;
@@ -160,7 +161,11 @@ await ConsoleApp.RunAsync(
                         var loop = container.Resolve<IGameLoopContext>();
                         var marker = container.Resolve<ILoopThread>();
 
-                        loop.Post(marker.Capture);
+                        loop.Post(() =>
+                        {
+                            marker.Capture();
+                            _ = eventBus.PublishAsync(new WorldReadyEvent());
+                        });
 
                         return Task.CompletedTask;
                     }
