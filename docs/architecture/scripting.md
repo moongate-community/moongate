@@ -47,7 +47,7 @@ item.remove_from_container(container, serial)  -> boolean
 item.contents(container)                     -> { serial, ... }
 ```
 
-`layer` is a layer name (for example `"OneHanded"`, `"TwoHanded"`, `"Backpack"`), matched case-insensitively.
+`layer` accepts either a layer name (for example `"OneHanded"`, `"TwoHanded"`, `"Backpack"`, case-insensitive) or a `layer_type` enum constant (see [Exposed enums](#exposed-enums)).
 
 ### `mobile`
 
@@ -63,13 +63,22 @@ mobile.skills(serial)                        -> { [skillName] = value, ... } | n
 mobile.delete(serial)                        -> boolean
 ```
 
-`mobile.set` reads the keys it recognises from `fields` and ignores the rest: `name`, `str`, `dex`, `int`, `profession`, `map`, `hair_style`, `facial_hair_style`, `skin_hue`, `hair_hue`, `facial_hair_hue`, and the string-valued `gender`, `race`, and `direction` (parsed case-insensitively; an unrecognised value leaves the field unchanged).
+`mobile.set` reads the keys it recognises from `fields` and ignores the rest: `name`, `str`, `dex`, `int`, `profession`, `map`, `hair_style`, `facial_hair_style`, `skin_hue`, `hair_hue`, `facial_hair_hue`, and `gender`, `race`, `direction`. The last three accept either a name string (case-insensitive) or a numeric enum value — `gender` and `race` have exposed constants (`gender_type`, `race_type`); an unrecognised value leaves the field unchanged.
 
 `skillName` accepts either a name string — its display form (`"Animal Lore"`) or the compact form (`"AnimalLore"`), punctuation- and case-insensitive — or a numeric skill id. The `SkillName` enum is exposed to Lua as the read-only global `skill_name`, so `skill_name.Swordsmanship` (a number) is the recommended, typo-safe way to name a skill. Skill values are stored in tenths (`500` = 50.0); the balancing rules live in `data/skills.yaml`.
 
 ### Exposed enums
 
-`MoongateScriptModulesPlugin` also exposes the `SkillName` enum to Lua as a read-only, case-insensitive global table named `skill_name`, mapping each member to its numeric id (for example `skill_name.Swordsmanship == 40`). Reading an undefined member yields `nil`, and the table cannot be extended. Enums are registered with `container.RegisterScriptEnum<T>()`.
+`MoongateScriptModulesPlugin` exposes several C# enums to Lua as read-only, case-insensitive global tables, each mapping a member to its numeric value (for example `skill_name.Swordsmanship == 40`). Reading an undefined member yields `nil`, and the tables cannot be extended. Enums are registered with `container.RegisterScriptEnum<T>()`.
+
+| Global | Enum | Used by |
+|---|---|---|
+| `skill_name` | `SkillName` | `mobile.get_skill` / `set_skill` / `skills` |
+| `gender_type` | `GenderType` | `mobile.set` (`gender`) |
+| `race_type` | `RaceType` | `mobile.set` (`race`) |
+| `layer_type` | `LayerType` | `item.equip` / `unequip` |
+
+Wherever a function accepts one of these, it also accepts the equivalent name string, so `item.equip(m, s, layer_type.OneHanded)` and `item.equip(m, s, "OneHanded")` are equivalent.
 
 ### Example: spawn and outfit a guard
 
@@ -96,7 +105,7 @@ game.post(function()
 
     -- Give the guard a weapon and equip it.
     local blade = item.create("dagger", 1, 0)
-    if blade and item.equip(guard, blade, "OneHanded") then
+    if blade and item.equip(guard, blade, layer_type.OneHanded) then
         log.info("Armed guard {0} with blade {1}", guard, blade)
     end
 
@@ -125,6 +134,7 @@ end)
 - `src/Moongate.Server/MoongateScriptModulesPlugin.cs`
 - `src/Moongate.Server/Scripting/ItemModule.cs`
 - `src/Moongate.Server/Scripting/MobileModule.cs`
+- `src/Moongate.Server/Scripting/ScriptEnums.cs`
 - `src/Moongate.UO.Data/Types/SkillName.cs`
 
 ### Tests
