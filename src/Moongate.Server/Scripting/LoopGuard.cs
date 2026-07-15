@@ -9,13 +9,14 @@ namespace Moongate.Server.Scripting;
 /// </summary>
 public static class LoopGuard
 {
-    private static readonly ILogger Logger = Log.ForContext(typeof(LoopGuard));
-
     public static void Warn(ILoopThread loopThread, string operation)
     {
         if (!loopThread.IsOnLoopThread)
         {
-            Logger.Warning("{Operation} called off the game-loop thread; world mutation must run on the loop", operation);
+            // Resolve the logger at call time (not a cached static) so it honours the current
+            // Log.Logger configuration; the off-loop path is rare, so the cost is negligible.
+            Log.ForContext(typeof(LoopGuard))
+               .Warning("{Operation} called off the game-loop thread; world mutation must run on the loop", operation);
         }
     }
 }
