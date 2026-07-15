@@ -183,7 +183,7 @@ public sealed class SpeechList
     }
 
     /// <summary>
-    /// Saves speech.mul to <see cref="fileName" />
+    /// Saves speech.mul to <paramref name="fileName" />
     /// </summary>
     /// <param name="fileName"></param>
     public static void SaveSpeechList(string fileName)

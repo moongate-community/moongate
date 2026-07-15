@@ -52,7 +52,7 @@ public struct ItemData
 
     /// <summary>
     /// Gets the animation body index of this item.
-    /// <seealso cref="Animations" />
+    /// <seealso cref="Moongate.Ultima.Animation.Animations" />
     /// </summary>
     public short Animation { get; set; }
 

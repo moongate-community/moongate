@@ -89,7 +89,7 @@ public static class Animations
     /// <param name="direction"></param>
     /// <param name="hue"></param>
     /// <param name="preserveHue">
-    /// No Hue override <see cref="bodydev" />
+    /// No Hue override <c>bodydev</c>
     /// </param>
     /// <param name="firstFrame"></param>
     /// <returns></returns>

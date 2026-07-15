@@ -17,7 +17,7 @@ namespace Moongate.Ultima.Helpers;
 public sealed class MapHelper
 {
     /// <summary>
-    /// Checks if map1.mul exists and sets <see cref="Ultima.Map" />
+    /// Checks if map1.mul exists and sets <see cref="Map" />
     /// </summary>
     public static void CheckForNewMapSize()
     {
