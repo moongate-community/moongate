@@ -11,4 +11,11 @@
         <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+      </PackageReference>
+    </ItemGroup>
+
 </Project>

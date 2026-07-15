@@ -13,6 +13,10 @@
     <ItemGroup>
         <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.35.0"/>
         <PackageReference Include="SquidStd.Scripting.Lua" Version="0.35.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>
