@@ -1,4 +1,5 @@
 using Moongate.UO.Data.Mobiles.Templates;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Mobiles;
 
@@ -56,6 +57,7 @@ public sealed class MobileTemplateBaseResolver
             Category = NonEmpty(derived.Category, baseTemplate.Category),
             Description = NonEmpty(derived.Description, baseTemplate.Description),
             BaseMobile = null,
+            Gender = derived.Gender != GenderType.Male ? derived.Gender : baseTemplate.Gender,
             Strength = derived.Strength != DefaultStat ? derived.Strength : baseTemplate.Strength,
             Dexterity = derived.Dexterity != DefaultStat ? derived.Dexterity : baseTemplate.Dexterity,
             Intelligence = derived.Intelligence != DefaultStat ? derived.Intelligence : baseTemplate.Intelligence,

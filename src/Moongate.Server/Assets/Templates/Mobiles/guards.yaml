@@ -39,6 +39,7 @@
 -   Id: warrior_guard_female_npc
     Title: the guard
     Category: npc
+    Gender: Female
     Description: Town female warrior guard NPC inspired by ModernUO WarriorGuard.
     Tags:
         - npc
@@ -117,6 +118,7 @@
 -   Id: archer_guard_female_npc
     Title: the guard
     Category: npc
+    Gender: Female
     Description: Town female archer guard NPC inspired by ModernUO ArcherGuard.
     Tags:
         - npc

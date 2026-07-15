@@ -100,6 +100,18 @@ public class MobileFactoryServiceTests
     }
 
     [Fact]
+    public void CreateFromTemplate_AppliesGender()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "male", Name = "Guard" });
+        templates.Register(new() { Id = "female", Name = "Guard", Gender = GenderType.Female });
+        var factory = Factory(templates);
+
+        Assert.Equal(GenderType.Male, factory.CreateFromTemplate("male", 1, new(0, 0, 0))!.Mobile.Gender);
+        Assert.Equal(GenderType.Female, factory.CreateFromTemplate("female", 1, new(0, 0, 0))!.Mobile.Gender);
+    }
+
+    [Fact]
     public void CreateFromTemplate_ResolvesEquipment()
     {
         var templates = new MobileTemplateService();

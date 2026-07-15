@@ -1,3 +1,5 @@
+using Moongate.UO.Data.Types;
+
 namespace Moongate.UO.Data.Mobiles.Templates;
 
 /// <summary>A declarative mobile spawn template. Inheritance (BaseMobile) is resolved at load time.</summary>
@@ -6,6 +8,8 @@ public sealed class MobileTemplate
     public string Id { get; set; } = string.Empty;
 
     public string Name { get; set; } = string.Empty;
+
+    public GenderType Gender { get; set; } = GenderType.Male;
 
     public string Title { get; set; } = string.Empty;
 

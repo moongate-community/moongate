@@ -91,6 +91,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Name = template.Name,
             MapId = mapId,
             Position = position,
+            Gender = template.Gender,
             Strength = template.Strength,
             Dexterity = template.Dexterity,
             Intelligence = template.Intelligence,
