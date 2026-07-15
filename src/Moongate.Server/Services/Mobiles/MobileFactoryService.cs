@@ -91,7 +91,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Name = template.Name,
             MapId = mapId,
             Position = position,
-            Gender = template.Gender,
+            Gender = ResolveGender(template.Gender),
             Strength = template.Strength,
             Dexterity = template.Dexterity,
             Intelligence = template.Intelligence,
@@ -107,6 +107,14 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         return new MobileSpawn(mobile, ResolveEquipment(equipmentSource));
     }
+
+    private GenderType ResolveGender(MobileTemplateGenderType gender)
+        => gender switch
+        {
+            MobileTemplateGenderType.Female => GenderType.Female,
+            MobileTemplateGenderType.Random => _random.Next(2) == 0 ? GenderType.Male : GenderType.Female,
+            _ => GenderType.Male
+        };
 
     private MobileVariant? PickVariant(List<MobileVariant> variants)
     {

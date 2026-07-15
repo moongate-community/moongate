@@ -104,11 +104,26 @@ public class MobileFactoryServiceTests
     {
         var templates = new MobileTemplateService();
         templates.Register(new() { Id = "male", Name = "Guard" });
-        templates.Register(new() { Id = "female", Name = "Guard", Gender = GenderType.Female });
+        templates.Register(new() { Id = "female", Name = "Guard", Gender = MobileTemplateGenderType.Female });
         var factory = Factory(templates);
 
         Assert.Equal(GenderType.Male, factory.CreateFromTemplate("male", 1, new(0, 0, 0))!.Mobile.Gender);
         Assert.Equal(GenderType.Female, factory.CreateFromTemplate("female", 1, new(0, 0, 0))!.Mobile.Gender);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_RandomGender_RollsBothValues()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "any", Name = "Guard", Gender = MobileTemplateGenderType.Random });
+        var factory = Factory(templates);
+
+        var genders = Enumerable.Range(0, 40)
+                                .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
+                                .ToHashSet();
+
+        Assert.Contains(GenderType.Male, genders);
+        Assert.Contains(GenderType.Female, genders);
     }
 
     [Fact]

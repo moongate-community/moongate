@@ -9,7 +9,7 @@ public sealed class MobileTemplate
 
     public string Name { get; set; } = string.Empty;
 
-    public GenderType Gender { get; set; } = GenderType.Male;
+    public MobileTemplateGenderType Gender { get; set; } = MobileTemplateGenderType.Male;
 
     public string Title { get; set; } = string.Empty;
 

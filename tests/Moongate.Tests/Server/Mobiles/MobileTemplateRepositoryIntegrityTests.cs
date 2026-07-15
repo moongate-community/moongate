@@ -25,8 +25,8 @@ public class MobileTemplateRepositoryIntegrityTests
             Assert.NotEmpty(mobiles.All);
 
             // Gender parses from YAML into the enum: the shipped female guard is Female, a male one Male.
-            Assert.Equal(GenderType.Female, mobiles.GetById("warrior_guard_female_npc")!.Gender);
-            Assert.Equal(GenderType.Male, mobiles.GetById("warrior_guard_male_npc")!.Gender);
+            Assert.Equal(MobileTemplateGenderType.Female, mobiles.GetById("warrior_guard_female_npc")!.Gender);
+            Assert.Equal(MobileTemplateGenderType.Male, mobiles.GetById("warrior_guard_male_npc")!.Gender);
 
             foreach (var template in mobiles.All)
             {
