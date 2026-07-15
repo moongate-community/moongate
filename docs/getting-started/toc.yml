@@ -1,0 +1,10 @@
+- name: Overview
+  href: index.md
+- name: What is Moongate
+  href: what-is-moongate.md
+- name: Install & first launch
+  href: install-and-first-launch.md
+- name: Connect with ClassicUO
+  href: connect-with-classicuo.md
+- name: Configuration
+  href: configuration.md

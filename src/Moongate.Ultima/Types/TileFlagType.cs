@@ -2,8 +2,8 @@ namespace Moongate.Ultima.Types;
 
 /// <summary>
 /// An enumeration of 64 different tile flags.
-/// <seealso cref="ItemData" />
-/// <seealso cref="LandData" />
+/// <seealso cref="Moongate.Ultima.Tiles.ItemData" />
+/// <seealso cref="Moongate.Ultima.Tiles.LandData" />
 /// </summary>
 [Flags]
 public enum TileFlagType : ulong
