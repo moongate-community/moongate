@@ -122,6 +122,7 @@ public sealed class FrameEdit
                     var col = cur[r + i];
                     raw.data[r++] = GetPaletteIndex(palette, col);
                 }
+
                 tmp.Add(raw);
                 x = j + 1;
                 i = x;

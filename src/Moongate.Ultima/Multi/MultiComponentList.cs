@@ -94,6 +94,7 @@ public sealed class MultiComponentList
                 MaxHeight = e.OffsetZ;
             }
         }
+
         ConvertList();
     }
 
@@ -116,6 +117,7 @@ public sealed class MultiComponentList
                             itemCount++;
                         }
                     }
+
                     SortedTiles = new MultiTileEntry[itemCount];
                     itemCount = 0;
                     _min.X = 10000;
@@ -191,6 +193,7 @@ public sealed class MultiComponentList
                             break;
                         }
                     }
+
                     SortedTiles = new MultiTileEntry[itemCount];
                     itemCount = 0;
                     _min.X = 10000;
@@ -337,6 +340,7 @@ public sealed class MultiComponentList
                             }
                         }
                     }
+
                     SortedTiles = new MultiTileEntry[itemCount];
                     itemCount = 0;
                     _min.X = 10000;
@@ -447,6 +451,7 @@ public sealed class MultiComponentList
                             SortedTiles[i].OffsetX = (short)(SortedTiles[i].OffsetX - _min.X);
                             SortedTiles[i].OffsetY = (short)(SortedTiles[i].OffsetY - _min.Y);
                         }
+
                         _max.X -= _min.X;
                         _max.Y -= _min.Y;
                         _min.X = 0;
@@ -584,6 +589,7 @@ public sealed class MultiComponentList
 
             ++i;
         }
+
         arr.Clear();
 
         ConvertList();
@@ -707,6 +713,7 @@ public sealed class MultiComponentList
                 }
             }
         }
+
         ConvertList();
     }
 

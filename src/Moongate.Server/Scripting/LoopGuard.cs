@@ -16,7 +16,7 @@ public static class LoopGuard
             // Resolve the logger at call time (not a cached static) so it honours the current
             // Log.Logger configuration; the off-loop path is rare, so the cost is negligible.
             Log.ForContext(typeof(LoopGuard))
-               .Warning("{Operation} called off the game-loop thread; world mutation must run on the loop", operation);
+                .Warning("{Operation} called off the game-loop thread; world mutation must run on the loop", operation);
         }
     }
 }

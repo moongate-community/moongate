@@ -39,8 +39,7 @@ public class LoginFlowIntegrationTests
         var eventBus = new EventBusService();
 
         using var dispatched = new ManualResetEventSlim();
-        eventBus.Subscribe<PacketDispatchedEvent>(
-            (e, _) =>
+        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
             {
                 if (e.OpCode == 0x80)
                 {
@@ -181,16 +180,14 @@ public class LoginFlowIntegrationTests
 
         using var created = new ManualResetEventSlim();
         using var destroyed = new ManualResetEventSlim();
-        eventBus.Subscribe<SessionCreatedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
             {
                 created.Set();
 
                 return Task.CompletedTask;
             }
         );
-        eventBus.Subscribe<SessionDestroyedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
             {
                 destroyed.Set();
 

@@ -159,12 +159,14 @@ public sealed class MultiMap
                         ++colorsCount;
                         ++x;
                     }
+
                     writer.Write((byte)colorsCount);
                     writer.Write((ushort)(hue ^ 0x8000));
 
                     colorsAtLine++;
                     colorsCount = 0;
                 }
+
                 var currpos = writer.BaseStream.Position;
                 writer.BaseStream.Seek(pos, SeekOrigin.Begin);
                 writer.Write(colorsAtLine * 3); // byte count

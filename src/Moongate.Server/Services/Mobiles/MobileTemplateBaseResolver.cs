@@ -22,7 +22,9 @@ public sealed class MobileTemplateBaseResolver
         return templates.Select(template => ResolveOne(template, byId, new(StringComparer.OrdinalIgnoreCase))).ToList();
     }
 
-    private MobileTemplate ResolveOne(MobileTemplate template, Dictionary<string, MobileTemplate> byId, HashSet<string> visiting)
+    private MobileTemplate ResolveOne(
+        MobileTemplate template, Dictionary<string, MobileTemplate> byId, HashSet<string> visiting
+    )
     {
         if (string.IsNullOrEmpty(template.BaseMobile))
         {

@@ -133,8 +133,8 @@ public sealed class StringList
 
         public int Compare(StringEntry x, StringEntry y)
             => _sortDescending
-                   ? string.CompareOrdinal(y.Text, x.Text)
-                   : string.CompareOrdinal(x.Text, y.Text);
+                ? string.CompareOrdinal(y.Text, x.Text)
+                : string.CompareOrdinal(x.Text, y.Text);
     }
 
     public StringEntry GetEntry(int number)
@@ -184,6 +184,7 @@ public sealed class StringList
                         bin.Write(data);
                     }
                 }
+
                 var length = (uint)data2.Length;
                 data2 = MythicDecompress.Transform(data2);
                 var data3 = new byte[data2.Length + 4];
@@ -397,6 +398,7 @@ public sealed class StringList
 
                     return result;
                 }
+
                 cursor += length;
 
                 var se = new StringEntry(number, text, flag);

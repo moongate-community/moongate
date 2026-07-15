@@ -84,8 +84,7 @@ public class CharacterServiceTests
 
         var eventBus = new EventBusService();
         CharacterCreatedEvent? published = null;
-        eventBus.Subscribe<CharacterCreatedEvent>(
-            (evt, _) =>
+        eventBus.Subscribe<CharacterCreatedEvent>((evt, _) =>
             {
                 published = evt;
 
@@ -124,8 +123,7 @@ public class CharacterServiceTests
         var eventBus = new EventBusService();
 
         CharacterReadyEvent? ready = null;
-        eventBus.Subscribe<CharacterReadyEvent>(
-            (evt, _) =>
+        eventBus.Subscribe<CharacterReadyEvent>((evt, _) =>
             {
                 ready = evt;
 

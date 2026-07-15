@@ -15,11 +15,12 @@ public class LoopAffineInvokeMarshallerTests
         var ran = false;
 
         var result = marshaller.Invoke(() =>
-        {
-            ran = true;
+            {
+                ran = true;
 
-            return DynValue.NewNumber(42);
-        });
+                return DynValue.NewNumber(42);
+            }
+        );
 
         Assert.True(ran);
         Assert.Equal(42, result.Number);
@@ -34,11 +35,12 @@ public class LoopAffineInvokeMarshallerTests
         var ran = false;
 
         var result = marshaller.Invoke(() =>
-        {
-            ran = true;
+            {
+                ran = true;
 
-            return DynValue.NewNumber(42);
-        });
+                return DynValue.NewNumber(42);
+            }
+        );
 
         Assert.False(ran);
         Assert.True(result.IsNil());
@@ -60,6 +62,8 @@ public class LoopAffineInvokeMarshallerTests
 
         public bool IsOnLoopThread => _onLoop;
 
-        public void Capture() { }
+        public void Capture()
+        {
+        }
     }
 }

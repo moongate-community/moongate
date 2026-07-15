@@ -19,8 +19,8 @@ public class FlippableTemplatesTests
             await new ItemTemplatesLoader(templates, directories).LoadAsync();
 
             var withFlip = templates.All
-                                    .Where(t => t.FlippableItemIds is { Count: > 0 })
-                                    .ToList();
+                .Where(t => t.FlippableItemIds is { Count: > 0 })
+                .ToList();
 
             // The port added flip data well beyond the 3 hand-authored files.
             Assert.True(withFlip.Count > 20, $"Expected many flippable templates, got {withFlip.Count}");

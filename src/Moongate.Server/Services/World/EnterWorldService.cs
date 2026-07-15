@@ -20,8 +20,8 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public sealed class EnterWorldService : IEnterWorldService
 {
-    private const byte DefaultSeason = 0;         // spring
-    private const byte OverallLightLevel = 0;     // full daylight
+    private const byte DefaultSeason = 0;     // spring
+    private const byte OverallLightLevel = 0; // full daylight
     private const byte PersonalLightLevel = 0;
     private const byte FemaleFlag = 0x02;
     private const ushort DefaultStatCap = 225;

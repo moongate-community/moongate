@@ -91,8 +91,7 @@ await ConsoleApp.RunAsync(
         // Safe with config-first: sections bind eagerly at registration, even after this call.
         stdBootstrap.ConfigureLogging();
 
-        stdBootstrap.UsePlugins(
-            builder =>
+        stdBootstrap.UsePlugins(builder =>
             {
                 builder.FromDirectory("plugins");
                 builder.Add<MoongatePersistencePlugin>();
@@ -102,8 +101,7 @@ await ConsoleApp.RunAsync(
             }
         );
 
-        stdBootstrap.ConfigureServices(
-            container =>
+        stdBootstrap.ConfigureServices(container =>
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
@@ -159,8 +157,7 @@ await ConsoleApp.RunAsync(
 
                 var eventBus = container.Resolve<IEventBus>();
 
-                eventBus.Subscribe<EngineStartedEvent>(
-                    (_, _) =>
+                eventBus.Subscribe<EngineStartedEvent>((_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 
@@ -168,10 +165,11 @@ await ConsoleApp.RunAsync(
                         var marker = container.Resolve<ILoopThread>();
 
                         loop.Post(() =>
-                        {
-                            marker.Capture();
-                            _ = eventBus.PublishAsync(new WorldReadyEvent());
-                        });
+                            {
+                                marker.Capture();
+                                _ = eventBus.PublishAsync(new WorldReadyEvent());
+                            }
+                        );
 
                         return Task.CompletedTask;
                     }

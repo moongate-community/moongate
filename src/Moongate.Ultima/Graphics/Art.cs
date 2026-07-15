@@ -368,6 +368,7 @@ public static class Art
                         }
                     }
                 }
+
                 ++x;
             }
 
@@ -492,8 +493,8 @@ public static class Art
                             // GetLand / GetStatic transparently check _replaced
                             // first, then the LRU cache, then decode from disk.
                             var bmp = index < 0x4000
-                                          ? GetLand(index)
-                                          : GetStatic(index - 0x4000, false);
+                                ? GetLand(index)
+                                : GetStatic(index - 0x4000, false);
 
                             if (bmp == null || _removed[index])
                             {
@@ -982,8 +983,10 @@ public static class Art
                     {
                         ++x;
                     }
+
                     total += 2 + (x - runStart);
                 }
+
                 total += 2;
             }
         }

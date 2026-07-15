@@ -31,7 +31,9 @@ public sealed class FileIndex : IDisposable
         ".dat",
         -1,
         false
-    ) { }
+    )
+    {
+    }
 
     public FileIndex(
         string idxFile,

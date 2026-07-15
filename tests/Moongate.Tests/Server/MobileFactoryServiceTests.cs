@@ -129,8 +129,8 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var genders = Enumerable.Range(0, 40)
-                                .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
-                                .ToHashSet();
+            .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
+            .ToHashSet();
 
         Assert.Contains(GenderType.Male, genders);
         Assert.Contains(GenderType.Female, genders);
@@ -200,11 +200,11 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var loots = Enumerable.Range(0, 40)
-                              .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
-                              .ToHashSet();
+            .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
+            .ToHashSet();
 
-        Assert.Contains("guard.rich", loots);  // variant override wins
-        Assert.Contains("guard.base", loots);  // variant without loot inherits the template
+        Assert.Contains("guard.rich", loots); // variant override wins
+        Assert.Contains("guard.base", loots); // variant without loot inherits the template
         Assert.Equal(2, loots.Count);
     }
 

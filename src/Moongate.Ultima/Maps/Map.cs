@@ -33,6 +33,7 @@ public sealed class Map
             {
                 return;
             }
+
             _altitudeIntensity = value;
             InvalidateAltitudeShadingCache();
         }
@@ -50,6 +51,7 @@ public sealed class Map
             {
                 return;
             }
+
             _shadingPreset = value;
             InvalidateAltitudeShadingCache();
         }
@@ -509,7 +511,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -523,7 +525,7 @@ public sealed class Map
             var pRow7 = (int*)(pStart + 7 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -589,7 +591,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -599,7 +601,7 @@ public sealed class Map
             var pRow3 = (int*)(pStart + 3 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -634,7 +636,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -642,7 +644,7 @@ public sealed class Map
             var pRow1 = (int*)(pStart + 1 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -923,6 +925,7 @@ public sealed class Map
                                         binaryWriter.Write((sbyte)0);
                                     }
                                 }
+
                                 y = 0;
                             }
                         }
@@ -1270,6 +1273,7 @@ public sealed class Map
                 half[dstRow + 2] = full[srcRow + 4];
                 half[dstRow + 3] = full[srcRow + 6];
             }
+
             cache[y][x] = data = half;
         }
 
@@ -1487,7 +1491,7 @@ public sealed class Map
         return data;
     }
 
-#region Altitude Map Rendering
+    #region Altitude Map Rendering
 
     /// <summary>
     /// Returns Bitmap with altitude rendering mode support
@@ -1544,7 +1548,7 @@ public sealed class Map
         {
             // Grayscale altitude mode (formerly 8bpp indexed with a gray palette)
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1558,7 +1562,7 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
@@ -1617,7 +1621,7 @@ public sealed class Map
             var withAltitude = altitudeMode == MapAltitudeModeType.NormalWithAltitude;
 
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1631,13 +1635,13 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
                     var colorData = withAltitude
-                                        ? GetLitBlock(bx, by, statics)
-                                        : GetRenderedBlock(bx, by, statics);
+                        ? GetLitBlock(bx, by, statics)
+                        : GetRenderedBlock(bx, by, statics);
 
                     fixed (ushort* pData = colorData)
                     {
@@ -1809,8 +1813,8 @@ public sealed class Map
     {
         // Get current shading settings based on preset
         var settings = ShadingPreset == AltitudeShadingPresetType.Custom
-                           ? CustomShadingSettings
-                           : AltitudeShadingSettings.GetPreset(ShadingPreset);
+            ? CustomShadingSettings
+            : AltitudeShadingSettings.GetPreset(ShadingPreset);
 
         // Use configurable intensity (lower = more contrast, higher = softer)
         var maxSlope = Math.Clamp(AltitudeIntensity, 1, 20);
@@ -1911,5 +1915,5 @@ public sealed class Map
         return (ushort)((red << 10) | (green << 5) | blue);
     }
 
-#endregion
+    #endregion
 }

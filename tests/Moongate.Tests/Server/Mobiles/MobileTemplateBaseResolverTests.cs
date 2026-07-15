@@ -33,16 +33,16 @@ public class MobileTemplateBaseResolverTests
         var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
         var guard = resolved.Single(t => t.Id == "guard");
 
-        Assert.Equal("Town Guard", guard.Name);        // derived string wins
-        Assert.Equal(100, guard.Strength);             // derived scalar wins
-        Assert.Equal(70, guard.Dexterity);             // inherited (derived left default)
-        Assert.Null(guard.BaseMobile);                 // cleared after resolution
-        Assert.Equal(["human", "guard"], guard.Tags);  // union
-        Assert.Equal(500, guard.Skills["Tactics"]);    // inherited
+        Assert.Equal("Town Guard", guard.Name);           // derived string wins
+        Assert.Equal(100, guard.Strength);                // derived scalar wins
+        Assert.Equal(70, guard.Dexterity);                // inherited (derived left default)
+        Assert.Null(guard.BaseMobile);                    // cleared after resolution
+        Assert.Equal(["human", "guard"], guard.Tags);     // union
+        Assert.Equal(500, guard.Skills["Tactics"]);       // inherited
         Assert.Equal(900, guard.Skills["Swordsmanship"]); // derived
-        Assert.Equal(0x0190, guard.Appearance.Body);   // inherited
-        Assert.Equal("1002", guard.Appearance.SkinHue); // inherited
-        Assert.Equal(22, guard.Appearance.HairStyle);  // derived overlay
+        Assert.Equal(0x0190, guard.Appearance.Body);      // inherited
+        Assert.Equal("1002", guard.Appearance.SkinHue);   // inherited
+        Assert.Equal(22, guard.Appearance.HairStyle);     // derived overlay
     }
 
     [Fact]

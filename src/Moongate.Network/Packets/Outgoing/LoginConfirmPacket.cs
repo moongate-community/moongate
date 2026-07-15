@@ -26,18 +26,18 @@ public readonly record struct LoginConfirmPacket(
     {
         writer.Write(PacketId);
         writer.Write(Serial);
-        writer.Write(0);            // unknown, always 0
+        writer.Write(0); // unknown, always 0
         writer.Write(Body);
         writer.Write(X);
         writer.Write(Y);
         writer.Write(Z);
         writer.Write((byte)Direction);
-        writer.Write((byte)0);      // unknown
-        writer.Write(-1);           // unknown, always -1
-        writer.Write(0);            // unknown, always 0
+        writer.Write((byte)0); // unknown
+        writer.Write(-1);      // unknown, always -1
+        writer.Write(0);       // unknown, always 0
         writer.Write(MapWidth);
         writer.Write(MapHeight);
-        writer.Write(0);            // padding to 37
-        writer.Write((ushort)0);    // padding to 37
+        writer.Write(0);         // padding to 37
+        writer.Write((ushort)0); // padding to 37
     }
 }

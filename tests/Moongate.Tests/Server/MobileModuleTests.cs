@@ -208,7 +208,8 @@ public class MobileModuleTests
     private static (MobileModule Module, FakePersistenceService Persistence) Build()
         => BuildWith(new MobileTemplateService());
 
-    private static (MobileModule Module, FakePersistenceService Persistence, MobileTemplateService Templates) BuildWithTemplates()
+    private static (MobileModule Module, FakePersistenceService Persistence, MobileTemplateService Templates)
+        BuildWithTemplates()
     {
         var templates = new MobileTemplateService();
         var (module, persistence) = BuildWith(templates);

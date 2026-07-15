@@ -251,26 +251,26 @@ public sealed class MobileModule
         {
             // A skill name, in display form ("Animal Lore") or compact form ("AnimalLore").
             case string name when !string.IsNullOrWhiteSpace(name):
-            {
-                var token = new string(name.Where(char.IsLetter).ToArray());
-
-                if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
                 {
-                    return false;
+                    var token = new string(name.Where(char.IsLetter).ToArray());
+
+                    if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+                    {
+                        return false;
+                    }
+
+                    skillId = (int)parsed;
+
+                    return true;
                 }
-
-                skillId = (int)parsed;
-
-                return true;
-            }
 
             // A numeric skill id, e.g. the value of an exposed SkillName enum constant.
             case IConvertible convertible when skill is not string:
-            {
-                skillId = convertible.ToInt32(CultureInfo.InvariantCulture);
+                {
+                    skillId = convertible.ToInt32(CultureInfo.InvariantCulture);
 
-                return skillId >= 0;
-            }
+                    return skillId >= 0;
+                }
 
             default:
                 return false;

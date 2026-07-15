@@ -23,8 +23,8 @@ public class AccountService : IAccountService
     public AccountAuthResult Authenticate(string username, string password)
     {
         var account = _accountStore
-                      .Query()
-                      .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
+            .Query()
+            .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
 
         if (account == null)
         {

@@ -12,7 +12,7 @@ public class CharacterSelectPacketTests
     {
         var buffer = new byte[73];
         buffer[0] = 0x5D;
-        Encoding.ASCII.GetBytes("Hero").CopyTo(buffer, 5); // name field starts after the 4-byte pattern
+        Encoding.ASCII.GetBytes("Hero").CopyTo(buffer, 5);          // name field starts after the 4-byte pattern
         BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(65), 3); // char slot
 
         var reader = new SpanReader(buffer);

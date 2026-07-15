@@ -25,7 +25,9 @@ public sealed class ItemModule
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly ILoopThread _loopThread;
 
-    public ItemModule(IItemFactoryService factory, IItemService items, IPersistenceService persistence, ILoopThread loopThread)
+    public ItemModule(
+        IItemFactoryService factory, IItemService items, IPersistenceService persistence, ILoopThread loopThread
+    )
     {
         _factory = factory;
         _items = items;

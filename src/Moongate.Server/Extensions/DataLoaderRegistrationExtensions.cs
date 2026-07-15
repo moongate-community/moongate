@@ -40,10 +40,10 @@ public static class DataLoaderRegistrationExtensions
                 var recorded = resolver.Resolve<List<DataLoaderRegistration>>(IfUnresolved.ReturnDefault);
 
                 return recorded is null
-                           ? []
-                           : recorded.OrderBy(registration => registration.Priority)
-                                     .Select(registration => registration.Resolve(resolver))
-                                     .ToList();
+                    ? []
+                    : recorded.OrderBy(registration => registration.Priority)
+                        .Select(registration => registration.Resolve(resolver))
+                        .ToList();
             },
             Reuse.Singleton
         );

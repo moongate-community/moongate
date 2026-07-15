@@ -14,14 +14,14 @@ public readonly record struct CharacterSelectPacket(string Name, int Slot)
 
     public static CharacterSelectPacket Read(ref SpanReader reader)
     {
-        reader.ReadByte();        // packet id
-        reader.ReadUInt32();      // 0xEDEDEDED pattern
+        reader.ReadByte();   // packet id
+        reader.ReadUInt32(); // 0xEDEDEDED pattern
         var name = reader.ReadAscii(30);
-        reader.ReadUInt16();      // unknown
-        reader.ReadInt32();       // client flags
-        reader.ReadBytes(24);     // unknown
+        reader.ReadUInt16();  // unknown
+        reader.ReadInt32();   // client flags
+        reader.ReadBytes(24); // unknown
         var slot = reader.ReadInt32();
-        reader.ReadUInt32();      // client IP
+        reader.ReadUInt32(); // client IP
 
         return new(name, slot);
     }

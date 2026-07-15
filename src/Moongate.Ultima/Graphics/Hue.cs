@@ -150,6 +150,7 @@ public sealed class Hue
                             *pBuffer = (ushort)(Colors[(c >> 10) & 0x1F] | 0x8000);
                         }
                     }
+
                     ++pBuffer;
                 }
 

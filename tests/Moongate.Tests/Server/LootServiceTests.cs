@@ -133,7 +133,9 @@ public class LootServiceTests
     {
         var itemTemplates = new ItemTemplateService();
         itemTemplates.Register(new() { Id = "gold", Name = "Gold", Category = "Currency", ItemId = 3821 });
-        itemTemplates.Register(new() { Id = "bandage", Name = "Bandage", Category = "Healing", ItemId = 3617, Tags = { "healing" } });
+        itemTemplates.Register(
+            new() { Id = "bandage", Name = "Bandage", Category = "Healing", ItemId = 3617, Tags = { "healing" } }
+        );
 
         var itemFactory = new ItemFactoryService(itemTemplates, new Random(1));
 

@@ -57,6 +57,7 @@ public sealed class GameServerLoginHandler : IPacketHandler<GameServerLoginPacke
 
             throw new InvalidOperationException($"Account with username {pending.Username} not found");
         }
+
         var characters = _characterService.GetPlayerCharacters(accountId.Value).Select(s => s.Name);
 
         context.Session.EnableCompression();

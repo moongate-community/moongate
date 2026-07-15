@@ -59,6 +59,7 @@ public static class UnicodeFonts
                         {
                             continue;
                         }
+
                         fs.Seek(num2, SeekOrigin.Begin);
 
                         var xOffset = bin.ReadSByte();

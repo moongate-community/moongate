@@ -141,7 +141,7 @@ public sealed class Gumps
                         var pPixelEnd = pPixel + width;
 
                         ushort color,
-                               count;
+                            count;
 
                         if (onlyHueGrayPixels)
                         {
@@ -1059,6 +1059,7 @@ public sealed class Gumps
             {
                 ArrayPool<byte>.Shared.Return(zlibBuf);
             }
+
             ArrayPool<byte>.Shared.Return(rented);
         }
     }

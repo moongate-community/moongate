@@ -43,7 +43,7 @@ public readonly record struct MobileStatusPacket(
         writer.Write((short)Hits);
         writer.Write((short)HitsMax);
 
-        writer.Write((byte)0);    // name-change flag
+        writer.Write((byte)0); // name-change flag
         writer.Write(Version);
 
         writer.Write((byte)(Female ? 1 : 0));
@@ -57,26 +57,26 @@ public readonly record struct MobileStatusPacket(
         writer.Write((short)Mana);
         writer.Write((short)ManaMax);
 
-        writer.Write(0);          // gold
-        writer.Write((short)0);   // physical resistance / armor rating
-        writer.Write((short)0);   // weight
+        writer.Write(0);        // gold
+        writer.Write((short)0); // physical resistance / armor rating
+        writer.Write((short)0); // weight
 
-        writer.Write((short)0);   // max weight (version >= 5)
+        writer.Write((short)0);               // max weight (version >= 5)
         writer.Write((byte)((byte)Race + 1)); // race id, 1-based (version >= 5)
 
         writer.Write((short)StatCap);
 
-        writer.Write((byte)0);    // followers
+        writer.Write((byte)0); // followers
         writer.Write(FollowersMax);
 
-        writer.Write((short)0);   // fire resistance (version >= 4)
-        writer.Write((short)0);   // cold resistance
-        writer.Write((short)0);   // poison resistance
-        writer.Write((short)0);   // energy resistance
-        writer.Write((short)0);   // luck
-        writer.Write((short)0);   // damage min
-        writer.Write((short)0);   // damage max
-        writer.Write(0);          // tithing points
+        writer.Write((short)0); // fire resistance (version >= 4)
+        writer.Write((short)0); // cold resistance
+        writer.Write((short)0); // poison resistance
+        writer.Write((short)0); // energy resistance
+        writer.Write((short)0); // luck
+        writer.Write((short)0); // damage min
+        writer.Write((short)0); // damage max
+        writer.Write(0);        // tithing points
 
         for (var i = 0; i < 15; i++)
         {

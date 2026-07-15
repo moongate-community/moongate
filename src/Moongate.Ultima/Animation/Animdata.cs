@@ -23,7 +23,9 @@ public sealed class Animdata
         public byte FrameStart { get; set; }
 
         // Empty constructor needed for deserialization.
-        public AnimdataEntry() { }
+        public AnimdataEntry()
+        {
+        }
 
         public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
         {

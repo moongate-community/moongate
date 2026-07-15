@@ -43,6 +43,7 @@ public sealed class LruAnimationCache : IDisposable
         {
             throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
         }
+
         _capacity = capacity;
         _map = new(Math.Min(capacity, 4096));
     }
@@ -51,7 +52,10 @@ public sealed class LruAnimationCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _capacity; }
+            lock (_lock)
+            {
+                return _capacity;
+            }
         }
     }
 
@@ -59,7 +63,10 @@ public sealed class LruAnimationCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _map.Count; }
+            lock (_lock)
+            {
+                return _map.Count;
+            }
         }
     }
 
@@ -74,7 +81,10 @@ public sealed class LruAnimationCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _evictedCount; }
+            lock (_lock)
+            {
+                return _evictedCount;
+            }
         }
     }
 
@@ -93,6 +103,7 @@ public sealed class LruAnimationCache : IDisposable
                     DisposeFrames(kvp.Value);
                 }
             }
+
             _list.Clear();
             _map.Clear();
         }
@@ -106,12 +117,14 @@ public sealed class LruAnimationCache : IDisposable
             {
                 return;
             }
+
             _disposed = true;
 
             foreach (var kvp in _list)
             {
                 DisposeFrames(kvp.Value);
             }
+
             _list.Clear();
             _map.Clear();
         }
@@ -211,6 +224,7 @@ public sealed class LruAnimationCache : IDisposable
 
                 return true;
             }
+
             value = null;
 
             return false;
@@ -243,6 +257,7 @@ public sealed class LruAnimationCache : IDisposable
             {
                 break;
             }
+
             _list.RemoveLast();
             _map.Remove(lru.Value.Key);
             _evictedCount++;

@@ -19,19 +19,19 @@ internal static class ScriptEnums
                 return Enum.TryParse(name, ignoreCase: true, out result) && Enum.IsDefined(result);
 
             case IConvertible convertible when value is not string:
-            {
-                var number = convertible.ToInt32(CultureInfo.InvariantCulture);
-                var converted = (TEnum)Enum.ToObject(typeof(TEnum), number);
-
-                if (!Enum.IsDefined(converted))
                 {
-                    return false;
+                    var number = convertible.ToInt32(CultureInfo.InvariantCulture);
+                    var converted = (TEnum)Enum.ToObject(typeof(TEnum), number);
+
+                    if (!Enum.IsDefined(converted))
+                    {
+                        return false;
+                    }
+
+                    result = converted;
+
+                    return true;
                 }
-
-                result = converted;
-
-                return true;
-            }
 
             default:
                 return false;
@@ -46,6 +46,6 @@ internal static class ScriptEnums
         {
             DataType.String => value.String,
             DataType.Number => value.Number,
-            _ => null
+            _               => null
         };
 }

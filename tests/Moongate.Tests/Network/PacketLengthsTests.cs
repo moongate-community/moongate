@@ -20,7 +20,7 @@ public class PacketLengthsTests
     // movement ack
     // ping
     // login denied
-     // character creation (7.x)
+    // character creation (7.x)
     public void Get_FixedLengthPackets_ReturnsKnownSize(int id, int expected)
         => Assert.Equal((short)expected, PacketLengths.Get((byte)id));
 
@@ -35,7 +35,7 @@ public class PacketLengthsTests
     // unicode speech
     // client version
     // extended command
-     // gump response
+    // gump response
     public void Get_VariableLengthPackets_ReturnsVariable(int id)
         => Assert.Equal(PacketLengths.Variable, PacketLengths.Get((byte)id));
 }

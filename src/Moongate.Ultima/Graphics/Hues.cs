@@ -46,6 +46,7 @@ public static class Hues
                             *pBuffer = (ushort)(colors[(c >> 10) & 0x1F] | 0x8000);
                         }
                     }
+
                     ++pBuffer;
                 }
 

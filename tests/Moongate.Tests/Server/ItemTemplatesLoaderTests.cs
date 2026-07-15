@@ -140,9 +140,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("collections.yaml", exception.Message);
             Assert.Contains("'item'", exception.Message);
@@ -167,9 +167,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("b.yaml", exception.Message);
             Assert.Contains("DUPLICATE", exception.Message);
@@ -240,9 +240,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("strict-null.yaml", exception.Message);
             Assert.Contains("'item'", exception.Message);
@@ -270,9 +270,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("validation.yaml", exception.Message);
             Assert.Contains(templateId, exception.Message);
@@ -323,9 +323,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("b-invalid.yaml", exception.Message);
             Assert.Contains("invalid", exception.Message);
@@ -357,9 +357,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("params.yaml", exception.Message);
             Assert.Contains("Params[broken]", exception.Message);
@@ -383,9 +383,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains("non-finite-weight.yaml", exception.Message);
             Assert.Contains("'item'", exception.Message);
@@ -409,9 +409,9 @@ public class ItemTemplatesLoaderTests
 
         try
         {
-            var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                                async () => await new ItemTemplatesLoader(service, directories).LoadAsync()
-                            );
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+                await new ItemTemplatesLoader(service, directories).LoadAsync()
+            );
 
             Assert.Contains(Path.Combine("nested", "schema.yaml"), exception.Message);
             Assert.NotNull(exception.InnerException);

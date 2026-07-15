@@ -83,9 +83,9 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         return race switch
         {
-            RaceType.Elf       => female ? 0x25E : 0x25D,
-            RaceType.Gargoyle  => female ? 0x29B : 0x29A,
-            _                  => female ? 0x191 : 0x190
+            RaceType.Elf      => female ? 0x25E : 0x25D,
+            RaceType.Gargoyle => female ? 0x29B : 0x29A,
+            _                 => female ? 0x191 : 0x190
         };
     }
 
@@ -136,7 +136,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
         {
             MobileTemplateGenderType.Female => GenderType.Female,
             MobileTemplateGenderType.Random => _random.Next(2) == 0 ? GenderType.Male : GenderType.Female,
-            _ => GenderType.Male
+            _                               => GenderType.Male
         };
 
     private MobileVariant? PickVariant(List<MobileVariant> variants)

@@ -143,7 +143,7 @@ public class EnterWorldPacketsTests
         Assert.Equal(23, b.Length);
         Assert.Equal(0x78, b[0]);
         Assert.Equal(23, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(1)));
-        Assert.Equal(1, b[18]);                                        // notoriety
+        Assert.Equal(1, b[18]);                                             // notoriety
         Assert.Equal(0, BinaryPrimitives.ReadInt32BigEndian(b.AsSpan(19))); // terminator
     }
 
@@ -217,8 +217,8 @@ public class EnterWorldPacketsTests
         Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(39))); // max hits
         Assert.Equal(0, b[41]);                                              // name-change flag
         Assert.Equal(6, b[42]);                                              // version
-        Assert.Equal(1, b[43]);                                             // female
+        Assert.Equal(1, b[43]);                                              // female
         Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(44))); // strength
-        Assert.Equal(1, b[68]);                                             // race id (Human 0 + 1)
+        Assert.Equal(1, b[68]);                                              // race id (Human 0 + 1)
     }
 }

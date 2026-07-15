@@ -78,6 +78,7 @@ public static class TileData
                 {
                     tex.Write($";{((tile.Flags & enumValues[t]) != 0 ? "1" : "0")}");
                 }
+
                 tex.Write("\r\n");
             }
         }
@@ -110,6 +111,7 @@ public static class TileData
                 {
                     tex.Write($";{((tile.Flags & enumValues[t]) != 0 ? "1" : "0")}");
                 }
+
                 tex.Write("\r\n");
             }
         }
@@ -252,6 +254,7 @@ public static class TileData
                         var cur = Unsafe.ReadUnaligned<OldLandTileDataMul>(ref buffer[currentPos]);
                         LandTable[i + count] = new(cur);
                     }
+
                     currentPos += landStructSize;
                 }
             }
@@ -287,6 +290,7 @@ public static class TileData
                         ItemTable[i + count] = new(cur);
                         HeightTable[i + count] = cur.height;
                     }
+
                     currentPos += structSize;
                 }
             }

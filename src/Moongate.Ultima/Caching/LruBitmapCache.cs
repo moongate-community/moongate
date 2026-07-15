@@ -48,6 +48,7 @@ public sealed class LruBitmapCache : IDisposable
         {
             throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
         }
+
         _capacity = capacity;
         _map = new(Math.Min(capacity, 4096));
     }
@@ -60,7 +61,10 @@ public sealed class LruBitmapCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _capacity; }
+            lock (_lock)
+            {
+                return _capacity;
+            }
         }
     }
 
@@ -68,7 +72,10 @@ public sealed class LruBitmapCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _map.Count; }
+            lock (_lock)
+            {
+                return _map.Count;
+            }
         }
     }
 
@@ -89,7 +96,10 @@ public sealed class LruBitmapCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _evictedCount; }
+            lock (_lock)
+            {
+                return _evictedCount;
+            }
         }
     }
 
@@ -102,7 +112,10 @@ public sealed class LruBitmapCache : IDisposable
     {
         get
         {
-            lock (_lock) { return _disposedCount; }
+            lock (_lock)
+            {
+                return _disposedCount;
+            }
         }
     }
 
@@ -124,6 +137,7 @@ public sealed class LruBitmapCache : IDisposable
                     _disposedCount++;
                 }
             }
+
             _list.Clear();
             _map.Clear();
         }
@@ -137,6 +151,7 @@ public sealed class LruBitmapCache : IDisposable
             {
                 return;
             }
+
             _disposed = true;
 
             foreach (var kvp in _list)
@@ -144,6 +159,7 @@ public sealed class LruBitmapCache : IDisposable
                 kvp.Value?.Dispose();
                 _disposedCount++;
             }
+
             _list.Clear();
             _map.Clear();
         }
@@ -251,6 +267,7 @@ public sealed class LruBitmapCache : IDisposable
 
                 return true;
             }
+
             value = null;
 
             return false;
@@ -267,6 +284,7 @@ public sealed class LruBitmapCache : IDisposable
             {
                 break;
             }
+
             _list.RemoveLast();
             _map.Remove(lru.Value.Key);
             _evictedCount++;
