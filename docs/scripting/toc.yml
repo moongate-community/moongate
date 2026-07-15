@@ -1,2 +1,18 @@
 - name: Overview
   href: index.md
+- name: Reference
+  items:
+    - name: log
+      href: reference/log.md
+    - name: game
+      href: reference/game.md
+    - name: events
+      href: reference/events.md
+    - name: item
+      href: reference/item.md
+    - name: mobile
+      href: reference/mobile.md
+    - name: loot
+      href: reference/loot.md
+    - name: Enums
+      href: reference/enums.md
