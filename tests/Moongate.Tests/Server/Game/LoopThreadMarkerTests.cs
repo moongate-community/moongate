@@ -20,8 +20,13 @@ public class LoopThreadMarkerTests
 
         Assert.True(marker.IsOnLoopThread);
 
-        var offThread = Task.Run(() => marker.IsOnLoopThread);
+        // A dedicated Thread always has a distinct ManagedThreadId from the still-alive test thread
+        // (unlike a ThreadPool thread, whose id can be reused under load).
+        var offThreadResult = true;
+        var thread = new Thread(() => offThreadResult = marker.IsOnLoopThread);
+        thread.Start();
+        thread.Join();
 
-        Assert.False(offThread.Result);
+        Assert.False(offThreadResult);
     }
 }

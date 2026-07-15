@@ -1,5 +1,6 @@
 using MoonSharp.Interpreter;
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Items;
@@ -21,25 +22,39 @@ public sealed class ItemModule
     private readonly IItemFactoryService _factory;
     private readonly IItemService _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
+    private readonly ILoopThread _loopThread;
 
-    public ItemModule(IItemFactoryService factory, IItemService items, IPersistenceService persistence)
+    public ItemModule(IItemFactoryService factory, IItemService items, IPersistenceService persistence, ILoopThread loopThread)
     {
         _factory = factory;
         _items = items;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
+        _loopThread = loopThread;
     }
 
     [ScriptFunction("create", "Creates an item from a template; returns its serial or nil.")]
     public uint? Create(string templateId, int amount, uint hue)
-        => Persist(_factory.CreateFromTemplate(templateId, amount: amount, hue: ToHue(hue)));
+    {
+        LoopGuard.Warn(_loopThread, "item.create");
+
+        return Persist(_factory.CreateFromTemplate(templateId, amount: amount, hue: ToHue(hue)));
+    }
 
     [ScriptFunction("create_by_tag", "Creates a random item carrying the tag; returns its serial or nil.")]
     public uint? CreateByTag(string tag, int amount, uint hue)
-        => Persist(_factory.CreateByTag(tag, amount: amount, hue: ToHue(hue)));
+    {
+        LoopGuard.Warn(_loopThread, "item.create_by_tag");
+
+        return Persist(_factory.CreateByTag(tag, amount: amount, hue: ToHue(hue)));
+    }
 
     [ScriptFunction("create_by_category", "Creates a random item in the category; returns its serial or nil.")]
     public uint? CreateByCategory(string category, int amount, uint hue)
-        => Persist(_factory.CreateByCategory(category, amount: amount, hue: ToHue(hue)));
+    {
+        LoopGuard.Warn(_loopThread, "item.create_by_category");
+
+        return Persist(_factory.CreateByCategory(category, amount: amount, hue: ToHue(hue)));
+    }
 
     [ScriptFunction("get", "Returns a field table for the item, or nil.")]
     public Dictionary<string, object?>? Get(uint serial)
@@ -67,6 +82,8 @@ public sealed class ItemModule
     [ScriptFunction("set", "Mutates item fields from a table {amount,hue,item_id,name}; returns true on success.")]
     public bool Set(uint serial, Table fields)
     {
+        LoopGuard.Warn(_loopThread, "item.set");
+
         var item = _items.GetById((Serial)serial);
 
         if (item is null || fields is null)
@@ -110,6 +127,8 @@ public sealed class ItemModule
     [ScriptFunction("flip", "Flips the item to its next orientation graphic; false when it has none.")]
     public bool Flip(uint serial)
     {
+        LoopGuard.Warn(_loopThread, "item.flip");
+
         var item = _items.GetById((Serial)serial);
 
         return item is not null && _items.Flip(item);
@@ -117,11 +136,17 @@ public sealed class ItemModule
 
     [ScriptFunction("delete", "Deletes the item; true when it existed.")]
     public bool Delete(uint serial)
-        => _items.Delete((Serial)serial);
+    {
+        LoopGuard.Warn(_loopThread, "item.delete");
+
+        return _items.Delete((Serial)serial);
+    }
 
     [ScriptFunction("equip", "Equips the item on a mobile at a layer; false on unknown mobile/item/layer.")]
     public bool Equip(uint mobile, uint serial, object layer)
     {
+        LoopGuard.Warn(_loopThread, "item.equip");
+
         if (!ScriptEnums.TryResolve<LayerType>(layer, out var parsed))
         {
             return false;
@@ -143,6 +168,8 @@ public sealed class ItemModule
     [ScriptFunction("unequip", "Removes the item on a layer; returns its serial or nil.")]
     public uint? Unequip(uint mobile, object layer)
     {
+        LoopGuard.Warn(_loopThread, "item.unequip");
+
         if (!ScriptEnums.TryResolve<LayerType>(layer, out var parsed))
         {
             return null;
@@ -164,6 +191,8 @@ public sealed class ItemModule
     [ScriptFunction("add_to_container", "Places an item into a container at (x, y); false on unknown serials.")]
     public bool AddToContainer(uint container, uint serial, int x, int y)
     {
+        LoopGuard.Warn(_loopThread, "item.add_to_container");
+
         var box = _items.GetById((Serial)container);
         var item = _items.GetById((Serial)serial);
 
@@ -180,6 +209,8 @@ public sealed class ItemModule
     [ScriptFunction("remove_from_container", "Removes an item from a container; false on unknown serials.")]
     public bool RemoveFromContainer(uint container, uint serial)
     {
+        LoopGuard.Warn(_loopThread, "item.remove_from_container");
+
         var box = _items.GetById((Serial)container);
         var item = _items.GetById((Serial)serial);
 

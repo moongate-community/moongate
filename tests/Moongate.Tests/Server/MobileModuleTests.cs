@@ -228,6 +228,6 @@ public class MobileModuleTests
         var itemFactory = new ItemFactoryService(itemTemplates, random);
         var items = new ItemService(persistence);
 
-        return (new MobileModule(factory, itemFactory, items, persistence), persistence);
+        return (new MobileModule(factory, itemFactory, items, persistence, new StubLoopThread()), persistence);
     }
 }

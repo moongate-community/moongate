@@ -177,6 +177,6 @@ public class ItemModuleTests
         var factory = new ItemFactoryService(templates, new(1));
         var itemService = new ItemService(persistence);
 
-        return (new ItemModule(factory, itemService, persistence), persistence);
+        return (new ItemModule(factory, itemService, persistence, new StubLoopThread()), persistence);
     }
 }
