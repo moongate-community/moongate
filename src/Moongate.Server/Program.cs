@@ -130,6 +130,7 @@ await ConsoleApp.RunAsync(
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(new());
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
+                container.Register<ILoopThread, LoopThreadMarker>(Reuse.Singleton);
                 container.RegisterEventLoop(
                     new()
                     {
@@ -155,6 +156,11 @@ await ConsoleApp.RunAsync(
                     (_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
+
+                        var loop = container.Resolve<IGameLoopContext>();
+                        var marker = container.Resolve<ILoopThread>();
+
+                        loop.Post(marker.Capture);
 
                         return Task.CompletedTask;
                     }
