@@ -120,9 +120,9 @@ public sealed class ItemModule
         => _items.Delete((Serial)serial);
 
     [ScriptFunction("equip", "Equips the item on a mobile at a layer; false on unknown mobile/item/layer.")]
-    public bool Equip(uint mobile, uint serial, string layer)
+    public bool Equip(uint mobile, uint serial, object layer)
     {
-        if (!Enum.TryParse<LayerType>(layer, ignoreCase: true, out var parsed))
+        if (!ScriptEnums.TryResolve<LayerType>(layer, out var parsed))
         {
             return false;
         }
@@ -141,9 +141,9 @@ public sealed class ItemModule
     }
 
     [ScriptFunction("unequip", "Removes the item on a layer; returns its serial or nil.")]
-    public uint? Unequip(uint mobile, string layer)
+    public uint? Unequip(uint mobile, object layer)
     {
-        if (!Enum.TryParse<LayerType>(layer, ignoreCase: true, out var parsed))
+        if (!ScriptEnums.TryResolve<LayerType>(layer, out var parsed))
         {
             return null;
         }

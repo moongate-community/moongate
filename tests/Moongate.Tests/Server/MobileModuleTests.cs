@@ -69,6 +69,23 @@ public class MobileModuleTests
     }
 
     [Fact]
+    public void Set_AcceptsNumericGenderAndRaceConstants()
+    {
+        var (module, persistence) = Build();
+        var serial = module.Create("Guard", 1, 0, 0, 0)!.Value;
+
+        var fields = new Table(new Script());
+        fields["gender"] = (int)GenderType.Female;
+        fields["race"] = (int)RaceType.Gargoyle;
+
+        Assert.True(module.Set(serial, fields));
+
+        var m = persistence.Store<MobileEntity>().GetById((Serial)serial)!;
+        Assert.Equal(GenderType.Female, m.Gender);
+        Assert.Equal(RaceType.Gargoyle, m.Race);
+    }
+
+    [Fact]
     public void Set_InvalidRace_IgnoresField()
     {
         var (module, persistence) = Build();

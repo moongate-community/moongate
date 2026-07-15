@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Server;
 using Moongate.Server.Scripting;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Scripting.Lua.Data.Internal;
 
@@ -30,14 +31,18 @@ public class MoongateScriptModulesPluginTests
         Assert.Contains(modules, module => module.ModuleType == typeof(MobileModule));
     }
 
-    [Fact]
-    public void Configure_RegistersSkillNameEnum()
+    [Theory]
+    [InlineData(typeof(SkillName))]
+    [InlineData(typeof(GenderType))]
+    [InlineData(typeof(RaceType))]
+    [InlineData(typeof(LayerType))]
+    public void Configure_RegistersScriptEnum(Type enumType)
     {
         var container = new Container();
 
         new MoongateScriptModulesPlugin().Configure(container, new());
 
         var enums = container.Resolve<List<ScriptEnumData>>();
-        Assert.Contains(enums, entry => entry.EnumType == typeof(SkillName));
+        Assert.Contains(enums, entry => entry.EnumType == enumType);
     }
 }

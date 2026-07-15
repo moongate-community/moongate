@@ -135,6 +135,19 @@ public class ItemModuleTests
     }
 
     [Fact]
+    public void Equip_AcceptsNumericLayerConstant()
+    {
+        var (module, persistence) = Build();
+        var mobile = new MobileEntity { Name = "Bob" };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
+        var serial = module.Create("dagger", 1, 0)!.Value;
+
+        // Lua passes an exposed LayerType constant as a number.
+        Assert.True(module.Equip(mobile.Id.Value, serial, (int)LayerType.OneHanded));
+        Assert.Equal(serial, module.Unequip(mobile.Id.Value, (int)LayerType.OneHanded));
+    }
+
+    [Fact]
     public void Container_AddContentsRemove()
     {
         var (module, _) = Build();

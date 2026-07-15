@@ -93,26 +93,19 @@ public sealed class MobileModule
         ApplyHue(fields, "hair_hue", value => mobile.HairHue = value);
         ApplyHue(fields, "facial_hair_hue", value => mobile.FacialHairHue = value);
 
-        var gender = fields.Get("gender");
-
-        if (gender.Type == DataType.String && Enum.TryParse<GenderType>(gender.String, ignoreCase: true, out var g))
+        if (ScriptEnums.TryResolve<GenderType>(fields.Get("gender"), out var gender))
         {
-            mobile.Gender = g;
+            mobile.Gender = gender;
         }
 
-        var race = fields.Get("race");
-
-        if (race.Type == DataType.String && Enum.TryParse<RaceType>(race.String, ignoreCase: true, out var r))
+        if (ScriptEnums.TryResolve<RaceType>(fields.Get("race"), out var race))
         {
-            mobile.Race = r;
+            mobile.Race = race;
         }
 
-        var direction = fields.Get("direction");
-
-        if (direction.Type == DataType.String &&
-            Enum.TryParse<DirectionType>(direction.String, ignoreCase: true, out var d))
+        if (ScriptEnums.TryResolve<DirectionType>(fields.Get("direction"), out var direction))
         {
-            mobile.Direction = d;
+            mobile.Direction = direction;
         }
 
         _mobiles.UpsertAsync(mobile).WaitSync();
