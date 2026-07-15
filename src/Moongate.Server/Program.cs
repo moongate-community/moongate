@@ -13,11 +13,13 @@ using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
 using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Interfaces.World;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.World;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
@@ -114,6 +116,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
                 container.Register<IItemService, ItemService>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
+                container.Register<IEnterWorldService, EnterWorldService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);
 
@@ -126,6 +129,8 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, GameServerLoginHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, CharacterCreationHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, CharacterSelectHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, PingHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
 

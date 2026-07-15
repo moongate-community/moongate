@@ -34,10 +34,19 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Name = packet.Name,
             Gender = packet.Gender,
             Race = packet.Race,
+            Body = ResolvePlayerBody(packet.Race, packet.Gender),
             ProfessionId = packet.ProfessionId,
             Strength = packet.Strength,
             Dexterity = packet.Dexterity,
             Intelligence = packet.Intelligence,
+            // Classic-UO player rule: pool ceilings mirror the stats; start topped up. Regen and
+            // damage that move the current pools arrive with the combat system.
+            Hits = packet.Strength,
+            HitsMax = packet.Strength,
+            Stamina = packet.Dexterity,
+            StaminaMax = packet.Dexterity,
+            Mana = packet.Intelligence,
+            ManaMax = packet.Intelligence,
             SkinHue = new((ushort)packet.SkinHue),
             HairStyle = (ushort)packet.HairStyle,
             HairHue = new((ushort)packet.HairHue),
@@ -65,6 +74,19 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         return character;
+    }
+
+    /// <summary>Maps a playable race and gender to the human/elf/gargoyle body graphic id.</summary>
+    private static int ResolvePlayerBody(RaceType race, GenderType gender)
+    {
+        var female = gender == GenderType.Female;
+
+        return race switch
+        {
+            RaceType.Elf       => female ? 0x25E : 0x25D,
+            RaceType.Gargoyle  => female ? 0x29B : 0x29A,
+            _                  => female ? 0x191 : 0x190
+        };
     }
 
     public MobileEntity Create(string name, int mapId, Point3D position)

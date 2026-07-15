@@ -5,5 +5,6 @@ public enum SessionStateType : byte
 {
     AwaitingSeed = 0,
     Login = 1,
-    Authenticated = 2
+    Authenticated = 2,
+    InWorld = 3
 }

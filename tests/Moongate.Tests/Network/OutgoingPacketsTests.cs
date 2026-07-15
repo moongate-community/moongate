@@ -21,7 +21,7 @@ public class OutgoingPacketsTests
     [Fact]
     public void MovementAckPacket_Write_ProducesWireBytes()
     {
-        var packet = new MovementAckPacket(0x0A, 1);
+        var packet = new MovementAckPacket(0x0A, NotorietyType.Innocent);
 
         var writer = new SpanWriter(stackalloc byte[3]);
         packet.Write(ref writer);

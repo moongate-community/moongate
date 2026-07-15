@@ -32,6 +32,24 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
 
     public int Intelligence { get; set; }
 
+    /// <summary>Current hit points; <see cref="HitsMax" /> is the ceiling.</summary>
+    public int Hits { get; set; }
+
+    /// <summary>Maximum hit points. For players this seeds from <see cref="Strength" /> at creation.</summary>
+    public int HitsMax { get; set; }
+
+    /// <summary>Current stamina; <see cref="StaminaMax" /> is the ceiling.</summary>
+    public int Stamina { get; set; }
+
+    /// <summary>Maximum stamina. For players this seeds from <see cref="Dexterity" /> at creation.</summary>
+    public int StaminaMax { get; set; }
+
+    /// <summary>Current mana; <see cref="ManaMax" /> is the ceiling.</summary>
+    public int Mana { get; set; }
+
+    /// <summary>Maximum mana. For players this seeds from <see cref="Intelligence" /> at creation.</summary>
+    public int ManaMax { get; set; }
+
     /// <summary>Skill values keyed by skill id, stored in tenths (500 = 50.0).</summary>
     public Dictionary<int, int> Skills { get; set; } = new();
 

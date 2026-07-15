@@ -23,6 +23,16 @@ public class MobileFactoryServiceTests
         Assert.Equal(45, character.Strength);
         Assert.Equal(20, character.Dexterity);
         Assert.Equal(25, character.Intelligence);
+
+        // Body derives from race + gender (elf female); pools seed from the stats, topped up.
+        Assert.Equal(0x25E, character.Body);
+        Assert.Equal(45, character.HitsMax);
+        Assert.Equal(45, character.Hits);
+        Assert.Equal(20, character.StaminaMax);
+        Assert.Equal(20, character.Stamina);
+        Assert.Equal(25, character.ManaMax);
+        Assert.Equal(25, character.Mana);
+
         Assert.Equal((ushort)0x03EA, character.SkinHue.Value);
         Assert.Equal((ushort)0x203C, character.HairStyle);
         Assert.Equal((ushort)0x044E, character.HairHue.Value);
