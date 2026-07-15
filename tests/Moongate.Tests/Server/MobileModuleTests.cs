@@ -2,6 +2,8 @@ using MoonSharp.Interpreter;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Scripting;
+using Moongate.Server.Services.Mobiles;
+using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
@@ -171,6 +173,7 @@ public class MobileModuleTests
     private static (MobileModule Module, FakePersistenceService Persistence) Build()
     {
         var persistence = new FakePersistenceService();
-        return (new MobileModule(persistence), persistence);
+        var factory = new MobileFactoryService(new StartingCityService());
+        return (new MobileModule(factory, persistence), persistence);
     }
 }

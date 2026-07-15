@@ -5,6 +5,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Interfaces.Mobiles;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -20,17 +21,19 @@ namespace Moongate.Server.Scripting;
 [ScriptModule("mobile", "Create and manipulate mobiles by serial.")]
 public sealed class MobileModule
 {
+    private readonly IMobileFactoryService _factory;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
 
-    public MobileModule(IPersistenceService persistence)
+    public MobileModule(IMobileFactoryService factory, IPersistenceService persistence)
     {
+        _factory = factory;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
     [ScriptFunction("create", "Creates a mobile at a location; returns its serial.")]
     public uint? Create(string name, int map, int x, int y, int z)
     {
-        var mobile = new MobileEntity { Name = name, MapId = map, Position = new Point3D(x, y, z) };
+        var mobile = _factory.Create(name, map, new Point3D(x, y, z));
         _mobiles.UpsertAsync(mobile).WaitSync();
 
         return mobile.Id.Value;

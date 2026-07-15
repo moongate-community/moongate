@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Mobiles;
@@ -53,5 +54,15 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         return character;
+    }
+
+    public MobileEntity Create(string name, int mapId, Point3D position)
+    {
+        return new MobileEntity
+        {
+            Name = name,
+            MapId = mapId,
+            Position = position
+        };
     }
 }

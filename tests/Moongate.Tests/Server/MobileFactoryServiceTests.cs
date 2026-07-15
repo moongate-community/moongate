@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
@@ -45,6 +46,17 @@ public class MobileFactoryServiceTests
         // Falls back to the city at index 0 (Britain / Trammel).
         Assert.Equal((int)MapType.Trammel, character.MapId);
         Assert.Equal(new(1602, 1591, 20), character.Position);
+    }
+
+    [Fact]
+    public void Create_BuildsBareMobileWithNameMapAndPosition()
+    {
+        var mobile = new MobileFactoryService(Cities()).Create("Town Guard", 1, new(1420, 1690, 5));
+
+        Assert.Equal("Town Guard", mobile.Name);
+        Assert.Equal(1, mobile.MapId);
+        Assert.Equal(new(1420, 1690, 5), mobile.Position);
+        Assert.Equal(Serial.Zero, mobile.Id);
     }
 
     private static StartingCityService Cities()
