@@ -2,10 +2,12 @@ using MoonSharp.Interpreter;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Scripting;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server;
 
@@ -170,10 +172,62 @@ public class MobileModuleTests
         Assert.Null(persistence.Store<MobileEntity>().GetById((Serial)serial));
     }
 
+    [Fact]
+    public void CreateFromTemplate_UnknownId_ReturnsNull()
+    {
+        var (module, _) = Build();
+        Assert.Null(module.CreateFromTemplate("nope", 1, 0, 0, 0));
+    }
+
+    [Fact]
+    public void CreateFromTemplate_PersistsMobileAndEquipsItems()
+    {
+        var (module, persistence, templates) = BuildWithTemplates();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Town Guard",
+                Strength = 100,
+                Appearance = new() { Body = 400 },
+                Skills = { ["Swordsmanship"] = 900 },
+                Equipment = [new() { Item = "plate_chest", Layer = "InnerTorso" }]
+            }
+        );
+
+        var serial = module.CreateFromTemplate("guard", 1, 10, 20, 5);
+
+        Assert.NotNull(serial);
+        var mobile = persistence.Store<MobileEntity>().GetById((Serial)serial!.Value)!;
+        Assert.Equal("Town Guard", mobile.Name);
+        Assert.Equal(400, mobile.Body);
+        Assert.Equal(900, mobile.Skills[40]);
+        Assert.Equal(mobile.EquippedItemIds[LayerType.InnerTorso], Assert.Single(mobile.EquippedItemIds).Value);
+    }
+
     private static (MobileModule Module, FakePersistenceService Persistence) Build()
+        => BuildWith(new MobileTemplateService());
+
+    private static (MobileModule Module, FakePersistenceService Persistence, MobileTemplateService Templates) BuildWithTemplates()
+    {
+        var templates = new MobileTemplateService();
+        var (module, persistence) = BuildWith(templates);
+
+        return (module, persistence, templates);
+    }
+
+    private static (MobileModule Module, FakePersistenceService Persistence) BuildWith(MobileTemplateService mobileTemplates)
     {
         var persistence = new FakePersistenceService();
-        var factory = new MobileFactoryService(new StartingCityService(), new MobileTemplateService(), new Random(1));
-        return (new MobileModule(factory, persistence), persistence);
+        var random = new Random(1);
+
+        var itemTemplates = new ItemTemplateService();
+        itemTemplates.Register(new() { Id = "plate_chest", Name = "Plate Chest", Category = "Armor", ItemId = 5141 });
+
+        var factory = new MobileFactoryService(new StartingCityService(), mobileTemplates, random);
+        var itemFactory = new ItemFactoryService(itemTemplates, random);
+        var items = new ItemService(persistence);
+
+        return (new MobileModule(factory, itemFactory, items, persistence), persistence);
     }
 }

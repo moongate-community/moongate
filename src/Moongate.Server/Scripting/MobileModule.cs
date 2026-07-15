@@ -5,6 +5,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
@@ -22,11 +23,20 @@ namespace Moongate.Server.Scripting;
 public sealed class MobileModule
 {
     private readonly IMobileFactoryService _factory;
+    private readonly IItemFactoryService _itemFactory;
+    private readonly IItemService _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
 
-    public MobileModule(IMobileFactoryService factory, IPersistenceService persistence)
+    public MobileModule(
+        IMobileFactoryService factory,
+        IItemFactoryService itemFactory,
+        IItemService items,
+        IPersistenceService persistence
+    )
     {
         _factory = factory;
+        _itemFactory = itemFactory;
+        _items = items;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
@@ -37,6 +47,35 @@ public sealed class MobileModule
         _mobiles.UpsertAsync(mobile).WaitSync();
 
         return mobile.Id.Value;
+    }
+
+    [ScriptFunction("create_from_template", "Spawns a mobile from a template; returns its serial or nil.")]
+    public uint? CreateFromTemplate(string templateId, int map, int x, int y, int z)
+    {
+        var spawn = _factory.CreateFromTemplate(templateId, map, new Point3D(x, y, z));
+
+        if (spawn is null)
+        {
+            return null;
+        }
+
+        _mobiles.UpsertAsync(spawn.Mobile).WaitSync();
+
+        foreach (var entry in spawn.Equipment)
+        {
+            var created = _itemFactory.CreateFromTemplate(entry.ItemTemplateId, hue: new Hue(entry.Hue));
+
+            if (created.Count == 0)
+            {
+                continue;
+            }
+
+            var item = created[0];
+            _items.Create(item);
+            _items.Equip(spawn.Mobile, item, entry.Layer);
+        }
+
+        return spawn.Mobile.Id.Value;
     }
 
     [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
