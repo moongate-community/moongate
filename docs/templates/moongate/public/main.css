@@ -1,0 +1,539 @@
+/* ==========================================================================
+   Moongate theme layer — a refined dark identity over the docfx `modern`
+   template. The visual metaphor is a moongate: a glowing blue portal against
+   the Britannian night sky. Deep night-blues, a restrained moongate-blue
+   accent glow, and pixel-art touches. Restraint over neon.
+
+   This layer only overrides Bootstrap `--bs-*` design tokens and a handful of
+   modern-template classes that are present in the rendered DOM. No HTML
+   partials are touched, so it survives docfx template updates.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design tokens
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Moongate identity tokens (theme-independent) */
+  --mg-accent: #4f7dff;
+  --mg-accent-bright: #6ea8ff;
+  --mg-accent-soft: #9cc4ff;
+  --mg-accent-glow: rgba(79, 125, 255, 0.35);
+  --mg-accent-glow-strong: rgba(79, 125, 255, 0.55);
+  --mg-accent-rgb: 79, 125, 255;
+}
+
+/* Dark-first: this is the default the site loads with (main.js sets it). */
+:root,
+[data-bs-theme='dark'] {
+  --bs-body-bg: #0b0e1a;
+  --bs-body-color: #d8dcf0;
+  --bs-emphasis-color: #ffffff;
+  --bs-secondary-color: rgba(216, 220, 240, 0.66);
+  --bs-secondary-bg: #141a30;
+  --bs-tertiary-bg: #0e1224;
+  --bs-border-color: #232a4d;
+  --bs-border-color-translucent: rgba(79, 125, 255, 0.16);
+
+  --bs-link-color: var(--mg-accent-bright);
+  --bs-link-color-rgb: 110, 168, 255;
+  --bs-link-hover-color: var(--mg-accent-soft);
+  --bs-link-hover-color-rgb: 156, 196, 255;
+
+  --bs-heading-color: #eef1ff;
+  --bs-code-color: #a9c3ff;
+
+  /* surface used for panels / hovers */
+  --mg-surface: #10152a;
+  --mg-surface-raised: #141b34;
+  --mg-navbar-top: #101530;
+  --mg-navbar-bottom: #0b0e1a;
+  --mg-scroll-track: #0b0e1a;
+  --mg-scroll-thumb: #26305a;
+}
+
+/* Light mode: kept legible and on-brand (still moongate-blue), never broken.
+   A cool parchment-grey daytime sky rather than a harsh white. */
+[data-bs-theme='light'] {
+  --bs-body-bg: #f4f6fc;
+  --bs-body-color: #1c2340;
+  --bs-emphasis-color: #0a1030;
+  --bs-secondary-color: rgba(28, 35, 64, 0.7);
+  --bs-secondary-bg: #e7ebf8;
+  --bs-tertiary-bg: #eef1fb;
+  --bs-border-color: #d3d9f0;
+  --bs-border-color-translucent: rgba(79, 125, 255, 0.18);
+
+  --bs-link-color: #2f5bd6;
+  --bs-link-color-rgb: 47, 91, 214;
+  --bs-link-hover-color: #1c3fa8;
+  --bs-link-hover-color-rgb: 28, 63, 168;
+
+  --bs-heading-color: #131a38;
+  --bs-code-color: #2f5bd6;
+
+  --mg-accent-glow: rgba(79, 125, 255, 0.22);
+  --mg-accent-glow-strong: rgba(79, 125, 255, 0.32);
+  --mg-surface: #ffffff;
+  --mg-surface-raised: #ffffff;
+  --mg-navbar-top: #ffffff;
+  --mg-navbar-bottom: #eef1fb;
+  --mg-scroll-track: #e7ebf8;
+  --mg-scroll-thumb: #b9c3e6;
+}
+
+/* --------------------------------------------------------------------------
+   2. Base document
+   -------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--bs-body-bg);
+  /* A faint moongate glow low on the horizon, fixed to the viewport. */
+  background-image:
+    radial-gradient(
+      1200px 520px at 50% -8%,
+      var(--mg-accent-glow) 0%,
+      transparent 60%
+    );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--bs-heading-color);
+  letter-spacing: 0.01em;
+}
+
+/* Section headings get a hairline rule with a hint of the accent. */
+article h2 {
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--bs-border-color);
+}
+
+article a {
+  text-decoration-color: rgba(var(--mg-accent-rgb), 0.4);
+  text-underline-offset: 0.15em;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+article a:hover {
+  text-decoration-color: var(--mg-accent-soft);
+}
+
+::selection {
+  background: var(--mg-accent-glow-strong);
+  color: #ffffff;
+}
+
+/* --------------------------------------------------------------------------
+   3. Header / navbar
+   -------------------------------------------------------------------------- */
+
+header.bg-body {
+  background: linear-gradient(
+    180deg,
+    var(--mg-navbar-top) 0%,
+    var(--mg-navbar-bottom) 100%
+  ) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  box-shadow: 0 1px 0 var(--mg-accent-glow), 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+.navbar-brand {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bs-heading-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+/* The logo is pixel-art: keep the hard edges and give it a subtle portal glow. */
+.navbar-brand img#logo,
+img#logo.svg {
+  height: 30px;
+  width: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 6px var(--mg-accent-glow));
+}
+
+/* --------------------------------------------------------------------------
+   4. Search box
+   -------------------------------------------------------------------------- */
+
+form.search {
+  position: relative;
+}
+form.search > i.bi {
+  color: var(--mg-accent-bright);
+  opacity: 0.8;
+}
+#search-query {
+  background-color: var(--mg-surface);
+  border: 1px solid var(--bs-border-color);
+  color: var(--bs-body-color);
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#search-query::placeholder {
+  color: var(--bs-secondary-color);
+}
+#search-query:focus {
+  border-color: var(--mg-accent);
+  box-shadow: 0 0 0 0.2rem var(--mg-accent-glow);
+  background-color: var(--mg-surface-raised);
+}
+
+.search-results {
+  background-color: var(--bs-body-bg);
+}
+
+/* --------------------------------------------------------------------------
+   5. Sidebar TOC (.toc) + in-page affix nav (.affix)
+   -------------------------------------------------------------------------- */
+
+.toc-offcanvas .offcanvas-md {
+  background-color: var(--mg-surface);
+  border-right: 1px solid var(--bs-border-color);
+}
+.toc-offcanvas .offcanvas-title,
+.offcanvas-title {
+  color: var(--bs-heading-color);
+  letter-spacing: 0.03em;
+}
+
+/* TOC filter box */
+.toc form.filter > input {
+  background-color: var(--mg-surface-raised);
+  border: 1px solid var(--bs-border-color);
+  color: var(--bs-body-color);
+  border-radius: 0.5rem;
+}
+.toc form.filter > input:focus {
+  border-color: var(--mg-accent);
+  box-shadow: 0 0 0 0.2rem var(--mg-accent-glow);
+  outline: none;
+}
+.toc form.filter > i.bi {
+  color: var(--mg-accent-bright);
+}
+
+/* TOC entries: a left accent bar reveals on hover / active. */
+.toc li > a {
+  color: var(--bs-secondary-color);
+  border-left: 2px solid transparent;
+  padding-left: 0.75rem;
+  border-radius: 0 0.25rem 0.25rem 0;
+  transition: color 0.12s ease, background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+.toc li > a:hover,
+.toc li > a:focus {
+  color: var(--bs-heading-color);
+  background-color: rgba(var(--mg-accent-rgb), 0.08);
+  border-left-color: var(--mg-accent);
+}
+.toc li > a.active {
+  color: var(--mg-accent-bright);
+  background-color: rgba(var(--mg-accent-rgb), 0.12);
+  border-left-color: var(--mg-accent);
+  font-weight: 600;
+}
+.toc .expand-stub:before {
+  color: var(--bs-secondary-color);
+}
+
+/* Affix (right-hand "On this page" nav) */
+.affix ul li a {
+  color: var(--bs-secondary-color);
+  border-left: 2px solid transparent;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.affix ul li a:hover,
+.affix ul li a:focus {
+  color: var(--mg-accent-bright);
+  border-left-color: var(--mg-accent);
+}
+.affix ul li.active > a,
+.affix ul li > a.active {
+  color: var(--mg-accent-bright);
+  border-left-color: var(--mg-accent);
+}
+.affix > h5,
+.affix h5 {
+  color: var(--bs-heading-color);
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+
+/* Breadcrumb / actionbar */
+.actionbar {
+  border-bottom: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. Code blocks and inline code
+   -------------------------------------------------------------------------- */
+
+pre {
+  background-color: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.6rem;
+  padding: 1rem 1.1rem;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.18);
+}
+pre code {
+  color: var(--bs-body-color);
+  background: none;
+  padding: 0;
+}
+:not(pre) > code {
+  color: var(--bs-code-color);
+  background-color: rgba(var(--mg-accent-rgb), 0.1);
+  border: 1px solid var(--bs-border-color-translucent);
+  border-radius: 0.35rem;
+  padding: 0.12em 0.4em;
+  font-size: 0.88em;
+}
+
+/* --------------------------------------------------------------------------
+   7. Tables
+   -------------------------------------------------------------------------- */
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.table > thead {
+  color: var(--bs-heading-color);
+  background-color: var(--mg-surface-raised);
+  border-bottom: 2px solid var(--mg-accent);
+}
+.table > tbody tr {
+  border-color: var(--bs-border-color);
+}
+.table > tbody tr:hover {
+  background-color: rgba(var(--mg-accent-rgb), 0.06);
+}
+
+/* Blockquotes / admonitions get a moongate-blue edge. */
+blockquote {
+  border-left: 3px solid var(--mg-accent);
+  background-color: rgba(var(--mg-accent-rgb), 0.06);
+  padding: 0.6rem 1rem;
+  border-radius: 0 0.4rem 0.4rem 0;
+  color: var(--bs-secondary-color);
+}
+
+/* --------------------------------------------------------------------------
+   8. Footer, next-article
+   -------------------------------------------------------------------------- */
+
+footer.border-top {
+  border-top: 1px solid var(--bs-border-color) !important;
+  background: linear-gradient(
+    0deg,
+    var(--mg-navbar-top) 0%,
+    transparent 100%
+  );
+  color: var(--bs-secondary-color);
+}
+
+.next-article {
+  border-top: 1px solid var(--bs-border-color) !important;
+}
+.next-article > div > a {
+  color: var(--mg-accent-bright);
+}
+
+/* --------------------------------------------------------------------------
+   9. Custom scrollbars (tasteful, thin)
+   -------------------------------------------------------------------------- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mg-scroll-thumb) var(--mg-scroll-track);
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--mg-scroll-track);
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--mg-scroll-thumb);
+  border-radius: 6px;
+  border: 2px solid var(--mg-scroll-track);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--mg-accent);
+}
+
+/* --------------------------------------------------------------------------
+   10. Landing hero (homepage)
+   -------------------------------------------------------------------------- */
+
+.mg-hero {
+  text-align: center;
+  padding: 4.5rem 1rem 2.5rem;
+  position: relative;
+}
+
+/* The portal: a soft radial glow blooming behind the logo. */
+.mg-hero::before {
+  content: '';
+  position: absolute;
+  top: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 340px;
+  height: 340px;
+  max-width: 80vw;
+  background: radial-gradient(
+    circle,
+    var(--mg-accent-glow-strong) 0%,
+    transparent 68%
+  );
+  filter: blur(8px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mg-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mg-hero img {
+  width: 200px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 26px var(--mg-accent-glow-strong));
+  animation: mg-portal-pulse 5s ease-in-out infinite;
+}
+
+@keyframes mg-portal-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 22px var(--mg-accent-glow));
+  }
+  50% {
+    filter: drop-shadow(0 0 34px var(--mg-accent-glow-strong));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-hero img {
+    animation: none;
+  }
+}
+
+.mg-hero h1 {
+  font-size: clamp(2.2rem, 6vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-top: 1.4rem;
+  margin-bottom: 0.6rem;
+  background: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    var(--mg-accent-soft) 130%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+[data-bs-theme='light'] .mg-hero h1 {
+  background: linear-gradient(180deg, #131a38 0%, #2f5bd6 140%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.mg-hero p {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--bs-secondary-color);
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+/* Hero section links: kept as a horizontal row of understated chips. */
+.mg-hero-nav {
+  list-style: none;
+  padding: 0;
+  margin: 2rem auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.mg-hero-nav li {
+  padding: 0.5rem 1.1rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 2rem;
+  background-color: rgba(var(--mg-accent-rgb), 0.06);
+  color: var(--bs-heading-color);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: border-color 0.15s ease, background-color 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.mg-hero-nav li:hover {
+  border-color: var(--mg-accent);
+  background-color: rgba(var(--mg-accent-rgb), 0.12);
+  box-shadow: 0 0 16px var(--mg-accent-glow);
+}
+.mg-hero-nav li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Feature grid below the hero. */
+.mg-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  max-width: 60rem;
+  margin: 3rem auto 4rem;
+}
+.mg-feature {
+  padding: 1.5rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.75rem;
+  background-color: var(--mg-surface);
+  transition: border-color 0.18s ease, transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.mg-feature:hover {
+  border-color: rgba(var(--mg-accent-rgb), 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25), 0 0 0 1px var(--mg-accent-glow);
+}
+.mg-feature h3 {
+  font-size: 1.05rem;
+  margin: 0 0 0.5rem;
+  color: var(--mg-accent-bright);
+  letter-spacing: 0.02em;
+}
+.mg-feature p {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* On the landing layout, the empty affix / breadcrumb add dead whitespace. */
+body[data-layout='landing'] .affix,
+body[data-layout='landing'] .actionbar {
+  display: none;
+}
+body[data-layout='landing'] .content {
+  width: 100%;
+}

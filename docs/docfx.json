@@ -7,7 +7,7 @@
       { "files": ["images/**"] }
     ],
     "output": "_site",
-    "template": ["default", "modern"],
+    "template": ["default", "modern", "templates/moongate"],
     "globalMetadata": {
       "_appName": "Moongate",
       "_appTitle": "Moongate",
