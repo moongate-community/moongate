@@ -86,12 +86,14 @@ public sealed class MobileFactoryService : IMobileFactoryService
             return null;
         }
 
+        var variant = PickVariant(template.Variants);
+
         var mobile = new MobileEntity
         {
             Name = template.Name,
             MapId = mapId,
             Position = position,
-            Gender = ResolveGender(template.Gender),
+            Gender = ResolveGender(variant?.Gender ?? template.Gender),
             Strength = template.Strength,
             Dexterity = template.Dexterity,
             Intelligence = template.Intelligence,
@@ -99,7 +101,6 @@ public sealed class MobileFactoryService : IMobileFactoryService
             LootTableId = template.LootTableId ?? string.Empty
         };
 
-        var variant = PickVariant(template.Variants);
         ApplyAppearance(mobile, template.Appearance, variant?.Appearance);
         ApplySkills(mobile, template.Skills);
 

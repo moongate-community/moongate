@@ -127,6 +127,50 @@ public class MobileFactoryServiceTests
     }
 
     [Fact]
+    public void CreateFromTemplate_VariantGender_KeepsGenderBodyAndEquipmentCoherent()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Guard",
+                Variants =
+                [
+                    new()
+                    {
+                        Name = "m",
+                        Gender = MobileTemplateGenderType.Male,
+                        Appearance = new() { Body = 400 },
+                        Equipment = [new() { Item = "male_plate", Layer = "InnerTorso" }]
+                    },
+                    new()
+                    {
+                        Name = "f",
+                        Gender = MobileTemplateGenderType.Female,
+                        Appearance = new() { Body = 401 },
+                        Equipment = [new() { Item = "female_plate", Layer = "InnerTorso" }]
+                    }
+                ]
+            }
+        );
+        var factory = Factory(templates);
+
+        var combos = new HashSet<(GenderType, int, string)>();
+
+        for (var i = 0; i < 40; i++)
+        {
+            var spawn = factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!;
+            combos.Add((spawn.Mobile.Gender, spawn.Mobile.Body, Assert.Single(spawn.Equipment).ItemTemplateId));
+        }
+
+        // Both coherent packages appear and nothing else — never a mismatched gender/body/gear.
+        Assert.Contains((GenderType.Male, 400, "male_plate"), combos);
+        Assert.Contains((GenderType.Female, 401, "female_plate"), combos);
+        Assert.Equal(2, combos.Count);
+    }
+
+    [Fact]
     public void CreateFromTemplate_ResolvesEquipment()
     {
         var templates = new MobileTemplateService();
