@@ -13,8 +13,11 @@ using SquidStd.Network.Spans;
 
 namespace Moongate.Tests.Server.World;
 
-public class EnterWorldServiceTests
+public class WorldServiceTests
 {
+    private static WorldService Service(StubItemService items)
+        => new(items, new StubEventBus());
+
     private static byte[] Serialize(IOutgoingPacket packet)
     {
         var writer = new SpanWriter(256, true);
@@ -51,14 +54,25 @@ public class EnterWorldServiceTests
     [Fact]
     public void BuildSequence_EmitsExpectedOrderedOpcodes()
     {
-        var service = new EnterWorldService(new StubItemService([]));
-
-        var opcodes = service.BuildSequence(Player()).Select(packet => Serialize(packet)[0]).ToArray();
+        var opcodes = Service(new StubItemService([]))
+            .BuildSequence(Player())
+            .Select(packet => Serialize(packet)[0])
+            .ToArray();
 
         Assert.Equal(
             new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0x72, 0x55, 0x5B },
             opcodes
         );
+    }
+
+    [Fact]
+    public void BuildSequence_SeasonComesFromTheMap()
+    {
+        // The player stands on Trammel (map 1), whose definition season is Spring (0).
+        var season = Serialize(Service(new StubItemService([])).BuildSequence(Player())[3]); // 0xBC is the 4th packet
+
+        Assert.Equal(0xBC, season[0]);
+        Assert.Equal((byte)SeasonType.Spring, season[1]);
     }
 
     [Fact]
@@ -71,9 +85,7 @@ public class EnterWorldServiceTests
             Hue = new Hue(0x10),
             EquippedLayer = LayerType.Shirt
         };
-        var service = new EnterWorldService(new StubItemService([shirt]));
-
-        var incoming = Serialize(service.BuildSequence(Player())[8]); // 0x78 is the 9th packet
+        var incoming = Serialize(Service(new StubItemService([shirt])).BuildSequence(Player())[8]); // 0x78 is the 9th packet
 
         Assert.Equal(0x78, incoming[0]);
         Assert.Equal(23 + 9 * 2, BinaryPrimitives.ReadUInt16BigEndian(incoming.AsSpan(1))); // shirt + hair

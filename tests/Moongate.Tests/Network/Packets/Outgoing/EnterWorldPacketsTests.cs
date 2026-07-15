@@ -70,7 +70,7 @@ public class EnterWorldPacketsTests
     [Fact]
     public void SeasonChange_IsByteExact()
     {
-        var b = Serialize(new SeasonChangePacket(2, true));
+        var b = Serialize(new SeasonChangePacket(SeasonType.Fall, true));
 
         Assert.Equal(new byte[] { 0xBC, 2, 1 }, b);
     }

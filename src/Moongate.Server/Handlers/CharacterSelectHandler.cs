@@ -16,12 +16,12 @@ public sealed class CharacterSelectHandler : IPacketHandler<CharacterSelectPacke
     private readonly ILogger _logger = Log.ForContext<CharacterSelectHandler>();
 
     private readonly ICharacterService _characterService;
-    private readonly IEnterWorldService _enterWorld;
+    private readonly IWorldService _world;
 
-    public CharacterSelectHandler(ICharacterService characterService, IEnterWorldService enterWorld)
+    public CharacterSelectHandler(ICharacterService characterService, IWorldService world)
     {
         _characterService = characterService;
-        _enterWorld = enterWorld;
+        _world = world;
     }
 
     public void Handle(CharacterSelectPacket packet, in PacketContext context)
@@ -45,7 +45,7 @@ public sealed class CharacterSelectHandler : IPacketHandler<CharacterSelectPacke
         var character = characters[packet.Slot];
 
         context.Session.SetCharacter(character);
-        _enterWorld.SendEnterWorld(context.Session, character);
+        _world.SendEnterWorld(context.Session, character);
     }
 
     public void Register(INetworkService network)

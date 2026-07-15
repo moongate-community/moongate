@@ -3,6 +3,7 @@ using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.World;
@@ -10,17 +11,17 @@ using Moongate.Server.Types;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using SquidStd.Core.Interfaces.Events;
 
 namespace Moongate.Server.Services.World;
 
 /// <summary>
-/// Default <see cref="IEnterWorldService" />: builds the self-only enter-world burst from a mobile's
-/// state and streams it in the ModernUO order. Broadcasting nearby mobiles/items (SendEverything)
-/// waits on a spatial world system and is out of scope here.
+/// Default <see cref="IWorldService" />: builds the self-only enter-world burst from a mobile's state,
+/// streams it in the ModernUO order, and raises <see cref="PlayerEnteredWorldEvent" />. Broadcasting
+/// nearby mobiles/items (SendEverything) waits on a spatial world system and is out of scope here.
 /// </summary>
-public sealed class EnterWorldService : IEnterWorldService
+public sealed class WorldService : IWorldService
 {
-    private const byte DefaultSeason = 0;     // spring
     private const byte OverallLightLevel = 0; // full daylight
     private const byte PersonalLightLevel = 0;
     private const byte FemaleFlag = 0x02;
@@ -33,10 +34,12 @@ public sealed class EnterWorldService : IEnterWorldService
     private static readonly Serial FacialHairVirtualSerial = new(0x7FFFFFFE);
 
     private readonly IItemService _items;
+    private readonly IEventBus _eventBus;
 
-    public EnterWorldService(IItemService items)
+    public WorldService(IItemService items, IEventBus eventBus)
     {
         _items = items;
+        _eventBus = eventBus;
     }
 
     public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
@@ -47,6 +50,8 @@ public sealed class EnterWorldService : IEnterWorldService
         }
 
         session.SetState(SessionStateType.InWorld);
+
+        _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
     }
 
     /// <summary>
@@ -55,7 +60,7 @@ public sealed class EnterWorldService : IEnterWorldService
     /// </summary>
     public IReadOnlyList<IOutgoingPacket> BuildSequence(MobileEntity mobile)
     {
-        var (mapWidth, mapHeight) = MapDimensions.Get(mobile.MapId);
+        var map = MapDefinitions.Get(mobile.MapId);
         var position = mobile.Position;
         var body = (ushort)mobile.Body;
         var flags = GetBodyFlags(mobile);
@@ -69,12 +74,12 @@ public sealed class EnterWorldService : IEnterWorldService
                 (ushort)position.Y,
                 (short)position.Z,
                 mobile.Direction,
-                (ushort)mapWidth,
-                (ushort)mapHeight
+                (ushort)map.Width,
+                (ushort)map.Height
             ),
-            new MapChangePacket((MapType)mobile.MapId),
+            new MapChangePacket(map.Map),
             new MapPatchesPacket(),
-            new SeasonChangePacket(DefaultSeason, true),
+            new SeasonChangePacket(map.Season, true),
             new SupportFeaturesPacket(FeatureFlagType.Modern),
             new MobileUpdatePacket(
                 mobile.Id,
