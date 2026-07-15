@@ -1,0 +1,21 @@
+{
+  "build": {
+    "content": [
+      { "files": ["**/*.{md,yml}"], "exclude": ["_site/**", "templates/**", "obj/**"] }
+    ],
+    "resource": [
+      { "files": ["images/**"] }
+    ],
+    "output": "_site",
+    "template": ["default", "modern"],
+    "globalMetadata": {
+      "_appName": "Moongate",
+      "_appTitle": "Moongate",
+      "_appLogoPath": "images/logo.png",
+      "_appFooter": "Moongate — an Ultima Online server emulator",
+      "_enableSearch": true,
+      "_disableContribution": true
+    },
+    "sitemap": { "baseUrl": "https://moongate-community.github.io/moongate" }
+  }
+}

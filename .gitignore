@@ -592,3 +592,8 @@ benchmarks/.compare
 
 # CodeGraph index (never commit)
 .codegraph/
+
+# DocFX
+docs/_site/
+docs/obj/
+docs/api/
