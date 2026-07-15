@@ -1,0 +1,14 @@
+-   Id: ethereal_horse_mount
+    Name: horse
+    Title: a horse
+    Category: mount
+    Description: Personal horse used by mount tokens.
+    Tags:
+        - mount
+        - horse
+        - ethereal
+    Strength: 50
+    Dexterity: 60
+    Intelligence: 10
+    Appearance:
+        Body: 226

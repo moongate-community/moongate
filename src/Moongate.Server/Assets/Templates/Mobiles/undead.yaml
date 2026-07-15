@@ -1,0 +1,37 @@
+-   Id: zombie_npc
+    Title: a zombie
+    Category: monster
+    Description: Static zombie template for spawn and combat testing.
+    Tags:
+        - monster
+        - undead
+        - zombie
+        - test
+    Strength: 58
+    Dexterity: 40
+    Intelligence: 33
+    Appearance:
+        Body: 3
+    LootTableId: undead.low
+    BrainScript: undead_melee
+-   Id: skeletal_knight_npc
+    Title: a skeletal knight
+    Category: monster
+    Description: Static skeletal knight template for corpse and loot testing.
+    Tags:
+        - monster
+        - undead
+        - skeleton
+        - knight
+        - test
+    Strength: 220
+    Dexterity: 85
+    Intelligence: 48
+    Appearance:
+        Body: 147
+    Equipment:
+      - Item: scimitar
+        Layer: OneHanded
+      - Item: wooden_shield
+        Layer: TwoHanded
+    LootTableId: undead.knight
