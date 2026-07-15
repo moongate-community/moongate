@@ -17,8 +17,9 @@ namespace Moongate.Server.Scripting;
 
 /// <summary>
 /// Exposes mobile creation and manipulation to Lua. Mobiles are referenced by serial (a number).
-/// All functions are synchronous and must be called on the game-loop thread (from
-/// <c>game.post</c> / <c>game.schedule</c>), the single-writer boundary for mobile state.
+/// All functions are synchronous and must run on the game-loop thread — the single-writer boundary
+/// for mobile state. Event handlers (<c>events.on</c>) are dispatched there automatically; other code
+/// reaches it via <c>game.post</c> / <c>game.schedule</c>. Mutating calls log a warning if run off-loop.
 /// </summary>
 [ScriptModule("mobile", "Create and manipulate mobiles by serial.")]
 public sealed class MobileModule

@@ -27,7 +27,19 @@ Delays and intervals are converted from milliseconds to `TimeSpan`. Each closure
 
 `MoongateScriptModulesPlugin` registers two gameplay modules that bridge the server's item and mobile services to Lua. Both reference their subjects by **serial** (a plain number), so scripts never hold C# object handles; a serial round-trips as a number and is re-resolved on each call.
 
-These functions are synchronous and mutate world state directly. They must run on the game-loop thread — call them from inside `game.post` / `game.schedule` / `game.schedule_repeating`, which is the single-writer boundary for item and mobile state.
+These functions are synchronous and mutate world state directly, so they must run on the game-loop thread — the single-writer boundary for item and mobile state.
+
+**Event handlers are already loop-affine.** Callbacks registered with `events.on(...)` are dispatched on the game-loop thread automatically, so you do **not** need to wrap their body in `game.post`. Moongate installs a loop-affine invoke marshaller (`LoopAffineInvokeMarshaller`): when an event fires it runs the handler inline if the publisher is already on the loop, otherwise it posts the handler onto the loop. `game.post` / `game.schedule` / `game.schedule_repeating` are still the way to reach the loop from code that runs off it by other means (for example a bare async continuation).
+
+**`world_ready`.** Moongate publishes a `world_ready` event on the game-loop thread once the engine has started and the world is loaded. Use it for bootstrap spawns — the handler runs on the loop, so it can mutate world state directly:
+
+```lua
+events.on("world_ready", function()
+    mobile.create_from_template("guard", 1, 1420, 1690, 0)
+end)
+```
+
+**Off-loop guard.** As a diagnostic safety net, every mutating `item.*` / `mobile.*` call checks whether it is running on the loop thread and logs a **warning** if it is not (`"<op> called off the game-loop thread; ..."`). It never blocks or throws — it just makes an otherwise-silent single-writer violation visible in the logs.
 
 ### `item`
 
@@ -82,7 +94,7 @@ Wherever a function accepts one of these, it also accepts the equivalent name st
 
 ### Example: spawn and outfit a guard
 
-The whole routine runs inside `game.post`, so every mutation happens on the game-loop thread:
+The whole routine runs inside `game.post`, so every mutation happens on the game-loop thread. (Inside an `events.on(...)` / `world_ready` handler the `game.post` wrapper is unnecessary — the body already runs on the loop.)
 
 ```lua
 game.post(function()
@@ -129,17 +141,26 @@ end)
 - `src/Moongate.Scripting/MoongateScriptingPlugin.cs`
 - `src/Moongate.Scripting/Modules/LoggerModule.cs`
 - `src/Moongate.Scripting/Modules/GameLoopModule.cs`
+- `src/Moongate.Scripting/LoopAffineInvokeMarshaller.cs`
 - `src/Moongate.Core/Interfaces/IGameLoopContext.cs`
+- `src/Moongate.Core/Interfaces/ILoopThread.cs`
 - `src/Moongate.Server/Services/Game/GameLoopContext.cs`
+- `src/Moongate.Server/Services/Game/LoopThreadMarker.cs`
+- `src/Moongate.Server/Data/Events/WorldReadyEvent.cs`
 - `src/Moongate.Server/MoongateScriptModulesPlugin.cs`
 - `src/Moongate.Server/Scripting/ItemModule.cs`
 - `src/Moongate.Server/Scripting/MobileModule.cs`
+- `src/Moongate.Server/Scripting/LoopGuard.cs`
 - `src/Moongate.Server/Scripting/ScriptEnums.cs`
 - `src/Moongate.UO.Data/Types/SkillName.cs`
 
 ### Tests
 
 - `tests/Moongate.Tests/Scripting/GameLoopModuleTests.cs`
+- `tests/Moongate.Tests/Server/Game/LoopThreadMarkerTests.cs`
+- `tests/Moongate.Tests/Server/Scripting/LoopAffineInvokeMarshallerTests.cs`
+- `tests/Moongate.Tests/Server/Scripting/WorldReadyForwardingTests.cs`
+- `tests/Moongate.Tests/Server/Scripting/LoopGuardTests.cs`
 - `tests/Moongate.Tests/Server/ItemModuleTests.cs`
 - `tests/Moongate.Tests/Server/MobileModuleTests.cs`
 - `tests/Moongate.Tests/Server/MoongateScriptModulesPluginTests.cs`
