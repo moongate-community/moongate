@@ -6,6 +6,7 @@ using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
+using SquidStd.Scripting.Lua.Interfaces.Events;
 
 namespace Moongate.Scripting;
 
@@ -34,6 +35,8 @@ public class MoongateScriptingPlugin : ISquidStdPlugin
                 appConfig.AppVersion
             )
         );
+
+        container.Register<ILuaInvokeMarshaller, LoopAffineInvokeMarshaller>(Reuse.Singleton);
 
         container.RegisterLuaEvents();
 
