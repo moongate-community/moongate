@@ -1,8 +1,11 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
+using Moongate.UO.Data.Mobiles.Templates;
 using Moongate.UO.Data.Types;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server;
 
@@ -11,7 +14,7 @@ public class MobileFactoryServiceTests
     [Fact]
     public void CreatePlayerMobile_MapsIdentityStatsAppearanceHuesSkillsAndStartingLocation()
     {
-        var character = new MobileFactoryService(Cities()).CreatePlayerMobile(Packet(1));
+        var character = Factory().CreatePlayerMobile(Packet(1));
 
         Assert.Equal("Freydis", character.Name);
         Assert.Equal(GenderType.Female, character.Gender);
@@ -41,7 +44,7 @@ public class MobileFactoryServiceTests
     [Fact]
     public void CreatePlayerMobile_OutOfRangeCityIndex_FallsBackToFirstCity()
     {
-        var character = new MobileFactoryService(Cities()).CreatePlayerMobile(Packet(99));
+        var character = Factory().CreatePlayerMobile(Packet(99));
 
         // Falls back to the city at index 0 (Britain / Trammel).
         Assert.Equal((int)MapType.Trammel, character.MapId);
@@ -51,13 +54,75 @@ public class MobileFactoryServiceTests
     [Fact]
     public void Create_BuildsBareMobileWithNameMapAndPosition()
     {
-        var mobile = new MobileFactoryService(Cities()).Create("Town Guard", 1, new(1420, 1690, 5));
+        var mobile = Factory().Create("Town Guard", 1, new(1420, 1690, 5));
 
         Assert.Equal("Town Guard", mobile.Name);
         Assert.Equal(1, mobile.MapId);
         Assert.Equal(new(1420, 1690, 5), mobile.Position);
         Assert.Equal(Serial.Zero, mobile.Id);
     }
+
+    [Fact]
+    public void CreateFromTemplate_UnknownId_ReturnsNull()
+        => Assert.Null(Factory().CreateFromTemplate("nope", 1, new(0, 0, 0)));
+
+    [Fact]
+    public void CreateFromTemplate_AppliesBodyStatsHuesAndSkills()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Town Guard",
+                Strength = 100,
+                Dexterity = 90,
+                Intelligence = 25,
+                BrainScript = "guard",
+                LootTableId = "guard.warrior",
+                Appearance = new() { Body = 400, SkinHue = "1002" },
+                Skills = { ["Swordsmanship"] = 900, ["Bogus"] = 10 }
+            }
+        );
+
+        var spawn = Factory(templates).CreateFromTemplate("guard", 1, new(10, 20, 5))!;
+
+        Assert.Equal("Town Guard", spawn.Mobile.Name);
+        Assert.Equal(400, spawn.Mobile.Body);
+        Assert.Equal(100, spawn.Mobile.Strength);
+        Assert.Equal((ushort)1002, spawn.Mobile.SkinHue.Value);
+        Assert.Equal(new(10, 20, 5), spawn.Mobile.Position);
+        Assert.Equal("guard", spawn.Mobile.BrainScriptId);
+        Assert.Equal("guard.warrior", spawn.Mobile.LootTableId);
+        // 40 == Swordsmanship; the unknown "Bogus" skill is skipped.
+        Assert.Equal(900, spawn.Mobile.Skills[40]);
+        Assert.DoesNotContain(spawn.Mobile.Skills, pair => pair.Value == 10);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_ResolvesEquipment()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Guard",
+                Appearance = new() { Body = 400 },
+                Equipment = [new() { Item = "plate_chest", Layer = "InnerTorso", Hue = "1002" }]
+            }
+        );
+
+        var spawn = Factory(templates).CreateFromTemplate("guard", 1, new(0, 0, 0))!;
+
+        var equip = Assert.Single(spawn.Equipment);
+        Assert.Equal("plate_chest", equip.ItemTemplateId);
+        Assert.Equal(LayerType.InnerTorso, equip.Layer);
+        Assert.Equal((ushort)1002, equip.Hue);
+    }
+
+    private static MobileFactoryService Factory(MobileTemplateService? templates = null)
+        => new(Cities(), templates ?? new MobileTemplateService(), new Random(1));
 
     private static StartingCityService Cities()
     {

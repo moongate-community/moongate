@@ -201,7 +201,7 @@ public class CharacterServiceTests
 
         return new(
             persistence,
-            new MobileFactoryService(Cities()),
+            new MobileFactoryService(Cities(), new MobileTemplateService(), random),
             factory,
             new ItemService(persistence),
             templates,

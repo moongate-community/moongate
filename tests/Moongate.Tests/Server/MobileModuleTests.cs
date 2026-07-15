@@ -173,7 +173,7 @@ public class MobileModuleTests
     private static (MobileModule Module, FakePersistenceService Persistence) Build()
     {
         var persistence = new FakePersistenceService();
-        var factory = new MobileFactoryService(new StartingCityService());
+        var factory = new MobileFactoryService(new StartingCityService(), new MobileTemplateService(), new Random(1));
         return (new MobileModule(factory, persistence), persistence);
     }
 }
