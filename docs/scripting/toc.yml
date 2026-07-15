@@ -26,3 +26,11 @@
       href: reference/loot.md
     - name: Enums
       href: reference/enums.md
+- name: Data files
+  items:
+    - name: Item templates
+      href: data/item-templates.md
+    - name: Mobile templates
+      href: data/mobile-templates.md
+    - name: Loot tables
+      href: data/loot-tables.md
