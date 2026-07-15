@@ -34,6 +34,12 @@ public sealed class PlayerSession : ISeedTarget
 
     public MobileEntity? Character { get; private set; }
 
+    public int ScreenWidth { get; private set; }
+
+    public int ScreenHeight { get; private set; }
+
+    public string? Language { get; private set; }
+
     public UoCompressionMiddleware Compression { get; }
 
     public PlayerSession(SquidStdTcpClient client)
@@ -117,6 +123,25 @@ public sealed class PlayerSession : ISeedTarget
         lock (_stateSync)
         {
             Version = version;
+        }
+    }
+
+    /// <summary>Records the client viewport size reported via 0xBF sub-command 0x05.</summary>
+    public void SetScreenSize(int width, int height)
+    {
+        lock (_stateSync)
+        {
+            ScreenWidth = width;
+            ScreenHeight = height;
+        }
+    }
+
+    /// <summary>Records the client language (e.g. "ENU") reported via 0xBF sub-command 0x0B.</summary>
+    public void SetLanguage(string language)
+    {
+        lock (_stateSync)
+        {
+            Language = language;
         }
     }
 
