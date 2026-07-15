@@ -572,9 +572,6 @@ crashlytics-build.properties
 coverage/*
 /definizions.lua
 
-# VitePress generated documentation
-docs/.vitepress/cache/
-docs/.vitepress/dist/
 node_modules/
 
 # Source Generator - auto-generated files (regenerated on build)
