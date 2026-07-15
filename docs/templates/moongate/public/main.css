@@ -432,6 +432,10 @@ footer.border-top {
   .mg-hero img {
     animation: none;
   }
+  .mg-feature,
+  .mg-feature:hover {
+    transform: none;
+  }
 }
 
 .mg-hero h1 {

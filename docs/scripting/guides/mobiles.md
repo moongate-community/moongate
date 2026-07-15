@@ -57,9 +57,11 @@ A few things happen when this is loaded and spawned:
 
 - **`BaseMobile` inheritance.** `base_human_npc` supplies defaults (a base body,
   skin/hair, a basic shirt-and-shoes outfit). The derived template is merged
-  onto it: strings and lists overlay, and a numeric stat overrides the base only
-  when it differs from the DTO default. So the guard keeps the base human look
-  but raises Strength/Dexterity/Intelligence and swaps in plate.
+  onto it: empty strings fall back to the base, `Tags` concatenate,
+  `Equipment` (and `Variants`) are replaced wholesale when the derived
+  template declares any, and a numeric stat overrides the base only when it
+  differs from the DTO default. So the guard keeps the base human look but
+  raises Strength/Dexterity/Intelligence and swaps in plate.
 - **Skills** are stored in **tenths**, so `Swordsmanship: 1200` means a skill of
   120.0.
 - **Equipment** is resolved item-by-item onto the named

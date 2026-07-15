@@ -38,7 +38,8 @@ exist. Functions that return several serials return them as a Lua
 > - Callbacks registered with `events.on` (including `world_ready`) are
 >   dispatched on the game-loop thread automatically. You do **not** need to
 >   wrap their body in `game.post`.
-> - From any other context (a bare timer callback, an async continuation),
+> - From any other context (an async continuation, a thread of your own —
+>   anything not already running on the loop),
 >   reach the loop with [`game.post`](reference/game.md#gamepost),
 >   [`game.schedule`](reference/game.md#gameschedule) or
 >   [`game.schedule_repeating`](reference/game.md#gameschedule_repeating).

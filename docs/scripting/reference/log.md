@@ -3,8 +3,8 @@
 Writes to the server log. Backed by `LoggerModule`, which forwards to Serilog.
 
 Every function takes a **message template** and optional positional arguments.
-The template uses Serilog placeholders (`{0}`, `{1}`, …) that are filled from
-the extra arguments in order. None of these functions return a value.
+The template uses positional placeholders (`{0}`, `{1}`, …) in Serilog's
+message-template style, filled from the extra arguments in order. None of these functions return a value.
 
 ## log.debug
 

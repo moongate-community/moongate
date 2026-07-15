@@ -19,7 +19,8 @@ on:
 
 concurrency:
   group: docs-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancel superseded PR builds, but never an in-flight Pages deploy from main.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
