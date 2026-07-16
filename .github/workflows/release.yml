@@ -221,6 +221,11 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      # The @semantic-release/github success hook searches the issues/PRs
+      # associated with the released commits; without this it dies with
+      # "Resource not accessible by integration" AFTER tagging, which skips
+      # the publish job (happened on v0.2.0).
+      issues: write
     outputs:
       version: ${{ steps.semantic_release.outputs.version }}
 
