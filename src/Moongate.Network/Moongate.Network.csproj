@@ -7,8 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
-      <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj" />
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SquidStd.Network" Version="0.36.0"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.36.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,11 @@
+-   Id: creature.red_solen_queen
+    Name: RedSolenQueen
+    Category: loot
+    Description: Creature-specific loot for RedSolenQueen.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: ball_of_summoning
+            Amount: 1
+            Chance: 1.0

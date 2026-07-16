@@ -1,0 +1,11 @@
+-   Id: creature.juka_warrior
+    Name: JukaWarrior
+    Category: loot
+    Description: Creature-specific loot for JukaWarrior.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: arcane_gem
+            Amount: 1
+            Chance: 1.0

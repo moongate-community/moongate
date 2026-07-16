@@ -1,0 +1,11 @@
+-   Id: creature.enslaved_gargoyle
+    Name: EnslavedGargoyle
+    Category: loot
+    Description: Creature-specific loot for EnslavedGargoyle.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gargoyles_pickaxe
+            Amount: 1
+            Chance: 1.0

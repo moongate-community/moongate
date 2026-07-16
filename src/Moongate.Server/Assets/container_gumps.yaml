@@ -1,0 +1,324 @@
+-   GumpId: 60
+    RectX: 44
+    RectY: 65
+    RectWidth: 142
+    RectHeight: 94
+    DropSound: 72
+    ItemIds: [ ]
+-   GumpId: 9
+    RectX: 20
+    RectY: 85
+    RectWidth: 104
+    RectHeight: 111
+    DropSound: 66
+    ItemIds:
+        - 8198
+        - 3786
+        - 3787
+        - 3788
+        - 3789
+        - 3790
+        - 3791
+        - 3792
+        - 3793
+        - 3794
+-   GumpId: 61
+    RectX: 29
+    RectY: 34
+    RectWidth: 108
+    RectHeight: 94
+    DropSound: 72
+    ItemIds:
+        - 3702
+        - 8790
+        - 8791
+-   GumpId: 62
+    RectX: 33
+    RectY: 36
+    RectWidth: 109
+    RectHeight: 112
+    DropSound: 66
+    ItemIds:
+        - 3703
+        - 3711
+-   GumpId: 63
+    RectX: 19
+    RectY: 47
+    RectWidth: 163
+    RectHeight: 76
+    DropSound: 79
+    ItemIds:
+        - 3706
+        - 9429
+        - 9430
+        - 9433
+        - 9434
+-   GumpId: 65
+    RectX: 35
+    RectY: 38
+    RectWidth: 110
+    RectHeight: 78
+    DropSound: 79
+    ItemIds:
+        - 2448
+        - 2476
+        - 2481
+        - 9431
+        - 9432
+        - 9437
+-   GumpId: 66
+    RectX: 18
+    RectY: 105
+    RectWidth: 144
+    RectHeight: 73
+    DropSound: 66
+    ItemIds:
+        - 3648
+        - 3649
+-   GumpId: 67
+    RectX: 16
+    RectY: 51
+    RectWidth: 168
+    RectHeight: 73
+    DropSound: 66
+    ItemIds:
+        - 3709
+        - 2474
+-   GumpId: 68
+    RectX: 20
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 90
+    DropSound: 66
+    ItemIds:
+        - 3710
+        - 2473
+        - 3644
+        - 3645
+        - 3646
+        - 3647
+-   GumpId: 72
+    RectX: 76
+    RectY: 12
+    RectWidth: 64
+    RectHeight: 56
+    DropSound: 66
+    ItemIds:
+        - 2608
+        - 2616
+-   GumpId: 73
+    RectX: 18
+    RectY: 105
+    RectWidth: 144
+    RectHeight: 73
+    DropSound: 66
+    ItemIds:
+        - 3650
+        - 3651
+-   GumpId: 74
+    RectX: 18
+    RectY: 105
+    RectWidth: 144
+    RectHeight: 73
+    DropSound: 66
+    ItemIds:
+        - 3708
+        - 2475
+-   GumpId: 75
+    RectX: 16
+    RectY: 51
+    RectWidth: 168
+    RectHeight: 73
+    DropSound: 66
+    ItemIds:
+        - 3712
+        - 2472
+-   GumpId: 76
+    RectX: 46
+    RectY: 74
+    RectWidth: 150
+    RectHeight: 110
+    DropSound: 66
+    ItemIds:
+        - 15973
+        - 16019
+        - 16046
+        - 16057
+-   GumpId: 77
+    RectX: 76
+    RectY: 12
+    RectWidth: 64
+    RectHeight: 56
+    DropSound: 66
+    ItemIds:
+        - 2711
+        - 2712
+        - 2713
+        - 2714
+        - 2715
+        - 2716
+        - 2717
+        - 2718
+-   GumpId: 78
+    RectX: 24
+    RectY: 96
+    RectWidth: 74
+    RectHeight: 56
+    DropSound: 66
+    ItemIds:
+        - 2636
+        - 2637
+        - 2640
+        - 2641
+-   GumpId: 79
+    RectX: 24
+    RectY: 96
+    RectWidth: 74
+    RectHeight: 56
+    DropSound: 66
+    ItemIds:
+        - 2638
+        - 2639
+        - 2642
+        - 2643
+-   GumpId: 81
+    RectX: 16
+    RectY: 10
+    RectWidth: 138
+    RectHeight: 84
+    DropSound: 66
+    ItemIds:
+        - 2604
+        - 2612
+-   GumpId: 82
+    RectX: 0
+    RectY: 0
+    RectWidth: 110
+    RectHeight: 62
+    DropSound: 66
+    ItemIds:
+        - 7774
+-   GumpId: 2330
+    RectX: 0
+    RectY: 0
+    RectWidth: 282
+    RectHeight: 210
+    DropSound: -1
+    ItemIds:
+        - 4006
+-   GumpId: 2350
+    RectX: 0
+    RectY: 0
+    RectWidth: 282
+    RectHeight: 230
+    DropSound: -1
+    ItemIds:
+        - 3612
+        - 4013
+-   GumpId: 258
+    RectX: 35
+    RectY: 10
+    RectWidth: 155
+    RectHeight: 85
+    DropSound: 66
+    ItemIds:
+        - 9002
+        - 9003
+-   GumpId: 261
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10327
+        - 10328
+-   GumpId: 262
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10331
+        - 10332
+-   GumpId: 263
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10333
+        - 10334
+        - 10329
+        - 10330
+-   GumpId: 264
+    RectX: 10
+    RectY: 10
+    RectWidth: 116
+    RectHeight: 71
+    DropSound: 79
+    ItemIds:
+        - 9435
+        - 9436
+-   GumpId: 265
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10251
+        - 10252
+-   GumpId: 266
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10255
+        - 10256
+-   GumpId: 267
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10253
+        - 10254
+-   GumpId: 268
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10257
+        - 10258
+        - 10261
+        - 10262
+        - 10263
+        - 10264
+-   GumpId: 269
+    RectX: 10
+    RectY: 10
+    RectWidth: 150
+    RectHeight: 95
+    DropSound: 66
+    ItemIds:
+        - 10259
+        - 10260
+-   GumpId: 288
+    RectX: 56
+    RectY: 30
+    RectWidth: 102
+    RectHeight: 74
+    DropSound: 66
+    ItemIds:
+        - 18890
+        - 18891
+        - 18892
+        - 18896

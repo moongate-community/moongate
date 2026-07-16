@@ -1,0 +1,27 @@
+-   Id: guard.warrior
+    Name: GuardWarriorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 10
+            AmountMax: 25
+-   Id: guard.archer
+    Name: GuardArcherLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 10
+            AmountMax: 25
+        -   ItemTemplateId: arrow
+            Amount: 250
+            Chance: 1.0

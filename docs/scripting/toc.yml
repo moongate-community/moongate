@@ -1,0 +1,38 @@
+- name: Overview
+  href: index.md
+- name: Guides
+  items:
+    - name: How scripting works
+      href: guides/how-scripting-works.md
+    - name: Items
+      href: guides/items.md
+    - name: Mobiles
+      href: guides/mobiles.md
+    - name: Loot
+      href: guides/loot.md
+- name: Reference
+  items:
+    - name: log
+      href: reference/log.md
+    - name: game
+      href: reference/game.md
+    - name: events
+      href: reference/events.md
+    - name: item
+      href: reference/item.md
+    - name: mobile
+      href: reference/mobile.md
+    - name: loot
+      href: reference/loot.md
+    - name: account
+      href: reference/account.md
+    - name: Enums
+      href: reference/enums.md
+- name: Data files
+  items:
+    - name: Item templates
+      href: data/item-templates.md
+    - name: Mobile templates
+      href: data/mobile-templates.md
+    - name: Loot tables
+      href: data/loot-tables.md

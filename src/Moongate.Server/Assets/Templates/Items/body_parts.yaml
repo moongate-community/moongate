@@ -1,0 +1,84 @@
+-   Id: head
+    Name: Head
+    Category: Body Parts
+    Description: ''
+    ItemId: 7584
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts
+-   Id: left_arm
+    Name: Left Arm
+    Category: Body Parts
+    Description: ''
+    ItemId: 7585
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts
+-   Id: left_leg
+    Name: Left Leg
+    Category: Body Parts
+    Description: ''
+    ItemId: 7587
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts
+-   Id: right_arm
+    Name: Right Arm
+    Category: Body Parts
+    Description: ''
+    ItemId: 7586
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts
+-   Id: right_leg
+    Name: Right Leg
+    Category: Body Parts
+    Description: ''
+    ItemId: 7588
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts
+-   Id: torso
+    Name: Torso
+    Category: Body Parts
+    Description: ''
+    ItemId: 7583
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - body parts

@@ -1,0 +1,46 @@
+using DryIoc;
+using Moongate.Scripting.Modules;
+using SquidStd.Core.Data.Bootstrap;
+using SquidStd.Core.Directories;
+using SquidStd.Core.Utils;
+using SquidStd.Plugin.Abstractions.Data;
+using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
+using SquidStd.Scripting.Lua.Extensions.Scripts;
+using SquidStd.Scripting.Lua.Interfaces.Events;
+
+namespace Moongate.Scripting;
+
+public class MoongateScriptingPlugin : ISquidStdPlugin
+{
+    public PluginMetadata Metadata
+        => new()
+        {
+            Id = "moongate.scripting.plugin",
+            Version = new(VersionUtils.GetVersion(typeof(MoongateScriptingPlugin).Assembly)),
+            Author = "squid",
+            Name = "Moongate Scripting",
+            Description = "Moongate scripting plugin"
+        };
+
+    public void Configure(IContainer container, PluginContext context)
+    {
+        var appConfig = container.Resolve<SquidStdOptions>();
+        var directoryConfig = container.Resolve<DirectoriesConfig>();
+
+        container.RegisterLuaEngine(
+            new(
+                directoryConfig.GetPath("scripts"),
+                directoryConfig.GetPath("scripts"),
+                appConfig.AppName,
+                appConfig.AppVersion
+            )
+        );
+
+        container.Register<ILuaInvokeMarshaller, LoopAffineInvokeMarshaller>(Reuse.Singleton);
+
+        container.RegisterLuaEvents();
+
+        container.RegisterScriptModule<LoggerModule>();
+        container.RegisterScriptModule<GameLoopModule>();
+    }
+}

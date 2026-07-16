@@ -1,0 +1,11 @@
+-   Id: creature.ilhenir
+    Name: Ilhenir
+    Category: loot
+    Description: Creature-specific loot for Ilhenir.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTag: talismans
+            Amount: 1
+            Chance: 1.0

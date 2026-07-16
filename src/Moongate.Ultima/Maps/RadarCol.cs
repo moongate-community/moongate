@@ -1,0 +1,162 @@
+using System.Globalization;
+using System.Runtime.InteropServices;
+using System.Text;
+using Moongate.Ultima.Io;
+
+namespace Moongate.Ultima.Maps;
+
+public sealed class RadarCol
+{
+    static RadarCol()
+    {
+        Initialize();
+    }
+
+    public static ushort[] Colors { get; private set; }
+
+    public static void ExportToCSV(string fileName)
+    {
+        using (var tex = new StreamWriter(
+                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+                   Encoding.GetEncoding(1252)
+               ))
+        {
+            tex.WriteLine("ID;Color");
+
+            for (var i = 0; i < Colors.Length; ++i)
+            {
+                tex.WriteLine("0x{0:X4};{1}", i, Colors[i]);
+            }
+        }
+    }
+
+    public static ushort GetItemColor(int index)
+        => index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (ushort)0;
+
+    public static ushort GetLandColor(int index)
+        => index < Colors.Length ? Colors[index] : (ushort)0;
+
+    public static void ImportFromCSV(string fileName)
+    {
+        if (!File.Exists(fileName))
+        {
+            return;
+        }
+
+        using (var sr = new StreamReader(fileName))
+        {
+            var count = 0;
+
+            while (sr.ReadLine() is { } line)
+            {
+                line = line.Trim();
+
+                if (line.Length == 0 || line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                if (line.StartsWith("ID;"))
+                {
+                    continue;
+                }
+
+                ++count;
+            }
+
+            Colors = new ushort[count];
+        }
+
+        using (var sr = new StreamReader(fileName))
+        {
+            while (sr.ReadLine() is { } line)
+            {
+                line = line.Trim();
+
+                if (line.Length == 0 || line.StartsWith('#'))
+                {
+                    continue;
+                }
+
+                if (line.StartsWith("ID;"))
+                {
+                    continue;
+                }
+
+                try
+                {
+                    var split = line.Split(';');
+
+                    if (split.Length < 2)
+                    {
+                        continue;
+                    }
+
+                    var id = ConvertStringToInt(split[0]);
+                    var color = ConvertStringToInt(split[1]);
+                    Colors[id] = (ushort)color;
+                }
+                catch
+                {
+                    // TODO: ignored?
+                    // ignored
+                }
+            }
+        }
+    }
+
+    public static void Initialize()
+    {
+        var path = Files.GetFilePath("radarcol.mul");
+
+        if (path != null)
+        {
+            using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                Colors = new ushort[fs.Length / 2];
+                fs.ReadExactly(MemoryMarshal.AsBytes(Colors.AsSpan()));
+            }
+        }
+        else
+        {
+            Colors = new ushort[0x8000];
+        }
+    }
+
+    public static void Save(string fileName)
+    {
+        using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write))
+        {
+            using (var bin = new BinaryWriter(fs))
+            {
+                foreach (var colorValue in Colors)
+                {
+                    bin.Write(colorValue);
+                }
+            }
+        }
+    }
+
+    public static void SetItemColor(int index, ushort value)
+        => Colors[index + 0x4000] = value;
+
+    public static void SetLandColor(int index, ushort value)
+        => Colors[index] = value;
+
+    private static int ConvertStringToInt(string text)
+    {
+        int result;
+
+        if (text.Contains("0x"))
+        {
+            var convert = text.Replace("0x", "");
+            int.TryParse(convert, NumberStyles.HexNumber, null, out result);
+        }
+        else
+        {
+            int.TryParse(text, NumberStyles.Integer, null, out result);
+        }
+
+        return result;
+    }
+}

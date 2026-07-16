@@ -1,0 +1,83 @@
+-   Id: backgammon
+    Name: Backgammon
+    Category: Games
+    Description: ''
+    ItemId: 3612
+    FlippableItemIds:
+        - 3612
+        - 4013
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - games
+        - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+-   Id: checker_board
+    Name: Checker Board
+    Category: Games
+    Description: ''
+    ItemId: 4006
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - games
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+-   Id: chessboard
+    Name: Chessboard
+    Category: Games
+    Description: ''
+    ItemId: 4006
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - games
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+-   Id: dices
+    Name: Dices
+    Category: Games
+    Description: ''
+    ItemId: 4007
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - games
+-   Id: mahjong_game
+    Name: Mahjong Game
+    Category: Games
+    Description: ''
+    ItemId: 4010
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - games

@@ -1,0 +1,14 @@
+-   Id: creature.guardian
+    Name: Guardian
+    Category: loot
+    Description: Creature-specific loot for Guardian.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: arrow
+            Amount: 250
+            Chance: 1.0
+        -   ItemTemplateId: gold
+            Amount: 375
+            Chance: 1.0

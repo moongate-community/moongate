@@ -1,0 +1,23 @@
+-   Id: creature.kappa
+    Name: Kappa
+    Category: loot
+    Description: Creature-specific loot for Kappa.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: raw_fish_steak
+            Amount: 3
+            Chance: 1.0
+        -   ItemTemplateId: gears
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: hinge
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: axle
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

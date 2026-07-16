@@ -31,7 +31,7 @@
         <Product>Moongate</Product>
         <Company>Squid Development</Company>
         <Copyright>© $(Company) $([System.DateTime]::Now.Year)</Copyright>
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
         <PackageProjectUrl>https://github.com/tgiachi/Moongate</PackageProjectUrl>
         <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>

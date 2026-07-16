@@ -1,0 +1,139 @@
+-   Id: gm_body_bag
+    Name: GM Body Bag
+    Category: GameMaster
+    Description: Container used by .gm_body command.
+    ItemId: 3702
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.gm_body_bag
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - container
+    Visibility: GameMaster
+    Container:
+        ContainerLayoutId: bag
+        Contents:
+            - gm_hiding_stone
+            - gm_ethereal
+            - gm_staff_orb
+            - gm_staff_ring
+            - gm_robe
+            - gm_fur_boots
+            - gm_skullcap
+-   Id: gm_staff_ring
+    Name: The Staff Ring
+    Category: GameMaster
+    Description: Staff ring used by .gm_body command.
+    ItemId: 4234
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.1
+    ScriptId: items.gm_staff_ring
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_hiding_stone
+    Name: GM Hiding Stone
+    Category: GameMaster
+    Description: Hiding stone used by .gm_body command.
+    ItemId: 6256
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.gm_hiding_stone
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_ethereal
+    Name: Staff Ethereal Steed
+    Category: GameMaster
+    Description: Ethereal mount token used by .gm_body command.
+    ItemId: 8413
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.gm_ethereal
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_staff_orb
+    Name: Unassigned Staff Orb
+    Category: GameMaster
+    Description: Staff orb used by .gm_body command.
+    ItemId: 3631
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.gm_staff_orb
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_fur_boots
+    Name: Fur Boots
+    Category: GameMaster
+    Description: Fur boots used by .gm_body command.
+    ItemId: 8967
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.gm_fur_boots
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+        - flippable
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_skullcap
+    Name: Skullcap
+    Category: GameMaster
+    Description: Skullcap used by .gm_body command.
+    ItemId: 5444
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.gm_skullcap
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+    Visibility: GameMaster
+    LootType: Blessed
+-   Id: gm_robe
+    Name: GM Robe
+    Category: GameMaster
+    Description: GM robe imported from UOX3 staff items.
+    ItemId: 8271
+    Hue: 0
+    GoldValue: 0
+    Weight: 30.0
+    ScriptId: items.gm_robe
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - gm
+        - staff
+        - robe
+    Visibility: GameMaster
+    LootType: Blessed

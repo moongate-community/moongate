@@ -1,0 +1,14 @@
+-   Id: creature.reaper
+    Name: Reaper
+    Category: loot
+    Description: Creature-specific loot for Reaper.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: log
+            Amount: 10
+            Chance: 1.0
+        -   ItemTemplateId: mandrake_root
+            Amount: 5
+            Chance: 1.0

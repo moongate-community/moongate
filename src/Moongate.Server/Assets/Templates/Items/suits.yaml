@@ -1,0 +1,114 @@
+-   Id: admin_robe
+    Name: Admin Robe
+    Category: Suits
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: counselor_robe
+    Name: Counselor Robe
+    Category: Suits
+    Description: ''
+    ItemId: 3
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: death_shroud
+    Name: Death Shroud
+    Category: Suits
+    Description: ''
+    ItemId: 8270
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+    Equip:
+        Layer: OuterTorso
+-   Id: dupre_suit
+    Name: Dupre Suit
+    Category: Suits
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: lord_blackthorne_suit
+    Name: Lord Blackthorne Suit
+    Category: Suits
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: lord_british_suit
+    Name: Lord British Suit
+    Category: Suits
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: seer_robe
+    Name: Seer Robe
+    Category: Suits
+    Description: ''
+    ItemId: 467
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits
+-   Id: gmrobe
+    Name: GMRobe
+    Category: Suits
+    Description: ''
+    ItemId: 38
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - suits

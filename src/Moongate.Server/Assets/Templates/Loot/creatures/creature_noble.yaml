@@ -1,0 +1,11 @@
+-   Id: creature.noble
+    Name: Noble
+    Category: loot
+    Description: Creature-specific loot for Noble.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 225
+            Chance: 1.0

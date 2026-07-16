@@ -9,15 +9,13 @@
 //  *
 //  ***************************************************************************/
 
-using System.IO;
-
 namespace Moongate.Ultima.Helpers;
 
 public static class MultiHelpers
 {
     public static string ReadUOAString(BinaryReader bin)
     {
-        byte flag = bin.ReadByte();
+        var flag = bin.ReadByte();
 
         return flag == 0 ? null : bin.ReadString();
     }

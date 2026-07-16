@@ -1,0 +1,66 @@
+-   Id: generic_npc
+    Title: a generic npc
+    Category: npc
+    Description: Generic human NPC template for ad-hoc spawns and tests.
+    Tags:
+        - npc
+        - generic
+        - human
+    BaseMobile: base_human_npc
+    Appearance:
+        Body: 400
+        SkinHue: 'hue(1002:1058)'
+        HairStyle: 8251
+        HairHue: 'hue(1102:1149)'
+    Equipment:
+      - Item: shirt
+        Layer: Shirt
+      - Item: long_pants
+        Layer: Pants
+      - Item: shoes
+        Layer: Shoes
+-   Id: healer_npc
+    Title: a healer
+    Category: npc
+    Description: Town healer NPC.
+    Tags:
+        - npc
+        - healer
+        - town
+    BaseMobile: base_human_npc
+    Intelligence: 80
+    Appearance:
+        Body: 400
+        SkinHue: 'hue(1002:1058)'
+        HairStyle: 8251
+        HairHue: 'hue(1102:1149)'
+    Equipment:
+      - Item: robe
+        Layer: OuterTorso
+      - Item: sandals
+        Layer: Shoes
+    BrainScript: town_healer
+-   Id: lilly
+    Name: Lilly
+    Title: the Noble
+    Category: npc
+    Description: Noble town NPC inspired by ModernUO Regina quest character.
+    Tags:
+        - npc
+        - queen
+        - noble
+        - human
+    BaseMobile: base_human_npc
+    Appearance:
+        Body: 401
+        SkinHue: 'hue(1002:1058)'
+        HairStyle: 8251
+        HairHue: 'hue(1102:1149)'
+    Equipment:
+      - Item: backpack
+        Layer: Backpack
+      - Item: queen_gilded_dress
+        Layer: OuterTorso
+      - Item: queen_boots
+        Layer: Shoes
+    BrainScript: lilly

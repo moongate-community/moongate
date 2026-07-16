@@ -1,0 +1,11 @@
+-   Id: creature.peasant
+    Name: Peasant
+    Category: loot
+    Description: Creature-specific loot for Peasant.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 225
+            Chance: 1.0

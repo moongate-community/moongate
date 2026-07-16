@@ -1,0 +1,826 @@
+/* ==========================================================================
+   Moongate theme layer — implementation of the "Moongate Docs" design system
+   (claude.ai/design project) over the docfx `modern` template.
+
+   Palette, type scale and components come from tokens.css: an indigo night
+   sky, a cyan portal as the single primary accent, violet rune highlights,
+   Space Grotesk display type over Manrope body copy.
+
+   This layer only overrides Bootstrap `--bs-*` design tokens and a handful of
+   modern-template classes that are present in the rendered DOM. No HTML
+   partials are touched, so it survives docfx template updates.
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('./tokens.css');
+
+/* --------------------------------------------------------------------------
+   1. Bootstrap token mapping
+   -------------------------------------------------------------------------- */
+
+/* Dark-first: this is the default the site loads with (main.js sets it). */
+:root,
+[data-bs-theme='dark'] {
+  --bs-body-bg: var(--mg-surface);
+  --bs-body-color: var(--mg-text-body);
+  --bs-emphasis-color: var(--mg-text);
+  --bs-secondary-color: var(--mg-text-muted);
+  --bs-secondary-bg: var(--mg-surface-3);
+  --bs-tertiary-bg: var(--mg-surface-2);
+  --bs-border-color: var(--mg-border);
+  --bs-border-color-translucent: var(--mg-portal-line);
+
+  --bs-link-color: var(--mg-portal);
+  --bs-link-color-rgb: 87, 196, 240;
+  --bs-link-hover-color: var(--mg-portal-bright);
+  --bs-link-hover-color-rgb: 147, 220, 248;
+
+  --bs-heading-color: var(--mg-text);
+  --bs-code-color: var(--mg-portal-bright);
+
+  --bs-body-font-family: var(--mg-font-body);
+  --bs-font-monospace: var(--mg-font-mono);
+
+  /* surfaces used for panels / hovers */
+  --mg-accent-rgb: 87, 196, 240;
+  --mg-panel: var(--mg-surface-2);
+  --mg-panel-raised: var(--mg-surface-3);
+  --mg-navbar-bg: rgba(13, 11, 32, 0.92);
+  --mg-scroll-track: var(--mg-bg);
+  --mg-scroll-thumb: var(--mg-border-strong);
+  --mg-hero-glow: rgba(87, 196, 240, 0.35);
+}
+
+/* Light mode: kept legible and on-brand (portal cyan on a pale daylight sky),
+   never broken. The dark design is the reference; this is a faithful echo. */
+[data-bs-theme='light'] {
+  --bs-body-bg: #f5f6fc;
+  --bs-body-color: #2b2a4a;
+  --bs-emphasis-color: #14122e;
+  --bs-secondary-color: rgba(43, 42, 74, 0.68);
+  --bs-secondary-bg: #e9ecf8;
+  --bs-tertiary-bg: #eef0fa;
+  --bs-border-color: #d8dcf0;
+  --bs-border-color-translucent: rgba(59, 167, 221, 0.25);
+
+  --bs-link-color: #0e7cb4;
+  --bs-link-color-rgb: 14, 124, 180;
+  --bs-link-hover-color: #0a5a84;
+  --bs-link-hover-color-rgb: 10, 90, 132;
+
+  --bs-heading-color: #14122e;
+  --bs-code-color: #0e7cb4;
+
+  --bs-body-font-family: var(--mg-font-body);
+  --bs-font-monospace: var(--mg-font-mono);
+
+  --mg-accent-rgb: 59, 167, 221;
+  --mg-panel: #ffffff;
+  --mg-panel-raised: #ffffff;
+  --mg-navbar-bg: rgba(255, 255, 255, 0.92);
+  --mg-scroll-track: #e9ecf8;
+  --mg-scroll-thumb: #bcc4e4;
+  --mg-hero-glow: rgba(59, 167, 221, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   2. Base document
+   -------------------------------------------------------------------------- */
+
+body {
+  background-color: var(--bs-body-bg);
+  /* A faint portal glow low on the horizon, fixed to the viewport. */
+  background-image: radial-gradient(
+    1100px 480px at 50% -8%,
+    rgba(var(--mg-accent-rgb), 0.09) 0%,
+    transparent 60%
+  );
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--mg-font-display);
+  color: var(--bs-heading-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+article h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+article p {
+  line-height: 1.72;
+}
+
+/* Section headings get a hairline rule. */
+article h2 {
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  margin-top: 2.4rem;
+}
+
+article a {
+  text-decoration-color: rgba(var(--mg-accent-rgb), 0.4);
+  text-underline-offset: 0.15em;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+article a:hover {
+  text-decoration-color: var(--mg-portal-bright);
+}
+
+::selection {
+  background: rgba(87, 196, 240, 0.28);
+}
+
+/* --------------------------------------------------------------------------
+   3. Header / navbar
+   -------------------------------------------------------------------------- */
+
+header.bg-body {
+  background: var(--mg-navbar-bg) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--bs-border-color) !important;
+}
+
+.navbar-brand {
+  font-family: var(--mg-font-display);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--bs-heading-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* The logo is pixel-art: keep the hard edges and give it a subtle portal glow. */
+.navbar-brand img#logo,
+img#logo.svg {
+  height: 30px;
+  width: auto;
+  image-rendering: pixelated;
+  border-radius: 2px;
+  filter: drop-shadow(0 0 6px rgba(var(--mg-accent-rgb), 0.35));
+}
+
+.navbar-nav .nav-link {
+  font-weight: 500;
+  color: var(--bs-secondary-color);
+}
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: var(--bs-emphasis-color);
+}
+
+/* --------------------------------------------------------------------------
+   4. Search box
+   -------------------------------------------------------------------------- */
+
+form.search {
+  position: relative;
+}
+form.search > i.bi {
+  color: var(--mg-text-faint);
+}
+#search-query {
+  background-color: var(--mg-panel-raised);
+  border: 1px solid var(--mg-border-strong);
+  color: var(--bs-body-color);
+  border-radius: 2px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+#search-query::placeholder {
+  color: var(--mg-text-faint);
+}
+#search-query:focus {
+  border-color: var(--mg-portal);
+  box-shadow: 0 0 0 0.2rem rgba(var(--mg-accent-rgb), 0.2);
+}
+
+.search-results {
+  background-color: var(--bs-body-bg);
+}
+
+/* --------------------------------------------------------------------------
+   5. Sidebar TOC (.toc) + in-page affix nav (.affix)
+   -------------------------------------------------------------------------- */
+
+.toc-offcanvas .offcanvas-md {
+  background-color: var(--mg-panel);
+  border-right: 1px solid var(--mg-border-soft);
+}
+.toc-offcanvas .offcanvas-title,
+.offcanvas-title {
+  color: var(--bs-heading-color);
+  letter-spacing: 0.03em;
+}
+
+/* TOC filter box */
+.toc form.filter > input {
+  background-color: var(--mg-panel-raised);
+  border: 1px solid var(--mg-border-strong);
+  color: var(--bs-body-color);
+  border-radius: 2px;
+}
+.toc form.filter > input:focus {
+  border-color: var(--mg-portal);
+  box-shadow: 0 0 0 0.2rem rgba(var(--mg-accent-rgb), 0.2);
+  outline: none;
+}
+.toc form.filter > i.bi {
+  color: var(--mg-text-faint);
+}
+
+/* TOC entries: quiet by default, a soft portal pill when active. */
+.toc li > a {
+  color: var(--bs-secondary-color);
+  border-radius: var(--mg-r-sm);
+  padding: 0.28rem 0.75rem;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.toc li > a:hover,
+.toc li > a:focus {
+  color: var(--bs-heading-color);
+  background-color: rgba(var(--mg-accent-rgb), 0.08);
+}
+.toc li > a.active {
+  color: var(--mg-portal-bright);
+  background-color: var(--mg-portal-tint);
+  font-weight: 600;
+}
+[data-bs-theme='light'] .toc li > a.active {
+  color: var(--bs-link-color);
+}
+.toc .expand-stub:before {
+  color: var(--bs-secondary-color);
+}
+
+/* Affix (right-hand "In this article" rail) */
+.affix ul {
+  border-left: 2px solid var(--mg-border-soft);
+}
+.affix ul li a {
+  color: var(--bs-secondary-color);
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+  transition: color 0.12s ease, border-color 0.12s ease;
+}
+.affix ul li a:hover,
+.affix ul li a:focus {
+  color: var(--bs-link-hover-color);
+  border-left-color: var(--mg-portal);
+}
+.affix ul li.active > a,
+.affix ul li > a.active {
+  color: var(--bs-link-hover-color);
+  border-left-color: var(--mg-portal);
+  font-weight: 600;
+}
+.affix > h5,
+.affix h5 {
+  color: var(--mg-text-dim);
+  text-transform: uppercase;
+  font-size: 0.68rem;
+  letter-spacing: 0.11em;
+  font-weight: 700;
+}
+[data-bs-theme='light'] .affix > h5,
+[data-bs-theme='light'] .affix h5 {
+  color: var(--bs-secondary-color);
+}
+
+/* Breadcrumb / actionbar */
+.actionbar {
+  border-bottom: none;
+}
+.breadcrumb {
+  font-size: 0.82rem;
+  color: var(--mg-text-faint);
+}
+
+/* --------------------------------------------------------------------------
+   6. Code blocks and inline code
+   -------------------------------------------------------------------------- */
+
+code, pre, kbd, samp {
+  font-family: var(--mg-font-mono);
+}
+
+pre {
+  background-color: var(--mg-code-bg);
+  border: 1px solid var(--mg-border-strong);
+  border-radius: var(--mg-r-md);
+  padding: 1rem 1.15rem;
+  line-height: 1.75;
+}
+[data-bs-theme='light'] pre {
+  background-color: #f0f2fa;
+  border-color: var(--bs-border-color);
+}
+pre code {
+  color: var(--bs-body-color);
+  background: none;
+  padding: 0;
+}
+:not(pre) > code {
+  color: var(--bs-code-color);
+  background-color: var(--mg-inline-code);
+  border: 1px solid var(--mg-border-strong);
+  border-radius: 2px;
+  padding: 0.1em 0.4em;
+  font-size: 0.85em;
+}
+[data-bs-theme='light'] :not(pre) > code {
+  background-color: #e6ecf8;
+  border-color: var(--bs-border-color);
+}
+
+/* Syntax palette (dark only): cyan calls, grass strings, violet keywords,
+   stone attributes — the palette of the design system's code mockups. */
+[data-bs-theme='dark'] .hljs-keyword,
+[data-bs-theme='dark'] .hljs-literal { color: #c586e0; }
+[data-bs-theme='dark'] .hljs-string { color: var(--mg-grass); }
+[data-bs-theme='dark'] .hljs-number { color: var(--mg-grass); }
+[data-bs-theme='dark'] .hljs-comment { color: #5f5b8c; }
+[data-bs-theme='dark'] .hljs-title,
+[data-bs-theme='dark'] .hljs-title.function_ { color: #63c9f2; }
+[data-bs-theme='dark'] .hljs-attr,
+[data-bs-theme='dark'] .hljs-attribute { color: var(--mg-stone); }
+[data-bs-theme='dark'] .hljs-built_in,
+[data-bs-theme='dark'] .hljs-type { color: var(--mg-portal-bright); }
+[data-bs-theme='dark'] .hljs-variable,
+[data-bs-theme='dark'] .hljs-params { color: var(--mg-discord); }
+
+/* --------------------------------------------------------------------------
+   7. Tables, blockquotes, callouts
+   -------------------------------------------------------------------------- */
+
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+  border-radius: var(--mg-r-md);
+  overflow: hidden;
+  font-size: 0.92em;
+}
+.table > thead {
+  color: var(--bs-heading-color);
+  background-color: var(--mg-panel-raised);
+  border-bottom: 2px solid var(--mg-portal);
+}
+.table > tbody tr {
+  border-color: var(--bs-border-color);
+}
+.table > tbody tr:hover {
+  background-color: rgba(var(--mg-accent-rgb), 0.06);
+}
+
+blockquote {
+  border-left: 3px solid var(--mg-portal);
+  background-color: rgba(var(--mg-accent-rgb), 0.06);
+  padding: 0.6rem 1rem;
+  border-radius: 0 2px 2px 0;
+  color: var(--bs-secondary-color);
+}
+
+/* Markdown alerts (NOTE / TIP / WARNING / IMPORTANT / CAUTION): tinted
+   surface + 3px left rune bar, per the design system callout component. */
+.alert {
+  border-radius: 2px;
+  border-width: 1px 1px 1px 3px;
+  border-style: solid;
+}
+.alert h5 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.alert-info {
+  background-color: rgba(87, 196, 240, 0.07);
+  border-color: rgba(87, 196, 240, 0.22);
+  border-left-color: var(--mg-portal);
+  color: var(--bs-body-color);
+}
+.alert-info h5 { color: var(--mg-portal); }
+.alert-success {
+  background-color: rgba(97, 197, 84, 0.07);
+  border-color: rgba(97, 197, 84, 0.22);
+  border-left-color: var(--mg-grass-deep);
+  color: var(--bs-body-color);
+}
+.alert-success h5 { color: var(--mg-grass); }
+.alert-warning {
+  background-color: rgba(236, 201, 188, 0.06);
+  border-color: rgba(236, 201, 188, 0.2);
+  border-left-color: var(--mg-stone);
+  color: var(--bs-body-color);
+}
+.alert-warning h5 { color: var(--mg-stone); }
+.alert-danger {
+  background-color: rgba(236, 106, 94, 0.07);
+  border-color: rgba(236, 106, 94, 0.25);
+  border-left-color: #ec6a5e;
+  color: var(--bs-body-color);
+}
+.alert-danger h5 { color: #ec6a5e; }
+[data-bs-theme='light'] .alert-warning h5 { color: #b06a4e; }
+[data-bs-theme='light'] .alert-success h5 { color: #3f8f33; }
+[data-bs-theme='light'] .alert-info h5 { color: var(--bs-link-color); }
+
+/* --------------------------------------------------------------------------
+   8. Footer, prev/next
+   -------------------------------------------------------------------------- */
+
+footer.border-top {
+  border-top: 1px solid var(--bs-border-color) !important;
+  background: var(--mg-panel);
+  color: var(--mg-text-faint);
+  font-size: 0.85rem;
+}
+[data-bs-theme='light'] footer.border-top {
+  color: var(--bs-secondary-color);
+}
+
+/* Prev/next links rendered as raised cards, per the article mockup. */
+.next-article {
+  border-top: 1px solid var(--bs-border-color) !important;
+}
+.next-article > div {
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--mg-r-md);
+  padding: 0.85rem 1.1rem;
+  background-color: var(--mg-panel-raised);
+}
+.next-article > div > a {
+  color: var(--bs-link-hover-color);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   9. Custom scrollbars (tasteful, thin)
+   -------------------------------------------------------------------------- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mg-scroll-thumb) var(--mg-scroll-track);
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--mg-scroll-track);
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--mg-scroll-thumb);
+  border-radius: 2px;
+  border: 2px solid var(--mg-scroll-track);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--mg-portal);
+}
+
+/* --------------------------------------------------------------------------
+   10. Landing hero (homepage) — "Portal" layout from the design mockups
+   -------------------------------------------------------------------------- */
+
+.mg-hero {
+  text-align: center;
+  padding: 4.5rem 1rem 3rem;
+  position: relative;
+}
+
+/* The portal: a soft radial bloom behind the logo, with drifting stars. */
+.mg-hero::before {
+  content: '';
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 520px;
+  height: 340px;
+  max-width: 85vw;
+  background: radial-gradient(
+    closest-side,
+    var(--mg-hero-glow),
+    rgba(125, 112, 221, 0.12) 55%,
+    transparent 75%
+  );
+  filter: blur(18px);
+  animation: mg-portal-pulse 6s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mg-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.mg-star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--mg-cream);
+  animation: mg-twinkle 3.4s ease-in-out infinite;
+  z-index: 0;
+}
+.mg-star:nth-child(1) { top: 14%; left: 24%; }
+.mg-star:nth-child(2) { top: 30%; right: 26%; width: 2px; height: 2px; animation-delay: 0.6s; }
+.mg-star:nth-child(3) { top: 52%; left: 32%; width: 2px; height: 2px; background: #cbe9f6; animation-delay: 1.1s; }
+.mg-star:nth-child(4) { top: 20%; right: 35%; background: var(--mg-stone); animation-delay: 0.3s; }
+[data-bs-theme='light'] .mg-star { display: none; }
+
+@keyframes mg-portal-pulse {
+  0%, 100% { opacity: 0.55; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.9; transform: translateX(-50%) scale(1.06); }
+}
+@keyframes mg-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+.mg-hero img {
+  display: block;
+  margin: 0 auto;
+  width: 112px;
+  height: auto;
+  image-rendering: pixelated;
+  border-radius: 2px;
+  border: 1px solid rgba(147, 220, 248, 0.25);
+  box-shadow: 0 20px 50px -12px rgba(87, 196, 240, 0.5);
+}
+
+.mg-hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.6rem;
+  background: rgba(var(--mg-accent-rgb), 0.1);
+  border: 1px solid rgba(var(--mg-accent-rgb), 0.28);
+  border-radius: var(--mg-r-pill);
+  padding: 0.3rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--bs-link-hover-color);
+  letter-spacing: 0.02em;
+}
+.mg-hero-badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mg-grass-deep);
+  box-shadow: 0 0 8px var(--mg-grass-deep);
+}
+[data-bs-theme='light'] .mg-hero-badge {
+  color: var(--bs-link-color);
+}
+
+.mg-hero h1 {
+  font-size: clamp(2.3rem, 6vw, 3.6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  max-width: 46rem;
+  margin: 1.4rem auto 0;
+  color: var(--bs-heading-color);
+}
+
+.mg-hero p {
+  font-size: 1.12rem;
+  line-height: 1.65;
+  color: var(--bs-secondary-color);
+  max-width: 36rem;
+  margin: 1.2rem auto 0;
+}
+
+.mg-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  margin-top: 2.1rem;
+}
+.mg-hero-actions a {
+  text-decoration: none;
+}
+.mg-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(180deg, #63c9f2, var(--mg-portal-deep));
+  color: #07203a !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: var(--mg-r-md);
+  box-shadow: var(--mg-glow-portal);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.mg-btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px -8px rgba(87, 196, 240, 0.7);
+}
+.mg-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--mg-panel-raised);
+  border: 1px solid var(--mg-border-strong);
+  color: var(--bs-emphasis-color) !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.4rem;
+  border-radius: var(--mg-r-md);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.mg-btn-ghost:hover {
+  border-color: var(--mg-portal);
+}
+[data-bs-theme='light'] .mg-btn-ghost {
+  border-color: var(--bs-border-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-hero::before,
+  .mg-star {
+    animation: none;
+  }
+  .mg-btn-primary:hover,
+  .mg-card:hover {
+    transform: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   11. "Explore the docs" cards (homepage)
+   -------------------------------------------------------------------------- */
+
+.mg-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  max-width: 62rem;
+  margin: 2.5rem auto 1.4rem;
+  padding: 0 1rem;
+}
+.mg-section-title h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+  border: none;
+  padding: 0;
+}
+.mg-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--mg-border-strong), transparent);
+}
+
+.mg-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  max-width: 62rem;
+  margin: 0 auto 4rem;
+  padding: 0 1rem;
+}
+.mg-card {
+  position: relative;
+  display: block;
+  background-color: var(--mg-panel-raised);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 2px;
+  padding: 1.35rem 1.25rem 1.2rem;
+  overflow: hidden;
+  text-decoration: none !important;
+  transition: border-color 0.18s ease, transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+/* The rune accent: a cyan→violet bar down the left edge. */
+.mg-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(#63c9f2, var(--mg-violet));
+}
+.mg-card:hover {
+  border-color: rgba(var(--mg-accent-rgb), 0.5);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+[data-bs-theme='light'] .mg-card:hover {
+  box-shadow: 0 10px 30px rgba(20, 18, 46, 0.12);
+}
+.mg-card h3 {
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: var(--bs-heading-color);
+}
+.mg-card p {
+  margin: 0;
+  color: var(--bs-secondary-color);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+/* On the landing layout, the empty affix / breadcrumb add dead whitespace. */
+body[data-layout='landing'] .affix,
+body[data-layout='landing'] .actionbar {
+  display: none;
+}
+body[data-layout='landing'] .content {
+  width: 100%;
+}
+
+/* --------------------------------------------------------------------------
+   12. Packets reference (docs/packets) — from design mockup 3A
+   -------------------------------------------------------------------------- */
+
+/* Stat strip on the overview page. */
+.mg-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 1.6rem 0 2rem;
+}
+.mg-stat {
+  background-color: var(--mg-panel-raised);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--mg-r-md);
+  padding: 1rem 1.1rem;
+}
+.mg-stat-num {
+  font-family: var(--mg-font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  color: var(--mg-portal-bright);
+}
+.mg-stat-num.mg-grass { color: var(--mg-grass); }
+.mg-stat-num.mg-violet { color: var(--mg-violet-soft); }
+.mg-stat-num.mg-stone { color: var(--mg-stone); }
+[data-bs-theme='light'] .mg-stat-num { color: var(--bs-link-color); }
+[data-bs-theme='light'] .mg-stat-num.mg-grass { color: #3f8f33; }
+[data-bs-theme='light'] .mg-stat-num.mg-violet { color: #6a5cd0; }
+[data-bs-theme='light'] .mg-stat-num.mg-stone { color: #b06a4e; }
+.mg-stat-label {
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+  margin-top: 0.15rem;
+}
+
+/* Direction badge on per-packet pages. */
+.mg-dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mg-font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--mg-r-pill);
+  padding: 0.25rem 0.7rem;
+  background-color: var(--mg-panel-raised);
+  margin-bottom: 0.4rem;
+}
+.mg-dir::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.mg-dir-in { color: var(--mg-stone); }
+.mg-dir-in::before { background: var(--mg-stone); box-shadow: 0 0 8px var(--mg-stone); }
+.mg-dir-out { color: var(--mg-portal-bright); }
+.mg-dir-out::before { background: var(--mg-portal); box-shadow: 0 0 8px var(--mg-portal); }
+[data-bs-theme='light'] .mg-dir-in { color: #b06a4e; }
+[data-bs-theme='light'] .mg-dir-in::before { background: #b06a4e; box-shadow: none; }
+[data-bs-theme='light'] .mg-dir-out { color: var(--bs-link-color); }
+[data-bs-theme='light'] .mg-dir-out::before { background: var(--bs-link-color); box-shadow: none; }
+
+/* Family cards reused inside an article body (vs the landing page). */
+.mg-cards-article {
+  margin: 0 0 2rem;
+  padding: 0;
+  max-width: none;
+}
+.mg-card-ops {
+  font-family: var(--mg-font-mono);
+  font-size: 0.72rem;
+  color: var(--bs-secondary-color);
+  margin: 0 0 0.4rem;
+}

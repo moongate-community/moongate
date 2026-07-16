@@ -1,0 +1,14 @@
+-   Id: creature.ant_lion
+    Name: AntLion
+    Category: loot
+    Description: Creature-specific loot for AntLion.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bone
+            Amount: 3
+            Chance: 1.0
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

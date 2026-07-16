@@ -1,0 +1,11 @@
+-   Id: creature.frost_spider
+    Name: FrostSpider
+    Category: loot
+    Description: Creature-specific loot for FrostSpider.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: spiders_silk
+            Amount: 7
+            Chance: 1.0

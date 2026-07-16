@@ -1,0 +1,424 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Existing semantic release tag to repair, for example v0.2.0
+        required: true
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: moongate-community/moongate
+  DOCKERHUB_IMAGE_NAME: tgiachi/moongate-server
+
+jobs:
+  gate:
+    name: Resolve release request
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      should_release: ${{ steps.push_gate.outputs.result || steps.manual_gate.outputs.should_release }}
+      version: ${{ steps.manual_gate.outputs.version }}
+      release_ref: ${{ steps.push_range.outputs.release_ref || steps.manual_gate.outputs.release_ref }}
+      release_pull_requests: ${{ steps.push_gate.outputs.pull_requests }}
+
+    steps:
+      - name: Checkout current main
+        if: github.event_name == 'push'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Resolve unreleased commits
+        id: push_range
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stable_tag_pattern='^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$'
+          latest_tag=''
+
+          while IFS= read -r tag; do
+            if [[ "$tag" =~ $stable_tag_pattern ]]; then
+              latest_tag="$tag"
+              break
+            fi
+          done < <(git tag --merged HEAD --sort=-v:refname)
+
+          if [[ -z "$latest_tag" ]]; then
+            echo "No stable baseline tag is reachable from main" >&2
+            exit 1
+          fi
+
+          release_ref=$(git rev-parse HEAD)
+          commit_shas=$(git rev-list --reverse "$latest_tag..$release_ref" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+
+          echo "release_ref=$release_ref" >> "$GITHUB_OUTPUT"
+          echo "commit_shas=$commit_shas" >> "$GITHUB_OUTPUT"
+          echo "Scanning commits after $latest_tag through $release_ref"
+
+      - name: Evaluate unreleased pull requests
+        id: push_gate
+        if: github.event_name == 'push'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          UNRELEASED_COMMITS: ${{ steps.push_range.outputs.commit_shas }}
+        with:
+          result-encoding: string
+          script: |
+            const { owner, repo } = context.repo;
+            const commitShas = JSON.parse(process.env.UNRELEASED_COMMITS || '[]');
+            const eligiblePullRequests = new Map();
+
+            for (const commitSha of commitShas) {
+              const pullRequests = await github.paginate(
+                github.rest.repos.listPullRequestsAssociatedWithCommit,
+                { owner, repo, commit_sha: commitSha, per_page: 100 }
+              );
+
+              for (const pullRequest of pullRequests) {
+                const isEligible =
+                  pullRequest.merged_at !== null &&
+                  pullRequest.base.ref === 'main' &&
+                  pullRequest.labels.some((label) => label.name === 'release');
+
+                if (isEligible) {
+                  eligiblePullRequests.set(pullRequest.number, pullRequest);
+                }
+              }
+            }
+
+            if (eligiblePullRequests.size === 0) {
+              core.notice('No unreleased pull request merged to main has the release label.');
+              return 'false';
+            }
+
+            const pullRequestNumbers = [...eligiblePullRequests.keys()].sort((a, b) => a - b);
+            core.setOutput('pull_requests', JSON.stringify(pullRequestNumbers));
+            core.notice(`Release approved by pull request(s): ${pullRequestNumbers.map((number) => `#${number}`).join(', ')}.`);
+            return 'true';
+
+      - name: Checkout tags for manual recovery
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Validate manual recovery tag
+        id: manual_gate
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$INPUT_VERSION" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Version must use exact vX.Y.Z format" >&2
+            exit 64
+          fi
+
+          if ! git show-ref --verify --quiet "refs/tags/$INPUT_VERSION"; then
+            echo "Tag $INPUT_VERSION does not exist" >&2
+            exit 1
+          fi
+
+          tag_commit=$(git rev-list -n 1 "$INPUT_VERSION")
+          if ! git merge-base --is-ancestor "$tag_commit" origin/main; then
+            echo "Tag $INPUT_VERSION is not reachable from main" >&2
+            exit 1
+          fi
+
+          for release_file in .releaserc.json CHANGELOG.md; do
+            if ! git cat-file -e "${INPUT_VERSION}:${release_file}"; then
+              echo "Tag $INPUT_VERSION predates semantic-release and cannot be repaired" >&2
+              exit 1
+            fi
+          done
+
+          version="${INPUT_VERSION#v}"
+          props=$(git show "${INPUT_VERSION}:Directory.Build.props")
+          for expected in \
+            "<Version>${version}</Version>" \
+            "<AssemblyVersion>${version}.0</AssemblyVersion>" \
+            "<FileVersion>${version}.0</FileVersion>" \
+            "<InformationalVersion>${version}</InformationalVersion>"; do
+            if ! grep -Fq "$expected" <<< "$props"; then
+              echo "Tag $INPUT_VERSION does not contain expected release metadata: $expected" >&2
+              exit 1
+            fi
+          done
+
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "release_ref=$INPUT_VERSION" >> "$GITHUB_OUTPUT"
+
+  verify:
+    name: Verify release candidate
+    needs: gate
+    if: needs.gate.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout release candidate
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ needs.gate.outputs.release_ref || github.sha }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore Moongate.slnx
+
+      - name: Build
+        run: dotnet build Moongate.slnx --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Moongate.slnx --configuration Release --no-build
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Verify Docker image build
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: src/Moongate.Server/Dockerfile
+          platforms: linux/amd64
+          push: false
+          provenance: false
+          sbom: false
+
+  semantic_release:
+    name: Create semantic release
+    needs:
+      - gate
+      - verify
+    if: github.event_name == 'push' && needs.gate.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      version: ${{ steps.semantic_release.outputs.version }}
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Confirm verified main is still current
+        env:
+          VERIFIED_REF: ${{ needs.gate.outputs.release_ref }}
+        run: |
+          set -euo pipefail
+          git fetch origin main
+
+          if [[ "$(git rev-parse HEAD)" != "$VERIFIED_REF" || "$(git rev-parse origin/main)" != "$VERIFIED_REF" ]]; then
+            echo "main advanced after verification; a newer run will carry the release approval forward" >&2
+            exit 75
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.10.0
+
+      - name: Configure release author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Install locked release tooling
+        run: npm ci --prefix tools/release --ignore-scripts
+
+      - name: Run semantic-release
+        id: semantic_release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+        run: tools/release/node_modules/.bin/semantic-release
+
+      - name: Consume no-op release approvals
+        if: success() && steps.semantic_release.outputs.version == ''
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          RELEASE_PULL_REQUESTS: ${{ needs.gate.outputs.release_pull_requests }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pullRequestNumbers = JSON.parse(process.env.RELEASE_PULL_REQUESTS || '[]');
+
+            for (const pullRequestNumber of pullRequestNumbers) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner,
+                  repo,
+                  issue_number: pullRequestNumber,
+                  name: 'release',
+                });
+                core.notice(`Consumed release approval from pull request #${pullRequestNumber}.`);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.notice(`Release label is already absent from pull request #${pullRequestNumber}.`);
+                } else {
+                  throw error;
+                }
+              }
+            }
+
+  reconcile_release:
+    name: Reconcile GitHub release
+    needs:
+      - gate
+      - verify
+    if: github.event_name == 'workflow_dispatch' && needs.gate.outputs.should_release == 'true' && needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: v${{ needs.gate.outputs.version }}
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Create missing GitHub release
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "GitHub release $RELEASE_TAG already exists"
+          else
+            gh release create "$RELEASE_TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --verify-tag \
+              --title "$RELEASE_TAG" \
+              --generate-notes
+          fi
+
+  publish:
+    name: Publish container images
+    needs:
+      - gate
+      - verify
+      - semantic_release
+      - reconcile_release
+    if: >-
+      always() &&
+      needs.gate.outputs.should_release == 'true' &&
+      needs.verify.result == 'success' &&
+      (needs.semantic_release.result == 'success' || needs.semantic_release.result == 'skipped') &&
+      (needs.reconcile_release.result == 'success' || needs.reconcile_release.result == 'skipped') &&
+      (needs.semantic_release.outputs.version != '' || needs.gate.outputs.version != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RELEASE_VERSION: ${{ needs.semantic_release.outputs.version || needs.gate.outputs.version }}
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
+          fetch-depth: 0
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Login to GHCR
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Resolve release commit tag
+        id: release_commit
+        run: echo "sha_tag=sha-$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve safe rolling tags
+        id: rolling_tags
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          ./scripts/resolve-release-tags.sh "$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Generate image metadata
+        id: metadata
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+        with:
+          context: git
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker.io/${{ env.DOCKERHUB_IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ env.RELEASE_VERSION }}
+            type=raw,value=${{ steps.rolling_tags.outputs.minor_tag }},enable=${{ steps.rolling_tags.outputs.update_minor }}
+            type=raw,value=${{ steps.rolling_tags.outputs.major_tag }},enable=${{ steps.rolling_tags.outputs.update_major }}
+            type=raw,value=latest,enable=${{ steps.rolling_tags.outputs.update_latest }}
+            type=raw,value=${{ steps.release_commit.outputs.sha_tag }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
+        with:
+          context: .
+          file: src/Moongate.Server/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          provenance: false
+          sbom: false
+
+      - name: Verify published manifests
+        run: |
+          docker buildx imagetools inspect "${REGISTRY}/${IMAGE_NAME}:${RELEASE_VERSION}"
+          docker buildx imagetools inspect "docker.io/${DOCKERHUB_IMAGE_NAME}:${RELEASE_VERSION}"
+
+      - name: Sync Docker Hub description
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKERHUB_IMAGE_NAME }}
+          short-description: Modern Ultima Online server emulator — .NET, Lua scripting, ClassicUO 7.x
+          readme-filepath: ./README.md

@@ -1,0 +1,3549 @@
+-   Id: agility_scroll
+    Name: Agility Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 8
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: agility_potion
+    Name: Agility Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3848
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.agility_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: animate_dead_scroll
+    Name: Animate Dead Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 100
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: animated_weapon_scroll
+    Name: Animated Weapon Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 683
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: anvil
+    Name: Anvil
+    Category: Skill Items
+    Description: ''
+    ItemId: 4015
+    FlippableItemIds:
+        - 4015
+        - 4016
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: arcane_circle_scroll
+    Name: Arcane Circle Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 600
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: arcane_empowerment_scroll
+    Name: Arcane Empowerment Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 615
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: arch_cure_scroll
+    Name: Arch Cure Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 24
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: arch_protection_scroll
+    Name: Arch Protection Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 25
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: attune_weapon_scroll
+    Name: Attune Weapon Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 603
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: axle
+    Name: Axle
+    Category: Skill Items
+    Description: ''
+    ItemId: 4187
+    FlippableItemIds:
+        - 4187
+        - 4188
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: axle_gears
+    Name: Axle Gears
+    Category: Skill Items
+    Description: ''
+    ItemId: 4177
+    FlippableItemIds:
+        - 4177
+        - 4178
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: bamboo_flute
+    Name: Bamboo Flute
+    Category: Skill Items
+    Description: ''
+    ItemId: 10245
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: bandage
+    Name: Bandage
+    Category: Skill Items
+    Description: ''
+    ItemId: 3617
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.1
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Stackable: true
+-   Id: bedroll
+    Name: Bedroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 2647
+    FlippableItemIds:
+        - 2647
+        - 2648
+        - 2649
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: blade_spirits_scroll
+    Name: Blade Spirits Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 32
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: blank_scroll
+    Name: Blank Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 3827
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: bless_scroll
+    Name: Bless Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 16
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: blood_oath_scroll
+    Name: Blood Oath Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 101
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: blowpipe
+    Name: Blowpipe
+    Category: Skill Items
+    Description: ''
+    ItemId: 3722
+    FlippableItemIds:
+        - 3722
+        - 3721
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: board
+    Name: Board
+    Category: Skill Items
+    Description: ''
+    ItemId: 7127
+    FlippableItemIds:
+        - 7127
+        - 7130
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: clock
+    Name: Clock
+    Category: Skill Items
+    Description: ''
+    ItemId: 4171
+    FlippableItemIds:
+        - 4171
+        - 4172
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: items.clock
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: bombard_scroll
+    Name: Bombard Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 688
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: book_of_bushido
+    Name: Book Of Bushido
+    Category: Skill Items
+    Description: ''
+    ItemId: 9100
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: book_of_chivalry
+    Name: Book Of Chivalry
+    Category: Skill Items
+    Description: ''
+    ItemId: 8786
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: book_of_ninjitsu
+    Name: Book Of Ninjitsu
+    Category: Skill Items
+    Description: ''
+    ItemId: 9120
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: bottle
+    Name: Bottle
+    Category: Skill Items
+    Description: ''
+    ItemId: 3854
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: chain_lightning_scroll
+    Name: Chain Lightning Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 48
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: cleansing_winds_scroll
+    Name: Cleansing Winds Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 687
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: clock_frame
+    Name: Clock Frame
+    Category: Skill Items
+    Description: ''
+    ItemId: 4173
+    FlippableItemIds:
+        - 4173
+        - 4174
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: clock_left
+    Name: Clock Left
+    Category: Skill Items
+    Description: ''
+    ItemId: 4172
+    FlippableItemIds:
+        - 4171
+        - 4172
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.clock
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: clock_parts
+    Name: Clock Parts
+    Category: Skill Items
+    Description: ''
+    ItemId: 4175
+    FlippableItemIds:
+        - 4175
+        - 4176
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: clumsy_scroll
+    Name: Clumsy Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: corpse_skin_scroll
+    Name: Corpse Skin Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 102
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: create_food_scroll
+    Name: Create Food Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 1
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: cunning_scroll
+    Name: Cunning Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 9
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: cure_scroll
+    Name: Cure Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 10
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: curse_scroll
+    Name: Curse Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 26
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: curse_weapon_scroll
+    Name: Curse Weapon Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 103
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: disguise_kit
+    Name: Disguise Kit
+    Category: Skill Items
+    Description: ''
+    ItemId: 3589
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dispel_field_scroll
+    Name: Dispel Field Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 33
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dispel_scroll
+    Name: Dispel Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 40
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dovetail_saw
+    Name: Dovetail Saw
+    Category: Skill Items
+    Description: ''
+    ItemId: 4136
+    FlippableItemIds:
+        - 4136
+        - 4137
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: draw_knife
+    Name: Draw Knife
+    Category: Skill Items
+    Description: ''
+    ItemId: 4324
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dressform
+    Name: Dressform
+    Category: Skill Items
+    Description: ''
+    ItemId: 3782
+    FlippableItemIds:
+        - 3782
+        - 3783
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: drums
+    Name: Drums
+    Category: Skill Items
+    Description: ''
+    ItemId: 3740
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dryad_allure_scroll
+    Name: Dryad Allure Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 611
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dye_tub
+    Name: Dye Tub
+    Category: Skill Items
+    Description: ''
+    ItemId: 4011
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: items.dye_tub
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: dyes
+    Name: Dyes
+    Category: Skill Items
+    Description: ''
+    ItemId: 4009
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: eagle_strike_scroll
+    Name: Eagle Strike Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 682
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: earthquake_scroll
+    Name: Earthquake Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 56
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: egg_bomb
+    Name: Egg Bomb
+    Category: Skill Items
+    Description: ''
+    ItemId: 10248
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: enchant_scroll
+    Name: Enchant Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 680
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: energy_bolt_scroll
+    Name: Energy Bolt Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 41
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: energy_field_scroll
+    Name: Energy Field Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 49
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: energy_vortex_scroll
+    Name: Energy Vortex Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 57
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: essence_of_wind_scroll
+    Name: Essence Of Wind Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 610
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: ethereal_voyage_scroll
+    Name: Ethereal Voyage Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 612
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: evil_omen_scroll
+    Name: Evil Omen Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 104
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: exorcism_scroll
+    Name: Exorcism Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 116
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: explosion_scroll
+    Name: Explosion Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 42
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: feeblemind_scroll
+    Name: Feeblemind Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fire_field_scroll
+    Name: Fire Field Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 27
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fire_horn
+    Name: Fire Horn
+    Category: Skill Items
+    Description: ''
+    ItemId: 4039
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fireball_scroll
+    Name: Fireball Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 17
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fishing_pole
+    Name: Fishing Pole
+    Category: Skill Items
+    Description: ''
+    ItemId: 3520
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: flamestrike_scroll
+    Name: Flamestrike Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 50
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fletcher_tools
+    Name: Fletcher Tools
+    Category: Skill Items
+    Description: ''
+    ItemId: 4130
+    FlippableItemIds:
+        - 4130
+        - 4131
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: flour_sifter
+    Name: Flour Sifter
+    Category: Skill Items
+    Description: ''
+    ItemId: 4158
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: forge
+    Name: Forge
+    Category: Skill Items
+    Description: ''
+    ItemId: 4017
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: fork
+    Name: Fork
+    Category: Skill Items
+    Description: ''
+    ItemId: 2548
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: fork_left
+    Name: Fork Left
+    Category: Skill Items
+    Description: ''
+    ItemId: 2548
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: fork_right
+    Name: Fork Right
+    Category: Skill Items
+    Description: ''
+    ItemId: 2549
+    FlippableItemIds:
+        - 2548
+        - 2549
+        - 2467
+        - 2468
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: froe
+    Name: Froe
+    Category: Skill Items
+    Description: ''
+    ItemId: 4325
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: fukiya
+    Name: Fukiya
+    Category: Skill Items
+    Description: ''
+    ItemId: 10154
+    FlippableItemIds:
+        - 10154
+        - 10229
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: fukiya_darts
+    Name: Fukiya Darts
+    Category: Skill Items
+    Description: ''
+    ItemId: 10246
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: gate_travel_scroll
+    Name: Gate Travel Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 51
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: gears
+    Name: Gears
+    Category: Skill Items
+    Description: ''
+    ItemId: 4179
+    FlippableItemIds:
+        - 4179
+        - 4180
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: gift_of_life_scroll
+    Name: Gift Of Life Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 614
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: gift_of_renewal_scroll
+    Name: Gift Of Renewal Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 601
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: glassblowing_book
+    Name: Glassblowing Book
+    Category: Skill Items
+    Description: ''
+    ItemId: 4084
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: globe
+    Name: Globe
+    Category: Skill Items
+    Description: ''
+    ItemId: 4167
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: greater_heal_scroll
+    Name: Greater Heal Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 28
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: hail_storm_scroll
+    Name: Hail Storm Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 690
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: hammer
+    Name: Hammer
+    Category: Skill Items
+    Description: ''
+    ItemId: 4138
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: harm_scroll
+    Name: Harm Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 11
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: harp
+    Name: Harp
+    Category: Skill Items
+    Description: ''
+    ItemId: 3761
+    Hue: 0
+    GoldValue: 0
+    Weight: 35.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: heal_scroll
+    Name: Heal Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 3
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: healing_stone_scroll
+    Name: Healing Stone Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 678
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: hinge
+    Name: Hinge
+    Category: Skill Items
+    Description: ''
+    ItemId: 4181
+    FlippableItemIds:
+        - 4181
+        - 4182
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: horrific_beast_scroll
+    Name: Horrific Beast Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 105
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: immolating_weapon_scroll
+    Name: Immolating Weapon Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 602
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: incognito_scroll
+    Name: Incognito Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 34
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: inshave
+    Name: Inshave
+    Category: Skill Items
+    Description: ''
+    ItemId: 4326
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: invisibility_potion
+    Name: Invisibility Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3850
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: invisibility_scroll
+    Name: Invisibility Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 43
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: jointing_plane
+    Name: Jointing Plane
+    Category: Skill Items
+    Description: ''
+    ItemId: 4144
+    FlippableItemIds:
+        - 4144
+        - 4145
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: kindling
+    Name: Kindling
+    Category: Skill Items
+    Description: ''
+    ItemId: 3553
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: knife
+    Name: Knife
+    Category: Skill Items
+    Description: ''
+    ItemId: 2550
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: knife_left
+    Name: Knife Left
+    Category: Skill Items
+    Description: ''
+    ItemId: 2550
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: knife_right
+    Name: Knife Right
+    Category: Skill Items
+    Description: ''
+    ItemId: 2551
+    FlippableItemIds:
+        - 2550
+        - 2551
+        - 2469
+        - 2470
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: lap_harp
+    Name: Lap Harp
+    Category: Skill Items
+    Description: ''
+    ItemId: 3762
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: large_forge_east
+    Name: Large Forge East
+    Category: Skill Items
+    Description: ''
+    ItemId: 6522
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: large_forge_west
+    Name: Large Forge West
+    Category: Skill Items
+    Description: ''
+    ItemId: 6554
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: leather_ninja_belt
+    Name: Leather Ninja Belt
+    Category: Skill Items
+    Description: ''
+    ItemId: 10128
+    FlippableItemIds:
+        - 10128
+        - 10203
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: lich_form_scroll
+    Name: Lich Form Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 106
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: lesser_cure_potion
+    Name: Lesser Cure Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3847
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.lesser_cure_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: lesser_explosion_potion
+    Name: Lesser Explosion Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3853
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.lesser_explosion_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: lesser_heal_potion
+    Name: Lesser Heal Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3852
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.lesser_heal_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: lesser_poison_potion
+    Name: Lesser Poison Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3850
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.lesser_poison_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: iron_ingot
+    Name: Iron Ingot
+    Category: Skill Items
+    Description: ''
+    ItemId: 7154
+    FlippableItemIds:
+        - 7154
+        - 7151
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.1
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+    Stackable: true
+-   Id: leather
+    Name: Leather
+    Category: Skill Items
+    Description: ''
+    ItemId: 4225
+    FlippableItemIds:
+        - 4225
+        - 4226
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+    Stackable: true
+-   Id: lightning_scroll
+    Name: Lightning Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 29
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: lockpick
+    Name: Lockpick
+    Category: Skill Items
+    Description: ''
+    ItemId: 5372
+    FlippableItemIds:
+        - 5372
+        - 5371
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: log
+    Name: Log
+    Category: Skill Items
+    Description: ''
+    ItemId: 7133
+    FlippableItemIds:
+        - 7133
+        - 7136
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: lute
+    Name: Lute
+    Category: Skill Items
+    Description: ''
+    ItemId: 3763
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: magic_arrow_scroll
+    Name: Magic Arrow Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 4
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: magic_lock_scroll
+    Name: Magic Lock Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 18
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: magic_reflect_scroll
+    Name: Magic Reflect Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 35
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: magic_trap_scroll
+    Name: Magic Trap Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 12
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: magic_un_trap_scroll
+    Name: Magic Un Trap Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 13
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mallet_and_chisel
+    Name: Mallet And Chisel
+    Category: Skill Items
+    Description: ''
+    ItemId: 4787
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mana_drain_scroll
+    Name: Mana Drain Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 30
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mana_vampire_scroll
+    Name: Mana Vampire Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 52
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mapmakers_pen
+    Name: Mapmakers Pen
+    Category: Skill Items
+    Description: ''
+    ItemId: 4031
+    FlippableItemIds:
+        - 4031
+        - 4032
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: mark_scroll
+    Name: Mark Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 44
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: masonry_book
+    Name: Masonry Book
+    Category: Skill Items
+    Description: ''
+    ItemId: 4030
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mass_curse_scroll
+    Name: Mass Curse Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 45
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mass_dispel_scroll
+    Name: Mass Dispel Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 53
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mass_sleep_scroll
+    Name: Mass Sleep Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 686
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: message_in_a_bottle
+    Name: Message In A Bottle
+    Category: Skill Items
+    Description: ''
+    ItemId: 2463
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: meteor_swarm_scroll
+    Name: Meteor Swarm Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 54
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mind_blast_scroll
+    Name: Mind Blast Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 36
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mind_rot_scroll
+    Name: Mind Rot Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 107
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: moongate_modernuo
+    Name: Moongate
+    Category: Skill Items
+    Description: ''
+    ItemId: 3948
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: mortar_pestle
+    Name: Mortar Pestle
+    Category: Skill Items
+    Description: ''
+    ItemId: 3739
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: moulding_plane
+    Name: Moulding Plane
+    Category: Skill Items
+    Description: ''
+    ItemId: 4140
+    FlippableItemIds:
+        - 4140
+        - 4141
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: mystic_spellbook
+    Name: Mystic Spellbook
+    Category: Skill Items
+    Description: ''
+    ItemId: 11677
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Equip:
+        Layer: OneHanded
+-   Id: nails
+    Name: Nails
+    Category: Skill Items
+    Description: ''
+    ItemId: 4142
+    FlippableItemIds:
+        - 4142
+        - 4143
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: nature_fury_scroll
+    Name: Nature Fury Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 605
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: necromancer_spellbook
+    Name: Necromancer Spellbook
+    Category: Skill Items
+    Description: ''
+    ItemId: 8787
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Equip:
+        Layer: OneHanded
+-   Id: spellbook
+    Name: Spellbook
+    Category: Skill Items
+    Description: ''
+    ItemId: 3834
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Equip:
+        Layer: OneHanded
+-   Id: nether_bolt_scroll
+    Name: Nether Bolt Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 677
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: nether_cyclone_scroll
+    Name: Nether Cyclone Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 691
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: night_sight_potion
+    Name: Night Sight Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3846
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: night_sight_scroll
+    Name: Night Sight Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 5
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: pain_spike_scroll
+    Name: Pain Spike Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 108
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: paralyze_field_scroll
+    Name: Paralyze Field Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 46
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: paralyze_scroll
+    Name: Paralyze Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 37
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: plate
+    Name: Plate
+    Category: Skill Items
+    Description: ''
+    ItemId: 2519
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: poison_field_scroll
+    Name: Poison Field Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 38
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: poison_scroll
+    Name: Poison Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 19
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: poison_strike_scroll
+    Name: Poison Strike Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 109
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: polymorph_scroll
+    Name: Polymorph Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 55
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: potion_keg
+    Name: Potion Keg
+    Category: Skill Items
+    Description: ''
+    ItemId: 6464
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: prospectors_tool
+    Name: Prospectors Tool
+    Category: Skill Items
+    Description: ''
+    ItemId: 4020
+    FlippableItemIds:
+        - 4021
+        - 4020
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 33
+-   Id: protection_scroll
+    Name: Protection Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 14
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: purge_magic_scroll
+    Name: Purge Magic Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 679
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: reactive_armor_scroll
+    Name: Reactive Armor Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 6
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: reaper_form_scroll
+    Name: Reaper Form Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 608
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: recall_rune
+    Name: Recall Rune
+    Category: Skill Items
+    Description: ''
+    ItemId: 7956
+    FlippableItemIds:
+        - 7956
+        - 7957
+        - 7958
+        - 7959
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: recall_scroll
+    Name: Recall Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 31
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: recipe_scroll
+    Name: Recipe Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 10289
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: repair_deed
+    Name: Repair Deed
+    Category: Skill Items
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: refresh_potion
+    Name: Refresh Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3851
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.refresh_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: resurrection_scroll
+    Name: Resurrection Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 58
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: reveal_scroll
+    Name: Reveal Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 47
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: rising_colossus_scroll
+    Name: Rising Colossus Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 692
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: rolling_pin
+    Name: Rolling Pin
+    Category: Skill Items
+    Description: ''
+    ItemId: 4163
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: runic_dovetail_saw
+    Name: Runic Dovetail Saw
+    Category: Skill Items
+    Description: ''
+    ItemId: 4136
+    FlippableItemIds:
+        - 4136
+        - 4137
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: runic_fletcher_tool
+    Name: Runic Fletcher Tool
+    Category: Skill Items
+    Description: ''
+    ItemId: 4130
+    FlippableItemIds:
+        - 4130
+        - 4131
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: runic_hammer
+    Name: Runic Hammer
+    Category: Skill Items
+    Description: ''
+    ItemId: 5091
+    FlippableItemIds:
+        - 5091
+        - 5092
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: runic_sewing_kit
+    Name: Runic Sewing Kit
+    Category: Skill Items
+    Description: ''
+    ItemId: 3997
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: sand
+    Name: Sand
+    Category: Skill Items
+    Description: ''
+    ItemId: 4586
+    FlippableItemIds:
+        - 4586
+        - 4587
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: sand_mining_book
+    Name: Sand Mining Book
+    Category: Skill Items
+    Description: ''
+    ItemId: 4084
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: saw
+    Name: Saw
+    Category: Skill Items
+    Description: ''
+    ItemId: 4148
+    FlippableItemIds:
+        - 4148
+        - 4149
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: scissors
+    Name: Scissors
+    Category: Skill Items
+    Description: ''
+    ItemId: 3999
+    FlippableItemIds:
+        - 3999
+        - 3998
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: scorp
+    Name: Scorp
+    Category: Skill Items
+    Description: ''
+    ItemId: 4327
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: scribes_pen
+    Name: Scribes Pen
+    Category: Skill Items
+    Description: ''
+    ItemId: 4031
+    FlippableItemIds:
+        - 4031
+        - 4032
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: sewing_kit
+    Name: Sewing Kit
+    Category: Skill Items
+    Description: ''
+    ItemId: 3997
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: sextant
+    Name: Sextant
+    Category: Skill Items
+    Description: ''
+    ItemId: 4184
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: sextant_parts
+    Name: Sextant Parts
+    Category: Skill Items
+    Description: ''
+    ItemId: 4185
+    FlippableItemIds:
+        - 4185
+        - 4186
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: shovel
+    Name: Shovel
+    Category: Skill Items
+    Description: ''
+    ItemId: 3897
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: shuriken
+    Name: Shuriken
+    Category: Skill Items
+    Description: ''
+    ItemId: 10156
+    FlippableItemIds:
+        - 10156
+        - 10231
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: skillet
+    Name: Skillet
+    Category: Skill Items
+    Description: ''
+    ItemId: 2431
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: sledge_hammer
+    Name: Sledge Hammer
+    Category: Skill Items
+    Description: ''
+    ItemId: 4021
+    FlippableItemIds:
+        - 4021
+        - 4020
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: sleep_scroll
+    Name: Sleep Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 681
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: smith_hammer
+    Name: Smith Hammer
+    Category: Skill Items
+    Description: ''
+    ItemId: 5091
+    FlippableItemIds:
+        - 5091
+        - 5092
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: smoke_bomb
+    Name: Smoke Bomb
+    Category: Skill Items
+    Description: ''
+    ItemId: 10248
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: smoothing_plane
+    Name: Smoothing Plane
+    Category: Skill Items
+    Description: ''
+    ItemId: 4146
+    FlippableItemIds:
+        - 4146
+        - 4147
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: sos
+    Name: SOS
+    Category: Skill Items
+    Description: ''
+    ItemId: 5358
+    FlippableItemIds:
+        - 5357
+        - 5358
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: special_fishing_net
+    Name: Special Fishing Net
+    Category: Skill Items
+    Description: ''
+    ItemId: 3530
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: spell_plague_scroll
+    Name: Spell Plague Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 689
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: spell_trigger_scroll
+    Name: Spell Trigger Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 685
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: spellweaving_book
+    Name: Spellweaving Book
+    Category: Skill Items
+    Description: ''
+    ItemId: 11600
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: spoon
+    Name: Spoon
+    Category: Skill Items
+    Description: ''
+    ItemId: 2552
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: spoon_left
+    Name: Spoon Left
+    Category: Skill Items
+    Description: ''
+    ItemId: 2552
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: spoon_right
+    Name: Spoon Right
+    Category: Skill Items
+    Description: ''
+    ItemId: 2553
+    FlippableItemIds:
+        - 2552
+        - 2553
+        - 2498
+        - 2499
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: springs
+    Name: Springs
+    Category: Skill Items
+    Description: ''
+    ItemId: 4189
+    FlippableItemIds:
+        - 4189
+        - 4190
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: spyglass
+    Name: Spyglass
+    Category: Skill Items
+    Description: ''
+    ItemId: 5365
+    FlippableItemIds:
+        - 5365
+        - 5366
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: stone_form_scroll
+    Name: Stone Form Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 684
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: stone_mining_book
+    Name: Stone Mining Book
+    Category: Skill Items
+    Description: ''
+    ItemId: 4030
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: strangle_scroll
+    Name: Strangle Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 110
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: strength_scroll
+    Name: Strength Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 15
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: strength_potion
+    Name: Strength Potion
+    Category: Skill Items
+    Description: ''
+    ItemId: 3849
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: items.strength_potion
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - potion
+    Stackable: true
+-   Id: sturdy_pickaxe
+    Name: Sturdy Pickaxe
+    Category: Skill Items
+    Description: ''
+    ItemId: 3718
+    FlippableItemIds:
+        - 3718
+        - 3717
+    Hue: 0
+    GoldValue: 0
+    Weight: 11.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 35
+-   Id: sturdy_shovel
+    Name: Sturdy Shovel
+    Category: Skill Items
+    Description: ''
+    ItemId: 3897
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_air_elemental_scroll
+    Name: Summon Air Elemental Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 59
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_creature_scroll
+    Name: Summon Creature Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 39
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_daemon_scroll
+    Name: Summon Daemon Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 60
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_earth_elemental_scroll
+    Name: Summon Earth Elemental Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 61
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_familiar_scroll
+    Name: Summon Familiar Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 111
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_fey_scroll
+    Name: Summon Fey Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 606
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_fiend_scroll
+    Name: Summon Fiend Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 607
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_fire_elemental_scroll
+    Name: Summon Fire Elemental Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 62
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: summon_water_elemental_scroll
+    Name: Summon Water Elemental Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 63
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: tambourine
+    Name: Tambourine
+    Category: Skill Items
+    Description: ''
+    ItemId: 3741
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: tambourine_tassel
+    Name: Tambourine Tassel
+    Category: Skill Items
+    Description: ''
+    ItemId: 3742
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: taxidermy_kit
+    Name: Taxidermy Kit
+    Category: Skill Items
+    Description: ''
+    ItemId: 7866
+    FlippableItemIds:
+        - 7866
+        - 7867
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: telekinesis_scroll
+    Name: Telekinesis Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 20
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: teleport_scroll
+    Name: Teleport Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 21
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: thunderstorm_scroll
+    Name: Thunderstorm Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 604
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: tinker_tools
+    Name: Tinker Tools
+    Category: Skill Items
+    Description: ''
+    ItemId: 7864
+    FlippableItemIds:
+        - 7864
+        - 7865
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: tinkers_tools
+    Name: Tinkers Tools
+    Category: Skill Items
+    Description: ''
+    ItemId: 7868
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: tongs
+    Name: Tongs
+    Category: Skill Items
+    Description: ''
+    ItemId: 4027
+    FlippableItemIds:
+        - 4027
+        - 4028
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+        - flippable
+-   Id: unlock_scroll
+    Name: Unlock Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 22
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: vampiric_embrace_scroll
+    Name: Vampiric Embrace Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 112
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: vengeful_spirit_scroll
+    Name: Vengeful Spirit Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 113
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: wall_of_stone_scroll
+    Name: Wall Of Stone Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 23
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: weaken_scroll
+    Name: Weaken Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 7
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: wildfire_scroll
+    Name: Wildfire Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 609
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: wither_scroll
+    Name: Wither Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 114
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: word_of_death_scroll
+    Name: Word Of Death Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 613
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items
+-   Id: wraith_form_scroll
+    Name: Wraith Form Scroll
+    Category: Skill Items
+    Description: ''
+    ItemId: 115
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - skill items

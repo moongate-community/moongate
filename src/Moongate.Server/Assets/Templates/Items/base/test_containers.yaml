@@ -1,0 +1,28 @@
+-   Id: loot_test_chest
+    Name: Loot Test Chest
+    Category: Test Containers
+    Description: Spawnable chest used to verify first-open loot table generation.
+    ItemId: 3712
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - container
+        - test
+        - loot
+    LootTables:
+        - loot_test_chest_basic
+    Params:
+        loot_refillable:
+            Type: string
+            Value: 'true'
+        loot_refill_seconds:
+            Type: string
+            Value: '300'
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        ContainerLayoutId: metal_chest

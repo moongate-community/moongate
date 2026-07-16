@@ -1,0 +1,11 @@
+-   Id: creature.giant_serpent
+    Name: GiantSerpent
+    Category: loot
+    Description: Creature-specific loot for GiantSerpent.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bone
+            Amount: 1
+            Chance: 1.0

@@ -1,0 +1,11 @@
+-   Id: creature.savage_rider
+    Name: SavageRider
+    Category: loot
+    Description: Creature-specific loot for SavageRider.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bola_ball
+            Amount: 1
+            Chance: 1.0

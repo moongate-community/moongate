@@ -1,0 +1,35 @@
+-   Id: bulletin_board
+    Name: Bulletin Board
+    Category: Bulletin Boards
+    Description: ''
+    ItemId: 7774
+    FlippableItemIds:
+        - 7774
+        - 7775
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.bulletin_board
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - bulletin boards
+        - flippable
+-   Id: bb
+    Name: BB
+    Category: Bulletin Boards
+    Description: Bulletin board test item.
+    ItemId: 7774
+    FlippableItemIds:
+        - 7774
+        - 7775
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: items.bb
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - test
+        - bulletin boards

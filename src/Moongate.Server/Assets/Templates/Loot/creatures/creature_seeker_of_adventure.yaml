@@ -1,0 +1,11 @@
+-   Id: creature.seeker_of_adventure
+    Name: SeekerOfAdventure
+    Category: loot
+    Description: Creature-specific loot for SeekerOfAdventure.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Amount: 125
+            Chance: 1.0

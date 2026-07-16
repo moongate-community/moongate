@@ -1,0 +1,4616 @@
+-   Id: adventurers_machete
+    Name: Adventurers Machete
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: ancient_wild_staff
+    Name: Ancient Wild Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: arcanists_wild_staff
+    Name: Arcanists Wild Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: assassin_spike
+    Name: Assassin Spike
+    Category: Weapons
+    Description: ''
+    ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: assassins_shortbow
+    Name: Assassins Shortbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 13
+        Speed: 38
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: axe
+    Name: Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 3913
+    FlippableItemIds:
+        - 3913
+        - 3914
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 16
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: barbed_longbow
+    Name: Barbed Longbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 16
+        Speed: 27
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: bardiche
+    Name: Bardiche
+    Category: Weapons
+    Description: ''
+    ItemId: 3917
+    FlippableItemIds:
+        - 3917
+        - 3918
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 100
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 17
+        HighDamage: 18
+        Speed: 28
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: battle_axe
+    Name: Battle Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 3911
+    FlippableItemIds:
+        - 3911
+        - 3912
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 31
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: black_staff
+    Name: Black Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 3568
+    FlippableItemIds:
+        - 3569
+        - 3568
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 16
+        Speed: 39
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: bladed_staff
+    Name: Bladed Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 9917
+    FlippableItemIds:
+        - 9917
+        - 9927
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 16
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: blood_blade
+    Name: Blood Blade
+    Category: Weapons
+    Description: ''
+    ItemId: 2302
+    FlippableItemIds:
+        - 2302
+        - 16498
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 90
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: bokuto
+    Name: Bokuto
+    Category: Weapons
+    Description: ''
+    ItemId: 10152
+    FlippableItemIds:
+        - 10152
+        - 10227
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 53
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 1334
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: bone_harvester
+    Name: Bone Harvester
+    Category: Weapons
+    Description: ''
+    ItemId: 9915
+    FlippableItemIds:
+        - 9915
+        - 9925
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 36
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: bone_machete
+    Name: Bone Machete
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 5
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: boomerang
+    Name: Boomerang
+    Category: Weapons
+    Description: ''
+    ItemId: 2303
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 15
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 1491
+        MissSound: 1492
+        WeaponSkill: Throwing
+-   Id: bow
+    Name: Bow
+    Category: Weapons
+    Description: ''
+    ItemId: 5042
+    FlippableItemIds:
+        - 5042
+        - 5041
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 41
+        Speed: 25
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: broadsword
+    Name: Broadsword
+    Category: Weapons
+    Description: ''
+    ItemId: 3934
+    FlippableItemIds:
+        - 3934
+        - 3935
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 100
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 15
+        Speed: 33
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: butcher_knife
+    Name: Butcher Knife
+    Category: Weapons
+    Description: ''
+    ItemId: 5110
+    FlippableItemIds:
+        - 5110
+        - 5111
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 40
+        StrengthReq: 5
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 49
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: butchers_war_cleaver
+    Name: Butchers War Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: charged_assassin_spike
+    Name: Charged Assassin Spike
+    Category: Weapons
+    Description: ''
+    ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: cleaver
+    Name: Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 3779
+    FlippableItemIds:
+        - 3779
+        - 3778
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 50
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 46
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: club
+    Name: Club
+    Category: Weapons
+    Description: ''
+    ItemId: 5044
+    FlippableItemIds:
+        - 5044
+        - 5043
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 40
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: composite_bow
+    Name: Composite Bow
+    Category: Weapons
+    Description: ''
+    ItemId: 9922
+    FlippableItemIds:
+        - 9922
+        - 9932
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 25
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: corrupted_rune_blade
+    Name: Corrupted Rune Blade
+    Category: Weapons
+    Description: ''
+    ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: crescent_blade
+    Name: Crescent Blade
+    Category: Weapons
+    Description: ''
+    ItemId: 9921
+    FlippableItemIds:
+        - 9921
+        - 9931
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 80
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 14
+        Speed: 47
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: crossbow
+    Name: Crossbow
+    Category: Weapons
+    Description: ''
+    ItemId: 3920
+    FlippableItemIds:
+        - 3920
+        - 3919
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 8
+        HighDamage: 43
+        Speed: 24
+        BaseRange: 1
+        MaxRange: 8
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 7163
+        AmmoFx: 7163
+-   Id: cutlass
+    Name: Cutlass
+    Category: Weapons
+    Description: ''
+    ItemId: 5185
+    FlippableItemIds:
+        - 5185
+        - 5184
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: cyclone
+    Name: Cyclone
+    Category: Weapons
+    Description: ''
+    ItemId: 2305
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 17
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 1491
+        MissSound: 1492
+        WeaponSkill: Throwing
+-   Id: dagger
+    Name: Dagger
+    Category: Weapons
+    Description: ''
+    ItemId: 3922
+    FlippableItemIds:
+        - 3922
+        - 3921
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 40
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 11
+        Speed: 56
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: daisho
+    Name: Daisho
+    Category: Weapons
+    Description: ''
+    ItemId: 10153
+    FlippableItemIds:
+        - 10153
+        - 10228
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 65
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 40
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: darkglow_scimitar
+    Name: Darkglow Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: diamond_mace
+    Name: Diamond Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: disc_mace
+    Name: Disc Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 2307
+    FlippableItemIds:
+        - 2307
+        - 16494
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 15
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: diseased_machete
+    Name: Diseased Machete
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: double_axe
+    Name: Double Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 3915
+    FlippableItemIds:
+        - 3915
+        - 3916
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 33
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: double_bladed_staff
+    Name: Double Bladed Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 9919
+    FlippableItemIds:
+        - 9919
+        - 9929
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 13
+        Speed: 49
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: dread_sword
+    Name: Dread Sword
+    Category: Weapons
+    Description: ''
+    ItemId: 2315
+    FlippableItemIds:
+        - 2315
+        - 16500
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 18
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: dual_pointed_spear
+    Name: Dual Pointed Spear
+    Category: Weapons
+    Description: ''
+    ItemId: 2308
+    FlippableItemIds:
+        - 2308
+        - 16493
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 14
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: dual_short_axes
+    Name: Dual Short Axes
+    Category: Weapons
+    Description: ''
+    ItemId: 2301
+    FlippableItemIds:
+        - 2301
+        - 16488
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: elven_composite_longbow
+    Name: Elven Composite Longbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 16
+        Speed: 27
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: elven_machete
+    Name: Elven Machete
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: elven_spellblade
+    Name: Elven Spellblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: emerald_mace
+    Name: Emerald Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: executioners_axe
+    Name: Executioners Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 3909
+    FlippableItemIds:
+        - 3909
+        - 3910
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 33
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: fiery_spellblade
+    Name: Fiery Spellblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: fireworks_wand
+    Name: Fireworks Wand
+    Category: Weapons
+    Description: ''
+    ItemId: 3570
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 5
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 40
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: frozen_longbow
+    Name: Frozen Longbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 16
+        Speed: 27
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: gargish_talwar
+    Name: Gargish Talwar
+    Category: Weapons
+    Description: ''
+    ItemId: 2312
+    FlippableItemIds:
+        - 2312
+        - 16501
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 80
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 19
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: glacial_staff
+    Name: Glacial Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 3568
+    FlippableItemIds:
+        - 3569
+        - 3568
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 16
+        Speed: 39
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: glass_staff
+    Name: Glass Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 2309
+    FlippableItemIds:
+        - 2309
+        - 16496
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 14
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: glass_sword
+    Name: Glass Sword
+    Category: Weapons
+    Description: ''
+    ItemId: 2316
+    FlippableItemIds:
+        - 2316
+        - 16499
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 90
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 15
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: gnarled_staff
+    Name: Gnarled Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 5112
+    FlippableItemIds:
+        - 5112
+        - 5113
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 33
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: guardian_axe
+    Name: Guardian Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: halberd
+    Name: Halberd
+    Category: Weapons
+    Description: ''
+    ItemId: 5182
+    FlippableItemIds:
+        - 5182
+        - 5183
+    Hue: 0
+    GoldValue: 0
+    Weight: 16.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 19
+        Speed: 25
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: hammer_pick
+    Name: Hammer Pick
+    Category: Weapons
+    Description: ''
+    ItemId: 5181
+    FlippableItemIds:
+        - 5181
+        - 5180
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 28
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: hardened_wild_staff
+    Name: Hardened Wild Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: hatchet
+    Name: Hatchet
+    Category: Weapons
+    Description: ''
+    ItemId: 3907
+    FlippableItemIds:
+        - 3907
+        - 3908
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: heavy_crossbow
+    Name: Heavy Crossbow
+    Category: Weapons
+    Description: ''
+    ItemId: 5117
+    FlippableItemIds:
+        - 5117
+        - 5116
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 100
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 56
+        Speed: 22
+        BaseRange: 1
+        MaxRange: 8
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 7163
+        AmmoFx: 7163
+-   Id: heavy_ornate_axe
+    Name: Heavy Ornate Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: icy_scimitar
+    Name: Icy Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: icy_spellblade
+    Name: Icy Spellblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: juka_bow
+    Name: Juka Bow
+    Category: Weapons
+    Description: ''
+    ItemId: 5042
+    FlippableItemIds:
+        - 5042
+        - 5041
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 80
+        DexterityReq: 80
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 41
+        Speed: 25
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: kama
+    Name: Kama
+    Category: Weapons
+    Description: ''
+    ItemId: 10157
+    FlippableItemIds:
+        - 10157
+        - 10232
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 55
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: katana
+    Name: Katana
+    Category: Weapons
+    Description: ''
+    ItemId: 5119
+    FlippableItemIds:
+        - 5119
+        - 5118
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 90
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 46
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: knights_war_cleaver
+    Name: Knights War Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: kryss
+    Name: Kryss
+    Category: Weapons
+    Description: ''
+    ItemId: 5121
+    FlippableItemIds:
+        - 5121
+        - 5120
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 90
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 53
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: lajatang
+    Name: Lajatang
+    Category: Weapons
+    Description: ''
+    ItemId: 10151
+    FlippableItemIds:
+        - 10151
+        - 10226
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 95
+        StrengthReq: 65
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 18
+        Speed: 32
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: lance
+    Name: Lance
+    Category: Weapons
+    Description: ''
+    ItemId: 9920
+    FlippableItemIds:
+        - 9920
+        - 9930
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 17
+        HighDamage: 18
+        Speed: 24
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: large_battle_axe
+    Name: Large Battle Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 5115
+    FlippableItemIds:
+        - 5115
+        - 5114
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 70
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 17
+        Speed: 29
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: leafblade
+    Name: Leafblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: leafblade_of_ease
+    Name: Leafblade Of Ease
+    Category: Weapons
+    Description: ''
+    ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: lightweight_shortbow
+    Name: Lightweight Shortbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 13
+        Speed: 38
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: longbow_of_might
+    Name: Longbow Of Might
+    Category: Weapons
+    Description: ''
+    ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 16
+        Speed: 27
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: longsword
+    Name: Longsword
+    Category: Weapons
+    Description: ''
+    ItemId: 3937
+    FlippableItemIds:
+        - 3937
+        - 3936
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 16
+        Speed: 30
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: luckblade
+    Name: Luckblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: mace
+    Name: Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 3932
+    FlippableItemIds:
+        - 3932
+        - 3933
+    Hue: 0
+    GoldValue: 0
+    Weight: 14.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 40
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: machete_of_defense
+    Name: Machete Of Defense
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: magekiller_assassin_spike
+    Name: Magekiller Assassin Spike
+    Category: Weapons
+    Description: ''
+    ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: magekiller_leafblade
+    Name: Magekiller Leafblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: mages_rune_blade
+    Name: Mages Rune Blade
+    Category: Weapons
+    Description: ''
+    ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: magic_wand
+    Name: Magic Wand
+    Category: Weapons
+    Description: ''
+    ItemId: 3570
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 5
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 40
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: magical_shortbow
+    Name: Magical Shortbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 13
+        Speed: 38
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: maul
+    Name: Maul
+    Category: Weapons
+    Description: ''
+    ItemId: 5179
+    FlippableItemIds:
+        - 5179
+        - 5178
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 16
+        Speed: 32
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: mystical_shortbow
+    Name: Mystical Shortbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 13
+        Speed: 38
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: no_dachi
+    Name: No Dachi
+    Category: Weapons
+    Description: ''
+    ItemId: 10146
+    FlippableItemIds:
+        - 10146
+        - 10221
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 18
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: nunchaku
+    Name: Nunchaku
+    Category: Weapons
+    Description: ''
+    ItemId: 10158
+    FlippableItemIds:
+        - 10158
+        - 10233
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 55
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 47
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 1333
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: orcish_machete
+    Name: Orcish Machete
+    Category: Weapons
+    Description: ''
+    ItemId: 11573
+    FlippableItemIds:
+        - 11573
+        - 11561
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: ornate_axe
+    Name: Ornate Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: pickaxe
+    Name: Pickaxe
+    Category: Weapons
+    Description: ''
+    ItemId: 3718
+    FlippableItemIds:
+        - 3718
+        - 3717
+    Hue: 0
+    GoldValue: 0
+    Weight: 11.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: pike
+    Name: Pike
+    Category: Weapons
+    Description: ''
+    ItemId: 9918
+    FlippableItemIds:
+        - 9918
+        - 9928
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 16
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: pitchfork
+    Name: Pitchfork
+    Category: Weapons
+    Description: ''
+    ItemId: 3719
+    FlippableItemIds:
+        - 3719
+        - 3720
+    Hue: 0
+    GoldValue: 0
+    Weight: 11.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 55
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: quarter_staff
+    Name: Quarter Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 3721
+    FlippableItemIds:
+        - 3722
+        - 3721
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 14
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: radiant_scimitar
+    Name: Radiant Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: rangers_shortbow
+    Name: Rangers Shortbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11563
+    FlippableItemIds:
+        - 11563
+        - 11551
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 13
+        Speed: 38
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: repeating_crossbow
+    Name: Repeating Crossbow
+    Category: Weapons
+    Description: ''
+    ItemId: 9923
+    FlippableItemIds:
+        - 9923
+        - 9933
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 41
+        BaseRange: 1
+        MaxRange: 7
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 7163
+        AmmoFx: 7163
+-   Id: ruby_mace
+    Name: Ruby Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: rune_blade
+    Name: Rune Blade
+    Category: Weapons
+    Description: ''
+    ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: rune_blade_of_knowledge
+    Name: Rune Blade Of Knowledge
+    Category: Weapons
+    Description: ''
+    ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: runesabre
+    Name: Runesabre
+    Category: Weapons
+    Description: ''
+    ItemId: 11570
+    FlippableItemIds:
+        - 11570
+        - 11558
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 30
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 35
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: sai
+    Name: Sai
+    Category: Weapons
+    Description: ''
+    ItemId: 10159
+    FlippableItemIds:
+        - 10159
+        - 10234
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 55
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 562
+        WeaponSkill: Fencing
+-   Id: sapphire_mace
+    Name: Sapphire Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: scepter
+    Name: Scepter
+    Category: Weapons
+    Description: ''
+    ItemId: 9916
+    FlippableItemIds:
+        - 9916
+        - 9926
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 30
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: scimitar
+    Name: Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 5046
+    FlippableItemIds:
+        - 5046
+        - 5045
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 90
+        StrengthReq: 25
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: scythe
+    Name: Scythe
+    Category: Weapons
+    Description: ''
+    ItemId: 9914
+    FlippableItemIds:
+        - 9914
+        - 9924
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 100
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 18
+        Speed: 32
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: serpentstone_staff
+    Name: Serpentstone Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 2310
+    FlippableItemIds:
+        - 2310
+        - 16495
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 50
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 19
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: serrated_war_cleaver
+    Name: Serrated War Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: shepherds_crook
+    Name: Shepherds Crook
+    Category: Weapons
+    Description: ''
+    ItemId: 3713
+    FlippableItemIds:
+        - 3713
+        - 3714
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 40
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: short_spear
+    Name: Short Spear
+    Category: Weapons
+    Description: ''
+    ItemId: 5123
+    FlippableItemIds:
+        - 5123
+        - 5122
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 70
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 13
+        Speed: 55
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: silver_etched_mace
+    Name: Silver Etched Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 11556
+    FlippableItemIds:
+        - 11556
+        - 11568
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 17
+        Speed: 37
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: singing_axe
+    Name: Singing Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: skinning_knife
+    Name: Skinning Knife
+    Category: Weapons
+    Description: ''
+    ItemId: 3780
+    FlippableItemIds:
+        - 3780
+        - 3781
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 40
+        StrengthReq: 5
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 49
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 568
+        WeaponSkill: Swords
+-   Id: slayer_longbow
+    Name: Slayer Longbow
+    Category: Weapons
+    Description: ''
+    ItemId: 11550
+    FlippableItemIds:
+        - 11550
+        - 11562
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 16
+        Speed: 27
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166
+-   Id: soul_glaive
+    Name: Soul Glaive
+    Category: Weapons
+    Description: ''
+    ItemId: 2314
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 65
+        StrengthReq: 60
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 20
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 1491
+        MissSound: 1492
+        WeaponSkill: Throwing
+-   Id: spear
+    Name: Spear
+    Category: Weapons
+    Description: ''
+    ItemId: 3938
+    FlippableItemIds:
+        - 3938
+        - 3939
+    Hue: 0
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: spellblade_of_defense
+    Name: Spellblade Of Defense
+    Category: Weapons
+    Description: ''
+    ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: tekagi
+    Name: Tekagi
+    Category: Weapons
+    Description: ''
+    ItemId: 10155
+    FlippableItemIds:
+        - 10155
+        - 10230
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 53
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 568
+        MissSound: 562
+        WeaponSkill: Fencing
+-   Id: tessen
+    Name: Tessen
+    Category: Weapons
+    Description: ''
+    ItemId: 10147
+    FlippableItemIds:
+        - 10147
+        - 10222
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 10
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 568
+        WeaponSkill: Macing
+-   Id: tetsubo
+    Name: Tetsubo
+    Category: Weapons
+    Description: ''
+    ItemId: 10150
+    FlippableItemIds:
+        - 10150
+        - 10225
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 65
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 45
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 568
+        WeaponSkill: Macing
+-   Id: thin_longsword
+    Name: Thin Longsword
+    Category: Weapons
+    Description: ''
+    ItemId: 5048
+    FlippableItemIds:
+        - 5048
+        - 5047
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 16
+        Speed: 30
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: thorned_wild_staff
+    Name: Thorned Wild Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: throwing_dagger
+    Name: Throwing Dagger
+    Category: Weapons
+    Description: ''
+    ItemId: 3922
+    FlippableItemIds:
+        - 3922
+        - 3921
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 0
+        HighDamage: 0
+        Speed: 0
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 0
+        MissSound: 0
+-   Id: thundering_axe
+    Name: Thundering Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 11560
+    FlippableItemIds:
+        - 11560
+        - 11572
+    Hue: 0
+    GoldValue: 0
+    Weight: 12.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: tribal_spear
+    Name: Tribal Spear
+    Category: Weapons
+    Description: ''
+    ItemId: 3938
+    FlippableItemIds:
+        - 3938
+        - 3939
+    Hue: 837
+    GoldValue: 0
+    Weight: 7.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 80
+        StrengthReq: 50
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 572
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: true_assassin_spike
+    Name: True Assassin Spike
+    Category: Weapons
+    Description: ''
+    ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: true_leafblade
+    Name: True Leafblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11554
+    FlippableItemIds:
+        - 11554
+        - 11566
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 13
+        HighDamage: 15
+        Speed: 42
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: true_radiant_scimitar
+    Name: True Radiant Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: true_spellblade
+    Name: True Spellblade
+    Category: Weapons
+    Description: ''
+    ItemId: 11552
+    FlippableItemIds:
+        - 11552
+        - 11564
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: true_war_cleaver
+    Name: True War Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: twinkling_scimitar
+    Name: Twinkling Scimitar
+    Category: Weapons
+    Description: ''
+    ItemId: 11571
+    FlippableItemIds:
+        - 11571
+        - 11559
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 14
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Swords
+-   Id: two_handed_axe
+    Name: Two Handed Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 5187
+    FlippableItemIds:
+        - 5187
+        - 5186
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 90
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 17
+        Speed: 31
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 562
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: viking_sword
+    Name: Viking Sword
+    Category: Weapons
+    Description: ''
+    ItemId: 5049
+    FlippableItemIds:
+        - 5049
+        - 5050
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 100
+        StrengthReq: 40
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 15
+        HighDamage: 17
+        Speed: 28
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 567
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: wakizashi
+    Name: Wakizashi
+    Category: Weapons
+    Description: ''
+    ItemId: 10148
+    FlippableItemIds:
+        - 10148
+        - 10223
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 50
+        StrengthReq: 20
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 11
+        HighDamage: 13
+        Speed: 44
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 570
+        WeaponSkill: Swords
+-   Id: war_axe
+    Name: War Axe
+    Category: Weapons
+    Description: ''
+    ItemId: 5040
+    FlippableItemIds:
+        - 5040
+        - 5039
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 80
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 14
+        HighDamage: 15
+        Speed: 33
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: war_cleaver
+    Name: War Cleaver
+    Category: Weapons
+    Description: ''
+    ItemId: 11567
+    FlippableItemIds:
+        - 11567
+        - 11555
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 9
+        HighDamage: 11
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: war_fork
+    Name: War Fork
+    Category: Weapons
+    Description: ''
+    ItemId: 5125
+    FlippableItemIds:
+        - 5125
+        - 5124
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 45
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 12
+        HighDamage: 13
+        Speed: 43
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 566
+        MissSound: 568
+        WeaponSkill: Fencing
+-   Id: war_hammer
+    Name: War Hammer
+    Category: Weapons
+    Description: ''
+    ItemId: 5177
+    FlippableItemIds:
+        - 5177
+        - 5176
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 110
+        StrengthReq: 95
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 17
+        HighDamage: 18
+        Speed: 28
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: war_mace
+    Name: War Mace
+    Category: Weapons
+    Description: ''
+    ItemId: 5127
+    FlippableItemIds:
+        - 5127
+        - 5126
+    Hue: 0
+    GoldValue: 0
+    Weight: 17.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: OneHanded
+        HitPoints: 110
+        StrengthReq: 80
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 16
+        HighDamage: 17
+        Speed: 26
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: wild_staff
+    Name: Wild Staff
+    Category: Weapons
+    Description: ''
+    ItemId: 11557
+    FlippableItemIds:
+        - 11557
+        - 11569
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 48
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 563
+        MissSound: 569
+        WeaponSkill: Macing
+-   Id: wounding_assassin_spike
+    Name: Wounding Assassin Spike
+    Category: Weapons
+    Description: ''
+    ItemId: 11553
+    FlippableItemIds:
+        - 11553
+        - 11565
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+    Equip:
+        Layer: OneHanded
+        HitPoints: 60
+        StrengthReq: 15
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 10
+        HighDamage: 12
+        Speed: 50
+        BaseRange: 1
+        MaxRange: 1
+        HitSound: 571
+        MissSound: 569
+        WeaponSkill: Fencing
+-   Id: yumi
+    Name: Yumi
+    Category: Weapons
+    Description: ''
+    ItemId: 10149
+    FlippableItemIds:
+        - 10149
+        - 10224
+    Hue: 0
+    GoldValue: 0
+    Weight: 9.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - weapons
+        - flippable
+    Equip:
+        Layer: TwoHanded
+        HitPoints: 60
+        StrengthReq: 35
+        DexterityReq: 0
+        IntelligenceReq: 0
+    Weapon:
+        LowDamage: 18
+        HighDamage: 20
+        Speed: 25
+        BaseRange: 1
+        MaxRange: 10
+        HitSound: 564
+        MissSound: 568
+        WeaponSkill: Archery
+        Ammo: 3903
+        AmmoFx: 7166

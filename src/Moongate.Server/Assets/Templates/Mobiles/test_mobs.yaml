@@ -1,0 +1,26 @@
+-   Id: orione
+    Name: Orione
+    Title: a beautiful cat
+    Category: animals
+    Description: Legacy test mobile migrated from moongate v1.
+    Tags:
+        - legacy
+        - test
+        - animals
+    Appearance:
+        Body: 201
+        SkinHue: 779
+    BrainScript: orion
+-   Id: vega
+    Name: Vega
+    Title: a beautiful cat
+    Category: animals
+    Description: my cat
+    Tags:
+        - legacy
+        - test
+        - animals
+    Appearance:
+        Body: 201
+        SkinHue: 779
+    BrainScript: vega

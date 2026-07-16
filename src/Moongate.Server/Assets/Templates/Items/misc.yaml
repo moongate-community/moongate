@@ -1,0 +1,2455 @@
+-   Id: abscess_tail
+    Name: Abscess Tail
+    Category: Misc
+    Description: ''
+    ItemId: 6813
+    FlippableItemIds:
+        - 6812
+        - 6813
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: acid
+    Name: Acid
+    Category: Misc
+    Description: ''
+    ItemId: 4650
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: acid_proof_rope
+    Name: Acid Proof Rope
+    Category: Misc
+    Description: ''
+    ItemId: 525
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: ani_large_violet_flask
+    Name: Ani Large Violet Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6209
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: ani_red_ribbed_flask
+    Name: Ani Red Ribbed Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6206
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: ani_small_blue_flask
+    Name: Ani Small Blue Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6212
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: arcane_gem
+    Name: Arcane Gem
+    Category: Misc
+    Description: ''
+    ItemId: 7847
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: bank_check
+    Name: Bank Check
+    Category: Misc
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: beeswax
+    Name: Beeswax
+    Category: Misc
+    Description: ''
+    ItemId: 5154
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: blocker
+    Name: Blocker
+    Category: Misc
+    Description: ''
+    ItemId: 8612
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: blue_beaker
+    Name: Blue Beaker
+    Category: Misc
+    Description: ''
+    ItemId: 6192
+    FlippableItemIds:
+        - 6190
+        - 6191
+        - 6192
+        - 6193
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: blue_curved_flask
+    Name: Blue Curved Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6198
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: bola
+    Name: Bola
+    Category: Misc
+    Description: ''
+    ItemId: 9900
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: bola_ball
+    Name: Bola Ball
+    Category: Misc
+    Description: ''
+    ItemId: 3699
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: broadcast_crystal
+    Name: Broadcast Crystal
+    Category: Misc
+    Description: ''
+    ItemId: 7888
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: chisels_north
+    Name: Chisels North
+    Category: Misc
+    Description: ''
+    ItemId: 4134
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: chisels_west
+    Name: Chisels West
+    Category: Misc
+    Description: ''
+    ItemId: 4135
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: clockwork_assembly
+    Name: Clockwork Assembly
+    Category: Misc
+    Description: ''
+    ItemId: 7848
+    Hue: 1102
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: coils_fang
+    Name: Coils Fang
+    Category: Misc
+    Description: ''
+    ItemId: 4328
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: contract_of_employment
+    Name: Contract Of Employment
+    Category: Misc
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: copper_wire
+    Name: Copper Wire
+    Category: Misc
+    Description: ''
+    ItemId: 6265
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: crystalline_fragments
+    Name: Crystalline Fragments
+    Category: Misc
+    Description: ''
+    ItemId: 8763
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: curved_flask
+    Name: Curved Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6194
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: deceit_brazier
+    Name: Deceit Brazier
+    Category: Misc
+    Description: ''
+    ItemId: 3633
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_frypan
+    Name: Dirty Frypan
+    Category: Misc
+    Description: ''
+    ItemId: 2526
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_kettle
+    Name: Dirty Kettle
+    Category: Misc
+    Description: ''
+    ItemId: 2524
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_pan
+    Name: Dirty Pan
+    Category: Misc
+    Description: ''
+    ItemId: 2536
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_pot
+    Name: Dirty Pot
+    Category: Misc
+    Description: ''
+    ItemId: 2534
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_round_pot
+    Name: Dirty Round Pot
+    Category: Misc
+    Description: ''
+    ItemId: 2527
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_small_pot
+    Name: Dirty Small Pot
+    Category: Misc
+    Description: ''
+    ItemId: 2525
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dirty_small_round_pot
+    Name: Dirty Small Round Pot
+    Category: Misc
+    Description: ''
+    ItemId: 2535
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dragon_flame_sect_badge
+    Name: Dragon Flame Sect Badge
+    Category: Misc
+    Description: ''
+    ItemId: 574
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dried_herbs
+    Name: Dried Herbs
+    Category: Misc
+    Description: ''
+    ItemId: 3138
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: dried_onions
+    Name: Dried Onions
+    Category: Misc
+    Description: ''
+    ItemId: 3136
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: effect_controller
+    Name: Effect Controller
+    Category: Misc
+    Description: ''
+    ItemId: 7026
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_curved_flask_e
+    Name: Empty Curved Flask E
+    Category: Misc
+    Description: ''
+    ItemId: 6197
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_curved_flask_w
+    Name: Empty Curved Flask W
+    Category: Misc
+    Description: ''
+    ItemId: 6194
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_oil_flask
+    Name: Empty Oil Flask
+    Category: Misc
+    Description: ''
+    ItemId: 7192
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_ribbed_flask
+    Name: Empty Ribbed Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6202
+    FlippableItemIds:
+        - 6200
+        - 6201
+        - 6202
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_vial
+    Name: Empty Vial
+    Category: Misc
+    Description: ''
+    ItemId: 3620
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: empty_vials_w_rack
+    Name: Empty Vials W Rack
+    Category: Misc
+    Description: ''
+    ItemId: 6235
+    FlippableItemIds:
+        - 6235
+        - 6236
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: eternally_corrupt_tree
+    Name: Eternally Corrupt Tree
+    Category: Misc
+    Description: ''
+    ItemId: 8442
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: executioners_cap
+    Name: Executioners Cap
+    Category: Misc
+    Description: ''
+    ItemId: 3971
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: fancy_wind_chimes
+    Name: Fancy Wind Chimes
+    Category: Misc
+    Description: ''
+    ItemId: 10291
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: forged_metal
+    Name: Forged Metal
+    Category: Misc
+    Description: ''
+    ItemId: 4024
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: full_vials_w_rack
+    Name: Full Vials W Rack
+    Category: Misc
+    Description: ''
+    ItemId: 6237
+    FlippableItemIds:
+        - 6237
+        - 6238
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: glob_of_monstreous_interred_grizzle
+    Name: Glob Of Monstreous Interred Grizzle
+    Category: Misc
+    Description: ''
+    ItemId: 755
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: gold
+    Name: Gold
+    Category: Misc
+    Description: ''
+    ItemId: 3821
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: gold_wire
+    Name: Gold Wire
+    Category: Misc
+    Description: ''
+    ItemId: 6264
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: green_beaker
+    Name: Green Beaker
+    Category: Misc
+    Description: ''
+    ItemId: 6193
+    FlippableItemIds:
+        - 6190
+        - 6191
+        - 6192
+        - 6193
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: green_bottle
+    Name: Green Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3835
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: green_curved_flask
+    Name: Green Curved Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6199
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: green_dried_flowers
+    Name: Green Dried Flowers
+    Category: Misc
+    Description: ''
+    ItemId: 3134
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: grizzled_skull_collection
+    Name: Grizzled Skull Collection
+    Category: Misc
+    Description: ''
+    ItemId: 8700
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: grobus_fur
+    Name: Grobus Fur
+    Category: Misc
+    Description: ''
+    ItemId: 4596
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: guillotine
+    Name: Guillotine
+    Category: Misc
+    Description: ''
+    ItemId: 4656
+    FlippableItemIds:
+        - 4702
+        - 4656
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: hair_dye
+    Name: Hair Dye
+    Category: Misc
+    Description: ''
+    ItemId: 3839
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: horn_of_the_dreadhorn
+    Name: Horn Of The Dreadhorn
+    Category: Misc
+    Description: ''
+    ItemId: 12636
+    FlippableItemIds:
+        - 12636
+        - 12637
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: horse_shoes
+    Name: Horse Shoes
+    Category: Misc
+    Description: ''
+    ItemId: 4022
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: hourglass
+    Name: Hourglass
+    Category: Misc
+    Description: ''
+    ItemId: 6160
+    FlippableItemIds:
+        - 6160
+        - 6161
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: hourglass_ani
+    Name: Hourglass Ani
+    Category: Misc
+    Description: ''
+    ItemId: 6161
+    FlippableItemIds:
+        - 6160
+        - 6161
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: hovering_wisp
+    Name: Hovering Wisp
+    Category: Misc
+    Description: ''
+    ItemId: 8448
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: hydra_scale
+    Name: Hydra Scale
+    Category: Misc
+    Description: ''
+    ItemId: 9908
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: icy_heart
+    Name: Icy Heart
+    Category: Misc
+    Description: ''
+    ItemId: 587
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: interior_decorator
+    Name: Interior Decorator
+    Category: Misc
+    Description: ''
+    ItemId: 4033
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: iron_wire
+    Name: Iron Wire
+    Category: Misc
+    Description: ''
+    ItemId: 6262
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: key_ring
+    Name: Key Ring
+    Category: Misc
+    Description: ''
+    ItemId: 4113
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: large_empty_flask
+    Name: Large Empty Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6205
+    FlippableItemIds:
+        - 6203
+        - 6204
+        - 6205
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: large_flask
+    Name: Large Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6203
+    FlippableItemIds:
+        - 6203
+        - 6204
+        - 6205
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: large_violet_flask
+    Name: Large Violet Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6204
+    FlippableItemIds:
+        - 6203
+        - 6204
+        - 6205
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: large_yellow_flask
+    Name: Large Yellow Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6203
+    FlippableItemIds:
+        - 6203
+        - 6204
+        - 6205
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: long_flask
+    Name: Long Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6200
+    FlippableItemIds:
+        - 6200
+        - 6201
+        - 6202
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: los_blocker
+    Name: LOS Blocker
+    Category: Misc
+    Description: ''
+    ItemId: 8610
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: lt_blue_curved_flask
+    Name: Lt Blue Curved Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6196
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: lucky_dagger
+    Name: Lucky Dagger
+    Category: Misc
+    Description: ''
+    ItemId: 3922
+    FlippableItemIds:
+        - 3922
+        - 3921
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: mangled_head_of_dreadhorn
+    Name: Mangled Head Of Dreadhorn
+    Category: Misc
+    Description: ''
+    ItemId: 12630
+    FlippableItemIds:
+        - 12630
+        - 12631
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: medium_flask
+    Name: Medium Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6186
+    FlippableItemIds:
+        - 6186
+        - 6187
+        - 6188
+        - 6189
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: melisandes_hair_dye
+    Name: Melisandes Hair Dye
+    Category: Misc
+    Description: ''
+    ItemId: 3839
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: minotaur_artifact
+    Name: Minotaur Artifact
+    Category: Misc
+    Description: ''
+    ItemId: 2888
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: monsterous_interred_grizzle_maggots
+    Name: Monsterous Interred Grizzle Maggots
+    Category: Misc
+    Description: ''
+    ItemId: 9779
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: moonstone
+    Name: Moonstone
+    Category: Misc
+    Description: ''
+    ItemId: 3979
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: oil_cloth
+    Name: Oil Cloth
+    Category: Misc
+    Description: ''
+    ItemId: 5981
+    Hue: 2001
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: oil_flask
+    Name: Oil Flask
+    Category: Misc
+    Description: ''
+    ItemId: 7192
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: orders_from_minax
+    Name: Orders From Minax
+    Category: Misc
+    Description: ''
+    ItemId: 8825
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_butterfly
+    Name: Origami Butterfly
+    Category: Misc
+    Description: ''
+    ItemId: 10296
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_fish
+    Name: Origami Fish
+    Category: Misc
+    Description: ''
+    ItemId: 10301
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_frog
+    Name: Origami Frog
+    Category: Misc
+    Description: ''
+    ItemId: 10298
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_paper
+    Name: Origami Paper
+    Category: Misc
+    Description: ''
+    ItemId: 10288
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_shape
+    Name: Origami Shape
+    Category: Misc
+    Description: ''
+    ItemId: 10299
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_songbird
+    Name: Origami Songbird
+    Category: Misc
+    Description: ''
+    ItemId: 10300
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: origami_swan
+    Name: Origami Swan
+    Category: Misc
+    Description: ''
+    ItemId: 10297
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: paints_and_brush
+    Name: Paints And Brush
+    Category: Misc
+    Description: ''
+    ItemId: 4033
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: paroxysmus_corroded_stein
+    Name: Paroxysmus Corroded Stein
+    Category: Misc
+    Description: ''
+    ItemId: 2518
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: paroxysmus_dinner
+    Name: Paroxysmus Dinner
+    Category: Misc
+    Description: ''
+    ItemId: 7829
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: pen_and_ink
+    Name: Pen And Ink
+    Category: Misc
+    Description: ''
+    ItemId: 4031
+    FlippableItemIds:
+        - 4031
+        - 4032
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: player_bb_east
+    Name: Player BB East
+    Category: Misc
+    Description: ''
+    ItemId: 8978
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: player_bb_south
+    Name: Player BB South
+    Category: Misc
+    Description: ''
+    ItemId: 8977
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: power_crystal
+    Name: Power Crystal
+    Category: Misc
+    Description: ''
+    ItemId: 7964
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: primitive_fetish
+    Name: Primitive Fetish
+    Category: Misc
+    Description: ''
+    ItemId: 575
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: projected_item
+    Name: Projected Item
+    Category: Misc
+    Description: ''
+    ItemId: 1
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: protectors_essence
+    Name: Protectors Essence
+    Category: Misc
+    Description: ''
+    ItemId: 575
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: public_moongate
+    Name: Public Moongate
+    Category: Structure
+    Description: Shared destination moongate.
+    ItemId: 3948
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: items.public_moongate
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - moongate
+        - teleport
+        - worldgen
+        - public
+        - modernuo
+-   Id: receiver_crystal
+    Name: Receiver Crystal
+    Category: Misc
+    Description: ''
+    ItemId: 7888
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: red_beaker
+    Name: Red Beaker
+    Category: Misc
+    Description: ''
+    ItemId: 6191
+    FlippableItemIds:
+        - 6190
+        - 6191
+        - 6192
+        - 6193
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: red_bottle
+    Name: Red Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3836
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: red_curved_flask
+    Name: Red Curved Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6195
+    FlippableItemIds:
+        - 6194
+        - 6195
+        - 6196
+        - 6197
+        - 6198
+        - 6199
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: red_ribbed_flask
+    Name: Red Ribbed Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6200
+    FlippableItemIds:
+        - 6200
+        - 6201
+        - 6202
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: resolves_bridle
+    Name: Resolves Bridle
+    Category: Misc
+    Description: ''
+    ItemId: 4980
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: rope
+    Name: Rope
+    Category: Misc
+    Description: ''
+    ItemId: 5368
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: salivas_feather
+    Name: Salivas Feather
+    Category: Misc
+    Description: ''
+    ItemId: 4128
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: samples_of_corrupted_water
+    Name: Samples Of Corrupted Water
+    Category: Misc
+    Description: ''
+    ItemId: 3838
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: scales
+    Name: Scales
+    Category: Misc
+    Description: ''
+    ItemId: 6226
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: serpent_fang_sect_badge
+    Name: Serpent Fang Sect Badge
+    Category: Misc
+    Description: ''
+    ItemId: 572
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: serpent_pillar
+    Name: Serpent Pillar
+    Category: Misc
+    Description: ''
+    ItemId: 9023
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: silver_wire
+    Name: Silver Wire
+    Category: Misc
+    Description: ''
+    ItemId: 6263
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_blue_bottle
+    Name: Small Blue Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 6215
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_blue_flask
+    Name: Small Blue Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6186
+    FlippableItemIds:
+        - 6186
+        - 6187
+        - 6188
+        - 6189
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_brown_bottle
+    Name: Small Brown Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3837
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_empty_flask
+    Name: Small Empty Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6189
+    FlippableItemIds:
+        - 6186
+        - 6187
+        - 6188
+        - 6189
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_flask
+    Name: Small Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6190
+    FlippableItemIds:
+        - 6190
+        - 6191
+        - 6192
+        - 6193
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: small_green_bottle
+    Name: Small Green Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3841
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_green_bottle2
+    Name: Small Green Bottle2
+    Category: Misc
+    Description: ''
+    ItemId: 6216
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_red_flask
+    Name: Small Red Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6188
+    FlippableItemIds:
+        - 6186
+        - 6187
+        - 6188
+        - 6189
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_violet_bottle
+    Name: Small Violet Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3842
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: small_yellow_flask
+    Name: Small Yellow Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6187
+    FlippableItemIds:
+        - 6186
+        - 6187
+        - 6188
+        - 6189
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: special_beard_dye
+    Name: Special Beard Dye
+    Category: Misc
+    Description: ''
+    ItemId: 3622
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: special_hair_dye
+    Name: Special Hair Dye
+    Category: Misc
+    Description: ''
+    ItemId: 3622
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: spinning_hourglass
+    Name: Spinning Hourglass
+    Category: Misc
+    Description: ''
+    ItemId: 6160
+    FlippableItemIds:
+        - 6160
+        - 6161
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: string_of_parts_of_paroxysmus_victims
+    Name: String Of Parts Of Paroxysmus Victims
+    Category: Misc
+    Description: ''
+    ItemId: 4050
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: swarm_of_flies
+    Name: Swarm Of Flies
+    Category: Misc
+    Description: ''
+    ItemId: 2331
+    Hue: 1
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: sweat_of_paroxysmus
+    Name: Sweat Of Paroxysmus
+    Category: Misc
+    Description: ''
+    ItemId: 3841
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tainted_mushroom
+    Name: Tainted Mushroom
+    Category: Misc
+    Description: ''
+    ItemId: 8753
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tainted_seeds
+    Name: Tainted Seeds
+    Category: Misc
+    Description: ''
+    ItemId: 3578
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: teleporter_modernuo
+    Name: Teleporter
+    Category: Misc
+    Description: ''
+    ItemId: 7107
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: thorvalds_medallion
+    Name: Thorvalds Medallion
+    Category: Misc
+    Description: ''
+    ItemId: 10922
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: thrashers_tail
+    Name: Thrashers Tail
+    Category: Misc
+    Description: ''
+    ItemId: 6813
+    FlippableItemIds:
+        - 6812
+        - 6813
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tiger_claw_sect_badge
+    Name: Tiger Claw Sect Badge
+    Category: Misc
+    Description: ''
+    ItemId: 573
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: timeout_goal
+    Name: Timeout Goal
+    Category: Misc
+    Description: ''
+    ItemId: 6178
+    Hue: 1154
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tiny_red_bottle
+    Name: Tiny Red Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3844
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tiny_yellow_bottle
+    Name: Tiny Yellow Bottle
+    Category: Misc
+    Description: ''
+    ItemId: 3843
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tombstone_of_the_damned
+    Name: Tombstone Of The Damned
+    Category: Misc
+    Description: ''
+    ItemId: 3806
+    FlippableItemIds:
+        - 3805
+        - 3806
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: trash_barrel
+    Name: Trash Barrel
+    Category: Misc
+    Description: ''
+    ItemId: 3703
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+    Container:
+        WeightMax: 0
+-   Id: trash_chest
+    Name: Trash Chest
+    Category: Misc
+    Description: ''
+    ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+    Container:
+        WeightMax: 0
+-   Id: travestys_collection_of_shells
+    Name: Travestys Collection Of Shells
+    Category: Misc
+    Description: ''
+    ItemId: 4051
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: travestys_fine_teakwood_tray
+    Name: Travestys Fine Teakwood Tray
+    Category: Misc
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: travestys_sushi_preparations
+    Name: Travestys Sushi Preparations
+    Category: Misc
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tribal_berry
+    Name: Tribal Berry
+    Category: Misc
+    Description: ''
+    ItemId: 2512
+    Hue: 6
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: tribal_paint
+    Name: Tribal Paint
+    Category: Misc
+    Description: ''
+    ItemId: 2540
+    Hue: 2101
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: unholy_bone
+    Name: Unholy Bone
+    Category: Misc
+    Description: ''
+    ItemId: 3966
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: violet_ribbed_flask
+    Name: Violet Ribbed Flask
+    Category: Misc
+    Description: ''
+    ItemId: 6201
+    FlippableItemIds:
+        - 6200
+        - 6201
+        - 6202
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: way_point
+    Name: Way Point
+    Category: Misc
+    Description: ''
+    ItemId: 7956
+    FlippableItemIds:
+        - 7956
+        - 7957
+        - 7958
+        - 7959
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: whip
+    Name: Whip
+    Category: Misc
+    Description: ''
+    ItemId: 5742
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: white_dried_flowers
+    Name: White Dried Flowers
+    Category: Misc
+    Description: ''
+    ItemId: 3132
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: wind_chimes
+    Name: Wind Chimes
+    Category: Misc
+    Description: ''
+    ItemId: 10290
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: yellow_beaker
+    Name: Yellow Beaker
+    Category: Misc
+    Description: ''
+    ItemId: 6190
+    FlippableItemIds:
+        - 6190
+        - 6191
+        - 6192
+        - 6193
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: empty_vials_wrack
+    Name: Empty Vials WRack
+    Category: Misc
+    Description: ''
+    ItemId: 6235
+    FlippableItemIds:
+        - 6235
+        - 6236
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: full_vials_wrack
+    Name: Full Vials WRack
+    Category: Misc
+    Description: ''
+    ItemId: 6237
+    FlippableItemIds:
+        - 6237
+        - 6238
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+        - flippable
+-   Id: losblocker
+    Name: LOSBlocker
+    Category: Misc
+    Description: ''
+    ItemId: 8610
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: player_bbeast
+    Name: Player BBEast
+    Category: Misc
+    Description: ''
+    ItemId: 8978
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc
+-   Id: player_bbsouth
+    Name: Player BBSouth
+    Category: Misc
+    Description: ''
+    ItemId: 8977
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - misc

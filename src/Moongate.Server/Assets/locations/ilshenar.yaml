@@ -1,0 +1,282 @@
+Name: Ilshenar
+Categories:
+    -   Name: Cities
+        Categories:
+            -   Name: Ancient Citadel
+                Locations:
+                    -   Name: Entrance
+                        X: 1518
+                        Y: 568
+                        Z: -14
+            -   Name: Gargoyle City
+                Locations:
+                    -   Name: Bank
+                        X: 852
+                        Y: 602
+                        Z: -40
+                    -   Name: Central Area
+                        X: 836
+                        Y: 641
+                        Z: -20
+            -   Name: Lakeshire
+                Locations:
+                    -   Name: Central Area
+                        X: 1203
+                        Y: 1124
+                        Z: -25
+            -   Name: Mistas
+                Locations:
+                    -   Name: Central Area
+                        X: 820
+                        Y: 1073
+                        Z: -30
+            -   Name: Montor
+                Locations:
+                    -   Name: Central Area
+                        X: 1643
+                        Y: 310
+                        Z: 48
+            -   Name: Req Volon
+                Locations:
+                    -   Name: Central Area
+                        X: 1362
+                        Y: 1073
+                        Z: -13
+            -   Name: Savage Camp
+                Locations:
+                    -   Name: Central Area
+                        X: 1251
+                        Y: 743
+                        Z: -80
+            -   Name: Terort Skitas
+                Locations:
+                    -   Name: Entrance
+                        X: 567
+                        Y: 437
+                        Z: 21
+    -   Name: Dungeons
+        Categories:
+            -   Name: Ankh
+                Locations:
+                    -   Name: Entrance
+                        X: 576
+                        Y: 1150
+                        Z: -100
+                    -   Name: Level 1
+                        X: 155
+                        Y: 1482
+                        Z: -28
+                    -   Name: Kirin passage
+                        X: 11
+                        Y: 874
+                        Z: -28
+                    -   Name: Serpentine Passage
+                        X: 396
+                        Y: 1578
+                        Z: -28
+            -   Name: Blood
+                Locations:
+                    -   Name: Entrance
+                        X: 1747
+                        Y: 1228
+                        Z: -1
+                    -   Name: Level 1
+                        X: 2114
+                        Y: 834
+                        Z: -28
+            -   Name: Exodus
+                Locations:
+                    -   Name: Entrance
+                        X: 835
+                        Y: 777
+                        Z: -80
+                    -   Name: Level 1
+                        X: 1974
+                        Y: 115
+                        Z: -28
+            -   Name: Rock
+                Locations:
+                    -   Name: Entrance
+                        X: 1788
+                        Y: 573
+                        Z: 70
+                    -   Name: Level 1
+                        X: 2188
+                        Y: 318
+                        Z: -7
+                    -   Name: Level 2
+                        X: 2188
+                        Y: 28
+                        Z: -27
+            -   Name: Sorcerers
+                Locations:
+                    -   Name: Entrance
+                        X: 548
+                        Y: 462
+                        Z: -53
+                    -   Name: Level 1
+                        X: 428
+                        Y: 109
+                        Z: -28
+                    -   Name: Level 2
+                        X: 240
+                        Y: 23
+                        Z: -18
+                    -   Name: Level 3
+                        X: 272
+                        Y: 136
+                        Z: -28
+                    -   Name: Level 4
+                        X: 132
+                        Y: 124
+                        Z: -28
+                    -   Name: Level 5
+                        X: 236
+                        Y: 121
+                        Z: -28
+            -   Name: Spectre
+                Locations:
+                    -   Name: Entrance
+                        X: 1363
+                        Y: 1033
+                        Z: -8
+                    -   Name: Level 1
+                        X: 1982
+                        Y: 1103
+                        Z: -28
+            -   Name: Wisp
+                Locations:
+                    -   Name: Entrance
+                        X: 651
+                        Y: 1302
+                        Z: -58
+                    -   Name: Level 1
+                        X: 627
+                        Y: 1525
+                        Z: -28
+                    -   Name: Level 2
+                        X: 718
+                        Y: 1492
+                        Z: -28
+                    -   Name: Level 3
+                        X: 832
+                        Y: 1551
+                        Z: -28
+                    -   Name: Level 4
+                        X: 960
+                        Y: 1428
+                        Z: -28
+                    -   Name: Level 5
+                        X: 942
+                        Y: 1465
+                        Z: -33
+                    -   Name: Level 6
+                        X: 866
+                        Y: 1434
+                        Z: -28
+                    -   Name: Level 7
+                        X: 807
+                        Y: 1548
+                        Z: -28
+                    -   Name: Level 8
+                        X: 754
+                        Y: 1479
+                        Z: -28
+    -   Name: Caves
+        Categories:
+            -   Name: Ancient Lair
+                Locations:
+                    -   Name: Entrance
+                        X: 940
+                        Y: 504
+                        Z: -30
+                    -   Name: Level 1
+                        X: 85
+                        Y: 746
+                        Z: -28
+            -   Name: Lizard Passage
+                Locations:
+                    -   Name: Entrance
+                        X: 314
+                        Y: 1334
+                        Z: -36
+                    -   Name: Level 1
+                        X: 329
+                        Y: 1589
+                        Z: -18
+                    -   Name: Level 2
+                        X: 227
+                        Y: 1337
+                        Z: -18
+            -   Name: Mushroom Cave
+                Locations:
+                    -   Name: Entrance
+                        X: 1459
+                        Y: 1329
+                        Z: -24
+            -   Name: Rat Cave
+                Locations:
+                    -   Name: Entrance
+                        X: 1034
+                        Y: 1153
+                        Z: -23
+                    -   Name: Level 1
+                        X: 1348
+                        Y: 1510
+                        Z: -3
+                    -   Name: Level 2
+                        X: 1247
+                        Y: 1511
+                        Z: -28
+            -   Name: Spider Cave
+                Locations:
+                    -   Name: Entrance
+                        X: 1421
+                        Y: 913
+                        Z: -19
+                    -   Name: Level 1
+                        X: 1786
+                        Y: 991
+                        Z: -28
+                    -   Name: Level 2
+                        X: 1517
+                        Y: 877
+                        Z: 10
+                    -   Name: Ethereal Keep
+                        X: 1365
+                        Y: 1102
+                        Z: -26
+    -   Name: Shrines
+        Locations:
+            -   Name: Compassion
+                X: 1217
+                Y: 469
+                Z: -13
+            -   Name: Honesty
+                X: 720
+                Y: 1356
+                Z: -60
+            -   Name: Honor
+                X: 748
+                Y: 728
+                Z: -29
+            -   Name: Humility
+                X: 287
+                Y: 1016
+                Z: 0
+            -   Name: Justice
+                X: 987
+                Y: 1007
+                Z: -35
+            -   Name: Sacrifice
+                X: 1175
+                Y: 1287
+                Z: -30
+            -   Name: Spirituality
+                X: 1532
+                Y: 1341
+                Z: -3
+            -   Name: Valor
+                X: 527
+                Y: 218
+                Z: -44

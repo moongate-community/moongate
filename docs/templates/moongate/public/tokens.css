@@ -1,0 +1,64 @@
+/* ============================================================
+   Moongate v2 — Design System Tokens
+   Palette derived from the Moongate pixel-art logo:
+   night indigo sky · cyan/blue portal · violet · rune-stone
+   pink · star cream · grass green.
+   Dark-first documentation theme.
+   ============================================================ */
+
+:root {
+  /* ---- Surfaces (deep indigo night) ---- */
+  --mg-bg:            #0a0918; /* page / canvas backdrop        */
+  --mg-surface:       #0d0b20; /* main content surface          */
+  --mg-surface-2:     #0b091b; /* sidebars                      */
+  --mg-surface-3:     #131029; /* raised cards                  */
+  --mg-surface-nav:   #0f0d24; /* nav / chrome                  */
+  --mg-code-bg:       #0a0819; /* code blocks                   */
+  --mg-inline-code:   #1a1738; /* inline code chip              */
+
+  /* ---- Borders ---- */
+  --mg-border:        #211e3d; /* primary hairline              */
+  --mg-border-strong: #262347; /* code / emphasized             */
+  --mg-border-soft:   #1f1c39; /* sidebar dividers              */
+
+  /* ---- Text ---- */
+  --mg-text:          #e9e7f6; /* headings / high emphasis      */
+  --mg-text-body:     #c3c0e0; /* body copy                     */
+  --mg-text-muted:    #9995c2; /* secondary                     */
+  --mg-text-faint:    #726ea0; /* captions / placeholders       */
+  --mg-text-dim:      #615d8c; /* section eyebrows              */
+
+  /* ---- Brand accents (from logo) ---- */
+  --mg-portal:        #57c4f0; /* primary — portal cyan         */
+  --mg-portal-bright: #93dcf8; /* hover / links-hover           */
+  --mg-portal-deep:   #3ba7dd; /* gradient base                 */
+  --mg-violet:        #7d70dd; /* secondary — arch rune violet  */
+  --mg-violet-soft:   #9b8ff0;
+  --mg-discord:       #8b93f5; /* iris                          */
+  --mg-stone:         #ecc9bc; /* warm rune-stone pink          */
+  --mg-cream:         #f2e9cf; /* star cream                    */
+  --mg-grass:         #7fd06a; /* success / grass               */
+  --mg-grass-deep:    #61c554;
+
+  /* ---- Accent tints (translucent) ---- */
+  --mg-portal-tint:   rgba(87, 196, 240, 0.12);
+  --mg-portal-line:   rgba(87, 196, 240, 0.3);
+  --mg-violet-tint:   rgba(125, 112, 221, 0.14);
+  --mg-stone-tint:    rgba(236, 201, 188, 0.12);
+  --mg-grass-tint:    rgba(97, 197, 84, 0.12);
+
+  /* ---- Typography ---- */
+  --mg-font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --mg-font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --mg-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  /* ---- Radii (squared: sharp 2px corners across the theme) ---- */
+  --mg-r-sm: 2px;
+  --mg-r-md: 2px;
+  --mg-r-lg: 2px;
+  --mg-r-pill: 2px;
+
+  /* ---- Shadows / glow ---- */
+  --mg-shadow-card: 0 40px 90px -30px rgba(0, 0, 0, 0.8);
+  --mg-glow-portal: 0 12px 28px -8px rgba(87, 196, 240, 0.6);
+}

@@ -1,0 +1,11 @@
+-   Id: creature.terathan_matriarch
+    Name: TerathanMatriarch
+    Category: loot
+    Description: Creature-specific loot for TerathanMatriarch.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: spiders_silk
+            Amount: 5
+            Chance: 1.0

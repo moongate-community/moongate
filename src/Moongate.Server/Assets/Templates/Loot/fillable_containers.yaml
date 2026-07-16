@@ -1,0 +1,1243 @@
+-   Id: fillable.alchemist
+    Name: Alchemist
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: night_sight_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_cure_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: agility_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: strength_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_poison_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: refresh_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_heal_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_explosion_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: mortar_pestle
+            Amount: 1
+-   Id: fillable.armorer
+    Name: Armorer
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: chain_coif
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: plate_gorget
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bronze_shield
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: buckler
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: metal_kite_shield
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: heater_shield
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: wooden_shield
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: metal_shield
+            Amount: 1
+-   Id: fillable.artisan_guild
+    Name: ArtisanGuild
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: paints_and_brush
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sledge_hammer
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: smith_hammer
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: tongs
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: lockpick
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: tinker_tools
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: mallet_and_chisel
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_east2
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_south
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_south_east
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_west
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_north
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: statue_east
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bust_east
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bust_south
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bear_mask
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: deer_mask
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: orc_helm
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tribal_mask
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: horned_tribal_mask
+            Amount: 1
+-   Id: fillable.baker
+    Name: Baker
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: rolling_pin
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sack_flour
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bread_loaf
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: french_bread
+            Amount: 1
+-   Id: fillable.bard
+    Name: Bard
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: lap_harp
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: lute
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: drums
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tambourine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tambourine_tassel
+            Amount: 1
+-   Id: fillable.blacksmith
+    Name: Blacksmith
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 8
+            ItemTemplateId: smith_hammer
+            Amount: 1
+        -   Weight: 8
+            ItemTemplateId: tongs
+            Amount: 1
+        -   Weight: 8
+            ItemTemplateId: sledge_hammer
+            Amount: 1
+        -   Weight: 8
+            ItemTemplateId: iron_ingot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: iron_wire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: silver_wire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: gold_wire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: copper_wire
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: horse_shoes
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: forged_metal
+            Amount: 1
+-   Id: fillable.bowyer
+    Name: Bowyer
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: bow
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: crossbow
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: arrow
+            Amount: 1
+-   Id: fillable.butcher
+    Name: Butcher
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: cleaver
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: slab_of_bacon
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bacon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_fish_steak
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: fish_steak
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cooked_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: raw_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: ham
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ribs
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_ribs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sausage
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_chicken_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: chicken_leg
+            Amount: 1
+-   Id: fillable.carpenter
+    Name: Carpenter
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: chisels_north
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: chisels_west
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: dovetail_saw
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: hammer
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: moulding_plane
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: nails
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: jointing_plane
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: smoothing_plane
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: saw
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: draw_knife
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: log
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: froe
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: inshave
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: scorp
+            Amount: 1
+-   Id: fillable.clothier
+    Name: Clothier
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: cotton
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: wool
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dark_yarn
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: light_yarn
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: light_yarn_unraveled
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: spool_of_thread
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dyes
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather
+            Amount: 1
+-   Id: fillable.cobbler
+    Name: Cobbler
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: boots
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: shoes
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sandals
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: thigh_boots
+            Amount: 1
+-   Id: fillable.docks
+    Name: Docks
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: fishing_pole
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: fish
+            Amount: 1
+-   Id: fillable.farm
+    Name: Farm
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: shirt
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: short_pants
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: skirt
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: plain_dress
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cap
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sandals
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: gnarled_staff
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: pitchfork
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bag
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: kindling
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lettuce
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: onion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: turnip
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ham
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bacon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: sheaf_of_hay
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: pitcher_milk
+            Amount: 1
+-   Id: fillable.fighter_guild
+    Name: FighterGuild
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 3
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: arrow
+            Amount: 1
+-   Id: fillable.guard
+    Name: Guard
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 3
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: arrow
+            Amount: 1
+-   Id: fillable.healer
+    Name: Healer
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: bandage
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: mortar_pestle
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_heal_potion
+            Amount: 1
+-   Id: fillable.herbalist
+    Name: Herbalist
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 10
+            ItemTemplateId: garlic
+            Amount: 1
+        -   Weight: 10
+            ItemTemplateId: ginseng
+            Amount: 1
+        -   Weight: 10
+            ItemTemplateId: mandrake_root
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dead_wood
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: white_dried_flowers
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: green_dried_flowers
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dried_onions
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dried_herbs
+            Amount: 1
+-   Id: fillable.inn
+    Name: Inn
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: candle
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: torch
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lantern
+            Amount: 1
+-   Id: fillable.jeweler
+    Name: Jeweler
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: gold_ring
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: gold_bracelet
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: gold_earrings
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: gold_necklace
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: gold_bead_necklace
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: necklace
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: beads
+            Amount: 1
+-   Id: fillable.library
+    Name: Library
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: red_book
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: blue_book
+            Amount: 1
+-   Id: fillable.mage
+    Name: Mage
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 16
+            ItemTemplateId: blank_scroll
+            Amount: 1
+        -   Weight: 14
+            ItemTemplateId: spellbook
+            Amount: 1
+-   Id: fillable.merchant
+    Name: Merchant
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: cheese_wheel
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cheese_wedge
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cheese_slice
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: eggs
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: fish
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: raw_fish_steak
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: fish_steak
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: apple
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: banana
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bananas
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: open_coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: split_coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dates
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: grapes
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lemon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lemons
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lime
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: limes
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: peach
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: pear
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: slab_of_bacon
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bacon
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cooked_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: raw_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: ham
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ribs
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_ribs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sausage
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_chicken_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: chicken_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: watermelon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: small_watermelon
+            Amount: 1
+        -   Weight: 3
+            ItemTemplateId: turnip
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: yellow_gourd
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: green_gourd
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: pumpkin
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: small_pumpkin
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: onion
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: lettuce
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: squash
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: honeydew_melon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: carrot
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cantaloupe
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cabbage
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: ear_of_corn
+            Amount: 1
+-   Id: fillable.mill
+    Name: Mill
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: sack_flour
+            Amount: 1
+-   Id: fillable.mine
+    Name: Mine
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: pickaxe
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: shovel
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: iron_ingot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: forged_metal
+            Amount: 1
+-   Id: fillable.observatory
+    Name: Observatory
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: sextant
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: clock
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: spyglass
+            Amount: 1
+-   Id: fillable.painter
+    Name: Painter
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: paints_and_brush
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: pen_and_ink
+            Amount: 1
+-   Id: fillable.provisioner
+    Name: Provisioner
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: cheese_wheel
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cheese_wedge
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cheese_slice
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: eggs
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: fish
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_frypan
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_pan
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_kettle
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_small_round_pot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_round_pot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_small_pot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dirty_pot
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: apple
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: banana
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bananas
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: open_coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: split_coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: coconut
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: dates
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: grapes
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lemon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lemons
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lime
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: limes
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: peach
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: pear
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: slab_of_bacon
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bacon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_fish_steak
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: fish_steak
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cooked_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: raw_bird
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: ham
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lamb_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: ribs
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_ribs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sausage
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: raw_chicken_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: chicken_leg
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: watermelon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: small_watermelon
+            Amount: 1
+        -   Weight: 3
+            ItemTemplateId: turnip
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: yellow_gourd
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: green_gourd
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: pumpkin
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: small_pumpkin
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: onion
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: lettuce
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: squash
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: honeydew_melon
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: carrot
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cantaloupe
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: cabbage
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: ear_of_corn
+            Amount: 1
+-   Id: fillable.ranger
+    Name: Ranger
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 2
+            ItemTemplateId: studded_chest
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: studded_legs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: studded_arms
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: studded_gloves
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: studded_gorget
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_chest
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_legs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_arms
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_gloves
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: leather_gorget
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: feathered_hat
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: close_helm
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tall_straw_hat
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bandana
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: cloak
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: boots
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: thigh_boots
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: gnarled_staff
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: whip
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: bow
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: crossbow
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: heavy_crossbow
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: arrow
+            Amount: 1
+-   Id: fillable.stables
+    Name: Stables
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: carrot
+            Amount: 1
+-   Id: fillable.tanner
+    Name: Tanner
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: feathered_hat
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: leather_arms
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_legs
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_chest
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather_gloves
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: leather_gorget
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: leather
+            Amount: 1
+-   Id: fillable.tavern
+    Name: Tavern
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: bottle_ale
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bottle_wine
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bottle_liquor
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: pitcher_cider
+            Amount: 1
+-   Id: fillable.thief_guild
+    Name: ThiefGuild
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: lockpick
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: bear_mask
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: deer_mask
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tribal_mask
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: horned_tribal_mask
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: orc_helm
+            Amount: 1
+-   Id: fillable.tinker
+    Name: Tinker
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: lockpick
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: clock
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: clock_parts
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: axle_gears
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: gears
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: hinge
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sextant
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: sextant_parts
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: axle
+            Amount: 1
+        -   Weight: 2
+            ItemTemplateId: springs
+            Amount: 1
+        -   Weight: 5
+            ItemTemplateId: tinker_tools
+            Amount: 1
+        -   Weight: 4
+            ItemTemplateId: key
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: deco_arrow_shafts
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lockpick
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: tool_kit
+            Amount: 1
+-   Id: fillable.veterinarian
+    Name: Veterinarian
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: bandage
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: mortar_pestle
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: lesser_heal_potion
+            Amount: 1
+        -   Weight: 1
+            ItemTemplateId: carrot
+            Amount: 1
+-   Id: fillable.weaponsmith
+    Name: Weaponsmith
+    Category: loot
+    Description: ''
+    Mode: Weighted
+    Rolls: 2
+    NoDropWeight: 0
+    Entries:
+        -   Weight: 1
+            ItemTemplateId: arrow
+            Amount: 1

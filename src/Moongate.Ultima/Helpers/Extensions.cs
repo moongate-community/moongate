@@ -1,4 +1,3 @@
-using System;
 using System.IO.Hashing;
 using Moongate.Ultima.Imaging;
 
@@ -6,19 +5,6 @@ namespace Moongate.Ultima.Helpers;
 
 public static class Extensions
 {
-    /// <summary>
-    /// Copies the raw ARGB1555 pixel data of <paramref name="bmp"/> into a byte array.
-    /// </summary>
-    public static unsafe byte[] ToArray(this UltimaBitmap bmp)
-    {
-        ArgumentNullException.ThrowIfNull(bmp);
-
-        int size = bmp.Stride * bmp.Height;
-        byte[] buffer = new byte[size];
-        new ReadOnlySpan<byte>((void*)bmp.Scan0, size).CopyTo(buffer);
-        return buffer;
-    }
-
     /// <summary>
     /// Hashes a bitmap's pixel data using xxHash128, allocation-free over the
     /// native ARGB1555 buffer. Used for Save-time deduplication: the 128-bit
@@ -29,8 +15,23 @@ public static class Extensions
     {
         ArgumentNullException.ThrowIfNull(bmp);
 
-        int size = bmp.Stride * bmp.Height;
+        var size = bmp.Stride * bmp.Height;
         var span = new ReadOnlySpan<byte>((void*)bmp.Scan0, size);
+
         return XxHash128.HashToUInt128(span);
+    }
+
+    /// <summary>
+    /// Copies the raw ARGB1555 pixel data of <paramref name="bmp" /> into a byte array.
+    /// </summary>
+    public static unsafe byte[] ToArray(this UltimaBitmap bmp)
+    {
+        ArgumentNullException.ThrowIfNull(bmp);
+
+        var size = bmp.Stride * bmp.Height;
+        var buffer = new byte[size];
+        new ReadOnlySpan<byte>((void*)bmp.Scan0, size).CopyTo(buffer);
+
+        return buffer;
     }
 }

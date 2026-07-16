@@ -1,6 +1,4 @@
 using Moongate.Ultima.Imaging;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 
 namespace Moongate.Tests.Ultima;
 
@@ -11,15 +9,16 @@ public class UltimaBitmapTests
     private const ushort OpaqueRed = 0xFC00;
 
     [Fact]
-    public unsafe void Constructor_NewSurface_IsZeroed()
+    public unsafe void Clone_ModifyingCopy_DoesNotAffectOriginal()
     {
-        using var bmp = new UltimaBitmap(4, 4);
+        using var original = new UltimaBitmap(2, 2);
+        ((ushort*)original.Scan0)[0] = OpaqueRed;
 
-        var pixels = (ushort*)bmp.Scan0;
-        for (int i = 0; i < 16; i++)
-        {
-            Assert.Equal(0, pixels[i]);
-        }
+        using var copy = original.Clone();
+        ((ushort*)copy.Scan0)[0] = OpaqueWhite;
+
+        Assert.Equal(OpaqueRed, ((ushort*)original.Scan0)[0]);
+        Assert.Equal(OpaqueWhite, ((ushort*)copy.Scan0)[0]);
     }
 
     [Fact]
@@ -30,24 +29,16 @@ public class UltimaBitmapTests
     }
 
     [Fact]
-    public unsafe void Stride_IsWidthTimesTwo_NoPadding()
+    public unsafe void Constructor_NewSurface_IsZeroed()
     {
-        using var bmp = new UltimaBitmap(5, 3);
+        using var bmp = new UltimaBitmap(4, 4);
 
-        Assert.Equal(10, bmp.Stride);
-    }
+        var pixels = (ushort*)bmp.Scan0;
 
-    [Fact]
-    public unsafe void Clone_ModifyingCopy_DoesNotAffectOriginal()
-    {
-        using var original = new UltimaBitmap(2, 2);
-        ((ushort*)original.Scan0)[0] = OpaqueRed;
-
-        using UltimaBitmap copy = original.Clone();
-        ((ushort*)copy.Scan0)[0] = OpaqueWhite;
-
-        Assert.Equal(OpaqueRed, ((ushort*)original.Scan0)[0]);
-        Assert.Equal(OpaqueWhite, ((ushort*)copy.Scan0)[0]);
+        for (var i = 0; i < 16; i++)
+        {
+            Assert.Equal(0, pixels[i]);
+        }
     }
 
     [Fact]
@@ -83,39 +74,14 @@ public class UltimaBitmapTests
     }
 
     [Fact]
-    public unsafe void ToImage_ExpandsArgb1555ToBgra32()
-    {
-        using var bmp = new UltimaBitmap(2, 1);
-        ((ushort*)bmp.Scan0)[0] = OpaqueWhite;
-        ((ushort*)bmp.Scan0)[1] = 0;
-
-        using Image<Bgra32> image = bmp.ToImage();
-
-        Assert.Equal(new Bgra32(255, 255, 255, 255), image[0, 0]);
-        Assert.Equal((byte)0, image[1, 0].A);
-    }
-
-    [Fact]
-    public unsafe void ToImage_Opaque_ForcesFullAlpha()
-    {
-        using var bmp = new UltimaBitmap(1, 1);
-        ((ushort*)bmp.Scan0)[0] = 0x7C00; // red, no alpha bit
-
-        using Image<Bgra32> image = bmp.ToImage(opaque: true);
-
-        Assert.Equal((byte)255, image[0, 0].A);
-        Assert.Equal((byte)255, image[0, 0].R);
-    }
-
-    [Fact]
     public unsafe void FromImage_RoundTrip_PreservesOpaquePixels()
     {
         using var original = new UltimaBitmap(3, 2);
         ((ushort*)original.Scan0)[0] = OpaqueRed;
         ((ushort*)original.Scan0)[4] = OpaqueWhite;
 
-        using Image<Bgra32> image = original.ToImage();
-        using UltimaBitmap roundTripped = UltimaBitmap.FromImage(image);
+        using var image = original.ToImage();
+        using var roundTripped = UltimaBitmap.FromImage(image);
 
         Assert.Equal(OpaqueRed, ((ushort*)roundTripped.Scan0)[0]);
         Assert.Equal(OpaqueWhite, ((ushort*)roundTripped.Scan0)[4]);
@@ -125,7 +91,8 @@ public class UltimaBitmapTests
     [Fact]
     public unsafe void Save_And_FromFile_RoundTripsThroughPng()
     {
-        string file = Path.Combine(Path.GetTempPath(), $"moongate-bmp-{Guid.NewGuid():N}.png");
+        var file = Path.Combine(Path.GetTempPath(), $"moongate-bmp-{Guid.NewGuid():N}.png");
+
         try
         {
             using var original = new UltimaBitmap(2, 2);
@@ -133,7 +100,7 @@ public class UltimaBitmapTests
             ((ushort*)original.Scan0)[3] = OpaqueWhite;
 
             original.Save(file);
-            using UltimaBitmap loaded = UltimaBitmap.FromFile(file);
+            using var loaded = UltimaBitmap.FromFile(file);
 
             Assert.Equal(2, loaded.Width);
             Assert.Equal(2, loaded.Height);
@@ -153,5 +120,38 @@ public class UltimaBitmapTests
         bmp.Dispose();
 
         Assert.Throws<ObjectDisposedException>(() => bmp.Scan0);
+    }
+
+    [Fact]
+    public void Stride_IsWidthTimesTwo_NoPadding()
+    {
+        using var bmp = new UltimaBitmap(5, 3);
+
+        Assert.Equal(10, bmp.Stride);
+    }
+
+    [Fact]
+    public unsafe void ToImage_ExpandsArgb1555ToBgra32()
+    {
+        using var bmp = new UltimaBitmap(2, 1);
+        ((ushort*)bmp.Scan0)[0] = OpaqueWhite;
+        ((ushort*)bmp.Scan0)[1] = 0;
+
+        using var image = bmp.ToImage();
+
+        Assert.Equal(new(255, 255, 255, 255), image[0, 0]);
+        Assert.Equal((byte)0, image[1, 0].A);
+    }
+
+    [Fact]
+    public unsafe void ToImage_Opaque_ForcesFullAlpha()
+    {
+        using var bmp = new UltimaBitmap(1, 1);
+        ((ushort*)bmp.Scan0)[0] = 0x7C00; // red, no alpha bit
+
+        using var image = bmp.ToImage(true);
+
+        Assert.Equal((byte)255, image[0, 0].A);
+        Assert.Equal((byte)255, image[0, 0].R);
     }
 }

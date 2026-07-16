@@ -1,0 +1,14 @@
+-   Id: creature.exodus_overseer
+    Name: ExodusOverseer
+    Category: loot
+    Description: Creature-specific loot for ExodusOverseer.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: power_crystal
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: arcane_gem
+            Amount: 1
+            Chance: 1.0

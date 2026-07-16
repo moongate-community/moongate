@@ -1,0 +1,11 @@
+-   Id: creature.shade
+    Name: Shade
+    Category: loot
+    Description: Creature-specific loot for Shade.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTag: reagents
+            Amount: 10
+            Chance: 1.0

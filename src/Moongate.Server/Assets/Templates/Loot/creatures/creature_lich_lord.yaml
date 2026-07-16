@@ -1,0 +1,11 @@
+-   Id: creature.lich_lord
+    Name: LichLord
+    Category: loot
+    Description: Creature-specific loot for LichLord.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gnarled_staff
+            Amount: 1
+            Chance: 1.0

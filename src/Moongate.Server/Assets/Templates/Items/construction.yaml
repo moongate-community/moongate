@@ -1,0 +1,2034 @@
+-   Id: bamboo_chair
+    Name: Bamboo Chair
+    Category: Construction
+    Description: ''
+    ItemId: 2907
+    FlippableItemIds:
+        - 2907
+        - 2906
+        - 2908
+        - 2909
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: bamboo_screen
+    Name: Bamboo Screen
+    Category: Construction
+    Description: ''
+    ItemId: 9424
+    FlippableItemIds:
+        - 9424
+        - 9425
+        - 9426
+        - 9427
+        - 9428
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: barrel_hoops
+    Name: Barrel Hoops
+    Category: Construction
+    Description: ''
+    ItemId: 7607
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: barrel_lid
+    Name: Barrel Lid
+    Category: Construction
+    Description: ''
+    ItemId: 7608
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: barrel_staves
+    Name: Barrel Staves
+    Category: Construction
+    Description: ''
+    ItemId: 7857
+    FlippableItemIds:
+        - 7857
+        - 7858
+        - 7859
+        - 7860
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: barrel_tap
+    Name: Barrel Tap
+    Category: Construction
+    Description: ''
+    ItemId: 4100
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: big_elven_chair
+    Name: Big Elven Chair
+    Category: Construction
+    Description: ''
+    ItemId: 11755
+    FlippableItemIds:
+        - 11755
+        - 11756
+        - 11757
+        - 11758
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: blue_slate_floor_center
+    Name: Blue Slate Floor Center
+    Category: Construction
+    Description: ''
+    ItemId: 1179
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: bricks_floor1
+    Name: Bricks Floor1
+    Category: Construction
+    Description: ''
+    ItemId: 1250
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: bricks_floor2
+    Name: Bricks Floor2
+    Category: Construction
+    Description: ''
+    ItemId: 1335
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: bust_east
+    Name: Bust East
+    Category: Construction
+    Description: ''
+    ItemId: 4810
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: bust_south
+    Name: Bust South
+    Category: Construction
+    Description: ''
+    ItemId: 4811
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cave_floor_center
+    Name: Cave Floor Center
+    Category: Construction
+    Description: ''
+    ItemId: 1339
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cave_floor_east
+    Name: Cave Floor East
+    Category: Construction
+    Description: ''
+    ItemId: 1348
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cave_floor_north
+    Name: Cave Floor North
+    Category: Construction
+    Description: ''
+    ItemId: 1357
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cave_floor_south
+    Name: Cave Floor South
+    Category: Construction
+    Description: ''
+    ItemId: 1345
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cave_floor_west
+    Name: Cave Floor West
+    Category: Construction
+    Description: ''
+    ItemId: 1354
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: cobblestones_floor
+    Name: Cobblestones Floor
+    Category: Construction
+    Description: ''
+    ItemId: 1301
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: covered_chair
+    Name: Covered Chair
+    Category: Construction
+    Description: ''
+    ItemId: 3095
+    FlippableItemIds:
+        - 3095
+        - 3096
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: dark_sandstone_floor_n
+    Name: Dark Sandstone Floor N
+    Category: Construction
+    Description: ''
+    ItemId: 1327
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: dark_sandstone_floor_w
+    Name: Dark Sandstone Floor W
+    Category: Construction
+    Description: ''
+    ItemId: 1331
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: decorative_axe_north
+    Name: Decorative Axe North
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_axe_west
+    Name: Decorative Axe West
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_bow_north
+    Name: Decorative Bow North
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_bow_west
+    Name: Decorative Bow West
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_d_axe_north
+    Name: Decorative D Axe North
+    Category: Construction
+    Description: ''
+    ItemId: 5481
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: decorative_d_axe_west
+    Name: Decorative D Axe West
+    Category: Construction
+    Description: ''
+    ItemId: 5482
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: decorative_shield_sword1_north
+    Name: Decorative Shield Sword1 North
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield_sword1_west
+    Name: Decorative Shield Sword1 West
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield_sword2_north
+    Name: Decorative Shield Sword2 North
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield_sword2_west
+    Name: Decorative Shield Sword2 West
+    Category: Construction
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield1
+    Name: Decorative Shield1
+    Category: Construction
+    Description: ''
+    ItemId: 5484
+    FlippableItemIds:
+        - 5484
+        - 5485
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield10
+    Name: Decorative Shield10
+    Category: Construction
+    Description: ''
+    ItemId: 5502
+    FlippableItemIds:
+        - 5502
+        - 5503
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield11
+    Name: Decorative Shield11
+    Category: Construction
+    Description: ''
+    ItemId: 5504
+    FlippableItemIds:
+        - 5504
+        - 5505
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield2
+    Name: Decorative Shield2
+    Category: Construction
+    Description: ''
+    ItemId: 5486
+    FlippableItemIds:
+        - 5486
+        - 5487
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield3
+    Name: Decorative Shield3
+    Category: Construction
+    Description: ''
+    ItemId: 5488
+    FlippableItemIds:
+        - 5488
+        - 5489
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield4
+    Name: Decorative Shield4
+    Category: Construction
+    Description: ''
+    ItemId: 5490
+    FlippableItemIds:
+        - 5490
+        - 5491
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield5
+    Name: Decorative Shield5
+    Category: Construction
+    Description: ''
+    ItemId: 5492
+    FlippableItemIds:
+        - 5492
+        - 5493
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield6
+    Name: Decorative Shield6
+    Category: Construction
+    Description: ''
+    ItemId: 5494
+    FlippableItemIds:
+        - 5494
+        - 5495
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield7
+    Name: Decorative Shield7
+    Category: Construction
+    Description: ''
+    ItemId: 5496
+    FlippableItemIds:
+        - 5496
+        - 5497
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield8
+    Name: Decorative Shield8
+    Category: Construction
+    Description: ''
+    ItemId: 5498
+    FlippableItemIds:
+        - 5498
+        - 5499
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_shield9
+    Name: Decorative Shield9
+    Category: Construction
+    Description: ''
+    ItemId: 5500
+    FlippableItemIds:
+        - 5500
+        - 5501
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_sword_north
+    Name: Decorative Sword North
+    Category: Construction
+    Description: ''
+    ItemId: 5477
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_sword_west
+    Name: Decorative Sword West
+    Category: Construction
+    Description: ''
+    ItemId: 5478
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: easel
+    Name: Easel
+    Category: Construction
+    Description: ''
+    ItemId: 3941
+    FlippableItemIds:
+        - 3941
+        - 3943
+        - 3945
+    Hue: 0
+    GoldValue: 0
+    Weight: 25.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: elegant_low_table
+    Name: Elegant Low Table
+    Category: Construction
+    Description: ''
+    ItemId: 10265
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: elven_podium
+    Name: Elven Podium
+    Category: Construction
+    Description: ''
+    ItemId: 11741
+    FlippableItemIds:
+        - 11741
+        - 11742
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: elven_reading_chair
+    Name: Elven Reading Chair
+    Category: Construction
+    Description: ''
+    ItemId: 11765
+    FlippableItemIds:
+        - 11765
+        - 11766
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: fancy_wooden_chair_cushion
+    Name: Fancy Wooden Chair Cushion
+    Category: Construction
+    Description: ''
+    ItemId: 2895
+    FlippableItemIds:
+        - 2895
+        - 2894
+        - 2896
+        - 2897
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: foot_stool
+    Name: Foot Stool
+    Category: Construction
+    Description: ''
+    ItemId: 2910
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: giant_replica_acorn
+    Name: Giant Replica Acorn
+    Category: Construction
+    Description: ''
+    ItemId: 11594
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: green_marble_floor
+    Name: Green Marble Floor
+    Category: Construction
+    Description: ''
+    ItemId: 1295
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: grey_flagstones
+    Name: Grey Flagstones
+    Category: Construction
+    Description: ''
+    ItemId: 1276
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: grey_marble_floor
+    Name: Grey Marble Floor
+    Category: Construction
+    Description: ''
+    ItemId: 1297
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: grey_slate_floor
+    Name: Grey Slate Floor
+    Category: Construction
+    Description: ''
+    ItemId: 1180
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: lady_portrait1
+    Name: Lady Portrait1
+    Category: Construction
+    Description: ''
+    ItemId: 3750
+    FlippableItemIds:
+        - 3750
+        - 3749
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: lady_portrait2
+    Name: Lady Portrait2
+    Category: Construction
+    Description: ''
+    ItemId: 3751
+    FlippableItemIds:
+        - 3751
+        - 3752
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: large_painting
+    Name: Large Painting
+    Category: Construction
+    Description: ''
+    ItemId: 3744
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: large_table
+    Name: Large Table
+    Category: Construction
+    Description: ''
+    ItemId: 2960
+    FlippableItemIds:
+        - 2960
+        - 2941
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: large_vase
+    Name: Large Vase
+    Category: Construction
+    Description: ''
+    ItemId: 2885
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: man_portrait1
+    Name: Man Portrait1
+    Category: Construction
+    Description: ''
+    ItemId: 3746
+    FlippableItemIds:
+        - 3746
+        - 3745
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: man_portrait2
+    Name: Man Portrait2
+    Category: Construction
+    Description: ''
+    ItemId: 3747
+    FlippableItemIds:
+        - 3747
+        - 3748
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: marble_floor
+    Name: Marble Floor
+    Category: Construction
+    Description: ''
+    ItemId: 1293
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: marble_pavers
+    Name: Marble Pavers
+    Category: Construction
+    Description: ''
+    ItemId: 1173
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: melted_wax
+    Name: Melted Wax
+    Category: Construction
+    Description: ''
+    ItemId: 4650
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: mounted_dread_horn
+    Name: Mounted Dread Horn
+    Category: Construction
+    Description: ''
+    ItemId: 12632
+    FlippableItemIds:
+        - 12632
+        - 12633
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: nightstand
+    Name: Nightstand
+    Category: Construction
+    Description: ''
+    ItemId: 2869
+    FlippableItemIds:
+        - 2869
+        - 2868
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: obelisk
+    Name: Obelisk
+    Category: Construction
+    Description: ''
+    ItemId: 4484
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: ornate_elven_chair
+    Name: Ornate Elven Chair
+    Category: Construction
+    Description: ''
+    ItemId: 11747
+    FlippableItemIds:
+        - 11747
+        - 11748
+        - 11749
+        - 11750
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: plain_low_table
+    Name: Plain Low Table
+    Category: Construction
+    Description: ''
+    ItemId: 10266
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: portcullis_ew
+    Name: Portcullis EW
+    Category: Construction
+    Description: ''
+    ItemId: 1782
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: portcullis_ns
+    Name: Portcullis NS
+    Category: Construction
+    Description: ''
+    ItemId: 1781
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: ruined_armoire
+    Name: Ruined Armoire
+    Category: Construction
+    Description: ''
+    ItemId: 3091
+    FlippableItemIds:
+        - 3091
+        - 3090
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_bookcase
+    Name: Ruined Bookcase
+    Category: Construction
+    Description: ''
+    ItemId: 3092
+    FlippableItemIds:
+        - 3092
+        - 3093
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_books
+    Name: Ruined Books
+    Category: Construction
+    Description: ''
+    ItemId: 3094
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_chair
+    Name: Ruined Chair
+    Category: Construction
+    Description: ''
+    ItemId: 3099
+    FlippableItemIds:
+        - 3099
+        - 3100
+        - 3102
+        - 3101
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_clock
+    Name: Ruined Clock
+    Category: Construction
+    Description: ''
+    ItemId: 3103
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_drawers
+    Name: Ruined Drawers
+    Category: Construction
+    Description: ''
+    ItemId: 3108
+    FlippableItemIds:
+        - 3108
+        - 3109
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_fallen_chair_a
+    Name: Ruined Fallen Chair A
+    Category: Construction
+    Description: ''
+    ItemId: 3088
+    FlippableItemIds:
+        - 3088
+        - 3089
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_fallen_chair_b
+    Name: Ruined Fallen Chair B
+    Category: Construction
+    Description: ''
+    ItemId: 3097
+    FlippableItemIds:
+        - 3097
+        - 3098
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: ruined_painting
+    Name: Ruined Painting
+    Category: Construction
+    Description: ''
+    ItemId: 3116
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: sand_flagstones
+    Name: Sand Flagstones
+    Category: Construction
+    Description: ''
+    ItemId: 1280
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: sandstone_floor_n
+    Name: Sandstone Floor N
+    Category: Construction
+    Description: ''
+    ItemId: 1317
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: sandstone_floor_w
+    Name: Sandstone Floor W
+    Category: Construction
+    Description: ''
+    ItemId: 1321
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: shoji_screen
+    Name: Shoji Screen
+    Category: Construction
+    Description: ''
+    ItemId: 9419
+    FlippableItemIds:
+        - 9419
+        - 9420
+        - 9421
+        - 9422
+        - 9423
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: short_music_stand
+    Name: Short Music Stand
+    Category: Construction
+    Description: ''
+    ItemId: 3766
+    FlippableItemIds:
+        - 3766
+        - 3768
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: small_tower_sculpture
+    Name: Small Tower Sculpture
+    Category: Construction
+    Description: ''
+    ItemId: 9242
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: small_urn
+    Name: Small Urn
+    Category: Construction
+    Description: ''
+    ItemId: 9244
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_east
+    Name: Statue East
+    Category: Construction
+    Description: ''
+    ItemId: 5020
+    FlippableItemIds:
+        - 5020
+        - 4647
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_east2
+    Name: Statue East2
+    Category: Construction
+    Description: ''
+    ItemId: 4644
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_north
+    Name: Statue North
+    Category: Construction
+    Description: ''
+    ItemId: 5019
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_pegasus
+    Name: Statue Pegasus
+    Category: Construction
+    Description: ''
+    ItemId: 5021
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_pegasus2
+    Name: Statue Pegasus2
+    Category: Construction
+    Description: ''
+    ItemId: 4648
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_south
+    Name: Statue South
+    Category: Construction
+    Description: ''
+    ItemId: 5018
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_south_east
+    Name: Statue South East
+    Category: Construction
+    Description: ''
+    ItemId: 4645
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_south2
+    Name: Statue South2
+    Category: Construction
+    Description: ''
+    ItemId: 4647
+    FlippableItemIds:
+        - 5020
+        - 4647
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: statue_west
+    Name: Statue West
+    Category: Construction
+    Description: ''
+    ItemId: 4646
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: stone_chair
+    Name: Stone Chair
+    Category: Construction
+    Description: ''
+    ItemId: 4632
+    FlippableItemIds:
+        - 4632
+        - 4633
+        - 4634
+        - 4635
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: stone_pavers_dark
+    Name: Stone Pavers Dark
+    Category: Construction
+    Description: ''
+    ItemId: 1313
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: stone_pavers_light
+    Name: Stone Pavers Light
+    Category: Construction
+    Description: ''
+    ItemId: 1305
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: stone_pavers_medium
+    Name: Stone Pavers Medium
+    Category: Construction
+    Description: ''
+    ItemId: 1309
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: stool
+    Name: Stool
+    Category: Construction
+    Description: ''
+    ItemId: 2602
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tall_music_stand
+    Name: Tall Music Stand
+    Category: Construction
+    Description: ''
+    ItemId: 3771
+    FlippableItemIds:
+        - 3771
+        - 3772
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: tapestry1_n
+    Name: Tapestry1 N
+    Category: Construction
+    Description: ''
+    ItemId: 3754
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry2_n
+    Name: Tapestry2 N
+    Category: Construction
+    Description: ''
+    ItemId: 3756
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry2_w
+    Name: Tapestry2 W
+    Category: Construction
+    Description: ''
+    ItemId: 3758
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry3_n
+    Name: Tapestry3 N
+    Category: Construction
+    Description: ''
+    ItemId: 4054
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry3_w
+    Name: Tapestry3 W
+    Category: Construction
+    Description: ''
+    ItemId: 4055
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry4_n
+    Name: Tapestry4 N
+    Category: Construction
+    Description: ''
+    ItemId: 4058
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry4_w
+    Name: Tapestry4 W
+    Category: Construction
+    Description: ''
+    ItemId: 4059
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry5_n
+    Name: Tapestry5 N
+    Category: Construction
+    Description: ''
+    ItemId: 4062
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry5_w
+    Name: Tapestry5 W
+    Category: Construction
+    Description: ''
+    ItemId: 4063
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry6_n
+    Name: Tapestry6 N
+    Category: Construction
+    Description: ''
+    ItemId: 4066
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: tapestry6_w
+    Name: Tapestry6 W
+    Category: Construction
+    Description: ''
+    ItemId: 4067
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: throne
+    Name: Throne
+    Category: Construction
+    Description: ''
+    ItemId: 2867
+    FlippableItemIds:
+        - 2866
+        - 2867
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: vase
+    Name: Vase
+    Category: Construction
+    Description: ''
+    ItemId: 2886
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: vines
+    Name: Vines
+    Category: Construction
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: woman_portrait1
+    Name: Woman Portrait1
+    Category: Construction
+    Description: ''
+    ItemId: 3743
+    FlippableItemIds:
+        - 3743
+        - 3784
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: woman_portrait2
+    Name: Woman Portrait2
+    Category: Construction
+    Description: ''
+    ItemId: 3815
+    FlippableItemIds:
+        - 3815
+        - 3785
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: wood_debris
+    Name: Wood Debris
+    Category: Construction
+    Description: ''
+    ItemId: 3117
+    FlippableItemIds:
+        - 3117
+        - 3119
+        - 3118
+        - 3120
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: wooden_bench
+    Name: Wooden Bench
+    Category: Construction
+    Description: ''
+    ItemId: 2861
+    FlippableItemIds:
+        - 2861
+        - 2860
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: wooden_chair
+    Name: Wooden Chair
+    Category: Construction
+    Description: ''
+    ItemId: 2903
+    FlippableItemIds:
+        - 2903
+        - 2902
+        - 2905
+        - 2904
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: wooden_chair_cushion
+    Name: Wooden Chair Cushion
+    Category: Construction
+    Description: ''
+    ItemId: 2899
+    FlippableItemIds:
+        - 2899
+        - 2898
+        - 2900
+        - 2901
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: wooden_throne
+    Name: Wooden Throne
+    Category: Construction
+    Description: ''
+    ItemId: 2862
+    FlippableItemIds:
+        - 2862
+        - 2863
+        - 2865
+        - 2864
+    Hue: 0
+    GoldValue: 0
+    Weight: 15.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: writing_table
+    Name: Writing Table
+    Category: Construction
+    Description: ''
+    ItemId: 2890
+    FlippableItemIds:
+        - 2890
+        - 2889
+        - 2891
+        - 2892
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: yew_wood_table
+    Name: Yew Wood Table
+    Category: Construction
+    Description: ''
+    ItemId: 2959
+    FlippableItemIds:
+        - 2959
+        - 2940
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+        - flippable
+-   Id: decorative_daxe_north
+    Name: Decorative DAxe North
+    Category: Construction
+    Description: ''
+    ItemId: 5481
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction
+-   Id: decorative_daxe_west
+    Name: Decorative DAxe West
+    Category: Construction
+    Description: ''
+    ItemId: 5482
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - modernuo
+        - construction

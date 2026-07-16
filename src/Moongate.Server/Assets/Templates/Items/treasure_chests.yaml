@@ -1,0 +1,84 @@
+-   Id: treasure_chest_level1
+    Name: Treasure Chest Level1
+    Category: TreasureChests
+    Description: ''
+    ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
+-   Id: treasure_chest_level2
+    Name: Treasure Chest Level2
+    Category: TreasureChests
+    Description: ''
+    ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
+-   Id: treasure_chest_level3
+    Name: Treasure Chest Level3
+    Category: TreasureChests
+    Description: ''
+    ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
+-   Id: treasure_chest_level4
+    Name: Treasure Chest Level4
+    Category: TreasureChests
+    Description: ''
+    ItemId: 3649
+    FlippableItemIds:
+        - 3649
+        - 3648
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68

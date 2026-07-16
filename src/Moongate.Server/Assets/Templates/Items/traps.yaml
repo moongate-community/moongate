@@ -1,0 +1,70 @@
+-   Id: fire_column_trap
+    Name: Fire Column Trap
+    Category: Traps
+    Description: ''
+    ItemId: 7025
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - traps
+-   Id: flame_spurt_trap
+    Name: Flame Spurt Trap
+    Category: Traps
+    Description: ''
+    ItemId: 7025
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - traps
+-   Id: giant_spike_trap
+    Name: Giant Spike Trap
+    Category: Traps
+    Description: ''
+    ItemId: 1
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - traps
+-   Id: mushroom_trap
+    Name: Mushroom Trap
+    Category: Traps
+    Description: ''
+    ItemId: 4389
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - traps
+-   Id: stone_face_trap
+    Name: Stone Face Trap
+    Category: Traps
+    Description: ''
+    ItemId: 4348
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - traps

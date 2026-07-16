@@ -1,11 +1,66 @@
 using System.IO.Compression;
-using System.IO;
-using System;
 
 namespace Moongate.Ultima.Helpers;
 
-static public class UopUtils
+public static class UopUtils
 {
+    /// <summary>
+    /// Method for compressing zlib byte arrays inside .uop
+    /// </summary>
+    /// <returns>compressed byte[] data</returns>
+    public static (bool success, byte[] compressedData) Compress(byte[] rawData)
+    {
+        if (rawData == null || rawData.Length == 0)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        try
+        {
+            using var dataStream = new MemoryStream(rawData);
+            using var resultStream = new MemoryStream();
+            using var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal);
+            dataStream.CopyTo(zlibStream);
+            zlibStream.Flush();
+            zlibStream.Close();
+
+            return (true, resultStream.ToArray());
+        }
+        catch (Exception)
+        {
+            return (false, Array.Empty<byte>());
+        }
+    }
+
+    /// <summary>
+    /// Method for decompressing zlib byte arrays inside .uop
+    /// </summary>
+    /// <param name="compressedData">Input compressed array of bytes</param>
+    /// <returns>decompressed byte[] data</returns>
+    public static (bool success, byte[] data) Decompress(byte[] compressedData)
+    {
+        if (compressedData == null || compressedData.Length == 0)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        try
+        {
+            using var compressedStream = new MemoryStream(compressedData);
+            using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false);
+            using var resultStream = new MemoryStream();
+            zlibStream.CopyTo(resultStream);
+            resultStream.Flush();
+            zlibStream.Close();
+
+            return (true, resultStream.ToArray());
+        }
+        catch (Exception)
+        {
+            return (false, Array.Empty<byte>());
+        }
+    }
+
     /// <summary>
     /// Method for calculating entry hash by its name.
     /// Taken from Mythic.Package.dll
@@ -14,12 +69,17 @@ static public class UopUtils
     /// <returns></returns>
     public static ulong HashFileName(string s)
     {
-        uint eax, ecx, edx, ebx, esi, edi;
+        uint eax,
+            ecx,
+            edx,
+            ebx,
+            esi,
+            edi;
 
         eax = ecx = edx = ebx = esi = edi = 0;
         ebx = edi = esi = (uint)s.Length + 0xDEADBEEF;
 
-        int i = 0;
+        var i = 0;
 
         for (i = 0; i + 12 < s.Length; i += 12)
         {
@@ -55,7 +115,7 @@ static public class UopUtils
                     esi += (uint)s[i + 9] << 8;
                     goto case 9;
                 case 9:
-                    esi += (uint)s[i + 8];
+                    esi += s[i + 8];
                     goto case 8;
                 case 8:
                     edi += (uint)s[i + 7] << 24;
@@ -67,7 +127,7 @@ static public class UopUtils
                     edi += (uint)s[i + 5] << 8;
                     goto case 5;
                 case 5:
-                    edi += (uint)s[i + 4];
+                    edi += s[i + 4];
                     goto case 4;
                 case 4:
                     ebx += (uint)s[i + 3] << 24;
@@ -79,7 +139,8 @@ static public class UopUtils
                     ebx += (uint)s[i + 1] << 8;
                     goto case 1;
                 case 1:
-                    ebx += (uint)s[i];
+                    ebx += s[i];
+
                     break;
             }
 
@@ -98,47 +159,25 @@ static public class UopUtils
     }
 
     /// <summary>
-    /// Method for decompressing zlib byte arrays inside .uop
-    /// </summary>
-    /// <param name="compressedData">Input compressed array of bytes</param>
-    /// <returns>decompressed byte[] data</returns>
-    public static (bool success, byte[] data) Decompress(byte[] compressedData)
-    {
-        if (compressedData == null || compressedData.Length == 0)
-        {
-            return (false, Array.Empty<byte>());
-        }
-
-        try
-        {
-            using var compressedStream = new MemoryStream(compressedData);
-            using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false);
-            using var resultStream = new MemoryStream();
-            zlibStream.CopyTo(resultStream);
-            resultStream.Flush();
-            zlibStream.Close();
-            return (true, resultStream.ToArray());
-        }
-        catch (Exception)
-        {
-            return (false, Array.Empty<byte>());
-        }
-    }
-
-    /// <summary>
     /// Decompresses zlib UOP-entry bytes into a caller-supplied buffer
     /// instead of allocating a fresh byte[]. Pair with ArrayPool to make
     /// per-call allocations effectively zero on the hot decode paths.
-    ///
-    /// <paramref name="destinationBuffer"/> must be at least as large as
+    /// <paramref name="destinationBuffer" /> must be at least as large as
     /// the entry's declared decompressed length (see Entry6D.DecompressedLength).
     /// Returns false if decompression fails OR the destination is too
     /// small to hold the full payload — in the latter case the caller
     /// should retry with a larger buffer.
     /// </summary>
-    public static bool TryDecompressInto(byte[] compressedData, int compressedOffset, int compressedLength, byte[] destinationBuffer, out int decompressedLength)
+    public static bool TryDecompressInto(
+        byte[] compressedData,
+        int compressedOffset,
+        int compressedLength,
+        byte[] destinationBuffer,
+        out int decompressedLength
+    )
     {
         decompressedLength = 0;
+
         if (compressedData == null || compressedLength <= 0 || destinationBuffer == null)
         {
             return false;
@@ -146,11 +185,12 @@ static public class UopUtils
 
         try
         {
-            using var compressedStream = new MemoryStream(compressedData, compressedOffset, compressedLength, writable: false);
-            using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, leaveOpen: false);
+            using var compressedStream = new MemoryStream(compressedData, compressedOffset, compressedLength, false);
+            using var zlibStream = new ZLibStream(compressedStream, CompressionMode.Decompress, false);
 
-            int total = 0;
+            var total = 0;
             int read;
+
             while (total < destinationBuffer.Length &&
                    (read = zlibStream.Read(destinationBuffer, total, destinationBuffer.Length - total)) > 0)
             {
@@ -164,38 +204,12 @@ static public class UopUtils
             }
 
             decompressedLength = total;
+
             return true;
         }
         catch (Exception)
         {
             return false;
-        }
-    }
-
-    /// <summary>
-    /// Method for compressing zlib byte arrays inside .uop
-    /// </summary>
-    /// <returns>compressed byte[] data</returns>
-    public static (bool success, byte[] compressedData) Compress(byte[] rawData)
-    {
-        if (rawData == null || rawData.Length == 0)
-        {
-            return (false, Array.Empty<byte>());
-        }
-
-        try
-        {
-            using var dataStream = new MemoryStream(rawData);
-            using var resultStream = new MemoryStream();
-            using var zlibStream = new ZLibStream(resultStream, CompressionLevel.Optimal);
-            dataStream.CopyTo(zlibStream);
-            zlibStream.Flush();
-            zlibStream.Close();
-            return (true, resultStream.ToArray());
-        }
-        catch (Exception)
-        {
-            return (false, Array.Empty<byte>());
         }
     }
 }

@@ -1,0 +1,11 @@
+-   Id: creature.savage_shaman
+    Name: SavageShaman
+    Category: loot
+    Description: Creature-specific loot for SavageShaman.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: tribal_berry
+            Amount: 1
+            Chance: 1.0

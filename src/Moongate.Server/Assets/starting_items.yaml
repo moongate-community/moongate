@@ -1,0 +1,270 @@
+All:
+    Pack:
+        -   Item: dagger
+        -   Item: my_story
+ByBody:
+    Human/Male:
+        Equip:
+            -   Item: long_pants
+            -   Item: shirt
+            -   Item: shoes
+    Human/Female:
+        Equip:
+            -   Item: skirt
+            -   Item: fancy_shirt
+            -   Item: shoes
+    Elf/Male:
+        Equip:
+            -   Item: long_pants
+            -   Item: shirt
+            -   Item: shoes
+    Elf/Female:
+        Equip:
+            -   Item: skirt
+            -   Item: fancy_shirt
+            -   Item: shoes
+    Gargoyle/Male:
+        Equip:
+            -   Item: robe
+    Gargoyle/Female:
+        Equip:
+            -   Item: robe
+BySkill:
+    Alchemy:
+        Equip:
+            -   Item: robe
+                Hue: "0x4ca"
+        Pack:
+            -   Item: black_pearl
+                Amount: 3
+            -   Item: garlic
+                Amount: 3
+            -   Item: ginseng
+                Amount: 3
+            -   Item: spiders_silk
+                Amount: 3
+            -   Item: bottle
+                Amount: 4
+            -   Item: mortar_pestle
+    Anatomy:
+        Equip:
+            -   Item: robe
+                Hue: "0x6be"
+        Pack:
+            -   Item: bandage
+                Amount: 3
+    Animal Lore:
+        Equip:
+            -   Item: butcher_knife
+            -   Item: robe
+                Hue: "0x52e"
+    Animal Taming:
+        Equip:
+            -   Item: butcher_knife
+    Archery:
+        Equip:
+            -   Item: bow
+        Pack:
+            -   Item: arrow
+                Amount: 25
+    Begging:
+        Equip:
+            -   Item: gnarled_staff
+    Blacksmithy:
+        Equip:
+            -   Item: half_apron
+                Hue: "0x6be"
+            -   Item: leather_gloves
+            -   Item: runic_hammer
+        Pack:
+            -   Item: iron_ingot
+                Amount: 50
+            -   Item: shovel
+            -   Item: gargoyles_pickaxe
+    Bowcraft/Fletching:
+        Pack:
+            -   Item: feather
+                Amount: 5
+            -   Item: shaft
+                Amount: 5
+            -   Item: board
+                Amount: 14
+            -   Item: fletcher_tools
+    Bushido:
+        Equip:
+            -   Item: hakama
+            -   Item: hakama_shita
+            -   Item: waraji
+            -   Item: tattsuke_hakama
+            -   Item: bokuto
+            -   Item: leather_jingasa
+        Pack:
+            -   Item: book_of_bushido
+    Camping:
+        Pack:
+            -   Item: bedroll
+            -   Item: kindling
+                Amount: 5
+    Carpentry:
+        Equip:
+            -   Item: half_apron
+                Hue: "0x6be"
+        Pack:
+            -   Item: board
+                Amount: 10
+            -   Item: saw
+    Cartography:
+        Pack:
+            -   Item: map_item
+                Amount: 4
+            -   Item: sextant
+    Chivalry:
+        Equip:
+            -   Item: broadsword
+            -   Item: cloak
+            -   Item: body_sash
+            -   Item: thigh_boots
+            -   Item: ringmail_gloves
+            -   Item: ringmail_chest
+            -   Item: ringmail_arms
+            -   Item: ringmail_legs
+            -   Item: plate_gorget
+            -   Item: helmet
+        Pack:
+            -   Item: book_of_chivalry
+    Cooking:
+        Pack:
+            -   Item: kindling
+                Amount: 2
+            -   Item: raw_fish_steak
+            -   Item: raw_lamb_leg
+            -   Item: raw_chicken_leg
+            -   Item: spam
+            -   Item: brick
+    Detecting Hidden:
+        Equip:
+            -   Item: cloak
+    Fencing:
+        Pack:
+            -   Item: kryss
+    Fishing:
+        Equip:
+            -   Item: fishing_pole
+            -   Item: floppy_hat
+                Hue: "0x6be"
+    Focus:
+        Equip:
+            -   Item: robe
+                Hue: "0x65a"
+            -   Item: dagger
+    Healing:
+        Pack:
+            -   Item: bandage
+                Amount: 50
+            -   Item: scissors
+    Herding:
+        Equip:
+            -   Item: butcher_knife
+    Hiding:
+        Equip:
+            -   Item: cloak
+    Imbuing:
+        Equip:
+            -   Item: robe
+                Hue: "0x65a"
+    Inscription:
+        Pack:
+            -   Item: pen_and_ink
+    Item Identification:
+        Equip:
+            -   Item: gnarled_staff
+    Lockpicking:
+        Pack:
+            -   Item: lockpick
+                Amount: 20
+    Lumberjacking:
+        Pack:
+            -   Item: hatchet
+    Mace Fighting:
+        Pack:
+            -   Item: bow
+    Magery:
+        Equip:
+            -   Item: spellbook
+    Mining:
+        Pack:
+            -   Item: gargoyles_pickaxe
+    Mysticism:
+        Pack:
+            -   Item: mystic_spellbook
+    Necromancy:
+        Equip:
+            -   Item: bone_helm
+            -   Item: bone_harvester
+            -   Item: sandals
+        Pack:
+            -   Item: necromancer_spellbook
+            -   Item: bag
+            -   Item: bat_wing
+                Amount: 50
+            -   Item: pig_iron
+                Amount: 50
+            -   Item: nox_crystal
+                Amount: 50
+            -   Item: daemon_blood
+                Amount: 50
+            -   Item: grave_dust
+                Amount: 50
+    Ninjitsu:
+        Equip:
+            -   Item: kasa
+            -   Item: tattsuke_hakama
+            -   Item: hakama_shita
+            -   Item: ninja_tabi
+            -   Item: tekagi
+        Pack:
+            -   Item: book_of_ninjitsu
+    Parrying:
+        Pack:
+            -   Item: wooden_shield
+    Poisoning:
+        Pack:
+            -   Item: invisibility_potion
+                Amount: 2
+    Snooping:
+        Pack:
+            -   Item: lockpick
+                Amount: 20
+    Spirit Speak:
+        Equip:
+            -   Item: cloak
+    Stealing:
+        Pack:
+            -   Item: lockpick
+                Amount: 20
+    Swordsmanship:
+        Equip:
+            -   Item: katana
+    Tactics:
+        Pack:
+            -   Item: katana
+    Tailoring:
+        Pack:
+            -   Item: bolt_of_cloth
+            -   Item: sewing_kit
+    Tinkering:
+        Pack:
+            -   Item: tinker_tools
+    Tracking:
+        Equip:
+            -   Item: boots
+                Hue: "0x6be"
+            -   Item: skinning_knife
+    Veterinary:
+        Pack:
+            -   Item: bandage
+                Amount: 5
+            -   Item: scissors
+    Wrestling:
+        Equip:
+            -   Item: leather_gloves

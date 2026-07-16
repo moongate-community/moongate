@@ -27,6 +27,7 @@ imgui.ini
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+!tools/release/
 x64/
 x86/
 [Ww][Ii][Nn]32/
@@ -572,13 +573,7 @@ crashlytics-build.properties
 coverage/*
 /definizions.lua
 
-# DocFX generated documentation
-docs/_site/
-docs/obj/
-docs/api/
-docs/log.txt
-**/.manifest
-.tools
+node_modules/
 
 # Source Generator - auto-generated files (regenerated on build)
 src/**/Generated/
@@ -590,5 +585,16 @@ definitions.lua
 dist/
 benchmarks/.compare
 
-# Local runtime data directory
+# Local runtime data directories. Everything under them is generated on boot
+# (config, scripts, templates, plugins) or written at runtime (saves, data),
+# so the whole root is ignored rather than a few subdirectories.
 /moongate/
+/moongate_root/
+
+# CodeGraph index (never commit)
+.codegraph/
+
+# DocFX
+docs/_site/
+docs/obj/
+docs/api/

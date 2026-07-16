@@ -14,10 +14,10 @@ public static class UltimaFixtures
     private const int OldItemRecordSize = 37;
     private const int NewLandRecordSize = 30;
     private const int NewItemRecordSize = 41;
-    private const int LandGroupSize = 4 + (32 * OldLandRecordSize);
-    private const int ItemGroupSize = 4 + (32 * OldItemRecordSize);
-    private const int NewLandGroupSize = 4 + (32 * NewLandRecordSize);
-    private const int NewItemGroupSize = 4 + (32 * NewItemRecordSize);
+    private const int LandGroupSize = 4 + 32 * OldLandRecordSize;
+    private const int ItemGroupSize = 4 + 32 * OldItemRecordSize;
+    private const int NewLandGroupSize = 4 + 32 * NewLandRecordSize;
+    private const int NewItemGroupSize = 4 + 32 * NewItemRecordSize;
     private const int MapBlockSize = 196;
 
     /// <summary>
@@ -27,150 +27,186 @@ public static class UltimaFixtures
     private const int UoahsArtIdxSize = 0x13FDC * 12;
 
     /// <summary>
+    /// Builds anim.idx + anim.mul with one animation of <paramref name="frameCount" />
+    /// identical solid frames for (body &lt; 200, action, direction &lt;= 4), fileType 1.
+    /// </summary>
+    public static (byte[] Index, byte[] Anim) BuildAnim(
+        int body,
+        int action,
+        int direction,
+        int frameCount,
+        int width,
+        int height,
+        byte paletteIndex,
+        ushort paletteColor
+    )
+    {
+        const int DoubleXor = (0x200 << 22) | (0x200 << 12);
+
+        var blob = new List<byte>();
+
+        for (var i = 0; i < 256; i++)
+        {
+            var value = i == paletteIndex ? (ushort)(paletteColor ^ 0x8000) : (ushort)0x8000;
+            blob.AddRange(BitConverter.GetBytes(value));
+        }
+
+        var frame = new List<byte>();
+        frame.AddRange(BitConverter.GetBytes((short)0x200));            // xCenter
+        frame.AddRange(BitConverter.GetBytes((short)(0x200 - height))); // yCenter -> origin at (0,0)
+        frame.AddRange(BitConverter.GetBytes((ushort)width));
+        frame.AddRange(BitConverter.GetBytes((ushort)height));
+
+        for (var y = 0; y < height; y++)
+        {
+            var wanted = (0 << 22) | (y << 12) | width;
+            frame.AddRange(BitConverter.GetBytes(wanted ^ DoubleXor));
+
+            for (var x = 0; x < width; x++)
+            {
+                frame.Add(paletteIndex);
+            }
+        }
+
+        frame.AddRange(BitConverter.GetBytes(0x7FFF7FFF));
+
+        // header after palette: frameCount + frameCount offsets (relative to that point)
+        var tableBytes = 4 + frameCount * 4;
+        blob.AddRange(BitConverter.GetBytes(frameCount));
+
+        for (var i = 0; i < frameCount; i++)
+        {
+            blob.AddRange(BitConverter.GetBytes(tableBytes + i * frame.Count));
+        }
+
+        for (var i = 0; i < frameCount; i++)
+        {
+            blob.AddRange(frame);
+        }
+
+        var recordIndex = body * 110 + action * 5 + direction;
+        var index = new byte[(recordIndex + 1) * 12];
+        index.AsSpan().Fill(0xFF);
+
+        var record = recordIndex * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), 0);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), blob.Count);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+
+        return (index, blob.ToArray());
+    }
+
+    /// <summary>
+    /// Builds fonts.mul: 10 fonts of 224 characters each. Every character is empty (0x0) except
+    /// <paramref name="character" /> in font <paramref name="fontIndex" />, which gets a solid
+    /// <paramref name="width" />x<paramref name="height" /> bitmap filled with <paramref name="pixel" />.
+    /// </summary>
+    public static byte[] BuildAsciiFonts(int fontIndex, char character, int width, int height, ushort pixel)
+    {
+        var data = new List<byte>();
+        var targetChar = character - 0x20;
+
+        for (var i = 0; i < 10; i++)
+        {
+            data.Add(0); // font header
+
+            for (var k = 0; k < 224; k++)
+            {
+                if (i == fontIndex && k == targetChar)
+                {
+                    data.Add((byte)width);
+                    data.Add((byte)height);
+                    data.Add(0); // unk
+
+                    for (var p = 0; p < width * height; p++)
+                    {
+                        data.Add((byte)(pixel & 0xFF));
+                        data.Add((byte)(pixel >> 8));
+                    }
+                }
+                else
+                {
+                    data.Add(0); // width
+                    data.Add(0); // height
+                    data.Add(0); // unk
+                }
+            }
+        }
+
+        return data.ToArray();
+    }
+
+    /// <summary>
     /// Creates a temporary directory holding the given synthetic client files and
     /// returns its path. Caller deletes it when done.
     /// </summary>
-    public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
+    /// <summary>
+    /// Builds an uncompressed cliloc file: a 6-byte header followed by
+    /// <c>[int32 number][byte flag][ushort length][UTF-8 text]</c> per entry.
+    /// </summary>
+    public static byte[] BuildCliloc(params (int Number, byte Flag, string Text)[] entries)
     {
-        string dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
+        using var stream = new MemoryStream();
+        using var bin = new BinaryWriter(stream);
 
-        foreach ((string name, byte[] content) in files)
+        bin.Write(0);        // header1
+        bin.Write((short)0); // header2
+
+        foreach (var (number, flag, text) in entries)
         {
-            File.WriteAllBytes(Path.Combine(dir, name), content);
+            var utf8 = Encoding.UTF8.GetBytes(text);
+
+            bin.Write(number);
+            bin.Write(flag);
+            bin.Write((ushort)utf8.Length);
+            bin.Write(utf8);
         }
 
-        return dir;
+        bin.Flush();
+
+        return stream.ToArray();
     }
 
-    /// <summary>
-    /// Builds an old-format tiledata.mul: the full 0x4000 land table plus one item group
-    /// (32 items). Land and item entries are zeroed except the ones set via the callbacks.
-    /// </summary>
-    public static byte[] BuildTileData(
-        Action<int, uint, ushort, string, byte[]> setLand,
-        Action<int, uint, string, byte[]> setItem)
+    /// <summary>Builds gumpidx.mul + gumpart.mul containing solid-color gumps.</summary>
+    public static (byte[] Index, byte[] Gumps) BuildGumps(params (int GumpId, int Width, int Height, ushort Color)[] gumps)
     {
-        var buffer = new byte[(512 * LandGroupSize) + ItemGroupSize];
+        var maxId = gumps.Max(g => g.GumpId);
+        var index = new byte[(maxId + 1) * 12];
+        index.AsSpan().Fill(0xFF);
 
-        setLand(0, 0, 0, string.Empty, buffer);
-        setItem(0, 0, string.Empty, buffer);
+        var data = new List<byte>();
 
-        return buffer;
-    }
-
-    /// <summary>Builds an old-format tiledata.mul with the full land table and one item group.</summary>
-    public static byte[] BuildTileData()
-    {
-        return new byte[(512 * LandGroupSize) + ItemGroupSize];
-    }
-
-    /// <summary>Builds a new-format (HS 7.0.9+) tiledata.mul with the full land table and one item group.</summary>
-    public static byte[] BuildTileDataNew()
-    {
-        return new byte[(512 * NewLandGroupSize) + NewItemGroupSize];
-    }
-
-    /// <summary>
-    /// Builds a zero-filled artidx.mul large enough that the library detects a post-HS
-    /// client (new tiledata format). Pair with <see cref="BuildTileDataNew"/>.
-    /// </summary>
-    public static byte[] BuildUoahsArtIndex()
-    {
-        return new byte[UoahsArtIdxSize];
-    }
-
-    /// <summary>Writes a new-format land record (64-bit flags, textureId, name) for tile <paramref name="id"/>.</summary>
-    public static void SetLandNew(byte[] tileData, int id, ulong flags, ushort textureId, string name)
-    {
-        int group = id / 32;
-        int inGroup = id % 32;
-        int offset = (group * NewLandGroupSize) + 4 + (inGroup * NewLandRecordSize);
-
-        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
-        BinaryPrimitives.WriteUInt16LittleEndian(tileData.AsSpan(offset + 8), textureId);
-        WriteName(tileData, offset + 10, name);
-    }
-
-    /// <summary>Writes a new-format item record (64-bit flags, height, name) for item <paramref name="id"/> (first group only).</summary>
-    public static void SetItemNew(byte[] tileData, int id, ulong flags, byte height, string name)
-    {
-        int offset = (512 * NewLandGroupSize) + 4 + (id * NewItemRecordSize);
-
-        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
-        tileData[offset + 20] = height;
-        WriteName(tileData, offset + 21, name);
-    }
-
-    /// <summary>Writes an old-format land record (flags, textureId, name) for tile <paramref name="id"/>.</summary>
-    public static void SetLand(byte[] tileData, int id, uint flags, ushort textureId, string name)
-    {
-        int group = id / 32;
-        int inGroup = id % 32;
-        int offset = (group * LandGroupSize) + 4 + (inGroup * OldLandRecordSize);
-
-        BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
-        BinaryPrimitives.WriteUInt16LittleEndian(tileData.AsSpan(offset + 4), textureId);
-        WriteName(tileData, offset + 6, name);
-    }
-
-    /// <summary>Writes an old-format item record (flags, height, name) for item <paramref name="id"/> (first group only).</summary>
-    public static void SetItem(byte[] tileData, int id, uint flags, byte height, string name)
-    {
-        int offset = (512 * LandGroupSize) + 4 + (id * OldItemRecordSize);
-
-        BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
-        tileData[offset + 16] = height;
-        WriteName(tileData, offset + 17, name);
-    }
-
-    /// <summary>
-    /// Builds a single-block (8x8) map0.mul where every cell has the given land id and z.
-    /// </summary>
-    public static byte[] BuildMapBlock(ushort landId, sbyte z)
-    {
-        var buffer = new byte[MapBlockSize];
-        for (int cell = 0; cell < 64; cell++)
+        foreach (var (gumpId, width, height, color) in gumps)
         {
-            int offset = 4 + (cell * 3);
-            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset), landId);
-            buffer[offset + 2] = unchecked((byte)z);
+            var lookup = data.Count;
+            var blob = new List<byte>();
+
+            for (var y = 0; y < height; y++)
+            {
+                // row offset in DWORDs relative to blob start: lookup table (height) + y rows of 1 dword each
+                var rowOffset = height + y;
+                blob.AddRange(BitConverter.GetBytes(rowOffset));
+            }
+
+            // real gump data stores colors with bit15 clear; the reader XORs with 0x8000,
+            // which sets the alpha bit and makes the pixel opaque for DrawInto
+            var stored = (ushort)(color & 0x7FFF);
+
+            for (var y = 0; y < height; y++)
+            {
+                blob.AddRange(BitConverter.GetBytes(stored));
+                blob.AddRange(BitConverter.GetBytes((ushort)width));
+            }
+
+            data.AddRange(blob);
+
+            var record = gumpId * 12;
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), lookup);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), blob.Count);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), (width << 16) | height);
         }
 
-        return buffer;
-    }
-
-    /// <summary>Overwrites one cell of a single-block map built by <see cref="BuildMapBlock"/>.</summary>
-    public static void SetMapCell(byte[] mapBlock, int x, int y, ushort landId, sbyte z)
-    {
-        int offset = 4 + ((((y & 0x7) << 3) + (x & 0x7)) * 3);
-        BinaryPrimitives.WriteUInt16LittleEndian(mapBlock.AsSpan(offset), landId);
-        mapBlock[offset + 2] = unchecked((byte)z);
-    }
-
-    /// <summary>
-    /// Builds staidx0.mul + statics0.mul for a single block containing the given statics.
-    /// Each static: (id, cellX, cellY, z, hue) with cell coordinates inside the block (0-7).
-    /// </summary>
-    public static (byte[] Index, byte[] Statics) BuildStatics(
-        params (ushort Id, byte CellX, byte CellY, sbyte Z, ushort Hue)[] statics)
-    {
-        var data = new byte[statics.Length * 7];
-        for (int i = 0; i < statics.Length; i++)
-        {
-            int offset = i * 7;
-            BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset), statics[i].Id);
-            data[offset + 2] = statics[i].CellX;
-            data[offset + 3] = statics[i].CellY;
-            data[offset + 4] = unchecked((byte)statics[i].Z);
-            BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset + 5), statics[i].Hue);
-        }
-
-        var index = new byte[12];
-        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(0), 0);
-        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(4), data.Length);
-        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(8), 0);
-
-        return (index, data);
+        return (index, data.ToArray());
     }
 
     /// <summary>
@@ -181,15 +217,54 @@ public static class UltimaFixtures
     {
         var buffer = new byte[708];
 
-        int offset = 4;
-        for (int c = 0; c < 32; c++)
+        var offset = 4;
+
+        for (var c = 0; c < 32; c++)
         {
-            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + (c * 2)), firstColor);
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + c * 2), firstColor);
         }
 
         BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + 64), tableStart);
         BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset + 66), tableEnd);
         WriteName(buffer, offset + 68, firstHueName);
+
+        return buffer;
+    }
+
+    /// <summary>
+    /// Builds lightidx.mul + light.mul with a single light at <paramref name="index" />:
+    /// <c>width*height</c> intensity bytes, with size packed into the idx entry's extra field
+    /// (<c>(height &lt;&lt; 16) | width</c>).
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildLight(int index, int width, int height, byte fill)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[width * height];
+        mul.AsSpan().Fill(fill);
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);                          // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length);             // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), (height << 16) | width); // extra
+
+        return (idx, mul);
+    }
+
+    /// <summary>
+    /// Builds a single-block (8x8) map0.mul where every cell has the given land id and z.
+    /// </summary>
+    public static byte[] BuildMapBlock(ushort landId, sbyte z)
+    {
+        var buffer = new byte[MapBlockSize];
+
+        for (var cell = 0; cell < 64; cell++)
+        {
+            var offset = 4 + cell * 3;
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(offset), landId);
+            buffer[offset + 2] = unchecked((byte)z);
+        }
 
         return buffer;
     }
@@ -206,7 +281,7 @@ public static class UltimaFixtures
         const int headerSize = 28;
         const int blockTableHeaderSize = 12;
         const int entrySize = 34;
-        int dataOffset = headerSize + blockTableHeaderSize + entrySize;
+        var dataOffset = headerSize + blockTableHeaderSize + entrySize;
 
         var buffer = new byte[dataOffset + blockData.Length];
         Span<byte> span = buffer;
@@ -223,12 +298,15 @@ public static class UltimaFixtures
         BinaryPrimitives.WriteInt64LittleEndian(span[(headerSize + 4)..], 0);
 
         // Entry: offset, headerLength, compressed/decompressed length, name hash, adler, flag 0 (raw).
-        int entry = headerSize + blockTableHeaderSize;
+        var entry = headerSize + blockTableHeaderSize;
         BinaryPrimitives.WriteInt64LittleEndian(span[entry..], dataOffset);
         BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 8)..], 0);
         BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 12)..], blockData.Length);
         BinaryPrimitives.WriteInt32LittleEndian(span[(entry + 16)..], blockData.Length);
-        BinaryPrimitives.WriteUInt64LittleEndian(span[(entry + 20)..], UopUtils.HashFileName($"build/{pattern}/00000000.dat"));
+        BinaryPrimitives.WriteUInt64LittleEndian(
+            span[(entry + 20)..],
+            UopUtils.HashFileName($"build/{pattern}/00000000.dat")
+        );
         BinaryPrimitives.WriteUInt32LittleEndian(span[(entry + 28)..], 0);
         BinaryPrimitives.WriteInt16LittleEndian(span[(entry + 32)..], 0);
 
@@ -237,9 +315,365 @@ public static class UltimaFixtures
         return buffer;
     }
 
+    /// <summary>
+    /// Builds Multi.idx + Multi.mul (old 12-byte format: <c>[uint16 itemId][int16 x][int16 y][int16 z][int32 flags]</c>
+    /// per tile) with a single multi at <paramref name="index" />.
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildMulti(int index, params (ushort ItemId, short X, short Y, short Z)[] tiles)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[tiles.Length * 12];
+
+        for (var i = 0; i < tiles.Length; i++)
+        {
+            var (itemId, x, y, z) = tiles[i];
+            var offset = i * 12;
+
+            BinaryPrimitives.WriteUInt16LittleEndian(mul.AsSpan(offset), itemId);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 2), x);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 4), y);
+            BinaryPrimitives.WriteInt16LittleEndian(mul.AsSpan(offset + 6), z);
+            BinaryPrimitives.WriteInt32LittleEndian(mul.AsSpan(offset + 8), 0); // flags
+        }
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);              // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length); // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), 0);          // extra
+
+        return (idx, mul);
+    }
+
+    /// <summary>Builds radarcol.mul: a flat little-endian array of 16-bit colors.</summary>
+    public static byte[] BuildRadarCol(ushort[] colors)
+    {
+        var buffer = new byte[colors.Length * 2];
+
+        for (var i = 0; i < colors.Length; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(buffer.AsSpan(i * 2), colors[i]);
+        }
+
+        return buffer;
+    }
+
+    /// <summary>
+    /// Builds skills.idx (<c>[int32 lookup][int32 length][int32 extra]</c> per entry) and skills.mul
+    /// (<c>[bool isAction][ASCII name][0]</c> per entry) for the given skills.
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildSkills(params (string Name, bool IsAction, int Extra)[] skills)
+    {
+        using var idxStream = new MemoryStream();
+        using var mulStream = new MemoryStream();
+        using var idx = new BinaryWriter(idxStream);
+        using var mul = new BinaryWriter(mulStream);
+
+        foreach (var (name, isAction, extra) in skills)
+        {
+            var lookup = (int)mulStream.Position;
+
+            mul.Write(isAction);
+            mul.Write(Encoding.ASCII.GetBytes(name));
+            mul.Write((byte)0);
+
+            var length = (int)mulStream.Position - lookup;
+
+            idx.Write(lookup);
+            idx.Write(length);
+            idx.Write(extra);
+        }
+
+        idx.Flush();
+        mul.Flush();
+
+        return (idxStream.ToArray(), mulStream.ToArray());
+    }
+
+    /// <summary>
+    /// Builds soundidx.mul (<c>[int32 lookup][int32 length][int32 extra]</c> per entry, gaps = -1)
+    /// and sound.mul (<c>[32-byte ASCII name][PCM audio]</c> per entry) for the given sounds.
+    /// </summary>
+    public static (byte[] Index, byte[] Sounds) BuildSounds(params (int Id, string Name, byte[] Audio)[] sounds)
+    {
+        var maxId = sounds.Max(s => s.Id);
+        var index = new byte[(maxId + 1) * 12];
+        index.AsSpan().Fill(0xFF); // every missing entry has lookup/length = -1
+
+        var data = new List<byte>();
+
+        foreach (var (id, name, audio) in sounds)
+        {
+            var lookup = data.Count;
+            var nameBuffer = new byte[32];
+            var nameBytes = Encoding.ASCII.GetBytes(name);
+            Array.Copy(nameBytes, nameBuffer, Math.Min(nameBytes.Length, 32));
+
+            data.AddRange(nameBuffer);
+            data.AddRange(audio);
+
+            var record = id * 12;
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), lookup);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), 32 + audio.Length);
+            BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+        }
+
+        return (index, data.ToArray());
+    }
+
+    /// <summary>
+    /// Builds speech.mul: <c>[int16 BE id][int16 BE length][UTF-8 keyword]</c> per entry.
+    /// </summary>
+    public static byte[] BuildSpeech(params (short Id, string KeyWord)[] entries)
+    {
+        using var stream = new MemoryStream();
+        using var bin = new BinaryWriter(stream);
+
+        foreach (var (id, keyword) in entries)
+        {
+            var utf8 = Encoding.UTF8.GetBytes(keyword);
+
+            bin.Write(BinaryPrimitives.ReverseEndianness(id));
+            bin.Write(BinaryPrimitives.ReverseEndianness((short)utf8.Length));
+            bin.Write(utf8);
+        }
+
+        bin.Flush();
+
+        return stream.ToArray();
+    }
+
+    /// <summary>
+    /// Builds artidx.mul + art.mul holding a single solid-color static at
+    /// <paramref name="itemId" /> (record 0x4000 + itemId). All other records are -1.
+    /// </summary>
+    public static (byte[] Index, byte[] Art) BuildStaticArt(int itemId, int width, int height, ushort color)
+    {
+        var pixels = new List<ushort>
+        {
+            0,
+            0,
+            (ushort)width,
+            (ushort)height
+        };
+
+        var rowLength = 2 + width + 2;         // offset+run, pixels, terminator pair
+        var stored = (ushort)(color ^ 0x8000); // the reader XORs every pixel with 0x8000
+
+        for (var y = 0; y < height; y++)
+        {
+            pixels.Add((ushort)(y * rowLength));
+        }
+
+        for (var y = 0; y < height; y++)
+        {
+            pixels.Add(0);             // xOffset
+            pixels.Add((ushort)width); // xRun
+
+            for (var x = 0; x < width; x++)
+            {
+                pixels.Add(stored);
+            }
+
+            pixels.Add(0); // terminator offset
+            pixels.Add(0); // terminator run
+        }
+
+        var art = new byte[pixels.Count * 2];
+
+        for (var i = 0; i < pixels.Count; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(art.AsSpan(i * 2), pixels[i]);
+        }
+
+        var recordCount = 0x4000 + itemId + 1;
+        var index = new byte[recordCount * 12];
+        index.AsSpan().Fill(0xFF); // every lookup/length = -1
+
+        var record = (0x4000 + itemId) * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record), 0);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 4), art.Length);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(record + 8), 0);
+
+        return (index, art);
+    }
+
+    /// <summary>
+    /// Builds staidx0.mul + statics0.mul for a single block containing the given statics.
+    /// Each static: (id, cellX, cellY, z, hue) with cell coordinates inside the block (0-7).
+    /// </summary>
+    public static (byte[] Index, byte[] Statics) BuildStatics(
+        params (ushort Id, byte CellX, byte CellY, sbyte Z, ushort Hue)[] statics
+    )
+    {
+        var data = new byte[statics.Length * 7];
+
+        for (var i = 0; i < statics.Length; i++)
+        {
+            var offset = i * 7;
+            BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset), statics[i].Id);
+            data[offset + 2] = statics[i].CellX;
+            data[offset + 3] = statics[i].CellY;
+            data[offset + 4] = unchecked((byte)statics[i].Z);
+            BinaryPrimitives.WriteUInt16LittleEndian(data.AsSpan(offset + 5), statics[i].Hue);
+        }
+
+        var index = new byte[12];
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(0), 0);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(4), data.Length);
+        BinaryPrimitives.WriteInt32LittleEndian(index.AsSpan(8), 0);
+
+        return (index, data);
+    }
+
+    /// <summary>
+    /// Builds texidx.mul + texmaps.mul with a single texture at <paramref name="index" />:
+    /// a solid <paramref name="size" />x<paramref name="size" /> square of <paramref name="pixel" />
+    /// (raw 16-bit pixels; <paramref name="size" /> is 64 or 128).
+    /// </summary>
+    public static (byte[] Index, byte[] Mul) BuildTexmap(int index, int size, ushort pixel)
+    {
+        var idx = new byte[(index + 1) * 12];
+        idx.AsSpan().Fill(0xFF);
+
+        var mul = new byte[size * size * 2];
+
+        for (var i = 0; i < size * size; i++)
+        {
+            BinaryPrimitives.WriteUInt16LittleEndian(mul.AsSpan(i * 2), pixel);
+        }
+
+        var record = index * 12;
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record), 0);                      // lookup
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 4), mul.Length);         // length
+        BinaryPrimitives.WriteInt32LittleEndian(idx.AsSpan(record + 8), size == 64 ? 0 : 1); // extra
+
+        return (idx, mul);
+    }
+
+    /// <summary>
+    /// Builds an old-format tiledata.mul: the full 0x4000 land table plus one item group
+    /// (32 items). Land and item entries are zeroed except the ones set via the callbacks.
+    /// </summary>
+    public static byte[] BuildTileData(
+        Action<int, uint, ushort, string, byte[]> setLand,
+        Action<int, uint, string, byte[]> setItem
+    )
+    {
+        var buffer = new byte[512 * LandGroupSize + ItemGroupSize];
+
+        setLand(0, 0, 0, string.Empty, buffer);
+        setItem(0, 0, string.Empty, buffer);
+
+        return buffer;
+    }
+
+    /// <summary>Builds an old-format tiledata.mul with the full land table and one item group.</summary>
+    public static byte[] BuildTileData()
+        => new byte[512 * LandGroupSize + ItemGroupSize];
+
+    /// <summary>Builds a new-format (HS 7.0.9+) tiledata.mul with the full land table and one item group.</summary>
+    public static byte[] BuildTileDataNew()
+        => new byte[512 * NewLandGroupSize + NewItemGroupSize];
+
+    /// <summary>
+    /// Builds a zero-filled artidx.mul large enough that the library detects a post-HS
+    /// client (new tiledata format). Pair with <see cref="BuildTileDataNew" />.
+    /// </summary>
+    public static byte[] BuildUoahsArtIndex()
+        => new byte[UoahsArtIdxSize];
+
+    /// <summary>
+    /// Builds a verdata.mul: int32 patch count followed by 20-byte records
+    /// (file, index, lookup, length, extra).
+    /// </summary>
+    public static byte[] BuildVerdata(params (int File, int Index, int Lookup, int Length, int Extra)[] patches)
+    {
+        var buffer = new byte[4 + patches.Length * 20];
+        BinaryPrimitives.WriteInt32LittleEndian(buffer, patches.Length);
+
+        for (var i = 0; i < patches.Length; i++)
+        {
+            var offset = 4 + i * 20;
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset), patches[i].File);
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset + 4), patches[i].Index);
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset + 8), patches[i].Lookup);
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset + 12), patches[i].Length);
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(offset + 16), patches[i].Extra);
+        }
+
+        return buffer;
+    }
+
+    public static string CreateClientDirectory(params (string Name, byte[] Content)[] files)
+    {
+        var dir = Directory.CreateTempSubdirectory("moongate-uo-fixture-").FullName;
+
+        foreach (var (name, content) in files)
+        {
+            File.WriteAllBytes(Path.Combine(dir, name), content);
+        }
+
+        return dir;
+    }
+
+    /// <summary>Writes an old-format item record (flags, anim, height, name) for item <paramref name="id" /> (first group only).</summary>
+    public static void SetItem(byte[] tileData, int id, uint flags, byte height, string name, short anim = 0)
+    {
+        var offset = 512 * LandGroupSize + 4 + id * OldItemRecordSize;
+
+        BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
+        BinaryPrimitives.WriteInt16LittleEndian(tileData.AsSpan(offset + 10), anim);
+        tileData[offset + 16] = height;
+        WriteName(tileData, offset + 17, name);
+    }
+
+    /// <summary>Writes a new-format item record (64-bit flags, height, name) for item <paramref name="id" /> (first group only).</summary>
+    public static void SetItemNew(byte[] tileData, int id, ulong flags, byte height, string name)
+    {
+        var offset = 512 * NewLandGroupSize + 4 + id * NewItemRecordSize;
+
+        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
+        tileData[offset + 20] = height;
+        WriteName(tileData, offset + 21, name);
+    }
+
+    /// <summary>Writes an old-format land record (flags, textureId, name) for tile <paramref name="id" />.</summary>
+    public static void SetLand(byte[] tileData, int id, uint flags, ushort textureId, string name)
+    {
+        var group = id / 32;
+        var inGroup = id % 32;
+        var offset = group * LandGroupSize + 4 + inGroup * OldLandRecordSize;
+
+        BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
+        BinaryPrimitives.WriteUInt16LittleEndian(tileData.AsSpan(offset + 4), textureId);
+        WriteName(tileData, offset + 6, name);
+    }
+
+    /// <summary>Writes a new-format land record (64-bit flags, textureId, name) for tile <paramref name="id" />.</summary>
+    public static void SetLandNew(byte[] tileData, int id, ulong flags, ushort textureId, string name)
+    {
+        var group = id / 32;
+        var inGroup = id % 32;
+        var offset = group * NewLandGroupSize + 4 + inGroup * NewLandRecordSize;
+
+        BinaryPrimitives.WriteUInt64LittleEndian(tileData.AsSpan(offset), flags);
+        BinaryPrimitives.WriteUInt16LittleEndian(tileData.AsSpan(offset + 8), textureId);
+        WriteName(tileData, offset + 10, name);
+    }
+
+    /// <summary>Overwrites one cell of a single-block map built by <see cref="BuildMapBlock" />.</summary>
+    public static void SetMapCell(byte[] mapBlock, int x, int y, ushort landId, sbyte z)
+    {
+        var offset = 4 + (((y & 0x7) << 3) + (x & 0x7)) * 3;
+        BinaryPrimitives.WriteUInt16LittleEndian(mapBlock.AsSpan(offset), landId);
+        mapBlock[offset + 2] = unchecked((byte)z);
+    }
+
     private static void WriteName(byte[] buffer, int offset, string name)
     {
-        byte[] bytes = Encoding.ASCII.GetBytes(name);
+        var bytes = Encoding.ASCII.GetBytes(name);
         Array.Copy(bytes, 0, buffer, offset, Math.Min(bytes.Length, 20));
     }
 }

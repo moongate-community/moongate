@@ -1,0 +1,14 @@
+-   Id: creature.changeling
+    Name: Changeling
+    Category: loot
+    Description: Creature-specific loot for Changeling.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: arrow
+            Amount: 35
+            Chance: 1.0
+        -   ItemTemplateId: bolt
+            Amount: 25
+            Chance: 1.0

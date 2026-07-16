@@ -1,0 +1,2838 @@
+-   Id: ancient_smithy_hammer
+    Name: Ancient Smithy Hammer
+    Category: Special
+    Description: ''
+    ItemId: 5092
+    FlippableItemIds:
+        - 5091
+        - 5092
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: bad_card
+    Name: Bad Card
+    Category: Special
+    Description: ''
+    ItemId: 5359
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: bag_of_sending
+    Name: Bag Of Sending
+    Category: Special
+    Description: ''
+    ItemId: 3702
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: ball_of_summoning
+    Name: Ball Of Summoning
+    Category: Special
+    Description: ''
+    ItemId: 3630
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: banner_deed
+    Name: Banner Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: blue_snowflake
+    Name: Blue Snowflake
+    Category: Special
+    Description: ''
+    ItemId: 9006
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: blue_soulstone
+    Name: Blue Soulstone
+    Category: Special
+    Description: ''
+    ItemId: 10972
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: boiling_cauldron_addon
+    Name: Boiling Cauldron Addon
+    Category: Special
+    Description: ''
+    ItemId: 8296
+    FlippableItemIds:
+        - 8296
+        - 8314
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 9
+-   Id: bracelet_of_binding
+    Name: Bracelet Of Binding
+    Category: Special
+    Description: ''
+    ItemId: 4230
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: cards
+    Name: Cards
+    Category: Special
+    Description: ''
+    ItemId: 3609
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: cards2
+    Name: Cards2
+    Category: Special
+    Description: ''
+    ItemId: 3606
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: cards3
+    Name: Cards3
+    Category: Special
+    Description: ''
+    ItemId: 3605
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: cards4
+    Name: Cards4
+    Category: Special
+    Description: ''
+    ItemId: 3607
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: checkers
+    Name: Checkers
+    Category: Special
+    Description: ''
+    ItemId: 3610
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: checkers2
+    Name: Checkers2
+    Category: Special
+    Description: ''
+    ItemId: 3611
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: chessmen
+    Name: Chessmen
+    Category: Special
+    Description: ''
+    ItemId: 3603
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: chessmen2
+    Name: Chessmen2
+    Category: Special
+    Description: ''
+    ItemId: 3602
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: chessmen3
+    Name: Chessmen3
+    Category: Special
+    Description: ''
+    ItemId: 3604
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: closed_barrel
+    Name: Closed Barrel
+    Category: Special
+    Description: ''
+    ItemId: 4014
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 62
+-   Id: coal
+    Name: Coal
+    Category: Special
+    Description: ''
+    ItemId: 6585
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: colored_anvil
+    Name: Colored Anvil
+    Category: Special
+    Description: ''
+    ItemId: 4015
+    FlippableItemIds:
+        - 4015
+        - 4016
+    Hue: 0
+    GoldValue: 0
+    Weight: 20.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: commodity_deed_box
+    Name: Commodity Deed Box
+    Category: Special
+    Description: ''
+    ItemId: 2474
+    FlippableItemIds:
+        - 2474
+        - 3709
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 67
+-   Id: crossbow_bolts
+    Name: Crossbow Bolts
+    Category: Special
+    Description: ''
+    ItemId: 7164
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: dawns_music_box
+    Name: Dawns Music Box
+    Category: Special
+    Description: ''
+    ItemId: 11001
+    FlippableItemIds:
+        - 11001
+        - 11005
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: dawns_music_gear
+    Name: Dawns Music Gear
+    Category: Special
+    Description: ''
+    ItemId: 4179
+    FlippableItemIds:
+        - 4179
+        - 4180
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: deco_blackmoor
+    Name: Deco Blackmoor
+    Category: Special
+    Description: ''
+    ItemId: 3961
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_bloodspawn
+    Name: Deco Bloodspawn
+    Category: Special
+    Description: ''
+    ItemId: 3964
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_arrow_shafts
+    Name: Deco Arrow Shafts
+    Category: Special
+    Description: ''
+    ItemId: 4132
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_bottles_of_liquor
+    Name: Deco Bottles Of Liquor
+    Category: Special
+    Description: ''
+    ItemId: 2462
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_bridle
+    Name: Deco Bridle
+    Category: Special
+    Description: ''
+    ItemId: 4980
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_bridle2
+    Name: Deco Bridle2
+    Category: Special
+    Description: ''
+    ItemId: 4981
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_brimstone
+    Name: Deco Brimstone
+    Category: Special
+    Description: ''
+    ItemId: 3967
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_cards5
+    Name: Deco Cards5
+    Category: Special
+    Description: ''
+    ItemId: 3608
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_crystal_ball
+    Name: Deco Crystal Ball
+    Category: Special
+    Description: ''
+    ItemId: 3630
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_deck_of_tarot
+    Name: Deco Deck Of Tarot
+    Category: Special
+    Description: ''
+    ItemId: 4779
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_deck_of_tarot2
+    Name: Deco Deck Of Tarot2
+    Category: Special
+    Description: ''
+    ItemId: 4780
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_dragons_blood
+    Name: Deco Dragons Blood
+    Category: Special
+    Description: ''
+    ItemId: 16503
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_dragons_blood2
+    Name: Deco Dragons Blood2
+    Category: Special
+    Description: ''
+    ItemId: 3970
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_eye_of_newt
+    Name: Deco Eye Of Newt
+    Category: Special
+    Description: ''
+    ItemId: 3975
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_flower
+    Name: Deco Flower
+    Category: Special
+    Description: ''
+    ItemId: 6362
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_flower2
+    Name: Deco Flower2
+    Category: Special
+    Description: ''
+    ItemId: 6361
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_full_jar
+    Name: Deco Full Jar
+    Category: Special
+    Description: ''
+    ItemId: 4102
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_full_jars3
+    Name: Deco Full Jars3
+    Category: Special
+    Description: ''
+    ItemId: 3658
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_full_jars4
+    Name: Deco Full Jars4
+    Category: Special
+    Description: ''
+    ItemId: 3659
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_garlic
+    Name: Deco Garlic
+    Category: Special
+    Description: ''
+    ItemId: 6369
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_garlic_bulb
+    Name: Deco Garlic Bulb
+    Category: Special
+    Description: ''
+    ItemId: 6371
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_garlic_bulb2
+    Name: Deco Garlic Bulb2
+    Category: Special
+    Description: ''
+    ItemId: 6372
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_garlic2
+    Name: Deco Garlic2
+    Category: Special
+    Description: ''
+    ItemId: 6370
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_ginseng
+    Name: Deco Ginseng
+    Category: Special
+    Description: ''
+    ItemId: 6377
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_ginseng_root
+    Name: Deco Ginseng Root
+    Category: Special
+    Description: ''
+    ItemId: 6379
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_ginseng_root2
+    Name: Deco Ginseng Root2
+    Category: Special
+    Description: ''
+    ItemId: 6380
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_ginseng2
+    Name: Deco Ginseng2
+    Category: Special
+    Description: ''
+    ItemId: 6378
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingot
+    Name: Deco Gold Ingot
+    Category: Special
+    Description: ''
+    ItemId: 7145
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingot2
+    Name: Deco Gold Ingot2
+    Category: Special
+    Description: ''
+    ItemId: 7148
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingots
+    Name: Deco Gold Ingots
+    Category: Special
+    Description: ''
+    ItemId: 7146
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingots2
+    Name: Deco Gold Ingots2
+    Category: Special
+    Description: ''
+    ItemId: 7147
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingots3
+    Name: Deco Gold Ingots3
+    Category: Special
+    Description: ''
+    ItemId: 7149
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_gold_ingots4
+    Name: Deco Gold Ingots4
+    Category: Special
+    Description: ''
+    ItemId: 7150
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_hay
+    Name: Deco Hay
+    Category: Special
+    Description: ''
+    ItemId: 3893
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_hay2
+    Name: Deco Hay2
+    Category: Special
+    Description: ''
+    ItemId: 3892
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_horse_dung
+    Name: Deco Horse Dung
+    Category: Special
+    Description: ''
+    ItemId: 3899
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingot
+    Name: Deco Iron Ingot
+    Category: Special
+    Description: ''
+    ItemId: 7151
+    FlippableItemIds:
+        - 7154
+        - 7151
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingot2
+    Name: Deco Iron Ingot2
+    Category: Special
+    Description: ''
+    ItemId: 7151
+    FlippableItemIds:
+        - 7154
+        - 7151
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots
+    Name: Deco Iron Ingots
+    Category: Special
+    Description: ''
+    ItemId: 7153
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots2
+    Name: Deco Iron Ingots2
+    Category: Special
+    Description: ''
+    ItemId: 7152
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots3
+    Name: Deco Iron Ingots3
+    Category: Special
+    Description: ''
+    ItemId: 7152
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots4
+    Name: Deco Iron Ingots4
+    Category: Special
+    Description: ''
+    ItemId: 7153
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots5
+    Name: Deco Iron Ingots5
+    Category: Special
+    Description: ''
+    ItemId: 7155
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_iron_ingots6
+    Name: Deco Iron Ingots6
+    Category: Special
+    Description: ''
+    ItemId: 7156
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_magical_crystal
+    Name: Deco Magical Crystal
+    Category: Special
+    Description: ''
+    ItemId: 7961
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_mandrake
+    Name: Deco Mandrake
+    Category: Special
+    Description: ''
+    ItemId: 6367
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_mandrake_root
+    Name: Deco Mandrake Root
+    Category: Special
+    Description: ''
+    ItemId: 6366
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_mandrake_root2
+    Name: Deco Mandrake Root2
+    Category: Special
+    Description: ''
+    ItemId: 6365
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_mandrake2
+    Name: Deco Mandrake2
+    Category: Special
+    Description: ''
+    ItemId: 6368
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_mandrake3
+    Name: Deco Mandrake3
+    Category: Special
+    Description: ''
+    ItemId: 6367
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_nightshade
+    Name: Deco Nightshade
+    Category: Special
+    Description: ''
+    ItemId: 6375
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_nightshade2
+    Name: Deco Nightshade2
+    Category: Special
+    Description: ''
+    ItemId: 6373
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_nightshade3
+    Name: Deco Nightshade3
+    Category: Special
+    Description: ''
+    ItemId: 6374
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_obsidian
+    Name: Deco Obsidian
+    Category: Special
+    Description: ''
+    ItemId: 3977
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_pumice
+    Name: Deco Pumice
+    Category: Special
+    Description: ''
+    ItemId: 3979
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rock
+    Name: Deco Rock
+    Category: Special
+    Description: ''
+    ItemId: 6008
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rock2
+    Name: Deco Rock2
+    Category: Special
+    Description: ''
+    ItemId: 4963
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rocks
+    Name: Deco Rocks
+    Category: Special
+    Description: ''
+    ItemId: 4967
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rocks2
+    Name: Deco Rocks2
+    Category: Special
+    Description: ''
+    ItemId: 4973
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rose_of_trinsic
+    Name: Deco Rose Of Trinsic
+    Category: Special
+    Description: ''
+    ItemId: 9036
+    FlippableItemIds:
+        - 9036
+        - 9037
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rose_of_trinsic2
+    Name: Deco Rose Of Trinsic2
+    Category: Special
+    Description: ''
+    ItemId: 9037
+    FlippableItemIds:
+        - 9036
+        - 9037
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_rose_of_trinsic3
+    Name: Deco Rose Of Trinsic3
+    Category: Special
+    Description: ''
+    ItemId: 9035
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingot
+    Name: Deco Silver Ingot
+    Category: Special
+    Description: ''
+    ItemId: 7157
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingot2
+    Name: Deco Silver Ingot2
+    Category: Special
+    Description: ''
+    ItemId: 7160
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingots
+    Name: Deco Silver Ingots
+    Category: Special
+    Description: ''
+    ItemId: 7162
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingots2
+    Name: Deco Silver Ingots2
+    Category: Special
+    Description: ''
+    ItemId: 7158
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingots3
+    Name: Deco Silver Ingots3
+    Category: Special
+    Description: ''
+    ItemId: 7159
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingots4
+    Name: Deco Silver Ingots4
+    Category: Special
+    Description: ''
+    ItemId: 7161
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_silver_ingots5
+    Name: Deco Silver Ingots5
+    Category: Special
+    Description: ''
+    ItemId: 7162
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_spittoon
+    Name: Deco Spittoon
+    Category: Special
+    Description: ''
+    ItemId: 4099
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot
+    Name: Deco Tarot
+    Category: Special
+    Description: ''
+    ItemId: 4773
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot2
+    Name: Deco Tarot2
+    Category: Special
+    Description: ''
+    ItemId: 4774
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot3
+    Name: Deco Tarot3
+    Category: Special
+    Description: ''
+    ItemId: 4775
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot4
+    Name: Deco Tarot4
+    Category: Special
+    Description: ''
+    ItemId: 4776
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot5
+    Name: Deco Tarot5
+    Category: Special
+    Description: ''
+    ItemId: 4777
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot6
+    Name: Deco Tarot6
+    Category: Special
+    Description: ''
+    ItemId: 4778
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tarot7
+    Name: Deco Tarot7
+    Category: Special
+    Description: ''
+    ItemId: 4773
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_tray2
+    Name: Deco Tray2
+    Category: Special
+    Description: ''
+    ItemId: 2449
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: deco_wyrms_heart
+    Name: Deco Wyrms Heart
+    Category: Special
+    Description: ''
+    ItemId: 3985
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: decorative_shield_deed
+    Name: Decorative Shield Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: dupres_shield
+    Name: Dupres Shield
+    Category: Special
+    Description: ''
+    ItemId: 11009
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: earrings_of_protection
+    Name: Earrings Of Protection
+    Category: Special
+    Description: ''
+    ItemId: 4231
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_jar
+    Name: Empty Jar
+    Category: Special
+    Description: ''
+    ItemId: 4101
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_jars
+    Name: Empty Jars
+    Category: Special
+    Description: ''
+    ItemId: 3652
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_jars2
+    Name: Empty Jars2
+    Category: Special
+    Description: ''
+    ItemId: 3653
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_jars3
+    Name: Empty Jars3
+    Category: Special
+    Description: ''
+    ItemId: 3654
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_jars4
+    Name: Empty Jars4
+    Category: Special
+    Description: ''
+    ItemId: 3655
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_tool_kit
+    Name: Empty Tool Kit
+    Category: Special
+    Description: ''
+    ItemId: 7862
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: empty_tool_kit2
+    Name: Empty Tool Kit2
+    Category: Special
+    Description: ''
+    ItemId: 7863
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: tool_kit
+    Name: Tool Kit
+    Category: Special
+    Description: ''
+    ItemId: 7866
+    FlippableItemIds:
+        - 7866
+        - 7867
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: flaming_head_deed
+    Name: Flaming Head Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: fountain_of_life
+    Name: Fountain Of Life
+    Category: Special
+    Description: ''
+    ItemId: 10944
+    FlippableItemIds:
+        - 10944
+        - 10947
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+    Container:
+        MaxItems: 125
+-   Id: gift_box
+    Name: Gift Box
+    Category: Special
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: gift_box_angel
+    Name: Gift Box Angel
+    Category: Special
+    Description: ''
+    ItemId: 18087
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 287
+-   Id: gift_box_cube
+    Name: Gift Box Cube
+    Category: Special
+    Description: ''
+    ItemId: 18082
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 283
+-   Id: gift_box_cylinder
+    Name: Gift Box Cylinder
+    Category: Special
+    Description: ''
+    ItemId: 18083
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 284
+-   Id: gift_box_octogon
+    Name: Gift Box Octogon
+    Category: Special
+    Description: ''
+    ItemId: 18084
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 285
+-   Id: green_stocking
+    Name: Green Stocking
+    Category: Special
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: grizzled_mare_statuette
+    Name: Grizzled Mare Statuette
+    Category: Special
+    Description: ''
+    ItemId: 9751
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: half_empty_jar
+    Name: Half Empty Jar
+    Category: Special
+    Description: ''
+    ItemId: 4103
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: half_empty_jars
+    Name: Half Empty Jars
+    Category: Special
+    Description: ''
+    ItemId: 3660
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: hanging_skeleton_deed
+    Name: Hanging Skeleton Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: heritage_token
+    Name: Heritage Token
+    Category: Special
+    Description: ''
+    ItemId: 13946
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: holiday_bell
+    Name: Holiday Bell
+    Category: Special
+    Description: ''
+    ItemId: 7186
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: holiday_timepiece
+    Name: Holiday Timepiece
+    Category: Special
+    Description: ''
+    ItemId: 4230
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: hooded_shroud_of_shadows
+    Name: Hooded Shroud Of Shadows
+    Category: Special
+    Description: ''
+    ItemId: 9860
+    FlippableItemIds:
+        - 9860
+        - 9859
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: house_raffle_deed
+    Name: House Raffle Deed
+    Category: Special
+    Description: ''
+    ItemId: 10288
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: house_raffle_stone
+    Name: House Raffle Stone
+    Category: Special
+    Description: ''
+    ItemId: 3805
+    FlippableItemIds:
+        - 3805
+        - 3806
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: icicle_large_east
+    Name: Icicle Large East
+    Category: Special
+    Description: ''
+    ItemId: 17781
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: icicle_large_south
+    Name: Icicle Large South
+    Category: Special
+    Description: ''
+    ItemId: 17778
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: icicle_med_east
+    Name: Icicle Med East
+    Category: Special
+    Description: ''
+    ItemId: 17782
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: icicle_med_south
+    Name: Icicle Med South
+    Category: Special
+    Description: ''
+    ItemId: 17779
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: icicle_small_east
+    Name: Icicle Small East
+    Category: Special
+    Description: ''
+    ItemId: 17783
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: icicle_small_south
+    Name: Icicle Small South
+    Category: Special
+    Description: ''
+    ItemId: 17780
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: jars2
+    Name: Jars2
+    Category: Special
+    Description: ''
+    ItemId: 3661
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: jars3
+    Name: Jars3
+    Category: Special
+    Description: ''
+    ItemId: 3662
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: jars4
+    Name: Jars4
+    Category: Special
+    Description: ''
+    ItemId: 3663
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: jester_hatof_chuckles
+    Name: Jester Hatof Chuckles
+    Category: Special
+    Description: ''
+    ItemId: 5916
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: leather_gloves_of_mining
+    Name: Leather Gloves Of Mining
+    Category: Special
+    Description: ''
+    ItemId: 5062
+    FlippableItemIds:
+        - 5062
+        - 5070
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: lucky_necklace
+    Name: Lucky Necklace
+    Category: Special
+    Description: ''
+    ItemId: 4232
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: minotaur_hedge
+    Name: Minotaur Hedge
+    Category: Special
+    Description: ''
+    ItemId: 4
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: plague_beast_gland
+    Name: Plague Beast Gland
+    Category: Special
+    Description: ''
+    ItemId: 7407
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: plague_beast_mutation_core
+    Name: Plague Beast Mutation Core
+    Category: Special
+    Description: ''
+    ItemId: 7408
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: playing_cards
+    Name: Playing Cards
+    Category: Special
+    Description: ''
+    ItemId: 4003
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: playing_cards2
+    Name: Playing Cards2
+    Category: Special
+    Description: ''
+    ItemId: 4002
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: potted_cactus_deed
+    Name: Potted Cactus Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: potted_plant_deed
+    Name: Potted Plant Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: powder_of_temperament
+    Name: Powder Of Temperament
+    Category: Special
+    Description: ''
+    ItemId: 4102
+    Hue: 2419
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: powder_of_translocation
+    Name: Powder Of Translocation
+    Category: Special
+    Description: ''
+    ItemId: 9912
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.1
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: quiver
+    Name: Quiver
+    Category: Special
+    Description: ''
+    ItemId: 12215
+    FlippableItemIds:
+        - 12215
+        - 12657
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        GumpId: 264
+        IsQuiver: true
+        WeightReduction: 30
+        QuiverDamageIncrease: 10
+-   Id: quiver_of_infinity
+    Name: Quiver Of Infinity
+    Category: Special
+    Description: ''
+    ItemId: 11010
+    Hue: 0
+    GoldValue: 0
+    Weight: 8.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        GumpId: 264
+        IsQuiver: true
+        WeightReduction: 30
+        QuiverDamageIncrease: 10
+        LowerAmmoCost: 20
+        DefenseChanceIncrease: 5
+-   Id: red_poinsettia
+    Name: Red Poinsettia
+    Category: Special
+    Description: ''
+    ItemId: 9008
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: red_soulstone
+    Name: Red Soulstone
+    Category: Special
+    Description: ''
+    ItemId: 13043
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: red_stocking
+    Name: Red Stocking
+    Category: Special
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: red_velvet_gift_box
+    Name: Red Velvet Gift Box
+    Category: Special
+    Description: ''
+    ItemId: 3706
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 63
+-   Id: reward_brazier_deed
+    Name: Reward Brazier Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: reward_cake
+    Name: Reward Cake
+    Category: Special
+    Description: ''
+    ItemId: 2537
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: ringmail_gloves_of_mining
+    Name: Ringmail Gloves Of Mining
+    Category: Special
+    Description: ''
+    ItemId: 5099
+    FlippableItemIds:
+        - 5099
+        - 5106
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: rose_in_a_vase
+    Name: Rose In A Vase
+    Category: Special
+    Description: ''
+    ItemId: 3760
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: rose_of_trinsic
+    Name: Rose Of Trinsic
+    Category: Special
+    Description: ''
+    ItemId: 9037
+    FlippableItemIds:
+        - 9036
+        - 9037
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: rose_of_trinsic_petal
+    Name: Rose Of Trinsic Petal
+    Category: Special
+    Description: ''
+    ItemId: 4129
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: sacrificial_altar_addon
+    Name: Sacrificial Altar Addon
+    Category: Special
+    Description: ''
+    ItemId: 10907
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+    Container:
+        WeightMax: 0
+-   Id: samurai_helm
+    Name: Samurai Helm
+    Category: Special
+    Description: ''
+    ItemId: 9068
+    FlippableItemIds:
+        - 9068
+        - 9069
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snow_statue_deed
+    Name: Snow Statue Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snow_statue_griffon
+    Name: Snow Statue Griffon
+    Category: Special
+    Description: ''
+    ItemId: 17788
+    FlippableItemIds:
+        - 17788
+        - 17789
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snow_statue_mermaid
+    Name: Snow Statue Mermaid
+    Category: Special
+    Description: ''
+    ItemId: 17786
+    FlippableItemIds:
+        - 17786
+        - 17787
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snow_statue_pegasus
+    Name: Snow Statue Pegasus
+    Category: Special
+    Description: ''
+    ItemId: 17774
+    FlippableItemIds:
+        - 17774
+        - 17775
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snow_statue_seahorse
+    Name: Snow Statue Seahorse
+    Category: Special
+    Description: ''
+    ItemId: 17784
+    FlippableItemIds:
+        - 17784
+        - 17785
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: snowman
+    Name: Snowman
+    Category: Special
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 10.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: soulstone_fragment
+    Name: Soulstone Fragment
+    Category: Special
+    Description: ''
+    ItemId: 9
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: spam
+    Name: Spam
+    Category: Special
+    Description: ''
+    ItemId: 4164
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: studded_gloves_of_mining
+    Name: Studded Gloves Of Mining
+    Category: Special
+    Description: ''
+    ItemId: 5077
+    FlippableItemIds:
+        - 5077
+        - 5085
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: tapestry_of_sosaria
+    Name: Tapestry Of Sosaria
+    Category: Special
+    Description: ''
+    ItemId: 9038
+    FlippableItemIds:
+        - 9038
+        - 9039
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: tormented_chains
+    Name: Tormented Chains
+    Category: Special
+    Description: ''
+    ItemId: 2
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: unfinished_barrel
+    Name: Unfinished Barrel
+    Category: Special
+    Description: ''
+    ItemId: 7861
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: valentines_card_east
+    Name: Valentines Card East
+    Category: Special
+    Description: ''
+    ItemId: 3774
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: valentines_card_south
+    Name: Valentines Card South
+    Category: Special
+    Description: ''
+    ItemId: 3773
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: weapon_engraving_tool
+    Name: Weapon Engraving Tool
+    Category: Special
+    Description: ''
+    ItemId: 13048
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: white_poinsettia
+    Name: White Poinsettia
+    Category: Special
+    Description: ''
+    ItemId: 9009
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: white_snowflake
+    Name: White Snowflake
+    Category: Special
+    Description: ''
+    ItemId: 9007
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: wreath_addon
+    Name: Wreath Addon
+    Category: Special
+    Description: ''
+    ItemId: 9004
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: wreath_deed
+    Name: Wreath Deed
+    Category: Special
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+        - flippable
+-   Id: wrist_watch
+    Name: Wrist Watch
+    Category: Special
+    Description: ''
+    ItemId: 4230
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: zoogi_fungus
+    Name: Zoogi Fungus
+    Category: Special
+    Description: ''
+    ItemId: 9911
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.1
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special
+-   Id: rose_in_avase
+    Name: Rose In AVase
+    Category: Special
+    Description: ''
+    ItemId: 3760
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - special

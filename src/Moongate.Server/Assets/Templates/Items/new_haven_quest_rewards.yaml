@@ -1,0 +1,28 @@
+-   Id: amelias_toolbox
+    Name: Amelias Toolbox
+    Category: New Haven Quest Rewards
+    Description: ''
+    ItemId: 500
+    Hue: 1895
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - new haven quest rewards
+-   Id: hallowed_spellbook
+    Name: Hallowed Spellbook
+    Category: New Haven Quest Rewards
+    Description: ''
+    ItemId: 0
+    Hue: 0
+    GoldValue: 0
+    Weight: 0.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - new haven quest rewards

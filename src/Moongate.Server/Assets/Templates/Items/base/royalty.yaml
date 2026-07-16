@@ -1,0 +1,42 @@
+-   Id: queen_gilded_dress
+    Name: Queen Gilded Dress
+    Category: Royalty
+    Description: Royal outfit dress for queen/princess style NPCs.
+    ItemId: 8974
+    Hue: 1150
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - royalty
+        - npc
+        - clothing
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: queen_boots
+    Name: Queen Boots
+    Category: Royalty
+    Description: Royal outfit boots for queen/princess style NPCs.
+    ItemId: 5899
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - royalty
+        - npc
+        - clothing
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0

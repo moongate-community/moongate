@@ -1,0 +1,1603 @@
+-   Id: bandana
+    Name: Bandana
+    Category: Clothing
+    Description: ''
+    ItemId: 5440
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bear_mask
+    Name: Bear Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5445
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: body_sash
+    Name: Body Sash
+    Category: Clothing
+    Description: ''
+    ItemId: 5441
+    FlippableItemIds:
+        - 5441
+        - 5442
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: bonnet
+    Name: Bonnet
+    Category: Clothing
+    Description: ''
+    ItemId: 5913
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: boots
+    Name: Boots
+    Category: Clothing
+    Description: ''
+    ItemId: 5899
+    FlippableItemIds:
+        - 5899
+        - 5900
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: cap
+    Name: Cap
+    Category: Clothing
+    Description: ''
+    ItemId: 5909
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: cloak
+    Name: Cloak
+    Category: Clothing
+    Description: ''
+    ItemId: 5397
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Cloak
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: cloth_ninja_hood
+    Name: Cloth Ninja Hood
+    Category: Clothing
+    Description: ''
+    ItemId: 10127
+    FlippableItemIds:
+        - 10127
+        - 10202
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: cloth_ninja_jacket
+    Name: Cloth Ninja Jacket
+    Category: Clothing
+    Description: ''
+    ItemId: 10132
+    FlippableItemIds:
+        - 10132
+        - 10207
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: InnerTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: deer_mask
+    Name: Deer Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5447
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: doublet
+    Name: Doublet
+    Category: Clothing
+    Description: ''
+    ItemId: 8059
+    FlippableItemIds:
+        - 8059
+        - 8060
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: elven_boots
+    Name: Elven Boots
+    Category: Clothing
+    Description: ''
+    ItemId: 12228
+    FlippableItemIds:
+        - 12228
+        - 12666
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: elven_dark_shirt
+    Name: Elven Dark Shirt
+    Category: Clothing
+    Description: ''
+    ItemId: 12662
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Shirt
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: elven_pants
+    Name: Elven Pants
+    Category: Clothing
+    Description: ''
+    ItemId: 12227
+    FlippableItemIds:
+        - 12227
+        - 12665
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: elven_shirt
+    Name: Elven Shirt
+    Category: Clothing
+    Description: ''
+    ItemId: 12661
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shirt
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: fancy_dress
+    Name: Fancy Dress
+    Category: Clothing
+    Description: ''
+    ItemId: 7936
+    FlippableItemIds:
+        - 7936
+        - 7935
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: fancy_shirt
+    Name: Fancy Shirt
+    Category: Clothing
+    Description: ''
+    ItemId: 7933
+    FlippableItemIds:
+        - 7933
+        - 7934
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shirt
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: feathered_hat
+    Name: Feathered Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5914
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_elven_robe
+    Name: Female Elven Robe
+    Category: Clothing
+    Description: ''
+    ItemId: 12218
+    FlippableItemIds:
+        - 12218
+        - 12660
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: female_kimono
+    Name: Female Kimono
+    Category: Clothing
+    Description: ''
+    ItemId: 10115
+    FlippableItemIds:
+        - 10115
+        - 10190
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: floppy_hat
+    Name: Floppy Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5907
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: flower_garland
+    Name: Flower Garland
+    Category: Clothing
+    Description: ''
+    ItemId: 8966
+    FlippableItemIds:
+        - 8966
+        - 8965
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: formal_shirt
+    Name: Formal Shirt
+    Category: Clothing
+    Description: ''
+    ItemId: 8976
+    FlippableItemIds:
+        - 8976
+        - 8975
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: full_apron
+    Name: Full Apron
+    Category: Clothing
+    Description: ''
+    ItemId: 5437
+    FlippableItemIds:
+        - 5437
+        - 5438
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: fur_boots
+    Name: Fur Boots
+    Category: Clothing
+    Description: ''
+    ItemId: 8967
+    FlippableItemIds:
+        - 8967
+        - 8968
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: fur_cape
+    Name: Fur Cape
+    Category: Clothing
+    Description: ''
+    ItemId: 8970
+    FlippableItemIds:
+        - 8970
+        - 8969
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Cloak
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: fur_sarong
+    Name: Fur Sarong
+    Category: Clothing
+    Description: ''
+    ItemId: 8972
+    FlippableItemIds:
+        - 8972
+        - 8971
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: gilded_dress
+    Name: Gilded Dress
+    Category: Clothing
+    Description: ''
+    ItemId: 8974
+    FlippableItemIds:
+        - 8974
+        - 8973
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hakama
+    Name: Hakama
+    Category: Clothing
+    Description: ''
+    ItemId: 10138
+    FlippableItemIds:
+        - 10138
+        - 10213
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: hakama_shita
+    Name: Hakama Shita
+    Category: Clothing
+    Description: ''
+    ItemId: 10140
+    FlippableItemIds:
+        - 10140
+        - 10215
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: half_apron
+    Name: Half Apron
+    Category: Clothing
+    Description: ''
+    ItemId: 5435
+    FlippableItemIds:
+        - 5435
+        - 5436
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Waist
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: horned_tribal_mask
+    Name: Horned Tribal Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5449
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: jester_hat
+    Name: Jester Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5916
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: jester_suit
+    Name: Jester Suit
+    Category: Clothing
+    Description: ''
+    ItemId: 8095
+    FlippableItemIds:
+        - 8095
+        - 8096
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: jin_baori
+    Name: Jin Baori
+    Category: Clothing
+    Description: ''
+    ItemId: 10145
+    FlippableItemIds:
+        - 10145
+        - 10220
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: kamishimo
+    Name: Kamishimo
+    Category: Clothing
+    Description: ''
+    ItemId: 10137
+    FlippableItemIds:
+        - 10137
+        - 10212
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: kasa
+    Name: Kasa
+    Category: Clothing
+    Description: ''
+    ItemId: 10136
+    FlippableItemIds:
+        - 10136
+        - 10211
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: kilt
+    Name: Kilt
+    Category: Clothing
+    Description: ''
+    ItemId: 5431
+    FlippableItemIds:
+        - 5431
+        - 5432
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: long_pants
+    Name: Long Pants
+    Category: Clothing
+    Description: ''
+    ItemId: 5433
+    FlippableItemIds:
+        - 5433
+        - 5434
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: magic_wizards_hat
+    Name: Magic Wizards Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5912
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: male_elven_robe
+    Name: Male Elven Robe
+    Category: Clothing
+    Description: ''
+    ItemId: 12217
+    FlippableItemIds:
+        - 12217
+        - 12659
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: male_kimono
+    Name: Male Kimono
+    Category: Clothing
+    Description: ''
+    ItemId: 10114
+    FlippableItemIds:
+        - 10114
+        - 10189
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: monk_robe
+    Name: Monk Robe
+    Category: Clothing
+    Description: ''
+    ItemId: 9863
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: ninja_tabi
+    Name: Ninja Tabi
+    Category: Clothing
+    Description: ''
+    ItemId: 10135
+    FlippableItemIds:
+        - 10135
+        - 10210
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: obi
+    Name: Obi
+    Category: Clothing
+    Description: ''
+    ItemId: 10144
+    FlippableItemIds:
+        - 10144
+        - 10219
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Waist
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: orcish_kin_mask
+    Name: Orcish Kin Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5147
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: plain_dress
+    Name: Plain Dress
+    Category: Clothing
+    Description: ''
+    ItemId: 7937
+    FlippableItemIds:
+        - 7937
+        - 7938
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: reward_cloak
+    Name: Reward Cloak
+    Category: Clothing
+    Description: ''
+    ItemId: 5397
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Cloak
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: reward_dress
+    Name: Reward Dress
+    Category: Clothing
+    Description: ''
+    ItemId: 7937
+    FlippableItemIds:
+        - 7937
+        - 7938
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: reward_robe
+    Name: Reward Robe
+    Category: Clothing
+    Description: ''
+    ItemId: 7939
+    FlippableItemIds:
+        - 7939
+        - 7940
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: robe
+    Name: Robe
+    Category: Clothing
+    Description: ''
+    ItemId: 7939
+    FlippableItemIds:
+        - 7939
+        - 7940
+    Hue: 0
+    GoldValue: 0
+    Weight: 3.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: OuterTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: samurai_tabi
+    Name: Samurai Tabi
+    Category: Clothing
+    Description: ''
+    ItemId: 10134
+    FlippableItemIds:
+        - 10134
+        - 10209
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: sandals
+    Name: Sandals
+    Category: Clothing
+    Description: ''
+    ItemId: 5901
+    FlippableItemIds:
+        - 5901
+        - 5902
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: savage_mask
+    Name: Savage Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5451
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: shirt
+    Name: Shirt
+    Category: Clothing
+    Description: ''
+    ItemId: 5399
+    FlippableItemIds:
+        - 5399
+        - 5400
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shirt
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: shoes
+    Name: Shoes
+    Category: Clothing
+    Description: ''
+    ItemId: 5903
+    FlippableItemIds:
+        - 5903
+        - 5904
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: short_pants
+    Name: Short Pants
+    Category: Clothing
+    Description: ''
+    ItemId: 5422
+    FlippableItemIds:
+        - 5422
+        - 5423
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: skirt
+    Name: Skirt
+    Category: Clothing
+    Description: ''
+    ItemId: 5398
+    FlippableItemIds:
+        - 5398
+        - 5425
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: OuterLegs
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: skull_cap
+    Name: Skull Cap
+    Category: Clothing
+    Description: ''
+    ItemId: 5444
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: straw_hat
+    Name: Straw Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5911
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: surcoat
+    Name: Surcoat
+    Category: Clothing
+    Description: ''
+    ItemId: 8189
+    FlippableItemIds:
+        - 8189
+        - 8190
+    Hue: 0
+    GoldValue: 0
+    Weight: 6.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: tall_straw_hat
+    Name: Tall Straw Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5910
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: tattsuke_hakama
+    Name: Tattsuke Hakama
+    Category: Clothing
+    Description: ''
+    ItemId: 10139
+    FlippableItemIds:
+        - 10139
+        - 10214
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Pants
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: thigh_boots
+    Name: Thigh Boots
+    Category: Clothing
+    Description: ''
+    ItemId: 5905
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: tribal_mask
+    Name: Tribal Mask
+    Category: Clothing
+    Description: ''
+    ItemId: 5451
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: tricorne_hat
+    Name: Tricorne Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5915
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: tunic
+    Name: Tunic
+    Category: Clothing
+    Description: ''
+    ItemId: 8097
+    FlippableItemIds:
+        - 8097
+        - 8098
+    Hue: 0
+    GoldValue: 0
+    Weight: 5.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: MiddleTorso
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: waraji
+    Name: Waraji
+    Category: Clothing
+    Description: ''
+    ItemId: 10134
+    FlippableItemIds:
+        - 10134
+        - 10209
+    Hue: 0
+    GoldValue: 0
+    Weight: 2.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Shoes
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: wide_brim_hat
+    Name: Wide Brim Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5908
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: wizards_hat
+    Name: Wizards Hat
+    Category: Clothing
+    Description: ''
+    ItemId: 5912
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+    Equip:
+        Layer: Helm
+        HitPoints: 30
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0
+-   Id: woodland_belt
+    Name: Woodland Belt
+    Category: Clothing
+    Description: ''
+    ItemId: 11112
+    FlippableItemIds:
+        - 11112
+        - 12639
+    Hue: 0
+    GoldValue: 0
+    Weight: 4.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - clothing
+        - flippable
+    Equip:
+        Layer: Waist
+        HitPoints: 0
+        StrengthReq: 0
+        DexterityReq: 0
+        IntelligenceReq: 0

@@ -1,0 +1,17 @@
+-   Id: creature.sea_serpent
+    Name: SeaSerpent
+    Category: loot
+    Description: Creature-specific loot for SeaSerpent.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: sulfurous_ash
+            Amount: 4
+            Chance: 1.0
+        -   ItemTemplateId: black_pearl
+            Amount: 4
+            Chance: 1.0
+        -   ItemTemplateId: raw_fish_steak
+            Amount: 1
+            Chance: 1.0

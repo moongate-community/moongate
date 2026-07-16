@@ -1,0 +1,49 @@
+-   Id: guild_deed
+    Name: Guild Deed
+    Category: Guilds
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - guilds
+-   Id: guild_teleporter
+    Name: Guild Teleporter
+    Category: Guilds
+    Description: ''
+    ItemId: 6249
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - guilds
+-   Id: guildstone_deed
+    Name: Guildstone Deed
+    Category: Guilds
+    Description: ''
+    ItemId: 5360
+    FlippableItemIds:
+        - 5360
+        - 5359
+    Hue: 0
+    GoldValue: 0
+    Weight: 1.0
+    ScriptId: none
+    IsMovable: true
+    Rarity: Common
+    Tags:
+        - modernuo
+        - guilds
+        - flippable

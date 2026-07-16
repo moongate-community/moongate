@@ -1,0 +1,78 @@
+-   Id: vendor.blacksmith
+    Name: BlacksmithVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+-   Id: vendor.weaponsmith
+    Name: WeaponsmithVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+-   Id: vendor.armorer
+    Name: ArmorerVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+-   Id: vendor.provisioner
+    Name: ProvisionerVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+        -   ItemTemplateId: torch
+            Amount: 1
+            Chance: 1.0
+-   Id: vendor.mage
+    Name: MageVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+-   Id: vendor.healer
+    Name: HealerVendorLoot
+    Category: loot
+    Description: ''
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: gold
+            Chance: 1.0
+            AmountMin: 5
+            AmountMax: 15
+        -   ItemTemplateId: bandage
+            Amount: 1
+            Chance: 1.0

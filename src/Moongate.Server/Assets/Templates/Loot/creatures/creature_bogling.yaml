@@ -1,0 +1,14 @@
+-   Id: creature.bogling
+    Name: Bogling
+    Category: loot
+    Description: Creature-specific loot for Bogling.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: log
+            Amount: 4
+            Chance: 1.0
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

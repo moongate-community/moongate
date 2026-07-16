@@ -1,0 +1,17 @@
+-   Id: creature.plague_beast
+    Name: PlagueBeast
+    Category: loot
+    Description: Creature-specific loot for PlagueBeast.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: plague_beast_gland
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: metal_chest
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: seed
+            Amount: 1
+            Chance: 1.0

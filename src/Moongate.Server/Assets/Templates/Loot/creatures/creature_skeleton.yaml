@@ -1,0 +1,23 @@
+-   Id: creature.skeleton
+    Name: Skeleton
+    Category: loot
+    Description: Creature-specific loot for Skeleton.
+    Mode: Additive
+    Rolls: 1
+    NoDropWeight: 0
+    Entries:
+        -   ItemTemplateId: bone_arms
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bone_chest
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bone_gloves
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bone_legs
+            Amount: 1
+            Chance: 1.0
+        -   ItemTemplateId: bone_helm
+            Amount: 1
+            Chance: 1.0
