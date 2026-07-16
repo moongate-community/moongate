@@ -18,6 +18,7 @@ concurrency:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: moongate-community/moongate
+  DOCKERHUB_IMAGE_NAME: tgiachi/moongate-server
 
 jobs:
   gate:
@@ -326,7 +327,7 @@ jobs:
           fi
 
   publish:
-    name: Publish GHCR image
+    name: Publish container images
     needs:
       - gate
       - verify
@@ -364,6 +365,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Resolve release commit tag
         id: release_commit
         run: echo "sha_tag=sha-$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
@@ -380,7 +387,9 @@ jobs:
         uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           context: git
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            docker.io/${{ env.DOCKERHUB_IMAGE_NAME }}
           tags: |
             type=raw,value=${{ env.RELEASE_VERSION }}
             type=raw,value=${{ steps.rolling_tags.outputs.minor_tag }},enable=${{ steps.rolling_tags.outputs.update_minor }}
@@ -400,5 +409,16 @@ jobs:
           provenance: false
           sbom: false
 
-      - name: Verify published manifest
-        run: docker buildx imagetools inspect "${REGISTRY}/${IMAGE_NAME}:${RELEASE_VERSION}"
+      - name: Verify published manifests
+        run: |
+          docker buildx imagetools inspect "${REGISTRY}/${IMAGE_NAME}:${RELEASE_VERSION}"
+          docker buildx imagetools inspect "docker.io/${DOCKERHUB_IMAGE_NAME}:${RELEASE_VERSION}"
+
+      - name: Sync Docker Hub description
+        uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: ${{ env.DOCKERHUB_IMAGE_NAME }}
+          short-description: Modern Ultima Online server emulator — .NET, Lua scripting, ClassicUO 7.x
+          readme-filepath: ./README.md
