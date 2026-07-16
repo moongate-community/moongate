@@ -201,7 +201,7 @@ public class MobileModuleTests
         var mobile = persistence.Store<MobileEntity>().GetById((Serial)serial!.Value)!;
         Assert.Equal("Town Guard", mobile.Name);
         Assert.Equal(400, mobile.Body);
-        Assert.Equal(900, mobile.Skills[40]);
+        Assert.Equal(900, mobile.Skills[40].Value);
         Assert.Equal(mobile.EquippedItemIds[LayerType.InnerTorso], Assert.Single(mobile.EquippedItemIds).Value);
     }
 

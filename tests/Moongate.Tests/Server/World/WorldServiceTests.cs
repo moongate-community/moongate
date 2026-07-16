@@ -176,7 +176,7 @@ public class WorldServiceTests
     public void BuildSequence_SkillsCarryEveryRegisteredSkillEvenUntrainedOnes()
     {
         var mobile = Player();
-        mobile.Skills[40] = 733; // Swordsmanship 73.3
+        mobile.Skills[40] = new MobileSkill { Value = 733, Cap = 1200, Lock = SkillLockType.Locked };
 
         var skills = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[11]); // 0x3A follows the locks
 
@@ -184,16 +184,18 @@ public class WorldServiceTests
         Assert.Equal(6 + 9 * 3, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(1))); // all three, not just the trained one
         Assert.Equal(0x02, skills[3]);                                                    // absolute, with caps
 
-        // First entry: Alchemy (id 0) untrained, still sent, and one-based on the wire.
+        // First entry: Alchemy (id 0) untrained, still sent one-based, with the default cap and lock.
         Assert.Equal(1, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(4)));
         Assert.Equal(0, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(6)));
         Assert.Equal((byte)SkillLockType.Up, skills[10]);
         Assert.Equal(1000, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(11)));
 
-        // Third entry: Swordsmanship (id 40 -> 41 on the wire) with the trained value and base.
+        // Third entry: Swordsmanship (id 40 -> 41), value, base and the mobile's own cap and lock.
         Assert.Equal(41, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(22)));
-        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(24))); // value
-        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(26))); // base
+        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(24)));  // value
+        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(26)));  // base
+        Assert.Equal((byte)SkillLockType.Locked, skills[28]);                        // lock from the mobile
+        Assert.Equal(1200, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(29))); // cap from the mobile
 
         Assert.Equal(0, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(31))); // terminator
     }

@@ -133,6 +133,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IPacketHandlerRegistration, PingHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, ClientVersionHandler>(Reuse.Singleton);
                 container.Register<IPacketHandlerRegistration, GeneralInformationHandler>(Reuse.Singleton);
+                container.Register<IPacketHandlerRegistration, SkillLockChangeHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
 

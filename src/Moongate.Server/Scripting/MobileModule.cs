@@ -194,7 +194,7 @@ public sealed class MobileModule
             return 0;
         }
 
-        return mobile.Skills.GetValueOrDefault(skillId, 0);
+        return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
     }
 
     [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name or id; false on unknown serial/skill.")]
@@ -209,7 +209,16 @@ public sealed class MobileModule
             return false;
         }
 
-        mobile.Skills[skillId] = value;
+        // Preserve the skill's cap and lock when only the value changes.
+        if (mobile.Skills.TryGetValue(skillId, out var skillState))
+        {
+            skillState.Value = value;
+        }
+        else
+        {
+            mobile.Skills[skillId] = new MobileSkill { Value = value };
+        }
+
         _mobiles.UpsertAsync(mobile).WaitSync();
 
         return true;
@@ -227,9 +236,9 @@ public sealed class MobileModule
 
         var skills = new Dictionary<string, int>();
 
-        foreach (var (skillId, value) in mobile.Skills)
+        foreach (var (skillId, skillState) in mobile.Skills)
         {
-            skills[((SkillName)skillId).ToString()] = value;
+            skills[((SkillName)skillId).ToString()] = skillState.Value;
         }
 
         return skills;

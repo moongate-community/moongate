@@ -80,8 +80,11 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
     /// <summary>True while the mobile is flagged criminal.</summary>
     public bool Criminal { get; set; }
 
-    /// <summary>Skill values keyed by skill id, stored in tenths (500 = 50.0).</summary>
-    public Dictionary<int, int> Skills { get; set; } = new();
+    /// <summary>Skills keyed by skill id, each carrying its value, cap and lock.</summary>
+    public Dictionary<int, MobileSkill> Skills { get; set; } = new();
+
+    /// <summary>Ceiling on the sum of all skills, in tenths (7000 = 700.0). Server-side, for skill gain.</summary>
+    public int SkillsCap { get; set; } = 7000;
 
     public Hue SkinHue { get; set; }
 

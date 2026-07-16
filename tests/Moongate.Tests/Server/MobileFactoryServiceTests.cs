@@ -41,9 +41,9 @@ public class MobileFactoryServiceTests
 
         // Four skill slots: three chosen (stored in tenths) and one unused (0,0) skipped.
         Assert.Equal(3, character.Skills.Count);
-        Assert.Equal(500, character.Skills[1]);
-        Assert.Equal(300, character.Skills[2]);
-        Assert.Equal(200, character.Skills[3]);
+        Assert.Equal(500, character.Skills[1].Value);
+        Assert.Equal(300, character.Skills[2].Value);
+        Assert.Equal(200, character.Skills[3].Value);
         Assert.False(character.Skills.ContainsKey(0));
 
         // Starting location taken from the city at index 1 (Moonglow / Felucca).
@@ -156,8 +156,8 @@ public class MobileFactoryServiceTests
         Assert.Equal("guard", spawn.Mobile.BrainScriptId);
         Assert.Equal("guard.warrior", spawn.Mobile.LootTableId);
         // 40 == Swordsmanship; the unknown "Bogus" skill is skipped.
-        Assert.Equal(900, spawn.Mobile.Skills[40]);
-        Assert.DoesNotContain(spawn.Mobile.Skills, pair => pair.Value == 10);
+        Assert.Equal(900, spawn.Mobile.Skills[40].Value);
+        Assert.DoesNotContain(spawn.Mobile.Skills, pair => pair.Value.Value == 10);
     }
 
     [Fact]

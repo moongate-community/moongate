@@ -73,7 +73,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
                 continue; // unused starting-skill slot
             }
 
-            character.Skills[skill.SkillId] = skill.Value * 10; // stored in tenths (50 -> 500)
+            character.Skills[skill.SkillId] = new MobileSkill { Value = skill.Value * 10 }; // tenths (50 -> 500)
         }
 
         // Fall back to the first city when the client sends an out-of-range index.
@@ -235,7 +235,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
         {
             if (TryResolveSkill(name, out var skillId))
             {
-                mobile.Skills[skillId] = value;
+                mobile.Skills[skillId] = new MobileSkill { Value = value };
             }
             else
             {

@@ -135,9 +135,12 @@ public sealed class WorldService : IWorldService
 
         foreach (var definition in _skills.All)
         {
-            var value = (ushort)mobile.Skills.GetValueOrDefault(definition.Id);
+            var skill = mobile.Skills.GetValueOrDefault(definition.Id);
+            var value = (ushort)(skill?.Value ?? 0);
+            var cap = (ushort)(skill?.Cap ?? DefaultSkillCap);
+            var skillLock = skill?.Lock ?? SkillLockType.Up;
 
-            skills.Add(new SkillEntry((ushort)definition.Id, value, value, SkillLockType.Up, DefaultSkillCap));
+            skills.Add(new SkillEntry((ushort)definition.Id, value, value, skillLock, cap));
         }
 
         return skills;

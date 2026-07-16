@@ -180,7 +180,7 @@ public class LoginFlowIntegrationTests
             Assert.Equal(25, mobile.ManaMax);
 
             // The chosen skill survived the trip, stored in tenths.
-            Assert.Equal(500, mobile.Skills[1]);
+            Assert.Equal(500, mobile.Skills[1].Value);
 
             // Gear: backpack and bank box equipped, and the backpack is not empty.
             var items = new ItemService(persistence);
