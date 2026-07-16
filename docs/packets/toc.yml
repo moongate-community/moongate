@@ -1,0 +1,82 @@
+- name: Overview
+  href: index.md
+- name: Incoming (client → server)
+  items:
+    - name: "0x02 — Move Request"
+      href: incoming/0x02-move-request.md
+    - name: "0x06 — Double Click"
+      href: incoming/0x06-double-click.md
+    - name: "0x09 — Single Click"
+      href: incoming/0x09-single-click.md
+    - name: "0x3A — Skill Lock Change"
+      href: incoming/0x3a-skill-lock-change.md
+    - name: "0x5D — Character Select"
+      href: incoming/0x5d-character-select.md
+    - name: "0x73 — Ping"
+      href: incoming/0x73-ping.md
+    - name: "0x80 — Account Login Request"
+      href: incoming/0x80-account-login-request.md
+    - name: "0x83 — Delete Character"
+      href: incoming/0x83-delete-character.md
+    - name: "0x91 — Game Server Login"
+      href: incoming/0x91-game-server-login.md
+    - name: "0xA0 — Select Server"
+      href: incoming/0xa0-select-server.md
+    - name: "0xBD — Client Version"
+      href: incoming/0xbd-client-version.md
+    - name: "0xBF — General Information"
+      href: incoming/0xbf-general-information.md
+    - name: "0xEF — Login Seed"
+      href: incoming/0xef-login-seed.md
+    - name: "0xF8 — Character Creation"
+      href: incoming/0xf8-character-creation.md
+- name: Outgoing (server → client)
+  items:
+    - name: "0x11 — Mobile Status"
+      href: outgoing/0x11-mobile-status.md
+    - name: "0x1B — Login Confirm"
+      href: outgoing/0x1b-login-confirm.md
+    - name: "0x20 — Mobile Update"
+      href: outgoing/0x20-mobile-update.md
+    - name: "0x22 — Movement Ack"
+      href: outgoing/0x22-movement-ack.md
+    - name: "0x3A — Skills"
+      href: outgoing/0x3a-skills.md
+    - name: "0x4E — Personal Light Level"
+      href: outgoing/0x4e-personal-light-level.md
+    - name: "0x4F — Overall Light Level"
+      href: outgoing/0x4f-overall-light-level.md
+    - name: "0x55 — Login Complete"
+      href: outgoing/0x55-login-complete.md
+    - name: "0x5B — Game Time"
+      href: outgoing/0x5b-game-time.md
+    - name: "0x72 — War Mode"
+      href: outgoing/0x72-war-mode.md
+    - name: "0x73 — Ping Ack"
+      href: outgoing/0x73-ping-ack.md
+    - name: "0x78 — Mobile Incoming"
+      href: outgoing/0x78-mobile-incoming.md
+    - name: "0x82 — Login Denied"
+      href: outgoing/0x82-login-denied.md
+    - name: "0x85 — Character Delete Result"
+      href: outgoing/0x85-character-delete-result.md
+    - name: "0x86 — Character List Update"
+      href: outgoing/0x86-character-list-update.md
+    - name: "0x88 — Paperdoll"
+      href: outgoing/0x88-paperdoll.md
+    - name: "0x8C — Connect To Game Server"
+      href: outgoing/0x8c-connect-to-game-server.md
+    - name: "0xA8 — Server List"
+      href: outgoing/0xa8-server-list.md
+    - name: "0xA9 — Character List"
+      href: outgoing/0xa9-character-list.md
+    - name: "0xB9 — Support Features"
+      href: outgoing/0xb9-support-features.md
+    - name: "0xBC — Season Change"
+      href: outgoing/0xbc-season-change.md
+    - name: "0xBF — Map Change"
+      href: outgoing/0xbf-map-change.md
+    - name: "0xBF — Map Patches"
+      href: outgoing/0xbf-map-patches.md
+    - name: "0xBF — Stat Lock Info"
+      href: outgoing/0xbf-stat-lock-info.md
