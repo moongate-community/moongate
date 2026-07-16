@@ -25,6 +25,7 @@ public readonly record struct MobileStatusPacket(
     ushort ManaMax,
     RaceType Race,
     ushort StatCap,
+    byte Followers,
     byte FollowersMax
 ) : IOutgoingPacket
 {
@@ -66,7 +67,7 @@ public readonly record struct MobileStatusPacket(
 
         writer.Write((short)StatCap);
 
-        writer.Write((byte)0); // followers
+        writer.Write(Followers);
         writer.Write(FollowersMax);
 
         writer.Write((short)0); // fire resistance (version >= 4)

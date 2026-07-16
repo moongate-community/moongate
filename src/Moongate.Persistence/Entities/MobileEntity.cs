@@ -35,20 +35,50 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
     /// <summary>Current hit points; <see cref="HitsMax" /> is the ceiling.</summary>
     public int Hits { get; set; }
 
-    /// <summary>Maximum hit points. For players this seeds from <see cref="Strength" /> at creation.</summary>
+    /// <summary>
+    /// Maximum hit points. Players seed this as 50 + <see cref="Strength" />/2 at creation, while
+    /// creatures mirror their raw <see cref="Strength" />.
+    /// </summary>
     public int HitsMax { get; set; }
 
     /// <summary>Current stamina; <see cref="StaminaMax" /> is the ceiling.</summary>
     public int Stamina { get; set; }
 
-    /// <summary>Maximum stamina. For players this seeds from <see cref="Dexterity" /> at creation.</summary>
+    /// <summary>Maximum stamina; seeds from <see cref="Dexterity" /> at creation.</summary>
     public int StaminaMax { get; set; }
 
     /// <summary>Current mana; <see cref="ManaMax" /> is the ceiling.</summary>
     public int Mana { get; set; }
 
-    /// <summary>Maximum mana. For players this seeds from <see cref="Intelligence" /> at creation.</summary>
+    /// <summary>Maximum mana; seeds from <see cref="Intelligence" /> at creation.</summary>
     public int ManaMax { get; set; }
+
+    /// <summary>Ceiling on the sum of <see cref="Strength" />, <see cref="Dexterity" /> and <see cref="Intelligence" />.</summary>
+    public int StatCap { get; set; } = 225;
+
+    /// <summary>Whether <see cref="Strength" /> may rise, fall or is held as skills are used.</summary>
+    public StatLockType StrengthLock { get; set; }
+
+    /// <summary>Whether <see cref="Dexterity" /> may rise, fall or is held as skills are used.</summary>
+    public StatLockType DexterityLock { get; set; }
+
+    /// <summary>Whether <see cref="Intelligence" /> may rise, fall or is held as skills are used.</summary>
+    public StatLockType IntelligenceLock { get; set; }
+
+    /// <summary>Followers currently being controlled; <see cref="FollowersMax" /> is the ceiling.</summary>
+    public int Followers { get; set; }
+
+    /// <summary>Maximum followers this mobile may control at once.</summary>
+    public int FollowersMax { get; set; } = 5;
+
+    /// <summary>True while the mobile is in war mode.</summary>
+    public bool Warmode { get; set; }
+
+    /// <summary>Murder count. From five kills the mobile reads as a murderer; see Notoriety.</summary>
+    public int Kills { get; set; }
+
+    /// <summary>True while the mobile is flagged criminal.</summary>
+    public bool Criminal { get; set; }
 
     /// <summary>Skill values keyed by skill id, stored in tenths (500 = 50.0).</summary>
     public Dictionary<int, int> Skills { get; set; } = new();

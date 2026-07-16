@@ -60,7 +60,8 @@ public class WorldServiceTests
             .ToArray();
 
         Assert.Equal(
-            new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0x72, 0x55, 0x5B },
+            // The second 0x11 neighbour is 0xBF/0x19, the stat lock state paired with the status.
+            new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0xBF, 0x72, 0x55, 0x5B },
             opcodes
         );
     }
@@ -80,9 +81,82 @@ public class WorldServiceTests
     {
         var time = new FixedTimeProvider(new DateTimeOffset(2026, 1, 1, 13, 37, 45, TimeSpan.Zero));
 
-        var gameTime = Serialize(Service(new StubItemService([]), time).BuildSequence(Player())[12]); // 0x5B is last
+        var gameTime = Serialize(Service(new StubItemService([]), time).BuildSequence(Player())[13]); // 0x5B is last
 
         Assert.Equal(new byte[] { 0x5B, 13, 37, 45 }, gameTime);
+    }
+
+    [Fact]
+    public void BuildSequence_WarModeComesFromTheMobile()
+    {
+        var mobile = Player();
+        mobile.Warmode = true;
+
+        var warMode = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[11]); // 0x72 is the 12th packet
+
+        Assert.Equal(0x72, warMode[0]);
+        Assert.Equal(1, warMode[1]);
+    }
+
+    [Theory]
+    [InlineData(0, false, NotorietyType.Innocent)]
+    [InlineData(0, true, NotorietyType.Criminal)]
+    [InlineData(5, false, NotorietyType.Murderer)]
+    public void BuildSequence_NotorietyDerivesFromKillsAndCriminal(int kills, bool criminal, NotorietyType expected)
+    {
+        var mobile = Player();
+        mobile.Kills = kills;
+        mobile.Criminal = criminal;
+
+        var incoming = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[8]); // 0x78 is the 9th packet
+
+        Assert.Equal(0x78, incoming[0]);
+        Assert.Equal((byte)expected, incoming[18]);
+    }
+
+    [Fact]
+    public void BuildSequence_StatusCarriesStatCapAndFollowersFromTheMobile()
+    {
+        var mobile = Player();
+        mobile.StatCap = 250;
+        mobile.Followers = 3;
+        mobile.FollowersMax = 6;
+
+        var status = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[9]); // 0x11 is the 10th packet
+
+        Assert.Equal(0x11, status[0]);
+        Assert.Equal(250, BinaryPrimitives.ReadInt16BigEndian(status.AsSpan(69)));
+        Assert.Equal(3, status[71]);
+        Assert.Equal(6, status[72]);
+    }
+
+    [Fact]
+    public void BuildSequence_StatusDefaultsToTheClassicStatCapAndFollowersMax()
+    {
+        var status = Serialize(Service(new StubItemService([])).BuildSequence(Player())[9]);
+
+        Assert.Equal(225, BinaryPrimitives.ReadInt16BigEndian(status.AsSpan(69)));
+        Assert.Equal(0, status[71]);
+        Assert.Equal(5, status[72]);
+    }
+
+    [Fact]
+    public void BuildSequence_StatLockInfoCarriesTheMobileLocks()
+    {
+        var mobile = Player();
+        mobile.StrengthLock = StatLockType.Locked;   // 2
+        mobile.DexterityLock = StatLockType.Down;    // 1
+        mobile.IntelligenceLock = StatLockType.Up;   // 0
+
+        var locks = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[10]); // 0xBF/0x19 follows 0x11
+
+        Assert.Equal(0xBF, locks[0]);
+        Assert.Equal(12, BinaryPrimitives.ReadUInt16BigEndian(locks.AsSpan(1)));
+        Assert.Equal(0x19, BinaryPrimitives.ReadUInt16BigEndian(locks.AsSpan(3)));
+        Assert.Equal(0x64u, BinaryPrimitives.ReadUInt32BigEndian(locks.AsSpan(6)));
+
+        // Two bits per stat: (Str << 4) | (Dex << 2) | Int.
+        Assert.Equal((2 << 4) | (1 << 2) | 0, locks[11]);
     }
 
     [Fact]

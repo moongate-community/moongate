@@ -204,6 +204,7 @@ public class EnterWorldPacketsTests
                 ManaMax: 25,
                 Race: RaceType.Human,
                 StatCap: 225,
+                Followers: 2,
                 FollowersMax: 5
             )
         );
@@ -220,5 +221,8 @@ public class EnterWorldPacketsTests
         Assert.Equal(1, b[43]);                                              // female
         Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(44))); // strength
         Assert.Equal(1, b[68]);                                              // race id (Human 0 + 1)
+        Assert.Equal(225, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(69))); // stat cap
+        Assert.Equal(2, b[71]);                                               // followers
+        Assert.Equal(5, b[72]);                                               // followers max
     }
 }

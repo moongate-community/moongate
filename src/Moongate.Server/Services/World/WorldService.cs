@@ -9,6 +9,7 @@ using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.World;
 using Moongate.Server.Types;
 using Moongate.UO.Data.Maps;
+using Moongate.UO.Data.Mobiles;
 using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
 using SquidStd.Core.Interfaces.Events;
@@ -25,8 +26,6 @@ public sealed class WorldService : IWorldService
     private const byte OverallLightLevel = 0; // full daylight
     private const byte PersonalLightLevel = 0;
     private const byte FemaleFlag = 0x02;
-    private const ushort DefaultStatCap = 225;
-    private const byte DefaultFollowersMax = 5;
 
     // Self-only view: two fixed top-of-range virtual serials for the hair/beard pseudo-items. A
     // per-mobile virtual-serial allocator lands with the nearby-mobile broadcast.
@@ -105,11 +104,14 @@ public sealed class WorldService : IWorldService
                 mobile.Direction,
                 mobile.SkinHue,
                 flags,
-                NotorietyType.Innocent,
+                Notoriety.Resolve(mobile.Kills, mobile.Criminal),
                 BuildEquipment(mobile)
             ),
             BuildStatus(mobile),
-            new WarModePacket(false),
+            // ModernUO pairs the lock state with the status (OnStatsQuery), so the arrows are right
+            // from the first frame rather than only after the player touches one.
+            new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock),
+            new WarModePacket(mobile.Warmode),
             new LoginCompletePacket(),
             new GameTimePacket((byte)now.Hour, (byte)now.Minute, (byte)now.Second)
         ];
@@ -164,8 +166,9 @@ public sealed class WorldService : IWorldService
             (ushort)mobile.Mana,
             (ushort)mobile.ManaMax,
             mobile.Race,
-            DefaultStatCap,
-            DefaultFollowersMax
+            (ushort)mobile.StatCap,
+            (byte)mobile.Followers,
+            (byte)mobile.FollowersMax
         );
 
     private static byte GetBodyFlags(MobileEntity mobile)

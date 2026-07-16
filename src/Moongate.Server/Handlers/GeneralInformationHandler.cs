@@ -1,8 +1,10 @@
 using Moongate.Network.Packets.Incoming;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
 using Moongate.Server.Data;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Network;
+using Moongate.UO.Data.Types;
 using Serilog;
 using SquidStd.Network.Spans;
 
@@ -31,6 +33,10 @@ public sealed class GeneralInformationHandler : IPacketHandler<GeneralInformatio
 
             case GeneralInformationSubCommandType.ClientLanguage:
                 HandleLanguage(packet, context.Session);
+                break;
+
+            case GeneralInformationSubCommandType.ExtendedStats:
+                HandleStatLockChange(packet, context.Session);
                 break;
 
             case GeneralInformationSubCommandType.WrestlingStun:
@@ -62,6 +68,69 @@ public sealed class GeneralInformationHandler : IPacketHandler<GeneralInformatio
         {
             session.SetLanguage(language);
         }
+    }
+
+    // Applies the lock the client set to the attached mobile, then echoes the resulting state back:
+    // the echo is what keeps the arrows honest when the requested lock had to be clamped.
+    private static void HandleStatLockChange(GeneralInformationPacket packet, PlayerSession session)
+    {
+        if (session.Character is not { } mobile || ParseStatLockChange(packet.Payload) is not var (stat, statLock))
+        {
+            return;
+        }
+
+        switch (stat)
+        {
+            case StatType.Str:
+                mobile.StrengthLock = statLock;
+                break;
+
+            case StatType.Dex:
+                mobile.DexterityLock = statLock;
+                break;
+
+            case StatType.Int:
+                mobile.IntelligenceLock = statLock;
+                break;
+
+            default:
+                return;
+        }
+
+        session.Send(
+            new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock)
+        );
+    }
+
+    /// <summary>
+    /// Parses the stat-lock change (0x1A) payload: the stat index (0 strength, 1 dexterity,
+    /// 2 intelligence) and the requested lock state. A lock value the client should not have sent is
+    /// clamped to <see cref="StatLockType.Up" />, as ModernUO does. Returns null when the payload is
+    /// too short or names a stat that does not exist.
+    /// </summary>
+    public static (StatType Stat, StatLockType Lock)? ParseStatLockChange(byte[] payload)
+    {
+        if (payload.Length < 2)
+        {
+            return null;
+        }
+
+        var stat = payload[0] switch
+        {
+            0 => StatType.Str,
+            1 => StatType.Dex,
+            2 => StatType.Int,
+            _ => StatType.None
+        };
+
+        if (stat == StatType.None)
+        {
+            return null;
+        }
+
+        var statLock = payload[1] > (byte)StatLockType.Locked ? StatLockType.Up : (StatLockType)payload[1];
+
+        return (stat, statLock);
     }
 
     /// <summary>
