@@ -153,6 +153,7 @@ public static class PacketsInfo
         Add(table, 0x80, "LoginRequest", PacketDirectionType.Input, 62);
         Add(table, 0x82, "LoginDenied", PacketDirectionType.Output, 2);
         Add(table, 0x83, "DeleteCharacter", PacketDirectionType.Input, 39);
+        Add(table, 0x85, "DeleteCharacterError", PacketDirectionType.Output, 2);
         Add(table, 0x86, "ResendCharactersAfterDelete", PacketDirectionType.Output, 304);
         Add(table, 0x88, "OpenPaperdoll", PacketDirectionType.Output, 66);
         Add(table, 0x89, "CorpseClothing", PacketDirectionType.Output, PacketLengths.Variable);

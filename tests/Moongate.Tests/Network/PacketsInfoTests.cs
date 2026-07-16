@@ -31,7 +31,7 @@ public class PacketsInfoTests
             }
         }
 
-        Assert.Equal(198, count);
+        Assert.Equal(199, count);
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class PacketsInfoTests
 
     [Fact]
     public void Count_MatchesNumberOfDocumentedPackets()
-        => Assert.Equal(198, PacketsInfo.Count);
+        => Assert.Equal(199, PacketsInfo.Count);
 
     [Fact]
     public void GetPacket_BidirectionalPacket_HasBothFlags()
