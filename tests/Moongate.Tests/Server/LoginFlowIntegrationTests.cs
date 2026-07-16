@@ -2,14 +2,19 @@ using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using Moongate.Core.Primitives;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Handlers;
+using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Interfaces.Network;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Interfaces.Threading;
@@ -107,6 +112,82 @@ public class LoginFlowIntegrationTests
             var response = ReadBytes(socket, 1);
 
             Assert.NotEmpty(response);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task FullLogin_ThenCharacterCreation_PersistsTheCharacterWithItsGearAndEntersTheWorld()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)1;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "squid" });
+
+        var eventBus = new EventBusService();
+        using var enteredWorld = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
+            {
+                enteredWorld.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerAsync(config, eventBus, persistence);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A;
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+            ReadResponse(socket, 0xA8);
+
+            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+            var redirect = ReadResponse(socket, 0x8C);
+            var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+            var gameLogin = new byte[65];
+            gameLogin[0] = 0x91;
+            BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+            Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
+            socket.Send(gameLogin);
+            ReadBytes(socket, 1); // features + character list
+
+            socket.Send(CharacterCreation("Freydis"));
+
+            // Entering the world is the last step of creation, so it proves the whole chain ran.
+            Assert.True(enteredWorld.Wait(TimeSpan.FromSeconds(2)), "PlayerEnteredWorldEvent was not published.");
+
+            // The character is persisted and linked to the account that created it.
+            var mobile = Assert.Single(persistence.Store<MobileEntity>().Query());
+            Assert.Equal("Freydis", mobile.Name);
+            Assert.Contains(mobile.Id, persistence.Store<AccountEntity>().GetById(accountId)!.MobileIds);
+
+            // Stats came through the packet and were validated (45 + 20 + 25 == 90), so the pools follow.
+            Assert.Equal(45, mobile.Strength);
+            Assert.Equal(72, mobile.HitsMax); // 50 + 45/2
+            Assert.Equal(20, mobile.StaminaMax);
+            Assert.Equal(25, mobile.ManaMax);
+
+            // The chosen skill survived the trip, stored in tenths.
+            Assert.Equal(500, mobile.Skills[1]);
+
+            // Gear: backpack and bank box equipped, and the backpack is not empty.
+            var items = new ItemService(persistence);
+            Assert.NotEqual(Serial.Zero, mobile.BackpackId);
+            Assert.Equal(mobile.BackpackId, mobile.EquippedItemIds[LayerType.Backpack]);
+            Assert.True(mobile.EquippedItemIds.ContainsKey(LayerType.Bank));
+            Assert.NotEmpty(items.GetContents(mobile.BackpackId));
         }
         finally
         {
@@ -224,6 +305,27 @@ public class LoginFlowIntegrationTests
         return packet;
     }
 
+    /// <summary>
+    /// The 106-byte creation packet (0xF8) for a male human with a valid 45/20/25 stat spread and one
+    /// starting skill. Everything not asserted on is left zeroed, which also picks starting city 0.
+    /// </summary>
+    private static byte[] CharacterCreation(string name)
+    {
+        var packet = new byte[106];
+        packet[0] = 0xF8;
+        Encoding.ASCII.GetBytes(name).CopyTo(packet.AsSpan(10));
+
+        packet[70] = 0;  // gender/race: male human
+        packet[71] = 45; // strength
+        packet[72] = 20; // dexterity
+        packet[73] = 25; // intelligence, summing to the 90-point budget
+
+        packet[74] = 1;  // first skill: Anatomy
+        packet[75] = 50; // at 50, stored as 500 tenths
+
+        return packet;
+    }
+
     private static MoongateConfig LoopbackConfig()
         => new()
         {
@@ -278,7 +380,28 @@ public class LoginFlowIntegrationTests
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
         => StartServerAsync(config, new EventBusService());
 
-    private static async Task<NetworkService> StartServerAsync(MoongateConfig config, IEventBus eventBus)
+    private static Task<NetworkService> StartServerAsync(MoongateConfig config, IEventBus eventBus)
+        => StartServerAsync(config, eventBus, new StubCharacterService(), null);
+
+    /// <summary>Starts the server with a real character service over <paramref name="persistence" />.</summary>
+    private static Task<NetworkService> StartServerAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        FakePersistenceService persistence
+    )
+        => StartServerAsync(
+            config,
+            eventBus,
+            CharacterServiceFixture.Create(persistence, (EventBusService)eventBus),
+            new WorldService(new ItemService(persistence), CharacterServiceFixture.Skills(), eventBus, TimeProvider.System)
+        );
+
+    private static async Task<NetworkService> StartServerAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService? world
+    )
     {
         var sessions = new SessionManager();
         var accounts = new StubAccountService();
@@ -298,15 +421,20 @@ public class LoginFlowIntegrationTests
             }
         );
 
-        var handlers = new IPacketHandlerRegistration[]
+        var handlers = new List<IPacketHandlerRegistration>
         {
             new LoginSeedHandler(),
             new AccountLoginHandler(accounts, config),
             new SelectServerHandler(pending, config),
-            new GameServerLoginHandler(pending, cities, accounts, new StubCharacterService())
+            new GameServerLoginHandler(pending, cities, accounts, characters)
         };
 
-        var network = new NetworkService(sessions, config, handlers, eventBus, new InlineDispatcher());
+        if (world is not null)
+        {
+            handlers.Add(new CharacterCreationHandler(characters, world));
+        }
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
         await network.StartAsync(CancellationToken.None);
 
         return network;

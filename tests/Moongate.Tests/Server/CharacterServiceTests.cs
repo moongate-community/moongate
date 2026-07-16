@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
+using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Services.Accounts;
@@ -72,6 +73,131 @@ public class CharacterServiceTests
         var shirt = Assert.Single(equipped.Where(item => item.ItemId == 5399)); // shirt from ByBody Elf/Female
         Assert.Equal(LayerType.Shirt, shirt.EquippedLayer);
         Assert.Equal((ushort)0x0765, shirt.Hue.Value); // Hue "shirt" resolved to packet.ShirtHue
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_RemovesTheMobileEverythingItOwnsAndTheAccountLink()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // Everything the character owns before the deletion: containers plus their contents.
+        var backpackId = mobile.BackpackId;
+        var ownedIds = persistence.Store<ItemEntity>().Query().Select(item => item.Id).ToList();
+        Assert.NotEmpty(persistence.Store<ItemEntity>().GetById(backpackId)!.ContainedItemIds);
+
+        var result = service.DeleteCharacter(accountId, 0);
+
+        Assert.Null(result); // null means deleted
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+
+        // No orphans: the backpack, the bank box and every item inside them are gone with the mobile.
+        Assert.All(ownedIds, id => Assert.Null(persistence.Store<ItemEntity>().GetById(id)));
+        Assert.Empty(persistence.Store<ItemEntity>().Query());
+
+        var account = persistence.Store<AccountEntity>().GetById(accountId);
+        Assert.DoesNotContain(mobile.Id, account!.MobileIds);
+        Assert.Empty(service.GetPlayerCharacters(accountId));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_PublishesCharacterDeletedEventCarryingTheGoneMobile()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        CharacterDeletedEvent? published = null;
+        eventBus.Subscribe<CharacterDeletedEvent>((evt, _) =>
+            {
+                published = evt;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = Service(persistence, eventBus);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        service.DeleteCharacter(accountId, 0);
+
+        Assert.NotNull(published);
+        Assert.Equal(accountId, published!.AccountId);
+        Assert.Equal(mobile.Id, published.MobileId);
+
+        // The mobile is gone from the store, so the event is the only way left to read what it was.
+        Assert.Same(mobile, published.Character);
+        Assert.Equal("Freydis", published.Character.Name);
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_RefusedDeletion_PublishesNothing()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        var published = 0;
+        eventBus.Subscribe<CharacterDeletedEvent>((_, _) =>
+            {
+                published++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = Service(persistence, eventBus);
+        service.CreateCharacter(accountId, Packet());
+
+        service.DeleteCharacter(accountId, 42);
+
+        Assert.Equal(0, published);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(1)] // only slot 0 exists
+    [InlineData(99)]
+    public async Task DeleteCharacter_SlotOutOfRange_IsRefusedAndChangesNothing(int slot)
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        Assert.Equal(DeleteResultType.BadRequest, service.DeleteCharacter(accountId, slot));
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
+        Assert.Single(service.GetPlayerCharacters(accountId));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_LeavesTheOtherCharactersAlone()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var first = service.CreateCharacter(accountId, Packet());
+        var second = service.CreateCharacter(accountId, Packet());
+
+        Assert.Null(service.DeleteCharacter(accountId, 0));
+
+        var remaining = Assert.Single(service.GetPlayerCharacters(accountId));
+        Assert.Equal(second.Id, remaining.Id);
+
+        // The survivor kept its own gear.
+        Assert.NotNull(persistence.Store<ItemEntity>().GetById(second.BackpackId));
+        Assert.Null(persistence.Store<ItemEntity>().GetById(first.BackpackId));
     }
 
     [Fact]
@@ -156,18 +282,6 @@ public class CharacterServiceTests
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
     }
 
-    private static StartingCityService Cities()
-    {
-        var service = new StartingCityService();
-        service.Register(
-            new()
-            {
-                City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
-            }
-        );
-
-        return service;
-    }
 
     private static CharacterCreationPacket Packet()
         => new(
@@ -192,63 +306,8 @@ public class CharacterServiceTests
         );
 
     private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
-    {
-        var templates = Templates();
-        var random = new Random(1);
-        var factory = new ItemFactoryService(templates, random);
+        => CharacterServiceFixture.Create(persistence, eventBus);
 
-        return new(
-            persistence,
-            new MobileFactoryService(Cities(), new MobileTemplateService(), random),
-            factory,
-            new ItemService(persistence),
-            templates,
-            StartingItems(),
-            Skills(),
-            random,
-            eventBus
-        );
-    }
 
-    private static SkillService Skills()
-    {
-        var service = new SkillService();
-        service.Register(new() { Id = 1, Name = "Anatomy" });
 
-        return service;
-    }
-
-    private static StartingItemsService StartingItems()
-    {
-        var service = new StartingItemsService();
-        service.Load(
-            new()
-            {
-                All = new() { Pack = [new() { Item = "dagger" }] },
-                ByBody =
-                {
-                    ["Elf/Female"] = new() { Equip = [new() { Item = "shirt", Hue = "shirt" }] }
-                }
-            }
-        );
-
-        return service;
-    }
-
-    private static ItemTemplateService Templates()
-    {
-        var templates = new ItemTemplateService();
-        templates.Register(new() { Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701 });
-        templates.Register(new() { Id = "bank_box", Name = "Bank Box", Category = "Containers", ItemId = 2475 });
-        templates.Register(new() { Id = "dagger", Name = "Dagger", Category = "Weapons", ItemId = 3921 });
-        templates.Register(
-            new()
-            {
-                Id = "shirt", Name = "Shirt", Category = "Clothing", ItemId = 5399,
-                Equip = new() { Layer = LayerType.Shirt }
-            }
-        );
-
-        return templates;
-    }
 }
