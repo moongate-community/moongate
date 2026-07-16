@@ -17,14 +17,14 @@
     <ItemGroup>
         <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>
         <!--
-            Microsoft.AspNetCore.OpenApi 10.0.10 drags in Microsoft.OpenApi 2.0.0, which carries
-            GHSA-v5pm-xwqc-g5wc (high: circular schema references can terminate parsing). 2.7.5 is the
-            first patched release. Pinned explicitly to override the transitive version; drop this once
-            AspNetCore.OpenApi ships a patched one itself.
+            Swashbuckle rather than Microsoft.AspNetCore.OpenApi, which is otherwise the obvious choice on
+            .NET 10: AddOpenApi resolves its document services by key, and DryIoc.Microsoft.DependencyInjection
+            6.2.0 — the newest release, and the one SquidStd pins via DryIoc.dll 5.4.3 — does not implement
+            IKeyedServiceProvider, so every OpenAPI request 500s. Swashbuckle needs no keyed services, which is
+            what lets the web app run on the game's own container. Scalar reads the document either way.
         -->
-        <PackageReference Include="Microsoft.OpenApi" Version="2.7.5"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3"/>
         <PackageReference Include="Scalar.AspNetCore" Version="2.16.13"/>
         <PackageReference Include="SquidStd.Abstractions" Version="0.36.0"/>
         <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.36.0"/>
