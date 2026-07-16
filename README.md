@@ -188,7 +188,7 @@ long-running work of projects such as:
 
 ## License
 
-Copyright 2026 Squid Development.
+Copyright 2026 tgiachi.
 
 Moongate is licensed under the
 [GNU Affero General Public License v3.0](https://github.com/moongate-community/moongate/blob/main/LICENSE).

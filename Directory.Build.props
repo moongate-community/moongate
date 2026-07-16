@@ -27,9 +27,9 @@
         <AssemblyVersion>0.1.0.0</AssemblyVersion>
         <FileVersion>0.1.0.0</FileVersion>
         <InformationalVersion>0.1.0</InformationalVersion>
-        <Authors>Squid Development</Authors>
+        <Authors>tgiachi</Authors>
         <Product>Moongate</Product>
-        <Company>Squid Development</Company>
+        <Company>tgiachi</Company>
         <Copyright>© $(Company) $([System.DateTime]::Now.Year)</Copyright>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
