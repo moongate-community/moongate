@@ -22,6 +22,7 @@ using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
+using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Config;
@@ -37,7 +38,13 @@ const int loginHandoffTtlMs = 30_000;
 
 await ConsoleApp.RunAsync(
     args,
-    async (string rootDirectory = null, bool showHeader = true, string? uoDirectory = null, CancellationToken ct = default)
+    async (
+            string rootDirectory = null,
+            bool showHeader = true,
+            string? uoDirectory = null,
+            bool disableWebPlugin = false,
+            CancellationToken ct = default
+        )
         =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT");
@@ -93,7 +100,8 @@ await ConsoleApp.RunAsync(
         // Safe with config-first: sections bind eagerly at registration, even after this call.
         stdBootstrap.ConfigureLogging();
 
-        stdBootstrap.UsePlugins(builder =>
+        stdBootstrap.UsePlugins(
+            builder =>
             {
                 builder.FromDirectory("plugins");
                 builder.Add<MoongatePersistencePlugin>();
@@ -102,19 +110,24 @@ await ConsoleApp.RunAsync(
                 builder.Add<MoongateDataLoaderPlugin>();
                 builder.Add<MoongatePacketHandlersPlugin>();
                 builder.Add<MoongateEventSubscribersPlugin>();
-                builder.Add<MoongateHttpPlugin>();
+
+                if (!disableWebPlugin)
+                {
+                    builder.Add<MoongateHttpPlugin>();
+                    builder.Add<MoongateApiEndpointsPlugin>();
+                }
+                else
+                {
+                    Log.Logger.Warning("HTTP is disabled");
+                }
             }
         );
 
-        stdBootstrap.ConfigureServices(container =>
+        stdBootstrap.ConfigureServices(
+            container =>
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
-
-                container.RegisterApiEndpoint<VersionEndpoints>();
-                container.RegisterApiEndpoint<AuthEndpoints>();
-                container.RegisterApiEndpoint<AdminEndpoints>();
-                container.RegisterApiEndpoint<PlayerEndpoints>();
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -163,14 +176,16 @@ await ConsoleApp.RunAsync(
 
                 var eventBus = container.Resolve<IEventBus>();
 
-                eventBus.Subscribe<EngineStartedEvent>((_, _) =>
+                eventBus.Subscribe<EngineStartedEvent>(
+                    (_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 
                         var loop = container.Resolve<IGameLoopContext>();
                         var marker = container.Resolve<ILoopThread>();
 
-                        loop.Post(() =>
+                        loop.Post(
+                            () =>
                             {
                                 marker.Capture();
                                 _ = eventBus.PublishAsync(new WorldReadyEvent());

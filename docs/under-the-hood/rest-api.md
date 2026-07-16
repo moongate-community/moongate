@@ -8,14 +8,17 @@ whole web stack.
 
 ## Turning it off
 
-The API is wired in `Program.cs` alongside the other built-in plugins:
+Start the server with `--disable-web-plugin`:
 
-```csharp
-builder.Add<MoongateHttpPlugin>();
+```bash
+dotnet run --project src/Moongate.Server -- --disable-web-plugin
 ```
 
-Remove that line and the server boots with no Kestrel, no listener and no
-`REST API listening` log. Nothing else changes: no other code path asks for it.
+The server then runs with no Kestrel, no listener and no `REST API listening`
+log — it logs `HTTP is disabled` and nothing else changes, because no other
+code path asks for it. Two plugins are skipped: `MoongateHttpPlugin`, which
+owns the API's plumbing, and `MoongateApiEndpointsPlugin`, which registers the
+endpoint groups the server would map.
 
 ## Configuration
 
@@ -122,13 +125,17 @@ a container probe.
 
 ## Adding endpoints
 
-An endpoint group implements `IApiEndpointRegistration` and is registered with
-`RegisterApiEndpoint<T>()`; the server resolves every group and maps it at
-startup. This is the same registration seam used by packet handlers and event
-subscribers.
+An endpoint group implements `IApiEndpointRegistration` and is registered in
+`MoongateApiEndpointsPlugin` with `RegisterApiEndpoint<T>()`; the server
+resolves every group and maps it at startup. This is the same registration seam
+used by packet handlers and event subscribers, and each of those has its own
+plugin too.
 
-Groups live in `Moongate.Server`, not in the plugin: `Program.cs` adds the
-plugin, so the plugin cannot reference the server back. The plugin owns the
+A group that is never registered is not a startup error: the server comes up
+and the route simply 404s, and Scalar shows a reference with nothing in it.
+
+Groups live in `Moongate.Server`, not in `Moongate.Http.Plugin`: `Program.cs`
+adds that plugin, so it cannot reference the server back. The plugin owns the
 plumbing — config, tokens, the server itself — and the game owns the endpoints
 that need game services.
 

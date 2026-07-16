@@ -5,6 +5,7 @@ using Moongate.Persistence.Entities;
 using Moongate.Persistence.Generators;
 using Serilog;
 using SquidStd.Core.Directories;
+using SquidStd.Core.Json;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Data;
 using SquidStd.Persistence.Extensions;
@@ -47,6 +48,8 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             (entity, id) => entity.Id = id,
             new DefaultSerialGenerator()
         );
+
+
 
         container.RegisterPersistedEntity<MobileEntity, Serial>(
             2,

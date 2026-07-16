@@ -43,11 +43,11 @@ top to bottom:
 3. **Bootstrap.** `SquidStdBootstrap.Create(...)` builds the host;
    `ConfigureLogging()` brings Serilog up so even plugin loading is visible.
 4. **Plugins.** `UsePlugins(...)` registers drop-in assemblies from the root's
-   `plugins/` directory plus the seven built-in Moongate plugins: persistence,
+   `plugins/` directory plus the eight built-in Moongate plugins: persistence,
    scripting, script modules, data loaders, packet handlers, event
-   subscribers and HTTP. The last one is genuinely optional — drop its
-   `builder.Add<MoongateHttpPlugin>()` line and the server boots with no web
-   stack at all. See [REST API](rest-api.md).
+   subscribers, HTTP and API endpoints. The last two are genuinely optional —
+   start with `--disable-web-plugin` and the server runs with no web stack at
+   all. See [REST API](rest-api.md).
 5. **Services.** `ConfigureServices(...)` registers the game services
    (accounts, characters, items, mobiles, loot, world, sessions, network) and
    the SquidStd runtime services: main-thread dispatcher, timer wheel, event

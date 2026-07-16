@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
@@ -15,6 +16,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Config;
+using ILogger = Serilog.ILogger;
 
 namespace Moongate.Http.Plugin.Services;
 
@@ -31,8 +33,18 @@ public sealed class HttpServerService : ISquidStdService
     /// <summary>Any authenticated account.</summary>
     public const string PlayerPolicy = "player";
 
-    /// <summary>Where Swashbuckle publishes the document, and so where Scalar is pointed to read it.</summary>
+    /// <summary>The v1 document's route, as Swashbuckle publishes it.</summary>
     public const string SwaggerDocumentRoute = "/swagger/v1/swagger.json";
+
+    /// <summary>
+    /// The same route as a pattern, which is what Scalar needs: it substitutes the document name per
+    /// document. Without it Scalar looks for its own default, <c>openapi/{documentName}.json</c>, which
+    /// nothing serves here — the page still renders, and shows an empty reference.
+    /// </summary>
+    private const string SwaggerRoutePattern = "/swagger/{documentName}/swagger.json";
+
+    /// <summary>The only document served. Scalar's reference for it lives at <c>/scalar/v1</c>.</summary>
+    private const string DocumentName = "v1";
 
     private readonly ILogger _logger = Log.ForContext<HttpServerService>();
     private readonly IContainer _container;
@@ -61,6 +73,7 @@ public sealed class HttpServerService : ISquidStdService
 
         // The game's own container, so endpoints resolve the very singletons the game loop holds.
         builder.Host.UseServiceProviderFactory(new DryIocServiceProviderFactory(_container));
+        builder.Logging.ClearProviders().AddSerilog(_logger);
         builder.WebHost.UseUrls($"http://{_config.Address}:{_config.Port}");
 
         builder.Services.AddProblemDetails();
@@ -75,32 +88,33 @@ public sealed class HttpServerService : ISquidStdService
         );
 
         builder.Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _config.Jwt.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = _config.Jwt.Issuer,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = signingKey,
-                        ValidateLifetime = true
-                    };
-                }
-            );
+               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(
+                   options =>
+                   {
+                       options.TokenValidationParameters = new()
+                       {
+                           ValidateIssuer = true,
+                           ValidIssuer = _config.Jwt.Issuer,
+                           ValidateAudience = true,
+                           ValidAudience = _config.Jwt.Issuer,
+                           ValidateIssuerSigningKey = true,
+                           IssuerSigningKey = signingKey,
+                           ValidateLifetime = true
+                       };
+                   }
+               );
 
         builder.Services
-            .AddAuthorizationBuilder()
-            .AddPolicy(
-                AdminPolicy,
-                policy => policy.RequireRole(
-                    nameof(AccountLevelType.Administrator),
-                    nameof(AccountLevelType.GrandMaster)
-                )
-            )
-            .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
+               .AddAuthorizationBuilder()
+               .AddPolicy(
+                   AdminPolicy,
+                   policy => policy.RequireRole(
+                       nameof(AccountLevelType.Administrator),
+                       nameof(AccountLevelType.GrandMaster)
+                   )
+               )
+               .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
 
         _app = builder.Build();
 
@@ -110,8 +124,16 @@ public sealed class HttpServerService : ISquidStdService
         _app.UseAuthorization();
 
         _app.UseSwagger();
-        _app.MapScalarApiReference(options => options.AddDocument("v1", routePattern: SwaggerDocumentRoute));
+        _app.MapScalarApiReference(
+            options =>
+            {
+                options.WithOpenApiRoutePattern(SwaggerRoutePattern);
+                options.AddDocument(DocumentName);
+            }
+        );
         _app.MapGet("/health", () => Results.Ok(new { status = "ok" })).ExcludeFromDescription();
+
+        _app.MapGet("/", () => Results.Ok(new { message = "Welcome to Moongate API" })).ExcludeFromDescription();
 
         foreach (var endpoints in _container.Resolve<IEnumerable<IApiEndpointRegistration>>())
         {
@@ -132,8 +154,12 @@ public sealed class HttpServerService : ISquidStdService
             return;
         }
 
+        // StopAsync releases the listener and the port; DisposeAsync would go further and dispose the
+        // WebApplication's service provider — which is the game's container, since that is what the app
+        // was built on. Its singletons are the game's, not the API's, and disposing them here takes them
+        // down while the game is still running: the services that stop after this one then fail on
+        // objects already disposed. The container's lifetime belongs to the bootstrap that owns it.
         await _app.StopAsync(cancellationToken);
-        await _app.DisposeAsync();
         _app = null;
     }
 
