@@ -45,6 +45,22 @@ login→game-server handoff uses a one-time auth key with a 30-second TTL.
 Targets ClassicUO 7.x only — the advertised feature flags are a constant,
 modern set.
 
+## Domain events
+
+Handlers stay thin: rather than acting on the world themselves, they publish
+**domain events** (`CharacterCreatedEvent`, `PlayerEnteredWorldEvent`, the
+click events, …) on the event bus. Behaviour lives in subscribers — classes
+implementing `IEventSubscriberRegistration`, registered with
+`RegisterEventSubscriber<T>()` in `MoongateEventSubscribersPlugin` and attached
+to the bus at startup by `EventSubscriberService`, the event-side twin of how
+the network service wires packet handlers.
+
+Publishing is synchronous — it returns once every subscriber has run — and
+inbound packets are already marshalled onto the game loop, so subscribers run
+loop-affine and may touch world state directly. Opening the paperdoll (0x88)
+when you double-click a humanoid is the first of these, and mirrors ModernUO,
+where the paperdoll is likewise a subscriber rather than packet-handler logic.
+
 ## Persistence
 
 World state is persisted as **binary snapshots** per entity kind (accounts,
@@ -60,6 +76,6 @@ YAML (world data, item/mobile/loot templates — see the
 referential integrity where it matters (loot entries must point at real item
 templates). Functionality is composed from **plugins** registered in
 `Program.cs` (persistence, scripting, script modules, data loaders, packet
-handlers); drop-in
+handlers, event subscribers); drop-in
 assemblies in the root's `plugins/` directory are loaded from disk the same
 way.
