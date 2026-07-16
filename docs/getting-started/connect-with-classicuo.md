@@ -34,18 +34,20 @@ The flow the server implements today:
    seconds.
 4. **Character list** — your characters, with the modern (post-AOS) client
    feature flags always enabled.
-5. **Character creation** — creating a character builds and persists your
-   player mobile.
+5. **Character creation and deletion** — creating a character builds and
+   persists your player mobile, with a backpack, a bank box and a starting
+   kit; deleting one removes it along with everything it owned.
 6. **World entry** — creating or selecting a character loads you into the
-   map, with your own mobile, its equipment and hair, your stats, and the
-   season of the facet you stand on.
+   map, with your own mobile, its equipment and hair, your stats and skills,
+   and the season of the facet you stand on.
 
 > [!IMPORTANT]
 > **The world you enter is empty, and you cannot move yet.** World entry is
 > self-only: the server sends you your own character, but nearby mobiles and
-> items are not broadcast to you, and movement requests are not handled. You
-> will load into the map and stand still, alone. This is the current frontier
-> of the project.
+> items are not broadcast to you, and movement requests are not handled. Your
+> backpack cannot be opened yet either, so the starting kit stays out of
+> reach. You will load into the map and stand still, alone. This is the
+> current frontier of the project.
 
 ## Troubleshooting
 

@@ -18,10 +18,11 @@ connect.
 Moongate is young and moves fast. What works today:
 
 - TCP login pipeline: seed, account login, server list, game-server handoff,
-  character list, **character creation** (the created player mobile is
-  persisted) and **world entry** — creating or selecting a character loads
-  you into the map. World entry is self-only: nearby mobiles and items are
-  not broadcast and movement is not handled yet, which is the next milestone.
+  character list, **character creation and deletion** (the created player
+  mobile is persisted) and **world entry** — creating or selecting a character
+  loads you into the map with its stats, skills and gear. World entry is
+  self-only: nearby mobiles and items are not broadcast, and movement is not
+  handled yet, which is the next milestone.
 - Item, mobile and loot systems driven by YAML templates, with a Lua API
   (`item`, `mobile`, `loot`, `game`, `events`, `log`) for shard logic.
 - Binary snapshot persistence for accounts, mobiles and items.
