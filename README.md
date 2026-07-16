@@ -20,30 +20,71 @@
   <img src="https://img.shields.io/badge/scripting-Lua-yellow" alt="Lua scripting">
 </p>
 
-Moongate is an Ultima Online server emulator written from scratch in .NET 10
-on the [SquidStd](https://www.nuget.org/packages?q=SquidStd) toolkit: a single
-game-loop thread, Lua scripting, YAML templates and binary snapshot
-persistence. It targets the [ClassicUO](https://www.classicuo.eu/) 7.x client
-only.
+Moongate is an Ultima Online server emulator written from scratch in .NET 10:
+a single game-loop thread, Lua scripting, YAML shard data, binary snapshot
+persistence, and generated documentation for every implemented packet. It is
+built on the [SquidStd](https://www.nuget.org/packages?q=SquidStd) toolkit and
+targets the [ClassicUO](https://www.classicuo.eu/) 7.x client only.
 
 > **Status: early development.** Today the server takes a 7.x client through
-> login, character creation/selection/deletion and into the world, with
-> movement, items & containers and the paperdoll working. It is not a fully
+> login, character creation, selection and deletion, and into the world, with
+> movement, items, containers and the paperdoll working. It is not a fully
 > playable shard yet. The exact protocol surface lives in the
 > [packet reference](https://moongate-community.github.io/moongate/packets/).
 
-## Looking for collaborators
+## Why Another Rewrite?
 
-Moongate is young and moving fast — contributors and reviewers are welcome.
+Yes, rewriting a UO server from scratch is not the most practical path. I know.
+Moongate exists because starting from a blank slate is how I like to learn: it
+gives me room to test architecture ideas, rebuild systems from first
+principles, and understand the tradeoffs by writing the code myself. Starting
+over gives me clarity, curiosity, and the calm needed to keep exploring how
+things work.
+
+## Looking For Collaborators
+
+Moongate is young and moving fast. Contributors and reviewers are welcome.
 
 - Issues: <https://github.com/moongate-community/moongate/issues>
 - Discussions: <https://github.com/moongate-community/moongate/discussions>
 - Discord: <https://discord.gg/h9UUyGqd>
 
-## Quick start (Docker)
+## Quick Start
 
-You need your own **Ultima Online 7.x client files** — Moongate does not
-distribute them.
+### Requirements
+
+- .NET SDK 10.0+
+- Docker, if you want to run the container image
+- Ultima Online 7.x client data files. Moongate does not distribute them.
+
+### Run The Server Locally
+
+```bash
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
+dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
+```
+
+On first boot, Moongate creates the runtime directory structure, writes a
+default `moongate.yaml`, and seeds an administrator account:
+
+```text
+admin / admin
+```
+
+Change the password before using a reachable server. The UO TCP server listens
+on `localhost:2593`; point ClassicUO 7.x at it.
+
+### Run Tests
+
+```bash
+dotnet test Moongate.slnx
+```
+
+## Docker
+
+Run the published image with persistent server data and read-only UO client
+files:
 
 ```bash
 docker run -d --name moongate \
@@ -74,63 +115,83 @@ volumes:
   moongate-data:
 ```
 
-The first run generates `moongate.yaml` (the whole configuration) inside the
-data root and seeds a default `admin` account — see
-[getting started](https://moongate-community.github.io/moongate/getting-started/).
-Point ClassicUO 7.x at port `2593`.
+Images are published to Docker Hub as `tgiachi/moongate-server` and to GHCR as
+`ghcr.io/moongate-community/moongate`, tagged `latest`, `X.Y`, `X.Y.Z` and
+`sha-<commit>`.
 
-Images are published on
-[Docker Hub](https://hub.docker.com/r/tgiachi/moongate-server)
-(`tgiachi/moongate-server`) and
-[GHCR](https://github.com/moongate-community/moongate/pkgs/container/moongate)
-(`ghcr.io/moongate-community/moongate`) with `latest`, `X.Y`, `X.Y.Z` and
-`sha-<commit>` tags.
+## What Is In Scope Today
 
-## Features
+- UO TCP networking with typed packet records and opcode dispatch.
+- Login server flow: account auth, shard list, game-server handoff.
+- Character creation, selection and deletion, and the enter-world sequence.
+- Movement, items, containers with gumps, and the paperdoll.
+- YAML runtime configuration through `moongate.yaml`.
+- Item, mobile and loot templates as embedded YAML assets, seeded into the
+  runtime data directory.
+- Loot tables validated against concrete item templates at startup.
+- Persistence as binary snapshots per entity kind, with no database.
+- Lua scripting modules: `item`, `mobile`, `loot`, `account` and `events`,
+  always dispatched on the game loop.
+- Generated packet reference: every packet class carries a
+  `[PacketDocumentation]` attribute and the docs are built from the code.
+- CI, semantic-release, Docker images and GitHub Pages documentation.
 
-- **Classic UO wire protocol** as small typed packet records — every
-  implemented packet is documented in the generated
-  [packet reference](https://moongate-community.github.io/moongate/packets/)
-- **Lua scripting** — `item`, `mobile`, `loot`, `account` and `events`
-  modules, always dispatched on the game loop
-  ([scripting guide](https://moongate-community.github.io/moongate/scripting/))
-- **YAML templates** for items, mobiles and loot tables
-  ([data reference](https://moongate-community.github.io/moongate/scripting/data/item-templates.html))
-- **Binary snapshot persistence** (MessagePack) — no database, no ORM
-- **Domain events** on an event bus: packet handlers stay thin, behaviour
-  lives in subscribers
-- **Single game-loop thread** — everything that mutates the world runs
-  loop-affine
+## Project Highlights
 
-## Building from source
-
-Requires the .NET 10 SDK.
-
-```bash
-git clone https://github.com/moongate-community/moongate.git
-cd moongate
-dotnet build Moongate.slnx
-dotnet test Moongate.slnx
-dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
-```
+- Two layers by design: SquidStd provides the generic server infrastructure
+  (host, game loop, event bus, plugins, persistence, Lua runtime), Moongate
+  adds everything Ultima Online.
+- One game-loop thread owns all world mutation; packet handlers publish domain
+  events and behaviour lives in subscribers.
+- Runtime data is YAML-first, so shard content can be edited without
+  recompiling.
+- The packet documentation can never drift from the code: the generator fails
+  the build when a packet is missing its metadata.
 
 ## Documentation
 
-The full documentation lives at
-**<https://moongate-community.github.io/moongate/>** — getting started,
-scripting guides, packet reference and architecture notes. To build it
-locally:
+Published documentation: <https://moongate-community.github.io/moongate/>
+
+Useful starting points:
+
+- Getting started: <https://moongate-community.github.io/moongate/getting-started/>
+- Lua scripting: <https://moongate-community.github.io/moongate/scripting/>
+- Packet reference: <https://moongate-community.github.io/moongate/packets/>
+- Architecture: <https://moongate-community.github.io/moongate/under-the-hood/architecture.html>
+
+Build it locally:
 
 ```bash
 dotnet tool restore
 dotnet docfx docs/docfx.json --serve
 ```
 
+## Contributing
+
+Contributions are welcome. For non-trivial changes, open an issue or
+discussion first so the design can be aligned before implementation.
+
+Before sending a pull request:
+
+- Follow `CODE_CONVENTION.md`.
+- Keep changes scoped.
+- Keep tests green.
+- Update docs when runtime behavior changes.
+
+## Acknowledgements
+
+Moongate is inspired by the Ultima Online emulator ecosystem and by the
+long-running work of projects such as:
+
+- POLServer: <https://github.com/polserver/polserver>
+- ModernUO: <https://github.com/modernuo/modernuo>
+- UOX3: <https://github.com/UOX3DevTeam/UOX3>
+
 ## License
 
 Copyright 2026 Squid Development.
 
-Licensed under the
-[GNU Affero General Public License v3.0](https://github.com/moongate-community/moongate/blob/main/LICENSE):
-Moongate stays open — if you distribute a modified server, or run one that
+Moongate is licensed under the
+[GNU Affero General Public License v3.0](https://github.com/moongate-community/moongate/blob/main/LICENSE).
+Moongate stays open: if you distribute a modified server, or run one that
 players connect to, you must publish your sources under the same license.
