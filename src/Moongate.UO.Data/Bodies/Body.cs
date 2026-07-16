@@ -22,6 +22,12 @@ public readonly struct Body : IEquatable<Body>
     /// <summary>True for the ghost bodies shown when a player is dead.</summary>
     public bool IsGhost => Value is 402 or 403 or 607 or 608 or 970;
 
+    /// <summary>
+    /// True for the human, elf and gargoyle bodies a player can wear — the ones that have a paperdoll.
+    /// Derived from the male/female tables rather than a creature table, which we do not model.
+    /// </summary>
+    public bool IsHumanoid => IsMale || IsFemale;
+
     public bool Equals(Body other)
         => Value == other.Value;
 
