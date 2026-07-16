@@ -18,6 +18,6 @@ public sealed class ItemTemplateService : IItemTemplateService
     public ItemTemplate? GetById(string id)
         => _byId.GetValueOrDefault(id);
 
-    public void Register(ItemTemplate template)
-        => _byId[template.Id] = template;
+    public void Register(ItemTemplate itemTemplate)
+        => _byId[itemTemplate.Id] = itemTemplate;
 }

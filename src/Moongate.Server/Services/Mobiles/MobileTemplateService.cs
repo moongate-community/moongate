@@ -23,6 +23,6 @@ public sealed class MobileTemplateService : IMobileTemplateService
     public IEnumerable<MobileTemplate> GetByCategory(string category)
         => _byId.Values.Where(template => string.Equals(template.Category, category, StringComparison.OrdinalIgnoreCase));
 
-    public void Register(MobileTemplate template)
-        => _byId[template.Id] = template;
+    public void Register(MobileTemplate mobileTemplate)
+        => _byId[mobileTemplate.Id] = mobileTemplate;
 }

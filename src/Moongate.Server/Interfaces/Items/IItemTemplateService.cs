@@ -15,5 +15,5 @@ public interface IItemTemplateService
     ItemTemplate? GetById(string id);
 
     /// <summary>Adds or replaces an item template, indexed by id.</summary>
-    void Register(ItemTemplate template);
+    void Register(ItemTemplate itemTemplate);
 }

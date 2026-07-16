@@ -21,5 +21,5 @@ public interface IMobileTemplateService
     IEnumerable<MobileTemplate> GetByCategory(string category);
 
     /// <summary>Adds or replaces a mobile template, indexed by id.</summary>
-    void Register(MobileTemplate template);
+    void Register(MobileTemplate mobileTemplate);
 }
