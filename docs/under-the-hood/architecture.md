@@ -102,11 +102,24 @@ likewise lives outside the packet handlers: double-clicking a humanoid opens
 its paperdoll (`0x88`), and double-clicking a container opens its gump
 (`0x24`) and fills it (`0x3C`).
 
-An item counts as a container when it carries a gump id. `ItemEntity` does not
-remember the template it was built from, so the gump is the only trace left of
-the template's `Container:` block — `ItemFactoryService` gives every container
-one, falling back to the plain bag when the template names none, which is the
-default ModernUO's container table applies.
+Whether an item is a container is the template's answer, not the item's:
+`ItemEntity` carries the `TemplateId` it was built from and nothing else on the
+subject, so the question is asked of the template's `Container:` block every
+time. ModernUO asks the same question of its class hierarchy — `Container` is a
+base class there — which an entity built from data does not have; the template
+id is the seam that replaces it.
+
+The gump follows the same chain ModernUO walks: the template's own `GumpId`
+wins, failing that the gump table is asked for one matching the graphic
+(ModernUO's `ContainerData.GetData(itemID)` over `containers.cfg`, which is
+where our table comes from), failing that it is the plain bag. That last step
+is why the backpack appears in neither: it lands on the default.
+
+The client's `tiledata.mul` also flags container graphics, and we deliberately
+ignore it — as ModernUO does. It answers a different question ("is this graphic
+a container?" rather than "does this shard open it?"), and the two disagree
+often enough to matter: key rings, potion kegs and spellbooks are all flagged
+graphics that no shard opens.
 
 ## Persistence
 

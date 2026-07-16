@@ -12,6 +12,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 263
 -   Id: arcane_bookshelf_south_addon
     Name: Arcane Bookshelf South Addon
     Category: Addons
@@ -26,6 +30,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 263
 -   Id: ballot_box
     Name: Ballot Box
     Category: Addons
@@ -57,6 +65,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 81
 -   Id: elven_dresser_south_addon
     Name: Elven Dresser South Addon
     Category: Addons
@@ -71,6 +83,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 81
 -   Id: elven_wash_basin_east_addon
     Name: Elven Wash Basin East Addon
     Category: Addons
@@ -85,6 +101,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 260
 -   Id: elven_wash_basin_south_addon
     Name: Elven Wash Basin South Addon
     Category: Addons
@@ -99,6 +119,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 260
 -   Id: ornate_elven_chest_east_addon
     Name: Ornate Elven Chest East Addon
     Category: Addons
@@ -113,6 +137,10 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 268
 -   Id: ornate_elven_chest_south_addon
     Name: Ornate Elven Chest South Addon
     Category: Addons
@@ -127,3 +155,7 @@
     Tags:
         - modernuo
         - addons
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 268

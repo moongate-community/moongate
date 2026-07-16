@@ -12,11 +12,16 @@ public class ItemEntity : ISerialIdEntity, IPositionEntity
 {
     public Serial Id { get; set; }
 
+    /// <summary>
+    /// The id of the item template this item was built from; empty for an item made without one. It is
+    /// how the item finds back everything its template says about it that the entity does not copy —
+    /// whether it is a container, above all.
+    /// </summary>
+    public string TemplateId { get; set; } = string.Empty;
+
     public int ItemId { get; set; }
 
     public Hue Hue { get; set; }
-
-    public int? GumpId { get; set; }
 
     public string Name { get; set; }
 

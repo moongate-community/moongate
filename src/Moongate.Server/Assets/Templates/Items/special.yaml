@@ -124,6 +124,10 @@
         - modernuo
         - special
         - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 9
 -   Id: bracelet_of_binding
     Name: Bracelet Of Binding
     Category: Special
@@ -278,6 +282,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 62
 -   Id: coal
     Name: Coal
     Category: Special
@@ -327,6 +335,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 67
 -   Id: crossbow_bolts
     Name: Crossbow Bolts
     Category: Special
@@ -1721,6 +1733,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 287
 -   Id: gift_box_cube
     Name: Gift Box Cube
     Category: Special
@@ -1736,6 +1752,10 @@
         - modernuo
         - special
         - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 283
 -   Id: gift_box_cylinder
     Name: Gift Box Cylinder
     Category: Special
@@ -1750,6 +1770,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 284
 -   Id: gift_box_octogon
     Name: Gift Box Octogon
     Category: Special
@@ -1764,6 +1788,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 285
 -   Id: green_stocking
     Name: Green Stocking
     Category: Special
@@ -2334,6 +2362,10 @@
     Tags:
         - modernuo
         - special
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 63
 -   Id: reward_brazier_deed
     Name: Reward Brazier Deed
     Category: Special

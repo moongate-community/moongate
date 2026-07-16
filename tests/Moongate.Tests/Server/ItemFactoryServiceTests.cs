@@ -1,6 +1,5 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Services.Items;
-using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -51,31 +50,24 @@ public class ItemFactoryServiceTests
     }
 
     [Fact]
-    public void CreateFromTemplate_ContainerTemplateSetsGumpId()
+    public void CreateFromTemplate_StampsTheTemplateIdOnTheItem()
     {
         var item = Assert.Single(Factory().CreateFromTemplate("backpack"));
-        Assert.Equal(60, item.GumpId);
+        Assert.Equal("backpack", item.TemplateId);
     }
 
     [Fact]
-    public void CreateFromTemplate_ContainerTemplateKeepsItsOwnGumpId()
+    public void CreateByCategory_StampsTheTemplateItLandedOn()
     {
-        var item = Assert.Single(Factory().CreateFromTemplate("armoire"));
-        Assert.Equal(74, item.GumpId);
+        var item = Assert.Single(Factory().CreateByCategory("Clothing"));
+        Assert.Equal("robe", item.TemplateId);
     }
 
     [Fact]
-    public void CreateFromTemplate_ContainerWithoutGumpId_FallsBackToThePlainBag()
+    public void CreateByTag_StampsTheTemplateItLandedOn()
     {
-        var item = Assert.Single(Factory().CreateFromTemplate("trash_barrel"));
-        Assert.Equal(ContainerGumpLayout.DefaultGumpId, item.GumpId);
-    }
-
-    [Fact]
-    public void CreateFromTemplate_NonContainer_HasNoGumpId()
-    {
-        var item = Assert.Single(Factory().CreateFromTemplate("dagger"));
-        Assert.Null(item.GumpId);
+        var item = Assert.Single(Factory().CreateByTag("clothing"));
+        Assert.Equal("robe", item.TemplateId);
     }
 
     [Fact]

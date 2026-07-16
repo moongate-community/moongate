@@ -125,11 +125,18 @@ load time, but no combat service in this codebase reads it yet.
 Nested under `Container:`. All fields are nullable; every numeric field must
 be non-negative when set.
 
+**Declaring `Container:` at all is what makes an item a container** — it is the
+question the server asks before opening anything, reached from the item's
+`TemplateId`. The client's own opinion does not enter into it: plenty of
+graphics are containers in `tiledata.mul` that no shard opens (key rings,
+potion kegs, spellbooks), and ModernUO ignores that flag for exactly the same
+reason — there, container-ness is which C# class the item is.
+
 | Key | Type | Required / default | Meaning |
 |---|---|---|---|
 | `WeightMax` | `int?` | optional, default `null` | Maximum total weight the container can hold. |
 | `MaxItems` | `int?` | optional, default `null` | Maximum item count. |
-| `GumpId` | `int?` | optional, default `60` | Container gump graphic id — the window the client opens on double-click. The only `Container` field `ItemFactoryService` copies onto the spawned item, and what marks that item as a container: leave it out and the item still gets gump `60`, the plain bag. |
+| `GumpId` | `int?` | optional, default `null` | The window the client opens on double-click. Leave it out and the gump table is asked for one matching `ItemId`; failing that it is gump `60`, the plain bag. Omitting it is the right call whenever the table already knows the graphic. |
 | `ContainerLayoutId` | `string?` | optional, default `null` | Identifier for a client-side container layout/background. |
 | `Contents` | `List<string>?` | optional, default `null` | Item template ids to pre-populate the container with. Elements must be non-null. Declared but not yet consumed by a spawn-time populator. |
 | `IsQuiver` | `bool?` | optional, default `null` | Marks the container as a quiver. |

@@ -15,6 +15,10 @@
     Tags:
         - modernuo
         - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
 -   Id: treasure_chest_level2
     Name: Treasure Chest Level2
     Category: TreasureChests
@@ -32,6 +36,10 @@
     Tags:
         - modernuo
         - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
 -   Id: treasure_chest_level3
     Name: Treasure Chest Level3
     Category: TreasureChests
@@ -49,6 +57,10 @@
     Tags:
         - modernuo
         - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68
 -   Id: treasure_chest_level4
     Name: Treasure Chest Level4
     Category: TreasureChests
@@ -66,3 +78,7 @@
     Tags:
         - modernuo
         - treasure_chests
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
+        GumpId: 68

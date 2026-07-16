@@ -26,6 +26,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket1_artifact
     Name: Basket1 Artifact
     Category: Decoration Artifacts
@@ -40,6 +43,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket2_artifact
     Name: Basket2 Artifact
     Category: Decoration Artifacts
@@ -54,6 +60,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket3_north_artifact
     Name: Basket3 North Artifact
     Category: Decoration Artifacts
@@ -68,6 +77,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket3_west_artifact
     Name: Basket3 West Artifact
     Category: Decoration Artifacts
@@ -82,6 +94,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket4_artifact
     Name: Basket4 Artifact
     Category: Decoration Artifacts
@@ -96,6 +111,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket5_north_artifact
     Name: Basket5 North Artifact
     Category: Decoration Artifacts
@@ -110,6 +128,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket5_west_artifact
     Name: Basket5 West Artifact
     Category: Decoration Artifacts
@@ -124,6 +145,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: basket6_artifact
     Name: Basket6 Artifact
     Category: Decoration Artifacts
@@ -138,6 +162,9 @@
     Tags:
         - modernuo
         - decoration artifacts
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: bloody_water_artifact
     Name: Bloody Water Artifact
     Category: Decoration Artifacts

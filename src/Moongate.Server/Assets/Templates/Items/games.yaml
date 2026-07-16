@@ -16,6 +16,9 @@
         - modernuo
         - games
         - flippable
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: checker_board
     Name: Checker Board
     Category: Games
@@ -30,6 +33,9 @@
     Tags:
         - modernuo
         - games
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: chessboard
     Name: Chessboard
     Category: Games
@@ -44,6 +50,9 @@
     Tags:
         - modernuo
         - games
+    Container:
+        WeightMax: 40000
+        MaxItems: 125
 -   Id: dices
     Name: Dices
     Category: Games
