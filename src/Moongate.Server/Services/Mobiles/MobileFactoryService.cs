@@ -15,6 +15,15 @@ namespace Moongate.Server.Services.Mobiles;
 /// <summary>Default <see cref="IMobileFactoryService" />: maps protocol input and templates into mobile entities.</summary>
 public sealed class MobileFactoryService : IMobileFactoryService
 {
+    // Starting-stat budget of the modern client (>= 7.0.16, the 0xF8 creation packet): every stat in
+    // [10, 60] and the three summing to 90. ModernUO floors a client that sends anything else.
+    private const int StartingStatPoints = 90;
+    private const int MinStartingStat = 10;
+    private const int MaxStartingStat = 60;
+
+    // Players carry a flat hit-point base on top of half their strength (ModernUO PlayerMobile).
+    private const int PlayerBaseHits = 50;
+
     private readonly ILogger _logger = Log.ForContext<MobileFactoryService>();
     private readonly IStartingCityService _startingCityService;
     private readonly IMobileTemplateService _templates;
@@ -29,6 +38,9 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
     public MobileEntity CreatePlayerMobile(CharacterCreationPacket packet)
     {
+        var (strength, dexterity, intelligence) = ResolveStartingStats(packet);
+        var hitsMax = PlayerHitsMax(strength);
+
         var character = new MobileEntity
         {
             Name = packet.Name,
@@ -36,17 +48,17 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Race = packet.Race,
             Body = ResolvePlayerBody(packet.Race, packet.Gender),
             ProfessionId = packet.ProfessionId,
-            Strength = packet.Strength,
-            Dexterity = packet.Dexterity,
-            Intelligence = packet.Intelligence,
-            // Classic-UO player rule: pool ceilings mirror the stats; start topped up. Regen and
-            // damage that move the current pools arrive with the combat system.
-            Hits = packet.Strength,
-            HitsMax = packet.Strength,
-            Stamina = packet.Dexterity,
-            StaminaMax = packet.Dexterity,
-            Mana = packet.Intelligence,
-            ManaMax = packet.Intelligence,
+            Strength = strength,
+            Dexterity = dexterity,
+            Intelligence = intelligence,
+            // Player pool ceilings, as ModernUO: hits 50 + Str/2, stamina Dex, mana Int. Pools start
+            // topped up (InitStats). Regen and damage that move the current pools arrive with combat.
+            Hits = hitsMax,
+            HitsMax = hitsMax,
+            Stamina = dexterity,
+            StaminaMax = dexterity,
+            Mana = intelligence,
+            ManaMax = intelligence,
             SkinHue = new((ushort)packet.SkinHue),
             HairStyle = (ushort)packet.HairStyle,
             HairHue = new((ushort)packet.HairHue),
@@ -75,6 +87,41 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         return character;
     }
+
+    /// <summary>
+    /// Validates the client-sent starting stats the way ModernUO's CharacterCreation.SetStats does:
+    /// every stat within [10, 60] and the three summing to the 90-point budget. A client sending
+    /// anything else is not trusted, and every stat is floored to the minimum.
+    /// </summary>
+    private (int Strength, int Dexterity, int Intelligence) ResolveStartingStats(CharacterCreationPacket packet)
+    {
+        int strength = packet.Strength;
+        int dexterity = packet.Dexterity;
+        int intelligence = packet.Intelligence;
+
+        if (strength is >= MinStartingStat and <= MaxStartingStat &&
+            dexterity is >= MinStartingStat and <= MaxStartingStat &&
+            intelligence is >= MinStartingStat and <= MaxStartingStat &&
+            strength + dexterity + intelligence == StartingStatPoints)
+        {
+            return (strength, dexterity, intelligence);
+        }
+
+        _logger.Warning(
+            "Character '{Name}' sent invalid starting stats {Strength}/{Dexterity}/{Intelligence}; flooring to {Floor} each",
+            packet.Name,
+            strength,
+            dexterity,
+            intelligence,
+            MinStartingStat
+        );
+
+        return (MinStartingStat, MinStartingStat, MinStartingStat);
+    }
+
+    /// <summary>Player hit-point ceiling, as ModernUO's PlayerMobile: half the strength over a flat base.</summary>
+    private static int PlayerHitsMax(int strength)
+        => PlayerBaseHits + strength / 2;
 
     /// <summary>Maps a playable race and gender to the human/elf/gargoyle body graphic id.</summary>
     private static int ResolvePlayerBody(RaceType race, GenderType gender)
@@ -119,6 +166,14 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Strength = template.Strength,
             Dexterity = template.Dexterity,
             Intelligence = template.Intelligence,
+            // Creature pool ceilings mirror the raw stats (ModernUO BaseCreature without a *MaxSeed),
+            // unlike players, who get the flat hit-point base. Spawns start topped up.
+            Hits = template.Strength,
+            HitsMax = template.Strength,
+            Stamina = template.Dexterity,
+            StaminaMax = template.Dexterity,
+            Mana = template.Intelligence,
+            ManaMax = template.Intelligence,
             BrainScriptId = template.BrainScript ?? string.Empty,
             LootTableId = variant?.LootTableId ?? template.LootTableId ?? string.Empty
         };

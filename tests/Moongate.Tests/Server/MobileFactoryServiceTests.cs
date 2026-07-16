@@ -26,8 +26,8 @@ public class MobileFactoryServiceTests
 
         // Body derives from race + gender (elf female); pools seed from the stats, topped up.
         Assert.Equal(0x25E, character.Body);
-        Assert.Equal(45, character.HitsMax);
-        Assert.Equal(45, character.Hits);
+        Assert.Equal(72, character.HitsMax); // players: 50 + Str/2 == 50 + 45/2
+        Assert.Equal(72, character.Hits);
         Assert.Equal(20, character.StaminaMax);
         Assert.Equal(20, character.Stamina);
         Assert.Equal(25, character.ManaMax);
@@ -49,6 +49,48 @@ public class MobileFactoryServiceTests
         // Starting location taken from the city at index 1 (Moonglow / Felucca).
         Assert.Equal((int)MapType.Felucca, character.MapId);
         Assert.Equal(new(4408, 1168, 0), character.Position);
+    }
+
+    [Theory]
+    // Sum is not the 90-point budget.
+    [InlineData(60, 60, 60)]
+    [InlineData(10, 10, 10)]
+    // Sums to 90, but a single stat escapes the [10, 60] range.
+    [InlineData(70, 10, 10)]
+    [InlineData(80, 5, 5)]
+    public void CreatePlayerMobile_InvalidStartingStats_FloorsEveryStat(byte strength, byte dexterity, byte intelligence)
+    {
+        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
+
+        Assert.Equal(10, character.Strength);
+        Assert.Equal(10, character.Dexterity);
+        Assert.Equal(10, character.Intelligence);
+
+        // Pools follow the floored stats: 50 + 10/2 == 55 hits.
+        Assert.Equal(55, character.HitsMax);
+        Assert.Equal(55, character.Hits);
+        Assert.Equal(10, character.StaminaMax);
+        Assert.Equal(10, character.ManaMax);
+    }
+
+    [Theory]
+    // Every stat inside [10, 60] and summing to the 90-point budget.
+    [InlineData(60, 20, 10, 80)]
+    [InlineData(10, 20, 60, 55)]
+    [InlineData(30, 30, 30, 65)]
+    public void CreatePlayerMobile_ValidStartingStats_AreKept(
+        byte strength,
+        byte dexterity,
+        byte intelligence,
+        int expectedHits
+    )
+    {
+        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
+
+        Assert.Equal(strength, character.Strength);
+        Assert.Equal(dexterity, character.Dexterity);
+        Assert.Equal(intelligence, character.Intelligence);
+        Assert.Equal(expectedHits, character.HitsMax);
     }
 
     [Fact]
@@ -100,6 +142,15 @@ public class MobileFactoryServiceTests
         Assert.Equal("Town Guard", spawn.Mobile.Name);
         Assert.Equal(400, spawn.Mobile.Body);
         Assert.Equal(100, spawn.Mobile.Strength);
+
+        // Creature pools mirror the raw stats (no flat hit-point base) and start topped up.
+        Assert.Equal(100, spawn.Mobile.HitsMax);
+        Assert.Equal(100, spawn.Mobile.Hits);
+        Assert.Equal(90, spawn.Mobile.StaminaMax);
+        Assert.Equal(90, spawn.Mobile.Stamina);
+        Assert.Equal(25, spawn.Mobile.ManaMax);
+        Assert.Equal(25, spawn.Mobile.Mana);
+
         Assert.Equal((ushort)1002, spawn.Mobile.SkinHue.Value);
         Assert.Equal(new(10, 20, 5), spawn.Mobile.Position);
         Assert.Equal("guard", spawn.Mobile.BrainScriptId);
@@ -256,7 +307,12 @@ public class MobileFactoryServiceTests
         return service;
     }
 
-    private static CharacterCreationPacket Packet(short startingCityIndex)
+    private static CharacterCreationPacket Packet(
+        short startingCityIndex,
+        byte strength = 45,
+        byte dexterity = 20,
+        byte intelligence = 25
+    )
         => new(
             0,
             "Freydis",
@@ -264,9 +320,9 @@ public class MobileFactoryServiceTests
             4,
             GenderType.Female,
             RaceType.Elf,
-            45,
-            20,
-            25,
+            strength,
+            dexterity,
+            intelligence,
             [new(1, 50), new(2, 30), new(3, 20), new(0, 0)],
             0x03EA,
             0x203C,
