@@ -34,6 +34,7 @@ public class CharacterService : ICharacterService
     private readonly ISkillService _skills;
     private readonly Random _random;
     private readonly IEventBus _eventBus;
+    private readonly ISessionManager _sessions;
 
     private readonly ILogger _logger = Log.ForContext<CharacterService>();
 
@@ -46,7 +47,8 @@ public class CharacterService : ICharacterService
         IStartingItemsService startingItems,
         ISkillService skills,
         Random random,
-        IEventBus eventBus
+        IEventBus eventBus,
+        ISessionManager sessions
     )
     {
         _mobileStore = persistenceService.GetStore<MobileEntity, Serial>();
@@ -59,6 +61,7 @@ public class CharacterService : ICharacterService
         _skills = skills;
         _random = random;
         _eventBus = eventBus;
+        _sessions = sessions;
     }
 
     public MobileEntity CreateCharacter(Serial accountId, CharacterCreationPacket packet)
@@ -121,6 +124,13 @@ public class CharacterService : ICharacterService
         }
 
         var mobile = characters[slot];
+
+        // Someone is playing this character right now — deleting it would pull the world out from under
+        // them. ModernUO asks the same question as Mobile.NetState != null.
+        if (_sessions.IsCharacterPlayed(mobile.Id))
+        {
+            return DeleteResultType.CharBeingPlayed;
+        }
 
         // Everything the character owns goes with it: the mobile store is the only thing linking the
         // backpack, the bank box and their contents, so dropping it alone would strand them.

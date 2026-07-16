@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Moongate.Core.Primitives;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Accounts;
 using SquidStd.Network.Client;
@@ -14,6 +15,9 @@ public sealed class SessionManager : ISessionManager
 
     public PlayerSession GetOrCreate(SquidStdTcpClient client)
         => _sessions.GetOrAdd(client.SessionId, _ => new(client));
+
+    public bool IsCharacterPlayed(Serial mobileId)
+        => _sessions.Values.Any(session => session.Character?.Id == mobileId);
 
     public void Remove(long sessionId)
         => _sessions.TryRemove(sessionId, out _);

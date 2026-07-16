@@ -3,6 +3,7 @@ using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
+using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -161,6 +162,45 @@ public class CharacterServiceTests
         Assert.Equal(0, published);
     }
 
+    [Fact]
+    public async Task DeleteCharacter_SomebodyIsPlayingIt_IsRefusedAndChangesNothing()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var sessions = new StubSessionManager();
+        var service = Service(persistence, new(), sessions);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // Another session has this very character in hand.
+        sessions.Played.Add(mobile.Id);
+
+        Assert.Equal(DeleteResultType.CharBeingPlayed, service.DeleteCharacter(accountId, 0));
+
+        // The mobile survives, and so does the account link.
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
+        Assert.Contains(mobile.Id, persistence.Store<AccountEntity>().GetById(accountId)!.MobileIds);
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_PlayingADifferentCharacter_StillDeletesThisOne()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var sessions = new StubSessionManager();
+        var service = Service(persistence, new(), sessions);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // A session is busy with someone else entirely — that must not protect this character.
+        sessions.Played.Add((Serial)0x7777);
+
+        Assert.Null(service.DeleteCharacter(accountId, 0));
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+    }
+
     [Theory]
     [InlineData(-1)]
     [InlineData(1)] // only slot 0 exists
@@ -305,8 +345,12 @@ public class CharacterServiceTests
             0x0766
         );
 
-    private static CharacterService Service(FakePersistenceService persistence, EventBusService eventBus)
-        => CharacterServiceFixture.Create(persistence, eventBus);
+    private static CharacterService Service(
+        FakePersistenceService persistence,
+        EventBusService eventBus,
+        ISessionManager? sessions = null
+    )
+        => CharacterServiceFixture.Create(persistence, eventBus, sessions);
 
 
 

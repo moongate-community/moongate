@@ -1,3 +1,4 @@
+using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -16,7 +17,11 @@ namespace Moongate.Tests.Support;
 /// </summary>
 public static class CharacterServiceFixture
 {
-    public static CharacterService Create(FakePersistenceService persistence, IEventBus eventBus)
+    public static CharacterService Create(
+        FakePersistenceService persistence,
+        IEventBus eventBus,
+        ISessionManager? sessions = null
+    )
     {
         var templates = Templates();
         var random = new Random(1);
@@ -30,7 +35,8 @@ public static class CharacterServiceFixture
             StartingItems(),
             Skills(),
             random,
-            eventBus
+            eventBus,
+            sessions ?? new StubSessionManager()
         );
     }
 
