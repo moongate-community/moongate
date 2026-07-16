@@ -23,7 +23,13 @@ public class MoongateApiEndpointsPluginTests
                                   .ToArray();
 
         Assert.Equal(
-            [typeof(AdminEndpoints), typeof(AuthEndpoints), typeof(PlayerEndpoints), typeof(VersionEndpoints)],
+            [
+                typeof(AccountEndpoints),
+                typeof(AdminEndpoints),
+                typeof(AuthEndpoints),
+                typeof(PlayerEndpoints),
+                typeof(VersionEndpoints)
+            ],
             registered
         );
     }

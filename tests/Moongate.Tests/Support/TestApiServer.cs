@@ -58,6 +58,7 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance<IConfigManagerService>(new StubConfigManagerService());
         container.Register<IJwtTokenService, JwtTokenService>(Reuse.Singleton);
 
+        container.RegisterApiEndpointInstance(new AccountEndpoints(accounts));
         container.RegisterApiEndpointInstance(new VersionEndpoints(moongateConfig));
         container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));

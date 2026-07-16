@@ -26,6 +26,7 @@ public class MoongateApiEndpointsPlugin : ISquidStdPlugin
 
     public void Configure(IContainer container, PluginContext context)
     {
+        container.RegisterApiEndpoint<AccountEndpoints>();
         container.RegisterApiEndpoint<VersionEndpoints>();
         container.RegisterApiEndpoint<AuthEndpoints>();
         container.RegisterApiEndpoint<AdminEndpoints>();
