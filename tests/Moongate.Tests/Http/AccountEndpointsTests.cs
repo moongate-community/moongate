@@ -85,6 +85,83 @@ public class AccountEndpointsTests
         );
     }
 
+    [Fact]
+    public async Task Create_NewAccount_Is201WithLocation()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "alice", password = "secret", email = "a@b.c", level = "Player" }
+        );
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.Equal("/api/v1/admin/accounts/alice", response.Headers.Location?.ToString());
+        Assert.NotNull(server.Accounts.GetByUsername("alice"));
+    }
+
+    [Fact]
+    public async Task Create_OmittedLevel_DefaultsToPlayer()
+    {
+        // The safe default: an account that gains staff rights by accident is the wrong way to fail.
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "alice", password = "secret" }
+        );
+
+        Assert.Equal(AccountLevelType.Player, server.Accounts.GetByUsername("alice")!.AccountLevel);
+    }
+
+    [Fact]
+    public async Task Create_TakenUsername_Is409()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "tom", password = "secret" }
+        );
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("", "secret")]
+    [InlineData("alice", "")]
+    public async Task Create_EmptyUsernameOrPassword_Is400(string username, string password)
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username, password }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_UnknownLevel_Is400AndCreatesNothing()
+    {
+        // The level is checked before the write, so a bad request cannot half-apply.
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "alice", password = "secret", level = "Wizard" }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(server.Accounts.GetByUsername("alice"));
+    }
+
     internal static async Task AuthenticateAsync(TestApiServer server)
     {
         var response = await server.Client.PostAsJsonAsync(

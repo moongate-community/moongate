@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Core.Types;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Api;
 using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Types;
 
 namespace Moongate.Server.Endpoints;
 
@@ -27,6 +29,7 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
 
         group.MapGet("/", List).WithName("ListAccounts");
         group.MapGet("/{username}", Get).WithName("GetAccount");
+        group.MapPost("/", Create).WithName("CreateAccount");
     }
 
     private IResult List()
@@ -36,6 +39,61 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         => _accounts.GetByUsername(username) is { } account
                ? Results.Ok(ToResponse(account))
                : NotFound(username);
+
+    private IResult Create(CreateAccountRequest request)
+    {
+        // Before the write, so an unknown level cannot leave a half-made account behind.
+        if (!TryParseLevel(request.Level, AccountLevelType.Player, out var level))
+        {
+            return InvalidLevel(request.Level);
+        }
+
+        return _accounts.Create(request.Username, request.Password, request.Email, level) switch
+        {
+            AccountCreateResultType.Created => Results.Created(
+                $"/api/v1/admin/accounts/{request.Username}",
+                ToResponse(_accounts.GetByUsername(request.Username)!)
+            ),
+            AccountCreateResultType.UsernameTaken => Results.Problem(
+                $"An account named '{request.Username}' already exists.",
+                statusCode: StatusCodes.Status409Conflict
+            ),
+            AccountCreateResultType.UsernameEmpty => Results.Problem(
+                "Username is required.",
+                statusCode: StatusCodes.Status400BadRequest
+            ),
+            AccountCreateResultType.PasswordEmpty => Results.Problem(
+                "Password is required.",
+                statusCode: StatusCodes.Status400BadRequest
+            ),
+            _ => Results.Problem(
+                "Unknown account creation result.",
+                statusCode: StatusCodes.Status500InternalServerError
+            )
+        };
+    }
+
+    /// <summary>
+    /// Parses a level name, falling back when none was sent. Callers check this before writing anything,
+    /// so a bad level fails the whole request rather than half of it.
+    /// </summary>
+    internal static bool TryParseLevel(string? name, AccountLevelType fallback, out AccountLevelType level)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            level = fallback;
+
+            return true;
+        }
+
+        return Enum.TryParse(name, ignoreCase: true, out level);
+    }
+
+    internal static IResult InvalidLevel(string? name)
+        => Results.Problem(
+            $"'{name}' is not an account level. Valid levels: {string.Join(", ", Enum.GetNames<AccountLevelType>())}.",
+            statusCode: StatusCodes.Status400BadRequest
+        );
 
     /// <summary>
     /// CharacterCount comes from the entity's own id list, which is free. It must not come from
