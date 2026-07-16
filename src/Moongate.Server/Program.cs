@@ -113,6 +113,8 @@ await ConsoleApp.RunAsync(
 
                 container.RegisterApiEndpoint<VersionEndpoints>();
                 container.RegisterApiEndpoint<AuthEndpoints>();
+                container.RegisterApiEndpoint<AdminEndpoints>();
+                container.RegisterApiEndpoint<PlayerEndpoints>();
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);

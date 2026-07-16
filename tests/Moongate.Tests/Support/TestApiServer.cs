@@ -35,10 +35,11 @@ public sealed class TestApiServer : IAsyncDisposable
     {
         var container = new Container();
         var persistence = new FakePersistenceService();
+        var sessions = new StubSessionManager();
         var accounts = new AccountService(
             persistence,
             CharacterServiceFixture.Create(persistence, new EventBusService()),
-            new StubSessionManager()
+            sessions
         );
         accounts.Create("tom", "secret", null, level);
 
@@ -59,6 +60,8 @@ public sealed class TestApiServer : IAsyncDisposable
 
         container.RegisterApiEndpointInstance(new VersionEndpoints(moongateConfig));
         container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
+        container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
+        container.RegisterApiEndpointInstance(new PlayerEndpoints());
 
         var service = new HttpServerService(container, config);
         await service.StartAsync();
