@@ -34,6 +34,7 @@ public class MoongatePacketHandlersPlugin : ISquidStdPlugin
         container.RegisterPacketHandler<GeneralInformationHandler>();
         container.RegisterPacketHandler<SkillLockChangeHandler>();
         container.RegisterPacketHandler<SingleClickHandler>();
+        container.RegisterPacketHandler<MegaClilocHandler>();
         container.RegisterPacketHandler<DoubleClickHandler>();
     }
 }
