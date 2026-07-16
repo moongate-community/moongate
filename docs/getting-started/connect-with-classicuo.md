@@ -36,12 +36,16 @@ The flow the server implements today:
    feature flags always enabled.
 5. **Character creation** — creating a character builds and persists your
    player mobile.
+6. **World entry** — creating or selecting a character loads you into the
+   map, with your own mobile, its equipment and hair, your stats, and the
+   season of the facet you stand on.
 
 > [!IMPORTANT]
-> **Entering the game world is not implemented yet.** Character creation
-> persists the character, but the server does not yet send the world-entry
-> packet sequence, so the client will not load into the map. This is the
-> current frontier of the project.
+> **The world you enter is empty, and you cannot move yet.** World entry is
+> self-only: the server sends you your own character, but nearby mobiles and
+> items are not broadcast to you, and movement requests are not handled. You
+> will load into the map and stand still, alone. This is the current frontier
+> of the project.
 
 ## Troubleshooting
 
