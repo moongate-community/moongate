@@ -201,6 +201,43 @@ public class WorldServiceTests
     }
 
     [Fact]
+    public void BuildSequence_TwoItemsOnOneLayer_OnlyTheFirstIsDrawn()
+    {
+        // The client cannot render two things on one slot; ModernUO keeps the first and drops the rest.
+        var shirt = new ItemEntity
+        {
+            Id = new Serial(0x40000005), ItemId = 0x1517, EquippedLayer = LayerType.Shirt
+        };
+        var otherShirt = new ItemEntity
+        {
+            Id = new Serial(0x40000006), ItemId = 0x1518, EquippedLayer = LayerType.Shirt
+        };
+
+        var incoming = Serialize(Service(new StubItemService([shirt, otherShirt])).BuildSequence(Player())[8]);
+
+        // Shirt + hair, not shirt + shirt + hair.
+        Assert.Equal(23 + 9 * 2, BinaryPrimitives.ReadUInt16BigEndian(incoming.AsSpan(1)));
+        Assert.Equal(0x40000005u, BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(19)));
+    }
+
+    [Fact]
+    public void BuildSequence_ItemAlreadyOnTheHairLayer_HairIsNotDrawn()
+    {
+        // A real item holding the hair layer wins over the mobile's hairstyle.
+        var wig = new ItemEntity
+        {
+            Id = new Serial(0x40000007), ItemId = 0x203C, EquippedLayer = LayerType.Hair
+        };
+
+        var incoming = Serialize(Service(new StubItemService([wig])).BuildSequence(Player())[8]);
+
+        // Just the wig: the mobile's own hair must not be appended on top of it.
+        Assert.Equal(23 + 9 * 1, BinaryPrimitives.ReadUInt16BigEndian(incoming.AsSpan(1)));
+        Assert.Equal(0x40000007u, BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(19)));
+        Assert.Equal((byte)LayerType.Hair, incoming[25]);
+    }
+
+    [Fact]
     public void BuildSequence_MobileIncoming_IncludesEquipmentAndHair()
     {
         var shirt = new ItemEntity

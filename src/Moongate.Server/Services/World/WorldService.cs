@@ -146,13 +146,19 @@ public sealed class WorldService : IWorldService
         return skills;
     }
 
+    /// <summary>
+    /// Builds the worn items the client draws on a mobile: its equipment, then hair and facial hair as
+    /// pseudo-items. One item per layer wins, as in ModernUO — the client cannot render two things on the
+    /// same slot, and hair only goes out if nothing real already claimed its layer (a helm, say).
+    /// </summary>
     private List<MobileIncomingItem> BuildEquipment(MobileEntity mobile)
     {
         var items = new List<MobileIncomingItem>();
+        var takenLayers = new HashSet<LayerType>();
 
         foreach (var item in _items.GetEquipped(mobile))
         {
-            if (item.EquippedLayer is not { } layer)
+            if (item.EquippedLayer is not { } layer || !takenLayers.Add(layer))
             {
                 continue;
             }
@@ -160,12 +166,12 @@ public sealed class WorldService : IWorldService
             items.Add(new MobileIncomingItem(item.Id, (ushort)item.ItemId, layer, item.Hue));
         }
 
-        if (mobile.HairStyle != 0)
+        if (mobile.HairStyle != 0 && takenLayers.Add(LayerType.Hair))
         {
             items.Add(new MobileIncomingItem(HairVirtualSerial, mobile.HairStyle, LayerType.Hair, mobile.HairHue));
         }
 
-        if (mobile.FacialHairStyle != 0)
+        if (mobile.FacialHairStyle != 0 && takenLayers.Add(LayerType.FacialHair))
         {
             items.Add(
                 new MobileIncomingItem(
