@@ -15,7 +15,7 @@
       { "files": ["**/*.{md,yml}"], "exclude": ["_site/**", "templates/**", "obj/**", "packets/includes/**"] }
     ],
     "resource": [
-      { "files": ["images/**"] }
+      { "files": ["images/**", "CNAME"] }
     ],
     "output": "_site",
     "template": ["default", "modern", "templates/moongate"],
