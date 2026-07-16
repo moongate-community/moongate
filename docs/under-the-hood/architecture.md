@@ -68,6 +68,14 @@ mobiles, items) under the root's `saves/` directory. Entity stores hand out
 serials from per-kind generators; a seeder creates the default administrator
 account on first run. There is no SQL database and no ORM — by design.
 
+A `Serial` says what it identifies by where it falls: mobiles below
+`0x40000000`, items above it — but only up to `Serial.MaxItem`. The rest of the
+range is the **virtual band**, for things the client must be able to identify
+that the server does not own as entities. Hair is the one we have: it is a
+property of a mobile, yet every layer entry on the wire needs a serial, so
+`IVirtualSerialService` allocates one from the band. Virtual serials are never
+persisted — they are reissued on each boot.
+
 ## Data and plugins
 
 At startup, loaders seed and then read the root's `data/` and `templates/`
