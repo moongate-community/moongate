@@ -45,3 +45,11 @@ loader/validator behavior means updating the matching
 [data file page](../scripting/data/item-templates.md). The docs build
 (`dotnet docfx docs/docfx.json --warningsAsErrors`) runs in CI on every PR
 that touches `docs/` or `src/` and fails on broken links.
+
+## License
+
+Moongate is licensed under the
+[GNU AGPL-3.0](https://github.com/moongate-community/moongate/blob/main/LICENSE):
+anyone who distributes a modified server — or lets players connect to one over
+the network — must publish their sources under the same license. By
+contributing you agree that your contribution is licensed under AGPL-3.0 too.
