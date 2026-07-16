@@ -184,7 +184,6 @@ Moongate is inspired by the Ultima Online emulator ecosystem and by the
 long-running work of projects such as:
 
 - POLServer: <https://github.com/polserver/polserver>
-- ModernUO: <https://github.com/modernuo/modernuo>
 - UOX3: <https://github.com/UOX3DevTeam/UOX3>
 
 ## License
