@@ -16,13 +16,15 @@ scripting engine, built on MoonSharp).
 | `item` | Create and manipulate items by serial. | [item](reference/item.md) |
 | `mobile` | Create and manipulate mobiles by serial. | [mobile](reference/mobile.md) |
 | `loot` | Roll loot tables into items. | [loot](reference/loot.md) |
-| enums | `skill_name`, `gender_type`, `race_type`, `layer_type`. | [Enums](reference/enums.md) |
+| `account` | Create and manage accounts by username. | [account](reference/account.md) |
+| enums | `skill_name`, `gender_type`, `race_type`, `layer_type`, `account_level_type`. | [Enums](reference/enums.md) |
 
 ## Values and types
 
 Scripts never hold C# object handles. Items and mobiles are referenced by
 **serial** — a plain number that round-trips as a Lua number and is re-resolved
-on every call. Functions that create something return the new serial, or `nil`
+on every call. Accounts are the exception: they are referenced by **username**,
+the handle they log in with. Functions that create something return the new serial, or `nil`
 when creation failed (for example an unknown template). Functions that read
 state return a Lua **table** of fields, or `nil` when the subject does not
 exist. Functions that return several serials return them as a Lua
@@ -48,3 +50,8 @@ exist. Functions that return several serials return them as a Lua
 > call checks whether it is running on the loop thread and logs a **warning**
 > if it is not. It never blocks or throws — it just makes an otherwise-silent
 > single-writer violation visible in the log.
+>
+> The `account.*` functions are the exception: they touch the account store,
+> not the world, and carry no such requirement. The one that does reach the
+> world is [`account.delete`](reference/account.md#accountdelete) — it deletes
+> the account's characters — and it warns off-loop like the rest.

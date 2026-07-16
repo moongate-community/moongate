@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Types;
 using Moongate.Server;
 using Moongate.Server.Scripting;
 using Moongate.Ultima.Types;
@@ -31,7 +32,19 @@ public class MoongateScriptModulesPluginTests
         Assert.Contains(modules, module => module.ModuleType == typeof(MobileModule));
     }
 
+    [Fact]
+    public void Configure_RegistersAccountModule()
+    {
+        var container = new Container();
+
+        new MoongateScriptModulesPlugin().Configure(container, new());
+
+        var modules = container.Resolve<List<ScriptModuleData>>();
+        Assert.Contains(modules, module => module.ModuleType == typeof(AccountModule));
+    }
+
     [Theory]
+    [InlineData(typeof(AccountLevelType))]
     [InlineData(typeof(SkillName))]
     [InlineData(typeof(GenderType))]
     [InlineData(typeof(RaceType))]

@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Types;
 using Moongate.Server.Scripting;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
@@ -24,10 +25,12 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
 
     public void Configure(IContainer container, PluginContext context)
     {
+        container.RegisterScriptModule<AccountModule>();
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();
         container.RegisterScriptModule<LootModule>();
 
+        container.RegisterScriptEnum<AccountLevelType>();
         container.RegisterScriptEnum<SkillName>();
         container.RegisterScriptEnum<GenderType>();
         container.RegisterScriptEnum<RaceType>();

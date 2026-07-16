@@ -24,6 +24,8 @@
       href: reference/mobile.md
     - name: loot
       href: reference/loot.md
+    - name: account
+      href: reference/account.md
     - name: Enums
       href: reference/enums.md
 - name: Data files

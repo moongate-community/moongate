@@ -11,6 +11,7 @@ C# enum type name.
 | `gender_type` | `GenderType` | [`mobile.set`](mobile.md#mobileset) (`gender`) |
 | `race_type` | `RaceType` | [`mobile.set`](mobile.md#mobileset) (`race`) |
 | `layer_type` | `LayerType` | [`item.equip`](item.md#itemequip) / [`unequip`](item.md#itemunequip) |
+| `account_level_type` | `AccountLevelType` | [`account.create`](account.md#accountcreate) / [`set_level`](account.md#accountset_level) |
 
 Wherever a function takes one of these, it also accepts the equivalent name
 string, so `item.equip(m, s, layer_type.OneHanded)` and
@@ -115,4 +116,20 @@ bank storage and are not normal equip targets.
 
 ```lua
 item.equip(guard, blade, layer_type.OneHanded)
+```
+
+## account_level_type
+
+An account's privilege level.
+
+| Constant | Value |
+|---|---|
+| `Player` | 0 |
+| `GrandMaster` | 1 |
+| `Administrator` | 2 |
+
+**Example**
+
+```lua
+account.set_level("tom", account_level_type.GrandMaster)
 ```

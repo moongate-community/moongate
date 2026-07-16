@@ -1,8 +1,11 @@
+using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data;
 using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Types;
 using Serilog;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -14,10 +17,16 @@ public class AccountService : IAccountService
     private readonly ILogger _logger = Log.ForContext<AccountService>();
 
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
+    private readonly ICharacterService _characterService;
+    private readonly ISessionManager _sessions;
 
-    public AccountService(IPersistenceService persistenceService)
+    public AccountService(
+        IPersistenceService persistenceService, ICharacterService characterService, ISessionManager sessions
+    )
     {
         _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
+        _characterService = characterService;
+        _sessions = sessions;
     }
 
     public AccountAuthResult Authenticate(string username, string password)
@@ -40,5 +49,125 @@ public class AccountService : IAccountService
     }
 
     public Serial? GetAccountIdByUsername(string username)
-        => _accountStore.Query().FirstOrDefault(s => s.Username == username)?.Id;
+        => GetByUsername(username)?.Id;
+
+    public AccountEntity? GetByUsername(string username)
+        => _accountStore.Query().FirstOrDefault(account => account.Username == username);
+
+    public IReadOnlyList<string> GetUsernames()
+        => _accountStore.Query().Select(account => account.Username).ToList();
+
+    public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return AccountCreateResultType.UsernameEmpty;
+        }
+
+        if (string.IsNullOrEmpty(password))
+        {
+            return AccountCreateResultType.PasswordEmpty;
+        }
+
+        if (GetByUsername(username) is not null)
+        {
+            return AccountCreateResultType.UsernameTaken;
+        }
+
+        var account = new AccountEntity
+        {
+            Username = username,
+            Email = email,
+            PasswordHash = HashUtils.HashPassword(password),
+            IsActive = true,
+            AccountLevel = level
+        };
+
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account created: {Username} at level {Level}", username, level);
+
+        return AccountCreateResultType.Created;
+    }
+
+    public bool SetPassword(string username, string password)
+    {
+        if (string.IsNullOrEmpty(password) || GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.PasswordHash = HashUtils.HashPassword(password);
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Password changed for account {Username}", username);
+
+        return true;
+    }
+
+    public bool SetLevel(string username, AccountLevelType level)
+    {
+        if (GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.AccountLevel = level;
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account {Username} set to level {Level}", username, level);
+
+        return true;
+    }
+
+    public bool SetActive(string username, bool isActive)
+    {
+        if (GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.IsActive = isActive;
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account {Username} is now {State}", username, isActive ? "active" : "blocked");
+
+        return true;
+    }
+
+    public AccountDeleteResultType Delete(string username)
+    {
+        if (GetByUsername(username) is not { } account)
+        {
+            return AccountDeleteResultType.NotFound;
+        }
+
+        var characterCount = _characterService.GetPlayerCharacters(account.Id).Count;
+
+        // Asked of the whole account before anything is deleted: refusing halfway would leave it
+        // stripped of every character but the one still being played.
+        if (_characterService.GetPlayerCharacters(account.Id).Any(character => _sessions.IsCharacterPlayed(character.Id)))
+        {
+            return AccountDeleteResultType.CharacterBeingPlayed;
+        }
+
+        // Always slot 0: each delete unlinks its character, so the list closes up behind it. The
+        // character service owns the cascade into equipment and containers — this walks it, it does
+        // not reimplement it.
+        for (var remaining = characterCount; remaining > 0; remaining--)
+        {
+            _characterService.DeleteCharacter(account.Id, 0);
+        }
+
+        _accountStore.RemoveAsync(account.Id).WaitSync();
+
+        _logger.Information(
+            "Account deleted: {Username} (serial {Serial}) with {Count} characters",
+            username,
+            account.Id,
+            characterCount
+        );
+
+        return AccountDeleteResultType.Deleted;
+    }
 }
