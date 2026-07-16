@@ -35,6 +35,9 @@ public sealed class StubAccountService : IAccountService
     public IReadOnlyList<string> GetUsernames()
         => throw new NotSupportedException();
 
+    public IReadOnlyList<AccountEntity> GetAll()
+        => throw new NotSupportedException();
+
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
         => throw new NotSupportedException();
 

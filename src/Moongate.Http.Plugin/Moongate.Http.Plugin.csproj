@@ -17,6 +17,7 @@
     <ItemGroup>
         <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
         <!--
             Swashbuckle rather than Microsoft.AspNetCore.OpenApi, which is otherwise the obvious choice on
             .NET 10: AddOpenApi resolves its document services by key, and DryIoc.Microsoft.DependencyInjection

@@ -38,7 +38,7 @@ public class HttpServerServiceTests
     }
 
     [Fact]
-    public async Task StartAsync_ServesTheOpenApiDocumentAndScalar()
+    public async Task StartAsync_ServesTheOpenApiDocument()
     {
         await using var server = await TestHttpServer.StartAsync();
 
@@ -46,7 +46,31 @@ public class HttpServerServiceTests
             HttpStatusCode.OK,
             (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
         );
-        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/scalar/v1")).StatusCode);
+    }
+
+    [Fact]
+    public async Task StartAsync_ScalarPointsAtTheDocumentThatIsActuallyServed()
+    {
+        // Asserting that /scalar/v1 answers 200 proves nothing: the page renders whatever happens, so
+        // pointing it at a document nobody serves still yields a 200 — showing an empty reference, which
+        // is exactly the bug this catches. What matters is the document it will go and fetch.
+        //
+        // Scalar's integration script resolves each source against the origin plus the app's base path
+        // (`new URL(source.url, origin + basePath + '/')`), so the route is emitted relative and is
+        // matched here the same way.
+        await using var server = await TestHttpServer.StartAsync();
+
+        var page = await server.Client.GetStringAsync("/scalar/v1");
+
+        Assert.Contains(HttpServerService.SwaggerDocumentRoute.TrimStart('/'), page, StringComparison.Ordinal);
+
+        // Scalar's own default, which nothing here serves: the reference silently renders empty against it.
+        Assert.DoesNotContain("openapi/v1.json", page, StringComparison.Ordinal);
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
+        );
     }
 
     [Fact]
@@ -127,6 +151,29 @@ public class HttpServerServiceTests
 
         Assert.Equal(TestHttpServer.SigningKey, server.Container.Resolve<MoongateHttpConfig>().Jwt.SigningKey);
         Assert.Equal(0, configManager.SaveCount);
+    }
+
+    /// <summary>Stands in for any game singleton holding an OS resource, as several really do.</summary>
+    private sealed class DisposableGameSingleton : IDisposable
+    {
+        public bool Disposed { get; private set; }
+
+        public void Dispose()
+            => Disposed = true;
+    }
+
+    [Fact]
+    public async Task StopAsync_LeavesTheGameContainersSingletonsAlone()
+    {
+        // The web app runs on the game's container, so disposing the WebApplication disposes that
+        // container's singletons — the game's, not the API's. They would go down while the game is still
+        // running, and its own StopAsync would then fail on objects already disposed.
+        var server = await TestHttpServer.StartAsync(container => container.Register<DisposableGameSingleton>(Reuse.Singleton));
+        var singleton = server.Container.Resolve<DisposableGameSingleton>();
+
+        await server.DisposeAsync();
+
+        Assert.False(singleton.Disposed);
     }
 
     [Fact]

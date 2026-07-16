@@ -57,6 +57,9 @@ public class AccountService : IAccountService
     public IReadOnlyList<string> GetUsernames()
         => _accountStore.Query().Select(account => account.Username).ToList();
 
+    public IReadOnlyList<AccountEntity> GetAll()
+        => [.. _accountStore.GetAll()];
+
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
     {
         if (string.IsNullOrWhiteSpace(username))
