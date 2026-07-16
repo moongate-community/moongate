@@ -1,3 +1,4 @@
+using Moongate.Tests.Support;
 using Moongate.Network.Compression;
 
 namespace Moongate.Tests.Network;
@@ -77,5 +78,16 @@ public class HuffmanEncoderTests
 
         Assert.Equal(1, written);
         Assert.Equal(0x34, output[0]);
+    }
+
+    [Fact]
+    public void Compress_ThenTestDecoder_RoundTripsArbitraryBytes()
+    {
+        // Cross-checks the encoder against the independent table copy in the test decoder.
+        var data = Enumerable.Range(0, 512).Select(i => (byte)(i * 31)).ToArray();
+        var output = new byte[HuffmanEncoder.CalculateMaxCompressedSize(data.Length)];
+        var written = HuffmanEncoder.Compress(data, output);
+
+        Assert.Equal(data, HuffmanDecoder.Decode(output.AsSpan(0, written)));
     }
 }
