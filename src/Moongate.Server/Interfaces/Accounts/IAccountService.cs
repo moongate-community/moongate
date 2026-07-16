@@ -27,6 +27,13 @@ public interface IAccountService
     IReadOnlyList<string> GetUsernames();
 
     /// <summary>
+    /// Every account, in one pass over the store. Exists because <see cref="GetByUsername" /> scans:
+    /// building a list from <see cref="GetUsernames" /> plus a lookup per name would scan the store once
+    /// per account.
+    /// </summary>
+    IReadOnlyList<AccountEntity> GetAll();
+
+    /// <summary>
     /// Creates an active account with a hashed password. Refuses a blank username or password, and a
     /// username already taken.
     /// </summary>
