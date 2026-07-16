@@ -24,7 +24,7 @@
       "_appTitle": "Moongate",
       "_appLogoPath": "images/logo.png",
       "_appFaviconPath": "images/favicon.ico",
-      "_appFooter": "Moongate — an Ultima Online server emulator · AGPL-3.0",
+      "_appFooter": "Moongate — an Ultima Online server · AGPL-3.0",
       "_enableSearch": true,
       "_disableContribution": true
     },
