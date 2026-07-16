@@ -129,7 +129,7 @@ be non-negative when set.
 |---|---|---|---|
 | `WeightMax` | `int?` | optional, default `null` | Maximum total weight the container can hold. |
 | `MaxItems` | `int?` | optional, default `null` | Maximum item count. |
-| `GumpId` | `int?` | optional, default `null` | Container gump graphic id. The only `Container` field `ItemFactoryService` currently copies onto the spawned item (`GumpId`). |
+| `GumpId` | `int?` | optional, default `60` | Container gump graphic id — the window the client opens on double-click. The only `Container` field `ItemFactoryService` copies onto the spawned item, and what marks that item as a container: leave it out and the item still gets gump `60`, the plain bag. |
 | `ContainerLayoutId` | `string?` | optional, default `null` | Identifier for a client-side container layout/background. |
 | `Contents` | `List<string>?` | optional, default `null` | Item template ids to pre-populate the container with. Elements must be non-null. Declared but not yet consumed by a spawn-time populator. |
 | `IsQuiver` | `bool?` | optional, default `null` | Marks the container as a quiver. |

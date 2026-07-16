@@ -57,9 +57,16 @@ the network service wires packet handlers.
 
 Publishing is synchronous — it returns once every subscriber has run — and
 inbound packets are already marshalled onto the game loop, so subscribers run
-loop-affine and may touch world state directly. Opening the paperdoll (0x88)
-when you double-click a humanoid is the first of these, and mirrors ModernUO,
-where the paperdoll is likewise a subscriber rather than packet-handler logic.
+loop-affine and may touch world state directly. Two subscribers ship today, and
+both mirror ModernUO, where the same behaviour likewise lives outside the packet
+handlers: double-clicking a humanoid opens its paperdoll (0x88), and
+double-clicking a container opens its gump (0x24) and fills it (0x3C).
+
+An item counts as a container when it carries a gump id. `ItemEntity` does not
+remember the template it was built from, so the gump is the only trace left of
+the template's `Container:` block — `ItemFactoryService` gives every container
+one, falling back to the plain bag when the template names none, which is the
+default ModernUO's container table applies.
 
 ## Persistence
 

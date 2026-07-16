@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Services.Items;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -54,6 +55,27 @@ public class ItemFactoryServiceTests
     {
         var item = Assert.Single(Factory().CreateFromTemplate("backpack"));
         Assert.Equal(60, item.GumpId);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_ContainerTemplateKeepsItsOwnGumpId()
+    {
+        var item = Assert.Single(Factory().CreateFromTemplate("armoire"));
+        Assert.Equal(74, item.GumpId);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_ContainerWithoutGumpId_FallsBackToThePlainBag()
+    {
+        var item = Assert.Single(Factory().CreateFromTemplate("trash_barrel"));
+        Assert.Equal(ContainerGumpLayout.DefaultGumpId, item.GumpId);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_NonContainer_HasNoGumpId()
+    {
+        var item = Assert.Single(Factory().CreateFromTemplate("dagger"));
+        Assert.Null(item.GumpId);
     }
 
     [Fact]
@@ -140,6 +162,13 @@ public class ItemFactoryServiceTests
             {
                 Id = "backpack", Name = "Backpack", Category = "Containers", ItemId = 3701,
                 Container = new() { GumpId = 60 }
+            }
+        );
+        service.Register(
+            new()
+            {
+                Id = "trash_barrel", Name = "Trash Barrel", Category = "Containers", ItemId = 3707,
+                Container = new()
             }
         );
         service.Register(

@@ -6,6 +6,13 @@ namespace Moongate.UO.Data.Containers;
 /// </summary>
 public sealed class ContainerGumpLayout
 {
+    /// <summary>
+    /// The gump a container falls back to when its own is not stated — the plain bag. It is the entry
+    /// ModernUO's container table keeps as its default, and the reason the backpack is listed nowhere:
+    /// it simply lands here.
+    /// </summary>
+    public const int DefaultGumpId = 60;
+
     public int GumpId { get; set; }
     public int RectX { get; set; }
     public int RectY { get; set; }

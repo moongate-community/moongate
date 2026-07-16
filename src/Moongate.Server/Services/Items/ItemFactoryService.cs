@@ -1,5 +1,6 @@
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Items;
+using Moongate.UO.Data.Containers;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
 
@@ -52,7 +53,12 @@ public sealed class ItemFactoryService : IItemFactoryService
         {
             ItemId = template.ItemId,
             Hue = hue ?? new Hue((ushort)template.Hue),
-            GumpId = template.Container?.GumpId,
+            // Every container gets a gump, falling back to the plain bag when the template does not name
+            // one — the same default ModernUO applies. This is also what marks the item as a container:
+            // the entity does not remember which template it came from, so the gump is the only trace.
+            GumpId = template.Container is null
+                ? null
+                : template.Container.GumpId ?? ContainerGumpLayout.DefaultGumpId,
             Name = template.Name,
             ScriptId = template.ScriptId,
             Rarity = template.Rarity,
