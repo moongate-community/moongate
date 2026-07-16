@@ -1,6 +1,7 @@
 using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Interfaces;
+using Moongate.Http.Plugin;
 using Moongate.Persistence;
 using Moongate.Scripting;
 using Moongate.Server;
@@ -99,6 +100,7 @@ await ConsoleApp.RunAsync(
                 builder.Add<MoongateDataLoaderPlugin>();
                 builder.Add<MoongatePacketHandlersPlugin>();
                 builder.Add<MoongateEventSubscribersPlugin>();
+                builder.Add<MoongateHttpPlugin>();
             }
         );
 

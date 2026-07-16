@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Moongate.Core.Primitives;
@@ -44,6 +45,15 @@ public sealed class JwtTokenService : IJwtTokenService
 
         return new(new JwtSecurityTokenHandler().WriteToken(token), expiresAt);
     }
+
+    /// <summary>
+    /// A fresh key, for a server whose config has none yet. Generated per install rather than shipped as a
+    /// constant: this key signs the tokens that carry <see cref="AccountLevelType.Administrator" />, so one
+    /// baked into the source would let anyone who reads it mint staff tokens against every server whose
+    /// owner never changed it.
+    /// </summary>
+    internal static string GenerateSigningKey()
+        => Convert.ToBase64String(RandomNumberGenerator.GetBytes(MinimumKeyBytes));
 
     /// <summary>
     /// Turns the configured key into a signing key, refusing anything HS256 cannot sign with. A short key

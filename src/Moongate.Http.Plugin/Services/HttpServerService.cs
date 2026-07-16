@@ -13,6 +13,7 @@ using Moongate.Http.Plugin.Interfaces;
 using Scalar.AspNetCore;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
+using SquidStd.Core.Interfaces.Config;
 
 namespace Moongate.Http.Plugin.Services;
 
@@ -49,8 +50,10 @@ public sealed class HttpServerService : ISquidStdService
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        // Validated before anything binds, so a missing key is a startup error rather than a 500 on the
-        // first login attempt.
+        EnsureSigningKey();
+
+        // Validated before anything binds, so a bad key is a startup error rather than a 500 on the first
+        // login attempt.
         var signingKey = JwtTokenService.SigningKey(_config.Jwt.SigningKey);
 
         var builder = WebApplication.CreateBuilder();
@@ -124,6 +127,33 @@ public sealed class HttpServerService : ISquidStdService
         await _app.StopAsync(cancellationToken);
         await _app.DisposeAsync();
         _app = null;
+    }
+
+    /// <summary>
+    /// Mints a signing key for a server that has not configured one, and writes it to moongate.yaml.
+    /// <para>
+    /// Persisting matters as much as generating: a key regenerated on every boot would invalidate every
+    /// token issued before the restart, silently. Saving here rather than in the plugin's Configure is
+    /// deliberate — Configure runs before the other config sections are registered, and the file is composed
+    /// from the registered ones, so an early save would drop them.
+    /// </para>
+    /// <para>
+    /// Only an absent key is filled in. A key that is set but unusable is left to fail loudly below: not
+    /// configuring one is an omission worth covering, whereas configuring a bad one is a mistake worth
+    /// reporting.
+    /// </para>
+    /// </summary>
+    private void EnsureSigningKey()
+    {
+        if (!string.IsNullOrWhiteSpace(_config.Jwt.SigningKey))
+        {
+            return;
+        }
+
+        _config.Jwt.SigningKey = JwtTokenService.GenerateSigningKey();
+        _container.Resolve<IConfigManagerService>().Save();
+
+        _logger.Information("No http.Jwt.SigningKey was configured; minted one and saved it to moongate.yaml");
     }
 
     /// <summary>
