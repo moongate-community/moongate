@@ -36,7 +36,8 @@ The flow the server implements today:
    feature flags always enabled.
 5. **Character creation and deletion** — creating a character builds and
    persists your player mobile, with a backpack, a bank box and a starting
-   kit; deleting one removes it along with everything it owned.
+   kit; deleting one removes it along with everything it owned. A character
+   somebody is logged in as cannot be deleted.
 6. **World entry** — creating or selecting a character loads you into the
    map, with your own mobile, its equipment and hair, your stats and skills,
    and the season of the facet you stand on.
