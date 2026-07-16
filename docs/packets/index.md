@@ -27,13 +27,15 @@ protocol surface currently implemented for the ClassicUO **7.x** client target.
 ## How a packet is implemented
 
 Each packet is a self-contained `readonly record struct` that knows how to read
-or write itself:
+or write itself, and declares its documentation family with the
+`[PacketDocumentation]` attribute:
 
 ```csharp
 /// <summary>
 /// Double click (0x06): the client double-clicked an entity, identified by its serial. 5 bytes fixed.
 /// Whether the target is a mobile or an item is decided later from the serial's range.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive, Length = 5)]
 public readonly record struct DoubleClickPacket(Serial Target) : IIncomingPacket<DoubleClickPacket>
 {
     public static byte PacketId => 0x06;

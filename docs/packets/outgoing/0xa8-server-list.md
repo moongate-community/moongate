@@ -5,7 +5,7 @@
 Server list (0xA8): advertises the available shards. Card 09 sends the single shard.
 
 - **Class:** [`ServerListPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Outgoing/ServerListPacket.cs)
-- **Size:** —
+- **Size:** Variable
 
 ## Fields
 

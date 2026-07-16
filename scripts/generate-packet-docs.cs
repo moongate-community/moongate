@@ -46,59 +46,36 @@ if (duplicate is not null)
     errors.Add($"duplicate page slug '{duplicate.Key.Slug}' in {duplicate.Key.Direction}");
 }
 
-// Packet families: every packet class must belong to exactly one family, so
-// adding a packet without categorizing it (or renaming a class) breaks the
-// generation instead of silently dropping the page from the family lists.
-var families = new Family[]
+// Packet families come from the [PacketDocumentation(PacketFamilyType.X)]
+// attribute on each packet record (enforced in Parse). This map only holds
+// the presentation strings per PacketFamilyType member; a packet using a
+// member missing here breaks the generation.
+var familyInfos = new FamilyInfo[]
 {
-    new("login-shard-select", "Login & shard select",
-        "Seed, account auth, server list, shard select, game-server handoff.",
-        ["LoginSeedPacket", "AccountLoginRequestPacket", "LoginDeniedPacket", "ServerListPacket", "SelectServerPacket", "ConnectToGameServerPacket", "GameServerLoginPacket", "ClientVersionPacket"]),
-    new("characters", "Characters",
-        "Character list, creation, selection, deletion and list updates.",
-        ["CharacterListPacket", "CharacterCreationPacket", "CharacterSelectPacket", "DeleteCharacterPacket", "CharacterDeleteResultPacket", "CharacterListUpdatePacket"]),
-    new("enter-world", "Enter world",
-        "Login confirm, feature flags, and the login-complete marker.",
-        ["LoginConfirmPacket", "SupportFeaturesPacket", "LoginCompletePacket"]),
-    new("world-state", "World state",
-        "Light levels, game time, season, map change/patches, object removal.",
-        ["PersonalLightLevelPacket", "OverallLightLevelPacket", "GameTimePacket", "SeasonChangePacket", "MapChangePacket", "MapPatchesPacket", "DeleteObjectPacket"]),
-    new("items-containers", "Items & containers",
-        "World items, worn items, container gumps, contents and lift rejects.",
-        ["WorldItemPacket", "WornItemPacket", "DrawContainerPacket", "ContainerContentPacket", "AddItemToContainerPacket", "LiftRejectPacket"]),
-    new("movement", "Movement",
-        "Move requests, acks, and mobile position updates.",
-        ["MoveRequestPacket", "MovementAckPacket", "MobileUpdatePacket", "MobileIncomingPacket"]),
-    new("status-skills", "Status & skills",
-        "Mobile status, paperdoll, skills, war mode, stat/skill locks.",
-        ["MobileStatusPacket", "PaperdollPacket", "SkillsPacket", "SkillLockChangePacket", "StatLockInfoPacket", "WarModePacket"]),
-    new("interaction-keepalive", "Interaction & keepalive",
-        "Single/double click, the 0xBF request multiplexer, and ping round-trips.",
-        ["DoubleClickPacket", "SingleClickPacket", "GeneralInformationPacket", "PingPacket", "PingAckPacket"]),
+    new("LoginShardSelect", "login-shard-select", "Login & shard select",
+        "Seed, account auth, server list, shard select, game-server handoff."),
+    new("Characters", "characters", "Characters",
+        "Character list, creation, selection, deletion and list updates."),
+    new("EnterWorld", "enter-world", "Enter world",
+        "Login confirm, feature flags, and the login-complete marker."),
+    new("WorldState", "world-state", "World state",
+        "Light levels, game time, season, map change/patches, object removal."),
+    new("ItemsContainers", "items-containers", "Items & containers",
+        "World items, worn items, container gumps, contents and lift rejects."),
+    new("Movement", "movement", "Movement",
+        "Move requests, acks, and mobile position updates."),
+    new("StatusSkills", "status-skills", "Status & skills",
+        "Mobile status, paperdoll, skills, war mode, stat/skill locks."),
+    new("InteractionKeepalive", "interaction-keepalive", "Interaction & keepalive",
+        "Single/double click, the 0xBF request multiplexer, and ping round-trips."),
 };
 
-var byClass = packets.ToDictionary(p => p.ClassName, StringComparer.Ordinal);
-var assigned = new HashSet<string>(StringComparer.Ordinal);
+var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);
 
-foreach (var family in families)
+foreach (var packet in packets.Where(p => !knownFamilies.Contains(p.Family)))
 {
-    foreach (var className in family.Classes)
-    {
-        if (!byClass.ContainsKey(className))
-        {
-            errors.Add($"family '{family.Slug}' references unknown class '{className}' — was it renamed?");
-        }
-
-        if (!assigned.Add(className))
-        {
-            errors.Add($"class '{className}' is assigned to more than one family");
-        }
-    }
-}
-
-foreach (var packet in packets.Where(p => !assigned.Contains(p.ClassName)))
-{
-    errors.Add($"class '{packet.ClassName}' is not assigned to any family in scripts/generate-packet-docs.cs");
+    errors.Add(
+        $"packet '{packet.ClassName}' uses family '{packet.Family}' which has no entry in the familyInfos map in this script");
 }
 
 if (errors.Count > 0)
@@ -137,15 +114,11 @@ foreach (var packet in packets)
     File.WriteAllText(path, PacketPage(packet));
 }
 
-var familyDocs = families
-    .Select(f => new FamilyDoc(
-        f,
-        f.Classes
-            .Select(c => byClass[c])
-            .OrderBy(p => p.OpcodeValue)
-            .ThenBy(p => p.Direction, StringComparer.Ordinal)
-            .ThenBy(p => p.Name, StringComparer.Ordinal)
-            .ToList()))
+// packets is already sorted; empty families (enum member without packets yet)
+// simply get no page.
+var familyDocs = familyInfos
+    .Select(info => new FamilyDoc(info, packets.Where(p => p.Family == info.Member).ToList()))
+    .Where(f => f.Members.Count > 0)
     .ToList();
 
 foreach (var familyDoc in familyDocs)
@@ -184,18 +157,87 @@ static PacketDoc Parse(string file, string direction)
     }
 
     var summary = ExtractSummary(record) ?? throw new InvalidOperationException("no XML <summary> doc comment found");
+    var doc = FindDocumentation(record)
+              ?? throw new InvalidOperationException("no [PacketDocumentation(PacketFamilyType.X, ...)] attribute found");
+
+    if (doc.Family is null)
+    {
+        throw new InvalidOperationException("[PacketDocumentation] is missing the PacketFamilyType argument");
+    }
+
+    if (doc.Length > 0 == doc.IsVariableLength)
+    {
+        throw new InvalidOperationException("[PacketDocumentation] must declare exactly one of Length or IsVariableLength");
+    }
 
     var fields = (record.ParameterList?.Parameters ?? default)
         .Select(p => (Name: p.Identifier.Text, Type: p.Type?.ToString() ?? "?"))
         .ToList();
 
-    var name = DisplayName(className);
+    var name = doc.Name ?? DisplayName(className);
     var slug = $"{opcode.ToLowerInvariant()}-{name.ToLowerInvariant().Replace(' ', '-')}";
     var sourcePath = file.Replace(Path.DirectorySeparatorChar, '/');
+    var size = doc.IsVariableLength ? "Variable" : $"{doc.Length} bytes (fixed)";
+    var subCommand = doc.SubCommand >= 0 ? $"0x{doc.SubCommand:X2}" : null;
+    var opcodeDisplay = subCommand is null ? opcode : $"{opcode}/{subCommand}";
 
     return new PacketDoc(
-        className, direction, opcode, opcodeValue, name, slug, summary,
-        ShortDescription(summary), ExtractSize(summary), fields, sourcePath);
+        className, direction, opcode, opcodeValue, opcodeDisplay, name, slug, summary,
+        ShortDescription(summary), size, subCommand, fields, sourcePath, doc.Family);
+}
+
+static PacketAttributeInfo? FindDocumentation(RecordDeclarationSyntax record)
+{
+    foreach (var attribute in record.AttributeLists.SelectMany(l => l.Attributes))
+    {
+        var attributeName = attribute.Name.ToString();
+
+        if (attributeName is not ("PacketDocumentation" or "PacketDocumentationAttribute"))
+        {
+            continue;
+        }
+
+        string? family = null;
+        string? name = null;
+        var length = -1;
+        var subCommand = -1;
+        var isVariableLength = false;
+
+        foreach (var argument in attribute.ArgumentList?.Arguments ?? default)
+        {
+            var text = argument.Expression.ToString();
+
+            switch (argument.NameEquals?.Name.Identifier.Text)
+            {
+                case null:
+                    family = text.Split('.')[^1];
+                    break;
+                case "Length":
+                    length = ParseIntLiteral(text);
+                    break;
+                case "IsVariableLength":
+                    isVariableLength = text == "true";
+                    break;
+                case "SubCommand":
+                    subCommand = ParseIntLiteral(text);
+                    break;
+                case "Name":
+                    name = text.Trim('"');
+                    break;
+            }
+        }
+
+        return new PacketAttributeInfo(family, length, isVariableLength, subCommand, name);
+    }
+
+    return null;
+}
+
+static int ParseIntLiteral(string text)
+{
+    return text.StartsWith("0x", StringComparison.Ordinal)
+        ? Convert.ToInt32(text[2..], 16)
+        : int.Parse(text);
 }
 
 static string? FindOpcode(RecordDeclarationSyntax record)
@@ -260,23 +302,11 @@ static string DisplayName(string className)
     return Regex.Replace(baseName, "(?<=[a-z0-9])(?=[A-Z])", " ");
 }
 
-static string ExtractSize(string summary)
-{
-    var match = Regex.Match(summary, @"(\d+)\s+bytes?\s+fixed", RegexOptions.IgnoreCase);
-
-    if (match.Success)
-    {
-        return $"{match.Groups[1].Value} bytes (fixed)";
-    }
-
-    return Regex.IsMatch(summary, "variable length", RegexOptions.IgnoreCase) ? "Variable" : "—";
-}
-
 static string ShortDescription(string summary)
 {
-    // Drop the "Name (0xNN):" prefix the summaries start with; the table has
-    // dedicated opcode and name columns already.
-    var text = Regex.Replace(summary, @"^[^:]{0,60}\(0x[0-9A-Fa-f]{2}\):\s*", "");
+    // Drop the "Name (0xNN):" / "Name (0xBF sub-command 0xNN):" prefix the
+    // summaries start with; the table has dedicated opcode and name columns.
+    var text = Regex.Replace(summary, @"^[^:]{0,60}\(0x[0-9A-Fa-f]{2}[^)]*\):\s*", "");
     var sentenceEnd = text.IndexOf(". ", StringComparison.Ordinal);
 
     if (sentenceEnd > 0)
@@ -293,11 +323,18 @@ static string PacketPage(PacketDoc packet)
     var dirClass = packet.Direction == "Incoming" ? "mg-dir-in" : "mg-dir-out";
     var sb = new StringBuilder();
 
-    sb.Append($"# {packet.Opcode} — {packet.Name}\n\n");
+    sb.Append($"# {packet.OpcodeDisplay} — {packet.Name}\n\n");
     sb.Append($"<span class=\"mg-dir {dirClass}\">{dirLabel}</span>\n\n");
     sb.Append(packet.Summary).Append("\n\n");
     sb.Append($"- **Class:** [`{packet.ClassName}`]({GitHubBlobRoot}{packet.SourcePath})\n");
-    sb.Append($"- **Size:** {packet.Size}\n\n");
+    sb.Append($"- **Size:** {packet.Size}\n");
+
+    if (packet.SubCommand is not null)
+    {
+        sb.Append($"- **Sub-command:** `{packet.SubCommand}` of General Information (`{packet.Opcode}`)\n");
+    }
+
+    sb.Append('\n');
     sb.Append("## Fields\n\n");
 
     if (packet.Fields.Count == 0)
@@ -345,7 +382,7 @@ static string PacketTable(IEnumerable<PacketDoc> packets)
     {
         var dir = packet.Direction == "Incoming" ? "C → S" : "S → C";
         var href = $"../{packet.Direction.ToLowerInvariant()}/{packet.Slug}.md";
-        sb.Append($"| [`{packet.Opcode}`]({href}) | {packet.Name} | {dir} | {packet.Size} | {packet.ShortDescription} |\n");
+        sb.Append($"| [`{packet.OpcodeDisplay}`]({href}) | {packet.Name} | {dir} | {packet.Size} | {packet.ShortDescription} |\n");
     }
 
     return sb.ToString();
@@ -410,24 +447,34 @@ static string Toc(List<PacketDoc> packets, List<FamilyDoc> familyDocs)
 
         foreach (var packet in group)
         {
-            sb.Append($"    - name: \"{packet.Opcode} — {packet.Name}\"\n      href: {folder}/{packet.Slug}.md\n");
+            sb.Append($"    - name: \"{packet.OpcodeDisplay} — {packet.Name}\"\n      href: {folder}/{packet.Slug}.md\n");
         }
     }
 }
 
-internal sealed record Family(string Slug, string Title, string Description, string[] Classes);
+internal sealed record PacketAttributeInfo(
+    string? Family,
+    int Length,
+    bool IsVariableLength,
+    int SubCommand,
+    string? Name);
 
-internal sealed record FamilyDoc(Family Family, List<PacketDoc> Members);
+internal sealed record FamilyInfo(string Member, string Slug, string Title, string Description);
+
+internal sealed record FamilyDoc(FamilyInfo Family, List<PacketDoc> Members);
 
 internal sealed record PacketDoc(
     string ClassName,
     string Direction,
     string Opcode,
     int OpcodeValue,
+    string OpcodeDisplay,
     string Name,
     string Slug,
     string Summary,
     string ShortDescription,
     string Size,
+    string? SubCommand,
     List<(string Name, string Type)> Fields,
-    string SourcePath);
+    string SourcePath,
+    string Family);

@@ -1,4 +1,4 @@
-# 0x78 — Mobile Incoming
+# 0x78 — Draw Object
 
 <span class="mg-dir mg-dir-out">Server → Client</span>
 

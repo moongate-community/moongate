@@ -1,5 +1,7 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -10,6 +12,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// This reads the wire fields and decodes gender/race; resolving profession, city and applying the
 /// starting loadout is the handler's job. An unrecognized gender/race byte falls back to a male human.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.Characters, Length = 106)]
 public readonly record struct CharacterCreationPacket(
     int Slot,
     string Name,

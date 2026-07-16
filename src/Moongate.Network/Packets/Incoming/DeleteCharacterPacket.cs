@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
@@ -7,6 +9,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// Delete character (0x83): the client asks to delete the character in the given slot. 39 bytes fixed.
 /// The password field is a leftover from the days the client sent it here and is ignored.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.Characters, Length = 39)]
 public readonly record struct DeleteCharacterPacket(int Slot) : IIncomingPacket<DeleteCharacterPacket>
 {
     public static byte PacketId => 0x83;

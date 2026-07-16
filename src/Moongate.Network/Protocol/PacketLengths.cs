@@ -134,6 +134,7 @@ public static class PacketLengths
         table[0x80] = 62;       // LoginRequest
         table[0x82] = 2;        // LoginDenied
         table[0x83] = 39;       // DeleteCharacter
+        table[0x85] = 2;        // DeleteCharacterError
         table[0x86] = 304;      // ResendCharactersAfterDelete
         table[0x88] = 66;       // OpenPaperdoll
         table[0x89] = Variable; // CorpseClothing

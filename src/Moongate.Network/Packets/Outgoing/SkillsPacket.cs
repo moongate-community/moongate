@@ -1,5 +1,7 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -9,6 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// go. Variable length: <c>6 + 9*Skills.Count</c>. Skills the mobile never trained are still sent, at
 /// zero, otherwise they go missing from the client's list.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.StatusSkills, IsVariableLength = true)]
 public readonly record struct SkillsPacket(IReadOnlyList<SkillEntry> Skills) : IOutgoingPacket
 {
     public const byte PacketId = 0x3A;

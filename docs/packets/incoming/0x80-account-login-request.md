@@ -5,7 +5,7 @@
 Account login request (0x80): credentials for the login server.
 
 - **Class:** [`AccountLoginRequestPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Incoming/AccountLoginRequestPacket.cs)
-- **Size:** —
+- **Size:** 62 bytes (fixed)
 
 ## Fields
 

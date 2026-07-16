@@ -5,7 +5,7 @@
 Select server (0xA0): the shard index the client picked from the server list.
 
 - **Class:** [`SelectServerPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Incoming/SelectServerPacket.cs)
-- **Size:** —
+- **Size:** 3 bytes (fixed)
 
 ## Fields
 

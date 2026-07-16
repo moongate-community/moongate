@@ -5,7 +5,7 @@
 Character creation (0xF8): the new 106-byte creation packet sent by clients 7.0.16.0 and later. This reads the wire fields and decodes gender/race; resolving profession, city and applying the starting loadout is the handler's job. An unrecognized gender/race byte falls back to a male human.
 
 - **Class:** [`CharacterCreationPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Incoming/CharacterCreationPacket.cs)
-- **Size:** —
+- **Size:** 106 bytes (fixed)
 
 ## Fields
 

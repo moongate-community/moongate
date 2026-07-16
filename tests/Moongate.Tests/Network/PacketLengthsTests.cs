@@ -6,7 +6,7 @@ public class PacketLengthsTests
 {
     [Fact]
     public void Count_MatchesNumberOfDocumentedPackets()
-        => Assert.Equal(198, PacketLengths.Count);
+        => Assert.Equal(199, PacketLengths.Count);
 
     [Theory, InlineData(0xEF, 21), InlineData(0x80, 62), InlineData(0xA0, 3), InlineData(0x91, 65), InlineData(0x5D, 73),
      InlineData(0x02, 7), InlineData(0x22, 3), InlineData(0x73, 2), InlineData(0x82, 2), InlineData(0xF8, 106)]

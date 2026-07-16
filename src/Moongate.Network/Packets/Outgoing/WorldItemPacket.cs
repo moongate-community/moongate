@@ -1,6 +1,8 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Hues;
 using SquidStd.Network.Spans;
 
@@ -11,6 +13,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// a trailing short to the 24-byte one. This packet can carry mobiles and multis too; we only send
 /// items, so the entity type is fixed.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.ItemsContainers, Length = 24)]
 public readonly record struct WorldItemPacket(
     Serial Serial,
     ushort ItemId,

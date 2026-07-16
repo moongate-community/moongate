@@ -1,5 +1,7 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -9,6 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// a trailing constant the older 7-byte form did not have. The contents follow in a separate container
 /// content (0x3C) packet.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.ItemsContainers, Length = 7)]
 public readonly record struct DrawContainerPacket(Serial Container, ushort GumpId) : IOutgoingPacket
 {
     public const byte PacketId = 0x24;

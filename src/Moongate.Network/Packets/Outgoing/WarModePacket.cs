@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -6,6 +8,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// War mode (0x72): toggles the client's combat stance. 5 bytes fixed.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.StatusSkills, Length = 5)]
 public readonly record struct WarModePacket(bool WarMode) : IOutgoingPacket
 {
     public const byte PacketId = 0x72;

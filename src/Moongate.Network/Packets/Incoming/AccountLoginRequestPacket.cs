@@ -1,9 +1,12 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
 
 /// <summary>Account login request (0x80): credentials for the login server.</summary>
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, Length = 62)]
 public readonly record struct AccountLoginRequestPacket(string Account, string Password, byte NextLoginKey)
     : IIncomingPacket<AccountLoginRequestPacket>
 {

@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
@@ -7,6 +9,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// Client version (0xBD): the client answers the server's version request with its build string
 /// (e.g. "7.0.115.0"), null-terminated ASCII. Variable length: 3-byte header + string.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, IsVariableLength = true)]
 public readonly record struct ClientVersionPacket(string Version) : IIncomingPacket<ClientVersionPacket>
 {
     public static byte PacketId => 0xBD;

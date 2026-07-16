@@ -5,7 +5,7 @@
 Login seed (0xEF): connection seed and client version, sent first by ClassicUO.
 
 - **Class:** [`LoginSeedPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Incoming/LoginSeedPacket.cs)
-- **Size:** —
+- **Size:** 21 bytes (fixed)
 
 ## Fields
 

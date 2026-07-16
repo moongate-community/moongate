@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -8,6 +10,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// redraw the selection screen. Length is <c>4 + 60*SlotCount</c>. Unlike the login character list
 /// (0xA9) it carries no starting cities.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.Characters, Length = 304)]
 public readonly record struct CharacterListUpdatePacket(IReadOnlyList<string> Characters, byte SlotCount)
     : IOutgoingPacket
 {
