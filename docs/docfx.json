@@ -28,6 +28,6 @@
       "_enableSearch": true,
       "_disableContribution": true
     },
-    "sitemap": { "baseUrl": "https://moongate-community.github.io/moongate" }
+    "sitemap": { "baseUrl": "https://moongate.sh" }
   }
 }
