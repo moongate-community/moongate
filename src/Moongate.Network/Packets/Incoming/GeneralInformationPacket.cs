@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
@@ -8,6 +10,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// <see cref="SubCommand" /> (ushort). Variable length: 5-byte header (id + length + sub-command)
 /// followed by the sub-command payload, which is carried verbatim in <see cref="Payload" />.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
 public readonly record struct GeneralInformationPacket(ushort SubCommand, byte[] Payload)
     : IIncomingPacket<GeneralInformationPacket>
 {

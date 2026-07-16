@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -7,6 +9,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// Map (facet) change (0xBF sub-command 0x08): switches the client to the given map. 6 bytes fixed.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.WorldState)]
 public readonly record struct MapChangePacket(MapType Map) : IOutgoingPacket
 {
     public const byte PacketId = 0xBF;

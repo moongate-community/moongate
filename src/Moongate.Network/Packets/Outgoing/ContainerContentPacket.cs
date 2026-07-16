@@ -1,6 +1,8 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -10,6 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// after draw container (0x24) to fill the gump that was just opened. Each entry repeats the container's
 /// serial, which is how the client knows where to draw it.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.ItemsContainers)]
 public readonly record struct ContainerContentPacket(Serial Container, IReadOnlyList<ContainerItem> Items)
     : IOutgoingPacket
 {

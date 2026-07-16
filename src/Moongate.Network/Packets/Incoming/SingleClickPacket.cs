@@ -1,5 +1,7 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Incoming;
@@ -8,6 +10,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// Single click (0x09): the client clicked an entity, identified by its serial. 5 bytes fixed.
 /// Whether the target is a mobile or an item is decided later from the serial's range.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
 public readonly record struct SingleClickPacket(Serial Target) : IIncomingPacket<SingleClickPacket>
 {
     public static byte PacketId => 0x09;

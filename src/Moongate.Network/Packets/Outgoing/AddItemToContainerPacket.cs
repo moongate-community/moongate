@@ -1,6 +1,8 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Hues;
 using SquidStd.Network.Spans;
 
@@ -11,6 +13,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// modern client carries a grid-location byte the older 20-byte form did not. Use container content
 /// (0x3C) to send a whole container at once instead.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.ItemsContainers)]
 public readonly record struct AddItemToContainerPacket(
     Serial Serial,
     ushort ItemId,

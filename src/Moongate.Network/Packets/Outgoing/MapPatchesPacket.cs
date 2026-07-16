@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -8,6 +10,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// classic facets. Moongate ships no diff files, so every count is zero and the client uses the base
 /// maps. 41 bytes fixed.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.WorldState)]
 public readonly record struct MapPatchesPacket : IOutgoingPacket
 {
     public const byte PacketId = 0xBF;

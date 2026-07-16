@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -9,6 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// character list. Moongate targets modern (7.x) clients only, so it always writes the extended
 /// 4-byte flags form.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.EnterWorld)]
 public readonly record struct SupportFeaturesPacket(FeatureFlagType Flags) : IOutgoingPacket
 {
     public const byte PacketId = 0xB9;

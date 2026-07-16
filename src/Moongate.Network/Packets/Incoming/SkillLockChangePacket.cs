@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -9,6 +11,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// 3-byte header + skill id (ushort) + lock (byte). A lock value the client should not have sent is
 /// clamped to <see cref="SkillLockType.Up" />. Shares its opcode with the outgoing skill list.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.StatusSkills)]
 public readonly record struct SkillLockChangePacket(ushort SkillId, SkillLockType Lock)
     : IIncomingPacket<SkillLockChangePacket>
 {

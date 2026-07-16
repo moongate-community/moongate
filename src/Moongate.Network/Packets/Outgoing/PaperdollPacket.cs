@@ -1,5 +1,7 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;
@@ -9,6 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// The text is the label shown on the window; <c>CanLift</c> lets the viewer drag items off the
 /// paperdoll, which is why it is only set for your own character.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.StatusSkills)]
 public readonly record struct PaperdollPacket(Serial Serial, string Text, bool Warmode, bool CanLift)
     : IOutgoingPacket
 {

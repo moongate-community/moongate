@@ -46,59 +46,36 @@ if (duplicate is not null)
     errors.Add($"duplicate page slug '{duplicate.Key.Slug}' in {duplicate.Key.Direction}");
 }
 
-// Packet families: every packet class must belong to exactly one family, so
-// adding a packet without categorizing it (or renaming a class) breaks the
-// generation instead of silently dropping the page from the family lists.
-var families = new Family[]
+// Packet families come from the [PacketDocumentation(PacketFamilyType.X)]
+// attribute on each packet record (enforced in Parse). This map only holds
+// the presentation strings per PacketFamilyType member; a packet using a
+// member missing here breaks the generation.
+var familyInfos = new FamilyInfo[]
 {
-    new("login-shard-select", "Login & shard select",
-        "Seed, account auth, server list, shard select, game-server handoff.",
-        ["LoginSeedPacket", "AccountLoginRequestPacket", "LoginDeniedPacket", "ServerListPacket", "SelectServerPacket", "ConnectToGameServerPacket", "GameServerLoginPacket", "ClientVersionPacket"]),
-    new("characters", "Characters",
-        "Character list, creation, selection, deletion and list updates.",
-        ["CharacterListPacket", "CharacterCreationPacket", "CharacterSelectPacket", "DeleteCharacterPacket", "CharacterDeleteResultPacket", "CharacterListUpdatePacket"]),
-    new("enter-world", "Enter world",
-        "Login confirm, feature flags, and the login-complete marker.",
-        ["LoginConfirmPacket", "SupportFeaturesPacket", "LoginCompletePacket"]),
-    new("world-state", "World state",
-        "Light levels, game time, season, map change/patches, object removal.",
-        ["PersonalLightLevelPacket", "OverallLightLevelPacket", "GameTimePacket", "SeasonChangePacket", "MapChangePacket", "MapPatchesPacket", "DeleteObjectPacket"]),
-    new("items-containers", "Items & containers",
-        "World items, worn items, container gumps, contents and lift rejects.",
-        ["WorldItemPacket", "WornItemPacket", "DrawContainerPacket", "ContainerContentPacket", "AddItemToContainerPacket", "LiftRejectPacket"]),
-    new("movement", "Movement",
-        "Move requests, acks, and mobile position updates.",
-        ["MoveRequestPacket", "MovementAckPacket", "MobileUpdatePacket", "MobileIncomingPacket"]),
-    new("status-skills", "Status & skills",
-        "Mobile status, paperdoll, skills, war mode, stat/skill locks.",
-        ["MobileStatusPacket", "PaperdollPacket", "SkillsPacket", "SkillLockChangePacket", "StatLockInfoPacket", "WarModePacket"]),
-    new("interaction-keepalive", "Interaction & keepalive",
-        "Single/double click, the 0xBF request multiplexer, and ping round-trips.",
-        ["DoubleClickPacket", "SingleClickPacket", "GeneralInformationPacket", "PingPacket", "PingAckPacket"]),
+    new("LoginShardSelect", "login-shard-select", "Login & shard select",
+        "Seed, account auth, server list, shard select, game-server handoff."),
+    new("Characters", "characters", "Characters",
+        "Character list, creation, selection, deletion and list updates."),
+    new("EnterWorld", "enter-world", "Enter world",
+        "Login confirm, feature flags, and the login-complete marker."),
+    new("WorldState", "world-state", "World state",
+        "Light levels, game time, season, map change/patches, object removal."),
+    new("ItemsContainers", "items-containers", "Items & containers",
+        "World items, worn items, container gumps, contents and lift rejects."),
+    new("Movement", "movement", "Movement",
+        "Move requests, acks, and mobile position updates."),
+    new("StatusSkills", "status-skills", "Status & skills",
+        "Mobile status, paperdoll, skills, war mode, stat/skill locks."),
+    new("InteractionKeepalive", "interaction-keepalive", "Interaction & keepalive",
+        "Single/double click, the 0xBF request multiplexer, and ping round-trips."),
 };
 
-var byClass = packets.ToDictionary(p => p.ClassName, StringComparer.Ordinal);
-var assigned = new HashSet<string>(StringComparer.Ordinal);
+var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);
 
-foreach (var family in families)
+foreach (var packet in packets.Where(p => !knownFamilies.Contains(p.Family)))
 {
-    foreach (var className in family.Classes)
-    {
-        if (!byClass.ContainsKey(className))
-        {
-            errors.Add($"family '{family.Slug}' references unknown class '{className}' — was it renamed?");
-        }
-
-        if (!assigned.Add(className))
-        {
-            errors.Add($"class '{className}' is assigned to more than one family");
-        }
-    }
-}
-
-foreach (var packet in packets.Where(p => !assigned.Contains(p.ClassName)))
-{
-    errors.Add($"class '{packet.ClassName}' is not assigned to any family in scripts/generate-packet-docs.cs");
+    errors.Add(
+        $"packet '{packet.ClassName}' uses family '{packet.Family}' which has no entry in the familyInfos map in this script");
 }
 
 if (errors.Count > 0)
@@ -137,15 +114,11 @@ foreach (var packet in packets)
     File.WriteAllText(path, PacketPage(packet));
 }
 
-var familyDocs = families
-    .Select(f => new FamilyDoc(
-        f,
-        f.Classes
-            .Select(c => byClass[c])
-            .OrderBy(p => p.OpcodeValue)
-            .ThenBy(p => p.Direction, StringComparer.Ordinal)
-            .ThenBy(p => p.Name, StringComparer.Ordinal)
-            .ToList()))
+// packets is already sorted; empty families (enum member without packets yet)
+// simply get no page.
+var familyDocs = familyInfos
+    .Select(info => new FamilyDoc(info, packets.Where(p => p.Family == info.Member).ToList()))
+    .Where(f => f.Members.Count > 0)
     .ToList();
 
 foreach (var familyDoc in familyDocs)
@@ -184,6 +157,8 @@ static PacketDoc Parse(string file, string direction)
     }
 
     var summary = ExtractSummary(record) ?? throw new InvalidOperationException("no XML <summary> doc comment found");
+    var family = FindFamily(record)
+                 ?? throw new InvalidOperationException("no [PacketDocumentation(PacketFamilyType.X)] attribute found");
 
     var fields = (record.ParameterList?.Parameters ?? default)
         .Select(p => (Name: p.Identifier.Text, Type: p.Type?.ToString() ?? "?"))
@@ -195,7 +170,24 @@ static PacketDoc Parse(string file, string direction)
 
     return new PacketDoc(
         className, direction, opcode, opcodeValue, name, slug, summary,
-        ShortDescription(summary), ExtractSize(summary), fields, sourcePath);
+        ShortDescription(summary), ExtractSize(summary), fields, sourcePath, family);
+}
+
+static string? FindFamily(RecordDeclarationSyntax record)
+{
+    foreach (var attribute in record.AttributeLists.SelectMany(l => l.Attributes))
+    {
+        var name = attribute.Name.ToString();
+
+        if (name is "PacketDocumentation" or "PacketDocumentationAttribute")
+        {
+            var argument = attribute.ArgumentList?.Arguments.FirstOrDefault()?.Expression.ToString();
+
+            return argument?.Split('.')[^1];
+        }
+    }
+
+    return null;
 }
 
 static string? FindOpcode(RecordDeclarationSyntax record)
@@ -415,9 +407,9 @@ static string Toc(List<PacketDoc> packets, List<FamilyDoc> familyDocs)
     }
 }
 
-internal sealed record Family(string Slug, string Title, string Description, string[] Classes);
+internal sealed record FamilyInfo(string Member, string Slug, string Title, string Description);
 
-internal sealed record FamilyDoc(Family Family, List<PacketDoc> Members);
+internal sealed record FamilyDoc(FamilyInfo Family, List<PacketDoc> Members);
 
 internal sealed record PacketDoc(
     string ClassName,
@@ -430,4 +422,5 @@ internal sealed record PacketDoc(
     string ShortDescription,
     string Size,
     List<(string Name, string Type)> Fields,
-    string SourcePath);
+    string SourcePath,
+    string Family);

@@ -1,4 +1,6 @@
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -8,6 +10,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// Seasonal information (0xBC): sets the client's season and optionally plays the season-change
 /// sound. 3 bytes fixed.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.WorldState)]
 public readonly record struct SeasonChangePacket(SeasonType Season, bool PlaySound) : IOutgoingPacket
 {
     public const byte PacketId = 0xBC;

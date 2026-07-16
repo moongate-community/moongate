@@ -1,5 +1,7 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
@@ -10,6 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// each into a single byte. 12 bytes fixed. Without it the client's status-gump arrows never learn the
 /// server's state, so they reset on every login.
 /// </summary>
+[PacketDocumentation(PacketFamilyType.StatusSkills)]
 public readonly record struct StatLockInfoPacket(
     Serial Serial,
     StatLockType StrengthLock,
