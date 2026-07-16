@@ -52,11 +52,11 @@
   --mg-font-body: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   --mg-font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  /* ---- Radii ---- */
-  --mg-r-sm: 6px;
-  --mg-r-md: 10px;
-  --mg-r-lg: 14px;
-  --mg-r-pill: 999px;
+  /* ---- Radii (squared: sharp 2px corners across the theme) ---- */
+  --mg-r-sm: 2px;
+  --mg-r-md: 2px;
+  --mg-r-lg: 2px;
+  --mg-r-pill: 2px;
 
   /* ---- Shadows / glow ---- */
   --mg-shadow-card: 0 40px 90px -30px rgba(0, 0, 0, 0.8);
