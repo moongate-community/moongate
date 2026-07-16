@@ -16,8 +16,13 @@
   </a>
   <a class="mg-card" href="families/world-state.md">
     <h3>World state</h3>
-    <div class="mg-card-ops">0x4E · 0x4F · 0x5B · 0xBC · 0xBF</div>
-    <p>Light levels, game time, season, map change and map patches.</p>
+    <div class="mg-card-ops">0x1D · 0x4E · 0x4F · 0x5B · 0xBC · 0xBF</div>
+    <p>Light levels, game time, season, map change/patches, object removal.</p>
+  </a>
+  <a class="mg-card" href="families/items-containers.md">
+    <h3>Items &amp; containers</h3>
+    <div class="mg-card-ops">0x24 · 0x25 · 0x27 · 0x2E · 0x3C · 0xF3</div>
+    <p>World items, worn items, container gumps, contents and lift rejects.</p>
   </a>
   <a class="mg-card" href="families/movement.md">
     <h3>Movement</h3>

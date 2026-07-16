@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">38</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">45</div><div class="mg-stat-label">implemented packets</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-grass">14</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">24</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">31</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -12,10 +12,16 @@
 | [`0x09`](../incoming/0x09-single-click.md) | Single Click | C → S | 5 bytes (fixed) | The client clicked an entity, identified by its serial. |
 | [`0x11`](../outgoing/0x11-mobile-status.md) | Mobile Status | S → C | — | The player's own status window. |
 | [`0x1B`](../outgoing/0x1b-login-confirm.md) | Login Confirm | S → C | 37 bytes (fixed) | The first packet of the enter-world burst. |
+| [`0x1D`](../outgoing/0x1d-delete-object.md) | Delete Object | S → C | 5 bytes (fixed) | The entity is gone — stop drawing it. |
 | [`0x20`](../outgoing/0x20-mobile-update.md) | Mobile Update | S → C | 19 bytes (fixed) | Positions and renders the player's own mobile. |
 | [`0x22`](../outgoing/0x22-movement-ack.md) | Movement Ack | S → C | — | Confirms the step with the client's sequence number. |
+| [`0x24`](../outgoing/0x24-draw-container.md) | Draw Container | S → C | — | Opens the container's gump on the client. |
+| [`0x25`](../outgoing/0x25-add-item-to-container.md) | Add Item To Container | S → C | — | Drops one item into an already-open container gump. |
+| [`0x27`](../outgoing/0x27-lift-reject.md) | Lift Reject | S → C | 2 bytes (fixed) | The lift the client asked for is refused, and why. |
+| [`0x2E`](../outgoing/0x2e-worn-item.md) | Worn Item | S → C | 15 bytes (fixed) | Draws a single item on a mobile that the client already knows about. |
 | [`0x3A`](../incoming/0x3a-skill-lock-change.md) | Skill Lock Change | C → S | Variable | The client sets the up/down/lock arrow on one skill. |
 | [`0x3A`](../outgoing/0x3a-skills.md) | Skills | S → C | Variable | Skill list (0x3A), in the absolute-with-caps form (type 0x02): the client's whole skill list in one go. |
+| [`0x3C`](../outgoing/0x3c-container-content.md) | Container Content | S → C | — | Every item inside a container, in one variable-length packet. |
 | [`0x4E`](../outgoing/0x4e-personal-light-level.md) | Personal Light Level | S → C | 6 bytes (fixed) | The light radiating around the given mobile. |
 | [`0x4F`](../outgoing/0x4f-overall-light-level.md) | Overall Light Level | S → C | 2 bytes (fixed) | 0 is full daylight, higher is darker. |
 | [`0x55`](../outgoing/0x55-login-complete.md) | Login Complete | S → C | — | The "you are now in the world" marker that unblocks the client. |
@@ -44,4 +50,5 @@
 | [`0xBF`](../outgoing/0xbf-map-patches.md) | Map Patches | S → C | 41 bytes (fixed) | Map patches (0xBF sub-command 0x18): declares the static/land map-diff block counts for the four classic facets. |
 | [`0xBF`](../outgoing/0xbf-stat-lock-info.md) | Stat Lock Info | S → C | 12 bytes (fixed) | Stat lock info (0xBF sub-command 0x19): the up/down/lock state of the three stats, packed two bits each into a single byte. |
 | [`0xEF`](../incoming/0xef-login-seed.md) | Login Seed | C → S | — | Connection seed and client version, sent first by ClassicUO. |
+| [`0xF3`](../outgoing/0xf3-world-item.md) | World Item | S → C | — | Draws an item lying in the world. |
 | [`0xF8`](../incoming/0xf8-character-creation.md) | Character Creation | C → S | — | The new 106-byte creation packet sent by clients 7.0.16.0 and later. |

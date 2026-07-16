@@ -10,6 +10,8 @@
       href: families/enter-world.md
     - name: "World state"
       href: families/world-state.md
+    - name: "Items & containers"
+      href: families/items-containers.md
     - name: "Movement"
       href: families/movement.md
     - name: "Status & skills"
@@ -52,12 +54,24 @@
       href: outgoing/0x11-mobile-status.md
     - name: "0x1B — Login Confirm"
       href: outgoing/0x1b-login-confirm.md
+    - name: "0x1D — Delete Object"
+      href: outgoing/0x1d-delete-object.md
     - name: "0x20 — Mobile Update"
       href: outgoing/0x20-mobile-update.md
     - name: "0x22 — Movement Ack"
       href: outgoing/0x22-movement-ack.md
+    - name: "0x24 — Draw Container"
+      href: outgoing/0x24-draw-container.md
+    - name: "0x25 — Add Item To Container"
+      href: outgoing/0x25-add-item-to-container.md
+    - name: "0x27 — Lift Reject"
+      href: outgoing/0x27-lift-reject.md
+    - name: "0x2E — Worn Item"
+      href: outgoing/0x2e-worn-item.md
     - name: "0x3A — Skills"
       href: outgoing/0x3a-skills.md
+    - name: "0x3C — Container Content"
+      href: outgoing/0x3c-container-content.md
     - name: "0x4E — Personal Light Level"
       href: outgoing/0x4e-personal-light-level.md
     - name: "0x4F — Overall Light Level"
@@ -96,3 +110,5 @@
       href: outgoing/0xbf-map-patches.md
     - name: "0xBF — Stat Lock Info"
       href: outgoing/0xbf-stat-lock-info.md
+    - name: "0xF3 — World Item"
+      href: outgoing/0xf3-world-item.md
