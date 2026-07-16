@@ -1,3 +1,4 @@
+using System.Text.Json;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -65,6 +66,13 @@ public sealed class HttpServerService : ISquidStdService
         builder.Services.AddProblemDetails();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+
+        // camelCase over the wire while the DTOs stay PascalCase in C#. ASP.NET already defaults to this,
+        // but the wire format is a contract clients are written against: stated here it cannot be changed
+        // by a default shifting under us.
+        builder.Services.ConfigureHttpJsonOptions(
+            options => options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        );
 
         builder.Services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

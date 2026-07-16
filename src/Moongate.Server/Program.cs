@@ -2,6 +2,7 @@ using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Http.Plugin;
+using Moongate.Http.Plugin.Extensions;
 using Moongate.Persistence;
 using Moongate.Scripting;
 using Moongate.Server;
@@ -9,6 +10,7 @@ using Moongate.Server.Autostart;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Exceptions;
+using Moongate.Server.Endpoints;
 using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
@@ -108,6 +110,9 @@ await ConsoleApp.RunAsync(
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
+
+                container.RegisterApiEndpoint<VersionEndpoints>();
+                container.RegisterApiEndpoint<AuthEndpoints>();
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
