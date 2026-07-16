@@ -1,5 +1,21 @@
 - name: Overview
   href: index.md
+- name: Families
+  items:
+    - name: "Login & shard select"
+      href: families/login-shard-select.md
+    - name: "Characters"
+      href: families/characters.md
+    - name: "Enter world"
+      href: families/enter-world.md
+    - name: "World state"
+      href: families/world-state.md
+    - name: "Movement"
+      href: families/movement.md
+    - name: "Status & skills"
+      href: families/status-skills.md
+    - name: "Interaction & keepalive"
+      href: families/interaction-keepalive.md
 - name: Incoming (client → server)
   items:
     - name: "0x02 — Move Request"

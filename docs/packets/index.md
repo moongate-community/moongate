@@ -54,35 +54,6 @@ from the repository root after adding or changing a packet.
 
 ## Packet families
 
-<div class="mg-cards mg-cards-article">
-  <div class="mg-card">
-    <h3>Login &amp; shard select</h3>
-    <div class="mg-card-ops">0xEF · 0x80 · 0x82 · 0xA8 · 0xA0 · 0x8C · 0x91 · 0xBD</div>
-    <p>Seed, account auth, server list, shard select, game-server handoff.</p>
-  </div>
-  <div class="mg-card">
-    <h3>Characters</h3>
-    <div class="mg-card-ops">0xA9 · 0xF8 · 0x5D · 0x83 · 0x85 · 0x86</div>
-    <p>Character list, creation, selection, deletion and list updates.</p>
-  </div>
-  <div class="mg-card">
-    <h3>Enter world</h3>
-    <div class="mg-card-ops">0x1B · 0xB9 · 0x55 · 0x4E · 0x4F · 0x5B · 0xBC</div>
-    <p>Login confirm, feature flags, light levels, game time, season.</p>
-  </div>
-  <div class="mg-card">
-    <h3>Movement</h3>
-    <div class="mg-card-ops">0x02 · 0x22 · 0x20 · 0x78</div>
-    <p>Move requests, acks, and mobile position updates.</p>
-  </div>
-  <div class="mg-card">
-    <h3>Status &amp; skills</h3>
-    <div class="mg-card-ops">0x11 · 0x88 · 0x3A · 0x72 · 0xBF</div>
-    <p>Mobile status, paperdoll, skills, war mode, stat/skill locks.</p>
-  </div>
-  <div class="mg-card">
-    <h3>Interaction &amp; keepalive</h3>
-    <div class="mg-card-ops">0x06 · 0x09 · 0x73</div>
-    <p>Single/double click on entities and ping round-trips.</p>
-  </div>
-</div>
+Every packet belongs to a family — click a card for the family's packet list.
+
+[!include[](includes/family-cards.md)]

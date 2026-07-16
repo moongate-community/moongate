@@ -46,6 +46,58 @@ if (duplicate is not null)
     errors.Add($"duplicate page slug '{duplicate.Key.Slug}' in {duplicate.Key.Direction}");
 }
 
+// Packet families: every packet class must belong to exactly one family, so
+// adding a packet without categorizing it (or renaming a class) breaks the
+// generation instead of silently dropping the page from the family lists.
+var families = new Family[]
+{
+    new("login-shard-select", "Login & shard select",
+        "Seed, account auth, server list, shard select, game-server handoff.",
+        ["LoginSeedPacket", "AccountLoginRequestPacket", "LoginDeniedPacket", "ServerListPacket", "SelectServerPacket", "ConnectToGameServerPacket", "GameServerLoginPacket", "ClientVersionPacket"]),
+    new("characters", "Characters",
+        "Character list, creation, selection, deletion and list updates.",
+        ["CharacterListPacket", "CharacterCreationPacket", "CharacterSelectPacket", "DeleteCharacterPacket", "CharacterDeleteResultPacket", "CharacterListUpdatePacket"]),
+    new("enter-world", "Enter world",
+        "Login confirm, feature flags, and the login-complete marker.",
+        ["LoginConfirmPacket", "SupportFeaturesPacket", "LoginCompletePacket"]),
+    new("world-state", "World state",
+        "Light levels, game time, season, map change and map patches.",
+        ["PersonalLightLevelPacket", "OverallLightLevelPacket", "GameTimePacket", "SeasonChangePacket", "MapChangePacket", "MapPatchesPacket"]),
+    new("movement", "Movement",
+        "Move requests, acks, and mobile position updates.",
+        ["MoveRequestPacket", "MovementAckPacket", "MobileUpdatePacket", "MobileIncomingPacket"]),
+    new("status-skills", "Status & skills",
+        "Mobile status, paperdoll, skills, war mode, stat/skill locks.",
+        ["MobileStatusPacket", "PaperdollPacket", "SkillsPacket", "SkillLockChangePacket", "StatLockInfoPacket", "WarModePacket"]),
+    new("interaction-keepalive", "Interaction & keepalive",
+        "Single/double click, the 0xBF request multiplexer, and ping round-trips.",
+        ["DoubleClickPacket", "SingleClickPacket", "GeneralInformationPacket", "PingPacket", "PingAckPacket"]),
+};
+
+var byClass = packets.ToDictionary(p => p.ClassName, StringComparer.Ordinal);
+var assigned = new HashSet<string>(StringComparer.Ordinal);
+
+foreach (var family in families)
+{
+    foreach (var className in family.Classes)
+    {
+        if (!byClass.ContainsKey(className))
+        {
+            errors.Add($"family '{family.Slug}' references unknown class '{className}' — was it renamed?");
+        }
+
+        if (!assigned.Add(className))
+        {
+            errors.Add($"class '{className}' is assigned to more than one family");
+        }
+    }
+}
+
+foreach (var packet in packets.Where(p => !assigned.Contains(p.ClassName)))
+{
+    errors.Add($"class '{packet.ClassName}' is not assigned to any family in scripts/generate-packet-docs.cs");
+}
+
 if (errors.Count > 0)
 {
     foreach (var error in errors)
@@ -64,7 +116,7 @@ packets = packets
 
 // The generator owns these paths and rebuilds them from scratch every run.
 // It must never touch docs/packets/index.md (hand-written).
-foreach (var sub in new[] { "incoming", "outgoing", "includes" })
+foreach (var sub in new[] { "incoming", "outgoing", "families", "includes" })
 {
     var dir = Path.Combine(outRoot, sub);
 
@@ -82,12 +134,29 @@ foreach (var packet in packets)
     File.WriteAllText(path, PacketPage(packet));
 }
 
+var familyDocs = families
+    .Select(f => new FamilyDoc(
+        f,
+        f.Classes
+            .Select(c => byClass[c])
+            .OrderBy(p => p.OpcodeValue)
+            .ThenBy(p => p.Direction, StringComparer.Ordinal)
+            .ThenBy(p => p.Name, StringComparer.Ordinal)
+            .ToList()))
+    .ToList();
+
+foreach (var familyDoc in familyDocs)
+{
+    File.WriteAllText(Path.Combine(outRoot, "families", familyDoc.Family.Slug + ".md"), FamilyPage(familyDoc));
+}
+
 File.WriteAllText(Path.Combine(outRoot, "includes", "packet-table.md"), TableInclude(packets));
-File.WriteAllText(Path.Combine(outRoot, "toc.yml"), Toc(packets));
+File.WriteAllText(Path.Combine(outRoot, "includes", "family-cards.md"), FamilyCards(familyDocs));
+File.WriteAllText(Path.Combine(outRoot, "toc.yml"), Toc(packets, familyDocs));
 
 var incomingCount = packets.Count(p => p.Direction == "Incoming");
 Console.WriteLine(
-    $"Generated {packets.Count} packet pages ({incomingCount} incoming, {packets.Count - incomingCount} outgoing) + packet-table.md + toc.yml");
+    $"Generated {packets.Count} packet pages ({incomingCount} incoming, {packets.Count - incomingCount} outgoing) + {familyDocs.Count} family pages + includes + toc.yml");
 return 0;
 
 static PacketDoc Parse(string file, string direction)
@@ -258,6 +327,14 @@ static string TableInclude(List<PacketDoc> packets)
     sb.Append($"  <div class=\"mg-stat\"><div class=\"mg-stat-num mg-stone\">{ClientTarget}</div><div class=\"mg-stat-label\">client target</div></div>\n");
     sb.Append("</div>\n\n");
 
+    sb.Append(PacketTable(packets));
+
+    return sb.ToString();
+}
+
+static string PacketTable(IEnumerable<PacketDoc> packets)
+{
+    var sb = new StringBuilder();
     sb.Append("| Opcode | Name | Dir | Size | Description |\n");
     sb.Append("|---|---|---|---|---|\n");
 
@@ -271,10 +348,54 @@ static string TableInclude(List<PacketDoc> packets)
     return sb.ToString();
 }
 
-static string Toc(List<PacketDoc> packets)
+static string FamilyPage(FamilyDoc familyDoc)
+{
+    var sb = new StringBuilder();
+    sb.Append($"# {familyDoc.Family.Title}\n\n");
+    sb.Append(familyDoc.Family.Description).Append("\n\n");
+    sb.Append(PacketTable(familyDoc.Members));
+
+    return sb.ToString();
+}
+
+static string FamilyCards(List<FamilyDoc> familyDocs)
+{
+    var sb = new StringBuilder();
+    sb.Append("<div class=\"mg-cards mg-cards-article\">\n");
+
+    foreach (var familyDoc in familyDocs)
+    {
+        // DocFX resolves raw HTML hrefs relative to the page that includes
+        // this file (docs/packets/index.md), rewriting .md to .html.
+        var opcodes = string.Join(" · ", familyDoc.Members.Select(p => p.Opcode).Distinct());
+        sb.Append($"  <a class=\"mg-card\" href=\"families/{familyDoc.Family.Slug}.md\">\n");
+        sb.Append($"    <h3>{HtmlEscape(familyDoc.Family.Title)}</h3>\n");
+        sb.Append($"    <div class=\"mg-card-ops\">{opcodes}</div>\n");
+        sb.Append($"    <p>{HtmlEscape(familyDoc.Family.Description)}</p>\n");
+        sb.Append("  </a>\n");
+    }
+
+    sb.Append("</div>\n");
+
+    return sb.ToString();
+}
+
+static string HtmlEscape(string text)
+{
+    return text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+}
+
+static string Toc(List<PacketDoc> packets, List<FamilyDoc> familyDocs)
 {
     var sb = new StringBuilder();
     sb.Append("- name: Overview\n  href: index.md\n");
+    sb.Append("- name: Families\n  items:\n");
+
+    foreach (var familyDoc in familyDocs)
+    {
+        sb.Append($"    - name: \"{familyDoc.Family.Title}\"\n      href: families/{familyDoc.Family.Slug}.md\n");
+    }
+
     AppendGroup(sb, "Incoming (client → server)", "incoming", packets.Where(p => p.Direction == "Incoming"));
     AppendGroup(sb, "Outgoing (server → client)", "outgoing", packets.Where(p => p.Direction == "Outgoing"));
 
@@ -290,6 +411,10 @@ static string Toc(List<PacketDoc> packets)
         }
     }
 }
+
+internal sealed record Family(string Slug, string Title, string Description, string[] Classes);
+
+internal sealed record FamilyDoc(Family Family, List<PacketDoc> Members);
 
 internal sealed record PacketDoc(
     string ClassName,
