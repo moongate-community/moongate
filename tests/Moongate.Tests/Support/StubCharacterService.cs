@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
+using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Accounts;
 
@@ -10,6 +11,9 @@ public sealed class StubCharacterService : ICharacterService
 {
     public MobileEntity CreateCharacter(Serial accountId, CharacterCreationPacket packet)
         => new() { Name = packet.Name };
+
+    public DeleteResultType? DeleteCharacter(Serial accountId, int slot)
+        => DeleteResultType.BadRequest;
 
     public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
         => [];

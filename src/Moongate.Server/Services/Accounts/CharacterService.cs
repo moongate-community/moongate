@@ -3,6 +3,7 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
+using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Interfaces.Accounts;
@@ -110,6 +111,47 @@ public class CharacterService : ICharacterService
         return mobile;
     }
 
+    public DeleteResultType? DeleteCharacter(Serial accountId, int slot)
+    {
+        var characters = GetPlayerCharacters(accountId).ToList();
+
+        if (slot < 0 || slot >= characters.Count)
+        {
+            return DeleteResultType.BadRequest;
+        }
+
+        var mobile = characters[slot];
+
+        // Everything the character owns goes with it: the mobile store is the only thing linking the
+        // backpack, the bank box and their contents, so dropping it alone would strand them.
+        foreach (var item in _itemService.GetEquipped(mobile))
+        {
+            DeleteItemTree(item);
+        }
+
+        _mobileStore.RemoveAsync(mobile.Id).WaitSync();
+
+        var account = _accountStore.GetById(accountId);
+
+        if (account is not null)
+        {
+            account.MobileIds.Remove(mobile.Id);
+            _accountStore.UpsertAsync(account).WaitSync();
+        }
+
+        _eventBus.Publish(new CharacterDeletedEvent(accountId, mobile.Id, mobile));
+
+        _logger.Information(
+            "Character deleted for account {AccountId}: {Name} (serial {Serial}) from slot {Slot}",
+            accountId,
+            mobile.Name,
+            mobile.Id,
+            slot
+        );
+
+        return null;
+    }
+
     public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
     {
         var account = _accountStore.Query().FirstOrDefault(a => a.Id == accountId);
@@ -122,6 +164,17 @@ public class CharacterService : ICharacterService
         }
 
         return [.. _mobileStore.Query().Where(mobile => account.MobileIds.Contains(mobile.Id))];
+    }
+
+    // Depth-first so a container's contents are gone before the container itself.
+    private void DeleteItemTree(ItemEntity item)
+    {
+        foreach (var contained in _itemService.GetContents(item.Id))
+        {
+            DeleteItemTree(contained);
+        }
+
+        _itemService.Delete(item.Id);
     }
 
     private ItemEntity? EquipContainer(MobileEntity mobile, string templateId, LayerType layer)
