@@ -393,7 +393,13 @@ public class LoginFlowIntegrationTests
             config,
             eventBus,
             CharacterServiceFixture.Create(persistence, (EventBusService)eventBus),
-            new WorldService(new ItemService(persistence), CharacterServiceFixture.Skills(), eventBus, TimeProvider.System)
+            new WorldService(
+                new ItemService(persistence),
+                CharacterServiceFixture.Skills(),
+                new VirtualSerialService(),
+                eventBus,
+                TimeProvider.System
+            )
         );
 
     private static async Task<NetworkService> StartServerAsync(

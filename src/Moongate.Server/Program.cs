@@ -116,6 +116,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
                 container.Register<IItemService, ItemService>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
+                container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);

@@ -32,20 +32,23 @@ public sealed class WorldService : IWorldService
     // 100.0 ceiling and a free-to-gain arrow.
     private const ushort DefaultSkillCap = 1000;
 
-    // Self-only view: two fixed top-of-range virtual serials for the hair/beard pseudo-items. A
-    // per-mobile virtual-serial allocator lands with the nearby-mobile broadcast.
-    private static readonly Serial HairVirtualSerial = new(0x7FFFFFFF);
-    private static readonly Serial FacialHairVirtualSerial = new(0x7FFFFFFE);
-
     private readonly IItemService _items;
     private readonly ISkillService _skills;
+    private readonly IVirtualSerialService _virtualSerials;
     private readonly IEventBus _eventBus;
     private readonly TimeProvider _timeProvider;
 
-    public WorldService(IItemService items, ISkillService skills, IEventBus eventBus, TimeProvider timeProvider)
+    public WorldService(
+        IItemService items,
+        ISkillService skills,
+        IVirtualSerialService virtualSerials,
+        IEventBus eventBus,
+        TimeProvider timeProvider
+    )
     {
         _items = items;
         _skills = skills;
+        _virtualSerials = virtualSerials;
         _eventBus = eventBus;
         _timeProvider = timeProvider;
     }
@@ -168,14 +171,21 @@ public sealed class WorldService : IWorldService
 
         if (mobile.HairStyle != 0 && takenLayers.Add(LayerType.Hair))
         {
-            items.Add(new MobileIncomingItem(HairVirtualSerial, mobile.HairStyle, LayerType.Hair, mobile.HairHue));
+            items.Add(
+                new MobileIncomingItem(
+                    _virtualSerials.GetOrCreate(mobile.Id, LayerType.Hair),
+                    mobile.HairStyle,
+                    LayerType.Hair,
+                    mobile.HairHue
+                )
+            );
         }
 
         if (mobile.FacialHairStyle != 0 && takenLayers.Add(LayerType.FacialHair))
         {
             items.Add(
                 new MobileIncomingItem(
-                    FacialHairVirtualSerial,
+                    _virtualSerials.GetOrCreate(mobile.Id, LayerType.FacialHair),
                     mobile.FacialHairStyle,
                     LayerType.FacialHair,
                     mobile.FacialHairHue

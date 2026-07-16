@@ -18,7 +18,7 @@ namespace Moongate.Tests.Server.World;
 public class WorldServiceTests
 {
     private static WorldService Service(StubItemService items, TimeProvider? time = null, ISkillService? skills = null)
-        => new(items, skills ?? Skills(), new StubEventBus(), time ?? TimeProvider.System);
+        => new(items, skills ?? Skills(), new VirtualSerialService(), new StubEventBus(), time ?? TimeProvider.System);
 
     // Three skills is enough to prove the list is built from the registry rather than from the mobile.
     private static SkillService Skills()
@@ -253,7 +253,10 @@ public class WorldServiceTests
         Assert.Equal(23 + 9 * 2, BinaryPrimitives.ReadUInt16BigEndian(incoming.AsSpan(1))); // shirt + hair
         Assert.Equal(0x40000005u, BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(19)));
         Assert.Equal((byte)LayerType.Shirt, incoming[25]);
-        Assert.Equal(0x7FFFFFFFu, BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(28))); // hair virtual serial
+
+        // Hair rides along as a pseudo-item on a serial from the reserved virtual band, since it is not
+        // an entity the server owns.
+        Assert.True(new Serial(BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(28))).IsVirtual);
         Assert.Equal((byte)LayerType.Hair, incoming[34]);
     }
 }
