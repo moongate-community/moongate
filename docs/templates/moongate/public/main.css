@@ -745,3 +745,82 @@ body[data-layout='landing'] .actionbar {
 body[data-layout='landing'] .content {
   width: 100%;
 }
+
+/* --------------------------------------------------------------------------
+   12. Packets reference (docs/packets) — from design mockup 3A
+   -------------------------------------------------------------------------- */
+
+/* Stat strip on the overview page. */
+.mg-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin: 1.6rem 0 2rem;
+}
+.mg-stat {
+  background-color: var(--mg-panel-raised);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--mg-r-md);
+  padding: 1rem 1.1rem;
+}
+.mg-stat-num {
+  font-family: var(--mg-font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  line-height: 1.2;
+  color: var(--mg-portal-bright);
+}
+.mg-stat-num.mg-grass { color: var(--mg-grass); }
+.mg-stat-num.mg-violet { color: var(--mg-violet-soft); }
+.mg-stat-num.mg-stone { color: var(--mg-stone); }
+[data-bs-theme='light'] .mg-stat-num { color: var(--bs-link-color); }
+[data-bs-theme='light'] .mg-stat-num.mg-grass { color: #3f8f33; }
+[data-bs-theme='light'] .mg-stat-num.mg-violet { color: #6a5cd0; }
+[data-bs-theme='light'] .mg-stat-num.mg-stone { color: #b06a4e; }
+.mg-stat-label {
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+  margin-top: 0.15rem;
+}
+
+/* Direction badge on per-packet pages. */
+.mg-dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--mg-font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--mg-r-pill);
+  padding: 0.25rem 0.7rem;
+  background-color: var(--mg-panel-raised);
+  margin-bottom: 0.4rem;
+}
+.mg-dir::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.mg-dir-in { color: var(--mg-stone); }
+.mg-dir-in::before { background: var(--mg-stone); box-shadow: 0 0 8px var(--mg-stone); }
+.mg-dir-out { color: var(--mg-portal-bright); }
+.mg-dir-out::before { background: var(--mg-portal); box-shadow: 0 0 8px var(--mg-portal); }
+[data-bs-theme='light'] .mg-dir-in { color: #b06a4e; }
+[data-bs-theme='light'] .mg-dir-in::before { background: #b06a4e; box-shadow: none; }
+[data-bs-theme='light'] .mg-dir-out { color: var(--bs-link-color); }
+[data-bs-theme='light'] .mg-dir-out::before { background: var(--bs-link-color); box-shadow: none; }
+
+/* Family cards reused inside an article body (vs the landing page). */
+.mg-cards-article {
+  margin: 0 0 2rem;
+  padding: 0;
+  max-width: none;
+}
+.mg-card-ops {
+  font-family: var(--mg-font-mono);
+  font-size: 0.72rem;
+  color: var(--bs-secondary-color);
+  margin: 0 0 0.4rem;
+}

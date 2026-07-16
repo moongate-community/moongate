@@ -2,6 +2,8 @@
   href: getting-started/
 - name: Scripting
   href: scripting/
+- name: Packets
+  href: packets/
 - name: API
   href: api/
 - name: Under the hood
