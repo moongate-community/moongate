@@ -162,6 +162,83 @@ public class AccountEndpointsTests
         Assert.Null(server.Accounts.GetByUsername("alice"));
     }
 
+    [Fact]
+    public async Task Update_ChangesOnlyTheFieldsSent()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PatchAsJsonAsync(
+            "/api/v1/admin/accounts/tom",
+            new { isActive = false }
+        );
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var account = server.Accounts.GetByUsername("tom")!;
+        Assert.False(account.IsActive);
+        // Untouched: the level was not in the body, which is what makes this a PATCH.
+        Assert.Equal(AccountLevelType.Administrator, account.AccountLevel);
+    }
+
+    [Fact]
+    public async Task Update_ChangesTheLevel()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        await server.Client.PatchAsJsonAsync("/api/v1/admin/accounts/tom", new { level = "GrandMaster" });
+
+        Assert.Equal(AccountLevelType.GrandMaster, server.Accounts.GetByUsername("tom")!.AccountLevel);
+    }
+
+    [Fact]
+    public async Task Update_ChangesThePassword()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        await server.Client.PatchAsJsonAsync("/api/v1/admin/accounts/tom", new { password = "nuova" });
+
+        // Proved through the service rather than by reading a hash back: the new password must
+        // authenticate and the old one must not.
+        Assert.True(server.Accounts.Authenticate("tom", "nuova").Success);
+        Assert.False(server.Accounts.Authenticate("tom", "secret").Success);
+    }
+
+    [Fact]
+    public async Task Update_UnknownAccount_Is404()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PatchAsJsonAsync(
+            "/api/v1/admin/accounts/nobody",
+            new { isActive = false }
+        );
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_UnknownLevel_Is400AndChangesNothing()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await AuthenticateAsync(server);
+
+        var response = await server.Client.PatchAsJsonAsync(
+            "/api/v1/admin/accounts/tom",
+            new { level = "Wizard", isActive = false }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+        // Nothing applied: the level is validated before any setter runs.
+        var account = server.Accounts.GetByUsername("tom")!;
+        Assert.True(account.IsActive);
+        Assert.Equal(AccountLevelType.Administrator, account.AccountLevel);
+    }
+
     internal static async Task AuthenticateAsync(TestApiServer server)
     {
         var response = await server.Client.PostAsJsonAsync(

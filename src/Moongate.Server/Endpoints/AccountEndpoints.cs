@@ -30,6 +30,7 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         group.MapGet("/", List).WithName("ListAccounts");
         group.MapGet("/{username}", Get).WithName("GetAccount");
         group.MapPost("/", Create).WithName("CreateAccount");
+        group.MapPatch("/{username}", Update).WithName("UpdateAccount");
     }
 
     private IResult List()
@@ -71,6 +72,46 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
                 statusCode: StatusCodes.Status500InternalServerError
             )
         };
+    }
+
+    /// <summary>
+    /// Applies the fields that are present and leaves the rest alone.
+    /// <para>
+    /// Applying several is not atomic: nothing rolls the level back if a later setter fails. Accepted
+    /// rather than solved — the setters fail only when the account is missing, which is ruled out a line
+    /// earlier, so a delete would have to race this patch for the window to open at all, and closing it
+    /// properly needs a transaction the store does not offer. The level, the one input a caller can get
+    /// wrong, is validated before any setter runs.
+    /// </para>
+    /// </summary>
+    private IResult Update(string username, UpdateAccountRequest request)
+    {
+        if (_accounts.GetByUsername(username) is null)
+        {
+            return NotFound(username);
+        }
+
+        if (!TryParseLevel(request.Level, AccountLevelType.Player, out var level))
+        {
+            return InvalidLevel(request.Level);
+        }
+
+        if (request.Level is not null)
+        {
+            _accounts.SetLevel(username, level);
+        }
+
+        if (request.IsActive is { } isActive)
+        {
+            _accounts.SetActive(username, isActive);
+        }
+
+        if (!string.IsNullOrEmpty(request.Password))
+        {
+            _accounts.SetPassword(username, request.Password);
+        }
+
+        return Results.Ok(ToResponse(_accounts.GetByUsername(username)!));
     }
 
     /// <summary>
