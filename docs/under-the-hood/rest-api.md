@@ -98,12 +98,17 @@ good token that is simply not staff.
 
 ## Endpoints
 
-| Method | Route                 | Auth     | Returns                              |
-| ------ | --------------------- | -------- | ------------------------------------ |
-| `GET`  | `/api/v1/version`     | none     | shard name and build                 |
-| `POST` | `/api/v1/auth/login`  | none     | a bearer token and its expiry        |
-| `GET`  | `/api/v1/admin/status`| `admin`  | shard name, build, online sessions   |
-| `GET`  | `/api/v1/player/me`   | `player` | the caller's username and level      |
+| Method   | Route                                | Auth     | Returns                            |
+| -------- | ------------------------------------ | -------- | ---------------------------------- |
+| `GET`    | `/api/v1/version`                    | none     | shard name and build               |
+| `POST`   | `/api/v1/auth/login`                 | none     | a bearer token and its expiry      |
+| `GET`    | `/api/v1/admin/status`               | `admin`  | shard name, build, online sessions |
+| `GET`    | `/api/v1/player/me`                  | `player` | the caller's username and level    |
+| `GET`    | `/api/v1/admin/accounts`             | `admin`  | every account                      |
+| `GET`    | `/api/v1/admin/accounts/{username}`  | `admin`  | one account, or 404                |
+| `POST`   | `/api/v1/admin/accounts`             | `admin`  | 201 and a `Location`, or 400 / 409 |
+| `PATCH`  | `/api/v1/admin/accounts/{username}`  | `admin`  | the updated account, or 400 / 404  |
+| `DELETE` | `/api/v1/admin/accounts/{username}`  | `admin`  | 204, or 404 / 409 / 503            |
 
 `/api/v1/version` is deliberately unauthenticated: a launcher or the website
 checks compatibility with it, and it reveals nothing an operator would want
@@ -115,6 +120,59 @@ which is single-writer on the game loop, and drag loop affinity into what is
 otherwise a probe.
 
 JSON is camelCase on the wire while the DTOs stay PascalCase in C#.
+
+## Managing accounts
+
+The account routes are the REST twin of Lua's `account.*` module, and reach the
+same `IAccountService`.
+
+```bash
+curl -X POST http://127.0.0.1:8933/api/v1/admin/accounts \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"username":"alice","password":"secret","email":"a@b.c","level":"Player"}'
+```
+
+An omitted `level` means `Player`: an account that gains staff rights by
+accident is the wrong way to fail. A level that is not an `AccountLevelType`
+name is a 400, checked before anything is written, so a bad request cannot
+leave a half-made account behind.
+
+`PATCH` changes only the fields it carries — `level`, `isActive` and
+`password` are each optional, and an absent one is left alone:
+
+```bash
+curl -X PATCH http://127.0.0.1:8933/api/v1/admin/accounts/alice \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"isActive":false}'
+```
+
+**Email cannot be changed after creation**: the account service has no setter
+for it.
+
+**The password is write-only.** It goes in through `POST` and `PATCH` and
+appears in no response: the account resource reports `username`, `email`,
+`level`, `isActive` and `characterCount`, and nothing else. `AccountEntity`
+holds a password hash and an activation token, and neither ever leaves the
+server.
+
+**These routes say why they failed**, which looks like the opposite of the
+login rule above and is not. Login answers a flat 401 because anyone can call
+it, and the difference between "no such user" and "wrong password" tells an
+attacker which usernames exist. Here the caller already holds a staff token, so
+naming the reason is operational information for someone entitled to it.
+
+### Deleting
+
+`DELETE` removes the account **and every character on it**, with everything
+those characters carry. It is the only route that touches world state, so it
+does its work on the game loop and the request waits for the answer: deleting
+checks whether a character is being played and then deletes, login runs on the
+loop, and doing that check anywhere else lets a player log in between the two
+and lose their character from under them.
+
+- **409** — a character on the account is being played. Nothing is deleted.
+- **503** — the game loop did not answer within five seconds. Nothing is
+  deleted; the shard is unwell and the log says so.
 
 ## Browsing the API
 
