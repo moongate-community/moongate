@@ -3,9 +3,11 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Interfaces;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Mobiles;
 using Moongate.Server.Services.Mobiles;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Hues;
@@ -18,7 +20,14 @@ namespace Moongate.Tests.Server.World;
 public class WorldServiceTests
 {
     private static WorldService Service(StubItemService items, TimeProvider? time = null, ISkillService? skills = null)
-        => new(items, skills ?? Skills(), new VirtualSerialService(), new StubEventBus(), time ?? TimeProvider.System);
+        => new(
+            items,
+            skills ?? Skills(),
+            new VirtualSerialService(),
+            new StubEventBus(),
+            time ?? TimeProvider.System,
+            new OplService(new FakePersistenceService(), new ItemTemplateService())
+        );
 
     // Three skills is enough to prove the list is built from the registry rather than from the mobile.
     private static SkillService Skills()
@@ -37,6 +46,29 @@ public class WorldServiceTests
         packet.Write(ref writer);
 
         return writer.Span.ToArray();
+    }
+
+    [Fact]
+    public async Task BuildSequence_EndsWithTheMobilesOplInfo()
+    {
+        var persistence = new FakePersistenceService();
+        var mobile = Player();
+        await persistence.Store<MobileEntity>().UpsertAsync(mobile);
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var service = new WorldService(
+            new StubItemService([]),
+            Skills(),
+            new VirtualSerialService(),
+            new StubEventBus(),
+            TimeProvider.System,
+            opl
+        );
+
+        var packets = service.BuildSequence(mobile);
+
+        var info = Assert.IsType<OplInfoPacket>(packets[^1]);
+        Assert.Equal(mobile.Id, info.Serial);
+        Assert.Equal(opl.GetOrBuild(mobile.Id).Hash, info.Hash);
     }
 
     private static MobileEntity Player()

@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
+using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Containers;
@@ -125,6 +126,12 @@ public class ContainerSubscriberTests
         var gumps = new ContainerGumpService();
         gumps.Register(new() { GumpId = 65, ItemIds = [9437] });
 
-        return new(new StubSessionManager(), new StubItemService([]), templates, gumps);
+        return new(
+            new StubSessionManager(),
+            new StubItemService([]),
+            templates,
+            gumps,
+            new OplService(new FakePersistenceService(), templates)
+        );
     }
 }

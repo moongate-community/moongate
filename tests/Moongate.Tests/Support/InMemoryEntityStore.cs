@@ -6,13 +6,15 @@ namespace Moongate.Tests.Support;
 
 /// <summary>
 /// In-memory <see cref="IEntityStore{TEntity,Serial}" /> test double. Mirrors the real store's auto-id
-/// behaviour: an upsert of an entity with a zero serial allocates the next serial and writes it back.
+/// behaviour: an upsert of an entity with a zero serial allocates the next serial and writes it back,
+/// starting from the entity kind's own range (items live above <see cref="Serial.MinItem" />) so that
+/// <see cref="Serial.IsItem" /> / <see cref="Serial.IsMobile" /> hold for test entities too.
 /// </summary>
 public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
     where TEntity : class, ISerialIdEntity
 {
     private readonly Dictionary<Serial, TEntity> _items = new();
-    private uint _nextId = 1;
+    private uint _nextId = typeof(TEntity) == typeof(Moongate.Persistence.Entities.ItemEntity) ? Serial.MinItem : 1;
 
     public int Count()
         => _items.Count;

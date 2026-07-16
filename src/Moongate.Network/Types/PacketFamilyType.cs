@@ -14,5 +14,6 @@ public enum PacketFamilyType : byte
     Movement,
     StatusSkills,
     ItemsContainers,
-    InteractionKeepalive
+    InteractionKeepalive,
+    Tooltips
 }
