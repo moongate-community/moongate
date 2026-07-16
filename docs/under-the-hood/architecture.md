@@ -35,9 +35,12 @@ state — event handlers, timers, spawns — happens on that thread:
 
 A single TCP listener (default `0.0.0.0:2593`) carries both login and game
 traffic. Incoming bytes are framed and decompressed in `Moongate.Network`,
-decoded into typed packets, and dispatched to handler classes registered in
-DI (`LoginSeedHandler`, `AccountLoginHandler`, `SelectServerHandler`,
-`GameServerLoginHandler`, `CharacterCreationHandler` today). The
+decoded into typed packets, and dispatched to handler classes collected in
+DI as `IPacketHandlerRegistration` (login and character-selection handlers,
+client version, general information, skill locks, and single/double click
+today). The handlers are wired up in one place — `MoongatePacketHandlersPlugin`
+— via the `RegisterPacketHandler<T>()` extension, keeping `Program.cs` free of
+the opcode list. The
 login→game-server handoff uses a one-time auth key with a 30-second TTL.
 Targets ClassicUO 7.x only — the advertised feature flags are a constant,
 modern set.
@@ -56,6 +59,7 @@ YAML (world data, item/mobile/loot templates — see the
 [data file reference](../scripting/data/item-templates.md)), validating
 referential integrity where it matters (loot entries must point at real item
 templates). Functionality is composed from **plugins** registered in
-`Program.cs` (persistence, scripting, script modules, data loaders); drop-in
+`Program.cs` (persistence, scripting, script modules, data loaders, packet
+handlers); drop-in
 assemblies in the root's `plugins/` directory are loaded from disk the same
 way.
