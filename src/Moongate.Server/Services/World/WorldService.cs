@@ -6,6 +6,7 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Session;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.Mobiles;
 using Moongate.Server.Interfaces.World;
 using Moongate.Server.Types;
 using Moongate.UO.Data.Maps;
@@ -27,18 +28,24 @@ public sealed class WorldService : IWorldService
     private const byte PersonalLightLevel = 0;
     private const byte FemaleFlag = 0x02;
 
+    // Skills carry no per-skill cap or lock of their own yet, so every entry reports the classic
+    // 100.0 ceiling and a free-to-gain arrow.
+    private const ushort DefaultSkillCap = 1000;
+
     // Self-only view: two fixed top-of-range virtual serials for the hair/beard pseudo-items. A
     // per-mobile virtual-serial allocator lands with the nearby-mobile broadcast.
     private static readonly Serial HairVirtualSerial = new(0x7FFFFFFF);
     private static readonly Serial FacialHairVirtualSerial = new(0x7FFFFFFE);
 
     private readonly IItemService _items;
+    private readonly ISkillService _skills;
     private readonly IEventBus _eventBus;
     private readonly TimeProvider _timeProvider;
 
-    public WorldService(IItemService items, IEventBus eventBus, TimeProvider timeProvider)
+    public WorldService(IItemService items, ISkillService skills, IEventBus eventBus, TimeProvider timeProvider)
     {
         _items = items;
+        _skills = skills;
         _eventBus = eventBus;
         _timeProvider = timeProvider;
     }
@@ -111,10 +118,29 @@ public sealed class WorldService : IWorldService
             // ModernUO pairs the lock state with the status (OnStatsQuery), so the arrows are right
             // from the first frame rather than only after the player touches one.
             new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock),
+            new SkillsPacket(BuildSkills(mobile)),
             new WarModePacket(mobile.Warmode),
             new LoginCompletePacket(),
             new GameTimePacket((byte)now.Hour, (byte)now.Minute, (byte)now.Second)
         ];
+    }
+
+    /// <summary>
+    /// Builds the full skill list: every registered skill, including the ones this mobile never
+    /// trained, because the client renders exactly the rows it is sent.
+    /// </summary>
+    private List<SkillEntry> BuildSkills(MobileEntity mobile)
+    {
+        var skills = new List<SkillEntry>(_skills.All.Count);
+
+        foreach (var definition in _skills.All)
+        {
+            var value = (ushort)mobile.Skills.GetValueOrDefault(definition.Id);
+
+            skills.Add(new SkillEntry((ushort)definition.Id, value, value, SkillLockType.Up, DefaultSkillCap));
+        }
+
+        return skills;
     }
 
     private List<MobileIncomingItem> BuildEquipment(MobileEntity mobile)

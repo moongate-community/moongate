@@ -4,6 +4,8 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Interfaces;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Hues;
@@ -15,8 +17,19 @@ namespace Moongate.Tests.Server.World;
 
 public class WorldServiceTests
 {
-    private static WorldService Service(StubItemService items, TimeProvider? time = null)
-        => new(items, new StubEventBus(), time ?? TimeProvider.System);
+    private static WorldService Service(StubItemService items, TimeProvider? time = null, ISkillService? skills = null)
+        => new(items, skills ?? Skills(), new StubEventBus(), time ?? TimeProvider.System);
+
+    // Three skills is enough to prove the list is built from the registry rather than from the mobile.
+    private static SkillService Skills()
+    {
+        var skills = new SkillService();
+        skills.Register(new() { Id = 0, Name = "Alchemy" });
+        skills.Register(new() { Id = 1, Name = "Anatomy" });
+        skills.Register(new() { Id = 40, Name = "Swordsmanship" });
+
+        return skills;
+    }
 
     private static byte[] Serialize(IOutgoingPacket packet)
     {
@@ -61,7 +74,7 @@ public class WorldServiceTests
 
         Assert.Equal(
             // The second 0x11 neighbour is 0xBF/0x19, the stat lock state paired with the status.
-            new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0xBF, 0x72, 0x55, 0x5B },
+            new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0xBF, 0x3A, 0x72, 0x55, 0x5B },
             opcodes
         );
     }
@@ -81,7 +94,7 @@ public class WorldServiceTests
     {
         var time = new FixedTimeProvider(new DateTimeOffset(2026, 1, 1, 13, 37, 45, TimeSpan.Zero));
 
-        var gameTime = Serialize(Service(new StubItemService([]), time).BuildSequence(Player())[13]); // 0x5B is last
+        var gameTime = Serialize(Service(new StubItemService([]), time).BuildSequence(Player())[14]); // 0x5B is last
 
         Assert.Equal(new byte[] { 0x5B, 13, 37, 45 }, gameTime);
     }
@@ -92,7 +105,7 @@ public class WorldServiceTests
         var mobile = Player();
         mobile.Warmode = true;
 
-        var warMode = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[11]); // 0x72 is the 12th packet
+        var warMode = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[12]); // 0x72 is the 13th packet
 
         Assert.Equal(0x72, warMode[0]);
         Assert.Equal(1, warMode[1]);
@@ -157,6 +170,32 @@ public class WorldServiceTests
 
         // Two bits per stat: (Str << 4) | (Dex << 2) | Int.
         Assert.Equal((2 << 4) | (1 << 2) | 0, locks[11]);
+    }
+
+    [Fact]
+    public void BuildSequence_SkillsCarryEveryRegisteredSkillEvenUntrainedOnes()
+    {
+        var mobile = Player();
+        mobile.Skills[40] = 733; // Swordsmanship 73.3
+
+        var skills = Serialize(Service(new StubItemService([])).BuildSequence(mobile)[11]); // 0x3A follows the locks
+
+        Assert.Equal(0x3A, skills[0]);
+        Assert.Equal(6 + 9 * 3, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(1))); // all three, not just the trained one
+        Assert.Equal(0x02, skills[3]);                                                    // absolute, with caps
+
+        // First entry: Alchemy (id 0) untrained, still sent, and one-based on the wire.
+        Assert.Equal(1, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(4)));
+        Assert.Equal(0, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(6)));
+        Assert.Equal((byte)SkillLockType.Up, skills[10]);
+        Assert.Equal(1000, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(11)));
+
+        // Third entry: Swordsmanship (id 40 -> 41 on the wire) with the trained value and base.
+        Assert.Equal(41, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(22)));
+        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(24))); // value
+        Assert.Equal(733, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(26))); // base
+
+        Assert.Equal(0, BinaryPrimitives.ReadUInt16BigEndian(skills.AsSpan(31))); // terminator
     }
 
     [Fact]
