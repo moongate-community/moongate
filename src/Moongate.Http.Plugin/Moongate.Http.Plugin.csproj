@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10"/>
+        <!--
+            Microsoft.AspNetCore.OpenApi 10.0.10 drags in Microsoft.OpenApi 2.0.0, which carries
+            GHSA-v5pm-xwqc-g5wc (high: circular schema references can terminate parsing). 2.7.5 is the
+            first patched release. Pinned explicitly to override the transitive version; drop this once
+            AspNetCore.OpenApi ships a patched one itself.
+        -->
+        <PackageReference Include="Microsoft.OpenApi" Version="2.7.5"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.16.13"/>
+        <PackageReference Include="SquidStd.Abstractions" Version="0.36.0"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.36.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
