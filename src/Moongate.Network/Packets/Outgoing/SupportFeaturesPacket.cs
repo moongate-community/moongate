@@ -11,7 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// character list. Moongate targets modern (7.x) clients only, so it always writes the extended
 /// 4-byte flags form.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.EnterWorld)]
+[PacketDocumentation(PacketFamilyType.EnterWorld, Length = 5)]
 public readonly record struct SupportFeaturesPacket(FeatureFlagType Flags) : IOutgoingPacket
 {
     public const byte PacketId = 0xB9;

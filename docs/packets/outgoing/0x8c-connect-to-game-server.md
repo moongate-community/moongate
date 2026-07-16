@@ -5,7 +5,7 @@
 Connect to game server (0x8C): redirects the client to the game port with an auth key.
 
 - **Class:** [`ConnectToGameServerPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Outgoing/ConnectToGameServerPacket.cs)
-- **Size:** —
+- **Size:** 11 bytes (fixed)
 
 ## Fields
 

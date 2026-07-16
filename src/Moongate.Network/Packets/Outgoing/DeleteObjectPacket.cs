@@ -10,7 +10,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// Delete object (0x1D): the entity is gone — stop drawing it. 5 bytes fixed. Sent to everyone who can
 /// see a mobile or item that was removed, deleted or moved out of view.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.WorldState)]
+[PacketDocumentation(PacketFamilyType.WorldState, Length = 5)]
 public readonly record struct DeleteObjectPacket(Serial Serial) : IOutgoingPacket
 {
     public const byte PacketId = 0x1D;

@@ -11,7 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// Login confirmation / character locale and body (0x1B): the first packet of the enter-world burst.
 /// Tells the client which mobile it is playing, where it stands, and the facet's dimensions. 37 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.EnterWorld)]
+[PacketDocumentation(PacketFamilyType.EnterWorld, Length = 37)]
 public readonly record struct LoginConfirmPacket(
     Serial Serial,
     ushort Body,

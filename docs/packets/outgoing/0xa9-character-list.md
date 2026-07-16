@@ -5,7 +5,7 @@
 Character list (0xA9): the character slots followed by the starting cities, in the extended 7.0.13+ layout. The first `Characters` fill the slots by index; the rest stay empty. Length is `11 + 60*SlotCount + 89*Cities.Count`.
 
 - **Class:** [`CharacterListPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Outgoing/CharacterListPacket.cs)
-- **Size:** —
+- **Size:** Variable
 
 ## Fields
 

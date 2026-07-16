@@ -11,7 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// go. Variable length: <c>6 + 9*Skills.Count</c>. Skills the mobile never trained are still sent, at
 /// zero, otherwise they go missing from the client's list.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.StatusSkills)]
+[PacketDocumentation(PacketFamilyType.StatusSkills, IsVariableLength = true)]
 public readonly record struct SkillsPacket(IReadOnlyList<SkillEntry> Skills) : IOutgoingPacket
 {
     public const byte PacketId = 0x3A;

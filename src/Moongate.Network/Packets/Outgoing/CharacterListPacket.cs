@@ -12,7 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// 7.0.13+ layout. The first <see cref="Characters" /> fill the slots by index; the rest stay empty.
 /// Length is <c>11 + 60*SlotCount + 89*Cities.Count</c>.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.Characters)]
+[PacketDocumentation(PacketFamilyType.Characters, IsVariableLength = true)]
 public readonly record struct CharacterListPacket(
     IReadOnlyList<string> Characters,
     IReadOnlyList<StartingCity> Cities,

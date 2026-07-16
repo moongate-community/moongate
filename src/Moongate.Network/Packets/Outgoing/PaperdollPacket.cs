@@ -11,7 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// The text is the label shown on the window; <c>CanLift</c> lets the viewer drag items off the
 /// paperdoll, which is why it is only set for your own character.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.StatusSkills)]
+[PacketDocumentation(PacketFamilyType.StatusSkills, Length = 66)]
 public readonly record struct PaperdollPacket(Serial Serial, string Text, bool Warmode, bool CanLift)
     : IOutgoingPacket
 {

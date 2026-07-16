@@ -9,7 +9,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// Ping / keep-alive (0x73): the client sends this periodically with a rolling sequence byte and
 /// expects the server to echo it straight back, or it eventually drops the connection. 2 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive, Length = 2)]
 public readonly record struct PingPacket(byte Sequence) : IIncomingPacket<PingPacket>
 {
     public static byte PacketId => 0x73;

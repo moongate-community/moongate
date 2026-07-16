@@ -6,7 +6,7 @@ using SquidStd.Network.Spans;
 namespace Moongate.Network.Packets.Incoming;
 
 /// <summary>Game server login (0x91): the auth key from the redirect plus the account credentials.</summary>
-[PacketDocumentation(PacketFamilyType.LoginShardSelect)]
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, Length = 65)]
 public readonly record struct GameServerLoginPacket(uint AuthKey, string Account, string Password)
     : IIncomingPacket<GameServerLoginPacket>
 {

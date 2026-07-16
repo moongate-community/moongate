@@ -8,7 +8,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// Ping acknowledgement (0x73): echoes the client's keep-alive sequence byte straight back. 2 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive, Length = 2)]
 public readonly record struct PingAckPacket(byte Sequence) : IOutgoingPacket
 {
     public const byte PacketId = 0x73;

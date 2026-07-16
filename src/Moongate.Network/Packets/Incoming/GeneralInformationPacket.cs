@@ -10,7 +10,7 @@ namespace Moongate.Network.Packets.Incoming;
 /// <see cref="SubCommand" /> (ushort). Variable length: 5-byte header (id + length + sub-command)
 /// followed by the sub-command payload, which is carried verbatim in <see cref="Payload" />.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive, IsVariableLength = true)]
 public readonly record struct GeneralInformationPacket(ushort SubCommand, byte[] Payload)
     : IIncomingPacket<GeneralInformationPacket>
 {

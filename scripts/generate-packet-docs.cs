@@ -157,37 +157,87 @@ static PacketDoc Parse(string file, string direction)
     }
 
     var summary = ExtractSummary(record) ?? throw new InvalidOperationException("no XML <summary> doc comment found");
-    var family = FindFamily(record)
-                 ?? throw new InvalidOperationException("no [PacketDocumentation(PacketFamilyType.X)] attribute found");
+    var doc = FindDocumentation(record)
+              ?? throw new InvalidOperationException("no [PacketDocumentation(PacketFamilyType.X, ...)] attribute found");
+
+    if (doc.Family is null)
+    {
+        throw new InvalidOperationException("[PacketDocumentation] is missing the PacketFamilyType argument");
+    }
+
+    if (doc.Length > 0 == doc.IsVariableLength)
+    {
+        throw new InvalidOperationException("[PacketDocumentation] must declare exactly one of Length or IsVariableLength");
+    }
 
     var fields = (record.ParameterList?.Parameters ?? default)
         .Select(p => (Name: p.Identifier.Text, Type: p.Type?.ToString() ?? "?"))
         .ToList();
 
-    var name = DisplayName(className);
+    var name = doc.Name ?? DisplayName(className);
     var slug = $"{opcode.ToLowerInvariant()}-{name.ToLowerInvariant().Replace(' ', '-')}";
     var sourcePath = file.Replace(Path.DirectorySeparatorChar, '/');
+    var size = doc.IsVariableLength ? "Variable" : $"{doc.Length} bytes (fixed)";
+    var subCommand = doc.SubCommand >= 0 ? $"0x{doc.SubCommand:X2}" : null;
+    var opcodeDisplay = subCommand is null ? opcode : $"{opcode}/{subCommand}";
 
     return new PacketDoc(
-        className, direction, opcode, opcodeValue, name, slug, summary,
-        ShortDescription(summary), ExtractSize(summary), fields, sourcePath, family);
+        className, direction, opcode, opcodeValue, opcodeDisplay, name, slug, summary,
+        ShortDescription(summary), size, subCommand, fields, sourcePath, doc.Family);
 }
 
-static string? FindFamily(RecordDeclarationSyntax record)
+static PacketAttributeInfo? FindDocumentation(RecordDeclarationSyntax record)
 {
     foreach (var attribute in record.AttributeLists.SelectMany(l => l.Attributes))
     {
-        var name = attribute.Name.ToString();
+        var attributeName = attribute.Name.ToString();
 
-        if (name is "PacketDocumentation" or "PacketDocumentationAttribute")
+        if (attributeName is not ("PacketDocumentation" or "PacketDocumentationAttribute"))
         {
-            var argument = attribute.ArgumentList?.Arguments.FirstOrDefault()?.Expression.ToString();
-
-            return argument?.Split('.')[^1];
+            continue;
         }
+
+        string? family = null;
+        string? name = null;
+        var length = -1;
+        var subCommand = -1;
+        var isVariableLength = false;
+
+        foreach (var argument in attribute.ArgumentList?.Arguments ?? default)
+        {
+            var text = argument.Expression.ToString();
+
+            switch (argument.NameEquals?.Name.Identifier.Text)
+            {
+                case null:
+                    family = text.Split('.')[^1];
+                    break;
+                case "Length":
+                    length = ParseIntLiteral(text);
+                    break;
+                case "IsVariableLength":
+                    isVariableLength = text == "true";
+                    break;
+                case "SubCommand":
+                    subCommand = ParseIntLiteral(text);
+                    break;
+                case "Name":
+                    name = text.Trim('"');
+                    break;
+            }
+        }
+
+        return new PacketAttributeInfo(family, length, isVariableLength, subCommand, name);
     }
 
     return null;
+}
+
+static int ParseIntLiteral(string text)
+{
+    return text.StartsWith("0x", StringComparison.Ordinal)
+        ? Convert.ToInt32(text[2..], 16)
+        : int.Parse(text);
 }
 
 static string? FindOpcode(RecordDeclarationSyntax record)
@@ -252,23 +302,11 @@ static string DisplayName(string className)
     return Regex.Replace(baseName, "(?<=[a-z0-9])(?=[A-Z])", " ");
 }
 
-static string ExtractSize(string summary)
-{
-    var match = Regex.Match(summary, @"(\d+)\s+bytes?\s+fixed", RegexOptions.IgnoreCase);
-
-    if (match.Success)
-    {
-        return $"{match.Groups[1].Value} bytes (fixed)";
-    }
-
-    return Regex.IsMatch(summary, "variable length", RegexOptions.IgnoreCase) ? "Variable" : "—";
-}
-
 static string ShortDescription(string summary)
 {
-    // Drop the "Name (0xNN):" prefix the summaries start with; the table has
-    // dedicated opcode and name columns already.
-    var text = Regex.Replace(summary, @"^[^:]{0,60}\(0x[0-9A-Fa-f]{2}\):\s*", "");
+    // Drop the "Name (0xNN):" / "Name (0xBF sub-command 0xNN):" prefix the
+    // summaries start with; the table has dedicated opcode and name columns.
+    var text = Regex.Replace(summary, @"^[^:]{0,60}\(0x[0-9A-Fa-f]{2}[^)]*\):\s*", "");
     var sentenceEnd = text.IndexOf(". ", StringComparison.Ordinal);
 
     if (sentenceEnd > 0)
@@ -285,11 +323,18 @@ static string PacketPage(PacketDoc packet)
     var dirClass = packet.Direction == "Incoming" ? "mg-dir-in" : "mg-dir-out";
     var sb = new StringBuilder();
 
-    sb.Append($"# {packet.Opcode} — {packet.Name}\n\n");
+    sb.Append($"# {packet.OpcodeDisplay} — {packet.Name}\n\n");
     sb.Append($"<span class=\"mg-dir {dirClass}\">{dirLabel}</span>\n\n");
     sb.Append(packet.Summary).Append("\n\n");
     sb.Append($"- **Class:** [`{packet.ClassName}`]({GitHubBlobRoot}{packet.SourcePath})\n");
-    sb.Append($"- **Size:** {packet.Size}\n\n");
+    sb.Append($"- **Size:** {packet.Size}\n");
+
+    if (packet.SubCommand is not null)
+    {
+        sb.Append($"- **Sub-command:** `{packet.SubCommand}` of General Information (`{packet.Opcode}`)\n");
+    }
+
+    sb.Append('\n');
     sb.Append("## Fields\n\n");
 
     if (packet.Fields.Count == 0)
@@ -337,7 +382,7 @@ static string PacketTable(IEnumerable<PacketDoc> packets)
     {
         var dir = packet.Direction == "Incoming" ? "C → S" : "S → C";
         var href = $"../{packet.Direction.ToLowerInvariant()}/{packet.Slug}.md";
-        sb.Append($"| [`{packet.Opcode}`]({href}) | {packet.Name} | {dir} | {packet.Size} | {packet.ShortDescription} |\n");
+        sb.Append($"| [`{packet.OpcodeDisplay}`]({href}) | {packet.Name} | {dir} | {packet.Size} | {packet.ShortDescription} |\n");
     }
 
     return sb.ToString();
@@ -402,10 +447,17 @@ static string Toc(List<PacketDoc> packets, List<FamilyDoc> familyDocs)
 
         foreach (var packet in group)
         {
-            sb.Append($"    - name: \"{packet.Opcode} — {packet.Name}\"\n      href: {folder}/{packet.Slug}.md\n");
+            sb.Append($"    - name: \"{packet.OpcodeDisplay} — {packet.Name}\"\n      href: {folder}/{packet.Slug}.md\n");
         }
     }
 }
+
+internal sealed record PacketAttributeInfo(
+    string? Family,
+    int Length,
+    bool IsVariableLength,
+    int SubCommand,
+    string? Name);
 
 internal sealed record FamilyInfo(string Member, string Slug, string Title, string Description);
 
@@ -416,11 +468,13 @@ internal sealed record PacketDoc(
     string Direction,
     string Opcode,
     int OpcodeValue,
+    string OpcodeDisplay,
     string Name,
     string Slug,
     string Summary,
     string ShortDescription,
     string Size,
+    string? SubCommand,
     List<(string Name, string Type)> Fields,
     string SourcePath,
     string Family);

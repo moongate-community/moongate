@@ -9,7 +9,7 @@ using System.Text;
 namespace Moongate.Network.Packets.Outgoing;
 
 /// <summary>Server list (0xA8): advertises the available shards. Card 09 sends the single shard.</summary>
-[PacketDocumentation(PacketFamilyType.LoginShardSelect)]
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, IsVariableLength = true)]
 public readonly record struct ServerListPacket(string ShardName, IPAddress Address) : IOutgoingPacket
 {
     public const byte PacketId = 0xA8;

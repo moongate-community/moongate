@@ -14,7 +14,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// Mobile incoming / draw object (0x78): draws a mobile and its equipped items on the client. Uses
 /// the modern layout (full 16-bit item ids, hue always written). Variable length.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.Movement)]
+[PacketDocumentation(PacketFamilyType.Movement, IsVariableLength = true, Name = "Draw Object")]
 public readonly record struct MobileIncomingPacket(
     Serial Serial,
     ushort Body,

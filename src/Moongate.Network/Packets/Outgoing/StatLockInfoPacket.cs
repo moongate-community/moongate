@@ -12,7 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// each into a single byte. 12 bytes fixed. Without it the client's status-gump arrows never learn the
 /// server's state, so they reset on every login.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.StatusSkills)]
+[PacketDocumentation(PacketFamilyType.StatusSkills, Length = 12, SubCommand = 0x19)]
 public readonly record struct StatLockInfoPacket(
     Serial Serial,
     StatLockType StrengthLock,

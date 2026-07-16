@@ -1,4 +1,4 @@
-# 0x20 — Mobile Update
+# 0x20 — Draw Game Player
 
 <span class="mg-dir mg-dir-out">Server → Client</span>
 

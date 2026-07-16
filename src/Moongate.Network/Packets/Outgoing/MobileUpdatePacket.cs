@@ -11,7 +11,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// Draw game player / mobile update (0x20): positions and renders the player's own mobile. 19 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.Movement)]
+[PacketDocumentation(PacketFamilyType.Movement, Length = 19, Name = "Draw Game Player")]
 public readonly record struct MobileUpdatePacket(
     Serial Serial,
     ushort Body,

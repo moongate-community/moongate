@@ -8,7 +8,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// Game time (0x5B): the in-world clock shown to the client. 4 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.WorldState)]
+[PacketDocumentation(PacketFamilyType.WorldState, Length = 4)]
 public readonly record struct GameTimePacket(byte Hour, byte Minute, byte Second) : IOutgoingPacket
 {
     public const byte PacketId = 0x5B;

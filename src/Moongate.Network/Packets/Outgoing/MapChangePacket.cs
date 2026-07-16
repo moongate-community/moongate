@@ -9,7 +9,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// <summary>
 /// Map (facet) change (0xBF sub-command 0x08): switches the client to the given map. 6 bytes fixed.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.WorldState)]
+[PacketDocumentation(PacketFamilyType.WorldState, Length = 6, SubCommand = 0x08)]
 public readonly record struct MapChangePacket(MapType Map) : IOutgoingPacket
 {
     public const byte PacketId = 0xBF;

@@ -35,7 +35,7 @@ or write itself, and declares its documentation family with the
 /// Double click (0x06): the client double-clicked an entity, identified by its serial. 5 bytes fixed.
 /// Whether the target is a mobile or an item is decided later from the serial's range.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.InteractionKeepalive)]
+[PacketDocumentation(PacketFamilyType.InteractionKeepalive, Length = 5)]
 public readonly record struct DoubleClickPacket(Serial Target) : IIncomingPacket<DoubleClickPacket>
 {
     public static byte PacketId => 0x06;

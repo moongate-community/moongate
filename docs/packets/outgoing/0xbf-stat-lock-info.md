@@ -1,4 +1,4 @@
-# 0xBF — Stat Lock Info
+# 0xBF/0x19 — Stat Lock Info
 
 <span class="mg-dir mg-dir-out">Server → Client</span>
 
@@ -6,6 +6,7 @@ Stat lock info (0xBF sub-command 0x19): the up/down/lock state of the three stat
 
 - **Class:** [`StatLockInfoPacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Outgoing/StatLockInfoPacket.cs)
 - **Size:** 12 bytes (fixed)
+- **Sub-command:** `0x19` of General Information (`0xBF`)
 
 ## Fields
 

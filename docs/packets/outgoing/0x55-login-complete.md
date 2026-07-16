@@ -5,7 +5,7 @@
 Login complete (0x55): the "you are now in the world" marker that unblocks the client. 1 byte.
 
 - **Class:** [`LoginCompletePacket`](https://github.com/moongate-community/moongate/blob/main/src/Moongate.Network/Packets/Outgoing/LoginCompletePacket.cs)
-- **Size:** —
+- **Size:** 1 bytes (fixed)
 
 ## Fields
 

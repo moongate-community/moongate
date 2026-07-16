@@ -6,7 +6,7 @@ using SquidStd.Network.Spans;
 namespace Moongate.Network.Packets.Incoming;
 
 /// <summary>Select server (0xA0): the shard index the client picked from the server list.</summary>
-[PacketDocumentation(PacketFamilyType.LoginShardSelect)]
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, Length = 3)]
 public readonly record struct SelectServerPacket(ushort ShardIndex) : IIncomingPacket<SelectServerPacket>
 {
     public static byte PacketId => 0xA0;

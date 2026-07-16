@@ -12,7 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// (version 6, 121 bytes) that modern 7.x clients expect. Combat-derived figures Moongate does not
 /// model yet (resists, luck, weapon damage, tithing, gold, weight) are sent as zero. Back-patched.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.StatusSkills)]
+[PacketDocumentation(PacketFamilyType.StatusSkills, IsVariableLength = true, Name = "Status Bar Info")]
 public readonly record struct MobileStatusPacket(
     Serial Serial,
     string Name,

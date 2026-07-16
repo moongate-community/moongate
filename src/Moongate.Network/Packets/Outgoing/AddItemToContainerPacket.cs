@@ -13,7 +13,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// modern client carries a grid-location byte the older 20-byte form did not. Use container content
 /// (0x3C) to send a whole container at once instead.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.ItemsContainers)]
+[PacketDocumentation(PacketFamilyType.ItemsContainers, Length = 21)]
 public readonly record struct AddItemToContainerPacket(
     Serial Serial,
     ushort ItemId,

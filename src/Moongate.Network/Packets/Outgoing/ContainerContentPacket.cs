@@ -12,7 +12,7 @@ namespace Moongate.Network.Packets.Outgoing;
 /// after draw container (0x24) to fill the gump that was just opened. Each entry repeats the container's
 /// serial, which is how the client knows where to draw it.
 /// </summary>
-[PacketDocumentation(PacketFamilyType.ItemsContainers)]
+[PacketDocumentation(PacketFamilyType.ItemsContainers, IsVariableLength = true)]
 public readonly record struct ContainerContentPacket(Serial Container, IReadOnlyList<ContainerItem> Items)
     : IOutgoingPacket
 {

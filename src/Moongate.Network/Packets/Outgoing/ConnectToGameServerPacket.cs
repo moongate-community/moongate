@@ -8,7 +8,7 @@ using System.Net;
 namespace Moongate.Network.Packets.Outgoing;
 
 /// <summary>Connect to game server (0x8C): redirects the client to the game port with an auth key.</summary>
-[PacketDocumentation(PacketFamilyType.LoginShardSelect)]
+[PacketDocumentation(PacketFamilyType.LoginShardSelect, Length = 11)]
 public readonly record struct ConnectToGameServerPacket(IPAddress Address, ushort Port, uint AuthKey) : IOutgoingPacket
 {
     public const byte PacketId = 0x8C;

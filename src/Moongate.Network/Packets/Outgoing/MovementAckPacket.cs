@@ -7,7 +7,7 @@ using SquidStd.Network.Spans;
 namespace Moongate.Network.Packets.Outgoing;
 
 /// <summary>Movement ack (0x22): confirms the step with the client's sequence number.</summary>
-[PacketDocumentation(PacketFamilyType.Movement)]
+[PacketDocumentation(PacketFamilyType.Movement, Length = 3)]
 public readonly record struct MovementAckPacket(byte Sequence, NotorietyType Notoriety) : IOutgoingPacket
 {
     public const byte PacketId = 0x22;
