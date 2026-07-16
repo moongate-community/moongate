@@ -584,11 +584,11 @@ definitions.lua
 dist/
 benchmarks/.compare
 
-# Local runtime data directory
+# Local runtime data directories. Everything under them is generated on boot
+# (config, scripts, templates, plugins) or written at runtime (saves, data),
+# so the whole root is ignored rather than a few subdirectories.
 /moongate/
-# Runtime persistence (world snapshot + journal + persisted entities)
-/moongate_root/saves/
-/moongate_root/data/
+/moongate_root/
 
 # CodeGraph index (never commit)
 .codegraph/
