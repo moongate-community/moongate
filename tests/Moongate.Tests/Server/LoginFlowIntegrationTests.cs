@@ -398,7 +398,8 @@ public class LoginFlowIntegrationTests
                 CharacterServiceFixture.Skills(),
                 new VirtualSerialService(),
                 eventBus,
-                TimeProvider.System
+                TimeProvider.System,
+                new OplService(persistence, new ItemTemplateService())
             )
         );
 

@@ -3,6 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Interfaces.World;
 using Moongate.Ultima.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
@@ -13,11 +14,15 @@ public sealed class ItemService : IItemService
 {
     private readonly IEntityStore<ItemEntity, Serial> _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
+    private readonly IOplService? _opl;
 
-    public ItemService(IPersistenceService persistenceService)
+    // The property-list cache is optional on purpose: tests build a bare ItemService, and the OPL is a
+    // pure cache concern the item flows only need to invalidate.
+    public ItemService(IPersistenceService persistenceService, IOplService? opl = null)
     {
         _items = persistenceService.GetStore<ItemEntity, Serial>();
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
+        _opl = opl;
     }
 
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
@@ -49,7 +54,11 @@ public sealed class ItemService : IItemService
     }
 
     public bool Delete(Serial itemId)
-        => _items.RemoveAsync(itemId).WaitSync();
+    {
+        _opl?.Invalidate(itemId);
+
+        return _items.RemoveAsync(itemId).WaitSync();
+    }
 
     public void Equip(MobileEntity mobile, ItemEntity item, LayerType layer)
     {
@@ -118,7 +127,10 @@ public sealed class ItemService : IItemService
     }
 
     public void Save(ItemEntity item)
-        => _items.UpsertAsync(item).WaitSync();
+    {
+        _items.UpsertAsync(item).WaitSync();
+        _opl?.Invalidate(item.Id);
+    }
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
     {

@@ -137,6 +137,37 @@ public class OplServiceTests
         Assert.Equal(0, snapshot.Hash);
     }
 
+    [Fact]
+    public void ItemServiceSave_InvalidatesTheCachedList()
+    {
+        var persistence = new FakePersistenceService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var items = new ItemService(persistence, opl);
+        var item = new ItemEntity { Name = "a dagger", ItemId = 3921 };
+        items.Create(item);
+        Assert.Equal("a dagger", opl.GetOrBuild(item.Id).Entries[0].Arguments);
+
+        item.Name = "a katana";
+        items.Save(item);
+
+        Assert.Equal("a katana", opl.GetOrBuild(item.Id).Entries[0].Arguments);
+    }
+
+    [Fact]
+    public void ItemServiceDelete_DropsTheCachedList()
+    {
+        var persistence = new FakePersistenceService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var items = new ItemService(persistence, opl);
+        var item = new ItemEntity { Name = "a dagger", ItemId = 3921 };
+        items.Create(item);
+        Assert.True(opl.GetOrBuild(item.Id).HasEntries);
+
+        items.Delete(item.Id);
+
+        Assert.False(opl.GetOrBuild(item.Id).HasEntries);
+    }
+
     private static (OplService Opl, ItemService Items, ItemTemplateService Templates) Build()
     {
         var (opl, items, templates, _) = BuildFull();
