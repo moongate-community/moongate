@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -24,6 +25,12 @@ namespace Moongate.Tests.Server;
 
 public class LoginFlowIntegrationTests
 {
+    // How long a wire read waits before it is called a failure. Deliberately far above what the reads
+    // actually take (milliseconds on an idle machine): the budget only has to outlast a loaded CI runner,
+    // and nothing waits for it on the happy path, since every read returns the moment the bytes land. A
+    // timeout here means the server never answered — not that it answered slowly.
+    private static readonly TimeSpan ReadTimeout = TimeSpan.FromSeconds(10);
+
     // Runs posted work inline (no game loop in the test), so inbound packets are processed
     // synchronously on the receive thread exactly as before the main-thread marshaling.
     private sealed class InlineDispatcher : IMainThreadDispatcher
@@ -289,24 +296,33 @@ public class LoginFlowIntegrationTests
     private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern)
     {
         var buffer = new byte[4096];
+        var elapsed = Stopwatch.StartNew();
 
-        for (var attempt = 0; attempt < 50; attempt++)
+        while (true)
         {
-            while (socket.Available > 0)
-            {
-                var read = socket.Receive(buffer);
-                compressed.AddRange(buffer.AsSpan(0, read).ToArray());
-            }
-
             if (HuffmanDecoder.Decode(compressed.ToArray().AsSpan()).AsSpan().IndexOf(pattern.AsSpan()) >= 0)
             {
                 return true;
             }
 
-            Thread.Sleep(20);
-        }
+            var remaining = ReadTimeout - elapsed.Elapsed;
 
-        return false;
+            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
+            {
+                return false;
+            }
+
+            var read = socket.Receive(buffer);
+
+            // A readable socket that yields nothing is a closed one: no further bytes are coming, so the
+            // pattern this is waiting for never will either.
+            if (read == 0)
+            {
+                return false;
+            }
+
+            compressed.AddRange(buffer.AsSpan(0, read).ToArray());
+        }
     }
 
     private static byte[] SerialBytes(Serial serial)
@@ -459,17 +475,27 @@ public class LoginFlowIntegrationTests
     {
         var buffer = new byte[512];
         var total = 0;
+        var elapsed = Stopwatch.StartNew();
 
-        for (var attempt = 0; attempt < 50 && total < minCount; attempt++)
+        while (total < minCount)
         {
-            if (socket.Available > 0)
+            var remaining = ReadTimeout - elapsed.Elapsed;
+
+            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
             {
-                total += socket.Receive(buffer, total, buffer.Length - total, SocketFlags.None);
+                break;
             }
-            else
+
+            var read = socket.Receive(buffer, total, buffer.Length - total, SocketFlags.None);
+
+            // A readable socket that yields nothing is a closed one: without this the loop would spin on
+            // Poll until the deadline rather than report what it got.
+            if (read == 0)
             {
-                Thread.Sleep(20);
+                break;
             }
+
+            total += read;
         }
 
         if (total < minCount)
@@ -484,19 +510,19 @@ public class LoginFlowIntegrationTests
     {
         var buffer = new byte[512];
 
-        for (var attempt = 0; attempt < 50; attempt++)
+        if (!socket.Poll(ReadTimeout, SelectMode.SelectRead))
         {
-            if (socket.Available > 0)
-            {
-                var read = socket.Receive(buffer);
-
-                return buffer.AsSpan(0, read).ToArray();
-            }
-
-            Thread.Sleep(20);
+            throw new TimeoutException($"No response (expected 0x{expectedFirstByte:X2}).");
         }
 
-        throw new TimeoutException($"No response (expected 0x{expectedFirstByte:X2}).");
+        var read = socket.Receive(buffer);
+
+        if (read == 0)
+        {
+            throw new IOException($"Server closed the connection (expected 0x{expectedFirstByte:X2}).");
+        }
+
+        return buffer.AsSpan(0, read).ToArray();
     }
 
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
