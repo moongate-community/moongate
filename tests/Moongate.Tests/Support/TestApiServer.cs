@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
@@ -20,27 +21,42 @@ public sealed class TestApiServer : IAsyncDisposable
 {
     private readonly HttpServerService _service;
 
-    private TestApiServer(HttpServerService service, HttpClient client, IAccountService accounts)
+    private TestApiServer(
+        HttpServerService service,
+        HttpClient client,
+        IAccountService accounts,
+        CharacterService characters,
+        StubSessionManager sessions
+    )
     {
         _service = service;
         Client = client;
         Accounts = accounts;
+        Characters = characters;
+        Sessions = sessions;
     }
 
     public HttpClient Client { get; }
 
     public IAccountService Accounts { get; }
 
-    public static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
+    /// <summary>Real, over the same fake persistence: a test can give an account a character.</summary>
+    public CharacterService Characters { get; }
+
+    /// <summary>Lets a test declare a character as being played, via <see cref="StubSessionManager.Played" />.</summary>
+    public StubSessionManager Sessions { get; }
+
+    public static async Task<TestApiServer> StartAsync(
+        AccountLevelType level = AccountLevelType.Administrator,
+        IGameLoopContext? loop = null,
+        TimeSpan? deleteTimeout = null
+    )
     {
         var container = new Container();
         var persistence = new FakePersistenceService();
         var sessions = new StubSessionManager();
-        var accounts = new AccountService(
-            persistence,
-            CharacterServiceFixture.Create(persistence, new EventBusService()),
-            sessions
-        );
+        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
+        var accounts = new AccountService(persistence, characters, sessions);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig
@@ -58,7 +74,17 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance<IConfigManagerService>(new StubConfigManagerService());
         container.Register<IJwtTokenService, JwtTokenService>(Reuse.Singleton);
 
-        container.RegisterApiEndpointInstance(new AccountEndpoints(accounts));
+        // Inline by default: the delete route's contract is "hand it to the loop and wait", and running
+        // the work inline satisfies it with nothing to flake on.
+        var gameLoop = loop ?? new StubGameLoopContext();
+        container.RegisterInstance(gameLoop);
+
+        container.RegisterApiEndpointInstance(
+            new AccountEndpoints(accounts, gameLoop)
+            {
+                DeleteTimeout = deleteTimeout ?? TimeSpan.FromSeconds(5)
+            }
+        );
         container.RegisterApiEndpointInstance(new VersionEndpoints(moongateConfig));
         container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
@@ -67,7 +93,13 @@ public sealed class TestApiServer : IAsyncDisposable
         var service = new HttpServerService(container, config);
         await service.StartAsync();
 
-        return new(service, new() { BaseAddress = new($"http://127.0.0.1:{service.BoundPort}") }, accounts);
+        return new(
+            service,
+            new() { BaseAddress = new($"http://127.0.0.1:{service.BoundPort}") },
+            accounts,
+            characters,
+            sessions
+        );
     }
 
     public async ValueTask DisposeAsync()

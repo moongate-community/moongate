@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
@@ -8,18 +9,29 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Api;
 using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Types;
+using Serilog;
 
 namespace Moongate.Server.Endpoints;
 
 /// <summary>Account administration: the REST twin of Lua's <c>account.*</c> module.</summary>
 public sealed class AccountEndpoints : IApiEndpointRegistration
 {
+    private readonly ILogger _logger = Log.ForContext<AccountEndpoints>();
     private readonly IAccountService _accounts;
+    private readonly IGameLoopContext _loop;
 
-    public AccountEndpoints(IAccountService accounts)
+    public AccountEndpoints(IAccountService accounts, IGameLoopContext loop)
     {
         _accounts = accounts;
+        _loop = loop;
     }
+
+    /// <summary>
+    /// How long to wait for the game loop before calling it unresponsive. Init-only rather than a
+    /// mutable static: xUnit runs test classes in parallel, and one test shortening a shared value would
+    /// change another's timeout mid-run.
+    /// </summary>
+    public TimeSpan DeleteTimeout { get; init; } = TimeSpan.FromSeconds(5);
 
     public void Register(IEndpointRouteBuilder routes)
     {
@@ -31,6 +43,65 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         group.MapGet("/{username}", Get).WithName("GetAccount");
         group.MapPost("/", Create).WithName("CreateAccount");
         group.MapPatch("/{username}", Update).WithName("UpdateAccount");
+        group.MapDelete("/{username}", Delete).WithName("DeleteAccount");
+    }
+
+    /// <summary>
+    /// The only route that mutates world state: deleting an account cascades into its characters and
+    /// everything they carry.
+    /// <para>
+    /// It also checks <c>IsCharacterPlayed</c> and then deletes, and login runs on the game loop — so off
+    /// the loop a player can log in between the two and lose their character from under them. The stores
+    /// lock internally, so the damage would not be corruption; it would be a silent, permanent loss.
+    /// Handing the work to the loop puts check and act on login's own thread, where they cannot
+    /// interleave.
+    /// </para>
+    /// <para>
+    /// The timeout is why a stalled loop fails the request instead of hanging it forever, and 503 is the
+    /// honest answer: the game loop is not responding.
+    /// </para>
+    /// </summary>
+    private async Task<IResult> Delete(string username)
+    {
+        var completion = new TaskCompletionSource<AccountDeleteResultType>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+
+        _loop.Post(() => completion.SetResult(_accounts.Delete(username)));
+
+        AccountDeleteResultType result;
+
+        try
+        {
+            result = await completion.Task.WaitAsync(DeleteTimeout);
+        }
+        catch (TimeoutException)
+        {
+            _logger.Error(
+                "Account delete for {Username} timed out after {Timeout}; the game loop did not answer",
+                username,
+                DeleteTimeout
+            );
+
+            return Results.Problem(
+                "The game loop did not respond; the account was not deleted.",
+                statusCode: StatusCodes.Status503ServiceUnavailable
+            );
+        }
+
+        return result switch
+        {
+            AccountDeleteResultType.Deleted => Results.NoContent(),
+            AccountDeleteResultType.NotFound => NotFound(username),
+            AccountDeleteResultType.CharacterBeingPlayed => Results.Problem(
+                $"'{username}' has a character being played; it cannot be deleted right now.",
+                statusCode: StatusCodes.Status409Conflict
+            ),
+            _ => Results.Problem(
+                "Unknown account delete result.",
+                statusCode: StatusCodes.Status500InternalServerError
+            )
+        };
     }
 
     private IResult List()
