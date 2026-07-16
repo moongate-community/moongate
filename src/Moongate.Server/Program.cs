@@ -8,7 +8,6 @@ using Moongate.Server.Autostart;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Events;
 using Moongate.Server.Data.Exceptions;
-using Moongate.Server.Handlers;
 using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Interfaces.Items;
 using Moongate.Server.Interfaces.Mobiles;
@@ -98,6 +97,7 @@ await ConsoleApp.RunAsync(
                 builder.Add<MoongateScriptingPlugin>();
                 builder.Add<MoongateScriptModulesPlugin>();
                 builder.Add<MoongateDataLoaderPlugin>();
+                builder.Add<MoongatePacketHandlersPlugin>();
             }
         );
 
@@ -123,17 +123,6 @@ await ConsoleApp.RunAsync(
                     new PendingLoginStore(loginHandoffTtlMs, () => Environment.TickCount64)
                 );
                 container.Register<ISessionManager, SessionManager>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, LoginSeedHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, AccountLoginHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, SelectServerHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, GameServerLoginHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, CharacterCreationHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, CharacterSelectHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, DeleteCharacterHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, PingHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, ClientVersionHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, GeneralInformationHandler>(Reuse.Singleton);
-                container.Register<IPacketHandlerRegistration, SkillLockChangeHandler>(Reuse.Singleton);
 
                 container.RegisterStdService<INetworkService, NetworkService>();
 
