@@ -34,7 +34,7 @@ public class ItemImageExportJobTests
     public async Task TryStart_ExportsEveryItemThatHasArt()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
         var job = new ItemImageExportJob(service);
 
         Assert.True(job.TryStart());
@@ -57,7 +57,7 @@ public class ItemImageExportJobTests
     public async Task TryStart_WhileRunning_IsRefused()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
         var job = new ItemImageExportJob(service);
 
         Assert.True(job.TryStart());
@@ -74,7 +74,7 @@ public class ItemImageExportJobTests
     public void Status_BeforeAnyExport_IsIdle()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
         var job = new ItemImageExportJob(service);
 
         var status = job.Status;

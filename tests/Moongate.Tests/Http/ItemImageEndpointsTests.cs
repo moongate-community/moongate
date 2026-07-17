@@ -20,6 +20,7 @@ public class ItemImageEndpointsTests
             {
                 container.RegisterInstance(fixture.Directories);
                 container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+                container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
                 container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
                 container.RegisterApiEndpointInstance(
                     new ItemImageEndpoints(container.Resolve<IItemImageService>())

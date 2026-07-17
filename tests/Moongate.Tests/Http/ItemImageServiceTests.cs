@@ -13,7 +13,7 @@ public class ItemImageServiceTests
     public async Task GetOrCreateAsync_FirstCall_WritesADecodablePng()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         var path = await service.GetOrCreateAsync(ItemImageFixture.ItemId, 0);
 
@@ -30,7 +30,7 @@ public class ItemImageServiceTests
     public async Task GetOrCreateAsync_SecondCall_ServesTheCachedFileWithoutRewritingIt()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         var first = await service.GetOrCreateAsync(ItemImageFixture.ItemId, 0);
 
@@ -49,7 +49,7 @@ public class ItemImageServiceTests
     public async Task GetOrCreateAsync_MissingArt_ReturnsNull()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         Assert.Null(await service.GetOrCreateAsync(ItemImageFixture.MissingArtItemId, 0));
     }
@@ -58,7 +58,7 @@ public class ItemImageServiceTests
     public async Task GetOrCreateAsync_Hued_GetsItsOwnFileWithDifferentPixels()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         var plain = await service.GetOrCreateAsync(ItemImageFixture.ItemId, 0);
         var hued = await service.GetOrCreateAsync(ItemImageFixture.ItemId, ItemImageFixture.Hue);
@@ -77,7 +77,7 @@ public class ItemImageServiceTests
         // The reason the gate exists: Art holds no lock, and shares an LRU cache, non-concurrent
         // dictionaries and a static scratch buffer across calls. Parallel decodes are what corrupt it.
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         var hues = Enumerable.Range(1, 16).Select(hue => (ushort)hue).ToArray();
 
@@ -99,7 +99,7 @@ public class ItemImageServiceTests
     public async Task GetArtItemIdsAsync_ReturnsOnlyIdsThatHaveArt()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         var ids = await service.GetArtItemIdsAsync();
 
@@ -111,7 +111,7 @@ public class ItemImageServiceTests
     public void IsReady_TrueOnceTheClientFilesAreLoaded()
     {
         using var fixture = ItemImageFixture.Create();
-        using var service = new ItemImageService(new ItemCatalog(), fixture.Directories);
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
 
         Assert.True(service.IsReady);
     }
