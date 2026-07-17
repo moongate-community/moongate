@@ -54,6 +54,9 @@ public class AccountService : IAccountService
     public AccountEntity? GetByUsername(string username)
         => _accountStore.Query().FirstOrDefault(account => account.Username == username);
 
+    public AccountEntity? GetById(Serial accountId)
+        => _accountStore.GetById(accountId);
+
     public IReadOnlyList<string> GetUsernames()
         => _accountStore.Query().Select(account => account.Username).ToList();
 

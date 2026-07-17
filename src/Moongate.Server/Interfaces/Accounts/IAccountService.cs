@@ -23,6 +23,13 @@ public interface IAccountService
     /// <summary>Returns the account with that username, or null when none has it.</summary>
     AccountEntity? GetByUsername(string username);
 
+    /// <summary>
+    /// Returns the account with that id, or null when none has it. A direct key lookup, unlike
+    /// <see cref="GetByUsername" /> which scans and clones the whole store — worth having because the
+    /// bearer token carries the account id, so a route already knows it and need not search by name.
+    /// </summary>
+    AccountEntity? GetById(Serial accountId);
+
     /// <summary>Returns every account's username, in store order.</summary>
     IReadOnlyList<string> GetUsernames();
 

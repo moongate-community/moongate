@@ -27,6 +27,8 @@ public class MoongateApiEndpointsPluginTests
                 typeof(AccountEndpoints),
                 typeof(AdminEndpoints),
                 typeof(AuthEndpoints),
+                typeof(CharacterAdminEndpoints),
+                typeof(CharacterEndpoints),
                 typeof(PlayerEndpoints),
                 typeof(VersionEndpoints)
             ],

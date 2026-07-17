@@ -225,6 +225,28 @@ public class AccountServiceTests
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(other.Id));
     }
 
+    [Fact]
+    public void GetById_KnownAccount_ReturnsIt()
+    {
+        // The JWT carries the account id in Sub, so a route holding a token can look the account up
+        // directly. GetByUsername answers the same question by scanning and deep-cloning every account.
+        var persistence = new FakePersistenceService();
+        var service = Service(persistence);
+        service.Create("tom", "secret", null, AccountLevelType.Player);
+        var created = service.GetByUsername("tom");
+
+        var fetched = service.GetById(created!.Id);
+
+        Assert.NotNull(fetched);
+        Assert.Equal("tom", fetched!.Username);
+    }
+
+    [Fact]
+    public void GetById_UnknownAccount_ReturnsNull()
+    {
+        Assert.Null(Service(new FakePersistenceService()).GetById(new Serial(0xDEADBEEF)));
+    }
+
     private static AccountService Service(
         FakePersistenceService persistence, ICharacterService? characters = null, ISessionManager? sessions = null
     )

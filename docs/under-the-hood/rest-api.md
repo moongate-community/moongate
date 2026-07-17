@@ -109,6 +109,8 @@ good token that is simply not staff.
 | `POST`   | `/api/v1/admin/accounts`             | `admin`  | 201 and a `Location`, or 400 / 409 |
 | `PATCH`  | `/api/v1/admin/accounts/{username}`  | `admin`  | the updated account, or 400 / 404  |
 | `DELETE` | `/api/v1/admin/accounts/{username}`  | `admin`  | 204, or 404 / 409 / 503            |
+| `GET`    | `/api/v1/player/me/characters`       | `player` | the caller's own characters        |
+| `GET`    | `/api/v1/admin/characters`           | `admin`  | every character, paged             |
 | `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
 | `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
 | `GET`    | `/api/v1/admin/images/items`         | `admin`  | export progress                    |
@@ -176,6 +178,36 @@ and lose their character from under them.
 - **409** — a character on the account is being played. Nothing is deleted.
 - **503** — the game loop did not answer within five seconds. Nothing is
   deleted; the shard is unwell and the log says so.
+
+## Characters
+
+`GET /api/v1/player/me/characters` reports the caller's own characters — stats,
+appearance and where they stand. The account comes from the token, never from the
+request: an id a caller could supply would let anyone list anyone's characters by
+changing a number. It is not paged, because an account holds a handful of
+characters and a page envelope around five rows is ceremony.
+
+`GET /api/v1/admin/characters` is the staff view of every character, paged and
+searchable. `search` is free text matched against both the character's name and
+the owning account's username, so "find me so-and-so's character" is one query.
+
+Nothing on a mobile marks it as a player character: the only link is the owning
+account's `MobileIds`. The admin route therefore reads the accounts first, which
+it must do anyway to name each character's owner, and uses that to tell characters
+from the NPCs sharing the mobile store.
+
+Neither route returns `MobileEntity`. It carries `BrainScriptId`, `LootTableId`
+and `BackpackId`, and a field added to it later would publish itself; the DTO
+names its fields for the same reason `AccountResponse` does.
+
+There is no fame or karma. `ITitleService` takes both, but nothing stores them on
+the entity yet, and a field pinned at 0 in this reference would be worse than an
+absent one. They arrive with the system that moves them.
+
+One detail worth copying if you add a route that reads the caller's identity: the
+account id is read from `NameIdentifier` before `sub`. `JwtTokenService` writes it
+into `sub`, but JwtBearer's inbound claim mapping is on by default and renames it
+before the principal reaches the route — reading only `sub` 401s every request.
 
 ## Item images
 

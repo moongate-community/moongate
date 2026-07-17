@@ -131,6 +131,7 @@ await ConsoleApp.RunAsync(
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+                container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
                 container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
 
                 container.RegisterInstance(Random.Shared);
