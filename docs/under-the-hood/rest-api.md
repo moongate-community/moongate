@@ -213,6 +213,26 @@ account id is read from `NameIdentifier` before `sub`. `JwtTokenService` writes 
 into `sub`, but JwtBearer's inbound claim mapping is on by default and renames it
 before the principal reaches the route — reading only `sub` 401s every request.
 
+## Item templates
+
+Staff-only, read-only views over the item template registry — the YAML-born
+catalog every item is built from.
+
+`GET /api/v1/admin/items/templates` lists templates as paged summary rows,
+using the shared paging contract: `page` is 1-based, `pageSize` caps at 100,
+and `search` is free text matched case-insensitively against a template's id,
+name, category and tags. Each row carries an `imageUrl` pointing at the item
+art route, so a table can show the sprite without computing anything.
+
+`GET /api/v1/admin/items/templates/{id}` returns one full template, specs
+included — equip, weapon, container, book and script params exactly as the
+[data reference](../scripting/data/item-templates.md) describes them. Ids are
+case-insensitive; an unknown id answers 404.
+
+Templates are read-only over the API on purpose: they are born from YAML and
+reloaded at startup, so a REST write would only diverge from the source of
+truth until the next restart.
+
 ## Item images
 
 `GET /api/v1/images/items/0x1234.png` returns an item's art as a PNG, and is
