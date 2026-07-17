@@ -23,7 +23,7 @@ public class AdminEndpointsTests
     public async Task AdminStatus_WithStaffToken_Is200(AccountLevelType level)
     {
         await using var server = await TestApiServer.StartAsync(level);
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
     }
@@ -34,7 +34,7 @@ public class AdminEndpointsTests
         // The test that proves the admin/player split exists rather than being asserted: a valid token
         // that is simply not staff enough.
         await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
     }
@@ -43,7 +43,7 @@ public class AdminEndpointsTests
     public async Task PlayerMe_WithAnyToken_ReportsTheAccount()
     {
         await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.GetAsync("/api/v1/player/me");
 
@@ -60,16 +60,5 @@ public class AdminEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync("/api/v1/player/me")).StatusCode);
-    }
-
-    private static async Task AuthenticateAsync(TestApiServer server)
-    {
-        var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
-        var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
-
-        server.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
     }
 }
