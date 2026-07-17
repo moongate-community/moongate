@@ -59,12 +59,12 @@ public class MapImageExportJobTests
         for (var zoom = 0; zoom <= maxZoom; zoom++)
         {
             Assert.True(
-                Directory.Exists(Path.Combine(root, "felucca", zoom.ToString())),
+                Directory.Exists(Path.Combine(root, "felucca", "flat", zoom.ToString())),
                 $"zoom {zoom} was not exported"
             );
         }
 
-        Assert.True(File.Exists(Path.Combine(root, "felucca", "full.png")));
+        Assert.True(File.Exists(Path.Combine(root, "felucca", "flat", "full.png")));
     }
 
     [Fact]

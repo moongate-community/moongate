@@ -1,3 +1,4 @@
+using Moongate.Http.Plugin.Types;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Http.Plugin.Interfaces.Maps;
@@ -18,14 +19,27 @@ public interface IMapImageService
     int MaxZoomFor(MapType facet);
 
     /// <summary>
-    /// The path of the cached tile, building it — and, below native zoom, its children — on first request.
-    /// Null when the facet is not served or the tile is outside that zoom's grid.
+    /// The path of the cached tile in the given <paramref name="style" />, building it — and, below native
+    /// zoom, its children — on first request. Null when the facet is not served or the tile is outside that
+    /// zoom's grid.
     /// </summary>
-    Task<string?> GetTileAsync(MapType facet, int zoom, int x, int y, CancellationToken cancellationToken = default);
+    Task<string?> GetTileAsync(
+        MapType facet,
+        MapRenderStyleType style,
+        int zoom,
+        int x,
+        int y,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
-    /// The path of the cached whole-facet image, rendering it on first request. Null when the facet is not
-    /// served. This one is expensive — a facet-sized bitmap — which is what the pre-warm is for.
+    /// The path of the cached whole-facet image in the given <paramref name="style" />, rendering it on
+    /// first request. Null when the facet is not served. This one is expensive — a facet-sized bitmap —
+    /// which is what the pre-warm is for.
     /// </summary>
-    Task<string?> GetFullAsync(MapType facet, CancellationToken cancellationToken = default);
+    Task<string?> GetFullAsync(
+        MapType facet,
+        MapRenderStyleType style,
+        CancellationToken cancellationToken = default
+    );
 }

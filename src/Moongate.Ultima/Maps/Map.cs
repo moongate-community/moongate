@@ -1925,8 +1925,8 @@ public sealed class Map
         green = Math.Clamp(green, 0, 31);
         blue = Math.Clamp(blue, 0, 31);
 
-        // Recombine into RGB555 format
-        return (ushort)((red << 10) | (green << 5) | blue);
+        // Recombine into RGB555, opaque — the map surface is ARGB1555 and the top bit means "visible".
+        return (ushort)(OpaqueBit | (red << 10) | (green << 5) | blue);
     }
 
     #endregion

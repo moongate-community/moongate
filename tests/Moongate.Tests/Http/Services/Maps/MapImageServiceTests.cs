@@ -1,5 +1,6 @@
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Services.Maps;
+using Moongate.Http.Plugin.Types;
 using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
@@ -31,7 +32,7 @@ public class MapImageServiceTests
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
 
-        var path = await service.GetTileAsync(MapType.Felucca, service.MaxZoomFor(MapType.Felucca), 0, 0);
+        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, service.MaxZoomFor(MapType.Felucca), 0, 0);
 
         Assert.NotNull(path);
 
@@ -50,7 +51,7 @@ public class MapImageServiceTests
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
 
-        var path = await service.GetTileAsync(MapType.Felucca, service.MaxZoomFor(MapType.Felucca), 0, 0);
+        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, service.MaxZoomFor(MapType.Felucca), 0, 0);
 
         using var image = await Image.LoadAsync<Bgra32>(path!);
         var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
@@ -60,17 +61,55 @@ public class MapImageServiceTests
     }
 
     [Fact]
+    public async Task GetTileAsync_Relief_RendersOpaquePixels()
+    {
+        // The relief path recomposes each pixel in ApplyLighting and must keep the ARGB1555 opaque bit —
+        // exactly the defect fixed for the flat path. Without it the whole relief tile decodes to alpha 0.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(
+            MapType.Felucca,
+            MapRenderStyleType.Relief,
+            service.MaxZoomFor(MapType.Felucca),
+            0,
+            0
+        );
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
+
+        Assert.Equal(byte.MaxValue, centre.A);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_FlatAndRelief_AreDistinctCacheFiles()
+    {
+        // Styles must not overwrite each other: the same coordinates cache to separate files.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+        var zoom = service.MaxZoomFor(MapType.Felucca);
+
+        var flat = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
+        var relief = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Relief, zoom, 0, 0);
+
+        Assert.NotEqual(flat, relief);
+        Assert.True(File.Exists(flat));
+        Assert.True(File.Exists(relief));
+    }
+
+    [Fact]
     public async Task GetTileAsync_SecondCall_ServesTheCachedFileWithoutRerendering()
     {
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
         var zoom = service.MaxZoomFor(MapType.Felucca);
 
-        var first = await service.GetTileAsync(MapType.Felucca, zoom, 0, 0);
+        var first = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
         var marker = DateTime.UtcNow.AddDays(-1);
         File.SetLastWriteTimeUtc(first!, marker);
 
-        var second = await service.GetTileAsync(MapType.Felucca, zoom, 0, 0);
+        var second = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
 
         Assert.Equal(first, second);
         Assert.Equal(marker, File.GetLastWriteTimeUtc(second!), TimeSpan.FromSeconds(1));
@@ -85,7 +124,7 @@ public class MapImageServiceTests
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
 
-        var path = await service.GetTileAsync(MapType.Felucca, 0, 0, 0);
+        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
 
         Assert.NotNull(path);
 
@@ -102,13 +141,13 @@ public class MapImageServiceTests
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
 
-        await service.GetTileAsync(MapType.Felucca, 0, 0, 0);
+        await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
 
         var native = service.MaxZoomFor(MapType.Felucca);
         var root = fixture.Directories.GetPath("cache/images/maps");
 
-        Assert.True(Directory.Exists(Path.Combine(root, "felucca", native.ToString())), "no native tiles cached");
-        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "0")), "no zoom 0 tile cached");
+        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", native.ToString())), "no native tiles cached");
+        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", "0")), "no zoom 0 tile cached");
     }
 
     [Fact]
@@ -116,7 +155,7 @@ public class MapImageServiceTests
     {
         using var fixture = MapImageFixture.Create();
 
-        Assert.Null(await Service(fixture).GetTileAsync(MapType.Felucca, 0, 99, 99));
+        Assert.Null(await Service(fixture).GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 99, 99));
     }
 
     [Fact]
@@ -124,7 +163,7 @@ public class MapImageServiceTests
     {
         using var fixture = MapImageFixture.Create();
 
-        Assert.Null(await Service(fixture).GetTileAsync(MapType.Malas, 0, 0, 0));
+        Assert.Null(await Service(fixture).GetTileAsync(MapType.Malas, MapRenderStyleType.Flat, 0, 0, 0));
     }
 
     [Fact]
@@ -132,7 +171,7 @@ public class MapImageServiceTests
     {
         using var fixture = MapImageFixture.Create();
 
-        var path = await Service(fixture).GetFullAsync(MapType.Felucca);
+        var path = await Service(fixture).GetFullAsync(MapType.Felucca, MapRenderStyleType.Flat);
 
         Assert.NotNull(path);
 
@@ -148,11 +187,11 @@ public class MapImageServiceTests
         using var fixture = MapImageFixture.Create();
         var service = Service(fixture);
 
-        var first = await service.GetFullAsync(MapType.Felucca);
+        var first = await service.GetFullAsync(MapType.Felucca, MapRenderStyleType.Flat);
         var marker = DateTime.UtcNow.AddDays(-1);
         File.SetLastWriteTimeUtc(first!, marker);
 
-        var second = await service.GetFullAsync(MapType.Felucca);
+        var second = await service.GetFullAsync(MapType.Felucca, MapRenderStyleType.Flat);
 
         Assert.Equal(marker, File.GetLastWriteTimeUtc(second!), TimeSpan.FromSeconds(1));
     }
@@ -167,7 +206,7 @@ public class MapImageServiceTests
         var zoom = service.MaxZoomFor(MapType.Felucca);
 
         var paths = await Task.WhenAll(
-            Enumerable.Range(0, 4).Select(x => service.GetTileAsync(MapType.Felucca, zoom, x, 0))
+            Enumerable.Range(0, 4).Select(x => service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, x, 0))
         );
 
         Assert.All(paths, path => Assert.True(File.Exists(path)));

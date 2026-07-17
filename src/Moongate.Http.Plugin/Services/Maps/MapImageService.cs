@@ -1,7 +1,10 @@
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Ultima;
+using Moongate.Http.Plugin.Types;
+using Moongate.Ultima.Imaging;
 using Moongate.Ultima.Tiles;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
@@ -30,6 +33,10 @@ public sealed class MapImageService : IMapImageService
         _maps = maps;
         _gate = gate;
         _cachePath = directories.RegisterDirectory(CacheDirectory);
+
+        // Relief shading is driven by process-wide statics that invalidate a per-Map altitude cache, so
+        // they must be fixed once, never per request. Soft matches the UO client's own map most closely.
+        UltimaMap.ShadingPreset = AltitudeShadingPresetType.Soft;
     }
 
     public bool IsReady
@@ -40,6 +47,7 @@ public sealed class MapImageService : IMapImageService
 
     public async Task<string?> GetTileAsync(
         MapType facet,
+        MapRenderStyleType style,
         int zoom,
         int x,
         int y,
@@ -58,7 +66,7 @@ public sealed class MapImageService : IMapImageService
             return null;
         }
 
-        var path = TilePath(facet, zoom, x, y);
+        var path = TilePath(facet, style, zoom, x, y);
 
         // The hit path touches neither the gate nor Ultima. Everything below is the miss.
         if (File.Exists(path))
@@ -67,22 +75,26 @@ public sealed class MapImageService : IMapImageService
         }
 
         using var tile = zoom == maxZoom
-                             ? await RenderNativeAsync(map, x, y, cancellationToken)
-                             : await ComposeAsync(facet, zoom, x, y, cancellationToken);
+                             ? await RenderNativeAsync(map, style, x, y, cancellationToken)
+                             : await ComposeAsync(facet, style, zoom, x, y, cancellationToken);
 
         await WriteAtomicallyAsync(path, tile, cancellationToken);
 
         return path;
     }
 
-    public async Task<string?> GetFullAsync(MapType facet, CancellationToken cancellationToken = default)
+    public async Task<string?> GetFullAsync(
+        MapType facet,
+        MapRenderStyleType style,
+        CancellationToken cancellationToken = default
+    )
     {
         if (_maps.Get(facet) is not { } map)
         {
             return null;
         }
 
-        var path = Path.Combine(FacetDirectory(facet), "full.png");
+        var path = Path.Combine(StyleDirectory(facet, style), "full.png");
 
         if (File.Exists(path))
         {
@@ -99,7 +111,7 @@ public sealed class MapImageService : IMapImageService
                     return null;
                 }
 
-                using var bitmap = map.GetImage(0, 0, Blocks(map.Width), Blocks(map.Height), true);
+                using var bitmap = RenderBlocks(map, style, 0, 0, Blocks(map.Width), Blocks(map.Height));
 
                 return bitmap.ToImage();
             },
@@ -128,6 +140,7 @@ public sealed class MapImageService : IMapImageService
     /// </summary>
     private async Task<Image<Bgra32>> RenderNativeAsync(
         UltimaMap map,
+        MapRenderStyleType style,
         int x,
         int y,
         CancellationToken cancellationToken
@@ -141,7 +154,7 @@ public sealed class MapImageService : IMapImageService
         var rendered = await _gate.ReadAsync(
             () =>
             {
-                using var bitmap = map.GetImage(blockX, blockY, width, height, true);
+                using var bitmap = RenderBlocks(map, style, blockX, blockY, width, height);
 
                 return bitmap.ToImage();
             },
@@ -170,6 +183,7 @@ public sealed class MapImageService : IMapImageService
     /// </summary>
     private async Task<Image<Bgra32>> ComposeAsync(
         MapType facet,
+        MapRenderStyleType style,
         int zoom,
         int x,
         int y,
@@ -181,7 +195,7 @@ public sealed class MapImageService : IMapImageService
 
         foreach (var (dx, dy) in new[] { (0, 0), (1, 0), (0, 1), (1, 1) })
         {
-            var childPath = await GetTileAsync(facet, zoom + 1, x * 2 + dx, y * 2 + dy, cancellationToken);
+            var childPath = await GetTileAsync(facet, style, zoom + 1, x * 2 + dx, y * 2 + dy, cancellationToken);
 
             if (childPath is null)
             {
@@ -196,6 +210,22 @@ public sealed class MapImageService : IMapImageService
         return tile;
     }
 
+    /// <summary>
+    /// The style's block render. Flat is the radar map; Relief is the same map with altitude shading,
+    /// which only differs at native zoom — every lower zoom is composed by downsampling native tiles.
+    /// </summary>
+    private static UltimaBitmap RenderBlocks(
+        UltimaMap map,
+        MapRenderStyleType style,
+        int x,
+        int y,
+        int width,
+        int height
+    )
+        => style == MapRenderStyleType.Relief
+            ? map.GetImageWithAltitude(x, y, width, height, true, MapAltitudeModeType.NormalWithAltitude)
+            : map.GetImage(x, y, width, height, true);
+
     private static bool InGrid(UltimaMap map, int zoom, int maxZoom, int x, int y)
         => x >= 0
            && y >= 0
@@ -206,13 +236,15 @@ public sealed class MapImageService : IMapImageService
     private static int Blocks(int extent)
         => (extent + 7) / 8;
 
-    private string FacetDirectory(MapType facet)
-        => Directory.CreateDirectory(Path.Combine(_cachePath, facet.ToString().ToLowerInvariant())).FullName;
+    private string StyleDirectory(MapType facet, MapRenderStyleType style)
+        => Directory.CreateDirectory(
+            Path.Combine(_cachePath, facet.ToString().ToLowerInvariant(), style.ToString().ToLowerInvariant())
+        ).FullName;
 
-    private string TilePath(MapType facet, int zoom, int x, int y)
+    private string TilePath(MapType facet, MapRenderStyleType style, int zoom, int x, int y)
     {
         var directory = Directory.CreateDirectory(
-            Path.Combine(FacetDirectory(facet), zoom.ToString(), x.ToString())
+            Path.Combine(StyleDirectory(facet, style), zoom.ToString(), x.ToString())
         );
 
         return Path.Combine(directory.FullName, $"{y}.png");
