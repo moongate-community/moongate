@@ -164,7 +164,11 @@ public class CharacterService : ICharacterService
 
     public IReadOnlyCollection<MobileEntity> GetPlayerCharacters(Serial accountId)
     {
-        var account = _accountStore.Query().FirstOrDefault(a => a.Id == accountId);
+        // Reads the account's own id list rather than filtering the mobile store by it. The store's Query()
+        // deep-clones every entity it holds before any Where runs, so the old shape cloned every account
+        // and every mobile — NPCs included — to return a handful of characters. GetById is a dictionary
+        // lookup and one clone, and an account holds at most a few characters.
+        var account = _accountStore.GetById(accountId);
 
         if (account == null)
         {
@@ -173,7 +177,19 @@ public class CharacterService : ICharacterService
             return [];
         }
 
-        return [.. _mobileStore.Query().Where(mobile => account.MobileIds.Contains(mobile.Id))];
+        var characters = new List<MobileEntity>(account.MobileIds.Count);
+
+        foreach (var id in account.MobileIds)
+        {
+            // A dangling id is not a failure worth refusing the whole list for: the character is gone and
+            // the account's list has not caught up. Skipping is what the old filter did implicitly.
+            if (_mobileStore.GetById(id) is { } mobile)
+            {
+                characters.Add(mobile);
+            }
+        }
+
+        return characters;
     }
 
     // Depth-first so a container's contents are gone before the container itself.
