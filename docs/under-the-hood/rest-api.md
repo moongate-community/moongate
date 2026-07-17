@@ -308,6 +308,11 @@ it reports rather than hardcoding it.
 `GET /api/v1/images/maps/{map}/full.png` is the whole facet in one image, for
 downloading or printing rather than browsing.
 
+Both routes take an optional `?style=`. `flat` (the default) is the radar map —
+one colour per map tile. `relief` renders the same map with altitude shading, so
+hills and valleys read as light and shadow; it is a touch slower to render the
+first time and caches separately from flat, so the two never overwrite each other.
+
 `POST /api/v1/admin/images/maps` builds every tile and whole-facet image ahead of
 time; `GET` on the same route reports progress. Staff-only. Run it before anyone
 opens a viewer: the first request at a low zoom otherwise builds every tile beneath
