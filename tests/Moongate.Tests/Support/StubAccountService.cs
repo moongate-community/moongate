@@ -32,6 +32,9 @@ public sealed class StubAccountService : IAccountService
     public AccountEntity? GetByUsername(string username)
         => throw new NotSupportedException();
 
+    public AccountEntity? GetById(Serial accountId)
+        => throw new NotSupportedException();
+
     public IReadOnlyList<string> GetUsernames()
         => throw new NotSupportedException();
 
