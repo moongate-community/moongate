@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <!--
+            Moongate.Ultima is standalone: it references no Moongate project. The image endpoints read
+            the client files through Ultima's process-wide statics, which the server has initialised by
+            the time a request arrives. Game-facing endpoints instead consume Moongate.Server.Abstractions,
+            the contract assembly the server implements — the plugin never references Moongate.Server.
+        -->
+        <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
+        <!--
+            For MapType, so the map routes name facets the way the rest of the project does rather than
+            inventing a second vocabulary. Moongate.UO.Data references only Moongate.Core and
+            Moongate.Ultima — the two this plugin already has — so this adds no cycle.
+        -->
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+        <!--
+            Swashbuckle rather than Microsoft.AspNetCore.OpenApi, which is otherwise the obvious choice on
+            .NET 10: AddOpenApi resolves its document services by key, and DryIoc.Microsoft.DependencyInjection
+            6.2.0 — the newest release, and the one SquidStd pins via DryIoc.dll 5.4.3 — does not implement
+            IKeyedServiceProvider, so every OpenAPI request 500s. Swashbuckle needs no keyed services, which is
+            what lets the web app run on the game's own container. Scalar reads the document either way.
+        -->
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3"/>
+        <PackageReference Include="Scalar.AspNetCore" Version="2.16.13"/>
+        <PackageReference Include="SquidStd.Abstractions" Version="0.37.0"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.37.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

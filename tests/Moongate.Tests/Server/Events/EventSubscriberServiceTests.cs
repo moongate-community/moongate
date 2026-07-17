@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Events;
 using Moongate.Server.Services.Events;
 using Moongate.Tests.Support;
 using SquidStd.Core.Interfaces.Events;

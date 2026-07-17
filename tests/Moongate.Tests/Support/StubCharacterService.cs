@@ -2,7 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 
 namespace Moongate.Tests.Support;
 

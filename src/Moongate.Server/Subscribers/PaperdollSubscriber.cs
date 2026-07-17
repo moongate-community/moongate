@@ -1,9 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Events;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Events;
 using Moongate.UO.Data.Bodies;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;

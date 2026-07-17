@@ -2,9 +2,9 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Tests.Support;
 
@@ -32,7 +32,13 @@ public sealed class StubAccountService : IAccountService
     public AccountEntity? GetByUsername(string username)
         => throw new NotSupportedException();
 
+    public AccountEntity? GetById(Serial accountId)
+        => throw new NotSupportedException();
+
     public IReadOnlyList<string> GetUsernames()
+        => throw new NotSupportedException();
+
+    public IReadOnlyList<AccountEntity> GetAll()
         => throw new NotSupportedException();
 
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)

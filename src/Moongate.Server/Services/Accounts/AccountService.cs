@@ -3,9 +3,9 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Types;
 using Serilog;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -54,8 +54,14 @@ public class AccountService : IAccountService
     public AccountEntity? GetByUsername(string username)
         => _accountStore.Query().FirstOrDefault(account => account.Username == username);
 
+    public AccountEntity? GetById(Serial accountId)
+        => _accountStore.GetById(accountId);
+
     public IReadOnlyList<string> GetUsernames()
         => _accountStore.Query().Select(account => account.Username).ToList();
+
+    public IReadOnlyList<AccountEntity> GetAll()
+        => [.. _accountStore.GetAll()];
 
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
     {

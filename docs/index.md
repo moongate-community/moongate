@@ -10,7 +10,7 @@ _layout: landing
   <img src="images/logo.png" alt="Moongate logo" />
   <div class="mg-hero-badge">.NET · Lua · ClassicUO 7.x</div>
   <h1>A modern Ultima Online server, built from scratch</h1>
-  <p>A KISS Ultima Online server emulator on .NET.
+  <p>A KISS Ultima Online server on .NET.
   Build your shard with Lua scripts and YAML data — no C# required.</p>
   <div class="mg-hero-actions">
     <a class="mg-btn-primary" href="getting-started/index.md">Get Started →</a>

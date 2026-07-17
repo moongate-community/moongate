@@ -2,10 +2,11 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Events;
-using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Containers;
 using SquidStd.Core.Interfaces.Events;
 
@@ -22,15 +23,21 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
     private readonly IItemService _items;
     private readonly IItemTemplateService _templates;
     private readonly IContainerGumpService _gumps;
+    private readonly IOplService _opl;
 
     public ContainerSubscriber(
-        ISessionManager sessions, IItemService items, IItemTemplateService templates, IContainerGumpService gumps
+        ISessionManager sessions,
+        IItemService items,
+        IItemTemplateService templates,
+        IContainerGumpService gumps,
+        IOplService opl
     )
     {
         _sessions = sessions;
         _items = items;
         _templates = templates;
         _gumps = gumps;
+        _opl = opl;
     }
 
     public void Subscribe(IEventBus eventBus)
@@ -48,8 +55,21 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
             return Task.CompletedTask;
         }
 
+        var contents = _items.GetContents(item.Id);
+
         session.Send(new DrawContainerPacket(item.Id, (ushort)gumpId));
-        session.Send(new ContainerContentPacket(item.Id, BuildContents(_items.GetContents(item.Id))));
+        session.Send(new ContainerContentPacket(item.Id, BuildContents(contents)));
+
+        // Prime the client's tooltip cache for what it can now see.
+        foreach (var contained in contents)
+        {
+            var snapshot = _opl.GetOrBuild(contained.Id);
+
+            if (snapshot.HasEntries)
+            {
+                session.Send(new OplInfoPacket(contained.Id, snapshot.Hash));
+            }
+        }
 
         return Task.CompletedTask;
     }

@@ -1,5 +1,5 @@
 using MoonSharp.Interpreter;
-using Moongate.Server.Data.Events;
+using Moongate.Server.Abstractions.Data.Events;
 using SquidStd.Core.Data.Events;
 using SquidStd.Scripting.Lua.Services;
 using SquidStd.Services.Core.Services;

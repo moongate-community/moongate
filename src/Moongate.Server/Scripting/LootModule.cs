@@ -1,5 +1,5 @@
 using Moongate.Core.Interfaces;
-using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Items;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
 namespace Moongate.Server.Scripting;

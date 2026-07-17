@@ -1,6 +1,6 @@
 using DryIoc;
-using Moongate.Server.Extensions;
-using Moongate.Server.Interfaces.Events;
+using Moongate.Server.Abstractions.Extensions;
+using Moongate.Server.Abstractions.Interfaces.Events;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Subscribers;
 using SquidStd.Abstractions.Extensions.Services;

@@ -39,4 +39,9 @@
     <div class="mg-card-ops">0x06 · 0x09 · 0x73 · 0xBF</div>
     <p>Single/double click, the 0xBF request multiplexer, and ping round-trips.</p>
   </a>
+  <a class="mg-card" href="families/tooltips.md">
+    <h3>Tooltips</h3>
+    <div class="mg-card-ops">0xD6 · 0xDC</div>
+    <p>Object property lists: the 0xD6 request/response pair and the 0xDC revision notification.</p>
+  </a>
 </div>

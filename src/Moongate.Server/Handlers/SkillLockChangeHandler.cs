@@ -2,9 +2,9 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Mobiles;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.UO.Data.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 

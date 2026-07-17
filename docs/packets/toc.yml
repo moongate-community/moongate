@@ -18,6 +18,8 @@
       href: families/status-skills.md
     - name: "Interaction & keepalive"
       href: families/interaction-keepalive.md
+    - name: "Tooltips"
+      href: families/tooltips.md
 - name: Incoming (client → server)
   items:
     - name: "0x02 — Move Request"
@@ -44,6 +46,8 @@
       href: incoming/0xbd-client-version.md
     - name: "0xBF — General Information"
       href: incoming/0xbf-general-information.md
+    - name: "0xD6 — Mega Cliloc Request"
+      href: incoming/0xd6-mega-cliloc-request.md
     - name: "0xEF — Login Seed"
       href: incoming/0xef-login-seed.md
     - name: "0xF8 — Character Creation"
@@ -110,5 +114,9 @@
       href: outgoing/0xbf-map-patches.md
     - name: "0xBF/0x19 — Stat Lock Info"
       href: outgoing/0xbf-stat-lock-info.md
+    - name: "0xD6 — Mega Cliloc"
+      href: outgoing/0xd6-mega-cliloc.md
+    - name: "0xDC — Opl Info"
+      href: outgoing/0xdc-opl-info.md
     - name: "0xF3 — World Item"
       href: outgoing/0xf3-world-item.md

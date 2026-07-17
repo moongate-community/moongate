@@ -1,5 +1,5 @@
-using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events;
+using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Ultima.Io;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;

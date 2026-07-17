@@ -2,8 +2,8 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -322,6 +322,36 @@ public class CharacterServiceTests
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
     }
 
+
+    [Fact]
+    public async Task GetPlayerCharacters_ReturnsOnlyTheAccountsOwnCharacters()
+    {
+        // Characterises the behaviour before the read path is rewritten: the account's own characters, and
+        // nothing else — not another account's, and not a mobile belonging to nobody, which is what every
+        // NPC on a real shard looks like in this store.
+        var persistence = new FakePersistenceService();
+        var mine = (Serial)5;
+        var theirs = (Serial)6;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = mine, Username = "bob" });
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = theirs, Username = "alice" });
+
+        var service = Service(persistence, new());
+        var myCharacter = service.CreateCharacter(mine, Packet());
+        service.CreateCharacter(theirs, Packet());
+        await persistence.Store<MobileEntity>().UpsertAsync(new() { Name = "a wandering healer" });
+
+        var characters = service.GetPlayerCharacters(mine);
+
+        Assert.Equal(myCharacter.Id, Assert.Single(characters).Id);
+    }
+
+    [Fact]
+    public void GetPlayerCharacters_UnknownAccount_IsEmpty()
+    {
+        var service = Service(new FakePersistenceService(), new());
+
+        Assert.Empty(service.GetPlayerCharacters(new Serial(0xDEADBEEF)));
+    }
 
     private static CharacterCreationPacket Packet()
         => new(

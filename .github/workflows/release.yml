@@ -425,5 +425,5 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ env.DOCKERHUB_IMAGE_NAME }}
-          short-description: Modern Ultima Online server emulator — .NET, Lua scripting, ClassicUO 7.x
+          short-description: Modern Ultima Online server built from scratch. .NET, Lua scripting, ClassicUO 7.x
           readme-filepath: ./README.md

@@ -3,7 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.UO.Data.Hues;
 using Moongate.Ultima.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;

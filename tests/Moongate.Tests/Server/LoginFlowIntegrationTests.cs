@@ -1,14 +1,15 @@
 using System.Buffers.Binary;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Config;
-using Moongate.Server.Data.Events;
+using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Handlers;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
@@ -24,6 +25,12 @@ namespace Moongate.Tests.Server;
 
 public class LoginFlowIntegrationTests
 {
+    // How long a wire read waits before it is called a failure. Deliberately far above what the reads
+    // actually take (milliseconds on an idle machine): the budget only has to outlast a loaded CI runner,
+    // and nothing waits for it on the happy path, since every read returns the moment the bytes land. A
+    // timeout here means the server never answered — not that it answered slowly.
+    private static readonly TimeSpan ReadTimeout = TimeSpan.FromSeconds(10);
+
     // Runs posted work inline (no game loop in the test), so inbound packets are processed
     // synchronously on the receive thread exactly as before the main-thread marshaling.
     private sealed class InlineDispatcher : IMainThreadDispatcher
@@ -196,6 +203,137 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
+    public async Task FullLogin_EnterWorld_TooltipRequest_ReturnsMegaClilocOverTheWire()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "squid" });
+
+        var eventBus = new EventBusService();
+        using var enteredWorld = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
+            {
+                enteredWorld.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerAsync(config, eventBus, persistence);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A;
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+            ReadResponse(socket, 0xA8);
+
+            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+            var redirect = ReadResponse(socket, 0x8C);
+            var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+            var gameLogin = new byte[65];
+            gameLogin[0] = 0x91;
+            BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+            Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
+            socket.Send(gameLogin);
+            ReadBytes(socket, 1); // features + character list
+
+            socket.Send(CharacterCreation("Freydis"));
+            Assert.True(enteredWorld.Wait(TimeSpan.FromSeconds(2)), "PlayerEnteredWorldEvent was not published.");
+
+            var mobile = Assert.Single(persistence.Store<MobileEntity>().Query());
+
+            // Everything after game login travels huffman-compressed. Accumulate and re-decode the
+            // stream while polling: a chunk may cut a code mid-packet.
+            var compressed = new List<byte>();
+
+            // The enter-world burst must have primed the tooltip revision (0xDC + serial).
+            var oplInfoPattern = new byte[] { 0xDC }.Concat(SerialBytes(mobile.Id)).ToArray();
+            Assert.True(
+                PollUntil(socket, compressed, oplInfoPattern),
+                "The enter-world burst carried no OplInfo (0xDC) for the player."
+            );
+
+            // Ask for the tooltip the way the client does: 0xD6 with one serial.
+            var request = new byte[7];
+            request[0] = 0xD6;
+            BinaryPrimitives.WriteUInt16BigEndian(request.AsSpan(1), 7);
+            SerialBytes(mobile.Id).CopyTo(request.AsSpan(3));
+            socket.Send(request);
+
+            // The response holds the 1050045 name line with "Freydis" in the UTF-16LE arguments.
+            var nameArgs = Encoding.Unicode.GetBytes(" \tFreydis\t ");
+            var megaClilocPattern = new byte[] { 0x00, 0x10, 0x05, 0xBD, 0x00, (byte)nameArgs.Length }
+                .Concat(nameArgs)
+                .ToArray();
+            Assert.True(
+                PollUntil(socket, compressed, megaClilocPattern),
+                "No MegaCliloc (0xD6) response carrying the name line arrived."
+            );
+
+            // And it is framed as a 0xD6 for that serial (id, length, 0x0001, serial).
+            var decoded = HuffmanDecoder.Decode(compressed.ToArray().AsSpan());
+            var start = decoded.AsSpan().IndexOf(megaClilocPattern.AsSpan());
+            var header = decoded.AsSpan(..start).LastIndexOf(new byte[] { 0xD6 }.AsSpan());
+            Assert.True(header >= 0);
+            Assert.Equal(0x0001, BinaryPrimitives.ReadUInt16BigEndian(decoded.AsSpan(header + 3)));
+            Assert.Equal(mobile.Id.Value, BinaryPrimitives.ReadUInt32BigEndian(decoded.AsSpan(header + 5)));
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    /// <summary>Keeps draining the socket into <paramref name="compressed" /> until the decoded stream contains <paramref name="pattern" />.</summary>
+    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern)
+    {
+        var buffer = new byte[4096];
+        var elapsed = Stopwatch.StartNew();
+
+        while (true)
+        {
+            if (HuffmanDecoder.Decode(compressed.ToArray().AsSpan()).AsSpan().IndexOf(pattern.AsSpan()) >= 0)
+            {
+                return true;
+            }
+
+            var remaining = ReadTimeout - elapsed.Elapsed;
+
+            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
+            {
+                return false;
+            }
+
+            var read = socket.Receive(buffer);
+
+            // A readable socket that yields nothing is a closed one: no further bytes are coming, so the
+            // pattern this is waiting for never will either.
+            if (read == 0)
+            {
+                return false;
+            }
+
+            compressed.AddRange(buffer.AsSpan(0, read).ToArray());
+        }
+    }
+
+    private static byte[] SerialBytes(Serial serial)
+    {
+        var bytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(bytes, serial.Value);
+
+        return bytes;
+    }
+
+    [Fact]
     public async Task FullLogin_SeedToRedirect_ReturnsServerListThenGameServer()
     {
         var config = LoopbackConfig();
@@ -337,17 +475,27 @@ public class LoginFlowIntegrationTests
     {
         var buffer = new byte[512];
         var total = 0;
+        var elapsed = Stopwatch.StartNew();
 
-        for (var attempt = 0; attempt < 50 && total < minCount; attempt++)
+        while (total < minCount)
         {
-            if (socket.Available > 0)
+            var remaining = ReadTimeout - elapsed.Elapsed;
+
+            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
             {
-                total += socket.Receive(buffer, total, buffer.Length - total, SocketFlags.None);
+                break;
             }
-            else
+
+            var read = socket.Receive(buffer, total, buffer.Length - total, SocketFlags.None);
+
+            // A readable socket that yields nothing is a closed one: without this the loop would spin on
+            // Poll until the deadline rather than report what it got.
+            if (read == 0)
             {
-                Thread.Sleep(20);
+                break;
             }
+
+            total += read;
         }
 
         if (total < minCount)
@@ -362,19 +510,19 @@ public class LoginFlowIntegrationTests
     {
         var buffer = new byte[512];
 
-        for (var attempt = 0; attempt < 50; attempt++)
+        if (!socket.Poll(ReadTimeout, SelectMode.SelectRead))
         {
-            if (socket.Available > 0)
-            {
-                var read = socket.Receive(buffer);
-
-                return buffer.AsSpan(0, read).ToArray();
-            }
-
-            Thread.Sleep(20);
+            throw new TimeoutException($"No response (expected 0x{expectedFirstByte:X2}).");
         }
 
-        throw new TimeoutException($"No response (expected 0x{expectedFirstByte:X2}).");
+        var read = socket.Receive(buffer);
+
+        if (read == 0)
+        {
+            throw new IOException($"Server closed the connection (expected 0x{expectedFirstByte:X2}).");
+        }
+
+        return buffer.AsSpan(0, read).ToArray();
     }
 
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
@@ -389,24 +537,31 @@ public class LoginFlowIntegrationTests
         IEventBus eventBus,
         FakePersistenceService persistence
     )
-        => StartServerAsync(
+    {
+        var opl = new OplService(persistence, new ItemTemplateService());
+
+        return StartServerAsync(
             config,
             eventBus,
             CharacterServiceFixture.Create(persistence, (EventBusService)eventBus),
             new WorldService(
-                new ItemService(persistence),
+                new ItemService(persistence, opl),
                 CharacterServiceFixture.Skills(),
                 new VirtualSerialService(),
                 eventBus,
-                TimeProvider.System
-            )
+                TimeProvider.System,
+                opl
+            ),
+            opl
         );
+    }
 
     private static async Task<NetworkService> StartServerAsync(
         MoongateConfig config,
         IEventBus eventBus,
         ICharacterService characters,
-        WorldService? world
+        WorldService? world,
+        OplService? opl = null
     )
     {
         var sessions = new SessionManager();
@@ -438,6 +593,11 @@ public class LoginFlowIntegrationTests
         if (world is not null)
         {
             handlers.Add(new CharacterCreationHandler(characters, world));
+        }
+
+        if (opl is not null)
+        {
+            handlers.Add(new MegaClilocHandler(opl));
         }
 
         var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());

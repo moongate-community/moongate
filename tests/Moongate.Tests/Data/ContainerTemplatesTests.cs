@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
+using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Containers;
@@ -117,7 +118,13 @@ public class ContainerTemplatesTests
             await new ItemTemplatesLoader(templates, directories).LoadAsync();
             await new ContainerGumpsLoader(gumps, directories).LoadAsync();
 
-            var subscriber = new ContainerSubscriber(new StubSessionManager(), new StubItemService([]), templates, gumps);
+            var subscriber = new ContainerSubscriber(
+                new StubSessionManager(),
+                new StubItemService([]),
+                templates,
+                gumps,
+                new OplService(new FakePersistenceService(), templates)
+            );
 
             return new(root, templates, subscriber);
         }

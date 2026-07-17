@@ -68,6 +68,8 @@ var familyInfos = new FamilyInfo[]
         "Mobile status, paperdoll, skills, war mode, stat/skill locks."),
     new("InteractionKeepalive", "interaction-keepalive", "Interaction & keepalive",
         "Single/double click, the 0xBF request multiplexer, and ping round-trips."),
+    new("Tooltips", "tooltips", "Tooltips",
+        "Object property lists: the 0xD6 request/response pair and the 0xDC revision notification."),
 };
 
 var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);

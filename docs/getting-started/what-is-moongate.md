@@ -1,6 +1,6 @@
 # What is Moongate
 
-Moongate is an open-source Ultima Online server emulator written in C# on
+Moongate is an open-source Ultima Online server written in C# on
 modern .NET, built around one idea: **keep it simple**. A single game loop, a
 small set of services, and a shard surface made of [Lua scripts](../scripting/index.md)
 and [YAML data files](../scripting/data/item-templates.md) — you build a shard

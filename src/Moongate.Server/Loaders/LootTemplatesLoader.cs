@@ -1,6 +1,6 @@
 using Moongate.Server.Data.Internal;
-using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.Loading;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Loading;
 using Moongate.Server.Internal;
 using Moongate.Server.Services.Items;
 using Serilog;

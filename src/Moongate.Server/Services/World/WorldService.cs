@@ -3,12 +3,12 @@ using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.Mobiles;
-using Moongate.Server.Interfaces.World;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Abstractions.Types;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Mobiles;
 using Moongate.UO.Data.Types;
@@ -37,13 +37,15 @@ public sealed class WorldService : IWorldService
     private readonly IVirtualSerialService _virtualSerials;
     private readonly IEventBus _eventBus;
     private readonly TimeProvider _timeProvider;
+    private readonly IOplService _opl;
 
     public WorldService(
         IItemService items,
         ISkillService skills,
         IVirtualSerialService virtualSerials,
         IEventBus eventBus,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        IOplService opl
     )
     {
         _items = items;
@@ -51,6 +53,7 @@ public sealed class WorldService : IWorldService
         _virtualSerials = virtualSerials;
         _eventBus = eventBus;
         _timeProvider = timeProvider;
+        _opl = opl;
     }
 
     public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
@@ -77,7 +80,7 @@ public sealed class WorldService : IWorldService
         var flags = GetBodyFlags(mobile);
         var now = _timeProvider.GetLocalNow();
 
-        return
+        List<IOutgoingPacket> packets =
         [
             new LoginConfirmPacket(
                 mobile.Id,
@@ -126,6 +129,27 @@ public sealed class WorldService : IWorldService
             new LoginCompletePacket(),
             new GameTimePacket((byte)now.Hour, (byte)now.Minute, (byte)now.Second)
         ];
+
+        // Prime the client's tooltip cache for everything this burst just showed: itself and its
+        // equipment. Objects without a property list get no revision to chase.
+        AppendOplInfo(packets, mobile.Id);
+
+        foreach (var equipped in _items.GetEquipped(mobile))
+        {
+            AppendOplInfo(packets, equipped.Id);
+        }
+
+        return packets;
+    }
+
+    private void AppendOplInfo(List<IOutgoingPacket> packets, Serial serial)
+    {
+        var snapshot = _opl.GetOrBuild(serial);
+
+        if (snapshot.HasEntries)
+        {
+            packets.Add(new OplInfoPacket(serial, snapshot.Hash));
+        }
     }
 
     /// <summary>

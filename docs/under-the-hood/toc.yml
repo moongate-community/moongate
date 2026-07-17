@@ -1,2 +1,4 @@
 - name: Architecture overview
   href: architecture.md
+- name: REST API
+  href: rest-api.md

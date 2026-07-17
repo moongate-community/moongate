@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/scripting-Lua-yellow" alt="Lua scripting">
 </p>
 
-Moongate is an Ultima Online server emulator written from scratch in .NET 10:
+Moongate is an Ultima Online server written from scratch in .NET 10:
 a single game-loop thread, Lua scripting, YAML shard data, binary snapshot
 persistence, and generated documentation for every implemented packet. It is
 built on the [SquidStd](https://www.nuget.org/packages?q=SquidStd) toolkit and
@@ -180,7 +180,7 @@ Before sending a pull request:
 
 ## Acknowledgements
 
-Moongate is inspired by the Ultima Online emulator ecosystem and by the
+Moongate is inspired by the Ultima Online server ecosystem and by the
 long-running work of projects such as:
 
 - POLServer: <https://github.com/polserver/polserver>
