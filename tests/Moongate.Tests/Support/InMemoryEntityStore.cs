@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
+using SquidStd.Persistence.Abstractions.Data;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.Tests.Support;
@@ -36,6 +37,31 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
 
     public IQueryable<TEntity> Query()
         => _items.Values.AsQueryable();
+
+    /// <summary>
+    /// Mirrors the real store's ordering, ties included: equal sort keys break on the entity's serial, so
+    /// a test cannot pass against a page order production would not produce. Unlike the real store this
+    /// hands back live references rather than clones — the simplification the rest of this double already
+    /// makes.
+    /// </summary>
+    public PagedResult<TEntity> QueryPaged<TOrder>(
+        Func<TEntity, bool>? filter,
+        Func<TEntity, TOrder> orderBy,
+        int skip,
+        int take,
+        bool descending = false
+    )
+    {
+        var matched = filter is null ? _items.Values.ToList() : _items.Values.Where(filter).ToList();
+
+        var ordered = descending
+                          ? matched.OrderByDescending(orderBy).ThenByDescending(entity => entity.Id)
+                          : matched.OrderBy(orderBy).ThenBy(entity => entity.Id);
+
+        IReadOnlyList<TEntity> page = [.. ordered.Skip(skip).Take(take)];
+
+        return new(page, matched.Count, skip, take);
+    }
 
     public ValueTask<bool> RemoveAsync(Serial id, CancellationToken cancellationToken = default)
         => new(_items.Remove(id));
