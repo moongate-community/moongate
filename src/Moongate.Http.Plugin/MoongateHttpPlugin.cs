@@ -7,17 +7,20 @@ using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Images;
 using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
+using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Extensions;
 using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Interfaces.Images;
 using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Interfaces.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Images;
 using Moongate.Http.Plugin.Services.Maps;
+using Moongate.Http.Plugin.Services.Mobiles;
 using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;
@@ -68,6 +71,19 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<MapImageEndpoints>();
         container.RegisterApiEndpoint<MapImageAdminEndpoints>();
         container.RegisterApiEndpoint<ItemImageAdminEndpoints>();
+
+        // Mobile figures share the same statics as the other image routes, so the same gate serializes
+        // them; the renderer's game-facing inputs come through the Abstractions contracts.
+        container.Register<IAnimationCatalog, AnimationCatalog>(Reuse.Singleton);
+        container.Register<IMobileFigureRenderer, MobileFigureRenderer>(Reuse.Singleton);
+        container.Register<IBodyImageService, BodyImageService>(Reuse.Singleton);
+        container.Register<IHairImageService, HairImageService>(Reuse.Singleton);
+        container.Register<IMobileTemplateImageService, MobileTemplateImageService>(Reuse.Singleton);
+        container.Register<IBodyImageExportJob, BodyImageExportJob>(Reuse.Singleton);
+        container.RegisterApiEndpoint<BodyImageEndpoints>();
+        container.RegisterApiEndpoint<HairImageEndpoints>();
+        container.RegisterApiEndpoint<MobileTemplateImageEndpoints>();
+        container.RegisterApiEndpoint<MobileImageAdminEndpoints>();
 
         // The game-facing groups consume the contracts in Moongate.Server.Abstractions, which the
         // server implements — the plugin never sees Moongate.Server itself.
