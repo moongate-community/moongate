@@ -50,6 +50,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // These endpoints live here rather than in Moongate.Server because they need no game service at
         // all — only the client files and the filesystem.
         container.RegisterApiEndpoint<ItemImageEndpoints>();
+        container.RegisterApiEndpoint<MapImageEndpoints>();
         container.RegisterApiEndpoint<ItemImageAdminEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
