@@ -30,11 +30,10 @@ public sealed class AdminEndpoints : IApiEndpointRegistration
               .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
-    /// <summary>
-    /// A snapshot of the shard. <see cref="ISessionManager.Count" /> is backed by a ConcurrentDictionary,
-    /// so it is safe to read from an ASP.NET thread; nothing here touches world state, which is
-    /// single-writer on the game loop.
-    /// </summary>
+    /// <summary>Reports the shard's name, build and how many sessions are connected.</summary>
+    /// <remarks>A snapshot taken when the request is served, not a live figure.</remarks>
+    // ISessionManager.Count is backed by a ConcurrentDictionary, so it is safe to read from an ASP.NET
+    // thread; nothing here touches world state, which is single-writer on the game loop.
     private IResult Status()
         => Results.Ok(
             new AdminStatusResponse(

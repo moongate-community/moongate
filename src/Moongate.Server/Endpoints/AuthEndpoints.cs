@@ -29,6 +29,12 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
               .AllowAnonymous();
     }
 
+    /// <summary>Trades account credentials for a bearer token.</summary>
+    /// <remarks>
+    /// The token carries the account's username and level, and every other route reads authorisation from
+    /// it. Send it as <c>Authorization: Bearer &lt;token&gt;</c>. Any failure answers 401 without saying
+    /// which part was wrong.
+    /// </remarks>
     private IResult Login(LoginRequest request)
     {
         var result = _accounts.Authenticate(request.Username, request.Password);

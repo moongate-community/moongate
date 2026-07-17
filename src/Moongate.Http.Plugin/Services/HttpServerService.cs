@@ -78,7 +78,15 @@ public sealed class HttpServerService : ISquidStdService
 
         builder.Services.AddProblemDetails();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(
+            options =>
+            {
+                foreach (var path in EndpointXmlDocumentationPaths())
+                {
+                    options.IncludeXmlComments(path);
+                }
+            }
+        );
 
         // camelCase over the wire while the DTOs stay PascalCase in C#. ASP.NET already defaults to this,
         // but the wire format is a contract clients are written against: stated here it cannot be changed
@@ -189,6 +197,30 @@ public sealed class HttpServerService : ISquidStdService
 
         _logger.Information("No http.Jwt.SigningKey was configured; minted one and saved it to moongate.yaml");
     }
+
+    /// <summary>
+    /// Finds the XML documentation of every assembly that contributes endpoints, which is what turns their
+    /// <c>///</c> summaries into the descriptions Scalar renders.
+    /// <para>
+    /// Read from the DI registrations rather than a hardcoded list because the endpoints live in
+    /// Moongate.Server while this runs in the plugin, and the dependency points the other way — the plugin
+    /// cannot name the assembly it must document. Registration metadata gives the implementation types
+    /// without resolving them, so nothing is constructed here just to be asked what assembly it came from.
+    /// </para>
+    /// <para>
+    /// A missing file is skipped rather than passed on: Swashbuckle throws on one, and it throws while
+    /// serving the document, so a single absent XML would turn the whole reference into a 500 instead of a
+    /// page with some prose missing.
+    /// </para>
+    /// </summary>
+    private IEnumerable<string> EndpointXmlDocumentationPaths()
+        => _container.GetServiceRegistrations()
+                     .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+                     .Select(registration => registration.ImplementationType?.Assembly)
+                     .Where(assembly => assembly is not null)
+                     .Select(assembly => Path.Combine(AppContext.BaseDirectory, $"{assembly!.GetName().Name}.xml"))
+                     .Distinct()
+                     .Where(File.Exists);
 
     /// <summary>
     /// Asks Kestrel what it actually bound. With a configured port of 0 the OS picks one, and this is the

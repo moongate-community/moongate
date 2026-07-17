@@ -181,6 +181,13 @@ reading the OpenAPI document published at `/swagger/v1/swagger.json`. There is
 also an unlisted `/health` returning `{"status":"ok"}`, for a load balancer or
 a container probe.
 
+The prose on each route is not written in the reference; it is written in the
+code. Swashbuckle reads the `///` off each handler, so a route's `<summary>`
+becomes its summary and its `<remarks>` becomes its description. The XML those
+are compiled into is produced by `GenerateDocumentationFile`, which is on for
+every configuration precisely so the reference reads the same in development as
+in production.
+
 ## Adding endpoints
 
 An endpoint group implements `IApiEndpointRegistration` and is registered in
@@ -195,7 +202,29 @@ and the route simply 404s, and Scalar shows a reference with nothing in it.
 Groups live in `Moongate.Server`, not in `Moongate.Http.Plugin`: `Program.cs`
 adds that plugin, so it cannot reference the server back. The plugin owns the
 plumbing — config, tokens, the server itself — and the game owns the endpoints
-that need game services.
+that need game services. This is also why the server finds the XML to document
+your routes with by reading the DI registrations: it cannot name the assembly
+your group lives in, so it asks the container which assemblies contributed
+endpoints and looks for their XML beside the binaries.
+
+Map each route to a **method group**, not a lambda:
+
+```csharp
+group.MapGet("/{username}", Get).WithName("GetAccount");
+
+/// <summary>Fetches a single account by username.</summary>
+/// <remarks>Answers 404 when no account carries that username.</remarks>
+private IResult Get(string username) => ...;
+```
+
+A lambda has no method for the `///` to hang off, so the route documents itself
+as blank — the reference still renders, and simply says nothing about it.
+
+Write the `<summary>` and `<remarks>` for whoever is calling the route: what it
+does, what it needs, what the failures mean. Reasoning aimed at whoever
+maintains the handler goes in a plain `//` comment inside the method, which is
+never published. The two registers are easy to mix up, and the cost of mixing
+them up is internal notes appearing in the public reference.
 
 Anything that mutates world state must get onto the game loop first; see
 [Architecture overview](architecture.md). None of the v1 endpoints do.

@@ -19,6 +19,25 @@ public class HttpServerServiceTests
             => routes.MapGet("/probe", () => Results.Ok("mapped"));
     }
 
+    /// <summary>
+    /// Documented with a method group rather than a lambda on purpose: that is the shape the real endpoint
+    /// groups use, and the only shape whose <c>///</c> Swashbuckle reads.
+    /// </summary>
+    private sealed class DocumentedProbeEndpoints : IApiEndpointRegistration
+    {
+        internal const string Summary = "Documented probe summary.";
+
+        internal const string Remarks = "Documented probe remarks.";
+
+        public void Register(IEndpointRouteBuilder routes)
+            => routes.MapGet("/documented-probe", Handle);
+
+        /// <summary>Documented probe summary.</summary>
+        /// <remarks>Documented probe remarks.</remarks>
+        private static IResult Handle()
+            => Results.Ok("documented");
+    }
+
     [Fact]
     public async Task StartAsync_MapsRegisteredEndpointGroups()
     {
@@ -71,6 +90,22 @@ public class HttpServerServiceTests
             HttpStatusCode.OK,
             (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
         );
+    }
+
+    [Fact]
+    public async Task StartAsync_PutsEndpointXmlCommentsIntoTheDocument()
+    {
+        // The whole point of the /// on the endpoint handlers: without the XML wired in, the document
+        // still serves and Scalar still renders — just with every description blank. Nothing else here
+        // would notice, which is why this asserts on the prose rather than on a 200.
+        await using var server = await TestHttpServer.StartAsync(
+            container => container.RegisterApiEndpointInstance(new DocumentedProbeEndpoints())
+        );
+
+        var document = await server.Client.GetStringAsync(HttpServerService.SwaggerDocumentRoute);
+
+        Assert.Contains(DocumentedProbeEndpoints.Summary, document, StringComparison.Ordinal);
+        Assert.Contains(DocumentedProbeEndpoints.Remarks, document, StringComparison.Ordinal);
     }
 
     [Fact]
