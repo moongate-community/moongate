@@ -2,6 +2,8 @@ using DryIoc;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
+using Moongate.Ultima.Catalog;
+using Moongate.Ultima.Interfaces;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Utils;
@@ -30,6 +32,11 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterConfigSection<MoongateHttpConfig>("http");
 
         container.Register<IJwtTokenService, JwtTokenService>(Reuse.Singleton);
+
+        // The catalog reads the UO client files through Moongate.Ultima's process-wide statics, which
+        // FilesLoaderService initialises at startup. It carries no state of its own, so a singleton costs
+        // nothing.
+        container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }

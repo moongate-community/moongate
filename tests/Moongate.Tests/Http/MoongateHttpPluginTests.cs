@@ -3,6 +3,8 @@ using Moongate.Http.Plugin;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
+using Moongate.Ultima.Catalog;
+using Moongate.Ultima.Interfaces;
 
 namespace Moongate.Tests.Http;
 
@@ -27,6 +29,10 @@ public class MoongateHttpPluginTests
     [Fact]
     public void Configure_RegistersTheServerThatRunsTheApi()
         => Assert.NotNull(Configured().Resolve<HttpServerService>());
+
+    [Fact]
+    public void Configure_RegistersTheItemCatalog()
+        => Assert.IsType<ItemCatalog>(Configured().Resolve<IItemCatalog>());
 
     [Fact]
     public void Metadata_IdentifiesThePlugin()
