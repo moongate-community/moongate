@@ -42,6 +42,24 @@ public class MapImageServiceTests
     }
 
     [Fact]
+    public async Task GetTileAsync_Native_RendersOpaqueLandPixels()
+    {
+        // Radar colours are RGB555 with no alpha bit — a palette, not a sprite. The renderer must mark
+        // the map opaque anyway; without that every pixel decodes to alpha 0 and the tile is a
+        // fully-transparent square that reads as blank. The fixture's land colour is 0x7C00 (red).
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(MapType.Felucca, service.MaxZoomFor(MapType.Felucca), 0, 0);
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
+
+        Assert.Equal(byte.MaxValue, centre.A);
+        Assert.Equal(byte.MaxValue, centre.R);
+    }
+
+    [Fact]
     public async Task GetTileAsync_SecondCall_ServesTheCachedFileWithoutRerendering()
     {
         using var fixture = MapImageFixture.Create();
