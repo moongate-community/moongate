@@ -20,6 +20,12 @@
             initialised by the time a request arrives.
         -->
         <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
+        <!--
+            For MapType, so the map routes name facets the way the rest of the project does rather than
+            inventing a second vocabulary. Moongate.UO.Data references only Moongate.Core and
+            Moongate.Ultima — the two this plugin already has — so this adds no cycle.
+        -->
+        <ProjectReference Include="..\Moongate.UO.Data\Moongate.UO.Data.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

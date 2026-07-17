@@ -114,6 +114,11 @@ good token that is simply not staff.
 | `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
 | `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
 | `GET`    | `/api/v1/admin/images/items`         | `admin`  | export progress                    |
+| `GET`    | `/api/v1/images/maps`                | none     | the facets and their tile grids    |
+| `GET`    | `/api/v1/images/maps/{map}/full.png` | none     | a whole facet as one PNG           |
+| `GET`    | `/api/v1/images/maps/{map}/{z}/{x}/{y}.png` | none | one map tile                  |
+| `POST`   | `/api/v1/admin/images/maps`          | `admin`  | 202, or 409 / 503                  |
+| `GET`    | `/api/v1/admin/images/maps`          | `admin`  | pre-warm progress                  |
 
 `/api/v1/version` is deliberately unauthenticated: a launcher or the website
 checks compatibility with it, and it reveals nothing an operator would want
@@ -267,6 +272,58 @@ clones only the page. Do not page over `GetAll()` or `Query()` — both deep-clo
 the entire store on every call, so paging over them costs the whole bucket per
 page. `QueryPaged` requires its sort key explicitly, because paging an unordered
 bucket lets a page repeat or drop a row with nothing in the response admitting it.
+
+## Map images
+
+`GET /api/v1/images/maps/{map}/{z}/{x}/{y}.png` serves a facet as 256×256 slippy-map
+tiles, open without a token: like the item art, it is client data every player
+already has. Facets are named, case-insensitively — `felucca`, `trammel`,
+`ilshenar`, `malas`, `tokuno`, `termur`.
+
+Zoom counts **up to detail**: `0` is the whole facet in a single tile, and `maxZoom`
+is one pixel per map tile. `maxZoom` differs per facet — it is
+`ceil(log2(longest side / 256))`, so Felucca's is 5 — and it depends on the shard's
+own client files. Read `GET /api/v1/images/maps` and configure the viewer from what
+it reports rather than hardcoding it.
+
+`GET /api/v1/images/maps/{map}/full.png` is the whole facet in one image, for
+downloading or printing rather than browsing.
+
+`POST /api/v1/admin/images/maps` builds every tile and whole-facet image ahead of
+time; `GET` on the same route reports progress. Staff-only. Run it before anyone
+opens a viewer: the first request at a low zoom otherwise builds every tile beneath
+it.
+
+### How a tile is built, and why
+
+A tile at native zoom is one `Map.GetImage` of exactly **32 blocks** — which is why
+256 was chosen: a block is 8×8 tiles, so a native tile is a whole number of blocks
+and never straddles one. Every zoom below is composed by halving its four children,
+recursively, each cached on the way down.
+
+The alternative — rendering a low zoom directly — means a facet-sized bitmap:
+6144×4096 for Felucca, roughly 100 MB. Composing from children never holds more than
+a few 256×256 images. `full.png` pays that cost once, unavoidably, because the
+output *is* that image; the pre-warm exists so nobody meets it on a request.
+
+**Fewer than four children is normal.** Grids do not double cleanly — each level's
+size is its own `ceil` — so Felucca's z1 is 2×1 and its z0 tile asks for two children
+that do not exist. A missing child leaves its quadrant transparent.
+
+### The rule that matters
+
+**Nothing may touch `Art`, `Map`, `RadarCol` or `TileData` outside
+`IUltimaReadGate.ReadAsync`.**
+
+`Map.cs` holds 18 locks of its own, which makes it look safe. It is not: it calls
+`Art.IsValidStatic`, which reads a shared LRU cache, moves a **shared file-index
+stream position** and writes a **shared static scratch buffer** — and `Art` holds no
+locks at all. `RadarCol` holds none either. So map rendering and item art decoding
+corrupt each other unless they queue behind the same gate, and it must be *one*
+gate: a service with its own semaphore is exactly as broken as one with none.
+
+None of this is visible from those types' signatures, which is why it is written
+down here.
 
 ## Browsing the API
 

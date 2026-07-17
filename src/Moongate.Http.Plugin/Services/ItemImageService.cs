@@ -10,7 +10,7 @@ namespace Moongate.Http.Plugin.Services;
 /// Caches item art as PNG files on disk. The decode itself belongs to <see cref="IItemCatalog" />; what
 /// this adds is the cache, and the serialisation that makes it safe to call from a web server at all.
 /// </summary>
-public sealed class ItemImageService : IItemImageService, IDisposable
+public sealed class ItemImageService : IItemImageService
 {
     /// <summary>
     /// Under the runtime root, which .gitignore already excludes wholesale — so the cache needs no ignore
@@ -19,18 +19,13 @@ public sealed class ItemImageService : IItemImageService, IDisposable
     private const string CacheDirectory = "cache/images/items";
 
     private readonly IItemCatalog _catalog;
+    private readonly IUltimaReadGate _gate;
     private readonly string _cachePath;
 
-    // One gate for every decode, not one per item. What it protects is Art's process-wide state — an LRU
-    // bitmap cache, plain Dictionary fields and a shared static scratch buffer — so two requests for
-    // different items corrupt each other exactly as two for the same item would. Art.cs holds no lock of
-    // its own, and nothing else in the server calls it, so this is the only thing standing between a
-    // concurrent request and that state.
-    private readonly SemaphoreSlim _decodeGate = new(1, 1);
-
-    public ItemImageService(IItemCatalog catalog, DirectoriesConfig directories)
+    public ItemImageService(IItemCatalog catalog, DirectoriesConfig directories, IUltimaReadGate gate)
     {
         _catalog = catalog;
+        _gate = gate;
         _cachePath = directories.RegisterDirectory(CacheDirectory);
     }
 
@@ -52,57 +47,47 @@ public sealed class ItemImageService : IItemImageService, IDisposable
             return path;
         }
 
-        await _decodeGate.WaitAsync(cancellationToken);
+        // Re-checked inside the gate, because another request may have produced it while this one waited.
+        // The decode is all that needs the gate — the write is ordinary file I/O and is done outside it.
+        var png = await _gate.ReadAsync(
+            () => File.Exists(path) ? null : _catalog.GetItemImage(itemId, hue),
+            cancellationToken
+        );
 
-        try
+        // Null means two different things here: another request won the race, or the item has no art.
+        // The file is what tells them apart — returning null blindly would turn a cache race into a 404.
+        if (png is null)
         {
-            // Another request may have produced it while this one waited on the gate.
-            if (File.Exists(path))
-            {
-                return path;
-            }
+            return File.Exists(path) ? path : null;
+        }
 
-            using var png = _catalog.GetItemImage(itemId, hue);
-
-            if (png is null)
-            {
-                return null;
-            }
-
+        using (png)
+        {
             await WriteAtomicallyAsync(path, png, cancellationToken);
+        }
 
-            return path;
-        }
-        finally
-        {
-            _decodeGate.Release();
-        }
+        return path;
     }
 
     public async Task<IReadOnlyList<uint>> GetArtItemIdsAsync(CancellationToken cancellationToken = default)
-    {
-        await _decodeGate.WaitAsync(cancellationToken);
-
-        try
-        {
-            var ids = new List<uint>();
-            var max = Art.GetMaxItemId();
-
-            for (var id = 0; id <= max; id++)
+        => await _gate.ReadAsync(
+            () =>
             {
-                if (Art.IsValidStatic(id))
-                {
-                    ids.Add((uint)id);
-                }
-            }
+                var ids = new List<uint>();
+                var max = Art.GetMaxItemId();
 
-            return ids;
-        }
-        finally
-        {
-            _decodeGate.Release();
-        }
-    }
+                for (var id = 0; id <= max; id++)
+                {
+                    if (Art.IsValidStatic(id))
+                    {
+                        ids.Add((uint)id);
+                    }
+                }
+
+                return (IReadOnlyList<uint>)ids;
+            },
+            cancellationToken
+        );
 
     /// <summary>
     /// Lowercase hex, zero-padded, so names sort and cannot collide. The hue goes in the name rather than
@@ -136,7 +121,4 @@ public sealed class ItemImageService : IItemImageService, IDisposable
             throw;
         }
     }
-
-    public void Dispose()
-        => _decodeGate.Dispose();
 }

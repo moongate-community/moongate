@@ -21,6 +21,7 @@ public class ItemImageAdminEndpointsTests
             {
                 container.RegisterInstance(fixture.Directories);
                 container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+                container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
                 container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
                 container.Register<IItemImageExportJob, ItemImageExportJob>(Reuse.Singleton);
                 container.RegisterApiEndpointInstance(
