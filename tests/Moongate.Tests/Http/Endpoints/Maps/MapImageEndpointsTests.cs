@@ -129,4 +129,28 @@ public class MapImageEndpointsTests
         Assert.Equal(MapTileGeometry.MaxZoom(MapImageFixture.MapWidth, MapImageFixture.MapHeight), only.MaxZoom);
         Assert.Equal(MapTileGeometry.TileSize, only.TileSize);
     }
+
+    [Fact]
+    public async Task GetTile_ReliefStyle_ServesAnImage()
+    {
+        using var fixture = MapImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+
+        var response = await server.Client.GetAsync("/api/v1/images/maps/felucca/0/0/0.png?style=relief");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("image/png", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task GetTile_UnknownStyle_IsABadRequest()
+    {
+        using var fixture = MapImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+
+        Assert.Equal(
+            HttpStatusCode.BadRequest,
+            (await server.Client.GetAsync("/api/v1/images/maps/felucca/0/0/0.png?style=bogus")).StatusCode
+        );
+    }
 }
