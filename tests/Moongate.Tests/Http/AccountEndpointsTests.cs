@@ -16,7 +16,7 @@ public class AccountEndpointsTests
     public async Task List_ReportsEveryAccount()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.GetAsync("/api/v1/admin/accounts");
 
@@ -28,7 +28,7 @@ public class AccountEndpointsTests
     public async Task Get_KnownAccount_ReportsIt()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.GetAsync("/api/v1/admin/accounts/tom");
 
@@ -40,7 +40,7 @@ public class AccountEndpointsTests
     public async Task Get_UnknownAccount_Is404()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         Assert.Equal(
             HttpStatusCode.NotFound,
@@ -54,7 +54,7 @@ public class AccountEndpointsTests
         // Against the raw JSON, not a deserialized DTO: deserializing into AccountResponse would drop an
         // extra field silently, which is exactly the leak this guards. AccountEntity holds both.
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         foreach (var route in new[] { "/api/v1/admin/accounts", "/api/v1/admin/accounts/tom" })
         {
@@ -80,7 +80,7 @@ public class AccountEndpointsTests
     public async Task List_WithPlayerToken_Is403()
     {
         await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         Assert.Equal(
             HttpStatusCode.Forbidden,
@@ -92,7 +92,7 @@ public class AccountEndpointsTests
     public async Task Create_NewAccount_Is201WithLocation()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/admin/accounts",
@@ -109,7 +109,7 @@ public class AccountEndpointsTests
     {
         // The safe default: an account that gains staff rights by accident is the wrong way to fail.
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         await server.Client.PostAsJsonAsync(
             "/api/v1/admin/accounts",
@@ -123,7 +123,7 @@ public class AccountEndpointsTests
     public async Task Create_TakenUsername_Is409()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/admin/accounts",
@@ -139,7 +139,7 @@ public class AccountEndpointsTests
     public async Task Create_EmptyUsernameOrPassword_Is400(string username, string password)
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/admin/accounts",
@@ -154,7 +154,7 @@ public class AccountEndpointsTests
     {
         // The level is checked before the write, so a bad request cannot half-apply.
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/admin/accounts",
@@ -169,7 +169,7 @@ public class AccountEndpointsTests
     public async Task Update_ChangesOnlyTheFieldsSent()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
             "/api/v1/admin/accounts/tom",
@@ -188,7 +188,7 @@ public class AccountEndpointsTests
     public async Task Update_ChangesTheLevel()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         await server.Client.PatchAsJsonAsync("/api/v1/admin/accounts/tom", new { level = "GrandMaster" });
 
@@ -199,7 +199,7 @@ public class AccountEndpointsTests
     public async Task Update_ChangesThePassword()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         await server.Client.PatchAsJsonAsync("/api/v1/admin/accounts/tom", new { password = "nuova" });
 
@@ -213,7 +213,7 @@ public class AccountEndpointsTests
     public async Task Update_UnknownAccount_Is404()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
             "/api/v1/admin/accounts/nobody",
@@ -227,7 +227,7 @@ public class AccountEndpointsTests
     public async Task Update_UnknownLevel_Is400AndChangesNothing()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
             "/api/v1/admin/accounts/tom",
@@ -246,7 +246,7 @@ public class AccountEndpointsTests
     public async Task Delete_KnownAccount_Is204AndRemovesIt()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.DeleteAsync("/api/v1/admin/accounts/tom");
 
@@ -262,7 +262,7 @@ public class AccountEndpointsTests
         // handover, which no status code would reveal.
         var loop = new StubGameLoopContext();
         await using var server = await TestApiServer.StartAsync(loop: loop);
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         await server.Client.DeleteAsync("/api/v1/admin/accounts/tom");
 
@@ -274,7 +274,7 @@ public class AccountEndpointsTests
     {
         // Deleting an account whose character is logged in would pull the world out from under them.
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var account = server.Accounts.GetByUsername("tom")!;
         var mobile = server.Characters.CreateCharacter(account.Id, CharacterPacket());
@@ -312,7 +312,7 @@ public class AccountEndpointsTests
     public async Task Delete_UnknownAccount_Is404()
     {
         await using var server = await TestApiServer.StartAsync();
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         Assert.Equal(
             HttpStatusCode.NotFound,
@@ -327,23 +327,12 @@ public class AccountEndpointsTests
             loop: new StubGameLoopContext(answers: false),
             deleteTimeout: TimeSpan.FromMilliseconds(50)
         );
-        await AuthenticateAsync(server);
+        await server.AuthenticateAsync();
 
         var response = await server.Client.DeleteAsync("/api/v1/admin/accounts/tom");
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
         // Still there: a timeout must not read as a delete.
         Assert.NotNull(server.Accounts.GetByUsername("tom"));
-    }
-
-    internal static async Task AuthenticateAsync(TestApiServer server)
-    {
-        var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
-        var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
-
-        server.Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.Token);
     }
 }

@@ -109,6 +109,9 @@ good token that is simply not staff.
 | `POST`   | `/api/v1/admin/accounts`             | `admin`  | 201 and a `Location`, or 400 / 409 |
 | `PATCH`  | `/api/v1/admin/accounts/{username}`  | `admin`  | the updated account, or 400 / 404  |
 | `DELETE` | `/api/v1/admin/accounts/{username}`  | `admin`  | 204, or 404 / 409 / 503            |
+| `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
+| `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
+| `GET`    | `/api/v1/admin/images/items`         | `admin`  | export progress                    |
 
 `/api/v1/version` is deliberately unauthenticated: a launcher or the website
 checks compatibility with it, and it reveals nothing an operator would want
@@ -174,6 +177,39 @@ and lose their character from under them.
 - **503** — the game loop did not answer within five seconds. Nothing is
   deleted; the shard is unwell and the log says so.
 
+## Item images
+
+`GET /api/v1/images/items/0x1234.png` returns an item's art as a PNG, and is
+open without a token: the art is client data every player already has on disk.
+The id is hex with or without the `0x` prefix — a bare `1234.png` is the same
+item, not item 4660. Add `?hue=0x21` for a coloured variant; the range is 0 to
+3000, and 0, or omitting it, gives the raw art.
+
+The hue range is checked here rather than left to Ultima because `Hues.GetHue`
+never fails: it masks the index and falls back to hue 0, so an out-of-range hue
+would answer 200 with the wrong image instead of an error.
+
+Images are decoded on first request and cached under `cache/images/items` in the
+runtime root, so the first call for an item is slower than every call after it.
+The directory is registered through `DirectoriesConfig` and needs no ignore rule
+of its own: the whole runtime root is already outside git.
+
+`POST /api/v1/admin/images/items` warms the cache for every item at once. It is
+staff-only, answers 202, and works in the background; `GET` on the same route
+reports progress, and a second `POST` while one runs answers 409. It generates
+unhued art only — hued variants are left to the public route, since multiplying
+every item by 3000 hues is not a cache but a disk filler. Progress lives in
+memory and does not survive a restart, which is what a cache warm should do: the
+lazy path is always the fallback.
+
+One thing to know before adding any route that reads the client files:
+`Moongate.Ultima`'s `Art` holds no locks, and shares an LRU bitmap cache, plain
+dictionaries and a static scratch buffer across calls. `ItemImageService`
+funnels every decode through a single gate for that reason — not one gate per
+item, since two requests for *different* items corrupt that state exactly as two
+for the same one would. Cache hits skip the gate entirely. Do not call `Art` from
+a request thread without going through that service.
+
 ## Browsing the API
 
 [Scalar](https://scalar.com) serves an interactive reference at `/scalar/v1`,
@@ -199,13 +235,25 @@ plugin too.
 A group that is never registered is not a startup error: the server comes up
 and the route simply 404s, and Scalar shows a reference with nothing in it.
 
-Groups live in `Moongate.Server`, not in `Moongate.Http.Plugin`: `Program.cs`
-adds that plugin, so it cannot reference the server back. The plugin owns the
-plumbing — config, tokens, the server itself — and the game owns the endpoints
-that need game services. This is also why the server finds the XML to document
-your routes with by reading the DI registrations: it cannot name the assembly
-your group lives in, so it asks the container which assemblies contributed
-endpoints and looks for their XML beside the binaries.
+Where a group lives depends on what it needs. Groups that need game services
+live in `Moongate.Server` and are registered in `MoongateApiEndpointsPlugin`:
+`Program.cs` adds the HTTP plugin, so the plugin cannot reference the server
+back. The plugin owns the plumbing — config, tokens, the server itself — and the
+game owns the endpoints that reach into it.
+
+Groups that need no game service live in `Moongate.Http.Plugin` and are
+registered in `MoongateHttpPlugin`. The item image routes are the case in point:
+they read the UO client files through `Moongate.Ultima` and write to disk, and
+touch nothing the game owns. `Moongate.Ultima` references no Moongate project,
+so the plugin may reference it without a cycle.
+
+The rule is about the dependency, not the address: if your group needs a game
+service, it goes in the server, because that is the only place that can see one.
+
+This is also why the server finds the XML to document your routes with by
+reading the DI registrations: it cannot name the assembly your group lives in,
+so it asks the container which assemblies contributed endpoints and looks for
+their XML beside the binaries.
 
 Map each route to a **method group**, not a lambda:
 

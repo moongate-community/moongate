@@ -1,6 +1,9 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
+using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
@@ -46,10 +49,27 @@ public sealed class TestApiServer : IAsyncDisposable
     /// <summary>Lets a test declare a character as being played, via <see cref="StubSessionManager.Played" />.</summary>
     public StubSessionManager Sessions { get; }
 
+    /// <summary>
+    /// Logs in as the account this fixture seeded and keeps the token on the client, so later requests
+    /// carry it. Lives here rather than in each test class because the fixture is what knows the
+    /// credentials it created.
+    /// </summary>
+    public async Task AuthenticateAsync()
+    {
+        var response = await Client.PostAsJsonAsync(
+            "/api/v1/auth/login",
+            new { username = "tom", password = "secret" }
+        );
+        var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
+
+        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Token);
+    }
+
     public static async Task<TestApiServer> StartAsync(
         AccountLevelType level = AccountLevelType.Administrator,
         IGameLoopContext? loop = null,
-        TimeSpan? deleteTimeout = null
+        TimeSpan? deleteTimeout = null,
+        Action<IContainer>? configure = null
     )
     {
         var container = new Container();
@@ -89,6 +109,9 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
         container.RegisterApiEndpointInstance(new PlayerEndpoints());
+
+        // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
+        configure?.Invoke(container);
 
         var service = new HttpServerService(container, config);
         await service.StartAsync();
