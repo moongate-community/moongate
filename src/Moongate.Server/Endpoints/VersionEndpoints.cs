@@ -23,14 +23,20 @@ public sealed class VersionEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
     {
-        routes.MapGet(
-                  "/api/v1/version",
-                  () => Results.Ok(
-                      new VersionResponse(_config.ShardName, VersionUtils.GetVersion(typeof(VersionEndpoints).Assembly))
-                  )
-              )
+        // A method group rather than a lambda: Swashbuckle reads the /// off the handler's method, and a
+        // lambda has no method to read it from — the route would document itself as blank.
+        routes.MapGet("/api/v1/version", Version)
               .WithName("GetVersion")
               .WithTags("version")
               .AllowAnonymous();
     }
+
+    /// <summary>Reports the shard's name and build.</summary>
+    /// <remarks>
+    /// Open without a token, so a launcher or the website can check compatibility before anyone logs in.
+    /// </remarks>
+    private IResult Version()
+        => Results.Ok(
+            new VersionResponse(_config.ShardName, VersionUtils.GetVersion(typeof(VersionEndpoints).Assembly))
+        );
 }

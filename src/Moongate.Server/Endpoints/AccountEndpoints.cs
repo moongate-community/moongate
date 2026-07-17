@@ -46,23 +46,22 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         group.MapDelete("/{username}", Delete).WithName("DeleteAccount");
     }
 
-    /// <summary>
-    /// The only route that mutates world state: deleting an account cascades into its characters and
-    /// everything they carry.
-    /// <para>
-    /// It also checks <c>IsCharacterPlayed</c> and then deletes, and login runs on the game loop — so off
-    /// the loop a player can log in between the two and lose their character from under them. The stores
-    /// lock internally, so the damage would not be corruption; it would be a silent, permanent loss.
-    /// Handing the work to the loop puts check and act on login's own thread, where they cannot
-    /// interleave.
-    /// </para>
-    /// <para>
-    /// The timeout is why a stalled loop fails the request instead of hanging it forever, and 503 is the
-    /// honest answer: the game loop is not responding.
-    /// </para>
-    /// </summary>
+    /// <summary>Deletes an account, along with its characters and everything they carry.</summary>
+    /// <remarks>
+    /// Permanent, and the only account route that changes the world rather than just the account record.
+    /// An account whose character is currently being played cannot be deleted: the request answers 409
+    /// until that character logs out. A 503 means the game loop did not respond and nothing was deleted.
+    /// </remarks>
     private async Task<IResult> Delete(string username)
     {
+        // Runs on the game loop rather than here. This checks IsCharacterPlayed and then deletes, and
+        // login runs on the loop — so off the loop a player can log in between the two and lose their
+        // character from under them. The stores lock internally, so the damage would not be corruption; it
+        // would be a silent, permanent loss. Handing the work to the loop puts check and act on login's
+        // own thread, where they cannot interleave.
+        //
+        // The timeout is why a stalled loop fails the request instead of hanging it forever, and 503 is
+        // the honest answer: the game loop is not responding.
         var completion = new TaskCompletionSource<AccountDeleteResultType>(
             TaskCreationOptions.RunContinuationsAsynchronously
         );
@@ -104,14 +103,23 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         };
     }
 
+    /// <summary>Lists every account on the shard.</summary>
+    /// <remarks>Passwords are never returned, by any account route.</remarks>
     private IResult List()
         => Results.Ok(_accounts.GetAll().Select(ToResponse));
 
+    /// <summary>Fetches a single account by username.</summary>
+    /// <remarks>Answers 404 when no account carries that username.</remarks>
     private IResult Get(string username)
         => _accounts.GetByUsername(username) is { } account
                ? Results.Ok(ToResponse(account))
                : NotFound(username);
 
+    /// <summary>Creates an account.</summary>
+    /// <remarks>
+    /// Username and password are required, and the username must be free — a taken one answers 409. Level
+    /// is optional and defaults to Player; when sent it must name an account level, case-insensitively.
+    /// </remarks>
     private IResult Create(CreateAccountRequest request)
     {
         // Before the write, so an unknown level cannot leave a half-made account behind.
@@ -145,18 +153,18 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
         };
     }
 
-    /// <summary>
-    /// Applies the fields that are present and leaves the rest alone.
-    /// <para>
-    /// Applying several is not atomic: nothing rolls the level back if a later setter fails. Accepted
-    /// rather than solved — the setters fail only when the account is missing, which is ruled out a line
-    /// earlier, so a delete would have to race this patch for the window to open at all, and closing it
-    /// properly needs a transaction the store does not offer. The level, the one input a caller can get
-    /// wrong, is validated before any setter runs.
-    /// </para>
-    /// </summary>
+    /// <summary>Updates an account, changing only the fields that are sent.</summary>
+    /// <remarks>
+    /// Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and
+    /// 400 when the level does not name one. Returns the account as it stands after the update.
+    /// </remarks>
     private IResult Update(string username, UpdateAccountRequest request)
     {
+        // Applying several fields is not atomic: nothing rolls the level back if a later setter fails.
+        // Accepted rather than solved — the setters fail only when the account is missing, which is ruled
+        // out a line below, so a delete would have to race this patch for the window to open at all, and
+        // closing it properly needs a transaction the store does not offer. The level, the one input a
+        // caller can get wrong, is validated before any setter runs.
         if (_accounts.GetByUsername(username) is null)
         {
             return NotFound(username);

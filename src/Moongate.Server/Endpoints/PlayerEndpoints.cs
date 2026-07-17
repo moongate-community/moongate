@@ -19,11 +19,13 @@ public sealed class PlayerEndpoints : IApiEndpointRegistration
               .RequireAuthorization(HttpServerService.PlayerPolicy);
     }
 
-    /// <summary>
-    /// Reports only what the token already carries. It deliberately does not list the account's
-    /// characters: that would read the mobile store, which is single-writer on the game loop, and drag
-    /// loop affinity into a probe endpoint.
-    /// </summary>
+    /// <summary>Reports the account the bearer token belongs to.</summary>
+    /// <remarks>
+    /// Username and level, read straight from the token — useful for confirming a token is still valid
+    /// and what it grants. It does not list the account's characters.
+    /// </remarks>
+    // Deliberately no character list: that would read the mobile store, which is single-writer on the game
+    // loop, and drag loop affinity into a probe endpoint.
     private static IResult Me(ClaimsPrincipal user)
         => Results.Ok(
             new PlayerMeResponse(
