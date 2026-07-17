@@ -1,4 +1,4 @@
-namespace Moongate.Server.Data.Api;
+namespace Moongate.Http.Plugin.Data.Api;
 
 /// <summary>
 /// The fields to change. Every one is optional: absent means "leave alone", which is what makes this a

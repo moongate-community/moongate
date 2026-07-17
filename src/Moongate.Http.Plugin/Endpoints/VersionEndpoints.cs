@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Interfaces;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Server.Abstractions.Data.Config;
 using SquidStd.Core.Utils;
 
-namespace Moongate.Server.Endpoints;
+namespace Moongate.Http.Plugin.Endpoints;
 
 /// <summary>
 /// The shard's name and build. Deliberately unauthenticated: a launcher or the website checks

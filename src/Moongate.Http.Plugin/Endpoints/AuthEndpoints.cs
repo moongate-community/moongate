@@ -2,11 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Interfaces;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Serilog;
 
-namespace Moongate.Server.Endpoints;
+namespace Moongate.Http.Plugin.Endpoints;
 
 /// <summary>Trades account credentials for a bearer token.</summary>
 public sealed class AuthEndpoints : IApiEndpointRegistration

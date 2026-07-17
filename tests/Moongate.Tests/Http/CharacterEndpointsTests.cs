@@ -4,7 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 

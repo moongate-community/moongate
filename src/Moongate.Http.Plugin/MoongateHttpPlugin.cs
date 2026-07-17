@@ -47,13 +47,22 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.Register<IMapImageService, MapImageService>(Reuse.Singleton);
         container.Register<IItemImageExportJob, ItemImageExportJob>(Reuse.Singleton);
 
-        // These endpoints live here rather than in Moongate.Server because they need no game service at
-        // all — only the client files and the filesystem.
+        // The image routes need no game service at all — only the client files and the filesystem.
         container.RegisterApiEndpoint<ItemImageEndpoints>();
         container.Register<IMapImageExportJob, MapImageExportJob>(Reuse.Singleton);
         container.RegisterApiEndpoint<MapImageEndpoints>();
         container.RegisterApiEndpoint<MapImageAdminEndpoints>();
         container.RegisterApiEndpoint<ItemImageAdminEndpoints>();
+
+        // The game-facing groups consume the contracts in Moongate.Server.Abstractions, which the
+        // server implements — the plugin never sees Moongate.Server itself.
+        container.RegisterApiEndpoint<AccountEndpoints>();
+        container.RegisterApiEndpoint<VersionEndpoints>();
+        container.RegisterApiEndpoint<AuthEndpoints>();
+        container.RegisterApiEndpoint<AdminEndpoints>();
+        container.RegisterApiEndpoint<PlayerEndpoints>();
+        container.RegisterApiEndpoint<CharacterEndpoints>();
+        container.RegisterApiEndpoint<CharacterAdminEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }

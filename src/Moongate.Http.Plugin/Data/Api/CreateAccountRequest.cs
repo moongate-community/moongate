@@ -1,4 +1,4 @@
-namespace Moongate.Server.Data.Api;
+namespace Moongate.Http.Plugin.Data.Api;
 
 /// <summary>
 /// A new account. <c>Level</c> is the <c>AccountLevelType</c> name; omitted means Player, the safe

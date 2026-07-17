@@ -7,10 +7,10 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 
-namespace Moongate.Server.Endpoints;
+namespace Moongate.Http.Plugin.Endpoints;
 
 /// <summary>What an authenticated account may ask about its own characters.</summary>
 public sealed class CharacterEndpoints : IApiEndpointRegistration

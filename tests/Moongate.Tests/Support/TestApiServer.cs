@@ -8,7 +8,7 @@ using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Server.Abstractions.Data.Config;
-using Moongate.Server.Endpoints;
+using Moongate.Http.Plugin.Endpoints;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using SquidStd.Core.Interfaces.Config;

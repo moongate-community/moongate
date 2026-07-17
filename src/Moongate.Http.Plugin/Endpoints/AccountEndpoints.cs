@@ -6,12 +6,12 @@ using Moongate.Core.Types;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Types;
 using Serilog;
 
-namespace Moongate.Server.Endpoints;
+namespace Moongate.Http.Plugin.Endpoints;
 
 /// <summary>Account administration: the REST twin of Lua's <c>account.*</c> module.</summary>
 public sealed class AccountEndpoints : IApiEndpointRegistration

@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
-using Moongate.Server.Data.Api;
+using Moongate.Http.Plugin.Data.Api;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 
-namespace Moongate.Server.Endpoints;
+namespace Moongate.Http.Plugin.Endpoints;
 
 /// <summary>Staff-only views over every character on the shard.</summary>
 public sealed class CharacterAdminEndpoints : IApiEndpointRegistration

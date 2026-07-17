@@ -13,11 +13,10 @@
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
         <!--
-            Moongate.Ultima is standalone: it references no Moongate project, so the plugin may reference it
-            without a cycle. This is what lets the image endpoints live here rather than in Moongate.Server,
-            which the plugin cannot reference — Program.cs adds this plugin, so the dependency runs the other
-            way. The client files reach us through Ultima's process-wide statics, which the server has already
-            initialised by the time a request arrives.
+            Moongate.Ultima is standalone: it references no Moongate project. The image endpoints read
+            the client files through Ultima's process-wide statics, which the server has initialised by
+            the time a request arrives. Game-facing endpoints instead consume Moongate.Server.Abstractions,
+            the contract assembly the server implements — the plugin never references Moongate.Server.
         -->
         <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
         <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>

@@ -1,4 +1,4 @@
-namespace Moongate.Server.Data.Api;
+namespace Moongate.Http.Plugin.Data.Api;
 
 /// <summary>
 /// An account as the API reports it. Deliberately not <c>AccountEntity</c>, which carries PasswordHash

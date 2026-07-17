@@ -1,6 +1,6 @@
 using Moongate.Persistence.Entities;
 
-namespace Moongate.Server.Data.Api;
+namespace Moongate.Http.Plugin.Data.Api;
 
 /// <summary>
 /// A character as the API reports it. Deliberately not <c>MobileEntity</c>, which carries BrainScriptId,
