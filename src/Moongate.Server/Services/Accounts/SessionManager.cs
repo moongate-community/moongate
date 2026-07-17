@@ -13,6 +13,8 @@ public sealed class SessionManager : ISessionManager
 
     public int Count => _sessions.Count;
 
+    public IReadOnlyCollection<PlayerSession> All => [.. _sessions.Values];
+
     public PlayerSession GetOrCreate(SquidStdTcpClient client)
         => _sessions.GetOrAdd(client.SessionId, _ => new(client));
 

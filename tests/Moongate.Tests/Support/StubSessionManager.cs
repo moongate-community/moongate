@@ -17,6 +17,9 @@ public sealed class StubSessionManager : ISessionManager
     public int Count
         => 0;
 
+    public IReadOnlyCollection<PlayerSession> All
+        => [];
+
     public PlayerSession GetOrCreate(SquidStdTcpClient client)
         => throw new NotSupportedException("The stub holds no sessions.");
 

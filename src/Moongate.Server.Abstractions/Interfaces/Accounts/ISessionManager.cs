@@ -8,6 +8,10 @@ namespace Moongate.Server.Abstractions.Interfaces.Accounts;
 public interface ISessionManager
 {
     int Count { get; }
+
+    /// <summary>Snapshot of the live sessions at call time.</summary>
+    IReadOnlyCollection<PlayerSession> All { get; }
+
     PlayerSession GetOrCreate(SquidStdTcpClient client);
 
     /// <summary>
