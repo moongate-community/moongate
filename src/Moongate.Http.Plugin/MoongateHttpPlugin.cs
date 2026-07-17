@@ -42,6 +42,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // One gate over Ultima's statics for every reader. Map rendering descends into Art too, and a
         // second gate would be no gate at all.
         container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
+        container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
         container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
         container.Register<IItemImageExportJob, ItemImageExportJob>(Reuse.Singleton);
 
