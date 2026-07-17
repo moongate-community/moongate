@@ -1,5 +1,7 @@
 using DryIoc;
 using Moongate.Http.Plugin.Data.Config;
+using Moongate.Http.Plugin.Endpoints;
+using Moongate.Http.Plugin.Extensions;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Ultima.Catalog;
@@ -37,6 +39,11 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // FilesLoaderService initialises at startup. It carries no state of its own, so a singleton costs
         // nothing.
         container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+        container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
+
+        // These endpoints live here rather than in Moongate.Server because they need no game service at
+        // all — only the client files and the filesystem.
+        container.RegisterApiEndpoint<ItemImageEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }
