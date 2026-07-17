@@ -61,6 +61,44 @@ public class MapImageServiceTests
     }
 
     [Fact]
+    public async Task GetTileAsync_Relief_RendersOpaquePixels()
+    {
+        // The relief path recomposes each pixel in ApplyLighting and must keep the ARGB1555 opaque bit —
+        // exactly the defect fixed for the flat path. Without it the whole relief tile decodes to alpha 0.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(
+            MapType.Felucca,
+            MapRenderStyleType.Relief,
+            service.MaxZoomFor(MapType.Felucca),
+            0,
+            0
+        );
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
+
+        Assert.Equal(byte.MaxValue, centre.A);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_FlatAndRelief_AreDistinctCacheFiles()
+    {
+        // Styles must not overwrite each other: the same coordinates cache to separate files.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+        var zoom = service.MaxZoomFor(MapType.Felucca);
+
+        var flat = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
+        var relief = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Relief, zoom, 0, 0);
+
+        Assert.NotEqual(flat, relief);
+        Assert.True(File.Exists(flat));
+        Assert.True(File.Exists(relief));
+    }
+
+    [Fact]
     public async Task GetTileAsync_SecondCall_ServesTheCachedFileWithoutRerendering()
     {
         using var fixture = MapImageFixture.Create();
