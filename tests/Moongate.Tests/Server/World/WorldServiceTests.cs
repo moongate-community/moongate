@@ -6,6 +6,8 @@ using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Types;
+using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
@@ -26,7 +28,8 @@ public class WorldServiceTests
             new VirtualSerialService(),
             new StubEventBus(),
             time ?? TimeProvider.System,
-            new OplService(new FakePersistenceService(), new ItemTemplateService())
+            new OplService(new FakePersistenceService(), new ItemTemplateService()),
+            new SessionManager()
         );
 
     // Three skills is enough to prove the list is built from the registry rather than from the mobile.
@@ -61,7 +64,8 @@ public class WorldServiceTests
             new VirtualSerialService(),
             new StubEventBus(),
             TimeProvider.System,
-            opl
+            opl,
+            new SessionManager()
         );
 
         var packets = service.BuildSequence(mobile);
@@ -290,5 +294,66 @@ public class WorldServiceTests
         // an entity the server owns.
         Assert.True(new Serial(BinaryPrimitives.ReadUInt32BigEndian(incoming.AsSpan(28))).IsVirtual);
         Assert.Equal((byte)LayerType.Hair, incoming[34]);
+    }
+
+    [Fact]
+    public void IsRecipient_InWorldSameMapInRange_IsTrue()
+    {
+        var character = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+
+        Assert.True(WorldService.IsRecipient(SessionStateType.InWorld, character, 0, new(105, 105, 0), 18, null));
+    }
+
+    [Fact]
+    public void IsRecipient_NotInWorld_IsFalse()
+    {
+        var character = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+
+        Assert.False(WorldService.IsRecipient(SessionStateType.Authenticated, character, 0, new(100, 100, 0), 18, null));
+    }
+
+    [Fact]
+    public void IsRecipient_NullCharacter_IsFalse()
+        => Assert.False(WorldService.IsRecipient(SessionStateType.InWorld, null, 0, new(100, 100, 0), 18, null));
+
+    [Fact]
+    public void IsRecipient_WrongMap_IsFalse()
+    {
+        var character = new MobileEntity { Id = new(0x1), MapId = 1, Position = new(100, 100, 0) };
+
+        Assert.False(WorldService.IsRecipient(SessionStateType.InWorld, character, 0, new(100, 100, 0), 18, null));
+    }
+
+    [Fact]
+    public void IsRecipient_OutOfRange_IsFalse()
+    {
+        var character = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(200, 200, 0) };
+
+        Assert.False(WorldService.IsRecipient(SessionStateType.InWorld, character, 0, new(100, 100, 0), 18, null));
+    }
+
+    [Fact]
+    public void IsRecipient_ExcludedSerial_IsFalse()
+    {
+        var character = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+
+        Assert.False(WorldService.IsRecipient(SessionStateType.InWorld, character, 0, new(100, 100, 0), 18, new Serial(0x1)));
+    }
+
+    [Fact]
+    public void SendToPlayersInRange_NoSessions_ReturnsZero()
+    {
+        var service = Service(new StubItemService([]));
+
+        Assert.Equal(0, service.SendToPlayersInRange(0, new Point3D(100, 100, 0), 18, new NoopPacket()));
+    }
+
+    // IOutgoingPacket's single member is Write(ref SpanWriter); the packet is never written here
+    // because there are no sessions.
+    private sealed class NoopPacket : IOutgoingPacket
+    {
+        public void Write(ref SpanWriter writer)
+        {
+        }
     }
 }

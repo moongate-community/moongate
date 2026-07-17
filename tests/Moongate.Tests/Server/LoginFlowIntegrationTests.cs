@@ -550,7 +550,8 @@ public class LoginFlowIntegrationTests
                 new VirtualSerialService(),
                 eventBus,
                 TimeProvider.System,
-                opl
+                opl,
+                new SessionManager()
             ),
             opl
         );
