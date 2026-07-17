@@ -5,6 +5,7 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Images;
+using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Version;
@@ -77,6 +78,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<PlayerEndpoints>();
         container.RegisterApiEndpoint<CharacterEndpoints>();
         container.RegisterApiEndpoint<CharacterAdminEndpoints>();
+        container.RegisterApiEndpoint<ItemTemplateEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }
