@@ -1,6 +1,6 @@
 using DryIoc;
-using Moongate.Server.Data.Internal;
-using Moongate.Server.Interfaces.Loading;
+using Moongate.Server.Abstractions.Data.Internal;
+using Moongate.Server.Abstractions.Interfaces.Loading;
 using Moongate.Server.Services.Loading;
 using SquidStd.Abstractions.Extensions.Container;
 using SquidStd.Abstractions.Extensions.Services;

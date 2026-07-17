@@ -2,11 +2,11 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Events;
-using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Containers;
 using SquidStd.Core.Interfaces.Events;
 

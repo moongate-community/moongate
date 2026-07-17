@@ -1,5 +1,5 @@
 using Moongate.Core.Primitives;
-using Moongate.Server.Data.Events;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Handlers;
 using Moongate.Tests.Support;
 

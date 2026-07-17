@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.Network;
 
 namespace Moongate.Server.Extensions;
 

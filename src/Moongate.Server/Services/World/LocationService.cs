@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Locations;
 
 namespace Moongate.Server.Services.World;

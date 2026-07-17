@@ -1,5 +1,5 @@
-using Moongate.Server.Interfaces.Loading;
-using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Loading;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Internal;
 using Moongate.Server.Services.Mobiles;
 using Moongate.UO.Data.Mobiles.Templates;

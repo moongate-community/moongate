@@ -1,9 +1,9 @@
 using Moongate.Core.Geometry;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Internal.Mobiles;
-using Moongate.Server.Interfaces.Mobiles;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Data.Internal.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Mobiles.Templates;
 using Moongate.UO.Data.Types;

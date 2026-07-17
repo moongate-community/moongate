@@ -8,7 +8,7 @@ using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Server.Data.Api;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 
 namespace Moongate.Server.Endpoints;
 

@@ -1,5 +1,5 @@
-using Moongate.Server.Interfaces.Loading;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Interfaces.Loading;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Regions;
 using Serilog;
 using SquidStd.Core.Directories;

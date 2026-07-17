@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Server.Data.Api;
-using Moongate.Server.Data.Config;
+using Moongate.Server.Abstractions.Data.Config;
 using SquidStd.Core.Utils;
 
 namespace Moongate.Server.Endpoints;

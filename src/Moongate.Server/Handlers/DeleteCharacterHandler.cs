@@ -1,10 +1,10 @@
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Network;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Server.Handlers;
 

@@ -8,7 +8,7 @@ using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Api;
 using Moongate.Server.Endpoints;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;

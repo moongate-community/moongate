@@ -7,8 +7,8 @@ using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Data.Api;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Types;
 using Serilog;
 
 namespace Moongate.Server.Endpoints;

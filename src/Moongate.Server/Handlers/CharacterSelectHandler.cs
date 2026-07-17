@@ -1,8 +1,8 @@
 using Moongate.Network.Packets.Incoming;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Interfaces.Network;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Serilog;
 
 namespace Moongate.Server.Handlers;

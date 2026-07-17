@@ -1,8 +1,8 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
-using Moongate.Server.Data;
-using Moongate.Server.Data.Events;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Interfaces.Network;
 using SquidStd.Core.Interfaces.Events;
 
 namespace Moongate.Server.Handlers;

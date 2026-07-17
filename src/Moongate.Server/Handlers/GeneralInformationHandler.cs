@@ -1,9 +1,9 @@
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
-using Moongate.Server.Data;
-using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.UO.Data.Types;
 using Serilog;
 using SquidStd.Network.Spans;

@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Server.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Events;
 
 namespace Moongate.Server.Extensions;
 

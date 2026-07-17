@@ -1,4 +1,4 @@
-using Moongate.Server.Data.Config;
+using Moongate.Server.Abstractions.Data.Config;
 
 namespace Moongate.Tests.Server;
 

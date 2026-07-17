@@ -1,7 +1,7 @@
 using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Types;
 using Serilog;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
