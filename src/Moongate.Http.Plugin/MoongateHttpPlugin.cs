@@ -44,6 +44,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
         container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
         container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
+        container.Register<IMapImageService, MapImageService>(Reuse.Singleton);
         container.Register<IItemImageExportJob, ItemImageExportJob>(Reuse.Singleton);
 
         // These endpoints live here rather than in Moongate.Server because they need no game service at
