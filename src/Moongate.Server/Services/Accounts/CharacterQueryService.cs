@@ -1,7 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.Internal;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Data.Internal;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using SquidStd.Persistence.Abstractions.Data;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 

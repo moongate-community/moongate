@@ -1,5 +1,5 @@
 using Moongate.Core.Primitives;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Services.World;

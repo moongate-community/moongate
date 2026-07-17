@@ -1,4 +1,4 @@
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Tests.Server;
 

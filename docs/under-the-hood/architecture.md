@@ -43,9 +43,9 @@ top to bottom:
 3. **Bootstrap.** `SquidStdBootstrap.Create(...)` builds the host;
    `ConfigureLogging()` brings Serilog up so even plugin loading is visible.
 4. **Plugins.** `UsePlugins(...)` registers drop-in assemblies from the root's
-   `plugins/` directory plus the eight built-in Moongate plugins: persistence,
+   `plugins/` directory plus the seven built-in Moongate plugins: persistence,
    scripting, script modules, data loaders, packet handlers, event
-   subscribers, HTTP and API endpoints. The last two are genuinely optional —
+   subscribers and HTTP. The last one is genuinely optional —
    start with `--disable-web-plugin` and the server runs with no web stack at
    all. See [REST API](rest-api.md).
 5. **Services.** `ConfigureServices(...)` registers the game services
@@ -145,8 +145,10 @@ At startup, loaders seed and then read the root's `data/` and `templates/`
 YAML (world data, item/mobile/loot templates — see the
 [data file reference](../scripting/data/item-templates.md)), validating
 referential integrity where it matters (loot entries must point at real item
-templates). Beyond the six built-in plugins, drop-in assemblies in the root's
-`plugins/` directory are loaded from disk the same way.
+templates). Beyond the seven built-in plugins, drop-in assemblies in the root's
+`plugins/` directory are loaded from disk the same way — and
+`Moongate.Server.Abstractions` is the assembly such a plugin references to
+consume the game's services and events without ever seeing the server.
 
 ## Scripting
 
@@ -158,15 +160,17 @@ handlers registered from Lua are always dispatched on the game loop.
 
 ## Solution layout
 
-Seven projects under `src/`, each with one job:
+Nine projects under `src/`, each with one job:
 
 | Project | Owns | SquidStd packages |
 |---|---|---|
 | `Moongate.Core` | Primitives shared by everything: `Serial`, geometry (`Point3D`), core interfaces and extensions. | Core |
+| `Moongate.Http.Plugin` | The whole REST surface: ASP.NET plumbing, JWT, OpenAPI/Scalar and every endpoint group — the game-facing groups consume `Moongate.Server.Abstractions`. | Abstractions, Plugin.Abstractions |
 | `Moongate.Network` | The UO wire protocol: framing, huffman compression, packet types, handler plumbing and middlewares. | Network, Plugin.Abstractions |
 | `Moongate.Persistence` | Snapshot persistence, serial generators, the `admin` seeder. | Persistence, Persistence.MessagePack, Plugin.Abstractions |
 | `Moongate.Scripting` | Lua runtime integration: script lifecycle, `log` and `game` modules. | Scripting.Lua, Plugin.Abstractions |
 | `Moongate.Server` | The composition root: `Program.cs`, DI wiring, packet handlers, game services, data loaders, embedded YAML assets, game-facing Lua modules. | Services.Core, Core, Abstractions, Plugin |
+| `Moongate.Server.Abstractions` | The game's contract assembly: every service interface (accounts, items, mobiles, world, sessions, network), the domain events, the session model and the yaml-bound config records. What a plugin references instead of the server. | — |
 | `Moongate.Ultima` | UO client file access (art, maps, animations, tiles, localization). Deliberately standalone: it references **no** other Moongate project. | — |
 | `Moongate.UO.Data` | UO domain data types: template DTOs, enums (`SkillName`, `LayerType`, …), hues. | — |
 

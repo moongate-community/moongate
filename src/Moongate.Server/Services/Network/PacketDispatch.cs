@@ -1,4 +1,4 @@
-using Moongate.Server.Data.Session;
+using Moongate.Server.Abstractions.Data.Session;
 
 namespace Moongate.Server.Services.Network;
 

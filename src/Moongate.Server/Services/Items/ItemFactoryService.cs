@@ -1,5 +1,5 @@
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
 

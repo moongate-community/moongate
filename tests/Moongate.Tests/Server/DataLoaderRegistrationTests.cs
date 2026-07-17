@@ -1,6 +1,6 @@
 using DryIoc;
 using Moongate.Server.Extensions;
-using Moongate.Server.Interfaces.Loading;
+using Moongate.Server.Abstractions.Interfaces.Loading;
 
 namespace Moongate.Tests.Server;
 

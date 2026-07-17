@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Http.Plugin;
 using Moongate.Http.Plugin.Data.Config;
+using Moongate.Http.Plugin.Endpoints;
 using Moongate.Http.Plugin.Interfaces;
 using Moongate.Http.Plugin.Services;
 using Moongate.Ultima.Catalog;
@@ -33,6 +34,35 @@ public class MoongateHttpPluginTests
     [Fact]
     public void Configure_RegistersTheItemCatalog()
         => Assert.IsType<ItemCatalog>(Configured().Resolve<IItemCatalog>());
+
+    [Fact]
+    public void Configure_RegistersEveryEndpointGroupTheApiServes()
+    {
+        // Registrations rather than instances: the game-facing groups need services this bare
+        // container has no reason to hold; what the plugin is responsible for is the registering.
+        var registered = Configured().GetServiceRegistrations()
+                                     .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+                                     .Select(registration => registration.ImplementationType)
+                                     .OrderBy(type => type!.Name)
+                                     .ToArray();
+
+        Assert.Equal(
+            [
+                typeof(AccountEndpoints),
+                typeof(AdminEndpoints),
+                typeof(AuthEndpoints),
+                typeof(CharacterAdminEndpoints),
+                typeof(CharacterEndpoints),
+                typeof(ItemImageAdminEndpoints),
+                typeof(ItemImageEndpoints),
+                typeof(MapImageAdminEndpoints),
+                typeof(MapImageEndpoints),
+                typeof(PlayerEndpoints),
+                typeof(VersionEndpoints)
+            ],
+            registered
+        );
+    }
 
     [Fact]
     public void Metadata_IdentifiesThePlugin()

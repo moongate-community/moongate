@@ -5,7 +5,7 @@ using Moongate.Core.Types;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;

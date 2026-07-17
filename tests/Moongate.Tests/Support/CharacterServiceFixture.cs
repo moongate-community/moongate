@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;

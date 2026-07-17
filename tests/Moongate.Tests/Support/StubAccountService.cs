@@ -2,9 +2,9 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Accounts;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Tests.Support;
 

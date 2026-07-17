@@ -1,9 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Network;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.World;
 
 namespace Moongate.Server.Handlers;
 

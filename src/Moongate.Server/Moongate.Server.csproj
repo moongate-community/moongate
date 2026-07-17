@@ -19,6 +19,7 @@
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

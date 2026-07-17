@@ -2,8 +2,8 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 

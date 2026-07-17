@@ -1,4 +1,4 @@
-using Moongate.Server.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.UO.Data.Professions;
 
 namespace Moongate.Server.Services.Mobiles;

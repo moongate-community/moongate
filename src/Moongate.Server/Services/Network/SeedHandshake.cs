@@ -1,6 +1,6 @@
 using System.Buffers.Binary;
-using Moongate.Server.Interfaces.Network;
-using Moongate.Server.Types;
+using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Server.Services.Network;
 

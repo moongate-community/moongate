@@ -1,6 +1,6 @@
 using Moongate.Network.Packets.Incoming;
-using Moongate.Server.Data;
-using Moongate.Server.Interfaces.Network;
+using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Ultima.Io;
 using Moongate.UO.Data.Extensions;
 using Moongate.UO.Data.Version;

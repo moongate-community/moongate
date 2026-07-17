@@ -1,7 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Support;

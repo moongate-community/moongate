@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
-using Moongate.Server.Data.Session;
-using Moongate.Server.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using SquidStd.Network.Client;
 
 namespace Moongate.Server.Services.Accounts;

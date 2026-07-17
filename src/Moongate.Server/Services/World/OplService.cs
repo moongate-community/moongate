@@ -1,9 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Data.World;
-using Moongate.Server.Interfaces.Items;
-using Moongate.Server.Interfaces.World;
+using Moongate.Server.Abstractions.Data.World;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
