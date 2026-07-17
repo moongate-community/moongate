@@ -76,7 +76,6 @@ public class PaperdollRendererTests
     [Fact]
     public void Render_FemaleHair_FallsBackToTheMaleGumpWhenHersIsMissing()
     {
-        const int femaleOffset = 60000;
         var (renderer, gumps, anim, _) = Build();
         gumps.Gumps[(0x000D, 0)] = (W: 40, H: 100); // female body
         anim.ItemAnimations[HairStyle] = HairAnim;

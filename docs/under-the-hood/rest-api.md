@@ -359,6 +359,13 @@ dressed figure of a mobile template — body, hair and worn equipment
 composited in draw order. Hue specs resolve to their low end so the image is
 deterministic and cacheable.
 
+`GET /api/v1/images/mobiles/templates/{id}/paperdoll.png` serves the same
+template as the classic client paperdoll instead: gump art, not an animation
+frame — background, body, hair and equipment composited in their own draw
+order. Pass `background=false` to drop the backdrop. A template with
+`Gender: Random` renders as male, the same "pick one and stick to it"
+determinism hue ranges get from `LowestHue`.
+
 Three staff routes support the pickers and the cache:
 `GET /api/v1/admin/bodies` pages the classified bodies (mobtypes.txt,
 Equipment excluded, decimal or hex search); `GET /api/v1/admin/hair-styles`

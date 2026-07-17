@@ -8,7 +8,7 @@ using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Services.Mobiles;
 
-public class PaperdollImageServiceTests : IDisposable
+public sealed class PaperdollImageServiceTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("mg-paperdoll-").FullName;
 
