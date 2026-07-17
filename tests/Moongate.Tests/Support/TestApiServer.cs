@@ -12,6 +12,7 @@ using Moongate.Server.Endpoints;
 using Moongate.Server.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using SquidStd.Core.Interfaces.Config;
+using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Support;
@@ -99,6 +100,10 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance(TimeProvider.System);
         container.RegisterInstance(moongateConfig);
         container.RegisterInstance<IAccountService>(accounts);
+
+        // Mirrors production, where the persistence plugin registers it: a service resolved from this
+        // container can ask for a store, exactly as it does on a real shard.
+        container.RegisterInstance<IPersistenceService>(persistence);
         container.RegisterInstance<IConfigManagerService>(new StubConfigManagerService());
         container.Register<IJwtTokenService, JwtTokenService>(Reuse.Singleton);
 
