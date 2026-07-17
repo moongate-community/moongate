@@ -344,6 +344,28 @@ gate: a service with its own semaphore is exactly as broken as one with none.
 None of this is visible from those types' signatures, which is why it is written
 down here.
 
+## Mobile images
+
+`GET /api/v1/images/bodies/{body}.png` serves a body's idle, front-facing
+frame, lazily rendered from the animation files and cached on disk; `hue`
+gives a skin-hued variant its own cache entry. Bodies with no usable
+animation answer 404. Like the item art, these are anonymous: it is client
+data every player already has.
+
+`GET /api/v1/images/hair/{style}.png` renders a hair style over a reference
+body (400 unless `body` says otherwise); `facial=true` switches to beards,
+`hue` dyes. `GET /api/v1/images/mobiles/templates/{id}.png` serves the
+dressed figure of a mobile template — body, hair and worn equipment
+composited in draw order. Hue specs resolve to their low end so the image is
+deterministic and cacheable.
+
+Three staff routes support the pickers and the cache:
+`GET /api/v1/admin/bodies` pages the classified bodies (mobtypes.txt,
+Equipment excluded, decimal or hex search); `GET /api/v1/admin/hair-styles`
+lists the selectable styles; `POST /api/v1/admin/images/bodies` warms the
+body cache in the background, polled with GET on the same route — the same
+contract as the item and map exports.
+
 ## Browsing the API
 
 [Scalar](https://scalar.com) serves an interactive reference at `/scalar/v1`,

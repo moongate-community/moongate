@@ -4,7 +4,7 @@ using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Services.Mobiles;
 
-public class BodyImageServiceTests : IDisposable
+public sealed class BodyImageServiceTests : IDisposable
 {
     private readonly string _root = Directory.CreateTempSubdirectory("mg-bodies-").FullName;
 
