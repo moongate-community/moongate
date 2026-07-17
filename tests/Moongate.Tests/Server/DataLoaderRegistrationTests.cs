@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Loading;
 

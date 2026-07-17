@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Server.Extensions;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Handlers;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;

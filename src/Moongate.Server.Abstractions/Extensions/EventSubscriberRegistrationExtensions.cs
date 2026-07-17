@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Server.Abstractions.Interfaces.Events;
 
-namespace Moongate.Server.Extensions;
+namespace Moongate.Server.Abstractions.Extensions;
 
 /// <summary>
 /// Registers event subscribers. Each one is collected under <see cref="IEventSubscriberRegistration" />,

@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Server.Abstractions.Interfaces.Network;
 
-namespace Moongate.Server.Extensions;
+namespace Moongate.Server.Abstractions.Extensions;
 
 /// <summary>
 /// Registers inbound packet handlers. Each handler is collected under

@@ -2,31 +2,17 @@ using DryIoc;
 using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Interfaces.Loading;
 using Moongate.Server.Services.Loading;
-using SquidStd.Abstractions.Extensions.Container;
 using SquidStd.Abstractions.Extensions.Services;
 
 namespace Moongate.Server.Extensions;
 
 /// <summary>
-/// Registers startup data loaders and the pipeline service that runs them. Loaders are collected in
-/// a typed list and executed in ascending <c>priority</c> order, mirroring SquidStd's persistence
-/// seeder registration.
+/// Registers the pipeline service that runs the recorded data loaders. The per-loader seam
+/// (<c>RegisterDataLoader</c>) lives in Moongate.Server.Abstractions so plugins can use it; wiring
+/// the concrete pipeline is the composition root's job and stays here.
 /// </summary>
-public static class DataLoaderRegistrationExtensions
+public static class DataLoaderServiceRegistrationExtensions
 {
-    /// <summary>
-    /// Records a data loader type; it is resolved as a singleton and run at startup in ascending
-    /// <paramref name="priority" /> order.
-    /// </summary>
-    public static IContainer RegisterDataLoader<T>(this IContainer container, int priority = 0)
-        where T : class, IDataLoader
-    {
-        container.Register<T>(Reuse.Singleton);
-        container.AddToRegisterTypedList(new DataLoaderRegistration(priority, static resolver => resolver.Resolve<T>()));
-
-        return container;
-    }
-
     /// <summary>
     /// Registers the <see cref="IDataLoaderService" /> pipeline: the priority-ordered loader list plus
     /// the manager as a std service started at <paramref name="priority" /> (default 110, after the
