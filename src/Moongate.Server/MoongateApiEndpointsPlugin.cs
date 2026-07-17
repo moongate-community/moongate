@@ -31,5 +31,6 @@ public class MoongateApiEndpointsPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<AuthEndpoints>();
         container.RegisterApiEndpoint<AdminEndpoints>();
         container.RegisterApiEndpoint<PlayerEndpoints>();
+        container.RegisterApiEndpoint<CharacterEndpoints>();
     }
 }

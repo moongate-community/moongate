@@ -29,7 +29,8 @@ public sealed class TestApiServer : IAsyncDisposable
         HttpClient client,
         IAccountService accounts,
         CharacterService characters,
-        StubSessionManager sessions
+        StubSessionManager sessions,
+        FakePersistenceService persistence
     )
     {
         _service = service;
@@ -37,6 +38,7 @@ public sealed class TestApiServer : IAsyncDisposable
         Accounts = accounts;
         Characters = characters;
         Sessions = sessions;
+        Persistence = persistence;
     }
 
     public HttpClient Client { get; }
@@ -45,6 +47,12 @@ public sealed class TestApiServer : IAsyncDisposable
 
     /// <summary>Real, over the same fake persistence: a test can give an account a character.</summary>
     public CharacterService Characters { get; }
+
+    /// <summary>
+    /// The store behind the services, for the things no service creates: a mobile owned by no account is
+    /// what every NPC on a real shard looks like here, and there is no other way to seed one.
+    /// </summary>
+    public FakePersistenceService Persistence { get; }
 
     /// <summary>Lets a test declare a character as being played, via <see cref="StubSessionManager.Played" />.</summary>
     public StubSessionManager Sessions { get; }
@@ -109,6 +117,7 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
         container.RegisterApiEndpointInstance(new PlayerEndpoints());
+        container.RegisterApiEndpointInstance(new CharacterEndpoints(accounts, characters));
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
@@ -121,7 +130,8 @@ public sealed class TestApiServer : IAsyncDisposable
             new() { BaseAddress = new($"http://127.0.0.1:{service.BoundPort}") },
             accounts,
             characters,
-            sessions
+            sessions,
+            persistence
         );
     }
 
