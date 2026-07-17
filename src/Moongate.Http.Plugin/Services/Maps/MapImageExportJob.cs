@@ -85,11 +85,11 @@ public sealed class MapImageExportJob : IMapImageExportJob
                 {
                     if (zoom == FullImageZoom)
                     {
-                        await _maps.GetFullAsync(facet);
+                        await _maps.GetFullAsync(facet, MapRenderStyleType.Flat);
                     }
                     else
                     {
-                        await _maps.GetTileAsync(facet, zoom, x, y);
+                        await _maps.GetTileAsync(facet, MapRenderStyleType.Flat, zoom, x, y);
                     }
 
                     lock (_sync)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Types;
 using Moongate.UO.Data.Types;
 
 namespace Moongate.Http.Plugin.Endpoints.Maps;
@@ -119,7 +120,7 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
             );
         }
 
-        var path = await _maps.GetTileAsync(facet, zoom, x, y, cancellationToken);
+        var path = await _maps.GetTileAsync(facet, MapRenderStyleType.Flat, zoom, x, y, cancellationToken);
 
         return path is null
                    ? Results.Problem(
@@ -147,7 +148,7 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
             return NotLoaded();
         }
 
-        var path = await _maps.GetFullAsync(facet, cancellationToken);
+        var path = await _maps.GetFullAsync(facet, MapRenderStyleType.Flat, cancellationToken);
 
         return path is null
                    ? Results.Problem($"{facet} is not served by this shard.", statusCode: StatusCodes.Status404NotFound)
