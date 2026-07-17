@@ -55,6 +55,20 @@ public sealed class MobileImageEndpointsTests : IDisposable
                 container.RegisterApiEndpointInstance(
                     new MobileImageAdminEndpoints(catalog, new BodyImageExportJob(bodies, catalog), bodies)
                 );
+
+                var gumps = new FakeGumpCatalog();
+                gumps.Gumps[(0x000C, 0)] = (W: 40, H: 100); // male body gump
+
+                container.RegisterApiEndpointInstance(
+                    new PaperdollEndpoints(
+                        new PaperdollImageService(
+                            new PaperdollRenderer(gumps, catalog, new ItemTemplateService()),
+                            templates,
+                            directories,
+                            gate
+                        )
+                    )
+                );
             }
         );
     }
@@ -153,5 +167,37 @@ public sealed class MobileImageEndpointsTests : IDisposable
 
         Assert.Equal(HttpStatusCode.Accepted, accepted.StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/images/bodies")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Paperdoll_SeededTemplate_ServesPng()
+    {
+        await using var server = await StartAsync();
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/templates/villager/paperdoll.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("image/png", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task Paperdoll_BackgroundFalse_IsAnonymousAndOk()
+    {
+        await using var server = await StartAsync();
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/templates/villager/paperdoll.png?background=false");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Paperdoll_UnknownTemplate_Is404()
+    {
+        await using var server = await StartAsync();
+
+        Assert.Equal(
+            HttpStatusCode.NotFound,
+            (await server.Client.GetAsync("/api/v1/images/mobiles/templates/nope/paperdoll.png")).StatusCode
+        );
     }
 }
