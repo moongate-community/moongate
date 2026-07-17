@@ -2,7 +2,8 @@ using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Interfaces.Images;
 
 namespace Moongate.Http.Plugin.Endpoints.Images;
 

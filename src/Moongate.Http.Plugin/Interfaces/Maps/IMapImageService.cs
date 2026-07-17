@@ -1,6 +1,6 @@
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Maps;
 
 /// <summary>Map facets as slippy-map tiles and as one whole-facet image, cached on disk.</summary>
 public interface IMapImageService

@@ -1,11 +1,12 @@
 using Moongate.Http.Plugin.Data;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Services.Maps;
+using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Moongate.Tests.Http;
+namespace Moongate.Tests.Http.Services.Maps;
 
 [Collection("UltimaClientData")]
 public class MapImageServiceTests

@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Moongate.Http.Plugin.Interfaces;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Services.Hosting;
 
 namespace Moongate.Http.Plugin.Endpoints.Maps;
 

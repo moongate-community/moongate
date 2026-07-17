@@ -1,10 +1,11 @@
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Images;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Interfaces;
 using Moongate.Ultima.Tiles;
 using SquidStd.Core.Directories;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Images;
 
 /// <summary>
 /// Caches item art as PNG files on disk. The decode itself belongs to <see cref="IItemCatalog" />; what

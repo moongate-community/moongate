@@ -1,5 +1,5 @@
 using DryIoc;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
 
 namespace Moongate.Http.Plugin.Extensions;
 

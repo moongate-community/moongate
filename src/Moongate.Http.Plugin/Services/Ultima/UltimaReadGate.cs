@@ -1,6 +1,6 @@
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Ultima;
 
 /// <summary>
 /// The process-wide gate over Moongate.Ultima's statics. Registered as a singleton, which is the only

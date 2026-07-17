@@ -3,10 +3,10 @@ using System.Security.Claims;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Tests.Support;
 
-namespace Moongate.Tests.Http;
+namespace Moongate.Tests.Http.Services.Auth;
 
 public class JwtTokenServiceTests
 {

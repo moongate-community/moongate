@@ -1,8 +1,8 @@
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Ultima.Maps;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Maps;
 
 /// <summary>
 /// Ultima's own facets, by <see cref="MapType" />. The sizes are Ultima's, not MapDefinitions': Ultima

@@ -1,4 +1,4 @@
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Images;
 
 /// <summary>
 /// Item art as PNG files, decoded from the UO client files on first request and cached on disk.

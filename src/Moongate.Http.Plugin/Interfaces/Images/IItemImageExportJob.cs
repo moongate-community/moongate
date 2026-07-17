@@ -1,6 +1,6 @@
 using Moongate.Http.Plugin.Data;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Images;
 
 /// <summary>Fills the item image cache in the background, one export at a time.</summary>
 public interface IItemImageExportJob

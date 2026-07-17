@@ -1,4 +1,5 @@
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Maps;

@@ -1,7 +1,7 @@
 using Moongate.Ultima.Maps;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Maps;
 
 /// <summary>
 /// The facets the shard's client files describe. Exists as an interface because Ultima's facets are static

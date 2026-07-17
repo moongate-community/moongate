@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Routing;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Endpoints;
 
 /// <summary>
 /// A group of REST endpoints. Implementations are collected from DI and applied by the HTTP server at

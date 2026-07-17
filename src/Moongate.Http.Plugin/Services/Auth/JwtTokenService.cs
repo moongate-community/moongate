@@ -7,9 +7,9 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Auth;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Auth;
 
 /// <inheritdoc />
 public sealed class JwtTokenService : IJwtTokenService

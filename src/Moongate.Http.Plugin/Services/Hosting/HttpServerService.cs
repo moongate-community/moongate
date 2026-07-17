@@ -11,14 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Services.Auth;
 using Scalar.AspNetCore;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Interfaces.Config;
 using ILogger = Serilog.ILogger;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Hosting;
 
 /// <summary>
 /// Runs the REST API. SquidStd hosts the process, so this owns the <see cref="WebApplication" />'s

@@ -2,7 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Auth;
 
 /// <summary>Mints the bearer tokens the REST API authenticates with.</summary>
 public interface IJwtTokenService

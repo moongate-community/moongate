@@ -1,5 +1,6 @@
 using Moongate.Http.Plugin.Data;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Ultima.Tiles;
 using Moongate.UO.Data.Types;
 using SixLabors.ImageSharp;
@@ -8,7 +9,7 @@ using SixLabors.ImageSharp.Processing;
 using SquidStd.Core.Directories;
 using UltimaMap = Moongate.Ultima.Maps.Map;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Maps;
 
 /// <summary>
 /// Renders map facets into cached PNG tiles. The pyramid is built from the bottom: a native tile is one

@@ -1,10 +1,11 @@
 using Moongate.Http.Plugin.Data;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Maps;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Types;
 using Moongate.UO.Data.Types;
 using Serilog;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Maps;
 
 /// <summary>
 /// Builds every facet's tiles and whole-facet image ahead of anyone asking. It goes through

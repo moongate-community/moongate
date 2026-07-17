@@ -1,4 +1,4 @@
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Ultima;
 
 /// <summary>
 /// Serialises every read of Moongate.Ultima's process-wide statics.

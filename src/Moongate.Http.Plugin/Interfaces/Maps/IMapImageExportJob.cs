@@ -1,6 +1,6 @@
 using Moongate.Http.Plugin.Data;
 
-namespace Moongate.Http.Plugin.Interfaces;
+namespace Moongate.Http.Plugin.Interfaces.Maps;
 
 /// <summary>Builds every map tile and whole-facet image in the background, one run at a time.</summary>
 public interface IMapImageExportJob

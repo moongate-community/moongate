@@ -1,10 +1,11 @@
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Services.Images;
+using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Catalog;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Moongate.Tests.Http;
+namespace Moongate.Tests.Http.Services.Images;
 
 [Collection("UltimaClientData")]
 public class ItemImageServiceTests

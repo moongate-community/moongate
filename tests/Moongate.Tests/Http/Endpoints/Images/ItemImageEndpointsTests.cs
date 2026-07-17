@@ -1,8 +1,10 @@
 using System.Net;
 using DryIoc;
 using Moongate.Http.Plugin.Endpoints.Images;
-using Moongate.Http.Plugin.Interfaces;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Interfaces.Images;
+using Moongate.Http.Plugin.Interfaces.Ultima;
+using Moongate.Http.Plugin.Services.Images;
+using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;

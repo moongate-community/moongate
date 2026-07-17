@@ -9,8 +9,10 @@ using Moongate.Http.Plugin.Endpoints.Images;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Version;
-using Moongate.Http.Plugin.Interfaces;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;
 

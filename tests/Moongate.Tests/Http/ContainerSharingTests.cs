@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Moongate.Http.Plugin.Extensions;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Http;

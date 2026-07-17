@@ -1,9 +1,10 @@
 using Moongate.Http.Plugin.Data;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Images;
+using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Types;
 using Serilog;
 
-namespace Moongate.Http.Plugin.Services;
+namespace Moongate.Http.Plugin.Services.Images;
 
 /// <summary>
 /// Warms the item image cache by walking every item id that has art. It goes through

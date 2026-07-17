@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Moongate.Core.Primitives;
-using Moongate.Http.Plugin.Interfaces;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 

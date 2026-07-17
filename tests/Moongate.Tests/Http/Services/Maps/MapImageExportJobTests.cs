@@ -1,10 +1,11 @@
 using Moongate.Http.Plugin.Data;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Services.Maps;
+using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Http.Plugin.Types;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
-namespace Moongate.Tests.Http;
+namespace Moongate.Tests.Http.Services.Maps;
 
 [Collection("UltimaClientData")]
 public class MapImageExportJobTests
