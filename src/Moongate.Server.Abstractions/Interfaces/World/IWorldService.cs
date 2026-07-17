@@ -1,3 +1,6 @@
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Network.Interfaces;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Session;
 
@@ -15,4 +18,13 @@ public interface IWorldService
     /// and raises <see cref="Data.Events.PlayerEnteredWorldEvent" />.
     /// </summary>
     void SendEnterWorld(PlayerSession session, MobileEntity mobile);
+
+    /// <summary>
+    /// Sends <paramref name="packet" /> to every in-world player session whose character is on
+    /// <paramref name="mapId" /> within <paramref name="range" /> tiles of <paramref name="center" />,
+    /// skipping the mobile identified by <paramref name="exclude" /> (typically the originator).
+    /// Returns the number of recipients.
+    /// </summary>
+    int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
+        where TPacket : IOutgoingPacket;
 }
