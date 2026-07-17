@@ -210,6 +210,32 @@ item, since two requests for *different* items corrupt that state exactly as two
 for the same one would. Cache hits skip the gate entirely. Do not call `Art` from
 a request thread without going through that service.
 
+## Paged listings
+
+Listing routes share one contract, in `PageRequest` and `PagedResponse`:
+
+| Parameter | Default | Rules |
+| --- | --- | --- |
+| `page` | 1 | 1-based. Below 1 is a 400. |
+| `pageSize` | 25 | 1 to 100. Outside that is a 400. |
+| `search` | none | Free text. Blank means no filter. |
+
+The response carries `items`, `total`, `page`, `pageSize` and `totalPages`, where
+`total` counts everything the search matched and not just this page.
+
+Out-of-range values are rejected rather than corrected. A caller asking for page
+0, or for 5000 rows, has a bug: serving page 1 or 100 rows hides it, and in the
+second case leaves them believing they read everything they asked for.
+
+An empty page is a 200 with `total: 0`, never a 404. The query ran and matched
+nothing, which is a fact rather than a failure.
+
+Under it, `IEntityStore.QueryPaged` filters and orders inside the store's lock and
+clones only the page. Do not page over `GetAll()` or `Query()` — both deep-clone
+the entire store on every call, so paging over them costs the whole bucket per
+page. `QueryPaged` requires its sort key explicitly, because paging an unordered
+bucket lets a page repeat or drop a row with nothing in the response admitting it.
+
 ## Browsing the API
 
 [Scalar](https://scalar.com) serves an interactive reference at `/scalar/v1`,
