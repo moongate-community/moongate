@@ -16,9 +16,8 @@ dotnet run --project src/Moongate.Server -- --disable-web-plugin
 
 The server then runs with no Kestrel, no listener and no `REST API listening`
 log — it logs `HTTP is disabled` and nothing else changes, because no other
-code path asks for it. Two plugins are skipped: `MoongateHttpPlugin`, which
-owns the API's plumbing, and `MoongateApiEndpointsPlugin`, which registers the
-endpoint groups the server would map.
+code path asks for it. One plugin is skipped: `MoongateHttpPlugin`, which
+owns the API — the plumbing and every endpoint group the server would map.
 
 ## Configuration
 
@@ -342,7 +341,7 @@ in production.
 ## Adding endpoints
 
 An endpoint group implements `IApiEndpointRegistration` and is registered in
-`MoongateApiEndpointsPlugin` with `RegisterApiEndpoint<T>()`; the server
+`MoongateHttpPlugin` with `RegisterApiEndpoint<T>()`; the server
 resolves every group and maps it at startup. This is the same registration seam
 used by packet handlers and event subscribers, and each of those has its own
 plugin too.
@@ -350,20 +349,11 @@ plugin too.
 A group that is never registered is not a startup error: the server comes up
 and the route simply 404s, and Scalar shows a reference with nothing in it.
 
-Where a group lives depends on what it needs. Groups that need game services
-live in `Moongate.Server` and are registered in `MoongateApiEndpointsPlugin`:
-`Program.cs` adds the HTTP plugin, so the plugin cannot reference the server
-back. The plugin owns the plumbing — config, tokens, the server itself — and the
-game owns the endpoints that reach into it.
-
-Groups that need no game service live in `Moongate.Http.Plugin` and are
-registered in `MoongateHttpPlugin`. The item image routes are the case in point:
-they read the UO client files through `Moongate.Ultima` and write to disk, and
-touch nothing the game owns. `Moongate.Ultima` references no Moongate project,
-so the plugin may reference it without a cycle.
-
-The rule is about the dependency, not the address: if your group needs a game
-service, it goes in the server, because that is the only place that can see one.
+Every group lives in `Moongate.Http.Plugin`. Groups that need game services
+take them from `Moongate.Server.Abstractions` — the contract assembly the
+server implements — so the plugin never references the server itself. Groups
+that need only the client files reach them through `Moongate.Ultima`, which
+references no Moongate project.
 
 This is also why the server finds the XML to document your routes with by
 reading the DI registrations: it cannot name the assembly your group lives in,
