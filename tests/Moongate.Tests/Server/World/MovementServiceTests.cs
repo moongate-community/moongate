@@ -58,7 +58,7 @@ public class MovementServiceTests
         var mobile = Mobile(direction: DirectionType.East);
         var now = DateTimeOffset.UtcNow;
 
-        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, now, now, mapTiles, regions, []);
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, DateTimeOffset.MinValue, now, mapTiles, regions, []);
 
         Assert.True(decision.Accepted);
         Assert.True(decision.PositionChanged);
@@ -122,7 +122,7 @@ public class MovementServiceTests
         var mobile = Mobile(direction: DirectionType.East);
         var now = DateTimeOffset.UtcNow;
 
-        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, now, now, mapTiles, regions, []);
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, DateTimeOffset.MinValue, now, mapTiles, regions, []);
 
         Assert.False(decision.Accepted);
     }
@@ -134,7 +134,24 @@ public class MovementServiceTests
         var mobile = Mobile(x: 1, y: 1, direction: DirectionType.East); // steps to (2, 1), where the wall sits
 
         var now = DateTimeOffset.UtcNow;
-        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, now, now, mapTiles, regions, []);
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, DateTimeOffset.MinValue, now, mapTiles, regions, []);
+
+        Assert.False(decision.Accepted);
+    }
+
+    [Fact]
+    public void Evaluate_AfterRejectionResetsSequence_StillEnforcesTimingAgainstPriorRealMove()
+    {
+        var (mapTiles, regions) = Build();
+        var mobile = Mobile(direction: DirectionType.East);
+        var lastRealMoveAt = DateTimeOffset.UtcNow;
+        var now = lastRealMoveAt.AddMilliseconds(50); // well under the 400ms walk interval
+
+        // Simulates: a real move was accepted at lastRealMoveAt, then a later packet was rejected
+        // (e.g. sequence mismatch), which reset lastSequence to null but left lastMoveAt untouched
+        // (TryMove's resync behavior). A subsequent attempt must still be timing-gated against the
+        // real prior move, not treated as a fresh first-ever move.
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, null, lastRealMoveAt, now, mapTiles, regions, []);
 
         Assert.False(decision.Accepted);
     }

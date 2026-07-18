@@ -136,7 +136,7 @@ public sealed class MovementService : IMovementService
         {
             var minInterval = direction.IsRunning() ? RunInterval : WalkInterval;
 
-            if (lastSequence.HasValue && now - lastMoveAt < minInterval)
+            if (now - lastMoveAt < minInterval)
             {
                 return new(false, false, mobile.Position, mobile.Direction);
             }
