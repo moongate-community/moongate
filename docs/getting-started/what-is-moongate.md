@@ -21,8 +21,11 @@ Moongate is young and moves fast. What works today:
   character list, **character creation and deletion** (the created player
   mobile is persisted) and **world entry** — creating or selecting a character
   loads you into the map with its stats, skills and gear. World entry is
-  self-only: nearby mobiles and items are not broadcast, and movement is not
-  handled yet, which is the next milestone.
+  self-only: nearby mobiles and items already in range are not sent to you
+  on login (SendEverything, still pending). Movement is handled — validated
+  against the map, rate-limited, and broadcast to players already in range —
+  but objects entering view as you walk are not yet, which is the next
+  milestone.
 - Item, mobile and loot systems driven by YAML templates, with a Lua API
   (`item`, `mobile`, `loot`, `game`, `events`, `log`) for shard logic.
 - Binary snapshot persistence for accounts, mobiles and items.
