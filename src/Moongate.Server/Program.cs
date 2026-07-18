@@ -10,7 +10,6 @@ using Moongate.Server.Autostart;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Data.Exceptions;
-using Moongate.Http.Plugin.Endpoints;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
@@ -140,6 +139,7 @@ await ConsoleApp.RunAsync(
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
+                container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);

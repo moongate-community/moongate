@@ -15,14 +15,16 @@ public sealed class ItemService : IItemService
     private readonly IEntityStore<ItemEntity, Serial> _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly IOplService? _opl;
+    private readonly ISpatialIndexService? _spatial;
 
-    // The property-list cache is optional on purpose: tests build a bare ItemService, and the OPL is a
-    // pure cache concern the item flows only need to invalidate.
-    public ItemService(IPersistenceService persistenceService, IOplService? opl = null)
+    // The property-list cache and the spatial index are optional on purpose: tests build a bare
+    // ItemService, and both are concerns the item flows only need to keep in sync, not require.
+    public ItemService(IPersistenceService persistenceService, IOplService? opl = null, ISpatialIndexService? spatial = null)
     {
         _items = persistenceService.GetStore<ItemEntity, Serial>();
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _opl = opl;
+        _spatial = spatial;
     }
 
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
@@ -44,11 +46,13 @@ public sealed class ItemService : IItemService
         }
 
         _items.UpsertAsync(container).WaitSync();
+        _spatial?.AddOrUpdate(item);
     }
 
     public Serial Create(ItemEntity item)
     {
         _items.UpsertAsync(item).WaitSync();
+        _spatial?.AddOrUpdate(item);
 
         return item.Id;
     }
@@ -56,6 +60,7 @@ public sealed class ItemService : IItemService
     public bool Delete(Serial itemId)
     {
         _opl?.Invalidate(itemId);
+        _spatial?.Remove(itemId);
 
         return _items.RemoveAsync(itemId).WaitSync();
     }
@@ -72,6 +77,7 @@ public sealed class ItemService : IItemService
         item.EquippedMobileId = mobile.Id;
         item.EquippedLayer = layer;
         _items.UpsertAsync(item).WaitSync();
+        _spatial?.AddOrUpdate(item);
 
         mobile.EquippedItemIds[layer] = item.Id;
 
@@ -124,12 +130,14 @@ public sealed class ItemService : IItemService
         item.ParentContainerId = Serial.Zero;
         item.ContainerPosition = Point2D.Zero;
         _items.UpsertAsync(item).WaitSync();
+        _spatial?.AddOrUpdate(item);
     }
 
     public void Save(ItemEntity item)
     {
         _items.UpsertAsync(item).WaitSync();
         _opl?.Invalidate(item.Id);
+        _spatial?.AddOrUpdate(item);
     }
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
@@ -153,6 +161,7 @@ public sealed class ItemService : IItemService
             item.EquippedMobileId = Serial.Zero;
             item.EquippedLayer = null;
             _items.UpsertAsync(item).WaitSync();
+            _spatial?.AddOrUpdate(item);
         }
 
         return item;

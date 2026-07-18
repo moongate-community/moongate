@@ -1,6 +1,6 @@
 using DryIoc;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Services.Hosting;
 
 namespace Moongate.Tests.Support;
 

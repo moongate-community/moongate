@@ -213,6 +213,26 @@ account id is read from `NameIdentifier` before `sub`. `JwtTokenService` writes 
 into `sub`, but JwtBearer's inbound claim mapping is on by default and renames it
 before the principal reaches the route — reading only `sub` 401s every request.
 
+## Item templates
+
+Staff-only, read-only views over the item template registry — the YAML-born
+catalog every item is built from.
+
+`GET /api/v1/admin/items/templates` lists templates as paged summary rows,
+using the shared paging contract: `page` is 1-based, `pageSize` caps at 100,
+and `search` is free text matched case-insensitively against a template's id,
+name, category and tags. Each row carries an `imageUrl` pointing at the item
+art route, so a table can show the sprite without computing anything.
+
+`GET /api/v1/admin/items/templates/{id}` returns one full template, specs
+included — equip, weapon, container, book and script params exactly as the
+[data reference](../scripting/data/item-templates.md) describes them. Ids are
+case-insensitive; an unknown id answers 404.
+
+Templates are read-only over the API on purpose: they are born from YAML and
+reloaded at startup, so a REST write would only diverge from the source of
+truth until the next restart.
+
 ## Item images
 
 `GET /api/v1/images/items/0x1234.png` returns an item's art as a PNG, and is
@@ -288,6 +308,11 @@ it reports rather than hardcoding it.
 `GET /api/v1/images/maps/{map}/full.png` is the whole facet in one image, for
 downloading or printing rather than browsing.
 
+Both routes take an optional `?style=`. `flat` (the default) is the radar map —
+one colour per map tile. `relief` renders the same map with altitude shading, so
+hills and valleys read as light and shadow; it is a touch slower to render the
+first time and caches separately from flat, so the two never overwrite each other.
+
 `POST /api/v1/admin/images/maps` builds every tile and whole-facet image ahead of
 time; `GET` on the same route reports progress. Staff-only. Run it before anyone
 opens a viewer: the first request at a low zoom otherwise builds every tile beneath
@@ -323,6 +348,35 @@ gate: a service with its own semaphore is exactly as broken as one with none.
 
 None of this is visible from those types' signatures, which is why it is written
 down here.
+
+## Mobile images
+
+`GET /api/v1/images/bodies/{body}.png` serves a body's idle, front-facing
+frame, lazily rendered from the animation files and cached on disk; `hue`
+gives a skin-hued variant its own cache entry. Bodies with no usable
+animation answer 404. Like the item art, these are anonymous: it is client
+data every player already has.
+
+`GET /api/v1/images/hair/{style}.png` renders a hair style over a reference
+body (400 unless `body` says otherwise); `facial=true` switches to beards,
+`hue` dyes. `GET /api/v1/images/mobiles/templates/{id}.png` serves the
+dressed figure of a mobile template — body, hair and worn equipment
+composited in draw order. Hue specs resolve to their low end so the image is
+deterministic and cacheable.
+
+`GET /api/v1/images/mobiles/templates/{id}/paperdoll.png` serves the same
+template as the classic client paperdoll instead: gump art, not an animation
+frame — background, body, hair and equipment composited in their own draw
+order. Pass `background=false` to drop the backdrop. A template with
+`Gender: Random` renders as male, the same "pick one and stick to it"
+determinism hue ranges get from `LowestHue`.
+
+Three staff routes support the pickers and the cache:
+`GET /api/v1/admin/bodies` pages the classified bodies (mobtypes.txt,
+Equipment excluded, decimal or hex search); `GET /api/v1/admin/hair-styles`
+lists the selectable styles; `POST /api/v1/admin/images/bodies` warms the
+body cache in the background, polled with GET on the same route — the same
+contract as the item and map exports.
 
 ## Browsing the API
 

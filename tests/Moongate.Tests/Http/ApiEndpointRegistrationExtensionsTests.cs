@@ -1,7 +1,7 @@
 using DryIoc;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Extensions;
-using Moongate.Http.Plugin.Interfaces;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
 
 namespace Moongate.Tests.Http;
 

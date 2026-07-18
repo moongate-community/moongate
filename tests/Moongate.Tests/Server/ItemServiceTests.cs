@@ -1,7 +1,10 @@
+using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
+using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
 
@@ -214,6 +217,75 @@ public class ItemServiceTests
         return (new(persistence), persistence);
     }
 
+    private static (ItemService Service, SpatialIndexService Spatial, FakePersistenceService Persistence) BuildWithSpatial()
+    {
+        var persistence = new FakePersistenceService();
+        var marker = new LoopThreadMarker();
+        marker.Capture();
+        var spatial = new SpatialIndexService(persistence, marker);
+
+        return (new(persistence, null, spatial), spatial, persistence);
+    }
+
     private static ItemEntity Item(string name = "Dagger", int itemId = 3921)
         => new() { Name = name, ItemId = itemId };
+
+    [Fact]
+    public void Create_GroundItem_IsSpatiallyQueryable()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+
+        service.Create(item);
+
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void AddToContainer_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var container = Item("Backpack", 3701);
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Create(container);
+        service.Create(item);
+
+        service.AddToContainer(container, item, new(1, 1));
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void Delete_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Create(item);
+
+        service.Delete(item.Id);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void Equip_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, persistence) = BuildWithSpatial();
+        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Create(item);
+
+        service.Equip(mobile, item, LayerType.OneHanded);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
 }

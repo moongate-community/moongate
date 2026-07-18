@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
@@ -5,6 +6,7 @@ using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.World;
@@ -19,8 +21,9 @@ namespace Moongate.Server.Services.World;
 
 /// <summary>
 /// Default <see cref="IWorldService" />: builds the self-only enter-world burst from a mobile's state,
-/// streams it in the ModernUO order, and raises <see cref="PlayerEnteredWorldEvent" />. Broadcasting
-/// nearby mobiles/items (SendEverything) waits on a spatial world system and is out of scope here.
+/// streams it in the ModernUO order, and raises <see cref="PlayerEnteredWorldEvent" />. Also broadcasts
+/// packets to in-world players near a point. Full SendEverything (nearby mobile/item snapshots) waits
+/// on later spatial work and is out of scope here.
 /// </summary>
 public sealed class WorldService : IWorldService
 {
@@ -38,6 +41,7 @@ public sealed class WorldService : IWorldService
     private readonly IEventBus _eventBus;
     private readonly TimeProvider _timeProvider;
     private readonly IOplService _opl;
+    private readonly ISessionManager _sessions;
 
     public WorldService(
         IItemService items,
@@ -45,7 +49,8 @@ public sealed class WorldService : IWorldService
         IVirtualSerialService virtualSerials,
         IEventBus eventBus,
         TimeProvider timeProvider,
-        IOplService opl
+        IOplService opl,
+        ISessionManager sessions
     )
     {
         _items = items;
@@ -54,6 +59,7 @@ public sealed class WorldService : IWorldService
         _eventBus = eventBus;
         _timeProvider = timeProvider;
         _opl = opl;
+        _sessions = sessions;
     }
 
     public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
@@ -67,6 +73,44 @@ public sealed class WorldService : IWorldService
 
         _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
     }
+
+    public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
+        where TPacket : IOutgoingPacket
+    {
+        var recipients = 0;
+
+        foreach (var session in _sessions.All)
+        {
+            if (!IsRecipient(session.State, session.Character, mapId, center, range, exclude))
+            {
+                continue;
+            }
+
+            session.Send(packet);
+            recipients++;
+        }
+
+        return recipients;
+    }
+
+    /// <summary>
+    /// True when a session in <paramref name="state" /> playing <paramref name="character" /> should
+    /// receive a broadcast centered on <paramref name="center" />. Static so the filter is testable
+    /// without fabricating live sessions.
+    /// </summary>
+    public static bool IsRecipient(
+        SessionStateType state,
+        MobileEntity? character,
+        int mapId,
+        Point3D center,
+        int range,
+        Serial? exclude
+    )
+        => state == SessionStateType.InWorld &&
+           character is not null &&
+           character.MapId == mapId &&
+           character.Id != exclude &&
+           center.InRange(character.Position, range);
 
     /// <summary>
     /// Builds the ordered self-only enter-world packet sequence for <paramref name="mobile" /> without

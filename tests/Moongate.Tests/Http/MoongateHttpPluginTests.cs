@@ -1,9 +1,20 @@
 using DryIoc;
 using Moongate.Http.Plugin;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Endpoints;
-using Moongate.Http.Plugin.Interfaces;
-using Moongate.Http.Plugin.Services;
+using Moongate.Http.Plugin.Endpoints.Accounts;
+using Moongate.Http.Plugin.Endpoints.Admin;
+using Moongate.Http.Plugin.Endpoints.Auth;
+using Moongate.Http.Plugin.Endpoints.Characters;
+using Moongate.Http.Plugin.Endpoints.Images;
+using Moongate.Http.Plugin.Endpoints.Items;
+using Moongate.Http.Plugin.Endpoints.Maps;
+using Moongate.Http.Plugin.Endpoints.Mobiles;
+using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Version;
+using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;
 
@@ -51,12 +62,18 @@ public class MoongateHttpPluginTests
                 typeof(AccountEndpoints),
                 typeof(AdminEndpoints),
                 typeof(AuthEndpoints),
+                typeof(BodyImageEndpoints),
                 typeof(CharacterAdminEndpoints),
                 typeof(CharacterEndpoints),
+                typeof(HairImageEndpoints),
                 typeof(ItemImageAdminEndpoints),
                 typeof(ItemImageEndpoints),
+                typeof(ItemTemplateEndpoints),
                 typeof(MapImageAdminEndpoints),
                 typeof(MapImageEndpoints),
+                typeof(MobileImageAdminEndpoints),
+                typeof(MobileTemplateImageEndpoints),
+                typeof(PaperdollEndpoints),
                 typeof(PlayerEndpoints),
                 typeof(VersionEndpoints)
             ],

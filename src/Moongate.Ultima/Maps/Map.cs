@@ -9,6 +9,9 @@ namespace Moongate.Ultima.Maps;
 
 public sealed class Map
 {
+    /// <summary>The ARGB1555 "visible" bit, set on every rendered map pixel so it decodes opaque.</summary>
+    private const ushort OpaqueBit = 0x8000;
+
     private TileMatrix _tiles;
     private readonly int _mapId;
     private readonly string _path;
@@ -1488,6 +1491,17 @@ public sealed class Map
             }
         }
 
+        // Radar colours and hue ramps are RGB555 palettes: opaque colours with the top bit clear. The
+        // reference SDK renders maps into a Format16bppRgb555 bitmap, where that bit is ignored and every
+        // pixel is opaque; UltimaBitmap has only an ARGB1555 surface, whose top bit means "visible", so
+        // without this the whole map decodes to alpha 0 and reads as blank. Out-of-bounds blocks never
+        // reach here — GetRenderedBlock returns a transparent block before calling in — so genuine
+        // no-data areas stay transparent.
+        for (var i = 0; i < data.Length; i++)
+        {
+            data[i] |= OpaqueBit;
+        }
+
         return data;
     }
 
@@ -1911,8 +1925,8 @@ public sealed class Map
         green = Math.Clamp(green, 0, 31);
         blue = Math.Clamp(blue, 0, 31);
 
-        // Recombine into RGB555 format
-        return (ushort)((red << 10) | (green << 5) | blue);
+        // Recombine into RGB555, opaque — the map surface is ARGB1555 and the top bit means "visible".
+        return (ushort)(OpaqueBit | (red << 10) | (green << 5) | blue);
     }
 
     #endregion
