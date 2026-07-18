@@ -288,4 +288,52 @@ public class ItemServiceTests
 
         Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
     }
+
+    [Fact]
+    public void RemoveFromContainer_MakesItemSpatiallyQueryableAgain()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var container = Item("Backpack", 3701);
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Create(container);
+        service.AddToContainer(container, item, new(1, 1));
+
+        service.RemoveFromContainer(container, item);
+
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void Unequip_MakesItemSpatiallyQueryableAgain()
+    {
+        var (service, spatial, persistence) = BuildWithSpatial();
+        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Equip(mobile, item, LayerType.OneHanded);
+
+        service.Unequip(mobile, LayerType.OneHanded);
+
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void Save_UpdatesTheItemPositionInTheSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new Point3D(100, 100, 0);
+        service.Create(item);
+
+        item.Position = new Point3D(300, 300, 0);
+        service.Save(item);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+        Assert.Single(spatial.GetItemsInRange(0, new(300, 300, 0), 5));
+    }
 }
