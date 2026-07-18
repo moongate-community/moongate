@@ -155,4 +155,31 @@ public class MovementServiceTests
 
         Assert.False(decision.Accepted);
     }
+
+    [Fact]
+    public void Evaluate_SequenceWrapsFrom255To1_NotToZero()
+    {
+        var (mapTiles, regions) = Build();
+        // Mobile faces South so the East move below is a turn-in-place, skipping the timing gate
+        // entirely and leaving the sequence check as the only thing under test.
+        var mobile = Mobile(direction: DirectionType.South);
+        var now = DateTimeOffset.UtcNow;
+
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 1, 255, now, now, mapTiles, regions, []);
+
+        Assert.True(decision.Accepted);
+    }
+
+    [Fact]
+    public void Evaluate_SequenceWrapsFrom255ButClientSendsZero_IsRejected()
+    {
+        var (mapTiles, regions) = Build();
+        // Same turn-in-place setup as above; only the sequence value under test differs.
+        var mobile = Mobile(direction: DirectionType.South);
+        var now = DateTimeOffset.UtcNow;
+
+        var decision = MovementService.Evaluate(mobile, DirectionType.East, 0, 255, now, now, mapTiles, regions, []);
+
+        Assert.False(decision.Accepted);
+    }
 }

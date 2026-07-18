@@ -122,11 +122,11 @@ public sealed class MovementService : IMovementService
         IReadOnlyList<ItemEntity> groundItems
     )
     {
-        var expected = lastSequence is { } last ? unchecked((byte)(last + 1)) : sequence;
+        var expected = lastSequence is { } last ? WrapNextSequence(last) : (byte)0;
 
         if (sequence != expected)
         {
-            return new(false, false, mobile.Position, mobile.Direction);
+            return RejectDecision(mobile);
         }
 
         var isTurnOnly = direction.StripRunning() != mobile.Direction.StripRunning();
@@ -138,7 +138,7 @@ public sealed class MovementService : IMovementService
 
             if (now - lastMoveAt < minInterval)
             {
-                return new(false, false, mobile.Position, mobile.Direction);
+                return RejectDecision(mobile);
             }
         }
 
@@ -152,16 +152,28 @@ public sealed class MovementService : IMovementService
 
         if (regionService.At((MapType)mobile.MapId, target)?.IsImpassable == true)
         {
-            return new(false, false, mobile.Position, mobile.Direction);
+            return RejectDecision(mobile);
         }
 
         if (!mapTiles.TryGetWalkableZ(mobile.MapId, target.X, target.Y, mobile.Position.Z, groundItems, out var newZ))
         {
-            return new(false, false, mobile.Position, mobile.Direction);
+            return RejectDecision(mobile);
         }
 
         return new(true, true, new(target.X, target.Y, newZ), direction);
     }
+
+    // ModernUO wraps the move-sequence counter 255 -> 1, never to 0: sequence 0 is a reserved
+    // sentinel meaning "no baseline / just reset" (MovementThrottle.cs:272-277, verified against
+    // others/ModernUO).
+    private static byte WrapNextSequence(byte sequence)
+        => sequence == 255 ? (byte)1 : (byte)(sequence + 1);
+
+    // Pure rejection shorthand for Evaluate's four "current position/direction, unchanged" exits.
+    // Not to be confused with the instance Reject(PlayerSession, MobileEntity, byte) below, which
+    // sends the MoveRejectPacket to the client.
+    private static MovementDecision RejectDecision(MobileEntity mobile)
+        => new(false, false, mobile.Position, mobile.Direction);
 
     private void Accept(PlayerSession session, MobileEntity mobile, byte sequence)
         => session.Send(new MovementAckPacket(sequence, Notoriety.Resolve(mobile.Kills, mobile.Criminal)));

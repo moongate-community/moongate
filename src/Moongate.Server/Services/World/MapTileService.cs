@@ -109,6 +109,9 @@ public sealed class MapTileService : IMapTileService
         }
     }
 
+    // Only correct when paired with PathBlocked below: an obstacle whose Bottom sits below the
+    // candidate surface is caught there, not here. Called in isolation, this alone cannot detect
+    // that case, so do not separate the two calls in TryGetWalkableZ without re-checking this.
     private static bool HasHeadroom(int surfaceZ, List<(int Bottom, int Top)> obstacles)
     {
         var ceiling = int.MaxValue;
