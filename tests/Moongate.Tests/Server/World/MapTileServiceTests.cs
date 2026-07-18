@@ -24,6 +24,7 @@ public class MapTileServiceTests
     private const ushort PlatformStaticId = 11;
     private const ushort LowCeilingStaticId = 12;
     private const ushort ImpassableItemId = 13;
+    private const ushort NearSurfaceId = 14;
 
     private static MapTileService Build(string dir)
     {
@@ -52,6 +53,10 @@ public class MapTileServiceTests
 
         // ImpassableItemId: the dynamic (ground-item) counterpart to WallStaticId.
         UltimaFixtures.SetItem(tileData, ImpassableItemId, (uint)TileFlagType.Impassable, height: 20, name: "crate");
+
+        // NearSurfaceId: a zero-height walkable surface, used to place a second candidate close to
+        // currentZ that a separate obstacle then shadows, forcing the fallback loop to move on.
+        UltimaFixtures.SetItem(tileData, NearSurfaceId, (uint)TileFlagType.Surface, height: 0, name: "near surface");
 
         var mapBlock = UltimaFixtures.BuildMapBlock(landId, landZ);
         var files = new List<(string, byte[])> { ("map0.mul", mapBlock), ("tiledata.mul", tileData) };
@@ -181,6 +186,60 @@ public class MapTileServiceTests
             var found = service.TryGetWalkableZ(mapId: 99, 1, 1, currentZ: 0, groundItems: [], out _);
 
             Assert.False(found);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void TryGetWalkableZ_ClosestCandidateBlocked_FallsBackToFartherCandidate()
+    {
+        // Two candidates exist: NearSurfaceId at Z=18 (distance 2 from currentZ=20, the closer one)
+        // and land at Z=0 (distance 20, the farther one). LowCeilingStaticId sits right above the
+        // near surface (bottom=20), leaving only 2 units of headroom there — less than the 16-unit
+        // person height — so the loop must skip it and fall back to land, which has a clear 20 units
+        // of headroom underneath that same static.
+        var dir = ClientDir(
+            FlatLandId,
+            landZ: 0,
+            (NearSurfaceId, 1, 1, 18, 0),
+            (LowCeilingStaticId, 1, 1, 20, 0)
+        );
+
+        try
+        {
+            var service = Build(dir);
+
+            var found = service.TryGetWalkableZ(0, 1, 1, currentZ: 20, groundItems: [], out var newZ);
+
+            Assert.True(found);
+            Assert.Equal(0, newZ);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void TryGetWalkableZ_GroundItemAtDifferentPosition_IsIgnored()
+    {
+        // ImpassableItemId would block (1,1) if it were actually there (see
+        // TryGetWalkableZ_DynamicItemObstacle_ReturnsFalse), but here it sits at (2,2) — a wider
+        // sweep the caller may pass without pre-filtering to the queried tile. It must be ignored.
+        var dir = ClientDir(FlatLandId, landZ: 0);
+
+        try
+        {
+            var service = Build(dir);
+            var groundItem = new ItemEntity { Id = new(0x40000002), ItemId = ImpassableItemId, MapId = 0, Position = new(2, 2, 0) };
+
+            var found = service.TryGetWalkableZ(0, 1, 1, currentZ: 0, groundItems: [groundItem], out var newZ);
+
+            Assert.True(found);
+            Assert.Equal(0, newZ);
         }
         finally
         {
