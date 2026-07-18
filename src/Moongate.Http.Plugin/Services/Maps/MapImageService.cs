@@ -35,8 +35,11 @@ public sealed class MapImageService : IMapImageService
         _cachePath = directories.RegisterDirectory(CacheDirectory);
 
         // Relief shading is driven by process-wide statics that invalidate a per-Map altitude cache, so
-        // they must be fixed once, never per request. Soft matches the UO client's own map most closely.
-        UltimaMap.ShadingPreset = AltitudeShadingPresetType.Soft;
+        // they must be fixed once, never per request. Sharp, not the client-faithful Soft: Soft's contrast
+        // is about a 1% brightness swing — real but imperceptible on screen — so the relief style would
+        // look no different from flat. Sharp makes hills and valleys actually read. Flat terrain has no
+        // slope and so no shading either way, so this only affects the parts worth seeing.
+        UltimaMap.ShadingPreset = AltitudeShadingPresetType.Sharp;
     }
 
     public bool IsReady
