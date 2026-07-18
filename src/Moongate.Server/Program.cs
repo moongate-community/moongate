@@ -21,7 +21,6 @@ using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
-using Moongate.Ultima.Maps;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;

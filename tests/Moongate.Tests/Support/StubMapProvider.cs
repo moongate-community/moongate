@@ -10,14 +10,14 @@ public sealed class StubMapProvider : IUltimaMapProvider
     private readonly MapType _facet;
     private readonly Map _map;
 
+    public IReadOnlyList<MapType> Facets { get; }
+
     public StubMapProvider(MapType facet, Map map)
     {
         _facet = facet;
         _map = map;
         Facets = [facet];
     }
-
-    public IReadOnlyList<MapType> Facets { get; }
 
     public Map? Get(MapType facet)
         => facet == _facet ? _map : null;
