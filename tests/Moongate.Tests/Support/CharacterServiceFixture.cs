@@ -1,4 +1,5 @@
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -20,7 +21,8 @@ public static class CharacterServiceFixture
     public static CharacterService Create(
         FakePersistenceService persistence,
         IEventBus eventBus,
-        ISessionManager? sessions = null
+        ISessionManager? sessions = null,
+        IStartingCityService? cities = null
     )
     {
         var templates = Templates();
@@ -28,7 +30,7 @@ public static class CharacterServiceFixture
 
         return new(
             persistence,
-            new MobileFactoryService(Cities(), new MobileTemplateService(), random),
+            new MobileFactoryService(cities ?? Cities(), new MobileTemplateService(), random),
             new ItemFactoryService(templates, random),
             new ItemService(persistence),
             templates,
