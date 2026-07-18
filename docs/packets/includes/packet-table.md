@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">48</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">50</div><div class="mg-stat-label">implemented packets</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-grass">15</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">33</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">35</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -14,6 +14,7 @@
 | [`0x1B`](../outgoing/0x1b-login-confirm.md) | Login Confirm | S → C | 37 bytes (fixed) | The first packet of the enter-world burst. |
 | [`0x1D`](../outgoing/0x1d-delete-object.md) | Delete Object | S → C | 5 bytes (fixed) | The entity is gone — stop drawing it. |
 | [`0x20`](../outgoing/0x20-draw-game-player.md) | Draw Game Player | S → C | 19 bytes (fixed) | Positions and renders the player's own mobile. |
+| [`0x21`](../outgoing/0x21-char-move-rejection.md) | Char Move Rejection | S → C | 8 bytes (fixed) | Echoes the rejected sequence with the mover's true position, forcing a client snap-back. |
 | [`0x22`](../outgoing/0x22-movement-ack.md) | Movement Ack | S → C | 3 bytes (fixed) | Confirms the step with the client's sequence number. |
 | [`0x24`](../outgoing/0x24-draw-container.md) | Draw Container | S → C | 7 bytes (fixed) | Opens the container's gump on the client. |
 | [`0x25`](../outgoing/0x25-add-item-to-container.md) | Add Item To Container | S → C | 21 bytes (fixed) | Drops one item into an already-open container gump. |
@@ -30,6 +31,7 @@
 | [`0x72`](../outgoing/0x72-war-mode.md) | War Mode | S → C | 5 bytes (fixed) | Toggles the client's combat stance. |
 | [`0x73`](../incoming/0x73-ping.md) | Ping | C → S | 2 bytes (fixed) | The client sends this periodically with a rolling sequence byte and expects the server to echo it straight back, or it eventually drops the connection. |
 | [`0x73`](../outgoing/0x73-ping-ack.md) | Ping Ack | S → C | 2 bytes (fixed) | Echoes the client's keep-alive sequence byte straight back. |
+| [`0x77`](../outgoing/0x77-update-player.md) | Update Player | S → C | 17 bytes (fixed) | Broadcasts another mobile's position/facing to nearby players. |
 | [`0x78`](../outgoing/0x78-draw-object.md) | Draw Object | S → C | Variable | Draws a mobile and its equipped items on the client. |
 | [`0x80`](../incoming/0x80-account-login-request.md) | Account Login Request | C → S | 62 bytes (fixed) | Credentials for the login server. |
 | [`0x82`](../outgoing/0x82-login-denied.md) | Login Denied | S → C | 2 bytes (fixed) | Rejects the login with a protocol reason code. |
