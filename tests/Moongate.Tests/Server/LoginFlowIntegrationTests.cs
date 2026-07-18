@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
@@ -11,9 +12,11 @@ using Moongate.Server.Handlers;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
+using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
@@ -292,8 +295,181 @@ public class LoginFlowIntegrationTests
         }
     }
 
+    /// <summary>
+    /// End-to-end proof that the spatial index and its consumers work together: two real characters log
+    /// in and enter the world (same default starting city, so they land on the same tile), the
+    /// WorldReadyEvent-independent PlayerEnteredWorldEvent path indexes both through
+    /// <see cref="SpatialSubscriber" />, and <see cref="WorldService.SendToPlayersInRange{TPacket}" />
+    /// delivers real bytes over the wire to the in-range session while skipping the excluded one.
+    /// </summary>
+    [Fact]
+    public async Task Spatial_TwoPlayersEnterWorld_IndexesBothAndBroadcastSkipsExcludedSession()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+
+        // StubAccountService.GetAccountIdByUsername always resolves to Serial(1) regardless of the
+        // username on the wire, so both logins land on this one seeded account. That is fine here: the
+        // spatial assertions below key off the created mobiles, not their owning account.
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var loopThread = new LoopThreadMarker();
+        loopThread.Capture();
+        var spatial = new SpatialIndexService(persistence, loopThread);
+        new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var characters = CharacterServiceFixture.Create(persistence, (EventBusService)eventBus, sessions);
+
+        using var aliceEntered = new ManualResetEventSlim();
+        using var bobEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+            {
+                if (e.Mobile.Name == "Alice")
+                {
+                    aliceEntered.Set();
+                }
+                else if (e.Mobile.Name == "Bob")
+                {
+                    bobEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        // WorldService and NetworkService share one SessionManager here, unlike the other harness
+        // overloads: this is what lets SendToPlayersInRange below reach the actual connected sockets.
+        var network = await StartServerAsync(config, eventBus, characters, world, opl, sessions);
+
+        try
+        {
+            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
+            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+
+            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(bobSocket, network.Port, "bob", "Bob");
+            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
+
+            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
+            var bobMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Bob");
+
+            // Same default starting city (index 0) for both: same map, same tile.
+            Assert.Equal(aliceMobile.MapId, bobMobile.MapId);
+            Assert.Equal(aliceMobile.Position, bobMobile.Position);
+
+            // The bootstrap subscriber indexed both purely from PlayerEnteredWorldEvent — no WorldReadyEvent
+            // fired in this harness, so this also proves the per-player path works standalone.
+            Assert.True(
+                WaitUntil(
+                    () => spatial.GetMobilesInRange(aliceMobile.MapId, aliceMobile.Position, 18).Count == 2,
+                    TimeSpan.FromSeconds(2)
+                ),
+                "The spatial index did not end up holding both players."
+            );
+
+            // A distinctive, single-use marker packet: opcode 0x4E (PersonalLightLevel) + Bob's serial +
+            // level 77, which never appears elsewhere on the wire (Bob's own enter-world burst carries the
+            // same opcode and serial but level 0).
+            var marker = new PersonalLightLevelPacket(bobMobile.Id, 77);
+            var pattern = new byte[] { 0x4E }.Concat(SerialBytes(bobMobile.Id)).Concat([(byte)77]).ToArray();
+
+            var recipients = world.SendToPlayersInRange(
+                aliceMobile.MapId,
+                aliceMobile.Position,
+                18,
+                marker,
+                exclude: aliceMobile.Id
+            );
+
+            Assert.Equal(1, recipients);
+
+            var bobCompressed = new List<byte>();
+            Assert.True(
+                PollUntil(bobSocket, bobCompressed, pattern),
+                "Bob (in range, not excluded) never received the broadcast."
+            );
+
+            var aliceCompressed = new List<byte>();
+            Assert.False(
+                PollUntil(aliceSocket, aliceCompressed, pattern, TimeSpan.FromMilliseconds(500)),
+                "Alice (excluded) received a broadcast meant to skip her."
+            );
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    /// <summary>Runs the seed → account login → game login → character creation handshake to get a fresh character into the world.</summary>
+    private static void EnterWorld(Socket socket, int port, string account, string characterName)
+    {
+        socket.Connect(IPAddress.Loopback, port);
+
+        var seed = new byte[21];
+        seed[0] = 0xEF;
+        seed[4] = 0x2A;
+        socket.Send(seed);
+
+        socket.Send(AccountLogin(account, "secret"));
+        ReadResponse(socket, 0xA8);
+
+        socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+        var redirect = ReadResponse(socket, 0x8C);
+        var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+        var gameLogin = new byte[65];
+        gameLogin[0] = 0x91;
+        BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+        Encoding.ASCII.GetBytes(account).CopyTo(gameLogin.AsSpan(5));
+        socket.Send(gameLogin);
+        ReadBytes(socket, 1); // features + character list
+
+        socket.Send(CharacterCreation(characterName));
+    }
+
+    /// <summary>Polls <paramref name="condition" /> until it is true or <paramref name="timeout" /> elapses.</summary>
+    private static bool WaitUntil(Func<bool> condition, TimeSpan timeout)
+    {
+        var elapsed = Stopwatch.StartNew();
+
+        while (!condition())
+        {
+            if (elapsed.Elapsed >= timeout)
+            {
+                return false;
+            }
+
+            Thread.Sleep(10);
+        }
+
+        return true;
+    }
+
     /// <summary>Keeps draining the socket into <paramref name="compressed" /> until the decoded stream contains <paramref name="pattern" />.</summary>
     private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern)
+        => PollUntil(socket, compressed, pattern, ReadTimeout);
+
+    /// <summary>
+    /// Same as the three-argument overload, but with an explicit <paramref name="timeout" /> — used to
+    /// prove a pattern does NOT arrive, where waiting out the full <see cref="ReadTimeout" /> per assertion
+    /// would make the test needlessly slow.
+    /// </summary>
+    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern, TimeSpan timeout)
     {
         var buffer = new byte[4096];
         var elapsed = Stopwatch.StartNew();
@@ -305,7 +481,7 @@ public class LoginFlowIntegrationTests
                 return true;
             }
 
-            var remaining = ReadTimeout - elapsed.Elapsed;
+            var remaining = timeout - elapsed.Elapsed;
 
             if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
             {
@@ -562,10 +738,11 @@ public class LoginFlowIntegrationTests
         IEventBus eventBus,
         ICharacterService characters,
         WorldService? world,
-        OplService? opl = null
+        OplService? opl = null,
+        ISessionManager? sessions = null
     )
     {
-        var sessions = new SessionManager();
+        sessions ??= new SessionManager();
         var accounts = new StubAccountService();
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
