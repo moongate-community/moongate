@@ -21,6 +21,7 @@ using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
+using Moongate.Ultima.Maps;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
@@ -139,6 +140,7 @@ await ConsoleApp.RunAsync(
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
+                container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
                 container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
 
