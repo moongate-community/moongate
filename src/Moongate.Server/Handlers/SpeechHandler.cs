@@ -1,6 +1,7 @@
 using Moongate.Network.Packets.Incoming;
 using Moongate.Server.Abstractions.Data;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Commands;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Services.Chat;
 using Serilog;
@@ -9,22 +10,23 @@ namespace Moongate.Server.Handlers;
 
 /// <summary>
 /// Handles player speech (0xAD): rate-limits, classifies the raw text (say/emote/whisper/yell/
-/// command) via <see cref="ChatService" />'s pure core, and either replies with a "not implemented"
-/// system message (the "." prefix) or hands the classified message to <see cref="IChatService.Say" />.
-/// Packets with the classic-client "encoded" (keyword-menu) flag are dropped, as is any text that is
-/// empty or longer than 128 characters after trimming.
+/// command) via <see cref="ChatService" />'s pure core, and either dispatches the "." prefix to
+/// <see cref="ICommandService.Execute" /> or hands the classified message to
+/// <see cref="IChatService.Say" />. Packets with the classic-client "encoded" (keyword-menu) flag
+/// are dropped, as is any text that is empty or longer than 128 characters after trimming.
 /// </summary>
 public sealed class SpeechHandler : IPacketHandler<UnicodeSpeechPacket>, IPacketHandlerRegistration
 {
     private const int MaxTextLength = 128;
-    private const string CommandNotImplementedMessage = "That command is not implemented yet.";
 
     private readonly ILogger _logger = Log.ForContext<SpeechHandler>();
     private readonly IChatService _chat;
+    private readonly ICommandService _commands;
 
-    public SpeechHandler(IChatService chat)
+    public SpeechHandler(IChatService chat, ICommandService commands)
     {
         _chat = chat;
+        _commands = commands;
     }
 
     public void Handle(UnicodeSpeechPacket packet, in PacketContext context)
@@ -61,7 +63,7 @@ public sealed class SpeechHandler : IPacketHandler<UnicodeSpeechPacket>, IPacket
 
         if (decision.IsCommand)
         {
-            session.Send(ChatMessageFactory.CreateSystem(CommandNotImplementedMessage));
+            _commands.Execute(session, speaker, decision.Text);
 
             return;
         }

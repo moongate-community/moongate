@@ -16,6 +16,7 @@ using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
+using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
@@ -620,13 +621,15 @@ public class LoginFlowIntegrationTests
 
             var aliceCompressed = new List<byte>();
 
-            // Matches on the reply text itself (big-endian unicode, via the same encoding SpeechHandler
-            // writes with) rather than hand-computing the packet's length-prefixed byte offsets — robust
-            // to the exact wording of SpeechHandler.CommandNotImplementedMessage changing later.
-            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("not implemented");
+            // Matches on the reply text itself (big-endian unicode, via the same encoding
+            // CommandService writes with) rather than hand-computing the packet's length-prefixed
+            // byte offsets. ".kick" is not a registered command, so CommandService.Execute replies
+            // with its generic "Unknown command." message — the same reply an unauthorized caller
+            // of a real command would get, by design (see the command-system design doc).
+            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("Unknown command");
             Assert.True(
                 PollUntil(aliceSocket, aliceCompressed, systemPattern),
-                "Alice never received the \"command not implemented\" system reply."
+                "Alice never received the \"Unknown command.\" reply."
             );
             Assert.False(
                 PollUntil(bobSocket, bobCompressed, new byte[] { 0, (byte)'k', 0, (byte)'i', 0, (byte)'c' }, TimeSpan.FromMilliseconds(300)),
@@ -1173,6 +1176,7 @@ public class LoginFlowIntegrationTests
     )
     {
         var accounts = new StubAccountService();
+        var commands = new CommandService([], accounts);
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
         var cities = new StartingCityService();
@@ -1197,7 +1201,7 @@ public class LoginFlowIntegrationTests
             new GameServerLoginHandler(pending, cities, accounts, characters),
             new CharacterCreationHandler(characters, world),
             new MegaClilocHandler(opl),
-            new SpeechHandler(chat)
+            new SpeechHandler(chat, commands)
         };
 
         var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
