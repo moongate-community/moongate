@@ -49,6 +49,9 @@ public sealed class PlayerSession : ISeedTarget
     /// <summary>When the last accepted move was recorded — the baseline the walk/run rate limit measures against.</summary>
     public DateTimeOffset LastMoveAt { get; private set; }
 
+    /// <summary>When the last accepted speech packet was recorded — the baseline the chat rate limit measures against.</summary>
+    public DateTimeOffset LastChatAt { get; private set; }
+
     public UoCompressionMiddleware Compression { get; }
 
     public PlayerSession(SquidStdTcpClient client)
@@ -130,6 +133,15 @@ public sealed class PlayerSession : ISeedTarget
         {
             LastMoveSequence = sequence;
             LastMoveAt = at;
+        }
+    }
+
+    /// <summary>Records when the last accepted speech packet arrived, for the chat rate limit.</summary>
+    public void SetLastChat(DateTimeOffset at)
+    {
+        lock (_stateSync)
+        {
+            LastChatAt = at;
         }
     }
 
