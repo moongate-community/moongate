@@ -9,6 +9,7 @@ using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Commands;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Network;
@@ -17,6 +18,7 @@ using Moongate.Server.Autostart;
 using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
+using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -108,6 +110,7 @@ await ConsoleApp.RunAsync(
                 builder.Add<MoongateScriptingPlugin>();
                 builder.Add<MoongateScriptModulesPlugin>();
                 builder.Add<MoongateDataLoaderPlugin>();
+                builder.Add<MoongateCommandsPlugin>();
                 builder.Add<MoongatePacketHandlersPlugin>();
                 builder.Add<MoongateEventSubscribersPlugin>();
 
@@ -141,6 +144,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
+                container.Register<ICommandService, CommandService>(Reuse.Singleton);
                 container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
                 container.Register<IMapTileService, MapTileService>(Reuse.Singleton);
                 container.Register<IMovementService, MovementService>(Reuse.Singleton);

@@ -11,11 +11,14 @@ using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Commands;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Commands;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
+using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
@@ -29,6 +32,7 @@ using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Interfaces.Threading;
+using SquidStd.Core.Utils;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
@@ -620,13 +624,15 @@ public class LoginFlowIntegrationTests
 
             var aliceCompressed = new List<byte>();
 
-            // Matches on the reply text itself (big-endian unicode, via the same encoding SpeechHandler
-            // writes with) rather than hand-computing the packet's length-prefixed byte offsets — robust
-            // to the exact wording of SpeechHandler.CommandNotImplementedMessage changing later.
-            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("not implemented");
+            // Matches on the reply text itself (big-endian unicode, via the same encoding
+            // CommandService writes with) rather than hand-computing the packet's length-prefixed
+            // byte offsets. ".kick" is not a registered command, so CommandService.Execute replies
+            // with its generic "Unknown command." message — the same reply an unauthorized caller
+            // of a real command would get, by design (see the command-system design doc).
+            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("Unknown command");
             Assert.True(
                 PollUntil(aliceSocket, aliceCompressed, systemPattern),
-                "Alice never received the \"command not implemented\" system reply."
+                "Alice never received the \"Unknown command.\" reply."
             );
             Assert.False(
                 PollUntil(bobSocket, bobCompressed, new byte[] { 0, (byte)'k', 0, (byte)'i', 0, (byte)'c' }, TimeSpan.FromMilliseconds(300)),
@@ -663,6 +669,148 @@ public class LoginFlowIntegrationTests
             }
 
             Assert.Equal(1, occurrences); // the second "spam" was dropped by the 25ms rate limit
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task Command_BroadcastAuthorizedAndUnauthorized_BehaveAsDesigned()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(
+            new()
+            {
+                Id = (Serial)1,
+                Username = "gm",
+                PasswordHash = HashUtils.HashPassword("secret"),
+                IsActive = true,
+                AccountLevel = AccountLevelType.GrandMaster
+            }
+        );
+        await persistence.Store<AccountEntity>().UpsertAsync(
+            new()
+            {
+                Id = (Serial)2,
+                Username = "player",
+                PasswordHash = HashUtils.HashPassword("secret"),
+                IsActive = true,
+                AccountLevel = AccountLevelType.Player
+            }
+        );
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var chat = new ChatService(world, eventBus);
+
+        var testCities = new StartingCityService();
+        testCities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
+        var accounts = new AccountService(persistence, characters, sessions);
+        var commands = new CommandService([new BroadcastCommand(chat)], accounts);
+
+        using var gmEntered = new ManualResetEventSlim();
+        using var playerEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
+            {
+                if (e.Mobile.Name == "GM")
+                {
+                    gmEntered.Set();
+                }
+                else if (e.Mobile.Name == "Player")
+                {
+                    playerEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerWithCommandsAsync(
+            config,
+            eventBus,
+            characters,
+            world,
+            chat,
+            commands,
+            accounts,
+            opl,
+            sessions
+        );
+
+        try
+        {
+            using var gmSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(gmSocket, network.Port, "gm", "GM");
+            Assert.True(gmEntered.Wait(TimeSpan.FromSeconds(2)), "GM's PlayerEnteredWorldEvent was not published.");
+
+            using var playerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(playerSocket, network.Port, "player", "Player");
+            Assert.True(
+                playerEntered.Wait(TimeSpan.FromSeconds(2)),
+                "Player's PlayerEnteredWorldEvent was not published."
+            );
+
+            // The GM (GrandMaster) broadcasts — both sessions receive it.
+            gmSocket.Send(Speech(".broadcast Server restarting soon"));
+
+            var gmCompressed = new List<byte>();
+            var playerCompressed = new List<byte>();
+            var broadcastPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("restarting soon");
+            Assert.True(
+                PollUntil(gmSocket, gmCompressed, broadcastPattern),
+                "GM never received their own broadcast."
+            );
+            Assert.True(
+                PollUntil(playerSocket, playerCompressed, broadcastPattern),
+                "Player never received the GM's broadcast."
+            );
+
+            // The Player (below GrandMaster) tries the same command — no broadcast reaches anyone,
+            // and the Player gets the generic "Unknown command." reply instead.
+            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
+            playerSocket.Send(Speech(".broadcast should not work"));
+
+            var unknownPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("Unknown command");
+            Assert.True(
+                PollUntil(playerSocket, playerCompressed, unknownPattern),
+                "Player never received the \"Unknown command.\" reply for an unauthorized broadcast."
+            );
+            Assert.False(
+                PollUntil(
+                    gmSocket,
+                    gmCompressed,
+                    System.Text.Encoding.BigEndianUnicode.GetBytes("should not work"),
+                    TimeSpan.FromMilliseconds(300)
+                ),
+                "GM must not receive a broadcast triggered by an unauthorized Player."
+            );
         }
         finally
         {
@@ -1173,6 +1321,7 @@ public class LoginFlowIntegrationTests
     )
     {
         var accounts = new StubAccountService();
+        var commands = new CommandService([], accounts);
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
         var cities = new StartingCityService();
@@ -1197,7 +1346,52 @@ public class LoginFlowIntegrationTests
             new GameServerLoginHandler(pending, cities, accounts, characters),
             new CharacterCreationHandler(characters, world),
             new MegaClilocHandler(opl),
-            new SpeechHandler(chat)
+            new SpeechHandler(chat, commands)
+        };
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
+    }
+
+    private static async Task<NetworkService> StartServerWithCommandsAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService world,
+        IChatService chat,
+        ICommandService commands,
+        IAccountService accounts,
+        OplService opl,
+        ISessionManager sessions
+    )
+    {
+        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+
+        var cities = new StartingCityService();
+        cities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+
+        var handlers = new List<IPacketHandlerRegistration>
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities, accounts, characters),
+            new CharacterCreationHandler(characters, world),
+            new MegaClilocHandler(opl),
+            new SpeechHandler(chat, commands)
         };
 
         var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
