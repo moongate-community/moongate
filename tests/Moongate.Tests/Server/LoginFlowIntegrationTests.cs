@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
@@ -11,6 +12,7 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Handlers;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
@@ -18,6 +20,9 @@ using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
+using Moongate.Ultima.Io;
+using Moongate.Ultima.Maps;
+using Moongate.Ultima.Tiles;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
@@ -26,6 +31,7 @@ using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server;
 
+[Collection("UltimaClientData")]
 public class LoginFlowIntegrationTests
 {
     // How long a wire read waits before it is called a failure. Deliberately far above what the reads
@@ -415,7 +421,13 @@ public class LoginFlowIntegrationTests
         }
     }
 
-    /// <summary>Runs the seed → account login → game login → character creation handshake to get a fresh character into the world.</summary>
+    /// <summary>
+    /// Drives one client through the full login handshake (seed, account login, server select, game
+    /// login) and sends character creation for <paramref name="characterName" />, mirroring the inline
+    /// steps every other test in this file repeats — parameterized so two independent clients can each
+    /// reach the world over their own socket. Does not itself wait for the enter-world burst; callers
+    /// observe that via <see cref="PlayerEnteredWorldEvent" /> or by reading the socket.
+    /// </summary>
     private static void EnterWorld(Socket socket, int port, string account, string characterName)
     {
         socket.Connect(IPAddress.Loopback, port);
@@ -607,6 +619,208 @@ public class LoginFlowIntegrationTests
         {
             await network.StopAsync(CancellationToken.None);
         }
+    }
+
+    [Fact]
+    public async Task Movement_TurnThenStep_AcksBothAndBroadcastsToNearbyPlayer()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        // Synthetic 8x8-tile flat map at mapId 0 (Felucca). "testCities" below is registered as
+        // starting city 0 for the character factory, so a freshly created character spawns at (5,5)
+        // on this same tiny map — real client coordinates (e.g. Britain at 1495,1629, the shared
+        // CharacterServiceFixture default) would fall outside it.
+        var tileData = UltimaFixtures.BuildTileData();
+        var mapBlock = UltimaFixtures.BuildMapBlock(landId: 3, z: 0);
+        var dir = UltimaFixtures.CreateClientDirectory(("map0.mul", mapBlock), ("tiledata.mul", tileData));
+
+        try
+        {
+            Files.SetDirectory(dir);
+            TileData.Initialize();
+            var map = new Map(dir, 0, 0, 8, 8);
+            var mapProvider = new StubMapProvider(MapType.Felucca, map);
+
+            var loopThread = new LoopThreadMarker();
+            loopThread.Capture();
+            var spatial = new SpatialIndexService(persistence, loopThread);
+            new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
+
+            var mapTiles = new MapTileService(mapProvider);
+            var regions = new RegionService();
+
+            var world = new WorldService(
+                new ItemService(persistence, opl),
+                CharacterServiceFixture.Skills(),
+                new VirtualSerialService(),
+                eventBus,
+                TimeProvider.System,
+                opl,
+                sessions
+            );
+            var movement = new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System);
+
+            // CharacterServiceFixture.Create wires its own MobileFactoryService, whose starting-city
+            // lookup is independent of the city StartServerWithMovementAsync registers for the
+            // client-facing character list — the fixture's default (Britain, off this tiny map) has to
+            // be overridden here too, or a fresh character would spawn outside the synthetic map.
+            var testCities = new StartingCityService();
+            testCities.Register(
+                new()
+                {
+                    City = "TestTown",
+                    Building = "Origin",
+                    Description = 1075072,
+                    X = 5,
+                    Y = 5,
+                    Z = 0,
+                    Map = MapType.Felucca
+                }
+            );
+            var characters = CharacterServiceFixture.Create(persistence, (EventBusService)eventBus, sessions, testCities);
+
+            using var aliceEntered = new ManualResetEventSlim();
+            using var bobEntered = new ManualResetEventSlim();
+            eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+                {
+                    if (e.Mobile.Name == "Alice")
+                    {
+                        aliceEntered.Set();
+                    }
+                    else if (e.Mobile.Name == "Bob")
+                    {
+                        bobEntered.Set();
+                    }
+
+                    return Task.CompletedTask;
+                }
+            );
+
+            var network = await StartServerWithMovementAsync(config, eventBus, characters, world, movement, opl, sessions);
+
+            try
+            {
+                using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                EnterWorld(aliceSocket, network.Port, "alice", "Alice");
+                Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+
+                using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                EnterWorld(bobSocket, network.Port, "bob", "Bob");
+                Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
+
+                var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
+
+                // InMemoryEntityStore.Query() hands back a live reference, not a clone (unlike the real
+                // store), so aliceMobile keeps aging as MovementService mutates it in place. Position is
+                // an immutable struct, so copying it now freezes the pre-move value for the assertions
+                // below instead of comparing the post-move mobile against itself.
+                var aliceStartPosition = aliceMobile.Position;
+
+                // Alice spawns facing North (the factory default); the first move request toward East
+                // only turns her — real UO client behavior — and must still be acked.
+                var turn = new byte[7];
+                turn[0] = 0x02;
+                turn[1] = 0x02; // DirectionType.East
+                turn[2] = 0x00; // sequence
+                aliceSocket.Send(turn);
+
+                var aliceCompressed = new List<byte>();
+                var turnAck = new byte[] { 0x22, 0x00, 0x01 }; // 0x22 + sequence 0 + Notoriety.Innocent
+                Assert.True(PollUntil(aliceSocket, aliceCompressed, turnAck), "Alice never received an ack for the turn.");
+
+                // A turn is an accepted move too, so it re-baselines the walk-rate-limit clock
+                // (PlayerSession.LastMoveAt) exactly like a real step does. Clearing the 400ms walk
+                // interval here is what makes the next request a real step rather than a rejected one —
+                // without it, the two sends race the clock and the outcome depends on machine speed.
+                await Task.Delay(450);
+
+                // Second request, now already facing East, is a real step.
+                var step = new byte[7];
+                step[0] = 0x02;
+                step[1] = 0x02; // DirectionType.East
+                step[2] = 0x01; // sequence
+                aliceSocket.Send(step);
+
+                var stepAck = new byte[] { 0x22, 0x01, 0x01 }; // 0x22 + sequence 1 + Notoriety.Innocent
+                Assert.True(PollUntil(aliceSocket, aliceCompressed, stepAck), "Alice never received an ack for the step.");
+
+                var bobCompressed = new List<byte>();
+                var broadcastPattern = new byte[] { 0x77 }.Concat(SerialBytes(aliceMobile.Id)).ToArray();
+                Assert.True(
+                    PollUntil(bobSocket, bobCompressed, broadcastPattern),
+                    "Bob never received Alice's movement broadcast (0x77)."
+                );
+
+                var moved = persistence.Store<MobileEntity>().GetById(aliceMobile.Id)!;
+                Assert.Equal(aliceStartPosition.X + 1, moved.Position.X);
+                Assert.Equal(aliceStartPosition.Y, moved.Position.Y);
+                Assert.Equal(DirectionType.East, moved.Direction);
+
+                // The spatial index was re-indexed at the new position, closing the loop with the
+                // earlier spatial-index feature. Range 0 (exact tile) rather than 1: Bob spawned at the
+                // same city as Alice (the fixture registers only one starting city), so a range wide
+                // enough to reach Alice's old tile would also still catch Bob standing right next to her.
+                Assert.Single(spatial.GetMobilesInRange(0, moved.Position, 0));
+            }
+            finally
+            {
+                await network.StopAsync(CancellationToken.None);
+            }
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    private static async Task<NetworkService> StartServerWithMovementAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService world,
+        IMovementService movement,
+        OplService opl,
+        ISessionManager sessions
+    )
+    {
+        var accounts = new StubAccountService();
+        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+
+        var cities = new StartingCityService();
+        cities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Felucca
+            }
+        );
+
+        var handlers = new List<IPacketHandlerRegistration>
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities, accounts, characters),
+            new CharacterCreationHandler(characters, world),
+            new MegaClilocHandler(opl),
+            new MoveRequestHandler(movement)
+        };
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
     }
 
     private static byte[] AccountLogin(string account, string password)

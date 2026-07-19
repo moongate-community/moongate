@@ -26,7 +26,7 @@
   </a>
   <a class="mg-card" href="families/movement.md">
     <h3>Movement</h3>
-    <div class="mg-card-ops">0x02 · 0x20 · 0x22 · 0x78</div>
+    <div class="mg-card-ops">0x02 · 0x20 · 0x21 · 0x22 · 0x77 · 0x78</div>
     <p>Move requests, acks, and mobile position updates.</p>
   </a>
   <a class="mg-card" href="families/status-skills.md">

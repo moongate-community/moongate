@@ -2,6 +2,7 @@ using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Types;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Types;
 using Serilog;
 

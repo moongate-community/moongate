@@ -7,6 +7,7 @@ using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Services.Maps;
 using Moongate.Http.Plugin.Services.Ultima;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Tests.Support;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;

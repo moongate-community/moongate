@@ -1,5 +1,5 @@
-using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Ultima;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Maps;
@@ -32,7 +32,7 @@ public sealed class MapImageFixture : IDisposable
         _clientDirectory = clientDirectory;
         Root = root;
         Directories = directories;
-        Provider = new StubMapProvider(new(0, 0, MapWidth, MapHeight));
+        Provider = new StubMapProvider(MapType.Felucca, new(0, 0, MapWidth, MapHeight));
     }
 
     public string Root { get; }
@@ -127,19 +127,4 @@ public sealed class MapImageFixture : IDisposable
         }
     }
 
-    /// <summary>Serves one small facet under Felucca's name, so a test need not render 384 tiles.</summary>
-    private sealed class StubMapProvider : IUltimaMapProvider
-    {
-        private readonly Map _map;
-
-        public StubMapProvider(Map map)
-        {
-            _map = map;
-        }
-
-        public IReadOnlyList<MapType> Facets { get; } = [MapType.Felucca];
-
-        public Map? Get(MapType facet)
-            => facet == MapType.Felucca ? _map : null;
-    }
 }

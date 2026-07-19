@@ -20,6 +20,7 @@
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
         <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
+        <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Regions;
 using Moongate.UO.Data.Types;
@@ -19,6 +20,43 @@ public sealed class RegionService : IRegionService
 
     public IReadOnlyList<RegionDefinition> ForMap(MapType map)
         => [.. _regions.Where(region => region.Map == map)];
+
+    public RegionDefinition? At(MapType map, Point3D point)
+    {
+        RegionDefinition? best = null;
+
+        foreach (var region in _regions)
+        {
+            if (region.Map != map)
+            {
+                continue;
+            }
+
+            var inArea = false;
+
+            foreach (var rect in region.Area)
+            {
+                if (point.X >= rect.X1 && point.X <= rect.X2 && point.Y >= rect.Y1 && point.Y <= rect.Y2)
+                {
+                    inArea = true;
+
+                    break;
+                }
+            }
+
+            if (!inArea)
+            {
+                continue;
+            }
+
+            if (best is null || region.Priority > best.Priority)
+            {
+                best = region;
+            }
+        }
+
+        return best;
+    }
 
     public void Register(RegionDefinition region)
         => _regions.Add(region);

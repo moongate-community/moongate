@@ -43,12 +43,14 @@ The flow the server implements today:
    and the season of the facet you stand on.
 
 > [!IMPORTANT]
-> **The world you enter is empty, and you cannot move yet.** World entry is
-> self-only: the server sends you your own character, but nearby mobiles and
-> items are not broadcast to you, and movement requests are not handled. Your
-> backpack cannot be opened yet either, so the starting kit stays out of
-> reach. You will load into the map and stand still, alone. This is the
-> current frontier of the project.
+> World entry is self-only: the server sends you your own character, but
+> nearby mobiles and items already in range are not sent to you when you
+> first log in (that needs SendEverything, still pending). You can walk and
+> turn — moves are validated against the map and broadcast to players
+> already in range of you — but no new objects appear as you walk into view
+> of them yet. Your backpack cannot be opened yet either, so the starting
+> kit stays out of reach. Nearby mobiles and items staying invisible until
+> SendEverything lands is the current frontier of the project.
 
 ## Troubleshooting
 
