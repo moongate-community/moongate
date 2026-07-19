@@ -11,6 +11,17 @@ namespace Moongate.Tests.Server;
 public class MoongateScriptModulesPluginTests
 {
     [Fact]
+    public void Configure_RegistersAccountModule()
+    {
+        var container = new Container();
+
+        new MoongateScriptModulesPlugin().Configure(container, new());
+
+        var modules = container.Resolve<List<ScriptModuleData>>();
+        Assert.Contains(modules, module => module.ModuleType == typeof(AccountModule));
+    }
+
+    [Fact]
     public void Configure_RegistersItemModule()
     {
         var container = new Container();
@@ -32,23 +43,8 @@ public class MoongateScriptModulesPluginTests
         Assert.Contains(modules, module => module.ModuleType == typeof(MobileModule));
     }
 
-    [Fact]
-    public void Configure_RegistersAccountModule()
-    {
-        var container = new Container();
-
-        new MoongateScriptModulesPlugin().Configure(container, new());
-
-        var modules = container.Resolve<List<ScriptModuleData>>();
-        Assert.Contains(modules, module => module.ModuleType == typeof(AccountModule));
-    }
-
-    [Theory]
-    [InlineData(typeof(AccountLevelType))]
-    [InlineData(typeof(SkillName))]
-    [InlineData(typeof(GenderType))]
-    [InlineData(typeof(RaceType))]
-    [InlineData(typeof(LayerType))]
+    [Theory, InlineData(typeof(AccountLevelType)), InlineData(typeof(SkillName)), InlineData(typeof(GenderType)),
+     InlineData(typeof(RaceType)), InlineData(typeof(LayerType))]
     public void Configure_RegistersScriptEnum(Type enumType)
     {
         var container = new Container();

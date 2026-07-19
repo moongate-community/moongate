@@ -1,6 +1,5 @@
 using Moongate.Http.Plugin.Services.Mobiles;
 using Moongate.Tests.Support;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Services.Mobiles;
 
@@ -10,9 +9,6 @@ public sealed class BodyImageServiceTests : IDisposable
 
     public void Dispose()
         => Directory.Delete(_root, true);
-
-    private BodyImageService Build(FakeAnimationCatalog catalog)
-        => new(catalog, new DirectoriesConfig(_root, Array.Empty<string>()), new StubUltimaReadGate());
 
     [Fact]
     public async Task GetOrCreate_DecodableBody_WritesThePngOnceAndReusesIt()
@@ -46,8 +42,11 @@ public sealed class BodyImageServiceTests : IDisposable
     [Fact]
     public async Task GetOrCreate_UnknownBody_ReturnsNull()
     {
-        var service = Build(new FakeAnimationCatalog());
+        var service = Build(new());
 
         Assert.Null(await service.GetOrCreateAsync(999, 0));
     }
+
+    private BodyImageService Build(FakeAnimationCatalog catalog)
+        => new(catalog, new(_root, Array.Empty<string>()), new StubUltimaReadGate());
 }

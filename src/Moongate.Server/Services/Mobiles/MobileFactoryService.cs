@@ -4,10 +4,9 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Internal.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.World;
-using Moongate.UO.Data.Hues;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Mobiles.Templates;
 using Moongate.UO.Data.Types;
-using Moongate.Ultima.Types;
 using Serilog;
 
 namespace Moongate.Server.Services.Mobiles;
@@ -36,6 +35,55 @@ public sealed class MobileFactoryService : IMobileFactoryService
         _random = random;
     }
 
+    public MobileEntity Create(string name, int mapId, Point3D position)
+        => new()
+        {
+            Name = name,
+            MapId = mapId,
+            Position = position
+        };
+
+    public MobileSpawn? CreateFromTemplate(string templateId, int mapId, Point3D position)
+    {
+        var template = _templates.GetById(templateId);
+
+        if (template is null)
+        {
+            return null;
+        }
+
+        var variant = PickVariant(template.Variants);
+
+        var mobile = new MobileEntity
+        {
+            Name = template.Name,
+            MapId = mapId,
+            Position = position,
+            Gender = ResolveGender(variant?.Gender ?? template.Gender),
+            Strength = template.Strength,
+            Dexterity = template.Dexterity,
+            Intelligence = template.Intelligence,
+
+            // Creature pool ceilings mirror the raw stats (ModernUO BaseCreature without a *MaxSeed),
+            // unlike players, who get the flat hit-point base. Spawns start topped up.
+            Hits = template.Strength,
+            HitsMax = template.Strength,
+            Stamina = template.Dexterity,
+            StaminaMax = template.Dexterity,
+            Mana = template.Intelligence,
+            ManaMax = template.Intelligence,
+            BrainScriptId = template.BrainScript ?? string.Empty,
+            LootTableId = variant?.LootTableId ?? template.LootTableId ?? string.Empty
+        };
+
+        ApplyAppearance(mobile, template.Appearance, variant?.Appearance);
+        ApplySkills(mobile, template.Skills);
+
+        var equipmentSource = variant is { Equipment.Count: > 0 } ? variant.Equipment : template.Equipment;
+
+        return new(mobile, ResolveEquipment(equipmentSource));
+    }
+
     public MobileEntity CreatePlayerMobile(CharacterCreationPacket packet)
     {
         var (strength, dexterity, intelligence) = ResolveStartingStats(packet);
@@ -51,6 +99,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
             Strength = strength,
             Dexterity = dexterity,
             Intelligence = intelligence,
+
             // Player pool ceilings, as ModernUO: hits 50 + Str/2, stamina Dex, mana Int. Pools start
             // topped up (InitStats). Regen and damage that move the current pools arrive with combat.
             Hits = hitsMax,
@@ -73,7 +122,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
                 continue; // unused starting-skill slot
             }
 
-            character.Skills[skill.SkillId] = new MobileSkill { Value = skill.Value * 10 }; // tenths (50 -> 500)
+            character.Skills[skill.SkillId] = new() { Value = skill.Value * 10 }; // tenths (50 -> 500)
         }
 
         // Fall back to the first city when the client sends an out-of-range index.
@@ -86,6 +135,100 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
 
         return character;
+    }
+
+    private void ApplyAppearance(MobileEntity mobile, MobileAppearance baseAppearance, MobileAppearance? variant)
+    {
+        mobile.Body = variant is { Body: not 0 } ? variant.Body : baseAppearance.Body;
+        mobile.HairStyle = (ushort)(variant is { HairStyle: not 0 } ? variant.HairStyle : baseAppearance.HairStyle);
+        mobile.FacialHairStyle =
+            (ushort)(variant is { FacialHairStyle: not 0 } ? variant.FacialHairStyle : baseAppearance.FacialHairStyle);
+        mobile.SkinHue = new(HueSpec.Resolve(variant?.SkinHue ?? baseAppearance.SkinHue, _random));
+        mobile.HairHue = new(HueSpec.Resolve(variant?.HairHue ?? baseAppearance.HairHue, _random));
+        mobile.FacialHairHue = new(HueSpec.Resolve(variant?.FacialHairHue ?? baseAppearance.FacialHairHue, _random));
+    }
+
+    private void ApplySkills(MobileEntity mobile, Dictionary<string, int> skills)
+    {
+        foreach (var (name, value) in skills)
+        {
+            if (TryResolveSkill(name, out var skillId))
+            {
+                mobile.Skills[skillId] = new() { Value = value };
+            }
+            else
+            {
+                _logger.Warning("Unknown skill '{Skill}' on mobile template; skipping", name);
+            }
+        }
+    }
+
+    private MobileVariant? PickVariant(List<MobileVariant> variants)
+    {
+        if (variants.Count == 0)
+        {
+            return null;
+        }
+
+        var total = variants.Sum(variant => Math.Max(1, variant.Weight));
+        var roll = _random.Next(total);
+        var cumulative = 0;
+
+        foreach (var variant in variants)
+        {
+            cumulative += Math.Max(1, variant.Weight);
+
+            if (roll < cumulative)
+            {
+                return variant;
+            }
+        }
+
+        return variants[^1];
+    }
+
+    /// <summary>Player hit-point ceiling, as ModernUO's PlayerMobile: half the strength over a flat base.</summary>
+    private static int PlayerHitsMax(int strength)
+        => PlayerBaseHits + strength / 2;
+
+    private List<ResolvedEquipment> ResolveEquipment(List<MobileEquipmentEntry> entries)
+    {
+        var resolved = new List<ResolvedEquipment>();
+
+        foreach (var entry in entries)
+        {
+            if (!Enum.TryParse<LayerType>(entry.Layer, true, out var layer))
+            {
+                _logger.Warning("Unknown layer '{Layer}' on mobile template equipment; skipping", entry.Layer);
+
+                continue;
+            }
+
+            resolved.Add(new(entry.Item, layer, HueSpec.Resolve(entry.Hue, _random)));
+        }
+
+        return resolved;
+    }
+
+    private GenderType ResolveGender(MobileTemplateGenderType gender)
+        => gender switch
+        {
+            MobileTemplateGenderType.Female => GenderType.Female,
+            MobileTemplateGenderType.Random => _random.Next(2) == 0 ? GenderType.Male : GenderType.Female,
+            _                               => GenderType.Male
+        };
+
+    /// <summary>Maps a playable race and gender to the human/elf/gargoyle body graphic id.</summary>
+    private static int ResolvePlayerBody(RaceType race, GenderType gender)
+    {
+        var female = gender == GenderType.Female;
+
+        return race switch
+        {
+            RaceType.Elf      => female ? 0x25E : 0x25D,
+            RaceType.Gargoyle => female ? 0x29B : 0x29A,
+            _                 => female ? 0x191 : 0x190
+        };
     }
 
     /// <summary>
@@ -119,156 +262,12 @@ public sealed class MobileFactoryService : IMobileFactoryService
         return (MinStartingStat, MinStartingStat, MinStartingStat);
     }
 
-    /// <summary>Player hit-point ceiling, as ModernUO's PlayerMobile: half the strength over a flat base.</summary>
-    private static int PlayerHitsMax(int strength)
-        => PlayerBaseHits + strength / 2;
-
-    /// <summary>Maps a playable race and gender to the human/elf/gargoyle body graphic id.</summary>
-    private static int ResolvePlayerBody(RaceType race, GenderType gender)
-    {
-        var female = gender == GenderType.Female;
-
-        return race switch
-        {
-            RaceType.Elf      => female ? 0x25E : 0x25D,
-            RaceType.Gargoyle => female ? 0x29B : 0x29A,
-            _                 => female ? 0x191 : 0x190
-        };
-    }
-
-    public MobileEntity Create(string name, int mapId, Point3D position)
-    {
-        return new MobileEntity
-        {
-            Name = name,
-            MapId = mapId,
-            Position = position
-        };
-    }
-
-    public MobileSpawn? CreateFromTemplate(string templateId, int mapId, Point3D position)
-    {
-        var template = _templates.GetById(templateId);
-
-        if (template is null)
-        {
-            return null;
-        }
-
-        var variant = PickVariant(template.Variants);
-
-        var mobile = new MobileEntity
-        {
-            Name = template.Name,
-            MapId = mapId,
-            Position = position,
-            Gender = ResolveGender(variant?.Gender ?? template.Gender),
-            Strength = template.Strength,
-            Dexterity = template.Dexterity,
-            Intelligence = template.Intelligence,
-            // Creature pool ceilings mirror the raw stats (ModernUO BaseCreature without a *MaxSeed),
-            // unlike players, who get the flat hit-point base. Spawns start topped up.
-            Hits = template.Strength,
-            HitsMax = template.Strength,
-            Stamina = template.Dexterity,
-            StaminaMax = template.Dexterity,
-            Mana = template.Intelligence,
-            ManaMax = template.Intelligence,
-            BrainScriptId = template.BrainScript ?? string.Empty,
-            LootTableId = variant?.LootTableId ?? template.LootTableId ?? string.Empty
-        };
-
-        ApplyAppearance(mobile, template.Appearance, variant?.Appearance);
-        ApplySkills(mobile, template.Skills);
-
-        var equipmentSource = variant is { Equipment.Count: > 0 } ? variant.Equipment : template.Equipment;
-
-        return new MobileSpawn(mobile, ResolveEquipment(equipmentSource));
-    }
-
-    private GenderType ResolveGender(MobileTemplateGenderType gender)
-        => gender switch
-        {
-            MobileTemplateGenderType.Female => GenderType.Female,
-            MobileTemplateGenderType.Random => _random.Next(2) == 0 ? GenderType.Male : GenderType.Female,
-            _                               => GenderType.Male
-        };
-
-    private MobileVariant? PickVariant(List<MobileVariant> variants)
-    {
-        if (variants.Count == 0)
-        {
-            return null;
-        }
-
-        var total = variants.Sum(variant => Math.Max(1, variant.Weight));
-        var roll = _random.Next(total);
-        var cumulative = 0;
-
-        foreach (var variant in variants)
-        {
-            cumulative += Math.Max(1, variant.Weight);
-
-            if (roll < cumulative)
-            {
-                return variant;
-            }
-        }
-
-        return variants[^1];
-    }
-
-    private void ApplyAppearance(MobileEntity mobile, MobileAppearance baseAppearance, MobileAppearance? variant)
-    {
-        mobile.Body = variant is { Body: not 0 } ? variant.Body : baseAppearance.Body;
-        mobile.HairStyle = (ushort)(variant is { HairStyle: not 0 } ? variant.HairStyle : baseAppearance.HairStyle);
-        mobile.FacialHairStyle =
-            (ushort)(variant is { FacialHairStyle: not 0 } ? variant.FacialHairStyle : baseAppearance.FacialHairStyle);
-        mobile.SkinHue = new Hue(HueSpec.Resolve(variant?.SkinHue ?? baseAppearance.SkinHue, _random));
-        mobile.HairHue = new Hue(HueSpec.Resolve(variant?.HairHue ?? baseAppearance.HairHue, _random));
-        mobile.FacialHairHue = new Hue(HueSpec.Resolve(variant?.FacialHairHue ?? baseAppearance.FacialHairHue, _random));
-    }
-
-    private void ApplySkills(MobileEntity mobile, Dictionary<string, int> skills)
-    {
-        foreach (var (name, value) in skills)
-        {
-            if (TryResolveSkill(name, out var skillId))
-            {
-                mobile.Skills[skillId] = new MobileSkill { Value = value };
-            }
-            else
-            {
-                _logger.Warning("Unknown skill '{Skill}' on mobile template; skipping", name);
-            }
-        }
-    }
-
-    private List<ResolvedEquipment> ResolveEquipment(List<MobileEquipmentEntry> entries)
-    {
-        var resolved = new List<ResolvedEquipment>();
-
-        foreach (var entry in entries)
-        {
-            if (!Enum.TryParse<LayerType>(entry.Layer, ignoreCase: true, out var layer))
-            {
-                _logger.Warning("Unknown layer '{Layer}' on mobile template equipment; skipping", entry.Layer);
-
-                continue;
-            }
-
-            resolved.Add(new(entry.Item, layer, HueSpec.Resolve(entry.Hue, _random)));
-        }
-
-        return resolved;
-    }
-
     private static bool TryResolveSkill(string name, out int skillId)
     {
         skillId = 0;
         var token = new string(name.Where(char.IsLetter).ToArray());
 
-        if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+        if (!Enum.TryParse<SkillName>(token, true, out var parsed))
         {
             return false;
         }

@@ -148,15 +148,6 @@ public sealed class PaperdollRenderer : IPaperdollRenderer
         }
     }
 
-    private UltimaBitmap? LoadGenderGump(int artId, int hue, bool female)
-    {
-        var gump = _gumps.GetGump(artId + (female ? FemaleOffset : MaleOffset), hue, false);
-
-        // A number of items (and every hair style) never shipped a female paperdoll variant; the male
-        // gump is the client's own fallback.
-        return gump ?? (female ? _gumps.GetGump(artId + MaleOffset, hue, false) : null);
-    }
-
     private static UltimaBitmap Compose(IReadOnlyList<UltimaBitmap> layers)
     {
         var width = layers.Max(layer => layer.Width);
@@ -169,5 +160,14 @@ public sealed class PaperdollRenderer : IPaperdollRenderer
         }
 
         return canvas;
+    }
+
+    private UltimaBitmap? LoadGenderGump(int artId, int hue, bool female)
+    {
+        var gump = _gumps.GetGump(artId + (female ? FemaleOffset : MaleOffset), hue, false);
+
+        // A number of items (and every hair style) never shipped a female paperdoll variant; the male
+        // gump is the client's own fallback.
+        return gump ?? (female ? _gumps.GetGump(artId + MaleOffset, hue, false) : null);
     }
 }

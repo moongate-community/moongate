@@ -1,6 +1,6 @@
 using Moongate.Core.Primitives;
-using Moongate.UO.Data.Hues;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Hues;
 
 namespace Moongate.Network.Data;
 

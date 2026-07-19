@@ -1,10 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
-using Moongate.Core.Primitives;
 using Moongate.Core.Types;
-using Moongate.Network.Packets.Incoming;
-using Moongate.Network.Types;
 using Moongate.Http.Plugin.Data.Api.Characters;
+using Moongate.Network.Packets.Incoming;
+using Moongate.Persistence.Entities;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
@@ -15,11 +14,32 @@ public class CharacterEndpointsTests
     private const string Route = "/api/v1/player/me/characters";
 
     [Fact]
-    public async Task GetMyCharacters_WithoutAToken_IsUnauthorized()
+    public async Task GetMyCharacters_IgnoresMobilesOwnedByNobody()
     {
+        // Every NPC on a real shard looks like this in the store: a mobile no account lists.
         await using var server = await TestApiServer.StartAsync();
+        await server.Persistence
+                    .Store<MobileEntity>()
+                    .UpsertAsync(new() { Name = "a wandering healer" });
+        await server.AuthenticateAsync();
 
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
+        var characters = await server.Client.GetFromJsonAsync<List<CharacterResponse>>(Route);
+
+        Assert.Empty(characters!);
+    }
+
+    [Fact]
+    public async Task GetMyCharacters_NeverReturnsAnotherAccountsCharacters()
+    {
+        // The one defect here that would be a security bug rather than an inconvenience.
+        await using var server = await TestApiServer.StartAsync();
+        server.Accounts.Create("alice", "secret", null, AccountLevelType.Player);
+        server.Characters.CreateCharacter(server.Accounts.GetByUsername("alice")!.Id, Packet("Aramis"));
+        await server.AuthenticateAsync();
+
+        var characters = await server.Client.GetFromJsonAsync<List<CharacterResponse>>(Route);
+
+        Assert.Empty(characters!);
     }
 
     [Fact]
@@ -52,31 +72,11 @@ public class CharacterEndpointsTests
     }
 
     [Fact]
-    public async Task GetMyCharacters_NeverReturnsAnotherAccountsCharacters()
+    public async Task GetMyCharacters_WithoutAToken_IsUnauthorized()
     {
-        // The one defect here that would be a security bug rather than an inconvenience.
         await using var server = await TestApiServer.StartAsync();
-        server.Accounts.Create("alice", "secret", null, AccountLevelType.Player);
-        server.Characters.CreateCharacter(server.Accounts.GetByUsername("alice")!.Id, Packet("Aramis"));
-        await server.AuthenticateAsync();
 
-        var characters = await server.Client.GetFromJsonAsync<List<CharacterResponse>>(Route);
-
-        Assert.Empty(characters!);
-    }
-
-    [Fact]
-    public async Task GetMyCharacters_IgnoresMobilesOwnedByNobody()
-    {
-        // Every NPC on a real shard looks like this in the store: a mobile no account lists.
-        await using var server = await TestApiServer.StartAsync();
-        await server.Persistence.Store<Moongate.Persistence.Entities.MobileEntity>()
-                    .UpsertAsync(new() { Name = "a wandering healer" });
-        await server.AuthenticateAsync();
-
-        var characters = await server.Client.GetFromJsonAsync<List<CharacterResponse>>(Route);
-
-        Assert.Empty(characters!);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
     }
 
     private static CharacterCreationPacket Packet(string name)

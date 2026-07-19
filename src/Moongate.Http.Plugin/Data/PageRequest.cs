@@ -36,8 +36,7 @@ public sealed class PageRequest
     /// The 0-based offset for the store. The one place the wire's 1-based page becomes an offset: doing it
     /// per route is how a page quietly repeats or drops a row.
     /// </summary>
-    public int Skip
-        => (Page - 1) * PageSize;
+    public int Skip => (Page - 1) * PageSize;
 
     /// <summary>
     /// Parses the raw query values. Returns false with a caller-facing reason rather than correcting
@@ -57,9 +56,8 @@ public sealed class PageRequest
 
         var pageNumber = 1;
 
-        if (!string.IsNullOrWhiteSpace(page)
-            && (!int.TryParse(page, NumberStyles.Integer, CultureInfo.InvariantCulture, out pageNumber)
-                || pageNumber < 1))
+        if (!string.IsNullOrWhiteSpace(page) &&
+            (!int.TryParse(page, NumberStyles.Integer, CultureInfo.InvariantCulture, out pageNumber) || pageNumber < 1))
         {
             error = $"'{page}' is not a page. Expected a whole number from 1 up.";
 
@@ -68,10 +66,10 @@ public sealed class PageRequest
 
         var size = DefaultPageSize;
 
-        if (!string.IsNullOrWhiteSpace(pageSize)
-            && (!int.TryParse(pageSize, NumberStyles.Integer, CultureInfo.InvariantCulture, out size)
-                || size < 1
-                || size > MaxPageSize))
+        if (!string.IsNullOrWhiteSpace(pageSize) &&
+            (!int.TryParse(pageSize, NumberStyles.Integer, CultureInfo.InvariantCulture, out size) ||
+             size < 1 ||
+             size > MaxPageSize))
         {
             error = $"'{pageSize}' is not a page size. Expected a whole number from 1 to {MaxPageSize}.";
 

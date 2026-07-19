@@ -48,8 +48,6 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             new DefaultSerialGenerator()
         );
 
-
-
         container.RegisterPersistedEntity<MobileEntity, Serial>(
             2,
             "mobiles",

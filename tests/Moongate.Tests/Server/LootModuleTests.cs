@@ -39,7 +39,7 @@ public class LootModuleTests
 
     [Fact]
     public void Roll_UnknownTable_ReturnsEmpty()
-        => Assert.Empty(Build(new LootTemplateService()).Module.Roll("nope"));
+        => Assert.Empty(Build(new()).Module.Roll("nope"));
 
     private static (LootModule Module, FakePersistenceService Persistence) Build(LootTemplateService loot)
     {
@@ -47,10 +47,10 @@ public class LootModuleTests
         var itemTemplates = new ItemTemplateService();
         itemTemplates.Register(new() { Id = "gold", Name = "Gold", Category = "Currency", ItemId = 3821 });
 
-        var itemFactory = new ItemFactoryService(itemTemplates, new Random(1));
-        var lootService = new LootService(loot, itemFactory, new Random(1));
+        var itemFactory = new ItemFactoryService(itemTemplates, new(1));
+        var lootService = new LootService(loot, itemFactory, new(1));
         var items = new ItemService(persistence);
 
-        return (new LootModule(lootService, items, new StubLoopThread()), persistence);
+        return (new(lootService, items, new StubLoopThread()), persistence);
     }
 }

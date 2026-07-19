@@ -9,10 +9,10 @@ using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
-using Moongate.Server.Handlers;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
@@ -60,7 +60,8 @@ public class LoginFlowIntegrationTests
         var eventBus = new EventBusService();
 
         using var dispatched = new ManualResetEventSlim();
-        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
+        eventBus.Subscribe<PacketDispatchedEvent>(
+            (e, _) =>
             {
                 if (e.OpCode == 0x80)
                 {
@@ -86,6 +87,97 @@ public class LoginFlowIntegrationTests
             socket.Send(AccountLogin("squid", "secret"));
 
             Assert.True(dispatched.Wait(TimeSpan.FromSeconds(2)), "PacketDispatchedEvent was not published for 0x80.");
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task FullLogin_EnterWorld_TooltipRequest_ReturnsMegaClilocOverTheWire()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "squid" });
+
+        var eventBus = new EventBusService();
+        using var enteredWorld = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (_, _) =>
+            {
+                enteredWorld.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerAsync(config, eventBus, persistence);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A;
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+            ReadResponse(socket, 0xA8);
+
+            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+            var redirect = ReadResponse(socket, 0x8C);
+            var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+            var gameLogin = new byte[65];
+            gameLogin[0] = 0x91;
+            BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+            Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
+            socket.Send(gameLogin);
+            ReadBytes(socket, 1); // features + character list
+
+            socket.Send(CharacterCreation("Freydis"));
+            Assert.True(enteredWorld.Wait(TimeSpan.FromSeconds(2)), "PlayerEnteredWorldEvent was not published.");
+
+            var mobile = Assert.Single(persistence.Store<MobileEntity>().Query());
+
+            // Everything after game login travels huffman-compressed. Accumulate and re-decode the
+            // stream while polling: a chunk may cut a code mid-packet.
+            var compressed = new List<byte>();
+
+            // The enter-world burst must have primed the tooltip revision (0xDC + serial).
+            var oplInfoPattern = new byte[] { 0xDC }.Concat(SerialBytes(mobile.Id)).ToArray();
+            Assert.True(
+                PollUntil(socket, compressed, oplInfoPattern),
+                "The enter-world burst carried no OplInfo (0xDC) for the player."
+            );
+
+            // Ask for the tooltip the way the client does: 0xD6 with one serial.
+            var request = new byte[7];
+            request[0] = 0xD6;
+            BinaryPrimitives.WriteUInt16BigEndian(request.AsSpan(1), 7);
+            SerialBytes(mobile.Id).CopyTo(request.AsSpan(3));
+            socket.Send(request);
+
+            // The response holds the 1050045 name line with "Freydis" in the UTF-16LE arguments.
+            var nameArgs = Encoding.Unicode.GetBytes(" \tFreydis\t ");
+            var megaClilocPattern = new byte[] { 0x00, 0x10, 0x05, 0xBD, 0x00, (byte)nameArgs.Length }
+                                    .Concat(nameArgs)
+                                    .ToArray();
+            Assert.True(
+                PollUntil(socket, compressed, megaClilocPattern),
+                "No MegaCliloc (0xD6) response carrying the name line arrived."
+            );
+
+            // And it is framed as a 0xD6 for that serial (id, length, 0x0001, serial).
+            var decoded = HuffmanDecoder.Decode(compressed.ToArray().AsSpan());
+            var start = decoded.AsSpan().IndexOf(megaClilocPattern.AsSpan());
+            var header = decoded.AsSpan(..start).LastIndexOf(new byte[] { 0xD6 }.AsSpan());
+            Assert.True(header >= 0);
+            Assert.Equal(0x0001, BinaryPrimitives.ReadUInt16BigEndian(decoded.AsSpan(header + 3)));
+            Assert.Equal(mobile.Id.Value, BinaryPrimitives.ReadUInt32BigEndian(decoded.AsSpan(header + 5)));
         }
         finally
         {
@@ -136,6 +228,37 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
+    public async Task FullLogin_SeedToRedirect_ReturnsServerListThenGameServer()
+    {
+        var config = LoopbackConfig();
+        var network = await StartServerAsync(config);
+
+        try
+        {
+            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+
+            var seed = new byte[21];
+            seed[0] = 0xEF;
+            seed[4] = 0x2A; // seed = 42
+            socket.Send(seed);
+
+            socket.Send(AccountLogin("squid", "secret"));
+            var serverList = ReadResponse(socket, 0xA8);
+            Assert.Equal(0xA8, serverList[0]);
+
+            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+            var redirect = ReadResponse(socket, 0x8C);
+            Assert.Equal(0x8C, redirect[0]);
+            Assert.Equal(11, redirect.Length);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
     public async Task FullLogin_ThenCharacterCreation_PersistsTheCharacterWithItsGearAndEntersTheWorld()
     {
         var config = LoopbackConfig();
@@ -145,7 +268,8 @@ public class LoginFlowIntegrationTests
 
         var eventBus = new EventBusService();
         using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (_, _) =>
             {
                 enteredWorld.Set();
 
@@ -212,347 +336,6 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
-    public async Task FullLogin_EnterWorld_TooltipRequest_ReturnsMegaClilocOverTheWire()
-    {
-        var config = LoopbackConfig();
-        var persistence = new FakePersistenceService();
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "squid" });
-
-        var eventBus = new EventBusService();
-        using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
-            {
-                enteredWorld.Set();
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var network = await StartServerAsync(config, eventBus, persistence);
-
-        try
-        {
-            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(IPAddress.Loopback, network.Port);
-
-            var seed = new byte[21];
-            seed[0] = 0xEF;
-            seed[4] = 0x2A;
-            socket.Send(seed);
-
-            socket.Send(AccountLogin("squid", "secret"));
-            ReadResponse(socket, 0xA8);
-
-            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
-            var redirect = ReadResponse(socket, 0x8C);
-            var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
-
-            var gameLogin = new byte[65];
-            gameLogin[0] = 0x91;
-            BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
-            Encoding.ASCII.GetBytes("squid").CopyTo(gameLogin.AsSpan(5));
-            socket.Send(gameLogin);
-            ReadBytes(socket, 1); // features + character list
-
-            socket.Send(CharacterCreation("Freydis"));
-            Assert.True(enteredWorld.Wait(TimeSpan.FromSeconds(2)), "PlayerEnteredWorldEvent was not published.");
-
-            var mobile = Assert.Single(persistence.Store<MobileEntity>().Query());
-
-            // Everything after game login travels huffman-compressed. Accumulate and re-decode the
-            // stream while polling: a chunk may cut a code mid-packet.
-            var compressed = new List<byte>();
-
-            // The enter-world burst must have primed the tooltip revision (0xDC + serial).
-            var oplInfoPattern = new byte[] { 0xDC }.Concat(SerialBytes(mobile.Id)).ToArray();
-            Assert.True(
-                PollUntil(socket, compressed, oplInfoPattern),
-                "The enter-world burst carried no OplInfo (0xDC) for the player."
-            );
-
-            // Ask for the tooltip the way the client does: 0xD6 with one serial.
-            var request = new byte[7];
-            request[0] = 0xD6;
-            BinaryPrimitives.WriteUInt16BigEndian(request.AsSpan(1), 7);
-            SerialBytes(mobile.Id).CopyTo(request.AsSpan(3));
-            socket.Send(request);
-
-            // The response holds the 1050045 name line with "Freydis" in the UTF-16LE arguments.
-            var nameArgs = Encoding.Unicode.GetBytes(" \tFreydis\t ");
-            var megaClilocPattern = new byte[] { 0x00, 0x10, 0x05, 0xBD, 0x00, (byte)nameArgs.Length }
-                .Concat(nameArgs)
-                .ToArray();
-            Assert.True(
-                PollUntil(socket, compressed, megaClilocPattern),
-                "No MegaCliloc (0xD6) response carrying the name line arrived."
-            );
-
-            // And it is framed as a 0xD6 for that serial (id, length, 0x0001, serial).
-            var decoded = HuffmanDecoder.Decode(compressed.ToArray().AsSpan());
-            var start = decoded.AsSpan().IndexOf(megaClilocPattern.AsSpan());
-            var header = decoded.AsSpan(..start).LastIndexOf(new byte[] { 0xD6 }.AsSpan());
-            Assert.True(header >= 0);
-            Assert.Equal(0x0001, BinaryPrimitives.ReadUInt16BigEndian(decoded.AsSpan(header + 3)));
-            Assert.Equal(mobile.Id.Value, BinaryPrimitives.ReadUInt32BigEndian(decoded.AsSpan(header + 5)));
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    /// <summary>
-    /// End-to-end proof that the spatial index and its consumers work together: two real characters log
-    /// in and enter the world (same default starting city, so they land on the same tile), the
-    /// WorldReadyEvent-independent PlayerEnteredWorldEvent path indexes both through
-    /// <see cref="SpatialSubscriber" />, and <see cref="WorldService.SendToPlayersInRange{TPacket}" />
-    /// delivers real bytes over the wire to the in-range session while skipping the excluded one.
-    /// </summary>
-    [Fact]
-    public async Task Spatial_TwoPlayersEnterWorld_IndexesBothAndBroadcastSkipsExcludedSession()
-    {
-        var config = LoopbackConfig();
-        var persistence = new FakePersistenceService();
-
-        // StubAccountService.GetAccountIdByUsername always resolves to Serial(1) regardless of the
-        // username on the wire, so both logins land on this one seeded account. That is fine here: the
-        // spatial assertions below key off the created mobiles, not their owning account.
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
-
-        var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
-        var sessions = new SessionManager();
-
-        var loopThread = new LoopThreadMarker();
-        loopThread.Capture();
-        var spatial = new SpatialIndexService(persistence, loopThread);
-        new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
-
-        var world = new WorldService(
-            new ItemService(persistence, opl),
-            CharacterServiceFixture.Skills(),
-            new VirtualSerialService(),
-            eventBus,
-            TimeProvider.System,
-            opl,
-            sessions
-        );
-        var characters = CharacterServiceFixture.Create(persistence, (EventBusService)eventBus, sessions);
-
-        using var aliceEntered = new ManualResetEventSlim();
-        using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
-            {
-                if (e.Mobile.Name == "Alice")
-                {
-                    aliceEntered.Set();
-                }
-                else if (e.Mobile.Name == "Bob")
-                {
-                    bobEntered.Set();
-                }
-
-                return Task.CompletedTask;
-            }
-        );
-
-        // WorldService and NetworkService share one SessionManager here, unlike the other harness
-        // overloads: this is what lets SendToPlayersInRange below reach the actual connected sockets.
-        var network = await StartServerAsync(config, eventBus, characters, world, opl, sessions);
-
-        try
-        {
-            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
-            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
-
-            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(bobSocket, network.Port, "bob", "Bob");
-            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
-
-            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
-            var bobMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Bob");
-
-            // Same default starting city (index 0) for both: same map, same tile.
-            Assert.Equal(aliceMobile.MapId, bobMobile.MapId);
-            Assert.Equal(aliceMobile.Position, bobMobile.Position);
-
-            // The bootstrap subscriber indexed both purely from PlayerEnteredWorldEvent — no WorldReadyEvent
-            // fired in this harness, so this also proves the per-player path works standalone.
-            Assert.True(
-                WaitUntil(
-                    () => spatial.GetMobilesInRange(aliceMobile.MapId, aliceMobile.Position, 18).Count == 2,
-                    TimeSpan.FromSeconds(2)
-                ),
-                "The spatial index did not end up holding both players."
-            );
-
-            // A distinctive, single-use marker packet: opcode 0x4E (PersonalLightLevel) + Bob's serial +
-            // level 77, which never appears elsewhere on the wire (Bob's own enter-world burst carries the
-            // same opcode and serial but level 0).
-            var marker = new PersonalLightLevelPacket(bobMobile.Id, 77);
-            var pattern = new byte[] { 0x4E }.Concat(SerialBytes(bobMobile.Id)).Concat([(byte)77]).ToArray();
-
-            var recipients = world.SendToPlayersInRange(
-                aliceMobile.MapId,
-                aliceMobile.Position,
-                18,
-                marker,
-                exclude: aliceMobile.Id
-            );
-
-            Assert.Equal(1, recipients);
-
-            var bobCompressed = new List<byte>();
-            Assert.True(
-                PollUntil(bobSocket, bobCompressed, pattern),
-                "Bob (in range, not excluded) never received the broadcast."
-            );
-
-            var aliceCompressed = new List<byte>();
-            Assert.False(
-                PollUntil(aliceSocket, aliceCompressed, pattern, TimeSpan.FromMilliseconds(500)),
-                "Alice (excluded) received a broadcast meant to skip her."
-            );
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    /// <summary>
-    /// Drives one client through the full login handshake (seed, account login, server select, game
-    /// login) and sends character creation for <paramref name="characterName" />, mirroring the inline
-    /// steps every other test in this file repeats — parameterized so two independent clients can each
-    /// reach the world over their own socket. Does not itself wait for the enter-world burst; callers
-    /// observe that via <see cref="PlayerEnteredWorldEvent" /> or by reading the socket.
-    /// </summary>
-    private static void EnterWorld(Socket socket, int port, string account, string characterName)
-    {
-        socket.Connect(IPAddress.Loopback, port);
-
-        var seed = new byte[21];
-        seed[0] = 0xEF;
-        seed[4] = 0x2A;
-        socket.Send(seed);
-
-        socket.Send(AccountLogin(account, "secret"));
-        ReadResponse(socket, 0xA8);
-
-        socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
-        var redirect = ReadResponse(socket, 0x8C);
-        var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
-
-        var gameLogin = new byte[65];
-        gameLogin[0] = 0x91;
-        BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
-        Encoding.ASCII.GetBytes(account).CopyTo(gameLogin.AsSpan(5));
-        socket.Send(gameLogin);
-        ReadBytes(socket, 1); // features + character list
-
-        socket.Send(CharacterCreation(characterName));
-    }
-
-    /// <summary>Polls <paramref name="condition" /> until it is true or <paramref name="timeout" /> elapses.</summary>
-    private static bool WaitUntil(Func<bool> condition, TimeSpan timeout)
-    {
-        var elapsed = Stopwatch.StartNew();
-
-        while (!condition())
-        {
-            if (elapsed.Elapsed >= timeout)
-            {
-                return false;
-            }
-
-            Thread.Sleep(10);
-        }
-
-        return true;
-    }
-
-    /// <summary>Keeps draining the socket into <paramref name="compressed" /> until the decoded stream contains <paramref name="pattern" />.</summary>
-    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern)
-        => PollUntil(socket, compressed, pattern, ReadTimeout);
-
-    /// <summary>
-    /// Same as the three-argument overload, but with an explicit <paramref name="timeout" /> — used to
-    /// prove a pattern does NOT arrive, where waiting out the full <see cref="ReadTimeout" /> per assertion
-    /// would make the test needlessly slow.
-    /// </summary>
-    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern, TimeSpan timeout)
-    {
-        var buffer = new byte[4096];
-        var elapsed = Stopwatch.StartNew();
-
-        while (true)
-        {
-            if (HuffmanDecoder.Decode(compressed.ToArray().AsSpan()).AsSpan().IndexOf(pattern.AsSpan()) >= 0)
-            {
-                return true;
-            }
-
-            var remaining = timeout - elapsed.Elapsed;
-
-            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
-            {
-                return false;
-            }
-
-            var read = socket.Receive(buffer);
-
-            // A readable socket that yields nothing is a closed one: no further bytes are coming, so the
-            // pattern this is waiting for never will either.
-            if (read == 0)
-            {
-                return false;
-            }
-
-            compressed.AddRange(buffer.AsSpan(0, read).ToArray());
-        }
-    }
-
-    private static byte[] SerialBytes(Serial serial)
-    {
-        var bytes = new byte[4];
-        BinaryPrimitives.WriteUInt32BigEndian(bytes, serial.Value);
-
-        return bytes;
-    }
-
-    [Fact]
-    public async Task FullLogin_SeedToRedirect_ReturnsServerListThenGameServer()
-    {
-        var config = LoopbackConfig();
-        var network = await StartServerAsync(config);
-
-        try
-        {
-            using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(IPAddress.Loopback, network.Port);
-
-            var seed = new byte[21];
-            seed[0] = 0xEF;
-            seed[4] = 0x2A; // seed = 42
-            socket.Send(seed);
-
-            socket.Send(AccountLogin("squid", "secret"));
-            var serverList = ReadResponse(socket, 0xA8);
-            Assert.Equal(0xA8, serverList[0]);
-
-            socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
-            var redirect = ReadResponse(socket, 0x8C);
-            Assert.Equal(0x8C, redirect[0]);
-            Assert.Equal(11, redirect.Length);
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    [Fact]
     public async Task Login_WithEmptyPassword_ReturnsLoginDenied()
     {
         var config = LoopbackConfig();
@@ -580,48 +363,6 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
-    public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
-    {
-        var config = LoopbackConfig();
-        var eventBus = new EventBusService();
-
-        using var created = new ManualResetEventSlim();
-        using var destroyed = new ManualResetEventSlim();
-        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
-            {
-                created.Set();
-
-                return Task.CompletedTask;
-            }
-        );
-        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
-            {
-                destroyed.Set();
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var network = await StartServerAsync(config, eventBus);
-
-        try
-        {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(IPAddress.Loopback, network.Port);
-
-            Assert.True(created.Wait(TimeSpan.FromSeconds(2)), "SessionCreatedEvent was not published.");
-
-            socket.Close();
-
-            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    [Fact]
     public async Task Movement_TurnThenStep_AcksBothAndBroadcastsToNearbyPlayer()
     {
         var config = LoopbackConfig();
@@ -637,7 +378,7 @@ public class LoginFlowIntegrationTests
         // on this same tiny map — real client coordinates (e.g. Britain at 1495,1629, the shared
         // CharacterServiceFixture default) would fall outside it.
         var tileData = UltimaFixtures.BuildTileData();
-        var mapBlock = UltimaFixtures.BuildMapBlock(landId: 3, z: 0);
+        var mapBlock = UltimaFixtures.BuildMapBlock(3, 0);
         var dir = UltimaFixtures.CreateClientDirectory(("map0.mul", mapBlock), ("tiledata.mul", tileData));
 
         try
@@ -683,11 +424,12 @@ public class LoginFlowIntegrationTests
                     Map = MapType.Felucca
                 }
             );
-            var characters = CharacterServiceFixture.Create(persistence, (EventBusService)eventBus, sessions, testCities);
+            var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
 
             using var aliceEntered = new ManualResetEventSlim();
             using var bobEntered = new ManualResetEventSlim();
-            eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+            eventBus.Subscribe<PlayerEnteredWorldEvent>(
+                (e, _) =>
                 {
                     if (e.Mobile.Name == "Alice")
                     {
@@ -708,7 +450,10 @@ public class LoginFlowIntegrationTests
             {
                 using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 EnterWorld(aliceSocket, network.Port, "alice", "Alice");
-                Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+                Assert.True(
+                    aliceEntered.Wait(TimeSpan.FromSeconds(2)),
+                    "Alice's PlayerEnteredWorldEvent was not published."
+                );
 
                 using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 EnterWorld(bobSocket, network.Port, "bob", "Bob");
@@ -779,48 +524,169 @@ public class LoginFlowIntegrationTests
         }
     }
 
-    private static async Task<NetworkService> StartServerWithMovementAsync(
-        MoongateConfig config,
-        IEventBus eventBus,
-        ICharacterService characters,
-        WorldService world,
-        IMovementService movement,
-        OplService opl,
-        ISessionManager sessions
-    )
+    [Fact]
+    public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
     {
-        var accounts = new StubAccountService();
-        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+        var config = LoopbackConfig();
+        var eventBus = new EventBusService();
 
-        var cities = new StartingCityService();
-        cities.Register(
-            new()
+        using var created = new ManualResetEventSlim();
+        using var destroyed = new ManualResetEventSlim();
+        eventBus.Subscribe<SessionCreatedEvent>(
+            (_, _) =>
             {
-                City = "TestTown",
-                Building = "Origin",
-                Description = 1075072,
-                X = 5,
-                Y = 5,
-                Z = 0,
-                Map = MapType.Felucca
+                created.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+        eventBus.Subscribe<SessionDestroyedEvent>(
+            (_, _) =>
+            {
+                destroyed.Set();
+
+                return Task.CompletedTask;
             }
         );
 
-        var handlers = new List<IPacketHandlerRegistration>
+        var network = await StartServerAsync(config, eventBus);
+
+        try
         {
-            new LoginSeedHandler(),
-            new AccountLoginHandler(accounts, config),
-            new SelectServerHandler(pending, config),
-            new GameServerLoginHandler(pending, cities, accounts, characters),
-            new CharacterCreationHandler(characters, world),
-            new MegaClilocHandler(opl),
-            new MoveRequestHandler(movement)
-        };
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
 
-        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
-        await network.StartAsync(CancellationToken.None);
+            Assert.True(created.Wait(TimeSpan.FromSeconds(2)), "SessionCreatedEvent was not published.");
 
-        return network;
+            socket.Close();
+
+            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    /// <summary>
+    /// End-to-end proof that the spatial index and its consumers work together: two real characters log
+    /// in and enter the world (same default starting city, so they land on the same tile), the
+    /// WorldReadyEvent-independent PlayerEnteredWorldEvent path indexes both through
+    /// <see cref="SpatialSubscriber" />, and <see cref="WorldService.SendToPlayersInRange{TPacket}" />
+    /// delivers real bytes over the wire to the in-range session while skipping the excluded one.
+    /// </summary>
+    [Fact]
+    public async Task Spatial_TwoPlayersEnterWorld_IndexesBothAndBroadcastSkipsExcludedSession()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+
+        // StubAccountService.GetAccountIdByUsername always resolves to Serial(1) regardless of the
+        // username on the wire, so both logins land on this one seeded account. That is fine here: the
+        // spatial assertions below key off the created mobiles, not their owning account.
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var loopThread = new LoopThreadMarker();
+        loopThread.Capture();
+        var spatial = new SpatialIndexService(persistence, loopThread);
+        new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions);
+
+        using var aliceEntered = new ManualResetEventSlim();
+        using var bobEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
+            {
+                if (e.Mobile.Name == "Alice")
+                {
+                    aliceEntered.Set();
+                }
+                else if (e.Mobile.Name == "Bob")
+                {
+                    bobEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        // WorldService and NetworkService share one SessionManager here, unlike the other harness
+        // overloads: this is what lets SendToPlayersInRange below reach the actual connected sockets.
+        var network = await StartServerAsync(config, eventBus, characters, world, opl, sessions);
+
+        try
+        {
+            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
+            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+
+            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(bobSocket, network.Port, "bob", "Bob");
+            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
+
+            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
+            var bobMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Bob");
+
+            // Same default starting city (index 0) for both: same map, same tile.
+            Assert.Equal(aliceMobile.MapId, bobMobile.MapId);
+            Assert.Equal(aliceMobile.Position, bobMobile.Position);
+
+            // The bootstrap subscriber indexed both purely from PlayerEnteredWorldEvent — no WorldReadyEvent
+            // fired in this harness, so this also proves the per-player path works standalone.
+            Assert.True(
+                WaitUntil(
+                    () => spatial.GetMobilesInRange(aliceMobile.MapId, aliceMobile.Position, 18).Count == 2,
+                    TimeSpan.FromSeconds(2)
+                ),
+                "The spatial index did not end up holding both players."
+            );
+
+            // A distinctive, single-use marker packet: opcode 0x4E (PersonalLightLevel) + Bob's serial +
+            // level 77, which never appears elsewhere on the wire (Bob's own enter-world burst carries the
+            // same opcode and serial but level 0).
+            var marker = new PersonalLightLevelPacket(bobMobile.Id, 77);
+            var pattern = new byte[] { 0x4E }.Concat(SerialBytes(bobMobile.Id)).Concat([(byte)77]).ToArray();
+
+            var recipients = world.SendToPlayersInRange(
+                aliceMobile.MapId,
+                aliceMobile.Position,
+                18,
+                marker,
+                aliceMobile.Id
+            );
+
+            Assert.Equal(1, recipients);
+
+            var bobCompressed = new List<byte>();
+            Assert.True(
+                PollUntil(bobSocket, bobCompressed, pattern),
+                "Bob (in range, not excluded) never received the broadcast."
+            );
+
+            var aliceCompressed = new List<byte>();
+            Assert.False(
+                PollUntil(aliceSocket, aliceCompressed, pattern, TimeSpan.FromMilliseconds(500)),
+                "Alice (excluded) received a broadcast meant to skip her."
+            );
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
     }
 
     private static byte[] AccountLogin(string account, string password)
@@ -854,12 +720,89 @@ public class LoginFlowIntegrationTests
         return packet;
     }
 
+    /// <summary>
+    /// Drives one client through the full login handshake (seed, account login, server select, game
+    /// login) and sends character creation for <paramref name="characterName" />, mirroring the inline
+    /// steps every other test in this file repeats — parameterized so two independent clients can each
+    /// reach the world over their own socket. Does not itself wait for the enter-world burst; callers
+    /// observe that via <see cref="PlayerEnteredWorldEvent" /> or by reading the socket.
+    /// </summary>
+    private static void EnterWorld(Socket socket, int port, string account, string characterName)
+    {
+        socket.Connect(IPAddress.Loopback, port);
+
+        var seed = new byte[21];
+        seed[0] = 0xEF;
+        seed[4] = 0x2A;
+        socket.Send(seed);
+
+        socket.Send(AccountLogin(account, "secret"));
+        ReadResponse(socket, 0xA8);
+
+        socket.Send(new byte[] { 0xA0, 0x00, 0x00 });
+        var redirect = ReadResponse(socket, 0x8C);
+        var authKey = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7));
+
+        var gameLogin = new byte[65];
+        gameLogin[0] = 0x91;
+        BinaryPrimitives.WriteUInt32BigEndian(gameLogin.AsSpan(1), authKey);
+        Encoding.ASCII.GetBytes(account).CopyTo(gameLogin.AsSpan(5));
+        socket.Send(gameLogin);
+        ReadBytes(socket, 1); // features + character list
+
+        socket.Send(CharacterCreation(characterName));
+    }
+
     private static MoongateConfig LoopbackConfig()
         => new()
         {
             ShardName = "Moongate",
             Network = new() { Address = "127.0.0.1", Port = 0, PublicAddress = "127.0.0.1" }
         };
+
+    /// <summary>
+    /// Keeps draining the socket into <paramref name="compressed" /> until the decoded stream contains
+    /// <paramref name="pattern" />.
+    /// </summary>
+    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern)
+        => PollUntil(socket, compressed, pattern, ReadTimeout);
+
+    /// <summary>
+    /// Same as the three-argument overload, but with an explicit <paramref name="timeout" /> — used to
+    /// prove a pattern does NOT arrive, where waiting out the full <see cref="ReadTimeout" /> per assertion
+    /// would make the test needlessly slow.
+    /// </summary>
+    private static bool PollUntil(Socket socket, List<byte> compressed, byte[] pattern, TimeSpan timeout)
+    {
+        var buffer = new byte[4096];
+        var elapsed = Stopwatch.StartNew();
+
+        while (true)
+        {
+            if (HuffmanDecoder.Decode(compressed.ToArray().AsSpan()).AsSpan().IndexOf(pattern.AsSpan()) >= 0)
+            {
+                return true;
+            }
+
+            var remaining = timeout - elapsed.Elapsed;
+
+            if (remaining <= TimeSpan.Zero || !socket.Poll(remaining, SelectMode.SelectRead))
+            {
+                return false;
+            }
+
+            var read = socket.Receive(buffer);
+
+            // A readable socket that yields nothing is a closed one: no further bytes are coming, so the
+            // pattern this is waiting for never will either.
+            if (read == 0)
+            {
+                return false;
+            }
+
+            compressed.AddRange(buffer.AsSpan(0, read).ToArray());
+        }
+    }
 
     private static byte[] ReadBytes(Socket socket, int minCount)
     {
@@ -915,6 +858,14 @@ public class LoginFlowIntegrationTests
         return buffer.AsSpan(0, read).ToArray();
     }
 
+    private static byte[] SerialBytes(Serial serial)
+    {
+        var bytes = new byte[4];
+        BinaryPrimitives.WriteUInt32BigEndian(bytes, serial.Value);
+
+        return bytes;
+    }
+
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
         => StartServerAsync(config, new EventBusService());
 
@@ -934,7 +885,7 @@ public class LoginFlowIntegrationTests
             config,
             eventBus,
             CharacterServiceFixture.Create(persistence, (EventBusService)eventBus),
-            new WorldService(
+            new(
                 new ItemService(persistence, opl),
                 CharacterServiceFixture.Skills(),
                 new VirtualSerialService(),
@@ -996,5 +947,67 @@ public class LoginFlowIntegrationTests
         await network.StartAsync(CancellationToken.None);
 
         return network;
+    }
+
+    private static async Task<NetworkService> StartServerWithMovementAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService world,
+        IMovementService movement,
+        OplService opl,
+        ISessionManager sessions
+    )
+    {
+        var accounts = new StubAccountService();
+        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+
+        var cities = new StartingCityService();
+        cities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Felucca
+            }
+        );
+
+        var handlers = new List<IPacketHandlerRegistration>
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities, accounts, characters),
+            new CharacterCreationHandler(characters, world),
+            new MegaClilocHandler(opl),
+            new MoveRequestHandler(movement)
+        };
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
+    }
+
+    /// <summary>Polls <paramref name="condition" /> until it is true or <paramref name="timeout" /> elapses.</summary>
+    private static bool WaitUntil(Func<bool> condition, TimeSpan timeout)
+    {
+        var elapsed = Stopwatch.StartNew();
+
+        while (!condition())
+        {
+            if (elapsed.Elapsed >= timeout)
+            {
+                return false;
+            }
+
+            Thread.Sleep(10);
+        }
+
+        return true;
     }
 }

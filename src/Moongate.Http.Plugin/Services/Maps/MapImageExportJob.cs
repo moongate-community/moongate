@@ -1,6 +1,5 @@
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Maps;
-using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Types;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Types;
@@ -69,6 +68,43 @@ public sealed class MapImageExportJob : IMapImageExportJob
         return true;
     }
 
+    /// <summary>
+    /// Every tile, deepest zoom first, then the whole-facet image. Bottom-up on purpose: each level
+    /// composes from children already on disk, so nothing recurses and no tile is built twice.
+    /// </summary>
+    private List<(MapType Facet, int Zoom, int X, int Y)> Plan()
+    {
+        var work = new List<(MapType, int, int, int)>();
+
+        foreach (var facet in _provider.Facets)
+        {
+            if (_provider.Get(facet) is not { } map)
+            {
+                continue;
+            }
+
+            var maxZoom = _maps.MaxZoomFor(facet);
+
+            for (var zoom = maxZoom; zoom >= 0; zoom--)
+            {
+                var across = MapTileGeometry.TilesAcross(map.Width, zoom, maxZoom);
+                var down = MapTileGeometry.TilesDown(map.Height, zoom, maxZoom);
+
+                for (var x = 0; x < across; x++)
+                {
+                    for (var y = 0; y < down; y++)
+                    {
+                        work.Add((facet, zoom, x, y));
+                    }
+                }
+            }
+
+            work.Add((facet, FullImageZoom, 0, 0));
+        }
+
+        return work;
+    }
+
     private async Task RunAsync()
     {
         try
@@ -126,42 +162,5 @@ public sealed class MapImageExportJob : IMapImageExportJob
                 _state = MapImageExportStateType.Failed;
             }
         }
-    }
-
-    /// <summary>
-    /// Every tile, deepest zoom first, then the whole-facet image. Bottom-up on purpose: each level
-    /// composes from children already on disk, so nothing recurses and no tile is built twice.
-    /// </summary>
-    private List<(MapType Facet, int Zoom, int X, int Y)> Plan()
-    {
-        var work = new List<(MapType, int, int, int)>();
-
-        foreach (var facet in _provider.Facets)
-        {
-            if (_provider.Get(facet) is not { } map)
-            {
-                continue;
-            }
-
-            var maxZoom = _maps.MaxZoomFor(facet);
-
-            for (var zoom = maxZoom; zoom >= 0; zoom--)
-            {
-                var across = MapTileGeometry.TilesAcross(map.Width, zoom, maxZoom);
-                var down = MapTileGeometry.TilesDown(map.Height, zoom, maxZoom);
-
-                for (var x = 0; x < across; x++)
-                {
-                    for (var y = 0; y < down; y++)
-                    {
-                        work.Add((facet, zoom, x, y));
-                    }
-                }
-            }
-
-            work.Add((facet, FullImageZoom, 0, 0));
-        }
-
-        return work;
     }
 }

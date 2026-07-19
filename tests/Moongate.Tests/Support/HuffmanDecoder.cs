@@ -12,7 +12,7 @@ public static class HuffmanDecoder
 {
     private static readonly int[] _table =
     {
-0x2, 0x000, 0x5, 0x01F, 0x6, 0x022, 0x7, 0x034, 0x7, 0x075, 0x6, 0x028, 0x6, 0x03B, 0x7, 0x032,
+        0x2, 0x000, 0x5, 0x01F, 0x6, 0x022, 0x7, 0x034, 0x7, 0x075, 0x6, 0x028, 0x6, 0x03B, 0x7, 0x032,
         0x8, 0x0E0, 0x8, 0x062, 0x7, 0x056, 0x8, 0x079, 0x9, 0x19D, 0x8, 0x097, 0x6, 0x02A, 0x7, 0x057,
         0x8, 0x071, 0x8, 0x05B, 0x9, 0x1CC, 0x8, 0x0A7, 0x7, 0x025, 0x7, 0x04F, 0x8, 0x066, 0x8, 0x07D,
         0x9, 0x191, 0x9, 0x1CE, 0x7, 0x03F, 0x9, 0x090, 0x8, 0x059, 0x8, 0x07B, 0x8, 0x091, 0x8, 0x0C6,
@@ -48,18 +48,6 @@ public static class HuffmanDecoder
     };
 
     private static readonly Dictionary<(int Length, int Value), int> _codes = BuildCodes();
-
-    private static Dictionary<(int Length, int Value), int> BuildCodes()
-    {
-        var codes = new Dictionary<(int Length, int Value), int>();
-
-        for (var symbol = 0; symbol <= 256; symbol++)
-        {
-            codes[(_table[symbol * 2], _table[symbol * 2 + 1])] = symbol;
-        }
-
-        return codes;
-    }
 
     /// <summary>
     /// Decodes a stream of terminator-separated compressed packets back into raw bytes. A trailing
@@ -100,5 +88,17 @@ public static class HuffmanDecoder
         }
 
         return output.ToArray();
+    }
+
+    private static Dictionary<(int Length, int Value), int> BuildCodes()
+    {
+        var codes = new Dictionary<(int Length, int Value), int>();
+
+        for (var symbol = 0; symbol <= 256; symbol++)
+        {
+            codes[(_table[symbol * 2], _table[symbol * 2 + 1])] = symbol;
+        }
+
+        return codes;
     }
 }

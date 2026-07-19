@@ -25,6 +25,9 @@ public sealed class StubGameLoopContext : IGameLoopContext
 
     public ITimerService Timers => throw new NotSupportedException();
 
+    public bool Cancel(string timerId)
+        => throw new NotSupportedException();
+
     public void Post(Action action)
     {
         PostCount++;
@@ -34,9 +37,6 @@ public sealed class StubGameLoopContext : IGameLoopContext
             action();
         }
     }
-
-    public bool Cancel(string timerId)
-        => throw new NotSupportedException();
 
     public string Schedule(string name, TimeSpan delay, Action callback)
         => throw new NotSupportedException();

@@ -17,11 +17,9 @@ public sealed class PaperdollEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
-        routes.MapGet("/api/v1/images/mobiles/templates/{id}/paperdoll.png", Get)
-              .WithName("GetMobileTemplatePaperdoll")
-              .WithTags("mobiles");
-    }
+        => routes.MapGet("/api/v1/images/mobiles/templates/{id}/paperdoll.png", Get)
+                 .WithName("GetMobileTemplatePaperdoll")
+                 .WithTags("mobiles");
 
     /// <summary>Serves the template's classic client paperdoll as PNG: background, body, hair, equipment.</summary>
     /// <remarks>
@@ -34,7 +32,7 @@ public sealed class PaperdollEndpoints : IApiEndpointRegistration
         var path = await _paperdolls.GetOrCreateAsync(id, background.GetValueOrDefault(true), cancellationToken);
 
         return path is null
-            ? Results.Problem($"No paperdoll for template '{id}'.", statusCode: StatusCodes.Status404NotFound)
-            : Results.File(path, "image/png");
+                   ? Results.Problem($"No paperdoll for template '{id}'.", statusCode: StatusCodes.Status404NotFound)
+                   : Results.File(path, "image/png");
     }
 }

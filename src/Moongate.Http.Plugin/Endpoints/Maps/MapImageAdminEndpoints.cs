@@ -29,6 +29,14 @@ public sealed class MapImageAdminEndpoints : IApiEndpointRegistration
         group.MapGet("/", GetStatus).WithName("GetMapImageExportStatus");
     }
 
+    /// <summary>Reports how far the map image export has got.</summary>
+    /// <remarks>
+    /// State is Idle before any export has run, then Running, and finally Completed or Failed. Failed counts
+    /// images that could not be produced; the reasons are in the server log.
+    /// </remarks>
+    private IResult GetStatus()
+        => Results.Ok(_export.Status);
+
     /// <summary>Builds every map tile and whole-facet image into the cache.</summary>
     /// <remarks>
     /// Answers 202 and works in the background; poll this same route with GET for progress. Only one runs
@@ -57,12 +65,4 @@ public sealed class MapImageAdminEndpoints : IApiEndpointRegistration
 
         return Results.Accepted("/api/v1/admin/images/maps", _export.Status);
     }
-
-    /// <summary>Reports how far the map image export has got.</summary>
-    /// <remarks>
-    /// State is Idle before any export has run, then Running, and finally Completed or Failed. Failed counts
-    /// images that could not be produced; the reasons are in the server log.
-    /// </remarks>
-    private IResult GetStatus()
-        => Results.Ok(_export.Status);
 }

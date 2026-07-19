@@ -7,8 +7,7 @@ public sealed class LoopThreadMarker : ILoopThread
 {
     private volatile int _loopThreadId = -1;
 
-    public bool IsOnLoopThread
-        => _loopThreadId == Environment.CurrentManagedThreadId;
+    public bool IsOnLoopThread => _loopThreadId == Environment.CurrentManagedThreadId;
 
     public void Capture()
         => _loopThreadId = Environment.CurrentManagedThreadId;

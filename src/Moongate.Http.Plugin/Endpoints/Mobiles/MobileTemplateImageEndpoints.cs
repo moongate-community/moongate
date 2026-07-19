@@ -17,11 +17,9 @@ public sealed class MobileTemplateImageEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
-        routes.MapGet("/api/v1/images/mobiles/templates/{id}.png", Get)
-              .WithName("GetMobileTemplateImage")
-              .WithTags("mobiles");
-    }
+        => routes.MapGet("/api/v1/images/mobiles/templates/{id}.png", Get)
+                 .WithName("GetMobileTemplateImage")
+                 .WithTags("mobiles");
 
     /// <summary>Serves a mobile template's dressed figure as PNG: body, hair and worn equipment.</summary>
     /// <remarks>
@@ -33,7 +31,7 @@ public sealed class MobileTemplateImageEndpoints : IApiEndpointRegistration
         var path = await _figures.GetOrCreateAsync(id, cancellationToken);
 
         return path is null
-            ? Results.Problem($"No renderable figure for template '{id}'.", statusCode: StatusCodes.Status404NotFound)
-            : Results.File(path, "image/png");
+                   ? Results.Problem($"No renderable figure for template '{id}'.", statusCode: StatusCodes.Status404NotFound)
+                   : Results.File(path, "image/png");
     }
 }

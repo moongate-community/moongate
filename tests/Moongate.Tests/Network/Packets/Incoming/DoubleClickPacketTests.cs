@@ -6,6 +6,14 @@ namespace Moongate.Tests.Network.Packets.Incoming;
 
 public class DoubleClickPacketTests
 {
+    [Fact]
+    public void PacketId_Is0x06()
+        => Assert.Equal(0x06, DoubleClickPacket.PacketId);
+
+    [Fact]
+    public void Read_ParsesTheTargetSerial()
+        => Assert.Equal(0x40000009u, Read(0x40000009).Target.Value);
+
     private static DoubleClickPacket Read(uint serial)
     {
         var buffer = new byte[5];
@@ -16,12 +24,4 @@ public class DoubleClickPacketTests
 
         return DoubleClickPacket.Read(ref reader);
     }
-
-    [Fact]
-    public void Read_ParsesTheTargetSerial()
-        => Assert.Equal(0x40000009u, Read(0x40000009).Target.Value);
-
-    [Fact]
-    public void PacketId_Is0x06()
-        => Assert.Equal(0x06, DoubleClickPacket.PacketId);
 }

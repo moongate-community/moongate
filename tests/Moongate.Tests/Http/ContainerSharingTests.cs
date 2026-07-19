@@ -42,6 +42,25 @@ public class ContainerSharingTests
     }
 
     [Fact]
+    public async Task Endpoint_ServesMutationsMadeThroughTheGameContainerAfterStartup()
+    {
+        await using var server = await TestHttpServer.StartAsync(
+                                     container =>
+                                     {
+                                         container.Register<GameSingleton>(Reuse.Singleton);
+                                         container.RegisterApiEndpoint<SingletonProbeEndpoints>();
+                                     }
+                                 );
+
+        // Mutated after the routes are mapped, through the container rather than the endpoint: the marker
+        // only comes back changed if the endpoint holds the game's own instance and reads it live. This is
+        // the whole chain the previous test only covers a link of.
+        server.Container.Resolve<GameSingleton>().Marker = "mutated-on-the-loop";
+
+        Assert.Equal("mutated-on-the-loop", await server.Client.GetStringAsync("/singleton-marker"));
+    }
+
+    [Fact]
     public async Task WebApplication_ResolvesTheSameSingletonInstanceTheGameContainerHolds()
     {
         // The container as SquidStdBootstrap leaves it: Moongate services already registered.
@@ -58,23 +77,5 @@ public class ContainerSharingTests
         // Reference identity, not mere resolvability: a cloned registry would hand back a different
         // instance, and no test asserting "200 OK" would ever notice.
         Assert.Same(fromGameLoop, fromWeb);
-    }
-
-    [Fact]
-    public async Task Endpoint_ServesMutationsMadeThroughTheGameContainerAfterStartup()
-    {
-        await using var server = await TestHttpServer.StartAsync(container =>
-            {
-                container.Register<GameSingleton>(Reuse.Singleton);
-                container.RegisterApiEndpoint<SingletonProbeEndpoints>();
-            }
-        );
-
-        // Mutated after the routes are mapped, through the container rather than the endpoint: the marker
-        // only comes back changed if the endpoint holds the game's own instance and reads it live. This is
-        // the whole chain the previous test only covers a link of.
-        server.Container.Resolve<GameSingleton>().Marker = "mutated-on-the-loop";
-
-        Assert.Equal("mutated-on-the-loop", await server.Client.GetStringAsync("/singleton-marker"));
     }
 }

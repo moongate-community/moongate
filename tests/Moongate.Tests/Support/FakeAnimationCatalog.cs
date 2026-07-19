@@ -1,6 +1,5 @@
 using Moongate.Http.Plugin.Data.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
-using Moongate.Ultima.Imaging;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Support;
@@ -33,7 +32,7 @@ public sealed class FakeAnimationCatalog : IAnimationCatalog
             return null;
         }
 
-        return new MobileFrame(spec.Cx, spec.Cy, new UltimaBitmap(spec.W, spec.H));
+        return new(spec.Cx, spec.Cy, new(spec.W, spec.H));
     }
 
     public int? GetItemAnimation(int itemId)

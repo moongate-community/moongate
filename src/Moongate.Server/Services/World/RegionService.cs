@@ -18,9 +18,6 @@ public sealed class RegionService : IRegionService
 
     public int Count => _regions.Count;
 
-    public IReadOnlyList<RegionDefinition> ForMap(MapType map)
-        => [.. _regions.Where(region => region.Map == map)];
-
     public RegionDefinition? At(MapType map, Point3D point)
     {
         RegionDefinition? best = null;
@@ -57,6 +54,9 @@ public sealed class RegionService : IRegionService
 
         return best;
     }
+
+    public IReadOnlyList<RegionDefinition> ForMap(MapType map)
+        => [.. _regions.Where(region => region.Map == map)];
 
     public void Register(RegionDefinition region)
         => _regions.Add(region);

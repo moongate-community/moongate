@@ -8,38 +8,23 @@ namespace Moongate.Tests.Network;
 public class PacketDocumentationTests
 {
     private static readonly List<Type> PacketTypes = typeof(IOutgoingPacket).Assembly
-        .GetTypes()
-        .Where(t => t is { IsValueType: true, Namespace: not null } &&
-                    t.Namespace.StartsWith("Moongate.Network.Packets.", StringComparison.Ordinal))
-        .ToList();
-
-    public static TheoryData<Type> Packets()
-    {
-        var data = new TheoryData<Type>();
-
-        foreach (var type in PacketTypes)
-        {
-            data.Add(type);
-        }
-
-        return data;
-    }
+                                                                            .GetTypes()
+                                                                            .Where(
+                                                                                t => t is
+                                                                                    {
+                                                                                        IsValueType: true,
+                                                                                        Namespace: not null
+                                                                                    } &&
+                                                                                    t.Namespace.StartsWith(
+                                                                                        "Moongate.Network.Packets.",
+                                                                                        StringComparison.Ordinal
+                                                                                    )
+                                                                            )
+                                                                            .ToList();
 
     [Fact]
     public void AllPacketTypes_AreDiscovered()
         => Assert.Equal(50, PacketTypes.Count);
-
-    [Theory, MemberData(nameof(Packets))]
-    public void EveryPacket_DeclaresExactlyOneSizeKind(Type packetType)
-    {
-        var doc = packetType.GetCustomAttribute<PacketDocumentationAttribute>();
-
-        Assert.NotNull(doc);
-        Assert.True(
-            doc.Length > 0 ^ doc.IsVariableLength,
-            $"{packetType.Name} must declare exactly one of Length or IsVariableLength"
-        );
-    }
 
     [Theory, MemberData(nameof(Packets))]
     public void DeclaredSize_MatchesThePacketLengthsTable(Type packetType)
@@ -57,6 +42,30 @@ public class PacketDocumentationTests
         {
             Assert.Equal((short)doc.Length, tableLength);
         }
+    }
+
+    [Theory, MemberData(nameof(Packets))]
+    public void EveryPacket_DeclaresExactlyOneSizeKind(Type packetType)
+    {
+        var doc = packetType.GetCustomAttribute<PacketDocumentationAttribute>();
+
+        Assert.NotNull(doc);
+        Assert.True(
+            (doc.Length > 0) ^ doc.IsVariableLength,
+            $"{packetType.Name} must declare exactly one of Length or IsVariableLength"
+        );
+    }
+
+    public static TheoryData<Type> Packets()
+    {
+        var data = new TheoryData<Type>();
+
+        foreach (var type in PacketTypes)
+        {
+            data.Add(type);
+        }
+
+        return data;
     }
 
     private static byte Opcode(Type packetType)

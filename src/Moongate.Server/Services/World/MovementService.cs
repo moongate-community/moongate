@@ -52,60 +52,6 @@ public sealed class MovementService : IMovementService
         _timeProvider = timeProvider;
     }
 
-    public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
-    {
-        var mobile = session.Character;
-
-        if (mobile is null)
-        {
-            return;
-        }
-
-        var now = _timeProvider.GetUtcNow();
-
-        // Chebyshev range 1 around the mobile's current position covers every tile a single step
-        // could land on (target is always exactly distance 1 away); MapTileService filters these
-        // down to the exact target tile itself.
-        var groundItems = _spatial.GetItemsInRange(mobile.MapId, mobile.Position, 1);
-
-        var decision = Evaluate(
-            mobile,
-            direction,
-            sequence,
-            session.LastMoveSequence,
-            session.LastMoveAt,
-            now,
-            _mapTiles,
-            _regions,
-            groundItems
-        );
-
-        if (!decision.Accepted)
-        {
-            // Any rejection forces a resync: the next packet's sequence is accepted unconditionally,
-            // matching how a real UO client resets its counter after a rejected move. The timing
-            // baseline (LastMoveAt) is left untouched so a burst of illegal attempts cannot keep
-            // resetting the clock and starve the rate limiter.
-            session.SetLastMove(null, session.LastMoveAt);
-            Reject(session, mobile, sequence);
-
-            return;
-        }
-
-        session.SetLastMove(sequence, now);
-        mobile.Direction = decision.NewDirection;
-
-        if (decision.PositionChanged)
-        {
-            mobile.Position = decision.NewPosition;
-        }
-
-        _mobiles.UpsertAsync(mobile).WaitSync();
-        _spatial.AddOrUpdate(mobile);
-        Broadcast(mobile);
-        Accept(session, mobile, sequence);
-    }
-
     /// <summary>
     /// Pure decision core: no I/O, no session, no persistence. Returns what the caller should do —
     /// accept-and-apply, or reject — without doing it.
@@ -163,31 +109,62 @@ public sealed class MovementService : IMovementService
         return new(true, true, new(target.X, target.Y, newZ), direction);
     }
 
-    // ModernUO wraps the move-sequence counter 255 -> 1, never to 0: sequence 0 is a reserved
-    // sentinel meaning "no baseline / just reset" (MovementThrottle.cs:272-277, verified against
-    // others/ModernUO).
-    private static byte WrapNextSequence(byte sequence)
-        => sequence == 255 ? (byte)1 : (byte)(sequence + 1);
+    public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
+    {
+        var mobile = session.Character;
 
-    // Pure rejection shorthand for Evaluate's four "current position/direction, unchanged" exits.
-    // Not to be confused with the instance Reject(PlayerSession, MobileEntity, byte) below, which
-    // sends the MoveRejectPacket to the client.
-    private static MovementDecision RejectDecision(MobileEntity mobile)
-        => new(false, false, mobile.Position, mobile.Direction);
+        if (mobile is null)
+        {
+            return;
+        }
+
+        var now = _timeProvider.GetUtcNow();
+
+        // Chebyshev range 1 around the mobile's current position covers every tile a single step
+        // could land on (target is always exactly distance 1 away); MapTileService filters these
+        // down to the exact target tile itself.
+        var groundItems = _spatial.GetItemsInRange(mobile.MapId, mobile.Position, 1);
+
+        var decision = Evaluate(
+            mobile,
+            direction,
+            sequence,
+            session.LastMoveSequence,
+            session.LastMoveAt,
+            now,
+            _mapTiles,
+            _regions,
+            groundItems
+        );
+
+        if (!decision.Accepted)
+        {
+            // Any rejection forces a resync: the next packet's sequence is accepted unconditionally,
+            // matching how a real UO client resets its counter after a rejected move. The timing
+            // baseline (LastMoveAt) is left untouched so a burst of illegal attempts cannot keep
+            // resetting the clock and starve the rate limiter.
+            session.SetLastMove(null, session.LastMoveAt);
+            Reject(session, mobile, sequence);
+
+            return;
+        }
+
+        session.SetLastMove(sequence, now);
+        mobile.Direction = decision.NewDirection;
+
+        if (decision.PositionChanged)
+        {
+            mobile.Position = decision.NewPosition;
+        }
+
+        _mobiles.UpsertAsync(mobile).WaitSync();
+        _spatial.AddOrUpdate(mobile);
+        Broadcast(mobile);
+        Accept(session, mobile, sequence);
+    }
 
     private void Accept(PlayerSession session, MobileEntity mobile, byte sequence)
         => session.Send(new MovementAckPacket(sequence, Notoriety.Resolve(mobile.Kills, mobile.Criminal)));
-
-    private void Reject(PlayerSession session, MobileEntity mobile, byte sequence)
-        => session.Send(
-            new MoveRejectPacket(
-                sequence,
-                (ushort)mobile.Position.X,
-                (ushort)mobile.Position.Y,
-                mobile.Direction,
-                (sbyte)mobile.Position.Z
-            )
-        );
 
     private void Broadcast(MobileEntity mobile)
         => _world.SendToPlayersInRange(
@@ -205,6 +182,29 @@ public sealed class MovementService : IMovementService
                 0,
                 Notoriety.Resolve(mobile.Kills, mobile.Criminal)
             ),
-            exclude: mobile.Id
+            mobile.Id
         );
+
+    private void Reject(PlayerSession session, MobileEntity mobile, byte sequence)
+        => session.Send(
+            new MoveRejectPacket(
+                sequence,
+                (ushort)mobile.Position.X,
+                (ushort)mobile.Position.Y,
+                mobile.Direction,
+                (sbyte)mobile.Position.Z
+            )
+        );
+
+    // Pure rejection shorthand for Evaluate's four "current position/direction, unchanged" exits.
+    // Not to be confused with the instance Reject(PlayerSession, MobileEntity, byte) below, which
+    // sends the MoveRejectPacket to the client.
+    private static MovementDecision RejectDecision(MobileEntity mobile)
+        => new(false, false, mobile.Position, mobile.Direction);
+
+    // ModernUO wraps the move-sequence counter 255 -> 1, never to 0: sequence 0 is a reserved
+    // sentinel meaning "no baseline / just reset" (MovementThrottle.cs:272-277, verified against
+    // others/ModernUO).
+    private static byte WrapNextSequence(byte sequence)
+        => sequence == 255 ? (byte)1 : (byte)(sequence + 1);
 }

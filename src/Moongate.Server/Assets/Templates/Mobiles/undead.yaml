@@ -30,8 +30,8 @@
     Appearance:
         Body: 147
     Equipment:
-      - Item: scimitar
-        Layer: OneHanded
-      - Item: wooden_shield
-        Layer: TwoHanded
+        -   Item: scimitar
+            Layer: OneHanded
+        -   Item: wooden_shield
+            Layer: TwoHanded
     LootTableId: undead.knight

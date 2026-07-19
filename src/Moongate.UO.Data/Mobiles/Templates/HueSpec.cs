@@ -6,9 +6,6 @@ namespace Moongate.UO.Data.Mobiles.Templates;
 /// <summary>Parses a hue spec into a concrete hue: a plain integer, a random <c>hue(a:b)</c> range, or 0.</summary>
 public static partial class HueSpec
 {
-    [GeneratedRegex(@"^hue\(\s*(\d+)\s*:\s*(\d+)\s*\)$", RegexOptions.IgnoreCase)]
-    private static partial Regex RangeRegex();
-
     public static ushort Resolve(string? spec, Random random)
     {
         if (string.IsNullOrWhiteSpace(spec))
@@ -32,7 +29,10 @@ public static partial class HueSpec
         }
 
         return ushort.TryParse(spec, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
-            ? value
-            : (ushort)0;
+                   ? value
+                   : (ushort)0;
     }
+
+    [GeneratedRegex(@"^hue\(\s*(\d+)\s*:\s*(\d+)\s*\)$", RegexOptions.IgnoreCase)]
+    private static partial Regex RangeRegex();
 }

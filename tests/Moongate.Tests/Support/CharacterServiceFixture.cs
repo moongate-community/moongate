@@ -18,6 +18,19 @@ namespace Moongate.Tests.Support;
 /// </summary>
 public static class CharacterServiceFixture
 {
+    public static StartingCityService Cities()
+    {
+        var service = new StartingCityService();
+        service.Register(
+            new()
+            {
+                City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
+            }
+        );
+
+        return service;
+    }
+
     public static CharacterService Create(
         FakePersistenceService persistence,
         IEventBus eventBus,
@@ -40,19 +53,6 @@ public static class CharacterServiceFixture
             eventBus,
             sessions ?? new StubSessionManager()
         );
-    }
-
-    public static StartingCityService Cities()
-    {
-        var service = new StartingCityService();
-        service.Register(
-            new()
-            {
-                City = "Britain", Building = "Inn", Description = 1, X = 1602, Y = 1591, Z = 20, Map = MapType.Trammel
-            }
-        );
-
-        return service;
     }
 
     public static SkillService Skills()

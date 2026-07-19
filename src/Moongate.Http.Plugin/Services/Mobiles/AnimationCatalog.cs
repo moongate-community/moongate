@@ -18,8 +18,7 @@ public sealed class AnimationCatalog : IAnimationCatalog
 
     private EquipConvTable? _equipConv;
 
-    public bool IsReady
-        => TileData.ItemTable is not null && MobTypes.IsLoaded;
+    public bool IsReady => TileData.ItemTable is not null && MobTypes.IsLoaded;
 
     public IReadOnlyList<(int Body, MobType Type)> ClassifiedBodies
         => [.. MobTypes.GetDefinedBodies().Order().Select(body => (body, MobTypes.GetTypeOrDefault(body)))];
@@ -37,12 +36,12 @@ public sealed class AnimationCatalog : IAnimationCatalog
         var index = frame < frames.Length ? frame : 0;
         var decoded = frames[index];
 
-        if (decoded.Bitmap is null || (decoded.Bitmap.Width <= 1 && decoded.Bitmap.Height <= 1))
+        if (decoded.Bitmap is null || decoded.Bitmap.Width <= 1 && decoded.Bitmap.Height <= 1)
         {
             return null;
         }
 
-        return new MobileFrame(decoded.Center.X, decoded.Center.Y, decoded.Bitmap.Clone());
+        return new(decoded.Center.X, decoded.Center.Y, decoded.Bitmap.Clone());
     }
 
     public int? GetItemAnimation(int itemId)
@@ -67,7 +66,7 @@ public sealed class AnimationCatalog : IAnimationCatalog
         {
             lock (_equipConvSync)
             {
-                _equipConv ??= new EquipConvTable(
+                _equipConv ??= new(
                     Files.GetFilePath("equipconv.def") ?? Path.Combine(Path.GetTempPath(), "equipconv.def.missing")
                 );
             }

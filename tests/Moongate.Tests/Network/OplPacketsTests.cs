@@ -1,4 +1,3 @@
-using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
@@ -9,46 +8,10 @@ namespace Moongate.Tests.Network;
 public class OplPacketsTests
 {
     [Fact]
-    public void Request_Read_ParsesSerialList()
-    {
-        var bytes = new byte[] { 0xD6, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x01, 0x40, 0x00, 0x00, 0x02 };
-        var reader = new SpanReader(bytes);
-
-        var packet = MegaClilocRequestPacket.Read(ref reader);
-
-        Assert.Equal(2, packet.Serials.Count);
-        Assert.Equal(new Serial(0x00000001), packet.Serials[0]);
-        Assert.Equal(new Serial(0x40000002), packet.Serials[1]);
-    }
-
-    [Fact]
-    public void Request_Read_MalformedLength_ReturnsEmpty()
-    {
-        // Length 6 means a 3-byte payload, which is not a multiple of four.
-        var bytes = new byte[] { 0xD6, 0x00, 0x06, 0x00, 0x00, 0x00 };
-        var reader = new SpanReader(bytes);
-
-        var packet = MegaClilocRequestPacket.Read(ref reader);
-
-        Assert.Empty(packet.Serials);
-    }
-
-    [Fact]
-    public void Request_Read_HeaderOnly_ReturnsEmpty()
-    {
-        var bytes = new byte[] { 0xD6, 0x00, 0x03 };
-        var reader = new SpanReader(bytes);
-
-        var packet = MegaClilocRequestPacket.Read(ref reader);
-
-        Assert.Empty(packet.Serials);
-    }
-
-    [Fact]
     public void MegaCliloc_Write_EncodesEntriesAndTerminator()
     {
         var entries = new[] { new OplEntry(1050039, "3\tgold coin"), new OplEntry(1042971, "shiny") };
-        var packet = new MegaClilocPacket(new Serial(0x40000001), 0x1234ABCD, entries);
+        var packet = new MegaClilocPacket(new(0x40000001), 0x1234ABCD, entries);
 
         var writer = new SpanWriter(stackalloc byte[63]);
         packet.Write(ref writer);
@@ -85,7 +48,7 @@ public class OplPacketsTests
     [Fact]
     public void OplInfo_Write_IsNineBytesWithFlaggedHash()
     {
-        var packet = new OplInfoPacket(new Serial(0x00000007), 0x00000012);
+        var packet = new OplInfoPacket(new(0x00000007), 0x00000012);
 
         var writer = new SpanWriter(stackalloc byte[9]);
         packet.Write(ref writer);
@@ -95,5 +58,41 @@ public class OplPacketsTests
         Assert.Equal(0xDC, written[0]);
         Assert.Equal(0x00000007u, (uint)((written[1] << 24) | (written[2] << 16) | (written[3] << 8) | written[4]));
         Assert.Equal(0x40000012u, (uint)((written[5] << 24) | (written[6] << 16) | (written[7] << 8) | written[8]));
+    }
+
+    [Fact]
+    public void Request_Read_HeaderOnly_ReturnsEmpty()
+    {
+        var bytes = new byte[] { 0xD6, 0x00, 0x03 };
+        var reader = new SpanReader(bytes);
+
+        var packet = MegaClilocRequestPacket.Read(ref reader);
+
+        Assert.Empty(packet.Serials);
+    }
+
+    [Fact]
+    public void Request_Read_MalformedLength_ReturnsEmpty()
+    {
+        // Length 6 means a 3-byte payload, which is not a multiple of four.
+        var bytes = new byte[] { 0xD6, 0x00, 0x06, 0x00, 0x00, 0x00 };
+        var reader = new SpanReader(bytes);
+
+        var packet = MegaClilocRequestPacket.Read(ref reader);
+
+        Assert.Empty(packet.Serials);
+    }
+
+    [Fact]
+    public void Request_Read_ParsesSerialList()
+    {
+        var bytes = new byte[] { 0xD6, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x01, 0x40, 0x00, 0x00, 0x02 };
+        var reader = new SpanReader(bytes);
+
+        var packet = MegaClilocRequestPacket.Read(ref reader);
+
+        Assert.Equal(2, packet.Serials.Count);
+        Assert.Equal(new(0x00000001), packet.Serials[0]);
+        Assert.Equal(new(0x40000002), packet.Serials[1]);
     }
 }

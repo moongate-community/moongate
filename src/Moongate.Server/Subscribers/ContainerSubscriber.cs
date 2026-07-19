@@ -1,4 +1,3 @@
-using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
@@ -40,6 +39,47 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         _opl = opl;
     }
 
+    /// <summary>
+    /// Turns a container's direct children into wire entries. Nesting is not walked: a container inside
+    /// this one is drawn as an item, and only opens when the player double-clicks it in turn.
+    /// </summary>
+    public static List<ContainerItem> BuildContents(IEnumerable<ItemEntity> items)
+    {
+        var contents = new List<ContainerItem>();
+
+        foreach (var item in items)
+        {
+            contents.Add(
+                new(
+                    item.Id,
+                    (ushort)item.ItemId,
+                    (ushort)Math.Clamp(item.Amount, 1, ushort.MaxValue),
+                    item.ContainerPosition,
+                    item.Hue
+                )
+            );
+        }
+
+        return contents;
+    }
+
+    /// <summary>
+    /// The gump to open the item with, or null when it is not a container. The template's own
+    /// <c>GumpId</c> wins; failing that the gump table is asked for one matching the graphic; failing
+    /// that it is the plain bag. This is ModernUO's chain — an overridden <c>DefaultGumpID</c>, then
+    /// <c>ContainerData.GetData(itemID)</c>, then that table's default entry — and it is why the
+    /// backpack is listed in neither: it lands on the default.
+    /// </summary>
+    public int? ResolveGumpId(ItemEntity item)
+    {
+        if (_templates.GetById(item.TemplateId)?.Container is not { } container)
+        {
+            return null;
+        }
+
+        return container.GumpId ?? _gumps.GetByItemId(item.ItemId)?.GumpId ?? ContainerGumpLayout.DefaultGumpId;
+    }
+
     public void Subscribe(IEventBus eventBus)
         => eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
 
@@ -72,48 +112,5 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         }
 
         return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// The gump to open the item with, or null when it is not a container. The template's own
-    /// <c>GumpId</c> wins; failing that the gump table is asked for one matching the graphic; failing
-    /// that it is the plain bag. This is ModernUO's chain — an overridden <c>DefaultGumpID</c>, then
-    /// <c>ContainerData.GetData(itemID)</c>, then that table's default entry — and it is why the
-    /// backpack is listed in neither: it lands on the default.
-    /// </summary>
-    public int? ResolveGumpId(ItemEntity item)
-    {
-        if (_templates.GetById(item.TemplateId)?.Container is not { } container)
-        {
-            return null;
-        }
-
-        return container.GumpId
-               ?? _gumps.GetByItemId(item.ItemId)?.GumpId
-               ?? ContainerGumpLayout.DefaultGumpId;
-    }
-
-    /// <summary>
-    /// Turns a container's direct children into wire entries. Nesting is not walked: a container inside
-    /// this one is drawn as an item, and only opens when the player double-clicks it in turn.
-    /// </summary>
-    public static List<ContainerItem> BuildContents(IEnumerable<ItemEntity> items)
-    {
-        var contents = new List<ContainerItem>();
-
-        foreach (var item in items)
-        {
-            contents.Add(
-                new ContainerItem(
-                    item.Id,
-                    (ushort)item.ItemId,
-                    (ushort)Math.Clamp(item.Amount, 1, ushort.MaxValue),
-                    item.ContainerPosition,
-                    item.Hue
-                )
-            );
-        }
-
-        return contents;
     }
 }

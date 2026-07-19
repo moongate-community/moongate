@@ -1,4 +1,3 @@
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Items;
@@ -24,14 +23,6 @@ public class MegaClilocHandlerTests
     }
 
     [Fact]
-    public void BuildResponses_UnknownSerial_YieldsNothing()
-    {
-        var (opl, _) = Build();
-
-        Assert.Empty(MegaClilocHandler.BuildResponses([new Serial(0x40009999)], opl));
-    }
-
-    [Fact]
     public void BuildResponses_MixedBatch_AnswersOnlyKnownInOrder()
     {
         var (opl, items) = Build();
@@ -39,19 +30,27 @@ public class MegaClilocHandlerTests
         var second = NewItem(items, "a katana");
 
         var responses = MegaClilocHandler
-            .BuildResponses([first.Id, new Serial(0x40009999), second.Id], opl)
-            .ToList();
+                        .BuildResponses([first.Id, new(0x40009999), second.Id], opl)
+                        .ToList();
 
         Assert.Equal(2, responses.Count);
         Assert.Equal(first.Id, responses[0].Serial);
         Assert.Equal(second.Id, responses[1].Serial);
     }
 
+    [Fact]
+    public void BuildResponses_UnknownSerial_YieldsNothing()
+    {
+        var (opl, _) = Build();
+
+        Assert.Empty(MegaClilocHandler.BuildResponses([new(0x40009999)], opl));
+    }
+
     private static (OplService Opl, ItemService Items) Build()
     {
         var persistence = new FakePersistenceService();
 
-        return (new OplService(persistence, new ItemTemplateService()), new ItemService(persistence));
+        return (new(persistence, new ItemTemplateService()), new(persistence));
     }
 
     private static ItemEntity NewItem(ItemService items, string name)

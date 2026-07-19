@@ -1,12 +1,21 @@
 using Moongate.Server.Scripting;
 using Moongate.Tests.Support;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
 
 namespace Moongate.Tests.Server.Scripting;
 
 public class LoopGuardTests
 {
+    private sealed class ListSink : ILogEventSink
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public void Emit(LogEvent logEvent)
+            => Events.Add(logEvent);
+    }
+
     [Fact]
     public void Warn_OffLoop_EmitsWarning()
     {
@@ -22,7 +31,7 @@ public class LoopGuardTests
     {
         var sink = new ListSink();
 
-        LoopGuard.Warn(new StubLoopThread(true), "mobile.create", LoggerFor(sink));
+        LoopGuard.Warn(new StubLoopThread(), "mobile.create", LoggerFor(sink));
 
         Assert.DoesNotContain(sink.Events, e => e.Level == LogEventLevel.Warning);
     }
@@ -31,12 +40,4 @@ public class LoopGuardTests
     // parallel tests can never write into this sink (which would race the assertions below).
     private static ILogger LoggerFor(ListSink sink)
         => new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
-
-    private sealed class ListSink : Serilog.Core.ILogEventSink
-    {
-        public List<LogEvent> Events { get; } = [];
-
-        public void Emit(LogEvent logEvent)
-            => Events.Add(logEvent);
-    }
 }

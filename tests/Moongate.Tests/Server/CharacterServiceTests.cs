@@ -6,8 +6,6 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
-using Moongate.Server.Services.Mobiles;
-using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
@@ -77,170 +75,6 @@ public class CharacterServiceTests
     }
 
     [Fact]
-    public async Task DeleteCharacter_RemovesTheMobileEverythingItOwnsAndTheAccountLink()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var service = Service(persistence, new());
-        var mobile = service.CreateCharacter(accountId, Packet());
-
-        // Everything the character owns before the deletion: containers plus their contents.
-        var backpackId = mobile.BackpackId;
-        var ownedIds = persistence.Store<ItemEntity>().Query().Select(item => item.Id).ToList();
-        Assert.NotEmpty(persistence.Store<ItemEntity>().GetById(backpackId)!.ContainedItemIds);
-
-        var result = service.DeleteCharacter(accountId, 0);
-
-        Assert.Null(result); // null means deleted
-        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
-
-        // No orphans: the backpack, the bank box and every item inside them are gone with the mobile.
-        Assert.All(ownedIds, id => Assert.Null(persistence.Store<ItemEntity>().GetById(id)));
-        Assert.Empty(persistence.Store<ItemEntity>().Query());
-
-        var account = persistence.Store<AccountEntity>().GetById(accountId);
-        Assert.DoesNotContain(mobile.Id, account!.MobileIds);
-        Assert.Empty(service.GetPlayerCharacters(accountId));
-    }
-
-    [Fact]
-    public async Task DeleteCharacter_PublishesCharacterDeletedEventCarryingTheGoneMobile()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var eventBus = new EventBusService();
-        CharacterDeletedEvent? published = null;
-        eventBus.Subscribe<CharacterDeletedEvent>((evt, _) =>
-            {
-                published = evt;
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var service = Service(persistence, eventBus);
-        var mobile = service.CreateCharacter(accountId, Packet());
-
-        service.DeleteCharacter(accountId, 0);
-
-        Assert.NotNull(published);
-        Assert.Equal(accountId, published!.AccountId);
-        Assert.Equal(mobile.Id, published.MobileId);
-
-        // The mobile is gone from the store, so the event is the only way left to read what it was.
-        Assert.Same(mobile, published.Character);
-        Assert.Equal("Freydis", published.Character.Name);
-        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
-    }
-
-    [Fact]
-    public async Task DeleteCharacter_RefusedDeletion_PublishesNothing()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var eventBus = new EventBusService();
-        var published = 0;
-        eventBus.Subscribe<CharacterDeletedEvent>((_, _) =>
-            {
-                published++;
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var service = Service(persistence, eventBus);
-        service.CreateCharacter(accountId, Packet());
-
-        service.DeleteCharacter(accountId, 42);
-
-        Assert.Equal(0, published);
-    }
-
-    [Fact]
-    public async Task DeleteCharacter_SomebodyIsPlayingIt_IsRefusedAndChangesNothing()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var sessions = new StubSessionManager();
-        var service = Service(persistence, new(), sessions);
-        var mobile = service.CreateCharacter(accountId, Packet());
-
-        // Another session has this very character in hand.
-        sessions.Played.Add(mobile.Id);
-
-        Assert.Equal(DeleteResultType.CharBeingPlayed, service.DeleteCharacter(accountId, 0));
-
-        // The mobile survives, and so does the account link.
-        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
-        Assert.Contains(mobile.Id, persistence.Store<AccountEntity>().GetById(accountId)!.MobileIds);
-    }
-
-    [Fact]
-    public async Task DeleteCharacter_PlayingADifferentCharacter_StillDeletesThisOne()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var sessions = new StubSessionManager();
-        var service = Service(persistence, new(), sessions);
-        var mobile = service.CreateCharacter(accountId, Packet());
-
-        // A session is busy with someone else entirely — that must not protect this character.
-        sessions.Played.Add((Serial)0x7777);
-
-        Assert.Null(service.DeleteCharacter(accountId, 0));
-        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
-    }
-
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(1)] // only slot 0 exists
-    [InlineData(99)]
-    public async Task DeleteCharacter_SlotOutOfRange_IsRefusedAndChangesNothing(int slot)
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var service = Service(persistence, new());
-        var mobile = service.CreateCharacter(accountId, Packet());
-
-        Assert.Equal(DeleteResultType.BadRequest, service.DeleteCharacter(accountId, slot));
-        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
-        Assert.Single(service.GetPlayerCharacters(accountId));
-    }
-
-    [Fact]
-    public async Task DeleteCharacter_LeavesTheOtherCharactersAlone()
-    {
-        var persistence = new FakePersistenceService();
-        var accountId = (Serial)5;
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
-
-        var service = Service(persistence, new());
-        var first = service.CreateCharacter(accountId, Packet());
-        var second = service.CreateCharacter(accountId, Packet());
-
-        Assert.Null(service.DeleteCharacter(accountId, 0));
-
-        var remaining = Assert.Single(service.GetPlayerCharacters(accountId));
-        Assert.Equal(second.Id, remaining.Id);
-
-        // The survivor kept its own gear.
-        Assert.NotNull(persistence.Store<ItemEntity>().GetById(second.BackpackId));
-        Assert.Null(persistence.Store<ItemEntity>().GetById(first.BackpackId));
-    }
-
-    [Fact]
     public async Task CreateCharacter_PersistsMobileWithAllocatedSerialAndLinksItToTheAccount()
     {
         var persistence = new FakePersistenceService();
@@ -250,7 +84,8 @@ public class CharacterServiceTests
 
         var eventBus = new EventBusService();
         CharacterCreatedEvent? published = null;
-        eventBus.Subscribe<CharacterCreatedEvent>((evt, _) =>
+        eventBus.Subscribe<CharacterCreatedEvent>(
+            (evt, _) =>
             {
                 published = evt;
 
@@ -289,7 +124,8 @@ public class CharacterServiceTests
         var eventBus = new EventBusService();
 
         CharacterReadyEvent? ready = null;
-        eventBus.Subscribe<CharacterReadyEvent>((evt, _) =>
+        eventBus.Subscribe<CharacterReadyEvent>(
+            (evt, _) =>
             {
                 ready = evt;
 
@@ -322,6 +158,170 @@ public class CharacterServiceTests
         Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
     }
 
+    [Fact]
+    public async Task DeleteCharacter_LeavesTheOtherCharactersAlone()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var first = service.CreateCharacter(accountId, Packet());
+        var second = service.CreateCharacter(accountId, Packet());
+
+        Assert.Null(service.DeleteCharacter(accountId, 0));
+
+        var remaining = Assert.Single(service.GetPlayerCharacters(accountId));
+        Assert.Equal(second.Id, remaining.Id);
+
+        // The survivor kept its own gear.
+        Assert.NotNull(persistence.Store<ItemEntity>().GetById(second.BackpackId));
+        Assert.Null(persistence.Store<ItemEntity>().GetById(first.BackpackId));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_PlayingADifferentCharacter_StillDeletesThisOne()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var sessions = new StubSessionManager();
+        var service = Service(persistence, new(), sessions);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // A session is busy with someone else entirely — that must not protect this character.
+        sessions.Played.Add((Serial)0x7777);
+
+        Assert.Null(service.DeleteCharacter(accountId, 0));
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_PublishesCharacterDeletedEventCarryingTheGoneMobile()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        CharacterDeletedEvent? published = null;
+        eventBus.Subscribe<CharacterDeletedEvent>(
+            (evt, _) =>
+            {
+                published = evt;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = Service(persistence, eventBus);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        service.DeleteCharacter(accountId, 0);
+
+        Assert.NotNull(published);
+        Assert.Equal(accountId, published!.AccountId);
+        Assert.Equal(mobile.Id, published.MobileId);
+
+        // The mobile is gone from the store, so the event is the only way left to read what it was.
+        Assert.Same(mobile, published.Character);
+        Assert.Equal("Freydis", published.Character.Name);
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_RefusedDeletion_PublishesNothing()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        var published = 0;
+        eventBus.Subscribe<CharacterDeletedEvent>(
+            (_, _) =>
+            {
+                published++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = Service(persistence, eventBus);
+        service.CreateCharacter(accountId, Packet());
+
+        service.DeleteCharacter(accountId, 42);
+
+        Assert.Equal(0, published);
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_RemovesTheMobileEverythingItOwnsAndTheAccountLink()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // Everything the character owns before the deletion: containers plus their contents.
+        var backpackId = mobile.BackpackId;
+        var ownedIds = persistence.Store<ItemEntity>().Query().Select(item => item.Id).ToList();
+        Assert.NotEmpty(persistence.Store<ItemEntity>().GetById(backpackId)!.ContainedItemIds);
+
+        var result = service.DeleteCharacter(accountId, 0);
+
+        Assert.Null(result); // null means deleted
+        Assert.Null(persistence.Store<MobileEntity>().GetById(mobile.Id));
+
+        // No orphans: the backpack, the bank box and every item inside them are gone with the mobile.
+        Assert.All(ownedIds, id => Assert.Null(persistence.Store<ItemEntity>().GetById(id)));
+        Assert.Empty(persistence.Store<ItemEntity>().Query());
+
+        var account = persistence.Store<AccountEntity>().GetById(accountId);
+        Assert.DoesNotContain(mobile.Id, account!.MobileIds);
+        Assert.Empty(service.GetPlayerCharacters(accountId));
+    }
+
+    [Theory, InlineData(-1), InlineData(1), InlineData(99)]
+
+    // only slot 0 exists
+    public async Task DeleteCharacter_SlotOutOfRange_IsRefusedAndChangesNothing(int slot)
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = Service(persistence, new());
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        Assert.Equal(DeleteResultType.BadRequest, service.DeleteCharacter(accountId, slot));
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
+        Assert.Single(service.GetPlayerCharacters(accountId));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_SomebodyIsPlayingIt_IsRefusedAndChangesNothing()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var sessions = new StubSessionManager();
+        var service = Service(persistence, new(), sessions);
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        // Another session has this very character in hand.
+        sessions.Played.Add(mobile.Id);
+
+        Assert.Equal(DeleteResultType.CharBeingPlayed, service.DeleteCharacter(accountId, 0));
+
+        // The mobile survives, and so does the account link.
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
+        Assert.Contains(mobile.Id, persistence.Store<AccountEntity>().GetById(accountId)!.MobileIds);
+    }
 
     [Fact]
     public async Task GetPlayerCharacters_ReturnsOnlyTheAccountsOwnCharacters()
@@ -348,9 +348,9 @@ public class CharacterServiceTests
     [Fact]
     public void GetPlayerCharacters_UnknownAccount_IsEmpty()
     {
-        var service = Service(new FakePersistenceService(), new());
+        var service = Service(new(), new());
 
-        Assert.Empty(service.GetPlayerCharacters(new Serial(0xDEADBEEF)));
+        Assert.Empty(service.GetPlayerCharacters(new(0xDEADBEEF)));
     }
 
     private static CharacterCreationPacket Packet()
@@ -381,7 +381,4 @@ public class CharacterServiceTests
         ISessionManager? sessions = null
     )
         => CharacterServiceFixture.Create(persistence, eventBus, sessions);
-
-
-
 }

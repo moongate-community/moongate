@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Data;
+using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Services.Hosting;
-using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 
 namespace Moongate.Http.Plugin.Endpoints.Characters;
@@ -20,12 +20,10 @@ public sealed class CharacterAdminEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
-        routes.MapGet("/api/v1/admin/characters", List)
-              .WithName("ListCharacters")
-              .WithTags("characters")
-              .RequireAuthorization(HttpServerService.AdminPolicy);
-    }
+        => routes.MapGet("/api/v1/admin/characters", List)
+                 .WithName("ListCharacters")
+                 .WithTags("characters")
+                 .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Every player character on the shard, paged.</summary>
     /// <remarks>

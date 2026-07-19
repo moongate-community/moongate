@@ -23,6 +23,13 @@ public class ItemFactoryServiceTests
     }
 
     [Fact]
+    public void CreateByCategory_StampsTheTemplateItLandedOn()
+    {
+        var item = Assert.Single(Factory().CreateByCategory("Clothing"));
+        Assert.Equal("robe", item.TemplateId);
+    }
+
+    [Fact]
     public void CreateByCategory_UnknownCategory_ReturnsEmpty()
         => Assert.Empty(Factory().CreateByCategory("Nope"));
 
@@ -33,6 +40,13 @@ public class ItemFactoryServiceTests
 
         Assert.Equal(5, items.Count);
         Assert.All(items, i => Assert.Contains(i.ItemId, new[] { 3921, 5118 }));
+    }
+
+    [Fact]
+    public void CreateByTag_StampsTheTemplateItLandedOn()
+    {
+        var item = Assert.Single(Factory().CreateByTag("clothing"));
+        Assert.Equal("robe", item.TemplateId);
     }
 
     [Fact]
@@ -50,24 +64,10 @@ public class ItemFactoryServiceTests
     }
 
     [Fact]
-    public void CreateFromTemplate_StampsTheTemplateIdOnTheItem()
+    public void CreateFromTemplate_CopiesFlippableItemIdsFromTemplate()
     {
-        var item = Assert.Single(Factory().CreateFromTemplate("backpack"));
-        Assert.Equal("backpack", item.TemplateId);
-    }
-
-    [Fact]
-    public void CreateByCategory_StampsTheTemplateItLandedOn()
-    {
-        var item = Assert.Single(Factory().CreateByCategory("Clothing"));
-        Assert.Equal("robe", item.TemplateId);
-    }
-
-    [Fact]
-    public void CreateByTag_StampsTheTemplateItLandedOn()
-    {
-        var item = Assert.Single(Factory().CreateByTag("clothing"));
-        Assert.Equal("robe", item.TemplateId);
+        var item = Assert.Single(Factory().CreateFromTemplate("armoire"));
+        Assert.Equal(new[] { 2639, 2643 }, item.FlippableItemIds);
     }
 
     [Fact]
@@ -76,6 +76,18 @@ public class ItemFactoryServiceTests
         var items = Factory().CreateFromTemplate("dagger", 3);
         Assert.Equal(3, items.Count);
         Assert.All(items, i => Assert.Equal(3921, i.ItemId));
+    }
+
+    [Fact]
+    public void CreateFromTemplate_FlippableCopyIsIndependentOfTemplate()
+    {
+        var factory = Factory();
+        var item = Assert.Single(factory.CreateFromTemplate("armoire"));
+
+        item.FlippableItemIds.Add(9999);
+
+        var second = Assert.Single(factory.CreateFromTemplate("armoire"));
+        Assert.Equal(new[] { 2639, 2643 }, second.FlippableItemIds);
     }
 
     [Fact]
@@ -91,17 +103,6 @@ public class ItemFactoryServiceTests
     }
 
     [Fact]
-    public void CreateFromTemplate_UnknownId_ReturnsEmpty()
-        => Assert.Empty(Factory().CreateFromTemplate("does_not_exist"));
-
-    [Fact]
-    public void CreateFromTemplate_CopiesFlippableItemIdsFromTemplate()
-    {
-        var item = Assert.Single(Factory().CreateFromTemplate("armoire"));
-        Assert.Equal(new[] { 2639, 2643 }, item.FlippableItemIds);
-    }
-
-    [Fact]
     public void CreateFromTemplate_NoFlippable_LeavesEmptyList()
     {
         var item = Assert.Single(Factory().CreateFromTemplate("dagger"));
@@ -109,16 +110,15 @@ public class ItemFactoryServiceTests
     }
 
     [Fact]
-    public void CreateFromTemplate_FlippableCopyIsIndependentOfTemplate()
+    public void CreateFromTemplate_StampsTheTemplateIdOnTheItem()
     {
-        var factory = Factory();
-        var item = Assert.Single(factory.CreateFromTemplate("armoire"));
-
-        item.FlippableItemIds.Add(9999);
-
-        var second = Assert.Single(factory.CreateFromTemplate("armoire"));
-        Assert.Equal(new[] { 2639, 2643 }, second.FlippableItemIds);
+        var item = Assert.Single(Factory().CreateFromTemplate("backpack"));
+        Assert.Equal("backpack", item.TemplateId);
     }
+
+    [Fact]
+    public void CreateFromTemplate_UnknownId_ReturnsEmpty()
+        => Assert.Empty(Factory().CreateFromTemplate("does_not_exist"));
 
     private static ItemFactoryService Factory(int seed = 1)
         => new(Templates(), new(seed));

@@ -45,6 +45,25 @@ public sealed class AccountModule
         return result == AccountCreateResultType.Created;
     }
 
+    [ScriptFunction("delete", "Deletes the account and its characters; false when refused.")]
+    public bool Delete(string username)
+    {
+        LoopGuard.Warn(_loopThread, "account.delete");
+
+        var result = _accounts.Delete(username);
+
+        if (result != AccountDeleteResultType.Deleted)
+        {
+            _logger.Warning("account.delete refused for {Username}: {Reason}", username, result);
+        }
+
+        return result == AccountDeleteResultType.Deleted;
+    }
+
+    [ScriptFunction("exists", "True when an account answers to that username.")]
+    public bool Exists(string username)
+        => _accounts.GetByUsername(username) is not null;
+
     [ScriptFunction("get", "Returns a field table for the account, or nil.")]
     public Dictionary<string, object?>? Get(string username)
     {
@@ -68,13 +87,9 @@ public sealed class AccountModule
     public List<string> List()
         => [.. _accounts.GetUsernames()];
 
-    [ScriptFunction("exists", "True when an account answers to that username.")]
-    public bool Exists(string username)
-        => _accounts.GetByUsername(username) is not null;
-
-    [ScriptFunction("set_password", "Replaces the account's password; false on unknown username.")]
-    public bool SetPassword(string username, string password)
-        => _accounts.SetPassword(username, password);
+    [ScriptFunction("set_active", "Activates or blocks the account; false on unknown username.")]
+    public bool SetActive(string username, bool isActive)
+        => _accounts.SetActive(username, isActive);
 
     [ScriptFunction("set_level", "Sets the account's privilege level; false on unknown username or level.")]
     public bool SetLevel(string username, object level)
@@ -89,22 +104,7 @@ public sealed class AccountModule
         return _accounts.SetLevel(username, accountLevel);
     }
 
-    [ScriptFunction("set_active", "Activates or blocks the account; false on unknown username.")]
-    public bool SetActive(string username, bool isActive)
-        => _accounts.SetActive(username, isActive);
-
-    [ScriptFunction("delete", "Deletes the account and its characters; false when refused.")]
-    public bool Delete(string username)
-    {
-        LoopGuard.Warn(_loopThread, "account.delete");
-
-        var result = _accounts.Delete(username);
-
-        if (result != AccountDeleteResultType.Deleted)
-        {
-            _logger.Warning("account.delete refused for {Username}: {Reason}", username, result);
-        }
-
-        return result == AccountDeleteResultType.Deleted;
-    }
+    [ScriptFunction("set_password", "Replaces the account's password; false on unknown username.")]
+    public bool SetPassword(string username, string password)
+        => _accounts.SetPassword(username, password);
 }

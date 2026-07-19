@@ -7,24 +7,27 @@ namespace Moongate.Tests.Server.World;
 public class VirtualSerialServiceTests
 {
     [Fact]
-    public void GetOrCreate_AllocatesFromTheReservedBand()
+    public void GetOrCreate_AcrossManyOwners_StaysInTheBandAndNeverRepeats()
     {
-        var serial = new VirtualSerialService().GetOrCreate(new Serial(0x64), LayerType.Hair);
+        var service = new VirtualSerialService();
+        var seen = new HashSet<Serial>();
 
-        Assert.True(serial.IsVirtual);
-        Assert.False(serial.IsItem); // the whole point: it can never be mistaken for a real item
+        for (var owner = 1u; owner <= 1000; owner++)
+        {
+            var serial = service.GetOrCreate(new(owner), LayerType.Hair);
+
+            Assert.True(serial.IsVirtual);
+            Assert.True(seen.Add(serial), $"serial {serial} was handed out twice");
+        }
     }
 
     [Fact]
-    public void GetOrCreate_SameOwnerAndLayer_KeepsGivingTheSameSerial()
+    public void GetOrCreate_AllocatesFromTheReservedBand()
     {
-        var service = new VirtualSerialService();
-        var owner = new Serial(0x64);
+        var serial = new VirtualSerialService().GetOrCreate(new(0x64), LayerType.Hair);
 
-        Assert.Equal(
-            service.GetOrCreate(owner, LayerType.Hair),
-            service.GetOrCreate(owner, LayerType.Hair)
-        );
+        Assert.True(serial.IsVirtual);
+        Assert.False(serial.IsItem); // the whole point: it can never be mistaken for a real item
     }
 
     [Fact]
@@ -47,23 +50,20 @@ public class VirtualSerialServiceTests
         var service = new VirtualSerialService();
 
         Assert.NotEqual(
-            service.GetOrCreate(new Serial(0x64), LayerType.Hair),
-            service.GetOrCreate(new Serial(0x65), LayerType.Hair)
+            service.GetOrCreate(new(0x64), LayerType.Hair),
+            service.GetOrCreate(new(0x65), LayerType.Hair)
         );
     }
 
     [Fact]
-    public void GetOrCreate_AcrossManyOwners_StaysInTheBandAndNeverRepeats()
+    public void GetOrCreate_SameOwnerAndLayer_KeepsGivingTheSameSerial()
     {
         var service = new VirtualSerialService();
-        var seen = new HashSet<Serial>();
+        var owner = new Serial(0x64);
 
-        for (var owner = 1u; owner <= 1000; owner++)
-        {
-            var serial = service.GetOrCreate(new Serial(owner), LayerType.Hair);
-
-            Assert.True(serial.IsVirtual);
-            Assert.True(seen.Add(serial), $"serial {serial} was handed out twice");
-        }
+        Assert.Equal(
+            service.GetOrCreate(owner, LayerType.Hair),
+            service.GetOrCreate(owner, LayerType.Hair)
+        );
     }
 }

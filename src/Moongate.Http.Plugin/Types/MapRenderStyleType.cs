@@ -7,5 +7,5 @@ public enum MapRenderStyleType
     Flat,
 
     /// <summary>The radar map with altitude-based relief shading — hills and valleys read as light and shadow.</summary>
-    Relief,
+    Relief
 }

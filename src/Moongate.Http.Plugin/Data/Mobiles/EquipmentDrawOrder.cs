@@ -16,24 +16,24 @@ public static class EquipmentDrawOrder
     public static int Priority(LayerType layer)
         => layer switch
         {
-            LayerType.Cloak => 0,
-            LayerType.InnerLegs => 10,
-            LayerType.Pants => 11,
-            LayerType.Shoes => 12,
-            LayerType.Shirt => 13,
-            LayerType.InnerTorso => 14,
-            LayerType.Arms => 15,
+            LayerType.Cloak       => 0,
+            LayerType.InnerLegs   => 10,
+            LayerType.Pants       => 11,
+            LayerType.Shoes       => 12,
+            LayerType.Shirt       => 13,
+            LayerType.InnerTorso  => 14,
+            LayerType.Arms        => 15,
             LayerType.MiddleTorso => 16,
-            LayerType.Gloves => 17,
-            LayerType.Neck => 18,
-            LayerType.Waist => 19,
-            LayerType.OuterLegs => 20,
-            LayerType.OuterTorso => 21,
-            LayerType.Hair => 25,
-            LayerType.FacialHair => 26,
-            LayerType.Helm => 30,
-            LayerType.OneHanded => 35,
-            LayerType.TwoHanded => 36,
-            _ => Skip
+            LayerType.Gloves      => 17,
+            LayerType.Neck        => 18,
+            LayerType.Waist       => 19,
+            LayerType.OuterLegs   => 20,
+            LayerType.OuterTorso  => 21,
+            LayerType.Hair        => 25,
+            LayerType.FacialHair  => 26,
+            LayerType.Helm        => 30,
+            LayerType.OneHanded   => 35,
+            LayerType.TwoHanded   => 36,
+            _                     => Skip
         };
 }

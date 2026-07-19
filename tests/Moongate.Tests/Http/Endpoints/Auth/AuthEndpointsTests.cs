@@ -8,14 +8,31 @@ namespace Moongate.Tests.Http.Endpoints.Auth;
 public class AuthEndpointsTests
 {
     [Fact]
+    public async Task Login_BlockedAccount_IsAlso401AndSaysNothingMore()
+    {
+        // The game client needs to know why; an HTTP API telling an attacker that a username exists but
+        // is blocked is an oracle. Same flat 401 either way.
+        await using var server = await TestApiServer.StartAsync();
+        server.Accounts.SetActive("tom", false);
+
+        var response = await server.Client.PostAsJsonAsync(
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "secret" }
+                       );
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.DoesNotContain("block", await response.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task Login_GoodCredentials_ReturnsAToken()
     {
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "secret" }
+                       );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -31,43 +48,13 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "secret" }
+                       );
 
         var body = await response.Content.ReadAsStringAsync();
         Assert.Contains("\"expiresAt\"", body, StringComparison.Ordinal);
         Assert.DoesNotContain("\"ExpiresAt\"", body, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public async Task Login_WrongPassword_Is401()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "wrong" }
-        );
-
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Login_BlockedAccount_IsAlso401AndSaysNothingMore()
-    {
-        // The game client needs to know why; an HTTP API telling an attacker that a username exists but
-        // is blocked is an oracle. Same flat 401 either way.
-        await using var server = await TestApiServer.StartAsync();
-        server.Accounts.SetActive("tom", false);
-
-        var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
-
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        Assert.DoesNotContain("block", await response.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -76,9 +63,22 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "nobody", password = "secret" }
-        );
+                           "/api/v1/auth/login",
+                           new { username = "nobody", password = "secret" }
+                       );
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Login_WrongPassword_Is401()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        var response = await server.Client.PostAsJsonAsync(
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "wrong" }
+                       );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }

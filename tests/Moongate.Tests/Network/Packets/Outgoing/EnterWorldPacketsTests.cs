@@ -1,32 +1,29 @@
 using System.Buffers.Binary;
 using System.Text;
-using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Data;
+using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
-using Moongate.UO.Data.Hues;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Tests.Network.Packets.Outgoing;
 
 public class EnterWorldPacketsTests
 {
-    private static byte[] Serialize<TPacket>(TPacket packet) where TPacket : Moongate.Network.Interfaces.IOutgoingPacket
-    {
-        var writer = new SpanWriter(256, true);
-        packet.Write(ref writer);
+    [Fact]
+    public void GameTime_IsByteExact()
+        => Assert.Equal(new byte[] { 0x5B, 12, 30, 45 }, Serialize(new GameTimePacket(12, 30, 45)));
 
-        return writer.Span.ToArray();
-    }
+    [Fact]
+    public void LoginComplete_IsSingleByte()
+        => Assert.Equal(new byte[] { 0x55 }, Serialize(new LoginCompletePacket()));
 
     [Fact]
     public void LoginConfirm_IsByteExact()
     {
-        var b = Serialize(
-            new LoginConfirmPacket(new Serial(0x12345678), 0x0190, 1000, 2000, 5, DirectionType.South, 7168, 4096)
-        );
+        var b = Serialize(new LoginConfirmPacket(new(0x12345678), 0x0190, 1000, 2000, 5, DirectionType.South, 7168, 4096));
 
         Assert.Equal(37, b.Length);
         Assert.Equal(0x1B, b[0]);
@@ -68,72 +65,17 @@ public class EnterWorldPacketsTests
     }
 
     [Fact]
-    public void SeasonChange_IsByteExact()
-    {
-        var b = Serialize(new SeasonChangePacket(SeasonType.Fall, true));
-
-        Assert.Equal(new byte[] { 0xBC, 2, 1 }, b);
-    }
-
-    [Fact]
-    public void MobileUpdate_IsByteExact()
-    {
-        var b = Serialize(
-            new MobileUpdatePacket(new Serial(0xABCD), 0x0191, new Hue(0x0203), 0x02, 1234, 5678, -7, DirectionType.West)
-        );
-
-        Assert.Equal(19, b.Length);
-        Assert.Equal(0x20, b[0]);
-        Assert.Equal(0xABCDu, BinaryPrimitives.ReadUInt32BigEndian(b.AsSpan(1)));
-        Assert.Equal(0x0191, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(5)));
-        Assert.Equal(0, b[7]);
-        Assert.Equal(0x0203, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(8)));
-        Assert.Equal(0x02, b[10]);
-        Assert.Equal(1234, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(11)));
-        Assert.Equal(5678, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(13)));
-        Assert.Equal((byte)DirectionType.West, b[17]);
-        Assert.Equal(-7, (sbyte)b[18]);
-    }
-
-    [Fact]
-    public void OverallLightLevel_IsByteExact()
-        => Assert.Equal(new byte[] { 0x4F, 3 }, Serialize(new OverallLightLevelPacket(3)));
-
-    [Fact]
-    public void PersonalLightLevel_IsByteExact()
-    {
-        var b = Serialize(new PersonalLightLevelPacket(new Serial(0x99), 4));
-
-        Assert.Equal(6, b.Length);
-        Assert.Equal(0x4E, b[0]);
-        Assert.Equal(0x99u, BinaryPrimitives.ReadUInt32BigEndian(b.AsSpan(1)));
-        Assert.Equal(4, b[5]);
-    }
-
-    [Fact]
-    public void WarMode_IsByteExact()
-        => Assert.Equal(new byte[] { 0x72, 1, 0x00, 0x32, 0x00 }, Serialize(new WarModePacket(true)));
-
-    [Fact]
-    public void LoginComplete_IsSingleByte()
-        => Assert.Equal(new byte[] { 0x55 }, Serialize(new LoginCompletePacket()));
-
-    [Fact]
-    public void GameTime_IsByteExact()
-        => Assert.Equal(new byte[] { 0x5B, 12, 30, 45 }, Serialize(new GameTimePacket(12, 30, 45)));
-
-    [Fact]
     public void MobileIncoming_NoItems_HasTerminatorAndLength()
     {
         var b = Serialize(
             new MobileIncomingPacket(
-                new Serial(0x01),
+                new(0x01),
                 0x0190,
                 100,
                 200,
                 3,
                 DirectionType.North,
-                new Hue(0),
+                new(0),
                 0,
                 NotorietyType.Innocent,
                 []
@@ -152,19 +94,19 @@ public class EnterWorldPacketsTests
     {
         var items = new MobileIncomingItem[]
         {
-            new(new Serial(0x40000001), 0x1B72, LayerType.Shirt, new Hue(0x0A)),
-            new(new Serial(0x7FFFFFFF), 0x203B, LayerType.Hair, new Hue(0x0B))
+            new(new(0x40000001), 0x1B72, LayerType.Shirt, new(0x0A)),
+            new(new(0x7FFFFFFF), 0x203B, LayerType.Hair, new(0x0B))
         };
 
         var b = Serialize(
             new MobileIncomingPacket(
-                new Serial(0x05),
+                new(0x05),
                 0x0190,
                 0,
                 0,
                 0,
                 DirectionType.North,
-                new Hue(0),
+                new(0),
                 0,
                 NotorietyType.Innocent,
                 items
@@ -190,22 +132,22 @@ public class EnterWorldPacketsTests
     {
         var b = Serialize(
             new MobileStatusPacket(
-                new Serial(0x07),
+                new(0x07),
                 "Squid",
                 40,
                 50,
-                Female: true,
-                Strength: 50,
-                Dexterity: 45,
-                Intelligence: 25,
-                Stamina: 44,
-                StaminaMax: 45,
-                Mana: 25,
-                ManaMax: 25,
-                Race: RaceType.Human,
-                StatCap: 225,
-                Followers: 2,
-                FollowersMax: 5
+                true,
+                50,
+                45,
+                25,
+                44,
+                45,
+                25,
+                25,
+                RaceType.Human,
+                225,
+                2,
+                5
             )
         );
 
@@ -214,15 +156,70 @@ public class EnterWorldPacketsTests
         Assert.Equal(121, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(1)));
         Assert.Equal(0x07u, BinaryPrimitives.ReadUInt32BigEndian(b.AsSpan(3)));
         Assert.Equal("Squid", Encoding.ASCII.GetString(b, 7, 30).TrimEnd('\0'));
-        Assert.Equal(40, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(37))); // current hits
-        Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(39))); // max hits
-        Assert.Equal(0, b[41]);                                              // name-change flag
-        Assert.Equal(6, b[42]);                                              // version
-        Assert.Equal(1, b[43]);                                              // female
-        Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(44))); // strength
-        Assert.Equal(1, b[68]);                                              // race id (Human 0 + 1)
+        Assert.Equal(40, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(37)));  // current hits
+        Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(39)));  // max hits
+        Assert.Equal(0, b[41]);                                               // name-change flag
+        Assert.Equal(6, b[42]);                                               // version
+        Assert.Equal(1, b[43]);                                               // female
+        Assert.Equal(50, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(44)));  // strength
+        Assert.Equal(1, b[68]);                                               // race id (Human 0 + 1)
         Assert.Equal(225, BinaryPrimitives.ReadInt16BigEndian(b.AsSpan(69))); // stat cap
         Assert.Equal(2, b[71]);                                               // followers
         Assert.Equal(5, b[72]);                                               // followers max
+    }
+
+    [Fact]
+    public void MobileUpdate_IsByteExact()
+    {
+        var b = Serialize(
+            new MobileUpdatePacket(new(0xABCD), 0x0191, new(0x0203), 0x02, 1234, 5678, -7, DirectionType.West)
+        );
+
+        Assert.Equal(19, b.Length);
+        Assert.Equal(0x20, b[0]);
+        Assert.Equal(0xABCDu, BinaryPrimitives.ReadUInt32BigEndian(b.AsSpan(1)));
+        Assert.Equal(0x0191, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(5)));
+        Assert.Equal(0, b[7]);
+        Assert.Equal(0x0203, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(8)));
+        Assert.Equal(0x02, b[10]);
+        Assert.Equal(1234, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(11)));
+        Assert.Equal(5678, BinaryPrimitives.ReadUInt16BigEndian(b.AsSpan(13)));
+        Assert.Equal((byte)DirectionType.West, b[17]);
+        Assert.Equal(-7, (sbyte)b[18]);
+    }
+
+    [Fact]
+    public void OverallLightLevel_IsByteExact()
+        => Assert.Equal(new byte[] { 0x4F, 3 }, Serialize(new OverallLightLevelPacket(3)));
+
+    [Fact]
+    public void PersonalLightLevel_IsByteExact()
+    {
+        var b = Serialize(new PersonalLightLevelPacket(new(0x99), 4));
+
+        Assert.Equal(6, b.Length);
+        Assert.Equal(0x4E, b[0]);
+        Assert.Equal(0x99u, BinaryPrimitives.ReadUInt32BigEndian(b.AsSpan(1)));
+        Assert.Equal(4, b[5]);
+    }
+
+    [Fact]
+    public void SeasonChange_IsByteExact()
+    {
+        var b = Serialize(new SeasonChangePacket(SeasonType.Fall, true));
+
+        Assert.Equal(new byte[] { 0xBC, 2, 1 }, b);
+    }
+
+    [Fact]
+    public void WarMode_IsByteExact()
+        => Assert.Equal(new byte[] { 0x72, 1, 0x00, 0x32, 0x00 }, Serialize(new WarModePacket(true)));
+
+    private static byte[] Serialize<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+    {
+        var writer = new SpanWriter(256, true);
+        packet.Write(ref writer);
+
+        return writer.Span.ToArray();
     }
 }

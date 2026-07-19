@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Http.Plugin.Data.Api.Admin;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Services.Hosting;
-using Moongate.Http.Plugin.Data.Api.Admin;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using SquidStd.Core.Utils;
@@ -23,15 +23,14 @@ public sealed class AdminEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
-        routes.MapGet("/api/v1/admin/status", Status)
-              .WithName("GetAdminStatus")
-              .WithTags("admin")
-              .RequireAuthorization(HttpServerService.AdminPolicy);
-    }
+        => routes.MapGet("/api/v1/admin/status", Status)
+                 .WithName("GetAdminStatus")
+                 .WithTags("admin")
+                 .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Reports the shard's name, build and how many sessions are connected.</summary>
     /// <remarks>A snapshot taken when the request is served, not a live figure.</remarks>
+
     // ISessionManager.Count is backed by a ConcurrentDictionary, so it is safe to read from an ASP.NET
     // thread; nothing here touches world state, which is single-writer on the game loop.
     private IResult Status()

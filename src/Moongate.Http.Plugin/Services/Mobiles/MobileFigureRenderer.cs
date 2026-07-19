@@ -149,9 +149,6 @@ public sealed class MobileFigureRenderer : IMobileFigureRenderer
         }
     }
 
-    private static int ResolveWornHue(MobileFigureEquipment worn, int templateHue)
-        => worn.Hue != 0 ? worn.Hue : templateHue;
-
     private static UltimaBitmap Compose(IReadOnlyList<MobileFrame> layers)
     {
         var topLeftX = new int[layers.Count];
@@ -183,4 +180,7 @@ public sealed class MobileFigureRenderer : IMobileFigureRenderer
 
         return canvas;
     }
+
+    private static int ResolveWornHue(MobileFigureEquipment worn, int templateHue)
+        => worn.Hue != 0 ? worn.Hue : templateHue;
 }

@@ -1,52 +1,23 @@
-using Moongate.Core.Geometry;
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Containers;
-using Moongate.UO.Data.Hues;
 
 namespace Moongate.Tests.Server.Subscribers;
 
 public class ContainerSubscriberTests
 {
-    [Fact]
-    public void ResolveGumpId_TemplateNamesItsOwnGump_ThatGumpWins()
-        => Assert.Equal(74, Subscriber().ResolveGumpId(Item("bank_box", 2475)));
+    [Theory, InlineData(0), InlineData(-5)]
 
-    [Fact]
-    public void ResolveGumpId_TemplateNamesNoGump_TakesTheOneTheGumpTableGivesTheGraphic()
+    // an item that never had its amount set
+     // nonsense, but the wire field is unsigned
+    public void BuildContents_AmountBelowOne_IsSentAsOne(int amount)
     {
-        // Mirrors ModernUO: an un-overridden DefaultGumpID falls through to ContainerData.GetData(itemID).
-        Assert.Equal(65, Subscriber().ResolveGumpId(Item("basket_artifact", 9437)));
-    }
+        var item = new ItemEntity { Id = new(0x40000005), ItemId = 1, Amount = amount };
 
-    [Fact]
-    public void ResolveGumpId_NeitherTemplateNorTableNamesOne_FallsBackToThePlainBag()
-    {
-        // The backpack's own case: listed in neither, so it lands on the table's default entry.
-        Assert.Equal(ContainerGumpLayout.DefaultGumpId, Subscriber().ResolveGumpId(Item("backpack", 3701)));
-    }
-
-    [Fact]
-    public void ResolveGumpId_TemplateHasNoContainerBlock_IsNotAContainer()
-        => Assert.Null(Subscriber().ResolveGumpId(Item("dagger", 3921)));
-
-    [Fact]
-    public void ResolveGumpId_UnknownTemplate_IsNotAContainer()
-        => Assert.Null(Subscriber().ResolveGumpId(Item("does_not_exist", 3701)));
-
-    [Fact]
-    public void ResolveGumpId_ItemMadeWithoutATemplate_IsNotAContainer()
-        => Assert.Null(Subscriber().ResolveGumpId(Item(string.Empty, 3701)));
-
-    [Fact]
-    public void ResolveGumpId_ContainerGraphicButNoContainerBlock_StaysShut()
-    {
-        // The key ring's case: a container to the client, an Item to ModernUO. The template decides.
-        Assert.Null(Subscriber().ResolveGumpId(Item("key_ring", 4113)));
+        Assert.Equal(1, Assert.Single(ContainerSubscriber.BuildContents([item])).Amount);
     }
 
     [Fact]
@@ -54,11 +25,11 @@ public class ContainerSubscriberTests
     {
         var dagger = new ItemEntity
         {
-            Id = new Serial(0x40000005),
+            Id = new(0x40000005),
             ItemId = 0x0F51,
             Amount = 3,
-            ContainerPosition = new Point2D(44, 65),
-            Hue = new Hue(0x21)
+            ContainerPosition = new(44, 65),
+            Hue = new(0x21)
         };
 
         var entry = Assert.Single(ContainerSubscriber.BuildContents([dagger]));
@@ -75,21 +46,11 @@ public class ContainerSubscriberTests
     public void BuildContents_EmptyContainer_ProducesNoEntries()
         => Assert.Empty(ContainerSubscriber.BuildContents([]));
 
-    [Theory]
-    [InlineData(0)]  // an item that never had its amount set
-    [InlineData(-5)] // nonsense, but the wire field is unsigned
-    public void BuildContents_AmountBelowOne_IsSentAsOne(int amount)
-    {
-        var item = new ItemEntity { Id = new Serial(0x40000005), ItemId = 1, Amount = amount };
-
-        Assert.Equal(1, Assert.Single(ContainerSubscriber.BuildContents([item])).Amount);
-    }
-
     [Fact]
     public void BuildContents_KeepsTheOrderItemsCameIn()
     {
-        var first = new ItemEntity { Id = new Serial(0x40000005), ItemId = 1, Amount = 1 };
-        var second = new ItemEntity { Id = new Serial(0x40000006), ItemId = 2, Amount = 1 };
+        var first = new ItemEntity { Id = new(0x40000005), ItemId = 1, Amount = 1 };
+        var second = new ItemEntity { Id = new(0x40000006), ItemId = 2, Amount = 1 };
 
         var contents = ContainerSubscriber.BuildContents([first, second]);
 
@@ -97,8 +58,42 @@ public class ContainerSubscriberTests
         Assert.Equal(0x40000006u, contents[1].Serial.Value);
     }
 
+    [Fact]
+    public void ResolveGumpId_ContainerGraphicButNoContainerBlock_StaysShut()
+
+        // The key ring's case: a container to the client, an Item to ModernUO. The template decides.
+        => Assert.Null(Subscriber().ResolveGumpId(Item("key_ring", 4113)));
+
+    [Fact]
+    public void ResolveGumpId_ItemMadeWithoutATemplate_IsNotAContainer()
+        => Assert.Null(Subscriber().ResolveGumpId(Item(string.Empty, 3701)));
+
+    [Fact]
+    public void ResolveGumpId_NeitherTemplateNorTableNamesOne_FallsBackToThePlainBag()
+
+        // The backpack's own case: listed in neither, so it lands on the table's default entry.
+        => Assert.Equal(ContainerGumpLayout.DefaultGumpId, Subscriber().ResolveGumpId(Item("backpack", 3701)));
+
+    [Fact]
+    public void ResolveGumpId_TemplateHasNoContainerBlock_IsNotAContainer()
+        => Assert.Null(Subscriber().ResolveGumpId(Item("dagger", 3921)));
+
+    [Fact]
+    public void ResolveGumpId_TemplateNamesItsOwnGump_ThatGumpWins()
+        => Assert.Equal(74, Subscriber().ResolveGumpId(Item("bank_box", 2475)));
+
+    [Fact]
+    public void ResolveGumpId_TemplateNamesNoGump_TakesTheOneTheGumpTableGivesTheGraphic()
+
+        // Mirrors ModernUO: an un-overridden DefaultGumpID falls through to ContainerData.GetData(itemID).
+        => Assert.Equal(65, Subscriber().ResolveGumpId(Item("basket_artifact", 9437)));
+
+    [Fact]
+    public void ResolveGumpId_UnknownTemplate_IsNotAContainer()
+        => Assert.Null(Subscriber().ResolveGumpId(Item("does_not_exist", 3701)));
+
     private static ItemEntity Item(string templateId, int itemId)
-        => new() { Id = new Serial(0x40000005), TemplateId = templateId, ItemId = itemId, Amount = 1 };
+        => new() { Id = new(0x40000005), TemplateId = templateId, ItemId = itemId, Amount = 1 };
 
     private static ContainerSubscriber Subscriber()
     {

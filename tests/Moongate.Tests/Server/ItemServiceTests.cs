@@ -13,6 +13,22 @@ namespace Moongate.Tests.Server;
 public class ItemServiceTests
 {
     [Fact]
+    public void AddToContainer_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var container = Item("Backpack", 3701);
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Create(container);
+        service.Create(item);
+
+        service.AddToContainer(container, item, new(1, 1));
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
     public void AddToContainer_SetsBothSidesAndClearsEquip()
     {
         var (service, _) = Build();
@@ -42,6 +58,19 @@ public class ItemServiceTests
     }
 
     [Fact]
+    public void Create_GroundItem_IsSpatiallyQueryable()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+
+        service.Create(item);
+
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
     public void Delete_RemovesFromStore()
     {
         var (service, persistence) = Build();
@@ -50,6 +79,20 @@ public class ItemServiceTests
 
         Assert.True(service.Delete(id));
         Assert.Null(persistence.Store<ItemEntity>().GetById(id));
+    }
+
+    [Fact]
+    public void Delete_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Create(item);
+
+        service.Delete(item.Id);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
     }
 
     [Fact]
@@ -83,6 +126,22 @@ public class ItemServiceTests
     }
 
     [Fact]
+    public void Equip_RemovesItemFromSpatialIndex()
+    {
+        var (service, spatial, persistence) = BuildWithSpatial();
+        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Create(item);
+
+        service.Equip(mobile, item, LayerType.OneHanded);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
     public void Equip_SetsBothSidesAndPersists()
     {
         var (service, persistence) = Build();
@@ -96,6 +155,49 @@ public class ItemServiceTests
         Assert.Equal(LayerType.OneHanded, item.EquippedLayer);
         Assert.Equal(Serial.Zero, item.ParentContainerId);
         Assert.NotNull(persistence.Store<ItemEntity>().GetById(item.Id));
+    }
+
+    [Fact]
+    public void Flip_CyclesToNextVariantAndPersists()
+    {
+        var (service, persistence) = Build();
+        var item = new ItemEntity { Name = "Armoire", ItemId = 2639, FlippableItemIds = [2639, 2643] };
+        service.Create(item);
+
+        Assert.True(service.Flip(item));
+        Assert.Equal(2643, item.ItemId);
+        Assert.Equal(2643, persistence.Store<ItemEntity>().GetById(item.Id)!.ItemId);
+    }
+
+    [Fact]
+    public void Flip_ReturnsFalse_WhenCurrentIdNotInList()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Odd", ItemId = 100, FlippableItemIds = [2639, 2643] };
+
+        Assert.False(service.Flip(item));
+        Assert.Equal(100, item.ItemId);
+    }
+
+    [Fact]
+    public void Flip_ReturnsFalse_WhenFewerThanTwoVariants()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Dagger", ItemId = 3921, FlippableItemIds = [] };
+
+        Assert.False(service.Flip(item));
+        Assert.Equal(3921, item.ItemId);
+    }
+
+    [Fact]
+    public void Flip_WrapsAroundToFirstVariant()
+    {
+        var (service, _) = Build();
+        var item = new ItemEntity { Name = "Armoire", ItemId = 2643, FlippableItemIds = [2639, 2643] };
+        service.Create(item);
+
+        Assert.True(service.Flip(item));
+        Assert.Equal(2639, item.ItemId);
     }
 
     [Fact]
@@ -143,6 +245,38 @@ public class ItemServiceTests
     }
 
     [Fact]
+    public void RemoveFromContainer_MakesItemSpatiallyQueryableAgain()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var container = Item("Backpack", 3701);
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Create(container);
+        service.AddToContainer(container, item, new(1, 1));
+
+        service.RemoveFromContainer(container, item);
+
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void Save_UpdatesTheItemPositionInTheSpatialIndex()
+    {
+        var (service, spatial, _) = BuildWithSpatial();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Create(item);
+
+        item.Position = new(300, 300, 0);
+        service.Save(item);
+
+        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+        Assert.Single(spatial.GetItemsInRange(0, new(300, 300, 0), 5));
+    }
+
+    [Fact]
     public void Unequip_ClearsBothSidesAndReturnsItem()
     {
         var (service, _) = Build();
@@ -168,46 +302,19 @@ public class ItemServiceTests
     }
 
     [Fact]
-    public void Flip_CyclesToNextVariantAndPersists()
+    public void Unequip_MakesItemSpatiallyQueryableAgain()
     {
-        var (service, persistence) = Build();
-        var item = new ItemEntity { Name = "Armoire", ItemId = 2639, FlippableItemIds = [2639, 2643] };
-        service.Create(item);
+        var (service, spatial, persistence) = BuildWithSpatial();
+        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        var item = Item();
+        item.MapId = 0;
+        item.Position = new(100, 100, 0);
+        service.Equip(mobile, item, LayerType.OneHanded);
 
-        Assert.True(service.Flip(item));
-        Assert.Equal(2643, item.ItemId);
-        Assert.Equal(2643, persistence.Store<ItemEntity>().GetById(item.Id)!.ItemId);
-    }
+        service.Unequip(mobile, LayerType.OneHanded);
 
-    [Fact]
-    public void Flip_WrapsAroundToFirstVariant()
-    {
-        var (service, _) = Build();
-        var item = new ItemEntity { Name = "Armoire", ItemId = 2643, FlippableItemIds = [2639, 2643] };
-        service.Create(item);
-
-        Assert.True(service.Flip(item));
-        Assert.Equal(2639, item.ItemId);
-    }
-
-    [Fact]
-    public void Flip_ReturnsFalse_WhenFewerThanTwoVariants()
-    {
-        var (service, _) = Build();
-        var item = new ItemEntity { Name = "Dagger", ItemId = 3921, FlippableItemIds = [] };
-
-        Assert.False(service.Flip(item));
-        Assert.Equal(3921, item.ItemId);
-    }
-
-    [Fact]
-    public void Flip_ReturnsFalse_WhenCurrentIdNotInList()
-    {
-        var (service, _) = Build();
-        var item = new ItemEntity { Name = "Odd", ItemId = 100, FlippableItemIds = [2639, 2643] };
-
-        Assert.False(service.Flip(item));
-        Assert.Equal(100, item.ItemId);
+        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
     }
 
     private static (ItemService Service, FakePersistenceService Persistence) Build()
@@ -229,111 +336,4 @@ public class ItemServiceTests
 
     private static ItemEntity Item(string name = "Dagger", int itemId = 3921)
         => new() { Name = name, ItemId = itemId };
-
-    [Fact]
-    public void Create_GroundItem_IsSpatiallyQueryable()
-    {
-        var (service, spatial, _) = BuildWithSpatial();
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-
-        service.Create(item);
-
-        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void AddToContainer_RemovesItemFromSpatialIndex()
-    {
-        var (service, spatial, _) = BuildWithSpatial();
-        var container = Item("Backpack", 3701);
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Create(container);
-        service.Create(item);
-
-        service.AddToContainer(container, item, new(1, 1));
-
-        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void Delete_RemovesItemFromSpatialIndex()
-    {
-        var (service, spatial, _) = BuildWithSpatial();
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Create(item);
-
-        service.Delete(item.Id);
-
-        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void Equip_RemovesItemFromSpatialIndex()
-    {
-        var (service, spatial, persistence) = BuildWithSpatial();
-        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Create(item);
-
-        service.Equip(mobile, item, LayerType.OneHanded);
-
-        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void RemoveFromContainer_MakesItemSpatiallyQueryableAgain()
-    {
-        var (service, spatial, _) = BuildWithSpatial();
-        var container = Item("Backpack", 3701);
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Create(container);
-        service.AddToContainer(container, item, new(1, 1));
-
-        service.RemoveFromContainer(container, item);
-
-        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void Unequip_MakesItemSpatiallyQueryableAgain()
-    {
-        var (service, spatial, persistence) = BuildWithSpatial();
-        var mobile = new MobileEntity { Id = new(0x1), MapId = 0, Position = new(100, 100, 0) };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Equip(mobile, item, LayerType.OneHanded);
-
-        service.Unequip(mobile, LayerType.OneHanded);
-
-        Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-    }
-
-    [Fact]
-    public void Save_UpdatesTheItemPositionInTheSpatialIndex()
-    {
-        var (service, spatial, _) = BuildWithSpatial();
-        var item = Item();
-        item.MapId = 0;
-        item.Position = new Point3D(100, 100, 0);
-        service.Create(item);
-
-        item.Position = new Point3D(300, 300, 0);
-        service.Save(item);
-
-        Assert.Empty(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
-        Assert.Single(spatial.GetItemsInRange(0, new(300, 300, 0), 5));
-    }
 }

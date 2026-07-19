@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Server.Abstractions.Extensions;
-using Moongate.Server.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Loading;
+using Moongate.Server.Extensions;
 
 namespace Moongate.Tests.Server;
 

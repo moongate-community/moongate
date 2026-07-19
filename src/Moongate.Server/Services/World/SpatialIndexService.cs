@@ -34,7 +34,7 @@ public sealed class SpatialIndexService : ISpatialIndexService
     public void AddOrUpdate(MobileEntity mobile)
     {
         LoopGuard.Warn(_loopThread, nameof(SpatialIndexService) + "." + nameof(AddOrUpdate));
-        Place(mobile.Id, mobile.MapId, mobile.Position, isMobile: true);
+        Place(mobile.Id, mobile.MapId, mobile.Position, true);
     }
 
     public void AddOrUpdate(ItemEntity item)
@@ -49,32 +49,7 @@ public sealed class SpatialIndexService : ISpatialIndexService
             return;
         }
 
-        Place(item.Id, item.MapId, item.Position, isMobile: false);
-    }
-
-    public void Remove(Serial serial)
-    {
-        LoopGuard.Warn(_loopThread, nameof(SpatialIndexService) + "." + nameof(Remove));
-        RemoveCore(serial);
-    }
-
-    public IReadOnlyList<MobileEntity> GetMobilesInRange(int mapId, Point3D center, int range)
-    {
-        LoopGuard.Warn(_loopThread, nameof(SpatialIndexService) + "." + nameof(GetMobilesInRange));
-        var results = new List<MobileEntity>();
-
-        foreach (var sector in SectorsInRange(mapId, center, range))
-        {
-            foreach (var serial in sector.Mobiles)
-            {
-                if (_mobiles.GetById(serial) is { } mobile && center.InRange(mobile.Position, range))
-                {
-                    results.Add(mobile);
-                }
-            }
-        }
-
-        return results;
+        Place(item.Id, item.MapId, item.Position, false);
     }
 
     public IReadOnlyList<ItemEntity> GetItemsInRange(int mapId, Point3D center, int range)
@@ -96,6 +71,31 @@ public sealed class SpatialIndexService : ISpatialIndexService
         return results;
     }
 
+    public IReadOnlyList<MobileEntity> GetMobilesInRange(int mapId, Point3D center, int range)
+    {
+        LoopGuard.Warn(_loopThread, nameof(SpatialIndexService) + "." + nameof(GetMobilesInRange));
+        var results = new List<MobileEntity>();
+
+        foreach (var sector in SectorsInRange(mapId, center, range))
+        {
+            foreach (var serial in sector.Mobiles)
+            {
+                if (_mobiles.GetById(serial) is { } mobile && center.InRange(mobile.Position, range))
+                {
+                    results.Add(mobile);
+                }
+            }
+        }
+
+        return results;
+    }
+
+    public void Remove(Serial serial)
+    {
+        LoopGuard.Warn(_loopThread, nameof(SpatialIndexService) + "." + nameof(Remove));
+        RemoveCore(serial);
+    }
+
     private void Place(Serial serial, int mapId, Point3D position, bool isMobile)
     {
         var key = (mapId, position.X >> SectorShift, position.Y >> SectorShift);
@@ -112,7 +112,7 @@ public sealed class SpatialIndexService : ISpatialIndexService
 
         if (!_sectors.TryGetValue(key, out var sector))
         {
-            sector = new Sector();
+            sector = new();
             _sectors[key] = sector;
         }
 

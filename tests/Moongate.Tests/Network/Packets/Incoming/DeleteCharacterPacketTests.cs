@@ -7,6 +7,10 @@ namespace Moongate.Tests.Network.Packets.Incoming;
 public class DeleteCharacterPacketTests
 {
     [Fact]
+    public void PacketId_Is0x83()
+        => Assert.Equal(0x83, DeleteCharacterPacket.PacketId);
+
+    [Fact]
     public void Read_ParsesSlot()
     {
         var buffer = new byte[39];
@@ -17,8 +21,4 @@ public class DeleteCharacterPacketTests
 
         Assert.Equal(2, DeleteCharacterPacket.Read(ref reader).Slot);
     }
-
-    [Fact]
-    public void PacketId_Is0x83()
-        => Assert.Equal(0x83, DeleteCharacterPacket.PacketId);
 }

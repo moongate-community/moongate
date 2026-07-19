@@ -10,8 +10,14 @@ public sealed class StubEventBus : IEventBus
 {
     private readonly List<IEvent> _published = [];
 
-    public IReadOnlyList<IEvent> Published
-        => _published;
+    public IReadOnlyList<IEvent> Published => _published;
+
+    private sealed class NoopDisposable : IDisposable
+    {
+        public static readonly NoopDisposable Instance = new();
+
+        public void Dispose() { }
+    }
 
     public void Publish<TEvent>(TEvent eventData) where TEvent : IEvent
         => _published.Add(eventData);
@@ -29,13 +35,4 @@ public sealed class StubEventBus : IEventBus
 
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler) where TEvent : IEvent
         => NoopDisposable.Instance;
-
-    private sealed class NoopDisposable : IDisposable
-    {
-        public static readonly NoopDisposable Instance = new();
-
-        public void Dispose()
-        {
-        }
-    }
 }

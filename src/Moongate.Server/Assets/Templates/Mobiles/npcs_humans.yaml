@@ -13,12 +13,12 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: shirt
-        Layer: Shirt
-      - Item: long_pants
-        Layer: Pants
-      - Item: shoes
-        Layer: Shoes
+        -   Item: shirt
+            Layer: Shirt
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: shoes
+            Layer: Shoes
 -   Id: healer_npc
     Title: a healer
     Category: npc
@@ -35,10 +35,10 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: robe
-        Layer: OuterTorso
-      - Item: sandals
-        Layer: Shoes
+        -   Item: robe
+            Layer: OuterTorso
+        -   Item: sandals
+            Layer: Shoes
     BrainScript: town_healer
 -   Id: lilly
     Name: Lilly
@@ -57,10 +57,10 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: backpack
-        Layer: Backpack
-      - Item: queen_gilded_dress
-        Layer: OuterTorso
-      - Item: queen_boots
-        Layer: Shoes
+        -   Item: backpack
+            Layer: Backpack
+        -   Item: queen_gilded_dress
+            Layer: OuterTorso
+        -   Item: queen_boots
+            Layer: Shoes
     BrainScript: lilly

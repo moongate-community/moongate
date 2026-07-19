@@ -37,6 +37,7 @@ public class SerialTests
     [Theory, InlineData(0x00000001u, true, false), InlineData(0x3FFFFFFFu, true, false),
      InlineData(0x40000000u, false, true), InlineData(0x7EEEEEEEu, false, true), InlineData(0x00000000u, false, false),
      InlineData(0x80000000u, false, false),
+
      // The virtual band sits above the items and belongs to neither.
      InlineData(0x7EEEEEEFu, false, false), InlineData(0x7FFFFFFFu, false, false)]
     public void IsMobile_IsItem_FollowProtocolRanges(uint value, bool isMobile, bool isItem)
@@ -47,22 +48,19 @@ public class SerialTests
         Assert.Equal(isItem, serial.IsItem);
     }
 
-    [Theory, InlineData(0x7EEEEEEFu, true), InlineData(0x7FFFFFFFu, true),
-     // The band is exclusive: the last item serial is not virtual, and neither is a mobile.
-     InlineData(0x7EEEEEEEu, false), InlineData(0x40000000u, false), InlineData(0x00000001u, false)]
-    public void IsVirtual_CoversOnlyTheReservedBand(uint value, bool isVirtual)
-        => Assert.Equal(isVirtual, new Serial(value).IsVirtual);
-
-    [Fact]
-    public void VirtualBand_StartsRightAfterTheLastItem()
-        => Assert.Equal(Serial.MaxItem + 1, Serial.MinVirtual);
-
     [Fact]
     public void IsValid_ZeroIsInvalid()
     {
         Assert.False(Serial.Zero.IsValid);
         Assert.True(new Serial(1).IsValid);
     }
+
+    [Theory, InlineData(0x7EEEEEEFu, true), InlineData(0x7FFFFFFFu, true),
+
+     // The band is exclusive: the last item serial is not virtual, and neither is a mobile.
+     InlineData(0x7EEEEEEEu, false), InlineData(0x40000000u, false), InlineData(0x00000001u, false)]
+    public void IsVirtual_CoversOnlyTheReservedBand(uint value, bool isVirtual)
+        => Assert.Equal(isVirtual, new Serial(value).IsVirtual);
 
     [Fact]
     public void ProtocolConstants_MatchWireRanges()
@@ -81,4 +79,8 @@ public class SerialTests
         Assert.Equal("0x4000000A", new Serial(0x4000000Au).ToString());
         Assert.Equal("0x00000001", new Serial(1).ToString());
     }
+
+    [Fact]
+    public void VirtualBand_StartsRightAfterTheLastItem()
+        => Assert.Equal(Serial.MaxItem + 1, Serial.MinVirtual);
 }

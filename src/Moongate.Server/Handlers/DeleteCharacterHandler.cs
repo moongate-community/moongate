@@ -1,10 +1,8 @@
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
-using Moongate.Network.Types;
 using Moongate.Server.Abstractions.Data;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Network;
-using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Server.Handlers;
 
@@ -36,8 +34,8 @@ public sealed class DeleteCharacterHandler : IPacketHandler<DeleteCharacterPacke
         }
 
         var characters = _characterService.GetPlayerCharacters(context.Session.AccountId)
-            .Select(character => character.Name)
-            .ToList();
+                                          .Select(character => character.Name)
+                                          .ToList();
 
         context.Session.Send(new CharacterListUpdatePacket(characters, CharacterSlots));
     }

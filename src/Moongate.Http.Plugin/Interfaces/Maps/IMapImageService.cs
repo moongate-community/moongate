@@ -13,10 +13,15 @@ public interface IMapImageService
     bool IsReady { get; }
 
     /// <summary>
-    /// The zoom at which one pixel is one map tile for this facet, and so the deepest zoom it serves. Zoom
-    /// 0 is always a single tile holding the whole facet. -1 when the facet is not served.
+    /// The path of the cached whole-facet image in the given <paramref name="style" />, rendering it on
+    /// first request. Null when the facet is not served. This one is expensive — a facet-sized bitmap —
+    /// which is what the pre-warm is for.
     /// </summary>
-    int MaxZoomFor(MapType facet);
+    Task<string?> GetFullAsync(
+        MapType facet,
+        MapRenderStyleType style,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>
     /// The path of the cached tile in the given <paramref name="style" />, building it — and, below native
@@ -33,13 +38,8 @@ public interface IMapImageService
     );
 
     /// <summary>
-    /// The path of the cached whole-facet image in the given <paramref name="style" />, rendering it on
-    /// first request. Null when the facet is not served. This one is expensive — a facet-sized bitmap —
-    /// which is what the pre-warm is for.
+    /// The zoom at which one pixel is one map tile for this facet, and so the deepest zoom it serves. Zoom
+    /// 0 is always a single tile holding the whole facet. -1 when the facet is not served.
     /// </summary>
-    Task<string?> GetFullAsync(
-        MapType facet,
-        MapRenderStyleType style,
-        CancellationToken cancellationToken = default
-    );
+    int MaxZoomFor(MapType facet);
 }

@@ -21,13 +21,53 @@ public sealed class ItemImageEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
+
         // A method group, not a lambda: Swashbuckle reads the /// off the handler's method, and a lambda
         // has none — the route would document itself blank.
-        routes.MapGet("/api/v1/images/items/{id}.png", Get)
-              .WithName("GetItemImage")
-              .WithTags("images")
-              .AllowAnonymous();
+        => routes.MapGet("/api/v1/images/items/{id}.png", Get)
+                 .WithName("GetItemImage")
+                 .WithTags("images")
+                 .AllowAnonymous();
+
+    /// <summary>
+    /// Hex, with or without the prefix. A bare "1234" is hex too: the route is documented as 0xITEM_ID,
+    /// and reading it as decimal would quietly serve 0x4D2 to someone who meant 0x1234.
+    /// </summary>
+    internal static bool TryParseHex(string? value, out uint parsed)
+    {
+        parsed = 0;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        var digits = value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ? value[2..] : value;
+
+        return uint.TryParse(digits, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out parsed);
+    }
+
+    /// <summary>
+    /// An absent hue is unhued. The range is checked here because Hues.GetHue never fails — it masks the
+    /// index and falls back to hue 0 — so an out-of-range value would serve a wrong image, not an error.
+    /// </summary>
+    internal static bool TryParseHue(string? value, out ushort hue)
+    {
+        hue = 0;
+
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return true;
+        }
+
+        if (!TryParseHex(value, out var parsed) || parsed > MaxHue)
+        {
+            return false;
+        }
+
+        hue = (ushort)parsed;
+
+        return true;
     }
 
     /// <summary>Item art as a PNG, optionally hued.</summary>
@@ -74,46 +114,5 @@ public sealed class ItemImageEndpoints : IApiEndpointRegistration
                        statusCode: StatusCodes.Status404NotFound
                    )
                    : Results.File(path, "image/png");
-    }
-
-    /// <summary>
-    /// Hex, with or without the prefix. A bare "1234" is hex too: the route is documented as 0xITEM_ID,
-    /// and reading it as decimal would quietly serve 0x4D2 to someone who meant 0x1234.
-    /// </summary>
-    internal static bool TryParseHex(string? value, out uint parsed)
-    {
-        parsed = 0;
-
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return false;
-        }
-
-        var digits = value.StartsWith("0x", StringComparison.OrdinalIgnoreCase) ? value[2..] : value;
-
-        return uint.TryParse(digits, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out parsed);
-    }
-
-    /// <summary>
-    /// An absent hue is unhued. The range is checked here because Hues.GetHue never fails — it masks the
-    /// index and falls back to hue 0 — so an out-of-range value would serve a wrong image, not an error.
-    /// </summary>
-    internal static bool TryParseHue(string? value, out ushort hue)
-    {
-        hue = 0;
-
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return true;
-        }
-
-        if (!TryParseHex(value, out var parsed) || parsed > MaxHue)
-        {
-            return false;
-        }
-
-        hue = (ushort)parsed;
-
-        return true;
     }
 }

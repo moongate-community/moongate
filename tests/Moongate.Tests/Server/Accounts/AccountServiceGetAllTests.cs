@@ -7,16 +7,9 @@ namespace Moongate.Tests.Server.Accounts;
 
 public class AccountServiceGetAllTests
 {
-    private static AccountService Build()
-    {
-        var persistence = new FakePersistenceService();
-
-        return new(
-            persistence,
-            CharacterServiceFixture.Create(persistence, new EventBusService()),
-            new StubSessionManager()
-        );
-    }
+    [Fact]
+    public void GetAll_NoAccounts_IsEmpty()
+        => Assert.Empty(Build().GetAll());
 
     [Fact]
     public void GetAll_ReturnsEveryAccount()
@@ -30,7 +23,14 @@ public class AccountServiceGetAllTests
         Assert.Equal(["alice", "tom"], all.Select(account => account.Username).OrderBy(name => name));
     }
 
-    [Fact]
-    public void GetAll_NoAccounts_IsEmpty()
-        => Assert.Empty(Build().GetAll());
+    private static AccountService Build()
+    {
+        var persistence = new FakePersistenceService();
+
+        return new(
+            persistence,
+            CharacterServiceFixture.Create(persistence, new EventBusService()),
+            new StubSessionManager()
+        );
+    }
 }

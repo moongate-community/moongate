@@ -1,5 +1,5 @@
-using Moongate.Tests.Support;
 using Moongate.Network.Compression;
+using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Network;
 

@@ -23,8 +23,7 @@ public sealed class BodyImageService : IBodyImageService
         _cachePath = directories.RegisterDirectory(CacheDirectory);
     }
 
-    public bool IsReady
-        => _catalog.IsReady;
+    public bool IsReady => _catalog.IsReady;
 
     public async Task<string?> GetOrCreateAsync(int body, int hue, CancellationToken cancellationToken = default)
     {
@@ -36,9 +35,9 @@ public sealed class BodyImageService : IBodyImageService
         }
 
         var frame = await _gate.ReadAsync(
-            () => File.Exists(path) ? null : _catalog.GetFrame(body, 0, 1, 0, hue),
-            cancellationToken
-        );
+                        () => File.Exists(path) ? null : _catalog.GetFrame(body, 0, 1, 0, hue),
+                        cancellationToken
+                    );
 
         if (frame is null)
         {

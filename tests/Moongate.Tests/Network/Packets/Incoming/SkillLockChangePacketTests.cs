@@ -7,6 +7,23 @@ namespace Moongate.Tests.Network.Packets.Incoming;
 
 public class SkillLockChangePacketTests
 {
+    [Fact]
+    public void PacketId_Is0x3A()
+        => Assert.Equal(0x3A, SkillLockChangePacket.PacketId);
+
+    [Fact]
+    public void Read_LockAboveLocked_ClampsToUp()
+        => Assert.Equal(SkillLockType.Up, Read(40, 9).Lock);
+
+    [Fact]
+    public void Read_ParsesSkillIdAndLock()
+    {
+        var packet = Read(40, (byte)SkillLockType.Down);
+
+        Assert.Equal(40, packet.SkillId);
+        Assert.Equal(SkillLockType.Down, packet.Lock);
+    }
+
     private static SkillLockChangePacket Read(ushort skillId, byte lockValue)
     {
         var buffer = new byte[6];
@@ -19,21 +36,4 @@ public class SkillLockChangePacketTests
 
         return SkillLockChangePacket.Read(ref reader);
     }
-
-    [Fact]
-    public void Read_ParsesSkillIdAndLock()
-    {
-        var packet = Read(40, (byte)SkillLockType.Down);
-
-        Assert.Equal(40, packet.SkillId);
-        Assert.Equal(SkillLockType.Down, packet.Lock);
-    }
-
-    [Fact]
-    public void Read_LockAboveLocked_ClampsToUp()
-        => Assert.Equal(SkillLockType.Up, Read(40, 9).Lock);
-
-    [Fact]
-    public void PacketId_Is0x3A()
-        => Assert.Equal(0x3A, SkillLockChangePacket.PacketId);
 }

@@ -9,12 +9,6 @@ namespace Moongate.Server.Abstractions.Interfaces.Mobiles;
 public interface IMobileFactoryService
 {
     /// <summary>
-    /// Creates a player mobile from a character creation (0xF8) packet: identity, stats, appearance
-    /// hues, starting skills and starting location. The mobile is built only, not persisted.
-    /// </summary>
-    MobileEntity CreatePlayerMobile(CharacterCreationPacket packet);
-
-    /// <summary>
     /// Builds a bare mobile with the given name at a map location. The mobile is built only, not
     /// persisted; the caller obtains its serial by persisting it.
     /// </summary>
@@ -26,4 +20,10 @@ public interface IMobileFactoryService
     /// Returns null when the template id is unknown. The mobile is built only, not persisted.
     /// </summary>
     MobileSpawn? CreateFromTemplate(string templateId, int mapId, Point3D position);
+
+    /// <summary>
+    /// Creates a player mobile from a character creation (0xF8) packet: identity, stats, appearance
+    /// hues, starting skills and starting location. The mobile is built only, not persisted.
+    /// </summary>
+    MobileEntity CreatePlayerMobile(CharacterCreationPacket packet);
 }

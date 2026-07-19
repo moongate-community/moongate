@@ -5,29 +5,13 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class GeneralInformationHandlerTests
 {
-    [Theory]
-    [InlineData(0, 0, StatType.Str, StatLockType.Up)]
-    [InlineData(1, 1, StatType.Dex, StatLockType.Down)]
-    [InlineData(2, 2, StatType.Int, StatLockType.Locked)]
-    public void ParseStatLockChange_ReadsStatAndLock(
-        byte stat,
-        byte statLock,
-        StatType expectedStat,
-        StatLockType expectedLock
-    )
-        => Assert.Equal((expectedStat, expectedLock), GeneralInformationHandler.ParseStatLockChange([stat, statLock]));
+    [Fact]
+    public void ParseLanguage_EmptyPayload_ReturnsNull()
+        => Assert.Null(GeneralInformationHandler.ParseLanguage([]));
 
     [Fact]
-    public void ParseStatLockChange_LockAboveLocked_ClampsToUp()
-        => Assert.Equal((StatType.Str, StatLockType.Up), GeneralInformationHandler.ParseStatLockChange([0, 9]));
-
-    [Fact]
-    public void ParseStatLockChange_UnknownStat_ReturnsNull()
-        => Assert.Null(GeneralInformationHandler.ParseStatLockChange([7, 0]));
-
-    [Fact]
-    public void ParseStatLockChange_ShortPayload_ReturnsNull()
-        => Assert.Null(GeneralInformationHandler.ParseStatLockChange([0]));
+    public void ParseLanguage_ReadsThreeCharCode()
+        => Assert.Equal("ENU", GeneralInformationHandler.ParseLanguage([(byte)'E', (byte)'N', (byte)'U', 0x00]));
 
     [Fact]
     public void ParseScreenSize_ReadsWidthAndHeight()
@@ -45,10 +29,24 @@ public class GeneralInformationHandlerTests
         => Assert.Null(GeneralInformationHandler.ParseScreenSize([0x00, 0x00]));
 
     [Fact]
-    public void ParseLanguage_ReadsThreeCharCode()
-        => Assert.Equal("ENU", GeneralInformationHandler.ParseLanguage([(byte)'E', (byte)'N', (byte)'U', 0x00]));
+    public void ParseStatLockChange_LockAboveLocked_ClampsToUp()
+        => Assert.Equal((StatType.Str, StatLockType.Up), GeneralInformationHandler.ParseStatLockChange([0, 9]));
+
+    [Theory, InlineData(0, 0, StatType.Str, StatLockType.Up), InlineData(1, 1, StatType.Dex, StatLockType.Down),
+     InlineData(2, 2, StatType.Int, StatLockType.Locked)]
+    public void ParseStatLockChange_ReadsStatAndLock(
+        byte stat,
+        byte statLock,
+        StatType expectedStat,
+        StatLockType expectedLock
+    )
+        => Assert.Equal((expectedStat, expectedLock), GeneralInformationHandler.ParseStatLockChange([stat, statLock]));
 
     [Fact]
-    public void ParseLanguage_EmptyPayload_ReturnsNull()
-        => Assert.Null(GeneralInformationHandler.ParseLanguage([]));
+    public void ParseStatLockChange_ShortPayload_ReturnsNull()
+        => Assert.Null(GeneralInformationHandler.ParseStatLockChange([0]));
+
+    [Fact]
+    public void ParseStatLockChange_UnknownStat_ReturnsNull()
+        => Assert.Null(GeneralInformationHandler.ParseStatLockChange([7, 0]));
 }

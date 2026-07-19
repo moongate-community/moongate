@@ -7,6 +7,25 @@ namespace Moongate.Tests.Server.Loaders;
 public class MobileTemplatesLoaderTests
 {
     [Fact]
+    public async Task LoadAsync_EmptyExistingDirectory_RegistersNothing()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, []);
+        Directory.CreateDirectory(Path.Combine(directories.RegisterDirectory("templates"), "mobiles"));
+        var service = new MobileTemplateService();
+
+        try
+        {
+            await new MobileTemplatesLoader(service, directories).LoadAsync();
+            Assert.Equal(0, service.Count);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    [Fact]
     public async Task LoadAsync_LoadsYamlRecursivelyAndResolvesBase()
     {
         var root = NewRoot();
@@ -48,25 +67,6 @@ public class MobileTemplatesLoaderTests
             Assert.Equal(100, guard.Strength);
             Assert.Equal(400, guard.Appearance.Body); // inherited from base
             Assert.Equal(900, guard.Skills["Swordsmanship"]);
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
-    }
-
-    [Fact]
-    public async Task LoadAsync_EmptyExistingDirectory_RegistersNothing()
-    {
-        var root = NewRoot();
-        var directories = new DirectoriesConfig(root, []);
-        Directory.CreateDirectory(Path.Combine(directories.RegisterDirectory("templates"), "mobiles"));
-        var service = new MobileTemplateService();
-
-        try
-        {
-            await new MobileTemplatesLoader(service, directories).LoadAsync();
-            Assert.Equal(0, service.Count);
         }
         finally
         {

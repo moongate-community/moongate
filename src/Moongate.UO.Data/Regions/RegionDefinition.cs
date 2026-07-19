@@ -12,8 +12,10 @@ public sealed class RegionDefinition
     public MapType Map { get; set; }
     public string Name { get; set; } = string.Empty;
     public int Priority { get; set; }
+
     /// <summary>When true, movement into this region is blocked. Defaults to false; no loaded region sets it yet.</summary>
     public bool IsImpassable { get; set; }
+
     public List<RegionRectangle> Area { get; set; } = [];
     public string? Music { get; set; }
     public RegionParent? Parent { get; set; }

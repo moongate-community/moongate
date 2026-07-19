@@ -527,7 +527,7 @@ public static class Animations
         int hue,
         bool isUop
     )
-        => (long)(body & 0xFFFFF) |
+        => body & 0xFFFFF |
            ((long)(action & 0x7F) << 20) |
            ((long)(direction & 0x7) << 27) |
            ((long)(fileType & 0x7) << 30) |

@@ -2,7 +2,6 @@ using Moongate.Http.Plugin.Data.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
-using Moongate.UO.Data.Mobiles.Templates;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Directories;
 
@@ -69,9 +68,9 @@ public sealed class PaperdollImageService : IPaperdollImageService
         );
 
         var doll = await _gate.ReadAsync(
-            () => File.Exists(path) ? null : _renderer.Render(request),
-            cancellationToken
-        );
+                       () => File.Exists(path) ? null : _renderer.Render(request),
+                       cancellationToken
+                   );
 
         if (doll is null)
         {

@@ -31,7 +31,7 @@
     <ItemGroup>
         <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.2.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10"/>
-        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0" />
+        <PackageReference Include="Serilog.Extensions.Logging" Version="10.0.0"/>
         <!--
             Swashbuckle rather than Microsoft.AspNetCore.OpenApi, which is otherwise the obvious choice on
             .NET 10: AddOpenApi resolves its document services by key, and DryIoc.Microsoft.DependencyInjection
@@ -44,8 +44,8 @@
         <PackageReference Include="SquidStd.Abstractions" Version="0.37.0"/>
         <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.37.0"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 

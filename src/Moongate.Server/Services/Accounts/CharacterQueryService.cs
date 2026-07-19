@@ -59,7 +59,7 @@ public sealed class CharacterQueryService : ICharacterQueryService
     /// me so-and-so's character", and which of the two names they typed is not worth asking.
     /// </summary>
     private static bool Matches(MobileEntity mobile, string username, string? search)
-        => string.IsNullOrEmpty(search)
-           || mobile.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
-           || username.Contains(search, StringComparison.OrdinalIgnoreCase);
+        => string.IsNullOrEmpty(search) ||
+           mobile.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+           username.Contains(search, StringComparison.OrdinalIgnoreCase);
 }

@@ -15,7 +15,7 @@ internal static class PngWriter
 
         try
         {
-            bitmap.Save(temporary, false);
+            bitmap.Save(temporary);
             File.Move(temporary, path, true);
         }
         catch

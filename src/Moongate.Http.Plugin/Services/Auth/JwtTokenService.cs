@@ -31,13 +31,12 @@ public sealed class JwtTokenService : IJwtTokenService
         var expiresAt = _timeProvider.GetUtcNow().AddMinutes(_config.Jwt.LifetimeMinutes);
 
         var token = new JwtSecurityToken(
-            issuer: _config.Jwt.Issuer,
-            audience: _config.Jwt.Issuer,
-            claims:
+            _config.Jwt.Issuer,
+            _config.Jwt.Issuer,
             [
-                new Claim(JwtRegisteredClaimNames.Sub, accountId.Value.ToString()),
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Role, level.ToString())
+                new(JwtRegisteredClaimNames.Sub, accountId.Value.ToString()),
+                new(ClaimTypes.Name, username),
+                new(ClaimTypes.Role, level.ToString())
             ],
             expires: expiresAt.UtcDateTime,
             signingCredentials: new(key, SecurityAlgorithms.HmacSha256)

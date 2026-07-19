@@ -1,16 +1,41 @@
-using MoonSharp.Interpreter;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Scripting;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
-using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
+using MoonSharp.Interpreter;
 
 namespace Moongate.Tests.Server;
 
 public class ItemModuleTests
 {
+    [Fact]
+    public void Container_AddContentsRemove()
+    {
+        var (module, _) = Build();
+        var container = module.Create("dagger", 1, 0)!.Value;
+        var item = module.Create("dagger", 1, 0)!.Value;
+
+        Assert.True(module.AddToContainer(container, item, 3, 4));
+        Assert.Contains(item, module.Contents(container));
+
+        Assert.True(module.RemoveFromContainer(container, item));
+        Assert.DoesNotContain(item, module.Contents(container));
+    }
+
+    [Fact]
+    public void Create_AppliesAmountAndHue()
+    {
+        var (module, persistence) = Build();
+
+        var serial = module.Create("dagger", 5, 1153);
+
+        var item = persistence.Store<ItemEntity>().GetById((Serial)serial!.Value)!;
+        Assert.Equal(5, item.Amount);
+        Assert.Equal((ushort)1153, item.Hue.Value);
+    }
+
     [Fact]
     public void Create_PersistsAndReturnsSerial()
     {
@@ -30,15 +55,59 @@ public class ItemModuleTests
     }
 
     [Fact]
-    public void Create_AppliesAmountAndHue()
+    public void Delete_RemovesItem()
     {
         var (module, persistence) = Build();
+        var serial = module.Create("dagger", 1, 0)!.Value;
 
-        var serial = module.Create("dagger", 5, 1153);
+        Assert.True(module.Delete(serial));
+        Assert.Null(persistence.Store<ItemEntity>().GetById((Serial)serial));
+    }
 
-        var item = persistence.Store<ItemEntity>().GetById((Serial)serial!.Value)!;
-        Assert.Equal(5, item.Amount);
-        Assert.Equal((ushort)1153, item.Hue.Value);
+    [Fact]
+    public void Equip_AcceptsNumericLayerConstant()
+    {
+        var (module, persistence) = Build();
+        var mobile = new MobileEntity { Name = "Bob" };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
+        var serial = module.Create("dagger", 1, 0)!.Value;
+
+        // Lua passes an exposed LayerType constant as a number.
+        Assert.True(module.Equip(mobile.Id.Value, serial, (int)LayerType.OneHanded));
+        Assert.Equal(serial, module.Unequip(mobile.Id.Value, (int)LayerType.OneHanded));
+    }
+
+    [Fact]
+    public void Equip_And_Equipped()
+    {
+        var (module, persistence) = Build();
+        var mobile = new MobileEntity { Name = "Bob" };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
+        var serial = module.Create("dagger", 1, 0)!.Value;
+
+        Assert.True(module.Equip(mobile.Id.Value, serial, "OneHanded"));
+        Assert.Contains(serial, module.Equipped(mobile.Id.Value));
+    }
+
+    [Fact]
+    public void Equip_UnknownLayer_ReturnsFalse()
+    {
+        var (module, persistence) = Build();
+        var mobile = new MobileEntity { Name = "Bob" };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
+        var serial = module.Create("dagger", 1, 0)!.Value;
+
+        Assert.False(module.Equip(mobile.Id.Value, serial, "NotALayer"));
+    }
+
+    [Fact]
+    public void Flip_CyclesGraphic()
+    {
+        var (module, _) = Build();
+        var serial = module.Create("armoire", 1, 0)!.Value;
+
+        Assert.True(module.Flip(serial));
+        Assert.Equal(2643, module.Get(serial)!["item_id"]);
     }
 
     [Fact]
@@ -68,7 +137,7 @@ public class ItemModuleTests
         var (module, persistence) = Build();
         var serial = module.Create("dagger", 1, 0)!.Value;
 
-        var fields = new Table(new Script());
+        var fields = new Table(new());
         fields["amount"] = 7;
         fields["hue"] = 42;
 
@@ -77,49 +146,6 @@ public class ItemModuleTests
         var item = persistence.Store<ItemEntity>().GetById((Serial)serial)!;
         Assert.Equal(7, item.Amount);
         Assert.Equal((ushort)42, item.Hue.Value);
-    }
-
-    [Fact]
-    public void Flip_CyclesGraphic()
-    {
-        var (module, _) = Build();
-        var serial = module.Create("armoire", 1, 0)!.Value;
-
-        Assert.True(module.Flip(serial));
-        Assert.Equal(2643, module.Get(serial)!["item_id"]);
-    }
-
-    [Fact]
-    public void Delete_RemovesItem()
-    {
-        var (module, persistence) = Build();
-        var serial = module.Create("dagger", 1, 0)!.Value;
-
-        Assert.True(module.Delete(serial));
-        Assert.Null(persistence.Store<ItemEntity>().GetById((Serial)serial));
-    }
-
-    [Fact]
-    public void Equip_And_Equipped()
-    {
-        var (module, persistence) = Build();
-        var mobile = new MobileEntity { Name = "Bob" };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
-        var serial = module.Create("dagger", 1, 0)!.Value;
-
-        Assert.True(module.Equip(mobile.Id.Value, serial, "OneHanded"));
-        Assert.Contains(serial, module.Equipped(mobile.Id.Value));
-    }
-
-    [Fact]
-    public void Equip_UnknownLayer_ReturnsFalse()
-    {
-        var (module, persistence) = Build();
-        var mobile = new MobileEntity { Name = "Bob" };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
-        var serial = module.Create("dagger", 1, 0)!.Value;
-
-        Assert.False(module.Equip(mobile.Id.Value, serial, "NotALayer"));
     }
 
     [Fact]
@@ -132,33 +158,6 @@ public class ItemModuleTests
         module.Equip(mobile.Id.Value, serial, "OneHanded");
 
         Assert.Equal(serial, module.Unequip(mobile.Id.Value, "OneHanded"));
-    }
-
-    [Fact]
-    public void Equip_AcceptsNumericLayerConstant()
-    {
-        var (module, persistence) = Build();
-        var mobile = new MobileEntity { Name = "Bob" };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).GetAwaiter().GetResult();
-        var serial = module.Create("dagger", 1, 0)!.Value;
-
-        // Lua passes an exposed LayerType constant as a number.
-        Assert.True(module.Equip(mobile.Id.Value, serial, (int)LayerType.OneHanded));
-        Assert.Equal(serial, module.Unequip(mobile.Id.Value, (int)LayerType.OneHanded));
-    }
-
-    [Fact]
-    public void Container_AddContentsRemove()
-    {
-        var (module, _) = Build();
-        var container = module.Create("dagger", 1, 0)!.Value;
-        var item = module.Create("dagger", 1, 0)!.Value;
-
-        Assert.True(module.AddToContainer(container, item, 3, 4));
-        Assert.Contains(item, module.Contents(container));
-
-        Assert.True(module.RemoveFromContainer(container, item));
-        Assert.DoesNotContain(item, module.Contents(container));
     }
 
     private static (ItemModule Module, FakePersistenceService Persistence) Build()
@@ -177,6 +176,6 @@ public class ItemModuleTests
         var factory = new ItemFactoryService(templates, new(1));
         var itemService = new ItemService(persistence);
 
-        return (new ItemModule(factory, itemService, persistence, new StubLoopThread()), persistence);
+        return (new(factory, itemService, persistence, new StubLoopThread()), persistence);
     }
 }

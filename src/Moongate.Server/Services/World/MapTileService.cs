@@ -89,7 +89,13 @@ public sealed class MapTileService : IMapTileService
         return false;
     }
 
-    private static void CollectTile(int itemId, int z, int currentZ, List<int> candidates, List<(int Bottom, int Top)> obstacles)
+    private static void CollectTile(
+        int itemId,
+        int z,
+        int currentZ,
+        List<int> candidates,
+        List<(int Bottom, int Top)> obstacles
+    )
     {
         if (itemId < 0 || itemId >= TileData.ItemTable.Length)
         {

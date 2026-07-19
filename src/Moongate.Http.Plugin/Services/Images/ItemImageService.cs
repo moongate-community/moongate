@@ -30,8 +30,27 @@ public sealed class ItemImageService : IItemImageService
         _cachePath = directories.RegisterDirectory(CacheDirectory);
     }
 
-    public bool IsReady
-        => TileData.ItemTable is not null;
+    public bool IsReady => TileData.ItemTable is not null;
+
+    public async Task<IReadOnlyList<uint>> GetArtItemIdsAsync(CancellationToken cancellationToken = default)
+        => await _gate.ReadAsync(
+               () =>
+               {
+                   var ids = new List<uint>();
+                   var max = Art.GetMaxItemId();
+
+                   for (var id = 0; id <= max; id++)
+                   {
+                       if (Art.IsValidStatic(id))
+                       {
+                           ids.Add((uint)id);
+                       }
+                   }
+
+                   return (IReadOnlyList<uint>)ids;
+               },
+               cancellationToken
+           );
 
     public async Task<string?> GetOrCreateAsync(
         uint itemId,
@@ -51,9 +70,9 @@ public sealed class ItemImageService : IItemImageService
         // Re-checked inside the gate, because another request may have produced it while this one waited.
         // The decode is all that needs the gate — the write is ordinary file I/O and is done outside it.
         var png = await _gate.ReadAsync(
-            () => File.Exists(path) ? null : _catalog.GetItemImage(itemId, hue),
-            cancellationToken
-        );
+                      () => File.Exists(path) ? null : _catalog.GetItemImage(itemId, hue),
+                      cancellationToken
+                  );
 
         // Null means two different things here: another request won the race, or the item has no art.
         // The file is what tells them apart — returning null blindly would turn a cache race into a 404.
@@ -69,26 +88,6 @@ public sealed class ItemImageService : IItemImageService
 
         return path;
     }
-
-    public async Task<IReadOnlyList<uint>> GetArtItemIdsAsync(CancellationToken cancellationToken = default)
-        => await _gate.ReadAsync(
-            () =>
-            {
-                var ids = new List<uint>();
-                var max = Art.GetMaxItemId();
-
-                for (var id = 0; id <= max; id++)
-                {
-                    if (Art.IsValidStatic(id))
-                    {
-                        ids.Add((uint)id);
-                    }
-                }
-
-                return (IReadOnlyList<uint>)ids;
-            },
-            cancellationToken
-        );
 
     /// <summary>
     /// Lowercase hex, zero-padded, so names sort and cannot collide. The hue goes in the name rather than

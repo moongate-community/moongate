@@ -69,14 +69,6 @@ public sealed class OplService : IOplService
         return [];
     }
 
-    private static List<OplEntry> BuildMobile(MobileEntity mobile)
-    {
-        // The 1050045 slots must never be empty strings; a single space is the wire convention.
-        var name = string.IsNullOrEmpty(mobile.Name) ? " " : mobile.Name;
-
-        return [new OplEntry(MobileNameCliloc, $" \t{name}\t ")];
-    }
-
     private List<OplEntry> BuildItem(ItemEntity item)
     {
         var entries = new List<OplEntry>();
@@ -86,7 +78,7 @@ public sealed class OplService : IOplService
 
         if (item.Amount > 1)
         {
-            entries.Add(new OplEntry(StackCliloc, $"{item.Amount}\t{name}"));
+            entries.Add(new(StackCliloc, $"{item.Amount}\t{name}"));
         }
         else
         {
@@ -96,7 +88,7 @@ public sealed class OplService : IOplService
         if (template is { Weight: > 0 })
         {
             var weight = (int)template.Weight;
-            entries.Add(new OplEntry(weight == 1 ? WeightSingular : WeightPlural, weight.ToString()));
+            entries.Add(new(weight == 1 ? WeightSingular : WeightPlural, weight.ToString()));
         }
 
         if (!string.IsNullOrWhiteSpace(item.Description))
@@ -112,13 +104,35 @@ public sealed class OplService : IOplService
         return entries;
     }
 
-    private static OplEntry RawText(string text, ref int rotation)
-        => new(_stringClilocs[rotation++ % _stringClilocs.Length], text);
+    private static List<OplEntry> BuildMobile(MobileEntity mobile)
+    {
+        // The 1050045 slots must never be empty strings; a single space is the wire convention.
+        var name = string.IsNullOrEmpty(mobile.Name) ? " " : mobile.Name;
+
+        return [new(MobileNameCliloc, $" \t{name}\t ")];
+    }
 
     private static string FirstNonEmpty(string? first, string? second, string fallback)
-        => !string.IsNullOrWhiteSpace(first) ? first
-            : !string.IsNullOrWhiteSpace(second) ? second
-            : fallback;
+        => !string.IsNullOrWhiteSpace(first) ? first :
+           !string.IsNullOrWhiteSpace(second) ? second : fallback;
+
+    private static int Fnv1a(string text)
+    {
+        var hash = unchecked((int)2166136261);
+
+        foreach (var ch in text)
+        {
+            hash = unchecked((hash ^ ch) * 16777619);
+        }
+
+        return hash;
+    }
+
+    private static void Fold(ref int hash, int value)
+    {
+        hash ^= value & 0x3FFFFFF;
+        hash ^= (value >> 26) & 0x3F;
+    }
 
     /// <summary>
     /// ModernUO's OPL hash: every value folded as <c>h ^= v &amp; 0x3FFFFFF; h ^= (v &gt;&gt; 26) &amp; 0x3F</c>.
@@ -142,21 +156,6 @@ public sealed class OplService : IOplService
         return hash;
     }
 
-    private static void Fold(ref int hash, int value)
-    {
-        hash ^= value & 0x3FFFFFF;
-        hash ^= (value >> 26) & 0x3F;
-    }
-
-    private static int Fnv1a(string text)
-    {
-        var hash = unchecked((int)2166136261);
-
-        foreach (var ch in text)
-        {
-            hash = unchecked((hash ^ ch) * 16777619);
-        }
-
-        return hash;
-    }
+    private static OplEntry RawText(string text, ref int rotation)
+        => new(_stringClilocs[rotation++ % _stringClilocs.Length], text);
 }

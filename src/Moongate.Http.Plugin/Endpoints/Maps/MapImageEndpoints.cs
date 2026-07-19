@@ -43,39 +43,35 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
               .AllowAnonymous();
     }
 
-    /// <summary>The facets this shard serves, and the shape of each one's tile grid.</summary>
+    /// <summary>A whole facet as one PNG.</summary>
     /// <remarks>
-    /// Open without a token. Read this before requesting tiles: the facets' sizes come from the shard's own
-    /// client files, so maxZoom and the grid differ between shards and must not be hardcoded.
+    /// Open without a token. The entire facet at one pixel per map tile — 6144×4096 for Felucca — for
+    /// downloading or printing rather than browsing; use the tiles for a viewer. Optional <c>?style=</c>
+    /// picks <c>flat</c> (default) or <c>relief</c> as on the tile route. It is generated once and
+    /// cached, and the first request is slow and memory-hungry if the staff pre-warm has not run.
     /// </remarks>
-    private IResult List()
+    private async Task<IResult> GetFull(string map, string? style, CancellationToken cancellationToken)
     {
+        if (!TryParseFacet(map, out var facet))
+        {
+            return InvalidFacet(map);
+        }
+
         if (!_maps.IsReady)
         {
             return NotLoaded();
         }
 
-        return Results.Ok(
-            _provider.Facets
-                     .Select(facet => (Facet: facet, Map: _provider.Get(facet)))
-                     .Where(entry => entry.Map is not null)
-                     .Select(
-                         entry =>
-                         {
-                             var maxZoom = _maps.MaxZoomFor(entry.Facet);
+        if (!TryParseStyle(style, out var renderStyle))
+        {
+            return InvalidStyle(style!);
+        }
 
-                             return new MapFacetInfo(
-                                 entry.Facet.ToString(),
-                                 entry.Map!.Width,
-                                 entry.Map.Height,
-                                 maxZoom,
-                                 MapTileGeometry.TileSize,
-                                 MapTileGeometry.TilesAcross(entry.Map.Width, maxZoom, maxZoom),
-                                 MapTileGeometry.TilesDown(entry.Map.Height, maxZoom, maxZoom)
-                             );
-                         }
-                     )
-        );
+        var path = await _maps.GetFullAsync(facet, renderStyle, cancellationToken);
+
+        return path is null
+                   ? Results.Problem($"{facet} is not served by this shard.", statusCode: StatusCodes.Status404NotFound)
+                   : Results.File(path, "image/png");
     }
 
     /// <summary>One map tile.</summary>
@@ -145,36 +141,58 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
                    : Results.File(path, "image/png");
     }
 
-    /// <summary>A whole facet as one PNG.</summary>
-    /// <remarks>
-    /// Open without a token. The entire facet at one pixel per map tile — 6144×4096 for Felucca — for
-    /// downloading or printing rather than browsing; use the tiles for a viewer. Optional <c>?style=</c>
-    /// picks <c>flat</c> (default) or <c>relief</c> as on the tile route. It is generated once and
-    /// cached, and the first request is slow and memory-hungry if the staff pre-warm has not run.
-    /// </remarks>
-    private async Task<IResult> GetFull(string map, string? style, CancellationToken cancellationToken)
-    {
-        if (!TryParseFacet(map, out var facet))
-        {
-            return InvalidFacet(map);
-        }
+    private static IResult InvalidFacet(string name)
+        => Results.Problem(
+            $"'{name}' is not a map. Valid maps: {string.Join(", ", Enum.GetNames<MapType>())}.",
+            statusCode: StatusCodes.Status400BadRequest
+        );
 
+    private static IResult InvalidStyle(string name)
+        => Results.Problem(
+            $"'{name}' is not a map style. Valid styles: {string.Join(", ", Enum.GetNames<MapRenderStyleType>())}.",
+            statusCode: StatusCodes.Status400BadRequest
+        );
+
+    /// <summary>The facets this shard serves, and the shape of each one's tile grid.</summary>
+    /// <remarks>
+    /// Open without a token. Read this before requesting tiles: the facets' sizes come from the shard's own
+    /// client files, so maxZoom and the grid differ between shards and must not be hardcoded.
+    /// </remarks>
+    private IResult List()
+    {
         if (!_maps.IsReady)
         {
             return NotLoaded();
         }
 
-        if (!TryParseStyle(style, out var renderStyle))
-        {
-            return InvalidStyle(style!);
-        }
+        return Results.Ok(
+            _provider.Facets
+                     .Select(facet => (Facet: facet, Map: _provider.Get(facet)))
+                     .Where(entry => entry.Map is not null)
+                     .Select(
+                         entry =>
+                         {
+                             var maxZoom = _maps.MaxZoomFor(entry.Facet);
 
-        var path = await _maps.GetFullAsync(facet, renderStyle, cancellationToken);
-
-        return path is null
-                   ? Results.Problem($"{facet} is not served by this shard.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.File(path, "image/png");
+                             return new MapFacetInfo(
+                                 entry.Facet.ToString(),
+                                 entry.Map!.Width,
+                                 entry.Map.Height,
+                                 maxZoom,
+                                 MapTileGeometry.TileSize,
+                                 MapTileGeometry.TilesAcross(entry.Map.Width, maxZoom, maxZoom),
+                                 MapTileGeometry.TilesDown(entry.Map.Height, maxZoom, maxZoom)
+                             );
+                         }
+                     )
+        );
     }
+
+    private static IResult NotLoaded()
+        => Results.Problem(
+            "The UO client files are not loaded; no maps can be served.",
+            statusCode: StatusCodes.Status503ServiceUnavailable
+        );
 
     /// <summary>
     /// Enum.TryParse accepts numeric strings, so "99" would parse into an undefined MapType and reach the
@@ -182,12 +200,6 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
     /// </summary>
     private static bool TryParseFacet(string name, out MapType facet)
         => Enum.TryParse(name, true, out facet) && Enum.IsDefined(facet);
-
-    private static IResult InvalidFacet(string name)
-        => Results.Problem(
-            $"'{name}' is not a map. Valid maps: {string.Join(", ", Enum.GetNames<MapType>())}.",
-            statusCode: StatusCodes.Status400BadRequest
-        );
 
     /// <summary>
     /// The optional <c>?style=</c> query: absent or empty means the flat radar map. Case-insensitive.
@@ -203,16 +215,4 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
 
         return Enum.TryParse(name, true, out style) && Enum.IsDefined(style);
     }
-
-    private static IResult InvalidStyle(string name)
-        => Results.Problem(
-            $"'{name}' is not a map style. Valid styles: {string.Join(", ", Enum.GetNames<MapRenderStyleType>())}.",
-            statusCode: StatusCodes.Status400BadRequest
-        );
-
-    private static IResult NotLoaded()
-        => Results.Problem(
-            "The UO client files are not loaded; no maps can be served.",
-            statusCode: StatusCodes.Status503ServiceUnavailable
-        );
 }

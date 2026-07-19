@@ -18,20 +18,19 @@ public interface IAccountService
     /// </summary>
     AccountAuthResult Authenticate(string username, string password);
 
-    Serial? GetAccountIdByUsername(string username);
-
-    /// <summary>Returns the account with that username, or null when none has it.</summary>
-    AccountEntity? GetByUsername(string username);
+    /// <summary>
+    /// Creates an active account with a hashed password. Refuses a blank username or password, and a
+    /// username already taken.
+    /// </summary>
+    AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level);
 
     /// <summary>
-    /// Returns the account with that id, or null when none has it. A direct key lookup, unlike
-    /// <see cref="GetByUsername" /> which scans and clones the whole store — worth having because the
-    /// bearer token carries the account id, so a route already knows it and need not search by name.
+    /// Deletes the account along with every character it owns and everything those characters carry.
+    /// Refused outright while any of them is being played.
     /// </summary>
-    AccountEntity? GetById(Serial accountId);
+    AccountDeleteResultType Delete(string username);
 
-    /// <summary>Returns every account's username, in store order.</summary>
-    IReadOnlyList<string> GetUsernames();
+    Serial? GetAccountIdByUsername(string username);
 
     /// <summary>
     /// Every account, in one pass over the store. Exists because <see cref="GetByUsername" /> scans:
@@ -41,19 +40,17 @@ public interface IAccountService
     IReadOnlyList<AccountEntity> GetAll();
 
     /// <summary>
-    /// Creates an active account with a hashed password. Refuses a blank username or password, and a
-    /// username already taken.
+    /// Returns the account with that id, or null when none has it. A direct key lookup, unlike
+    /// <see cref="GetByUsername" /> which scans and clones the whole store — worth having because the
+    /// bearer token carries the account id, so a route already knows it and need not search by name.
     /// </summary>
-    AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level);
+    AccountEntity? GetById(Serial accountId);
 
-    /// <summary>
-    /// Replaces the account's password with the hash of <paramref name="password" />. False on unknown
-    /// username or blank password.
-    /// </summary>
-    bool SetPassword(string username, string password);
+    /// <summary>Returns the account with that username, or null when none has it.</summary>
+    AccountEntity? GetByUsername(string username);
 
-    /// <summary>Sets the account's privilege level. False on unknown username.</summary>
-    bool SetLevel(string username, AccountLevelType level);
+    /// <summary>Returns every account's username, in store order.</summary>
+    IReadOnlyList<string> GetUsernames();
 
     /// <summary>
     /// Activates or deactivates the account. A deactivated account is refused at login but keeps its
@@ -61,9 +58,12 @@ public interface IAccountService
     /// </summary>
     bool SetActive(string username, bool isActive);
 
+    /// <summary>Sets the account's privilege level. False on unknown username.</summary>
+    bool SetLevel(string username, AccountLevelType level);
+
     /// <summary>
-    /// Deletes the account along with every character it owns and everything those characters carry.
-    /// Refused outright while any of them is being played.
+    /// Replaces the account's password with the hash of <paramref name="password" />. False on unknown
+    /// username or blank password.
     /// </summary>
-    AccountDeleteResultType Delete(string username);
+    bool SetPassword(string username, string password);
 }

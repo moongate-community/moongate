@@ -4,13 +4,9 @@ namespace Moongate.Tests.UO.Data.Mobiles.Templates;
 
 public class HueSpecTests
 {
-    [Theory]
-    [InlineData(null, 0)]
-    [InlineData("", 0)]
-    [InlineData("1002", 1002)]
-    [InlineData("garbage", 0)]
+    [Theory, InlineData(null, 0), InlineData("", 0), InlineData("1002", 1002), InlineData("garbage", 0)]
     public void Resolve_PlainAndInvalid(string? spec, int expected)
-        => Assert.Equal((ushort)expected, HueSpec.Resolve(spec, new Random(1)));
+        => Assert.Equal((ushort)expected, HueSpec.Resolve(spec, new(1)));
 
     [Fact]
     public void Resolve_Range_IsWithinInclusiveBounds()

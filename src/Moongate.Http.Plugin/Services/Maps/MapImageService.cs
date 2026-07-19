@@ -43,11 +43,58 @@ public sealed class MapImageService : IMapImageService
         UltimaMap.ShadingPreset = AltitudeShadingPresetType.Sharp;
     }
 
-    public bool IsReady
-        => TileData.ItemTable is not null;
+    public bool IsReady => TileData.ItemTable is not null;
 
-    public int MaxZoomFor(MapType facet)
-        => _maps.Get(facet) is { } map ? MapTileGeometry.MaxZoom(map.Width, map.Height) : -1;
+    public async Task<string?> GetFullAsync(
+        MapType facet,
+        MapRenderStyleType style,
+        CancellationToken cancellationToken = default
+    )
+    {
+        if (_maps.Get(facet) is not { } map)
+        {
+            return null;
+        }
+
+        var path = Path.Combine(StyleDirectory(facet, style), "full.png");
+
+        if (File.Exists(path))
+        {
+            return path;
+        }
+
+        // A facet-sized bitmap, unavoidably: the output is that image. The gate makes concurrent first
+        // requests queue rather than each allocating their own, and the re-check means only the first pays.
+        using var image = await _gate.ReadAsync(
+                              () =>
+                              {
+                                  if (File.Exists(path))
+                                  {
+                                      return null;
+                                  }
+
+                                  using var bitmap = RenderBlocks(map, style, 0, 0, Blocks(map.Width), Blocks(map.Height));
+
+                                  return bitmap.ToImage();
+                              },
+                              cancellationToken
+                          );
+
+        if (image is null)
+        {
+            return File.Exists(path) ? path : null;
+        }
+
+        // GetImage rounds up to whole blocks, so trim back to the facet's real extent.
+        if (image.Width != map.Width || image.Height != map.Height)
+        {
+            image.Mutate(context => context.Crop(new(0, 0, map.Width, map.Height)));
+        }
+
+        await WriteAtomicallyAsync(path, image, cancellationToken);
+
+        return path;
+    }
 
     public async Task<string?> GetTileAsync(
         MapType facet,
@@ -87,97 +134,12 @@ public sealed class MapImageService : IMapImageService
         return path;
     }
 
-    public async Task<string?> GetFullAsync(
-        MapType facet,
-        MapRenderStyleType style,
-        CancellationToken cancellationToken = default
-    )
-    {
-        if (_maps.Get(facet) is not { } map)
-        {
-            return null;
-        }
+    public int MaxZoomFor(MapType facet)
+        => _maps.Get(facet) is { } map ? MapTileGeometry.MaxZoom(map.Width, map.Height) : -1;
 
-        var path = Path.Combine(StyleDirectory(facet, style), "full.png");
-
-        if (File.Exists(path))
-        {
-            return path;
-        }
-
-        // A facet-sized bitmap, unavoidably: the output is that image. The gate makes concurrent first
-        // requests queue rather than each allocating their own, and the re-check means only the first pays.
-        using var image = await _gate.ReadAsync(
-            () =>
-            {
-                if (File.Exists(path))
-                {
-                    return null;
-                }
-
-                using var bitmap = RenderBlocks(map, style, 0, 0, Blocks(map.Width), Blocks(map.Height));
-
-                return bitmap.ToImage();
-            },
-            cancellationToken
-        );
-
-        if (image is null)
-        {
-            return File.Exists(path) ? path : null;
-        }
-
-        // GetImage rounds up to whole blocks, so trim back to the facet's real extent.
-        if (image.Width != map.Width || image.Height != map.Height)
-        {
-            image.Mutate(context => context.Crop(new(0, 0, map.Width, map.Height)));
-        }
-
-        await WriteAtomicallyAsync(path, image, cancellationToken);
-
-        return path;
-    }
-
-    /// <summary>
-    /// One GetImage of exactly 32 blocks, clipped at the facet's edge. The remainder of an edge tile is
-    /// left transparent: the grid rounds up, so the last tile is usually partial, and a viewer clips it.
-    /// </summary>
-    private async Task<Image<Bgra32>> RenderNativeAsync(
-        UltimaMap map,
-        MapRenderStyleType style,
-        int x,
-        int y,
-        CancellationToken cancellationToken
-    )
-    {
-        var blockX = x * MapTileGeometry.BlocksPerTile;
-        var blockY = y * MapTileGeometry.BlocksPerTile;
-        var width = Math.Min(MapTileGeometry.BlocksPerTile, Blocks(map.Width) - blockX);
-        var height = Math.Min(MapTileGeometry.BlocksPerTile, Blocks(map.Height) - blockY);
-
-        var rendered = await _gate.ReadAsync(
-            () =>
-            {
-                using var bitmap = RenderBlocks(map, style, blockX, blockY, width, height);
-
-                return bitmap.ToImage();
-            },
-            cancellationToken
-        );
-
-        if (rendered.Width == MapTileGeometry.TileSize && rendered.Height == MapTileGeometry.TileSize)
-        {
-            return rendered;
-        }
-
-        using (rendered)
-        {
-            var tile = new Image<Bgra32>(MapTileGeometry.TileSize, MapTileGeometry.TileSize);
-            tile.Mutate(context => context.DrawImage(rendered, new Point(0, 0), 1f));
-
-            return tile;
-        }
-    }
+    /// <summary>Map extent in whole 8×8 blocks, rounded up: a partial block still holds tiles.</summary>
+    private static int Blocks(int extent)
+        => (extent + 7) / 8;
 
     /// <summary>
     /// Halves the four children into one tile. Fewer than four is normal: the grids do not double cleanly,
@@ -214,6 +176,12 @@ public sealed class MapImageService : IMapImageService
         return tile;
     }
 
+    private static bool InGrid(UltimaMap map, int zoom, int maxZoom, int x, int y)
+        => x >= 0 &&
+           y >= 0 &&
+           x < MapTileGeometry.TilesAcross(map.Width, zoom, maxZoom) &&
+           y < MapTileGeometry.TilesDown(map.Height, zoom, maxZoom);
+
     /// <summary>
     /// The style's block render. Flat is the radar map; Relief is the same map with altitude shading,
     /// which only differs at native zoom — every lower zoom is composed by downsampling native tiles.
@@ -227,29 +195,59 @@ public sealed class MapImageService : IMapImageService
         int height
     )
         => style == MapRenderStyleType.Relief
-            ? map.GetImageWithAltitude(x, y, width, height, true, MapAltitudeModeType.NormalWithAltitude)
-            : map.GetImage(x, y, width, height, true);
+               ? map.GetImageWithAltitude(x, y, width, height, true, MapAltitudeModeType.NormalWithAltitude)
+               : map.GetImage(x, y, width, height, true);
 
-    private static bool InGrid(UltimaMap map, int zoom, int maxZoom, int x, int y)
-        => x >= 0
-           && y >= 0
-           && x < MapTileGeometry.TilesAcross(map.Width, zoom, maxZoom)
-           && y < MapTileGeometry.TilesDown(map.Height, zoom, maxZoom);
+    /// <summary>
+    /// One GetImage of exactly 32 blocks, clipped at the facet's edge. The remainder of an edge tile is
+    /// left transparent: the grid rounds up, so the last tile is usually partial, and a viewer clips it.
+    /// </summary>
+    private async Task<Image<Bgra32>> RenderNativeAsync(
+        UltimaMap map,
+        MapRenderStyleType style,
+        int x,
+        int y,
+        CancellationToken cancellationToken
+    )
+    {
+        var blockX = x * MapTileGeometry.BlocksPerTile;
+        var blockY = y * MapTileGeometry.BlocksPerTile;
+        var width = Math.Min(MapTileGeometry.BlocksPerTile, Blocks(map.Width) - blockX);
+        var height = Math.Min(MapTileGeometry.BlocksPerTile, Blocks(map.Height) - blockY);
 
-    /// <summary>Map extent in whole 8×8 blocks, rounded up: a partial block still holds tiles.</summary>
-    private static int Blocks(int extent)
-        => (extent + 7) / 8;
+        var rendered = await _gate.ReadAsync(
+                           () =>
+                           {
+                               using var bitmap = RenderBlocks(map, style, blockX, blockY, width, height);
+
+                               return bitmap.ToImage();
+                           },
+                           cancellationToken
+                       );
+
+        if (rendered.Width == MapTileGeometry.TileSize && rendered.Height == MapTileGeometry.TileSize)
+        {
+            return rendered;
+        }
+
+        using (rendered)
+        {
+            var tile = new Image<Bgra32>(MapTileGeometry.TileSize, MapTileGeometry.TileSize);
+            tile.Mutate(context => context.DrawImage(rendered, new Point(0, 0), 1f));
+
+            return tile;
+        }
+    }
 
     private string StyleDirectory(MapType facet, MapRenderStyleType style)
         => Directory.CreateDirectory(
-            Path.Combine(_cachePath, facet.ToString().ToLowerInvariant(), style.ToString().ToLowerInvariant())
-        ).FullName;
+                        Path.Combine(_cachePath, facet.ToString().ToLowerInvariant(), style.ToString().ToLowerInvariant())
+                    )
+                    .FullName;
 
     private string TilePath(MapType facet, MapRenderStyleType style, int zoom, int x, int y)
     {
-        var directory = Directory.CreateDirectory(
-            Path.Combine(StyleDirectory(facet, style), zoom.ToString(), x.ToString())
-        );
+        var directory = Directory.CreateDirectory(Path.Combine(StyleDirectory(facet, style), zoom.ToString(), x.ToString()));
 
         return Path.Combine(directory.FullName, $"{y}.png");
     }

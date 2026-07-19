@@ -33,12 +33,12 @@ public class StartingItemsDataTests
 
             var data = LoadData();
             var referenced = data.All
-                .Equip
-                .Concat(data.All.Pack)
-                .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Select(entry => entry.Item)
-                .Distinct();
+                                 .Equip
+                                 .Concat(data.All.Pack)
+                                 .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Select(entry => entry.Item)
+                                 .Distinct();
 
             foreach (var id in referenced)
             {

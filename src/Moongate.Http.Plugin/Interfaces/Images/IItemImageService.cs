@@ -11,12 +11,12 @@ public interface IItemImageService
     /// </summary>
     bool IsReady { get; }
 
+    /// <summary>Every item id the client files hold static art for.</summary>
+    Task<IReadOnlyList<uint>> GetArtItemIdsAsync(CancellationToken cancellationToken = default);
+
     /// <summary>
     /// The path of the cached PNG for this item and hue, decoding and caching it on first request. Null
     /// when the item has no art.
     /// </summary>
     Task<string?> GetOrCreateAsync(uint itemId, ushort hue, CancellationToken cancellationToken = default);
-
-    /// <summary>Every item id the client files hold static art for.</summary>
-    Task<IReadOnlyList<uint>> GetArtItemIdsAsync(CancellationToken cancellationToken = default);
 }

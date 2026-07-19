@@ -10,6 +10,9 @@ public sealed class UltimaReadGate : IUltimaReadGate, IDisposable
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
 
+    public void Dispose()
+        => _gate.Dispose();
+
     public async Task<T> ReadAsync<T>(Func<T> read, CancellationToken cancellationToken = default)
     {
         await _gate.WaitAsync(cancellationToken);
@@ -23,7 +26,4 @@ public sealed class UltimaReadGate : IUltimaReadGate, IDisposable
             _gate.Release();
         }
     }
-
-    public void Dispose()
-        => _gate.Dispose();
 }

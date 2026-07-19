@@ -1,108 +1,14 @@
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
-using Moongate.UO.Data.Mobiles.Templates;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server;
 
 public class MobileFactoryServiceTests
 {
-    [Fact]
-    public void CreatePlayerMobile_MapsIdentityStatsAppearanceHuesSkillsAndStartingLocation()
-    {
-        var character = Factory().CreatePlayerMobile(Packet(1));
-
-        Assert.Equal("Freydis", character.Name);
-        Assert.Equal(GenderType.Female, character.Gender);
-        Assert.Equal(RaceType.Elf, character.Race);
-        Assert.Equal((byte)4, character.ProfessionId);
-        Assert.Equal(45, character.Strength);
-        Assert.Equal(20, character.Dexterity);
-        Assert.Equal(25, character.Intelligence);
-
-        // Body derives from race + gender (elf female); pools seed from the stats, topped up.
-        Assert.Equal(0x25E, character.Body);
-        Assert.Equal(72, character.HitsMax); // players: 50 + Str/2 == 50 + 45/2
-        Assert.Equal(72, character.Hits);
-        Assert.Equal(20, character.StaminaMax);
-        Assert.Equal(20, character.Stamina);
-        Assert.Equal(25, character.ManaMax);
-        Assert.Equal(25, character.Mana);
-
-        Assert.Equal((ushort)0x03EA, character.SkinHue.Value);
-        Assert.Equal((ushort)0x203C, character.HairStyle);
-        Assert.Equal((ushort)0x044E, character.HairHue.Value);
-        Assert.Equal((ushort)0x2040, character.FacialHairStyle);
-        Assert.Equal((ushort)0x0450, character.FacialHairHue.Value);
-
-        // Four skill slots: three chosen (stored in tenths) and one unused (0,0) skipped.
-        Assert.Equal(3, character.Skills.Count);
-        Assert.Equal(500, character.Skills[1].Value);
-        Assert.Equal(300, character.Skills[2].Value);
-        Assert.Equal(200, character.Skills[3].Value);
-        Assert.False(character.Skills.ContainsKey(0));
-
-        // Starting location taken from the city at index 1 (Moonglow / Felucca).
-        Assert.Equal((int)MapType.Felucca, character.MapId);
-        Assert.Equal(new(4408, 1168, 0), character.Position);
-    }
-
-    [Theory]
-    // Sum is not the 90-point budget.
-    [InlineData(60, 60, 60)]
-    [InlineData(10, 10, 10)]
-    // Sums to 90, but a single stat escapes the [10, 60] range.
-    [InlineData(70, 10, 10)]
-    [InlineData(80, 5, 5)]
-    public void CreatePlayerMobile_InvalidStartingStats_FloorsEveryStat(byte strength, byte dexterity, byte intelligence)
-    {
-        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
-
-        Assert.Equal(10, character.Strength);
-        Assert.Equal(10, character.Dexterity);
-        Assert.Equal(10, character.Intelligence);
-
-        // Pools follow the floored stats: 50 + 10/2 == 55 hits.
-        Assert.Equal(55, character.HitsMax);
-        Assert.Equal(55, character.Hits);
-        Assert.Equal(10, character.StaminaMax);
-        Assert.Equal(10, character.ManaMax);
-    }
-
-    [Theory]
-    // Every stat inside [10, 60] and summing to the 90-point budget.
-    [InlineData(60, 20, 10, 80)]
-    [InlineData(10, 20, 60, 55)]
-    [InlineData(30, 30, 30, 65)]
-    public void CreatePlayerMobile_ValidStartingStats_AreKept(
-        byte strength,
-        byte dexterity,
-        byte intelligence,
-        int expectedHits
-    )
-    {
-        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
-
-        Assert.Equal(strength, character.Strength);
-        Assert.Equal(dexterity, character.Dexterity);
-        Assert.Equal(intelligence, character.Intelligence);
-        Assert.Equal(expectedHits, character.HitsMax);
-    }
-
-    [Fact]
-    public void CreatePlayerMobile_OutOfRangeCityIndex_FallsBackToFirstCity()
-    {
-        var character = Factory().CreatePlayerMobile(Packet(99));
-
-        // Falls back to the city at index 0 (Britain / Trammel).
-        Assert.Equal((int)MapType.Trammel, character.MapId);
-        Assert.Equal(new(1602, 1591, 20), character.Position);
-    }
-
     [Fact]
     public void Create_BuildsBareMobileWithNameMapAndPosition()
     {
@@ -113,10 +19,6 @@ public class MobileFactoryServiceTests
         Assert.Equal(new(1420, 1690, 5), mobile.Position);
         Assert.Equal(Serial.Zero, mobile.Id);
     }
-
-    [Fact]
-    public void CreateFromTemplate_UnknownId_ReturnsNull()
-        => Assert.Null(Factory().CreateFromTemplate("nope", 1, new(0, 0, 0)));
 
     [Fact]
     public void CreateFromTemplate_AppliesBodyStatsHuesAndSkills()
@@ -155,6 +57,7 @@ public class MobileFactoryServiceTests
         Assert.Equal(new(10, 20, 5), spawn.Mobile.Position);
         Assert.Equal("guard", spawn.Mobile.BrainScriptId);
         Assert.Equal("guard.warrior", spawn.Mobile.LootTableId);
+
         // 40 == Swordsmanship; the unknown "Bogus" skill is skipped.
         Assert.Equal(900, spawn.Mobile.Skills[40].Value);
         Assert.DoesNotContain(spawn.Mobile.Skills, pair => pair.Value.Value == 10);
@@ -180,12 +83,38 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var genders = Enumerable.Range(0, 40)
-            .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
-            .ToHashSet();
+                                .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
+                                .ToHashSet();
 
         Assert.Contains(GenderType.Male, genders);
         Assert.Contains(GenderType.Female, genders);
     }
+
+    [Fact]
+    public void CreateFromTemplate_ResolvesEquipment()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                Name = "Guard",
+                Appearance = new() { Body = 400 },
+                Equipment = [new() { Item = "plate_chest", Layer = "InnerTorso", Hue = "1002" }]
+            }
+        );
+
+        var spawn = Factory(templates).CreateFromTemplate("guard", 1, new(0, 0, 0))!;
+
+        var equip = Assert.Single(spawn.Equipment);
+        Assert.Equal("plate_chest", equip.ItemTemplateId);
+        Assert.Equal(LayerType.InnerTorso, equip.Layer);
+        Assert.Equal((ushort)1002, equip.Hue);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_UnknownId_ReturnsNull()
+        => Assert.Null(Factory().CreateFromTemplate("nope", 1, new(0, 0, 0)));
 
     [Fact]
     public void CreateFromTemplate_VariantGender_KeepsGenderBodyAndEquipmentCoherent()
@@ -251,38 +180,100 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var loots = Enumerable.Range(0, 40)
-            .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
-            .ToHashSet();
+                              .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
+                              .ToHashSet();
 
         Assert.Contains("guard.rich", loots); // variant override wins
         Assert.Contains("guard.base", loots); // variant without loot inherits the template
         Assert.Equal(2, loots.Count);
     }
 
-    [Fact]
-    public void CreateFromTemplate_ResolvesEquipment()
+    [Theory, InlineData(60, 60, 60), InlineData(10, 10, 10), InlineData(70, 10, 10), InlineData(80, 5, 5)]
+
+    // Sum is not the 90-point budget.
+    // Sums to 90, but a single stat escapes the [10, 60] range.
+    public void CreatePlayerMobile_InvalidStartingStats_FloorsEveryStat(byte strength, byte dexterity, byte intelligence)
     {
-        var templates = new MobileTemplateService();
-        templates.Register(
-            new()
-            {
-                Id = "guard",
-                Name = "Guard",
-                Appearance = new() { Body = 400 },
-                Equipment = [new() { Item = "plate_chest", Layer = "InnerTorso", Hue = "1002" }]
-            }
-        );
+        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
 
-        var spawn = Factory(templates).CreateFromTemplate("guard", 1, new(0, 0, 0))!;
+        Assert.Equal(10, character.Strength);
+        Assert.Equal(10, character.Dexterity);
+        Assert.Equal(10, character.Intelligence);
 
-        var equip = Assert.Single(spawn.Equipment);
-        Assert.Equal("plate_chest", equip.ItemTemplateId);
-        Assert.Equal(LayerType.InnerTorso, equip.Layer);
-        Assert.Equal((ushort)1002, equip.Hue);
+        // Pools follow the floored stats: 50 + 10/2 == 55 hits.
+        Assert.Equal(55, character.HitsMax);
+        Assert.Equal(55, character.Hits);
+        Assert.Equal(10, character.StaminaMax);
+        Assert.Equal(10, character.ManaMax);
     }
 
-    private static MobileFactoryService Factory(MobileTemplateService? templates = null)
-        => new(Cities(), templates ?? new MobileTemplateService(), new Random(1));
+    [Fact]
+    public void CreatePlayerMobile_MapsIdentityStatsAppearanceHuesSkillsAndStartingLocation()
+    {
+        var character = Factory().CreatePlayerMobile(Packet(1));
+
+        Assert.Equal("Freydis", character.Name);
+        Assert.Equal(GenderType.Female, character.Gender);
+        Assert.Equal(RaceType.Elf, character.Race);
+        Assert.Equal((byte)4, character.ProfessionId);
+        Assert.Equal(45, character.Strength);
+        Assert.Equal(20, character.Dexterity);
+        Assert.Equal(25, character.Intelligence);
+
+        // Body derives from race + gender (elf female); pools seed from the stats, topped up.
+        Assert.Equal(0x25E, character.Body);
+        Assert.Equal(72, character.HitsMax); // players: 50 + Str/2 == 50 + 45/2
+        Assert.Equal(72, character.Hits);
+        Assert.Equal(20, character.StaminaMax);
+        Assert.Equal(20, character.Stamina);
+        Assert.Equal(25, character.ManaMax);
+        Assert.Equal(25, character.Mana);
+
+        Assert.Equal((ushort)0x03EA, character.SkinHue.Value);
+        Assert.Equal((ushort)0x203C, character.HairStyle);
+        Assert.Equal((ushort)0x044E, character.HairHue.Value);
+        Assert.Equal((ushort)0x2040, character.FacialHairStyle);
+        Assert.Equal((ushort)0x0450, character.FacialHairHue.Value);
+
+        // Four skill slots: three chosen (stored in tenths) and one unused (0,0) skipped.
+        Assert.Equal(3, character.Skills.Count);
+        Assert.Equal(500, character.Skills[1].Value);
+        Assert.Equal(300, character.Skills[2].Value);
+        Assert.Equal(200, character.Skills[3].Value);
+        Assert.False(character.Skills.ContainsKey(0));
+
+        // Starting location taken from the city at index 1 (Moonglow / Felucca).
+        Assert.Equal((int)MapType.Felucca, character.MapId);
+        Assert.Equal(new(4408, 1168, 0), character.Position);
+    }
+
+    [Fact]
+    public void CreatePlayerMobile_OutOfRangeCityIndex_FallsBackToFirstCity()
+    {
+        var character = Factory().CreatePlayerMobile(Packet(99));
+
+        // Falls back to the city at index 0 (Britain / Trammel).
+        Assert.Equal((int)MapType.Trammel, character.MapId);
+        Assert.Equal(new(1602, 1591, 20), character.Position);
+    }
+
+    [Theory, InlineData(60, 20, 10, 80), InlineData(10, 20, 60, 55), InlineData(30, 30, 30, 65)]
+
+    // Every stat inside [10, 60] and summing to the 90-point budget.
+    public void CreatePlayerMobile_ValidStartingStats_AreKept(
+        byte strength,
+        byte dexterity,
+        byte intelligence,
+        int expectedHits
+    )
+    {
+        var character = Factory().CreatePlayerMobile(Packet(1, strength, dexterity, intelligence));
+
+        Assert.Equal(strength, character.Strength);
+        Assert.Equal(dexterity, character.Dexterity);
+        Assert.Equal(intelligence, character.Intelligence);
+        Assert.Equal(expectedHits, character.HitsMax);
+    }
 
     private static StartingCityService Cities()
     {
@@ -306,6 +297,9 @@ public class MobileFactoryServiceTests
 
         return service;
     }
+
+    private static MobileFactoryService Factory(MobileTemplateService? templates = null)
+        => new(Cities(), templates ?? new MobileTemplateService(), new(1));
 
     private static CharacterCreationPacket Packet(
         short startingCityIndex,

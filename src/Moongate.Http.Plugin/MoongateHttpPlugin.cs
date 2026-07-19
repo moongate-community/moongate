@@ -57,6 +57,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // FilesLoaderService initialises at startup. It carries no state of its own, so a singleton costs
         // nothing.
         container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+
         // One gate over Ultima's statics for every reader. Map rendering descends into Art too, and a
         // second gate would be no gate at all.
         container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);

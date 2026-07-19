@@ -1,21 +1,19 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Interfaces.Auth;
-using Moongate.Http.Plugin.Interfaces.Endpoints;
-using Moongate.Http.Plugin.Services.Auth;
-using Moongate.Http.Plugin.Services.Hosting;
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Http.Plugin.Endpoints.Accounts;
 using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Version;
+using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Hosting;
+using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using SquidStd.Core.Interfaces.Config;
@@ -73,12 +71,18 @@ public sealed class TestApiServer : IAsyncDisposable
     public async Task AuthenticateAsync()
     {
         var response = await Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "secret" }
+                       );
         var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
 
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Token);
+        Client.DefaultRequestHeaders.Authorization = new("Bearer", token!.Token);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        Client.Dispose();
+        await _service.StopAsync();
     }
 
     public static async Task<TestApiServer> StartAsync(
@@ -145,11 +149,5 @@ public sealed class TestApiServer : IAsyncDisposable
             sessions,
             persistence
         );
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        Client.Dispose();
-        await _service.StopAsync();
     }
 }

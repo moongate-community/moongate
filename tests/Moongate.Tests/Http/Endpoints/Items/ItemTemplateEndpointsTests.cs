@@ -17,90 +17,6 @@ public class ItemTemplateEndpointsTests
 {
     private const string Route = "/api/v1/admin/items/templates";
 
-    private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
-        => await TestApiServer.StartAsync(
-            level,
-            configure: container =>
-            {
-                var templates = new ItemTemplateService();
-                templates.Register(
-                    Template("katana", "a katana", "weapons", 0x13FF, ["weapon", "sword"], ItemRarityType.Common)
-                );
-                templates.Register(Template("bread", "a bread loaf", "food", 0x103B, ["food"]));
-                templates.Register(
-                    Template("elder_katana", "an elder katana", "weapons", 0x13FF, ["weapon", "sword"], ItemRarityType.Legendary)
-                );
-                container.RegisterInstance<IItemTemplateService>(templates);
-                container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates));
-            }
-        );
-
-    [Fact]
-    public async Task List_WithoutAToken_IsUnauthorized()
-    {
-        await using var server = await StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
-    }
-
-    [Fact]
-    public async Task List_AsPlayer_IsForbidden()
-    {
-        await using var server = await StartAsync(AccountLevelType.Player);
-        await server.AuthenticateAsync();
-
-        Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync(Route)).StatusCode);
-    }
-
-    [Fact]
-    public async Task List_AsStaff_ReturnsPagedSummariesOrderedById()
-    {
-        await using var server = await StartAsync();
-        await server.AuthenticateAsync();
-
-        var page = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>(Route);
-
-        Assert.Equal(3, page!.Total);
-        Assert.Equal(["bread", "elder_katana", "katana"], page.Items.Select(item => item.Id));
-        var katana = page.Items.Single(item => item.Id == "katana");
-        Assert.Equal("/api/v1/images/items/0x13ff.png", katana.ImageUrl);
-        Assert.Equal("Common", katana.Rarity);
-    }
-
-    [Fact]
-    public async Task List_SearchMatchesNameCategoryAndTags_CaseInsensitively()
-    {
-        await using var server = await StartAsync();
-        await server.AuthenticateAsync();
-
-        var byTag = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>($"{Route}?search=SWORD");
-        var byCategory = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>($"{Route}?search=food");
-
-        Assert.Equal(2, byTag!.Total);
-        Assert.Equal(["bread"], byCategory!.Items.Select(item => item.Id));
-    }
-
-    [Fact]
-    public async Task List_NoMatches_IsAnEmptyPageNotAnError()
-    {
-        await using var server = await StartAsync();
-        await server.AuthenticateAsync();
-
-        var page = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>($"{Route}?search=nothing");
-
-        Assert.Equal(0, page!.Total);
-        Assert.Empty(page.Items);
-    }
-
-    [Fact]
-    public async Task List_BadPaging_IsABadRequest()
-    {
-        await using var server = await StartAsync();
-        await server.AuthenticateAsync();
-
-        Assert.Equal(HttpStatusCode.BadRequest, (await server.Client.GetAsync($"{Route}?page=0")).StatusCode);
-    }
-
     [Fact]
     public async Task Get_ReturnsTheFullTemplate_SpecsIncluded()
     {
@@ -134,6 +50,99 @@ public class ItemTemplateEndpointsTests
         Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync($"{Route}/katana")).StatusCode);
     }
 
+    [Fact]
+    public async Task List_AsPlayer_IsForbidden()
+    {
+        await using var server = await StartAsync(AccountLevelType.Player);
+        await server.AuthenticateAsync();
+
+        Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync(Route)).StatusCode);
+    }
+
+    [Fact]
+    public async Task List_AsStaff_ReturnsPagedSummariesOrderedById()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+
+        var page = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>(Route);
+
+        Assert.Equal(3, page!.Total);
+        Assert.Equal(["bread", "elder_katana", "katana"], page.Items.Select(item => item.Id));
+        var katana = page.Items.Single(item => item.Id == "katana");
+        Assert.Equal("/api/v1/images/items/0x13ff.png", katana.ImageUrl);
+        Assert.Equal("Common", katana.Rarity);
+    }
+
+    [Fact]
+    public async Task List_BadPaging_IsABadRequest()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, (await server.Client.GetAsync($"{Route}?page=0")).StatusCode);
+    }
+
+    [Fact]
+    public async Task List_NoMatches_IsAnEmptyPageNotAnError()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+
+        var page = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>(
+                       $"{Route}?search=nothing"
+                   );
+
+        Assert.Equal(0, page!.Total);
+        Assert.Empty(page.Items);
+    }
+
+    [Fact]
+    public async Task List_SearchMatchesNameCategoryAndTags_CaseInsensitively()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+
+        var byTag =
+            await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>($"{Route}?search=SWORD");
+        var byCategory =
+            await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>($"{Route}?search=food");
+
+        Assert.Equal(2, byTag!.Total);
+        Assert.Equal(["bread"], byCategory!.Items.Select(item => item.Id));
+    }
+
+    [Fact]
+    public async Task List_WithoutAToken_IsUnauthorized()
+    {
+        await using var server = await StartAsync();
+
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
+    }
+
+    private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
+        => await TestApiServer.StartAsync(
+               level,
+               configure: container =>
+                          {
+                              var templates = new ItemTemplateService();
+                              templates.Register(Template("katana", "a katana", "weapons", 0x13FF, ["weapon", "sword"]));
+                              templates.Register(Template("bread", "a bread loaf", "food", 0x103B, ["food"]));
+                              templates.Register(
+                                  Template(
+                                      "elder_katana",
+                                      "an elder katana",
+                                      "weapons",
+                                      0x13FF,
+                                      ["weapon", "sword"],
+                                      ItemRarityType.Legendary
+                                  )
+                              );
+                              container.RegisterInstance<IItemTemplateService>(templates);
+                              container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates));
+                          }
+           );
+
     private static ItemTemplate Template(
         string id,
         string name,
@@ -154,7 +163,7 @@ public class ItemTemplateEndpointsTests
             Rarity = rarity,
             Tags = [.. tags],
             Params = id == "katana"
-                ? new() { ["durability"] = new() { Type = "int", Value = "100" } }
-                : null
+                         ? new() { ["durability"] = new() { Type = "int", Value = "100" } }
+                         : null
         };
 }

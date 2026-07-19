@@ -14,11 +14,9 @@ public sealed class StubSessionManager : ISessionManager
     /// <summary>Characters a session is pretending to play.</summary>
     public HashSet<Serial> Played { get; } = [];
 
-    public int Count
-        => 0;
+    public int Count => 0;
 
-    public IReadOnlyCollection<PlayerSession> All
-        => [];
+    public IReadOnlyCollection<PlayerSession> All => [];
 
     public PlayerSession GetOrCreate(SquidStdTcpClient client)
         => throw new NotSupportedException("The stub holds no sessions.");
@@ -26,9 +24,7 @@ public sealed class StubSessionManager : ISessionManager
     public bool IsCharacterPlayed(Serial mobileId)
         => Played.Contains(mobileId);
 
-    public void Remove(long sessionId)
-    {
-    }
+    public void Remove(long sessionId) { }
 
     public bool TryGet(long sessionId, out PlayerSession session)
     {

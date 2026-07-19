@@ -15,9 +15,9 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: shirt
-        Layer: Shirt
-      - Item: long_pants
-        Layer: Pants
-      - Item: shoes
-        Layer: Shoes
+        -   Item: shirt
+            Layer: Shirt
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: shoes
+            Layer: Shoes

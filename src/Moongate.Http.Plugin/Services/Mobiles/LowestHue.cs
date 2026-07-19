@@ -10,12 +10,12 @@ public static class LowestHue
 {
     private static readonly Random Low = new LowRandom();
 
-    public static ushort Resolve(string? spec)
-        => HueSpec.Resolve(spec, Low);
-
     private sealed class LowRandom : Random
     {
         public override int Next(int minValue, int maxValue)
             => minValue;
     }
+
+    public static ushort Resolve(string? spec)
+        => HueSpec.Resolve(spec, Low);
 }

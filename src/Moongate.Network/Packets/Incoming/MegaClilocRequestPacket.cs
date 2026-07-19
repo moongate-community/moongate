@@ -32,7 +32,7 @@ public readonly record struct MegaClilocRequestPacket(IReadOnlyList<Serial> Seri
 
         for (var i = 0; i < serials.Length; i++)
         {
-            serials[i] = new Serial(reader.ReadUInt32());
+            serials[i] = new(reader.ReadUInt32());
         }
 
         return new(serials);

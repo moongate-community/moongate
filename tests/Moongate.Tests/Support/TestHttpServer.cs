@@ -30,6 +30,12 @@ public sealed class TestHttpServer : IAsyncDisposable
     /// <summary>The game's container, so a test can reach the singletons the endpoints were built from.</summary>
     public IContainer Container { get; }
 
+    public async ValueTask DisposeAsync()
+    {
+        Client.Dispose();
+        await _service.StopAsync();
+    }
+
     public static async Task<TestHttpServer> StartAsync(Action<IContainer>? configure = null, int port = 0)
     {
         var container = new Container();
@@ -50,11 +56,5 @@ public sealed class TestHttpServer : IAsyncDisposable
         var client = new HttpClient { BaseAddress = new($"http://127.0.0.1:{service.BoundPort}") };
 
         return new(service, client, service.BoundPort, container);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        Client.Dispose();
-        await _service.StopAsync();
     }
 }

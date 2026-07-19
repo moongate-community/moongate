@@ -1,4 +1,3 @@
-using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Io;
@@ -81,6 +80,33 @@ public sealed class MapImageFixture : IDisposable
         return new(clientDirectory, root, new(root, []));
     }
 
+    public void Dispose()
+    {
+        if (Directory.Exists(_clientDirectory))
+        {
+            Directory.Delete(_clientDirectory, true);
+        }
+
+        if (Directory.Exists(Root))
+        {
+            Directory.Delete(Root, true);
+        }
+    }
+
+    private static ushort[] BuildColors()
+    {
+        // RadarCol is indexed by land and static id, so it must span both ranges: land below 0x4000 and
+        // statics above it.
+        var colors = new ushort[0x8000];
+
+        for (var i = 0; i < colors.Length; i++)
+        {
+            colors[i] = 0x7C00;
+        }
+
+        return colors;
+    }
+
     /// <summary>
     /// One land block repeated across the whole facet. The content does not matter — the tests assert
     /// sizes, caching and composition, not pixels — but the file's length does: it must cover every block
@@ -99,32 +125,4 @@ public sealed class MapImageFixture : IDisposable
 
         return file;
     }
-
-    private static ushort[] BuildColors()
-    {
-        // RadarCol is indexed by land and static id, so it must span both ranges: land below 0x4000 and
-        // statics above it.
-        var colors = new ushort[0x8000];
-
-        for (var i = 0; i < colors.Length; i++)
-        {
-            colors[i] = 0x7C00;
-        }
-
-        return colors;
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_clientDirectory))
-        {
-            Directory.Delete(_clientDirectory, true);
-        }
-
-        if (Directory.Exists(Root))
-        {
-            Directory.Delete(Root, true);
-        }
-    }
-
 }

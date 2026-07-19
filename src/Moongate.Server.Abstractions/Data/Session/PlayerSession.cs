@@ -40,7 +40,10 @@ public sealed class PlayerSession : ISeedTarget
 
     public string? Language { get; private set; }
 
-    /// <summary>The last movement sequence number accepted from this client, or null before the first accepted move (or after a resync).</summary>
+    /// <summary>
+    /// The last movement sequence number accepted from this client, or null before the first accepted move (or after a
+    /// resync).
+    /// </summary>
     public byte? LastMoveSequence { get; private set; }
 
     /// <summary>When the last accepted move was recorded — the baseline the walk/run rate limit measures against.</summary>
@@ -108,6 +111,38 @@ public sealed class PlayerSession : ISeedTarget
         }
     }
 
+    /// <summary>Records the client language (e.g. "ENU") reported via 0xBF sub-command 0x0B.</summary>
+    public void SetLanguage(string language)
+    {
+        lock (_stateSync)
+        {
+            Language = language;
+        }
+    }
+
+    /// <summary>
+    /// Records the outcome of a movement rate-limit check: the accepted sequence (or null to force a
+    /// resync, so the next packet's sequence is accepted unconditionally) and when it happened.
+    /// </summary>
+    public void SetLastMove(byte? sequence, DateTimeOffset at)
+    {
+        lock (_stateSync)
+        {
+            LastMoveSequence = sequence;
+            LastMoveAt = at;
+        }
+    }
+
+    /// <summary>Records the client viewport size reported via 0xBF sub-command 0x05.</summary>
+    public void SetScreenSize(int width, int height)
+    {
+        lock (_stateSync)
+        {
+            ScreenWidth = width;
+            ScreenHeight = height;
+        }
+    }
+
     public void SetSeed(uint seed)
     {
         lock (_stateSync)
@@ -129,38 +164,6 @@ public sealed class PlayerSession : ISeedTarget
         lock (_stateSync)
         {
             Version = version;
-        }
-    }
-
-    /// <summary>Records the client viewport size reported via 0xBF sub-command 0x05.</summary>
-    public void SetScreenSize(int width, int height)
-    {
-        lock (_stateSync)
-        {
-            ScreenWidth = width;
-            ScreenHeight = height;
-        }
-    }
-
-    /// <summary>Records the client language (e.g. "ENU") reported via 0xBF sub-command 0x0B.</summary>
-    public void SetLanguage(string language)
-    {
-        lock (_stateSync)
-        {
-            Language = language;
-        }
-    }
-
-    /// <summary>
-    /// Records the outcome of a movement rate-limit check: the accepted sequence (or null to force a
-    /// resync, so the next packet's sequence is accepted unconditionally) and when it happened.
-    /// </summary>
-    public void SetLastMove(byte? sequence, DateTimeOffset at)
-    {
-        lock (_stateSync)
-        {
-            LastMoveSequence = sequence;
-            LastMoveAt = at;
         }
     }
 

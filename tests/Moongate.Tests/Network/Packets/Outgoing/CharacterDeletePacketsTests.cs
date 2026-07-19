@@ -9,14 +9,6 @@ namespace Moongate.Tests.Network.Packets.Outgoing;
 
 public class CharacterDeletePacketsTests
 {
-    private static byte[] Serialize(IOutgoingPacket packet)
-    {
-        var writer = new SpanWriter(1024, true);
-        packet.Write(ref writer);
-
-        return writer.Span.ToArray();
-    }
-
     [Fact]
     public void CharacterDeleteResult_IsTwoBytesWithTheReason()
     {
@@ -40,5 +32,13 @@ public class CharacterDeletePacketsTests
 
         // The five unused slots are blank, not leftovers.
         Assert.Equal(string.Empty, Encoding.ASCII.GetString(bytes, 124, 30).TrimEnd('\0'));
+    }
+
+    private static byte[] Serialize(IOutgoingPacket packet)
+    {
+        var writer = new SpanWriter(1024, true);
+        packet.Write(ref writer);
+
+        return writer.Span.ToArray();
     }
 }

@@ -33,6 +33,30 @@ public class MobileEntityTests
     }
 
     [Fact]
+    public void RoundTrip_CarriesEachSkillValueCapAndLock()
+    {
+        var mobile = new MobileEntity
+        {
+            Name = "Hero",
+            Skills =
+            {
+                [1] = new() { Value = 733, Cap = 1200, Lock = SkillLockType.Locked },
+                [40] = new() { Value = 500 } // defaults: cap 1000, lock Up
+            }
+        };
+
+        var loaded = RoundTrip<MobileEntity, MobileEntity>(mobile);
+
+        Assert.Equal(733, loaded.Skills[1].Value);
+        Assert.Equal(1200, loaded.Skills[1].Cap);
+        Assert.Equal(SkillLockType.Locked, loaded.Skills[1].Lock);
+
+        Assert.Equal(500, loaded.Skills[40].Value);
+        Assert.Equal(1000, loaded.Skills[40].Cap);
+        Assert.Equal(SkillLockType.Up, loaded.Skills[40].Lock);
+    }
+
+    [Fact]
     public void RoundTrip_CarriesTheNotorietyAndFollowerState()
     {
         var mobile = new MobileEntity
@@ -56,30 +80,6 @@ public class MobileEntityTests
         Assert.Equal(7, loaded.Kills);
         Assert.True(loaded.Criminal);
         Assert.Equal(7200, loaded.SkillsCap);
-    }
-
-    [Fact]
-    public void RoundTrip_CarriesEachSkillValueCapAndLock()
-    {
-        var mobile = new MobileEntity
-        {
-            Name = "Hero",
-            Skills =
-            {
-                [1] = new MobileSkill { Value = 733, Cap = 1200, Lock = SkillLockType.Locked },
-                [40] = new MobileSkill { Value = 500 } // defaults: cap 1000, lock Up
-            }
-        };
-
-        var loaded = RoundTrip<MobileEntity, MobileEntity>(mobile);
-
-        Assert.Equal(733, loaded.Skills[1].Value);
-        Assert.Equal(1200, loaded.Skills[1].Cap);
-        Assert.Equal(SkillLockType.Locked, loaded.Skills[1].Lock);
-
-        Assert.Equal(500, loaded.Skills[40].Value);
-        Assert.Equal(1000, loaded.Skills[40].Cap);
-        Assert.Equal(SkillLockType.Up, loaded.Skills[40].Lock);
     }
 
     // Mirrors the persistence layer, which registers MessagePack's contractless resolver.

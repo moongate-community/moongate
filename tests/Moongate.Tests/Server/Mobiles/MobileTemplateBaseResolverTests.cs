@@ -6,6 +6,15 @@ namespace Moongate.Tests.Server.Mobiles;
 public class MobileTemplateBaseResolverTests
 {
     [Fact]
+    public void Resolve_Cycle_Throws()
+    {
+        var a = new MobileTemplate { Id = "a", BaseMobile = "b" };
+        var b = new MobileTemplate { Id = "b", BaseMobile = "a" };
+
+        Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([a, b]));
+    }
+
+    [Fact]
     public void Resolve_MergesScalarsSkillsTagsAndAppearance()
     {
         var baseTemplate = new MobileTemplate
@@ -52,14 +61,5 @@ public class MobileTemplateBaseResolverTests
 
         var ex = Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([derived]));
         Assert.Contains("missing", ex.Message);
-    }
-
-    [Fact]
-    public void Resolve_Cycle_Throws()
-    {
-        var a = new MobileTemplate { Id = "a", BaseMobile = "b" };
-        var b = new MobileTemplate { Id = "b", BaseMobile = "a" };
-
-        Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([a, b]));
     }
 }

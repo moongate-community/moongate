@@ -34,6 +34,9 @@ public sealed class SkillLockChangeHandler : IPacketHandler<SkillLockChangePacke
         }
     }
 
+    public void Register(INetworkService network)
+        => network.RegisterHandler(this);
+
     /// <summary>
     /// Sets the lock on <paramref name="mobile" />'s skill, creating the entry (at value zero) if the
     /// skill was untrained. Returns false — changing nothing — for a skill id that is not registered,
@@ -52,12 +55,9 @@ public sealed class SkillLockChangeHandler : IPacketHandler<SkillLockChangePacke
         }
         else
         {
-            mobile.Skills[skillId] = new MobileSkill { Lock = skillLock };
+            mobile.Skills[skillId] = new() { Lock = skillLock };
         }
 
         return true;
     }
-
-    public void Register(INetworkService network)
-        => network.RegisterHandler(this);
 }

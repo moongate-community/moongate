@@ -5,31 +5,17 @@ namespace Moongate.Tests.Http;
 public class MapTileGeometryTests
 {
     [Fact]
-    public void TileSize_IsAWholeNumberOfBlocks()
+    public void Grids_DoNotAlwaysHalveCleanly()
     {
-        // The reason 256 was chosen: a native tile is exactly 32 blocks, so GetImage never gets a
-        // fractional block and tiles never straddle one.
-        Assert.Equal(0, MapTileGeometry.TileSize % 8);
-        Assert.Equal(MapTileGeometry.TileSize / 8, MapTileGeometry.BlocksPerTile);
+        // Felucca's z1 is 2x1, so its single z0 tile asks for children (0,1) and (1,1), which do not
+        // exist. This is the case that makes a "fetch all four children" composer crash on every facet.
+        var maxZoom = MapTileGeometry.MaxZoom(6144, 4096);
+
+        Assert.Equal(2, MapTileGeometry.TilesAcross(6144, 1, maxZoom));
+        Assert.Equal(1, MapTileGeometry.TilesDown(4096, 1, maxZoom));
     }
 
-    [Theory]
-    [InlineData(6144, 4096, 5)] // Felucca and Trammel: 6144/256 = 24, ceil(log2 24) = 5
-    [InlineData(2304, 1600, 4)] // Ilshenar: 2304/256 = 9, ceil(log2 9) = 4
-    [InlineData(2560, 2048, 4)] // Malas: 2560/256 = 10, ceil(log2 10) = 4
-    [InlineData(1448, 1448, 3)] // Tokuno: 1448/256 = 5.65, ceil(log2 5.65) = 3
-    [InlineData(1280, 4096, 4)] // TerMur: tall, so height drives it: 4096/256 = 16, log2 16 = 4
-    [InlineData(256, 256, 0)]   // one tile already: no pyramid
-    public void MaxZoom_IsTheSmallestZoomWholeMapFitsOneTileAtZero(int width, int height, int expected)
-    {
-        Assert.Equal(expected, MapTileGeometry.MaxZoom(width, height));
-    }
-
-    [Theory]
-    [InlineData(6144, 4096)]
-    [InlineData(2304, 1600)]
-    [InlineData(1448, 1448)]
-    [InlineData(1280, 4096)]
+    [Theory, InlineData(6144, 4096), InlineData(2304, 1600), InlineData(1448, 1448), InlineData(1280, 4096)]
     public void MaxZoom_AlwaysLeavesExactlyOneTileAtZoomZero(int width, int height)
     {
         // The property MaxZoom exists to guarantee. If z0 were ever a 2x1 grid, a viewer would open on
@@ -39,6 +25,18 @@ public class MapTileGeometryTests
         Assert.Equal(1, MapTileGeometry.TilesAcross(width, 0, maxZoom));
         Assert.Equal(1, MapTileGeometry.TilesDown(height, 0, maxZoom));
     }
+
+    [Theory, InlineData(6144, 4096, 5), InlineData(2304, 1600, 4), InlineData(2560, 2048, 4), InlineData(1448, 1448, 3),
+     InlineData(1280, 4096, 4), InlineData(256, 256, 0)]
+
+    // Felucca and Trammel: 6144/256 = 24, ceil(log2 24) = 5
+    // Ilshenar: 2304/256 = 9, ceil(log2 9) = 4
+    // Malas: 2560/256 = 10, ceil(log2 10) = 4
+    // Tokuno: 1448/256 = 5.65, ceil(log2 5.65) = 3
+    // TerMur: tall, so height drives it: 4096/256 = 16, log2 16 = 4
+     // one tile already: no pyramid
+    public void MaxZoom_IsTheSmallestZoomWholeMapFitsOneTileAtZero(int width, int height, int expected)
+        => Assert.Equal(expected, MapTileGeometry.MaxZoom(width, height));
 
     [Fact]
     public void Scale_IsOneAtNativeAndDoublesDownwards()
@@ -57,19 +55,16 @@ public class MapTileGeometryTests
 
     [Fact]
     public void TilesAcross_RoundsUpSoTheLastPartialTileStillExists()
-    {
+
         // 1448 is 5.65 tiles across at native. Rounding down would drop the right edge of Tokuno.
-        Assert.Equal(6, MapTileGeometry.TilesAcross(1448, 3, 3));
-    }
+        => Assert.Equal(6, MapTileGeometry.TilesAcross(1448, 3, 3));
 
     [Fact]
-    public void Grids_DoNotAlwaysHalveCleanly()
+    public void TileSize_IsAWholeNumberOfBlocks()
     {
-        // Felucca's z1 is 2x1, so its single z0 tile asks for children (0,1) and (1,1), which do not
-        // exist. This is the case that makes a "fetch all four children" composer crash on every facet.
-        var maxZoom = MapTileGeometry.MaxZoom(6144, 4096);
-
-        Assert.Equal(2, MapTileGeometry.TilesAcross(6144, 1, maxZoom));
-        Assert.Equal(1, MapTileGeometry.TilesDown(4096, 1, maxZoom));
+        // The reason 256 was chosen: a native tile is exactly 32 blocks, so GetImage never gets a
+        // fractional block and tiles never straddle one.
+        Assert.Equal(0, MapTileGeometry.TileSize % 8);
+        Assert.Equal(MapTileGeometry.TileSize / 8, MapTileGeometry.BlocksPerTile);
     }
 }

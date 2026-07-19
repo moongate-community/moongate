@@ -18,8 +18,8 @@ public readonly record struct MegaClilocPacket(Serial Serial, int Hash, IReadOnl
 {
     public const byte PacketId = 0xD6;
 
-    private const int HeaderLength = 15;    // id + length + 0x0001 + serial + 0x0000 + hash
-    private const int EntryOverhead = 6;    // cliloc + byte length
+    private const int HeaderLength = 15; // id + length + 0x0001 + serial + 0x0000 + hash
+    private const int EntryOverhead = 6; // cliloc + byte length
     private const int TerminatorLength = 4;
 
     public void Write(ref SpanWriter writer)

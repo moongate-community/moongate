@@ -1,30 +1,22 @@
-using MoonSharp.Interpreter;
 using Moongate.Core.Interfaces;
 using Moongate.Scripting;
+using MoonSharp.Interpreter;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server.Scripting;
 
 public class LoopAffineInvokeMarshallerTests
 {
-    [Fact]
-    public void OnLoopThread_RunsInline_AndReturnsValue()
+    private sealed class StubLoopThread : ILoopThread
     {
-        var dispatcher = new MainThreadDispatcherService();
-        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
-        var ran = false;
+        public StubLoopThread(bool onLoop)
+        {
+            IsOnLoopThread = onLoop;
+        }
 
-        var result = marshaller.Invoke(() =>
-            {
-                ran = true;
+        public bool IsOnLoopThread { get; }
 
-                return DynValue.NewNumber(42);
-            }
-        );
-
-        Assert.True(ran);
-        Assert.Equal(42, result.Number);
-        Assert.Equal(0, dispatcher.PendingCount);
+        public void Capture() { }
     }
 
     [Fact]
@@ -34,7 +26,8 @@ public class LoopAffineInvokeMarshallerTests
         var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(false), dispatcher);
         var ran = false;
 
-        var result = marshaller.Invoke(() =>
+        var result = marshaller.Invoke(
+            () =>
             {
                 ran = true;
 
@@ -51,19 +44,24 @@ public class LoopAffineInvokeMarshallerTests
         Assert.True(ran);
     }
 
-    private sealed class StubLoopThread : ILoopThread
+    [Fact]
+    public void OnLoopThread_RunsInline_AndReturnsValue()
     {
-        private readonly bool _onLoop;
+        var dispatcher = new MainThreadDispatcherService();
+        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
+        var ran = false;
 
-        public StubLoopThread(bool onLoop)
-        {
-            _onLoop = onLoop;
-        }
+        var result = marshaller.Invoke(
+            () =>
+            {
+                ran = true;
 
-        public bool IsOnLoopThread => _onLoop;
+                return DynValue.NewNumber(42);
+            }
+        );
 
-        public void Capture()
-        {
-        }
+        Assert.True(ran);
+        Assert.Equal(42, result.Number);
+        Assert.Equal(0, dispatcher.PendingCount);
     }
 }

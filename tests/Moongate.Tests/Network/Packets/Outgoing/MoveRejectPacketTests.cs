@@ -8,12 +8,16 @@ namespace Moongate.Tests.Network.Packets.Outgoing;
 
 public class MoveRejectPacketTests
 {
-    private static byte[] Serialize(IOutgoingPacket packet)
+    [Fact]
+    public void Write_EncodesSequenceXYDirectionZInOrder()
     {
-        var writer = new SpanWriter(256, true);
-        packet.Write(ref writer);
+        var bytes = Serialize(new MoveRejectPacket(7, 100, 200, DirectionType.South, 5));
 
-        return writer.Span.ToArray();
+        Assert.Equal(7, bytes[1]);
+        Assert.Equal((ushort)100, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(2)));
+        Assert.Equal((ushort)200, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(4)));
+        Assert.Equal((byte)DirectionType.South, bytes[6]);
+        Assert.Equal(5, (sbyte)bytes[7]);
     }
 
     [Fact]
@@ -25,15 +29,11 @@ public class MoveRejectPacketTests
         Assert.Equal(0x21, bytes[0]);
     }
 
-    [Fact]
-    public void Write_EncodesSequenceXYDirectionZInOrder()
+    private static byte[] Serialize(IOutgoingPacket packet)
     {
-        var bytes = Serialize(new MoveRejectPacket(7, 100, 200, DirectionType.South, 5));
+        var writer = new SpanWriter(256, true);
+        packet.Write(ref writer);
 
-        Assert.Equal(7, bytes[1]);
-        Assert.Equal((ushort)100, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(2)));
-        Assert.Equal((ushort)200, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(4)));
-        Assert.Equal((byte)DirectionType.South, bytes[6]);
-        Assert.Equal(5, (sbyte)bytes[7]);
+        return writer.Span.ToArray();
     }
 }

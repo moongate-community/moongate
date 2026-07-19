@@ -4,19 +4,21 @@ namespace Moongate.Tests.UO.Bodies;
 
 public class BodyTests
 {
-    [Theory]
-    [InlineData(400)]  // human male
-    [InlineData(401)]  // human female
-    [InlineData(605)]  // elf male
-    [InlineData(606)]  // elf female
-    [InlineData(402)]  // male ghost — still a humanoid body
-    public void IsHumanoid_TrueForPlayerBodies(int value)
-        => Assert.True(new Body(value).IsHumanoid);
+    [Theory, InlineData(0), InlineData(200), InlineData(1)]
 
-    [Theory]
-    [InlineData(0)]    // no body
-    [InlineData(200)]  // horse
-    [InlineData(1)]    // ogre
+    // no body
+    // horse
+     // ogre
     public void IsHumanoid_FalseForCreatureBodies(int value)
         => Assert.False(new Body(value).IsHumanoid);
+
+    [Theory, InlineData(400), InlineData(401), InlineData(605), InlineData(606), InlineData(402)]
+
+    // human male
+    // human female
+    // elf male
+    // elf female
+     // male ghost — still a humanoid body
+    public void IsHumanoid_TrueForPlayerBodies(int value)
+        => Assert.True(new Body(value).IsHumanoid);
 }

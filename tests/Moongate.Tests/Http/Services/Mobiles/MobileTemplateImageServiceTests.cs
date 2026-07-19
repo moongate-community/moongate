@@ -2,8 +2,6 @@ using Moongate.Http.Plugin.Services.Mobiles;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Tests.Support;
-using Moongate.UO.Data.Mobiles.Templates;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Services.Mobiles;
 
@@ -18,11 +16,12 @@ public sealed class MobileTemplateImageServiceTests : IDisposable
     public async Task GetOrCreate_SeededTemplate_RendersDeterministicallyFromTheSpecLowEnd()
     {
         var catalog = new FakeAnimationCatalog();
+
         // hue(33:44) must resolve to 33 — only that pair decodes; a random pick would 404 the test.
         catalog.Frames[(400, 33)] = (W: 20, H: 40, Cx: 10, Cy: 0);
         var templates = new MobileTemplateService();
         templates.Register(
-            new MobileTemplate
+            new()
             {
                 Id = "villager",
                 Appearance = new() { Body = 400, SkinHue = "hue(33:44)" }
@@ -31,7 +30,7 @@ public sealed class MobileTemplateImageServiceTests : IDisposable
         var service = new MobileTemplateImageService(
             new MobileFigureRenderer(catalog, new ItemTemplateService()),
             templates,
-            new DirectoriesConfig(_root, Array.Empty<string>()),
+            new(_root, Array.Empty<string>()),
             new StubUltimaReadGate()
         );
 
@@ -47,7 +46,7 @@ public sealed class MobileTemplateImageServiceTests : IDisposable
         var service = new MobileTemplateImageService(
             new MobileFigureRenderer(new FakeAnimationCatalog(), new ItemTemplateService()),
             new MobileTemplateService(),
-            new DirectoriesConfig(_root, Array.Empty<string>()),
+            new(_root, Array.Empty<string>()),
             new StubUltimaReadGate()
         );
 

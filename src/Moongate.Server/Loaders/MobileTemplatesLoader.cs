@@ -46,8 +46,8 @@ public sealed class MobileTemplatesLoader : IDataLoader
         }
 
         var files = Directory.GetFiles(mobilesDirectory, "*.yaml", SearchOption.AllDirectories)
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+                             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+                             .ToArray();
 
         if (files.Length == 0)
         {

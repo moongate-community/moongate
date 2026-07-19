@@ -35,7 +35,7 @@ public sealed class AnimationEdit
                 bin.Write((short)6);
                 var animLength = Animations.GetAnimLength(body, fileType);
                 var currType = animLength == 22 ? 0 :
-                    animLength == 13 ? 1 : 2;
+                               animLength == 13 ? 1 : 2;
                 bin.Write((short)currType);
                 var indexPos = bin.BaseStream.Position;
                 var animPos = bin.BaseStream.Position + 12 * animLength * 5;

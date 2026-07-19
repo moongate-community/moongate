@@ -38,74 +38,13 @@ public class HttpServerServiceTests
             => Results.Ok("documented");
     }
 
-    [Fact]
-    public async Task StartAsync_MapsRegisteredEndpointGroups()
+    /// <summary>Stands in for any game singleton holding an OS resource, as several really do.</summary>
+    private sealed class DisposableGameSingleton : IDisposable
     {
-        await using var server = await TestHttpServer.StartAsync(
-            container => container.RegisterApiEndpointInstance(new ProbeEndpoints())
-        );
+        public bool Disposed { get; private set; }
 
-        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/probe")).StatusCode);
-    }
-
-    [Fact]
-    public async Task StartAsync_ServesHealth()
-    {
-        await using var server = await TestHttpServer.StartAsync();
-
-        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/health")).StatusCode);
-    }
-
-    [Fact]
-    public async Task StartAsync_ServesTheOpenApiDocument()
-    {
-        await using var server = await TestHttpServer.StartAsync();
-
-        Assert.Equal(
-            HttpStatusCode.OK,
-            (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
-        );
-    }
-
-    [Fact]
-    public async Task StartAsync_ScalarPointsAtTheDocumentThatIsActuallyServed()
-    {
-        // Asserting that /scalar/v1 answers 200 proves nothing: the page renders whatever happens, so
-        // pointing it at a document nobody serves still yields a 200 — showing an empty reference, which
-        // is exactly the bug this catches. What matters is the document it will go and fetch.
-        //
-        // Scalar's integration script resolves each source against the origin plus the app's base path
-        // (`new URL(source.url, origin + basePath + '/')`), so the route is emitted relative and is
-        // matched here the same way.
-        await using var server = await TestHttpServer.StartAsync();
-
-        var page = await server.Client.GetStringAsync("/scalar/v1");
-
-        Assert.Contains(HttpServerService.SwaggerDocumentRoute.TrimStart('/'), page, StringComparison.Ordinal);
-
-        // Scalar's own default, which nothing here serves: the reference silently renders empty against it.
-        Assert.DoesNotContain("openapi/v1.json", page, StringComparison.Ordinal);
-
-        Assert.Equal(
-            HttpStatusCode.OK,
-            (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
-        );
-    }
-
-    [Fact]
-    public async Task StartAsync_PutsEndpointXmlCommentsIntoTheDocument()
-    {
-        // The whole point of the /// on the endpoint handlers: without the XML wired in, the document
-        // still serves and Scalar still renders — just with every description blank. Nothing else here
-        // would notice, which is why this asserts on the prose rather than on a 200.
-        await using var server = await TestHttpServer.StartAsync(
-            container => container.RegisterApiEndpointInstance(new DocumentedProbeEndpoints())
-        );
-
-        var document = await server.Client.GetStringAsync(HttpServerService.SwaggerDocumentRoute);
-
-        Assert.Contains(DocumentedProbeEndpoints.Summary, document, StringComparison.Ordinal);
-        Assert.Contains(DocumentedProbeEndpoints.Remarks, document, StringComparison.Ordinal);
+        public void Dispose()
+            => Disposed = true;
     }
 
     [Fact]
@@ -124,28 +63,13 @@ public class HttpServerServiceTests
     }
 
     [Fact]
-    public async Task StartAsync_NoSigningKeyConfigured_MintsOneAndPersistsIt()
+    public async Task StartAsync_MapsRegisteredEndpointGroups()
     {
-        // Persisting is the point: a key minted per boot would invalidate every token issued before the
-        // restart, and nothing would say so.
-        var container = new Container();
-        var config = new MoongateHttpConfig { Address = "127.0.0.1", Port = 0, Jwt = new() { SigningKey = string.Empty } };
-        var configManager = new StubConfigManagerService();
-        container.RegisterInstance(config);
-        container.RegisterInstance<IConfigManagerService>(configManager);
+        await using var server = await TestHttpServer.StartAsync(
+                                     container => container.RegisterApiEndpointInstance(new ProbeEndpoints())
+                                 );
 
-        var service = new HttpServerService(container, config);
-        await service.StartAsync();
-
-        try
-        {
-            Assert.NotEmpty(config.Jwt.SigningKey);
-            Assert.Equal(1, configManager.SaveCount);
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
+        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/probe")).StatusCode);
     }
 
     [Fact]
@@ -174,6 +98,91 @@ public class HttpServerServiceTests
     }
 
     [Fact]
+    public async Task StartAsync_NoSigningKeyConfigured_MintsOneAndPersistsIt()
+    {
+        // Persisting is the point: a key minted per boot would invalidate every token issued before the
+        // restart, and nothing would say so.
+        var container = new Container();
+        var config = new MoongateHttpConfig { Address = "127.0.0.1", Port = 0, Jwt = new() { SigningKey = string.Empty } };
+        var configManager = new StubConfigManagerService();
+        container.RegisterInstance(config);
+        container.RegisterInstance<IConfigManagerService>(configManager);
+
+        var service = new HttpServerService(container, config);
+        await service.StartAsync();
+
+        try
+        {
+            Assert.NotEmpty(config.Jwt.SigningKey);
+            Assert.Equal(1, configManager.SaveCount);
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task StartAsync_PutsEndpointXmlCommentsIntoTheDocument()
+    {
+        // The whole point of the /// on the endpoint handlers: without the XML wired in, the document
+        // still serves and Scalar still renders — just with every description blank. Nothing else here
+        // would notice, which is why this asserts on the prose rather than on a 200.
+        await using var server = await TestHttpServer.StartAsync(
+                                     container => container.RegisterApiEndpointInstance(new DocumentedProbeEndpoints())
+                                 );
+
+        var document = await server.Client.GetStringAsync(HttpServerService.SwaggerDocumentRoute);
+
+        Assert.Contains(DocumentedProbeEndpoints.Summary, document, StringComparison.Ordinal);
+        Assert.Contains(DocumentedProbeEndpoints.Remarks, document, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task StartAsync_ScalarPointsAtTheDocumentThatIsActuallyServed()
+    {
+        // Asserting that /scalar/v1 answers 200 proves nothing: the page renders whatever happens, so
+        // pointing it at a document nobody serves still yields a 200 — showing an empty reference, which
+        // is exactly the bug this catches. What matters is the document it will go and fetch.
+        //
+        // Scalar's integration script resolves each source against the origin plus the app's base path
+        // (`new URL(source.url, origin + basePath + '/')`), so the route is emitted relative and is
+        // matched here the same way.
+        await using var server = await TestHttpServer.StartAsync();
+
+        var page = await server.Client.GetStringAsync("/scalar/v1");
+
+        Assert.Contains(HttpServerService.SwaggerDocumentRoute.TrimStart('/'), page, StringComparison.Ordinal);
+
+        // Scalar's own default, which nothing here serves: the reference silently renders empty against it.
+        Assert.DoesNotContain("openapi/v1.json", page, StringComparison.Ordinal);
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
+        );
+    }
+
+    [Fact]
+    public async Task StartAsync_ServesHealth()
+    {
+        await using var server = await TestHttpServer.StartAsync();
+
+        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/health")).StatusCode);
+    }
+
+    [Fact]
+    public async Task StartAsync_ServesTheOpenApiDocument()
+    {
+        await using var server = await TestHttpServer.StartAsync();
+
+        Assert.Equal(
+            HttpStatusCode.OK,
+            (await server.Client.GetAsync(HttpServerService.SwaggerDocumentRoute)).StatusCode
+        );
+    }
+
+    [Fact]
     public async Task StartAsync_SigningKeyAlreadyConfigured_LeavesItAloneAndSavesNothing()
     {
         // Rewriting the config file on every boot would be a surprising side effect, and re-minting would
@@ -181,20 +190,11 @@ public class HttpServerServiceTests
         var configManager = new StubConfigManagerService();
 
         await using var server = await TestHttpServer.StartAsync(
-            container => container.RegisterInstance<IConfigManagerService>(configManager)
-        );
+                                     container => container.RegisterInstance<IConfigManagerService>(configManager)
+                                 );
 
         Assert.Equal(TestHttpServer.SigningKey, server.Container.Resolve<MoongateHttpConfig>().Jwt.SigningKey);
         Assert.Equal(0, configManager.SaveCount);
-    }
-
-    /// <summary>Stands in for any game singleton holding an OS resource, as several really do.</summary>
-    private sealed class DisposableGameSingleton : IDisposable
-    {
-        public bool Disposed { get; private set; }
-
-        public void Dispose()
-            => Disposed = true;
     }
 
     [Fact]
@@ -203,7 +203,9 @@ public class HttpServerServiceTests
         // The web app runs on the game's container, so disposing the WebApplication disposes that
         // container's singletons — the game's, not the API's. They would go down while the game is still
         // running, and its own StopAsync would then fail on objects already disposed.
-        var server = await TestHttpServer.StartAsync(container => container.Register<DisposableGameSingleton>(Reuse.Singleton));
+        var server = await TestHttpServer.StartAsync(
+                         container => container.Register<DisposableGameSingleton>(Reuse.Singleton)
+                     );
         var singleton = server.Container.Resolve<DisposableGameSingleton>();
 
         await server.DisposeAsync();

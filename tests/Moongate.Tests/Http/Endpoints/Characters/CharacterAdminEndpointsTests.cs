@@ -3,11 +3,10 @@ using System.Net.Http.Json;
 using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data;
-using Moongate.Network.Packets.Incoming;
-using Moongate.Network.Types;
-using Moongate.Persistence.Entities;
 using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Http.Plugin.Endpoints.Characters;
+using Moongate.Network.Packets.Incoming;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
 using Moongate.Tests.Support;
@@ -18,26 +17,6 @@ namespace Moongate.Tests.Http.Endpoints.Characters;
 public class CharacterAdminEndpointsTests
 {
     private const string Route = "/api/v1/admin/characters";
-
-    private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
-        => await TestApiServer.StartAsync(
-            level,
-            configure: container =>
-            {
-                container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
-                container.RegisterApiEndpointInstance(
-                    new CharacterAdminEndpoints(container.Resolve<ICharacterQueryService>())
-                );
-            }
-        );
-
-    [Fact]
-    public async Task List_WithoutAToken_IsUnauthorized()
-    {
-        await using var server = await StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
-    }
 
     [Fact]
     public async Task List_AsPlayer_IsForbidden()
@@ -85,6 +64,37 @@ public class CharacterAdminEndpointsTests
         Assert.Empty(page.Items);
     }
 
+    [Theory, InlineData("?page=0"), InlineData("?pageSize=5000")]
+    public async Task List_OutOfRangePaging_IsBadRequest(string query)
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+
+        Assert.Equal(HttpStatusCode.BadRequest, (await server.Client.GetAsync($"{Route}{query}")).StatusCode);
+    }
+
+    [Fact]
+    public async Task List_Pages()
+    {
+        await using var server = await StartAsync();
+        var tom = server.Accounts.GetByUsername("tom")!.Id;
+        server.Characters.CreateCharacter(tom, Packet("Aramis"));
+        server.Characters.CreateCharacter(tom, Packet("Bors"));
+        server.Characters.CreateCharacter(tom, Packet("Cedric"));
+        await server.AuthenticateAsync();
+
+        var first = await server.Client.GetFromJsonAsync<PagedResponse<CharacterResponse>>($"{Route}?page=1&pageSize=2");
+        var second = await server.Client.GetFromJsonAsync<PagedResponse<CharacterResponse>>($"{Route}?page=2&pageSize=2");
+
+        Assert.Equal(2, first!.Items.Count);
+        Assert.Single(second!.Items);
+        Assert.Equal(3, first.Total);
+        Assert.Equal(2, first.TotalPages);
+
+        // Pages must not overlap, which is what the ordering key is for.
+        Assert.Empty(first.Items.Select(c => c.Serial).Intersect(second.Items.Select(c => c.Serial)));
+    }
+
     [Fact]
     public async Task List_SearchMatchesTheCharacterName()
     {
@@ -115,40 +125,11 @@ public class CharacterAdminEndpointsTests
     }
 
     [Fact]
-    public async Task List_Pages()
+    public async Task List_WithoutAToken_IsUnauthorized()
     {
         await using var server = await StartAsync();
-        var tom = server.Accounts.GetByUsername("tom")!.Id;
-        server.Characters.CreateCharacter(tom, Packet("Aramis"));
-        server.Characters.CreateCharacter(tom, Packet("Bors"));
-        server.Characters.CreateCharacter(tom, Packet("Cedric"));
-        await server.AuthenticateAsync();
 
-        var first = await server.Client.GetFromJsonAsync<PagedResponse<CharacterResponse>>(
-            $"{Route}?page=1&pageSize=2"
-        );
-        var second = await server.Client.GetFromJsonAsync<PagedResponse<CharacterResponse>>(
-            $"{Route}?page=2&pageSize=2"
-        );
-
-        Assert.Equal(2, first!.Items.Count);
-        Assert.Single(second!.Items);
-        Assert.Equal(3, first.Total);
-        Assert.Equal(2, first.TotalPages);
-
-        // Pages must not overlap, which is what the ordering key is for.
-        Assert.Empty(first.Items.Select(c => c.Serial).Intersect(second.Items.Select(c => c.Serial)));
-    }
-
-    [Theory]
-    [InlineData("?page=0")]
-    [InlineData("?pageSize=5000")]
-    public async Task List_OutOfRangePaging_IsBadRequest(string query)
-    {
-        await using var server = await StartAsync();
-        await server.AuthenticateAsync();
-
-        Assert.Equal(HttpStatusCode.BadRequest, (await server.Client.GetAsync($"{Route}{query}")).StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
     }
 
     private static CharacterCreationPacket Packet(string name)
@@ -172,4 +153,16 @@ public class CharacterAdminEndpointsTests
             0x0765,
             0x0766
         );
+
+    private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
+        => await TestApiServer.StartAsync(
+               level,
+               configure: container =>
+                          {
+                              container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
+                              container.RegisterApiEndpointInstance(
+                                  new CharacterAdminEndpoints(container.Resolve<ICharacterQueryService>())
+                              );
+                          }
+           );
 }

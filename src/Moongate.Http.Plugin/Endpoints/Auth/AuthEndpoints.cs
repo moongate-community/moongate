@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Http.Plugin.Data.Api.Auth;
 using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
-using Moongate.Http.Plugin.Data.Api.Auth;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Serilog;
 
@@ -23,12 +23,10 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-    {
-        routes.MapPost("/api/v1/auth/login", Login)
-              .WithName("Login")
-              .WithTags("auth")
-              .AllowAnonymous();
-    }
+        => routes.MapPost("/api/v1/auth/login", Login)
+                 .WithName("Login")
+                 .WithTags("auth")
+                 .AllowAnonymous();
 
     /// <summary>Trades account credentials for a bearer token.</summary>
     /// <remarks>

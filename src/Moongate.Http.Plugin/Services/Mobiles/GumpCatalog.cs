@@ -17,8 +17,7 @@ public sealed class GumpCatalog : IGumpCatalog
     // is the one member that null-checks the file index first.
     private const int ReadinessProbeGumpId = 0x000C;
 
-    public bool IsReady
-        => Gumps.IsValidIndex(ReadinessProbeGumpId);
+    public bool IsReady => Gumps.IsValidIndex(ReadinessProbeGumpId);
 
     public UltimaBitmap? GetGump(int gumpId, int hue, bool partialHue)
     {

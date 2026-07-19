@@ -9,9 +9,6 @@ namespace Moongate.Http.Plugin.Services.Mobiles;
 /// </summary>
 public sealed partial class EquipConvTable
 {
-    [GeneratedRegex(@"-?\d+")]
-    private static partial Regex Numbers();
-
     private readonly Dictionary<(int Body, int Anim), (int AnimId, int Hue)> _map = new();
 
     public EquipConvTable(string path)
@@ -60,4 +57,7 @@ public sealed partial class EquipConvTable
 
     public bool TryConvert(int bodyType, int equipmentAnim, out (int AnimId, int Hue) result)
         => _map.TryGetValue((bodyType, equipmentAnim), out result);
+
+    [GeneratedRegex(@"-?\d+")]
+    private static partial Regex Numbers();
 }

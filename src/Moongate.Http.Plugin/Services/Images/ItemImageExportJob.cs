@@ -1,6 +1,5 @@
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Images;
-using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Types;
 using Serilog;
 

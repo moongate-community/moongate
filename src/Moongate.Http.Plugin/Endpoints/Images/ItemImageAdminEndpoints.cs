@@ -29,6 +29,14 @@ public sealed class ItemImageAdminEndpoints : IApiEndpointRegistration
         group.MapGet("/", GetStatus).WithName("GetItemImageExportStatus");
     }
 
+    /// <summary>Reports how far the item image export has got.</summary>
+    /// <remarks>
+    /// State is Idle before any export has run, then Running, and finally Completed or Failed. Failed
+    /// counts items whose art could not be written; the reasons are in the server log.
+    /// </remarks>
+    private IResult GetStatus()
+        => Results.Ok(_export.Status);
+
     /// <summary>Generates every item's art into the cache.</summary>
     /// <remarks>
     /// Answers 202 and works in the background; poll this same route with GET for progress. Only one
@@ -56,12 +64,4 @@ public sealed class ItemImageAdminEndpoints : IApiEndpointRegistration
 
         return Results.Accepted("/api/v1/admin/images/items", _export.Status);
     }
-
-    /// <summary>Reports how far the item image export has got.</summary>
-    /// <remarks>
-    /// State is Idle before any export has run, then Running, and finally Completed or Failed. Failed
-    /// counts items whose art could not be written; the reasons are in the server log.
-    /// </remarks>
-    private IResult GetStatus()
-        => Results.Ok(_export.Status);
 }

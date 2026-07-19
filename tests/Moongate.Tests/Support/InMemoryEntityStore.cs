@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Entities;
 using Moongate.Persistence.Interfaces;
 using SquidStd.Persistence.Abstractions.Data;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -15,7 +16,7 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
     where TEntity : class, ISerialIdEntity
 {
     private readonly Dictionary<Serial, TEntity> _items = new();
-    private uint _nextId = typeof(TEntity) == typeof(Moongate.Persistence.Entities.ItemEntity) ? Serial.MinItem : 1;
+    private uint _nextId = typeof(TEntity) == typeof(ItemEntity) ? Serial.MinItem : 1;
 
     public int Count()
         => _items.Count;

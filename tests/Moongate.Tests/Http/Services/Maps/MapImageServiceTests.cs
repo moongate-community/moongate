@@ -1,7 +1,7 @@
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Services.Maps;
-using Moongate.Http.Plugin.Types;
 using Moongate.Http.Plugin.Services.Ultima;
+using Moongate.Http.Plugin.Types;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 using SixLabors.ImageSharp;
@@ -12,160 +12,6 @@ namespace Moongate.Tests.Http.Services.Maps;
 [Collection("UltimaClientData")]
 public class MapImageServiceTests
 {
-    private static MapImageService Service(MapImageFixture fixture)
-        => new(fixture.Provider, fixture.Directories, new UltimaReadGate());
-
-    [Fact]
-    public void MaxZoomFor_FollowsTheGeometry()
-    {
-        using var fixture = MapImageFixture.Create();
-
-        Assert.Equal(
-            MapTileGeometry.MaxZoom(MapImageFixture.MapWidth, MapImageFixture.MapHeight),
-            Service(fixture).MaxZoomFor(MapType.Felucca)
-        );
-    }
-
-    [Fact]
-    public async Task GetTileAsync_Native_RendersA256Tile()
-    {
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-
-        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, service.MaxZoomFor(MapType.Felucca), 0, 0);
-
-        Assert.NotNull(path);
-
-        using var image = await Image.LoadAsync<Bgra32>(path!);
-
-        Assert.Equal(MapTileGeometry.TileSize, image.Width);
-        Assert.Equal(MapTileGeometry.TileSize, image.Height);
-    }
-
-    [Fact]
-    public async Task GetTileAsync_Native_RendersOpaqueLandPixels()
-    {
-        // Radar colours are RGB555 with no alpha bit — a palette, not a sprite. The renderer must mark
-        // the map opaque anyway; without that every pixel decodes to alpha 0 and the tile is a
-        // fully-transparent square that reads as blank. The fixture's land colour is 0x7C00 (red).
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-
-        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, service.MaxZoomFor(MapType.Felucca), 0, 0);
-
-        using var image = await Image.LoadAsync<Bgra32>(path!);
-        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
-
-        Assert.Equal(byte.MaxValue, centre.A);
-        Assert.Equal(byte.MaxValue, centre.R);
-    }
-
-    [Fact]
-    public async Task GetTileAsync_Relief_RendersOpaquePixels()
-    {
-        // The relief path recomposes each pixel in ApplyLighting and must keep the ARGB1555 opaque bit —
-        // exactly the defect fixed for the flat path. Without it the whole relief tile decodes to alpha 0.
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-
-        var path = await service.GetTileAsync(
-            MapType.Felucca,
-            MapRenderStyleType.Relief,
-            service.MaxZoomFor(MapType.Felucca),
-            0,
-            0
-        );
-
-        using var image = await Image.LoadAsync<Bgra32>(path!);
-        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
-
-        Assert.Equal(byte.MaxValue, centre.A);
-    }
-
-    [Fact]
-    public async Task GetTileAsync_FlatAndRelief_AreDistinctCacheFiles()
-    {
-        // Styles must not overwrite each other: the same coordinates cache to separate files.
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-        var zoom = service.MaxZoomFor(MapType.Felucca);
-
-        var flat = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
-        var relief = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Relief, zoom, 0, 0);
-
-        Assert.NotEqual(flat, relief);
-        Assert.True(File.Exists(flat));
-        Assert.True(File.Exists(relief));
-    }
-
-    [Fact]
-    public async Task GetTileAsync_SecondCall_ServesTheCachedFileWithoutRerendering()
-    {
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-        var zoom = service.MaxZoomFor(MapType.Felucca);
-
-        var first = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
-        var marker = DateTime.UtcNow.AddDays(-1);
-        File.SetLastWriteTimeUtc(first!, marker);
-
-        var second = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
-
-        Assert.Equal(first, second);
-        Assert.Equal(marker, File.GetLastWriteTimeUtc(second!), TimeSpan.FromSeconds(1));
-    }
-
-    [Fact]
-    public async Task GetTileAsync_ZoomZero_ComposesFromChildrenIncludingTheOnesThatDoNotExist()
-    {
-        // The case that matters. This facet's z1 grid is 2x1, so the single z0 tile asks for (0,1) and
-        // (1,1), which are outside their own level's grid. A composer that treats a missing child as a
-        // failure makes z0 unreachable on every non-square facet — which is all of them.
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-
-        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
-
-        Assert.NotNull(path);
-
-        using var image = await Image.LoadAsync<Bgra32>(path!);
-
-        Assert.Equal(MapTileGeometry.TileSize, image.Width);
-    }
-
-    [Fact]
-    public async Task GetTileAsync_ZoomZero_LeavesItsChildrenCachedOnTheWay()
-    {
-        // Proof the pyramid is built bottom-up out of cached tiles rather than by rendering the whole
-        // facet into one bitmap, which for Felucca would be about 100 MB.
-        using var fixture = MapImageFixture.Create();
-        var service = Service(fixture);
-
-        await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
-
-        var native = service.MaxZoomFor(MapType.Felucca);
-        var root = fixture.Directories.GetPath("cache/images/maps");
-
-        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", native.ToString())), "no native tiles cached");
-        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", "0")), "no zoom 0 tile cached");
-    }
-
-    [Fact]
-    public async Task GetTileAsync_OutsideTheGrid_ReturnsNull()
-    {
-        using var fixture = MapImageFixture.Create();
-
-        Assert.Null(await Service(fixture).GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 99, 99));
-    }
-
-    [Fact]
-    public async Task GetTileAsync_UnknownFacet_ReturnsNull()
-    {
-        using var fixture = MapImageFixture.Create();
-
-        Assert.Null(await Service(fixture).GetTileAsync(MapType.Malas, MapRenderStyleType.Flat, 0, 0, 0));
-    }
-
     [Fact]
     public async Task GetFullAsync_IsTheWholeFacet()
     {
@@ -206,10 +52,163 @@ public class MapImageServiceTests
         var zoom = service.MaxZoomFor(MapType.Felucca);
 
         var paths = await Task.WhenAll(
-            Enumerable.Range(0, 4).Select(x => service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, x, 0))
-        );
+                        Enumerable.Range(0, 4)
+                                  .Select(x => service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, x, 0))
+                    );
 
         Assert.All(paths, path => Assert.True(File.Exists(path)));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_FlatAndRelief_AreDistinctCacheFiles()
+    {
+        // Styles must not overwrite each other: the same coordinates cache to separate files.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+        var zoom = service.MaxZoomFor(MapType.Felucca);
+
+        var flat = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
+        var relief = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Relief, zoom, 0, 0);
+
+        Assert.NotEqual(flat, relief);
+        Assert.True(File.Exists(flat));
+        Assert.True(File.Exists(relief));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_Native_RendersA256Tile()
+    {
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(
+                       MapType.Felucca,
+                       MapRenderStyleType.Flat,
+                       service.MaxZoomFor(MapType.Felucca),
+                       0,
+                       0
+                   );
+
+        Assert.NotNull(path);
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+
+        Assert.Equal(MapTileGeometry.TileSize, image.Width);
+        Assert.Equal(MapTileGeometry.TileSize, image.Height);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_Native_RendersOpaqueLandPixels()
+    {
+        // Radar colours are RGB555 with no alpha bit — a palette, not a sprite. The renderer must mark
+        // the map opaque anyway; without that every pixel decodes to alpha 0 and the tile is a
+        // fully-transparent square that reads as blank. The fixture's land colour is 0x7C00 (red).
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(
+                       MapType.Felucca,
+                       MapRenderStyleType.Flat,
+                       service.MaxZoomFor(MapType.Felucca),
+                       0,
+                       0
+                   );
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
+
+        Assert.Equal(byte.MaxValue, centre.A);
+        Assert.Equal(byte.MaxValue, centre.R);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_OutsideTheGrid_ReturnsNull()
+    {
+        using var fixture = MapImageFixture.Create();
+
+        Assert.Null(await Service(fixture).GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 99, 99));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_Relief_RendersOpaquePixels()
+    {
+        // The relief path recomposes each pixel in ApplyLighting and must keep the ARGB1555 opaque bit —
+        // exactly the defect fixed for the flat path. Without it the whole relief tile decodes to alpha 0.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(
+                       MapType.Felucca,
+                       MapRenderStyleType.Relief,
+                       service.MaxZoomFor(MapType.Felucca),
+                       0,
+                       0
+                   );
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+        var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
+
+        Assert.Equal(byte.MaxValue, centre.A);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_SecondCall_ServesTheCachedFileWithoutRerendering()
+    {
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+        var zoom = service.MaxZoomFor(MapType.Felucca);
+
+        var first = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
+        var marker = DateTime.UtcNow.AddDays(-1);
+        File.SetLastWriteTimeUtc(first!, marker);
+
+        var second = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, 0, 0);
+
+        Assert.Equal(first, second);
+        Assert.Equal(marker, File.GetLastWriteTimeUtc(second!), TimeSpan.FromSeconds(1));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_UnknownFacet_ReturnsNull()
+    {
+        using var fixture = MapImageFixture.Create();
+
+        Assert.Null(await Service(fixture).GetTileAsync(MapType.Malas, MapRenderStyleType.Flat, 0, 0, 0));
+    }
+
+    [Fact]
+    public async Task GetTileAsync_ZoomZero_ComposesFromChildrenIncludingTheOnesThatDoNotExist()
+    {
+        // The case that matters. This facet's z1 grid is 2x1, so the single z0 tile asks for (0,1) and
+        // (1,1), which are outside their own level's grid. A composer that treats a missing child as a
+        // failure makes z0 unreachable on every non-square facet — which is all of them.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        var path = await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
+
+        Assert.NotNull(path);
+
+        using var image = await Image.LoadAsync<Bgra32>(path!);
+
+        Assert.Equal(MapTileGeometry.TileSize, image.Width);
+    }
+
+    [Fact]
+    public async Task GetTileAsync_ZoomZero_LeavesItsChildrenCachedOnTheWay()
+    {
+        // Proof the pyramid is built bottom-up out of cached tiles rather than by rendering the whole
+        // facet into one bitmap, which for Felucca would be about 100 MB.
+        using var fixture = MapImageFixture.Create();
+        var service = Service(fixture);
+
+        await service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, 0, 0, 0);
+
+        var native = service.MaxZoomFor(MapType.Felucca);
+        var root = fixture.Directories.GetPath("cache/images/maps");
+
+        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", native.ToString())), "no native tiles cached");
+        Assert.True(Directory.Exists(Path.Combine(root, "felucca", "flat", "0")), "no zoom 0 tile cached");
     }
 
     [Fact]
@@ -219,4 +218,18 @@ public class MapImageServiceTests
 
         Assert.True(Service(fixture).IsReady);
     }
+
+    [Fact]
+    public void MaxZoomFor_FollowsTheGeometry()
+    {
+        using var fixture = MapImageFixture.Create();
+
+        Assert.Equal(
+            MapTileGeometry.MaxZoom(MapImageFixture.MapWidth, MapImageFixture.MapHeight),
+            Service(fixture).MaxZoomFor(MapType.Felucca)
+        );
+    }
+
+    private static MapImageService Service(MapImageFixture fixture)
+        => new(fixture.Provider, fixture.Directories, new UltimaReadGate());
 }

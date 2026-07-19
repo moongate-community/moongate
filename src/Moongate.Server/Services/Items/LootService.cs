@@ -61,6 +61,27 @@ public sealed class LootService : ILootService
         return result;
     }
 
+    private IReadOnlyList<ItemEntity> Materialize(LootTemplateEntry entry)
+    {
+        var amount = entry is { AmountMin: { } low, AmountMax: { } high }
+                         ? _random.Next(low, high + 1)
+                         : entry.Amount ?? 1;
+
+        var hasId = !string.IsNullOrWhiteSpace(entry.ItemTemplateId);
+        var hasTag = !string.IsNullOrWhiteSpace(entry.ItemTag);
+
+        if (hasId == hasTag)
+        {
+            _logger.Warning("Loot entry must set exactly one of ItemTemplateId/ItemTag; skipping");
+
+            return [];
+        }
+
+        return hasId
+                   ? _itemFactory.CreateFromTemplate(entry.ItemTemplateId!, amount: amount)
+                   : _itemFactory.CreateByTag(entry.ItemTag!, amount: amount);
+    }
+
     private LootTemplateEntry? PickWeighted(LootTemplate template)
     {
         var total = Math.Max(0, template.NoDropWeight);
@@ -89,26 +110,5 @@ public sealed class LootService : ILootService
         }
 
         return null;
-    }
-
-    private IReadOnlyList<ItemEntity> Materialize(LootTemplateEntry entry)
-    {
-        var amount = entry is { AmountMin: { } low, AmountMax: { } high }
-            ? _random.Next(low, high + 1)
-            : entry.Amount ?? 1;
-
-        var hasId = !string.IsNullOrWhiteSpace(entry.ItemTemplateId);
-        var hasTag = !string.IsNullOrWhiteSpace(entry.ItemTag);
-
-        if (hasId == hasTag)
-        {
-            _logger.Warning("Loot entry must set exactly one of ItemTemplateId/ItemTag; skipping");
-
-            return [];
-        }
-
-        return hasId
-            ? _itemFactory.CreateFromTemplate(entry.ItemTemplateId!, amount: amount)
-            : _itemFactory.CreateByTag(entry.ItemTag!, amount: amount);
     }
 }

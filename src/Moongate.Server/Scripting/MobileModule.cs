@@ -1,7 +1,5 @@
 using System.Globalization;
-using MoonSharp.Interpreter;
 using Moongate.Core.Extensions;
-using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
@@ -10,6 +8,7 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
+using MoonSharp.Interpreter;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
@@ -50,7 +49,7 @@ public sealed class MobileModule
     {
         LoopGuard.Warn(_loopThread, "mobile.create");
 
-        var mobile = _factory.Create(name, map, new Point3D(x, y, z));
+        var mobile = _factory.Create(name, map, new(x, y, z));
         _mobiles.UpsertAsync(mobile).WaitSync();
 
         return mobile.Id.Value;
@@ -61,7 +60,7 @@ public sealed class MobileModule
     {
         LoopGuard.Warn(_loopThread, "mobile.create_from_template");
 
-        var spawn = _factory.CreateFromTemplate(templateId, map, new Point3D(x, y, z));
+        var spawn = _factory.CreateFromTemplate(templateId, map, new(x, y, z));
 
         if (spawn is null)
         {
@@ -85,6 +84,14 @@ public sealed class MobileModule
         }
 
         return spawn.Mobile.Id.Value;
+    }
+
+    [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
+    public bool Delete(uint serial)
+    {
+        LoopGuard.Warn(_loopThread, "mobile.delete");
+
+        return _mobiles.RemoveAsync((Serial)serial).WaitSync();
     }
 
     [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
@@ -114,6 +121,37 @@ public sealed class MobileModule
             ["int"] = mobile.Intelligence,
             ["backpack"] = mobile.BackpackId.Value
         };
+    }
+
+    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
+    public int GetSkill(uint serial, object skill)
+    {
+        var mobile = _mobiles.GetById((Serial)serial);
+
+        if (mobile is null || !TryResolveSkill(skill, out var skillId))
+        {
+            return 0;
+        }
+
+        return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
+    }
+
+    [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
+    public bool Move(uint serial, int x, int y, int z)
+    {
+        LoopGuard.Warn(_loopThread, "mobile.move");
+
+        var mobile = _mobiles.GetById((Serial)serial);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        mobile.Position = new(x, y, z);
+        _mobiles.UpsertAsync(mobile).WaitSync();
+
+        return true;
     }
 
     [ScriptFunction("set", "Mutates mobile fields from a table; returns true on success.")]
@@ -166,37 +204,6 @@ public sealed class MobileModule
         return true;
     }
 
-    [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
-    public bool Move(uint serial, int x, int y, int z)
-    {
-        LoopGuard.Warn(_loopThread, "mobile.move");
-
-        var mobile = _mobiles.GetById((Serial)serial);
-
-        if (mobile is null)
-        {
-            return false;
-        }
-
-        mobile.Position = new Point3D(x, y, z);
-        _mobiles.UpsertAsync(mobile).WaitSync();
-
-        return true;
-    }
-
-    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
-    public int GetSkill(uint serial, object skill)
-    {
-        var mobile = _mobiles.GetById((Serial)serial);
-
-        if (mobile is null || !TryResolveSkill(skill, out var skillId))
-        {
-            return 0;
-        }
-
-        return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
-    }
-
     [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name or id; false on unknown serial/skill.")]
     public bool SetSkill(uint serial, object skill, int value)
     {
@@ -216,7 +223,7 @@ public sealed class MobileModule
         }
         else
         {
-            mobile.Skills[skillId] = new MobileSkill { Value = value };
+            mobile.Skills[skillId] = new() { Value = value };
         }
 
         _mobiles.UpsertAsync(mobile).WaitSync();
@@ -244,12 +251,24 @@ public sealed class MobileModule
         return skills;
     }
 
-    [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
-    public bool Delete(uint serial)
+    private static void ApplyHue(Table fields, string key, Action<Hue> apply)
     {
-        LoopGuard.Warn(_loopThread, "mobile.delete");
+        var value = fields.Get(key);
 
-        return _mobiles.RemoveAsync((Serial)serial).WaitSync();
+        if (value.Type == DataType.Number)
+        {
+            apply(new((ushort)value.Number));
+        }
+    }
+
+    private static void ApplyInt(Table fields, string key, Action<int> apply)
+    {
+        var value = fields.Get(key);
+
+        if (value.Type == DataType.Number)
+        {
+            apply((int)value.Number);
+        }
     }
 
     private static bool TryResolveSkill(object? skill, out int skillId)
@@ -263,7 +282,7 @@ public sealed class MobileModule
                 {
                     var token = new string(name.Where(char.IsLetter).ToArray());
 
-                    if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+                    if (!Enum.TryParse<SkillName>(token, true, out var parsed))
                     {
                         return false;
                     }
@@ -283,26 +302,6 @@ public sealed class MobileModule
 
             default:
                 return false;
-        }
-    }
-
-    private static void ApplyInt(Table fields, string key, Action<int> apply)
-    {
-        var value = fields.Get(key);
-
-        if (value.Type == DataType.Number)
-        {
-            apply((int)value.Number);
-        }
-    }
-
-    private static void ApplyHue(Table fields, string key, Action<Hue> apply)
-    {
-        var value = fields.Get(key);
-
-        if (value.Type == DataType.Number)
-        {
-            apply(new Hue((ushort)value.Number));
         }
     }
 }

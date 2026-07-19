@@ -21,7 +21,9 @@ public class AccountService : IAccountService
     private readonly ISessionManager _sessions;
 
     public AccountService(
-        IPersistenceService persistenceService, ICharacterService characterService, ISessionManager sessions
+        IPersistenceService persistenceService,
+        ICharacterService characterService,
+        ISessionManager sessions
     )
     {
         _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
@@ -32,8 +34,8 @@ public class AccountService : IAccountService
     public AccountAuthResult Authenticate(string username, string password)
     {
         var account = _accountStore
-            .Query()
-            .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
+                      .Query()
+                      .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
 
         if (account == null)
         {
@@ -47,21 +49,6 @@ public class AccountService : IAccountService
 
         return new() { Success = true, Username = account.Username };
     }
-
-    public Serial? GetAccountIdByUsername(string username)
-        => GetByUsername(username)?.Id;
-
-    public AccountEntity? GetByUsername(string username)
-        => _accountStore.Query().FirstOrDefault(account => account.Username == username);
-
-    public AccountEntity? GetById(Serial accountId)
-        => _accountStore.GetById(accountId);
-
-    public IReadOnlyList<string> GetUsernames()
-        => _accountStore.Query().Select(account => account.Username).ToList();
-
-    public IReadOnlyList<AccountEntity> GetAll()
-        => [.. _accountStore.GetAll()];
 
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
     {
@@ -94,51 +81,6 @@ public class AccountService : IAccountService
         _logger.Information("Account created: {Username} at level {Level}", username, level);
 
         return AccountCreateResultType.Created;
-    }
-
-    public bool SetPassword(string username, string password)
-    {
-        if (string.IsNullOrEmpty(password) || GetByUsername(username) is not { } account)
-        {
-            return false;
-        }
-
-        account.PasswordHash = HashUtils.HashPassword(password);
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Password changed for account {Username}", username);
-
-        return true;
-    }
-
-    public bool SetLevel(string username, AccountLevelType level)
-    {
-        if (GetByUsername(username) is not { } account)
-        {
-            return false;
-        }
-
-        account.AccountLevel = level;
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account {Username} set to level {Level}", username, level);
-
-        return true;
-    }
-
-    public bool SetActive(string username, bool isActive)
-    {
-        if (GetByUsername(username) is not { } account)
-        {
-            return false;
-        }
-
-        account.IsActive = isActive;
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account {Username} is now {State}", username, isActive ? "active" : "blocked");
-
-        return true;
     }
 
     public AccountDeleteResultType Delete(string username)
@@ -175,5 +117,65 @@ public class AccountService : IAccountService
         );
 
         return AccountDeleteResultType.Deleted;
+    }
+
+    public Serial? GetAccountIdByUsername(string username)
+        => GetByUsername(username)?.Id;
+
+    public IReadOnlyList<AccountEntity> GetAll()
+        => [.. _accountStore.GetAll()];
+
+    public AccountEntity? GetById(Serial accountId)
+        => _accountStore.GetById(accountId);
+
+    public AccountEntity? GetByUsername(string username)
+        => _accountStore.Query().FirstOrDefault(account => account.Username == username);
+
+    public IReadOnlyList<string> GetUsernames()
+        => _accountStore.Query().Select(account => account.Username).ToList();
+
+    public bool SetActive(string username, bool isActive)
+    {
+        if (GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.IsActive = isActive;
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account {Username} is now {State}", username, isActive ? "active" : "blocked");
+
+        return true;
+    }
+
+    public bool SetLevel(string username, AccountLevelType level)
+    {
+        if (GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.AccountLevel = level;
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account {Username} set to level {Level}", username, level);
+
+        return true;
+    }
+
+    public bool SetPassword(string username, string password)
+    {
+        if (string.IsNullOrEmpty(password) || GetByUsername(username) is not { } account)
+        {
+            return false;
+        }
+
+        account.PasswordHash = HashUtils.HashPassword(password);
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Password changed for account {Username}", username);
+
+        return true;
     }
 }

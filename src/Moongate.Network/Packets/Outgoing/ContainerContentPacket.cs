@@ -18,8 +18,8 @@ public readonly record struct ContainerContentPacket(Serial Container, IReadOnly
 {
     public const byte PacketId = 0x3C;
 
-    private const int HeaderLength = 5;  // id + length + count
-    private const int EntryLength = 20;  // modern client: 19 plus the grid-location byte
+    private const int HeaderLength = 5; // id + length + count
+    private const int EntryLength = 20; // modern client: 19 plus the grid-location byte
 
     public void Write(ref SpanWriter writer)
     {
