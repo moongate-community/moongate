@@ -29,6 +29,7 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();
         container.RegisterScriptModule<LootModule>();
+        container.RegisterScriptModule<ChatModule>();
 
         container.RegisterScriptEnum<AccountLevelType>();
         container.RegisterScriptEnum<SkillName>();

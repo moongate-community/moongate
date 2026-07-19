@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">50</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">15</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">35</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">52</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">16</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">36</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -44,6 +44,8 @@
 | [`0xA0`](../incoming/0xa0-select-server.md) | Select Server | C → S | 3 bytes (fixed) | The shard index the client picked from the server list. |
 | [`0xA8`](../outgoing/0xa8-server-list.md) | Server List | S → C | Variable | Advertises the available shards. |
 | [`0xA9`](../outgoing/0xa9-character-list.md) | Character List | S → C | Variable | The character slots followed by the starting cities, in the extended 7.0.13+ layout. |
+| [`0xAD`](../incoming/0xad-unicode-ascii-speech-request.md) | Unicode Ascii Speech Request | C → S | Variable | The only speech packet a modern client (ClassicUO 7.x) sends — ASCII TalkRequest (0x03) is intentionally not implemented. |
+| [`0xAE`](../outgoing/0xae-unicode-speech-message.md) | Unicode Speech Message | S → C | Variable | The only outgoing chat packet, sent to every recipient of a message including the speaker — never a reuse of the incoming packet, per real UO server behavior (confirmed across ModernUO, UOX3 and polserver). |
 | [`0xB9`](../outgoing/0xb9-support-features.md) | Support Features | S → C | 5 bytes (fixed) | Unlocks the client feature set at login, sent right before the character list. |
 | [`0xBC`](../outgoing/0xbc-season-change.md) | Season Change | S → C | 3 bytes (fixed) | Sets the client's season and optionally plays the season-change sound. |
 | [`0xBD`](../incoming/0xbd-client-version.md) | Client Version | C → S | Variable | The client answers the server's version request with its build string (e.g. |

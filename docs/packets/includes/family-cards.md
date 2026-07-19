@@ -44,4 +44,9 @@
     <div class="mg-card-ops">0xD6 · 0xDC</div>
     <p>Object property lists: the 0xD6 request/response pair and the 0xDC revision notification.</p>
   </a>
+  <a class="mg-card" href="families/chat.md">
+    <h3>Chat</h3>
+    <div class="mg-card-ops">0xAD · 0xAE</div>
+    <p>Player speech (say/emote/whisper/yell) and server-wide system broadcasts.</p>
+  </a>
 </div>

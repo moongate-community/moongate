@@ -295,6 +295,14 @@ public class WorldServiceTests
     }
 
     [Fact]
+    public void Broadcast_NoSessions_ReturnsZero()
+    {
+        var service = Service(new([]));
+
+        Assert.Equal(0, service.Broadcast(new NoopPacket()));
+    }
+
+    [Fact]
     public void SendToPlayersInRange_NoSessions_ReturnsZero()
     {
         var service = Service(new([]));

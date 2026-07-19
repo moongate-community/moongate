@@ -15,5 +15,6 @@ public enum PacketFamilyType : byte
     StatusSkills,
     ItemsContainers,
     InteractionKeepalive,
-    Tooltips
+    Tooltips,
+    Chat
 }

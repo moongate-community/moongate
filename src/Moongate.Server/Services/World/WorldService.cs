@@ -168,6 +168,24 @@ public sealed class WorldService : IWorldService
         _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
     }
 
+    public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+    {
+        var recipients = 0;
+
+        foreach (var session in _sessions.All)
+        {
+            if (session.State != SessionStateType.InWorld)
+            {
+                continue;
+            }
+
+            session.Send(packet);
+            recipients++;
+        }
+
+        return recipients;
+    }
+
     public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
         where TPacket : IOutgoingPacket
     {
