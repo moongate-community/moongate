@@ -651,7 +651,7 @@ public class LoginFlowIntegrationTests
 
             while (true)
             {
-                var index = decoded[searchFrom..].IndexOf(spamPattern.AsSpan());
+                var index = decoded.AsSpan(searchFrom).IndexOf(spamPattern.AsSpan());
 
                 if (index < 0)
                 {
