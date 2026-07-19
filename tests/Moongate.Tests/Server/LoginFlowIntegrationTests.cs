@@ -10,10 +10,12 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Chat;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
@@ -525,6 +527,150 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
+    public async Task Chat_SayBroadcastAndRateLimit_BehaveAsDesigned()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)2, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var chat = new ChatService(world, eventBus);
+
+        var testCities = new StartingCityService();
+        testCities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
+
+        using var aliceEntered = new ManualResetEventSlim();
+        using var bobEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
+            {
+                if (e.Mobile.Name == "Alice")
+                {
+                    aliceEntered.Set();
+                }
+                else if (e.Mobile.Name == "Bob")
+                {
+                    bobEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerWithChatAsync(config, eventBus, characters, world, chat, opl, sessions);
+
+        try
+        {
+            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
+            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+
+            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(bobSocket, network.Port, "bob", "Bob");
+            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
+
+            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
+
+            // Alice says "hi" (plain Regular speech, in range of Bob).
+            var say = Speech("hi");
+            aliceSocket.Send(say);
+
+            var bobCompressed = new List<byte>();
+
+            // Unlike the fixed-length 0x77 UpdatePlayerPacket the movement test matches on, 0xAE carries
+            // a 2-byte length between the opcode and the serial, so matching on the serial's 4 bytes alone
+            // (rather than hand-computing the length prefix) is what actually identifies this as Alice's
+            // packet reaching Bob — nothing else in this test's packet traffic carries Alice's own serial
+            // to Bob.
+            Assert.True(
+                PollUntil(bobSocket, bobCompressed, SerialBytes(aliceMobile.Id)),
+                "Bob never received Alice's speech (0xAE)."
+            );
+
+            // Alice sends a "." command: no broadcast reaches Bob, but Alice gets a system reply
+            // (sender serial 0x00000000) instead.
+            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
+            var command = Speech(".kick Bob");
+            aliceSocket.Send(command);
+
+            var aliceCompressed = new List<byte>();
+
+            // Matches on the reply text itself (big-endian unicode, via the same encoding SpeechHandler
+            // writes with) rather than hand-computing the packet's length-prefixed byte offsets — robust
+            // to the exact wording of SpeechHandler.CommandNotImplementedMessage changing later.
+            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("not implemented");
+            Assert.True(
+                PollUntil(aliceSocket, aliceCompressed, systemPattern),
+                "Alice never received the \"command not implemented\" system reply."
+            );
+            Assert.False(
+                PollUntil(bobSocket, bobCompressed, new byte[] { 0, (byte)'k', 0, (byte)'i', 0, (byte)'c' }, TimeSpan.FromMilliseconds(300)),
+                "Bob must not receive any broadcast for a \".\" command."
+            );
+
+            // Two sends back-to-back: the second is dropped by the 25ms rate limit, so Bob only ever
+            // sees one occurrence of "spam" on the wire, not two.
+            aliceSocket.Send(Speech("spam"));
+            aliceSocket.Send(Speech("spam"));
+
+            var spamPattern = new byte[] { 0, (byte)'s', 0, (byte)'p', 0, (byte)'a', 0, (byte)'m' };
+            Assert.True(PollUntil(bobSocket, bobCompressed, spamPattern), "Bob never received the first \"spam\".");
+
+            // Give the second (rate-limited) send time to arrive and be dropped server-side before
+            // counting occurrences on the wire.
+            await Task.Delay(100);
+
+            var decoded = HuffmanDecoder.Decode(bobCompressed.ToArray().AsSpan());
+            var occurrences = 0;
+            var searchFrom = 0;
+
+            while (true)
+            {
+                var index = decoded[searchFrom..].IndexOf(spamPattern.AsSpan());
+
+                if (index < 0)
+                {
+                    break;
+                }
+
+                occurrences++;
+                searchFrom += index + spamPattern.Length;
+            }
+
+            Assert.Equal(1, occurrences); // the second "spam" was dropped by the 25ms rate limit
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
     public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
     {
         var config = LoopbackConfig();
@@ -716,6 +862,29 @@ public class LoginFlowIntegrationTests
 
         packet[74] = 1;  // first skill: Anatomy
         packet[75] = 50; // at 50, stored as 500 tenths
+
+        return packet;
+    }
+
+    /// <summary>
+    /// Builds a 0xAD Unicode Speech Request packet with Regular type, hue 0, font 3, language "ENU".
+    /// The header is type(1) + hue(2) + font(2) + lang(4) = 9 bytes, plus id(1) + length(2) = 12 bytes
+    /// before the text.
+    /// </summary>
+    private static byte[] Speech(string text)
+    {
+        var textBytes = System.Text.Encoding.BigEndianUnicode.GetBytes(text + "\0");
+        var packet = new byte[12 + textBytes.Length];
+        packet[0] = 0xAD;
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(1), (ushort)packet.Length);
+        packet[3] = 0x00; // ChatMessageType.Regular
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(4), 0); // hue
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(6), 3); // font
+        packet[8] = (byte)'E';
+        packet[9] = (byte)'N';
+        packet[10] = (byte)'U';
+        packet[11] = 0x00;
+        textBytes.CopyTo(packet.AsSpan(12));
 
         return packet;
     }
@@ -985,6 +1154,50 @@ public class LoginFlowIntegrationTests
             new CharacterCreationHandler(characters, world),
             new MegaClilocHandler(opl),
             new MoveRequestHandler(movement)
+        };
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
+    }
+
+    private static async Task<NetworkService> StartServerWithChatAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService world,
+        IChatService chat,
+        OplService opl,
+        ISessionManager sessions
+    )
+    {
+        var accounts = new StubAccountService();
+        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+
+        var cities = new StartingCityService();
+        cities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+
+        var handlers = new List<IPacketHandlerRegistration>
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities, accounts, characters),
+            new CharacterCreationHandler(characters, world),
+            new MegaClilocHandler(opl),
+            new SpeechHandler(chat)
         };
 
         var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());

@@ -70,6 +70,8 @@ var familyInfos = new FamilyInfo[]
         "Single/double click, the 0xBF request multiplexer, and ping round-trips."),
     new("Tooltips", "tooltips", "Tooltips",
         "Object property lists: the 0xD6 request/response pair and the 0xDC revision notification."),
+    new("Chat", "chat", "Chat",
+        "Player speech (say/emote/whisper/yell) and server-wide system broadcasts."),
 };
 
 var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);

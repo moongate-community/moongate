@@ -20,6 +20,8 @@
       href: families/interaction-keepalive.md
     - name: "Tooltips"
       href: families/tooltips.md
+    - name: "Chat"
+      href: families/chat.md
 - name: Incoming (client → server)
   items:
     - name: "0x02 — Move Request"
@@ -42,6 +44,8 @@
       href: incoming/0x91-game-server-login.md
     - name: "0xA0 — Select Server"
       href: incoming/0xa0-select-server.md
+    - name: "0xAD — Unicode Ascii Speech Request"
+      href: incoming/0xad-unicode-ascii-speech-request.md
     - name: "0xBD — Client Version"
       href: incoming/0xbd-client-version.md
     - name: "0xBF — General Information"
@@ -108,6 +112,8 @@
       href: outgoing/0xa8-server-list.md
     - name: "0xA9 — Character List"
       href: outgoing/0xa9-character-list.md
+    - name: "0xAE — Unicode Speech Message"
+      href: outgoing/0xae-unicode-speech-message.md
     - name: "0xB9 — Support Features"
       href: outgoing/0xb9-support-features.md
     - name: "0xBC — Season Change"
