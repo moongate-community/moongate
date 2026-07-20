@@ -7,10 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
         <!-- Contract assembly the server implements: ICommandService, IAccountService, the command DTOs.
              The plugin never references Moongate.Server. -->
-        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

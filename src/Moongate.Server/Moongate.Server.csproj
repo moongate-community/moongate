@@ -15,8 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Moongate.Console.Admin.Plugin\Moongate.Console.Admin.Plugin.csproj"/>
-        <ProjectReference Include="..\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.Console.Admin.Plugin\Moongate.Console.Admin.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
         <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
