@@ -427,3 +427,53 @@ jobs:
           repository: ${{ env.DOCKERHUB_IMAGE_NAME }}
           short-description: Modern Ultima Online server built from scratch. .NET, Lua scripting, ClassicUO 7.x
           readme-filepath: ./README.md
+
+  publish_packages:
+    name: Publish NuGet packages
+    needs:
+      - gate
+      - verify
+      - semantic_release
+      - reconcile_release
+    if: >-
+      always() &&
+      needs.gate.outputs.should_release == 'true' &&
+      needs.verify.result == 'success' &&
+      (needs.semantic_release.result == 'success' || needs.semantic_release.result == 'skipped') &&
+      (needs.reconcile_release.result == 'success' || needs.reconcile_release.result == 'skipped') &&
+      (needs.semantic_release.outputs.version != '' || needs.gate.outputs.version != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    env:
+      RELEASE_VERSION: ${{ needs.semantic_release.outputs.version || needs.gate.outputs.version }}
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          global-json-file: global.json
+
+      - name: Pack
+        run: >-
+          dotnet pack Moongate.slnx -c Release
+          -p:Version=${{ env.RELEASE_VERSION }}
+          -p:IncludeSymbols=false
+          -o ./artifacts
+
+      - name: Push to GitHub Packages
+        run: |
+          for pkg in ./artifacts/*.nupkg; do
+            dotnet nuget push "$pkg" \
+              --source "https://nuget.pkg.github.com/moongate-community/index.json" \
+              --api-key "${{ github.token }}" \
+              --skip-duplicate
+          done
