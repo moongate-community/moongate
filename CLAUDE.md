@@ -101,6 +101,25 @@ English.
   data-template pages). Docs deploy to **moongate.sh only from `main`**, so docs merged to `develop`
   are not yet live.
 
+## Development workflow
+
+Every feature follows the same flow:
+
+1. **Open a GitHub issue first**, with a **type** label (`Bug`, `feature`, `improvement`) and an
+   **area** label (`backend`, `client`, `network`, …), and an accurate description of the change.
+2. **Branch from `develop`.** Create a `feature/<name>` branch off the latest `develop` — never work
+   directly on `develop` or `main`. (Isolated worktrees under `.claude/worktrees/` are used for this.)
+3. Implement the change, committing in **English Conventional Commits** (no AI attribution).
+4. **Check the network layer.** If any packet class changed, regenerate the packet reference and
+   commit it — `dotnet run scripts/generate-packet-docs.cs` — and keep each packet's
+   `[PacketDocumentation]` attribute (see §11 / the Packets section).
+5. **Keep the docs coherent.** Update `docs/` for any behaviour or API change, and confirm
+   `dotnet docfx docs/docfx.json --warningsAsErrors` builds at **0 warnings**.
+6. **Merge via PR into `develop`.** Open a PR from the feature branch to `develop` with a clear
+   description; merge once CI is green, then delete the branch.
+
+Releases are separate (see below): they go through a `develop`→`main` PR labelled `release`.
+
 ## Release
 
 `develop` is the integration branch; features branch off it and PR back. Releases go via a
