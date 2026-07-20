@@ -4,6 +4,7 @@ using Moongate.Http.Plugin.Endpoints.Accounts;
 using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
+using Moongate.Http.Plugin.Endpoints.Console;
 using Moongate.Http.Plugin.Endpoints.Images;
 using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
@@ -12,11 +13,13 @@ using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Extensions;
 using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Console;
 using Moongate.Http.Plugin.Interfaces.Images;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Console;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Images;
 using Moongate.Http.Plugin.Services.Maps;
@@ -99,6 +102,11 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<CharacterEndpoints>();
         container.RegisterApiEndpoint<CharacterAdminEndpoints>();
         container.RegisterApiEndpoint<ItemTemplateEndpoints>();
+
+        // A REST web-terminal onto the admin command set: the registry holds the open SSE feeds,
+        // the endpoints POST commands and stream their output.
+        container.Register<IConsoleStreamRegistry, ConsoleStreamRegistry>(Reuse.Singleton);
+        container.RegisterApiEndpoint<ConsoleEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }
