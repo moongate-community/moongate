@@ -107,7 +107,7 @@ public class ItemModuleTests
         var serial = module.Create("armoire", 1, 0)!.Value;
 
         Assert.True(module.Flip(serial));
-        Assert.Equal(2643, module.Get(serial)!["item_id"]);
+        Assert.Equal(2643, module.Get(serial)!.ToDictionary()["item_id"]);
     }
 
     [Fact]
@@ -116,7 +116,7 @@ public class ItemModuleTests
         var (module, _) = Build();
         var serial = module.Create("dagger", 2, 0)!.Value;
 
-        var table = module.Get(serial);
+        var table = module.Get(serial)?.ToDictionary();
 
         Assert.NotNull(table);
         Assert.Equal(3921, table!["item_id"]);

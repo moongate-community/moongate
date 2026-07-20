@@ -6,6 +6,7 @@ using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Scripting.Views;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
@@ -95,33 +96,8 @@ public sealed class MobileModule
     }
 
     [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
-    public Dictionary<string, object?>? Get(uint serial)
-    {
-        var mobile = _mobiles.GetById((Serial)serial);
-
-        if (mobile is null)
-        {
-            return null;
-        }
-
-        return new()
-        {
-            ["id"] = mobile.Id.Value,
-            ["name"] = mobile.Name,
-            ["map"] = mobile.MapId,
-            ["x"] = mobile.Position.X,
-            ["y"] = mobile.Position.Y,
-            ["z"] = mobile.Position.Z,
-            ["direction"] = mobile.Direction.ToString(),
-            ["gender"] = mobile.Gender.ToString(),
-            ["race"] = mobile.Race.ToString(),
-            ["profession"] = (int)mobile.ProfessionId,
-            ["str"] = mobile.Strength,
-            ["dex"] = mobile.Dexterity,
-            ["int"] = mobile.Intelligence,
-            ["backpack"] = mobile.BackpackId.Value
-        };
-    }
+    public MobileLuaView? Get(uint serial)
+        => _mobiles.GetById((Serial)serial) is { } mobile ? new MobileLuaView(mobile) : null;
 
     [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
     public int GetSkill(uint serial, object skill)

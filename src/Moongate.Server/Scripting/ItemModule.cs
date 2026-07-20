@@ -2,6 +2,7 @@ using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Scripting.Views;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Hues;
 using MoonSharp.Interpreter;
@@ -133,27 +134,8 @@ public sealed class ItemModule
     }
 
     [ScriptFunction("get", "Returns a field table for the item, or nil.")]
-    public Dictionary<string, object?>? Get(uint serial)
-    {
-        var item = _items.GetById((Serial)serial);
-
-        if (item is null)
-        {
-            return null;
-        }
-
-        return new()
-        {
-            ["id"] = item.Id.Value,
-            ["item_id"] = item.ItemId,
-            ["name"] = item.Name,
-            ["amount"] = item.Amount,
-            ["hue"] = (int)item.Hue.Value,
-            ["layer"] = item.EquippedLayer?.ToString(),
-            ["container"] = item.ParentContainerId.Value,
-            ["mobile"] = item.EquippedMobileId.Value
-        };
-    }
+    public ItemLuaView? Get(uint serial)
+        => _items.GetById((Serial)serial) is { } item ? new ItemLuaView(item) : null;
 
     [ScriptFunction("remove_from_container", "Removes an item from a container; false on unknown serials.")]
     public bool RemoveFromContainer(uint container, uint serial)

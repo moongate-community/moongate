@@ -2,6 +2,7 @@ using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Types;
+using Moongate.Server.Scripting.Views;
 using Serilog;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
@@ -65,23 +66,8 @@ public sealed class AccountModule
         => _accounts.GetByUsername(username) is not null;
 
     [ScriptFunction("get", "Returns a field table for the account, or nil.")]
-    public Dictionary<string, object?>? Get(string username)
-    {
-        if (_accounts.GetByUsername(username) is not { } account)
-        {
-            return null;
-        }
-
-        return new()
-        {
-            ["id"] = account.Id.Value,
-            ["username"] = account.Username,
-            ["email"] = account.Email,
-            ["level"] = account.AccountLevel.ToString(),
-            ["is_active"] = account.IsActive,
-            ["mobiles"] = account.MobileIds.Select(id => id.Value).ToList()
-        };
-    }
+    public AccountLuaView? Get(string username)
+        => _accounts.GetByUsername(username) is { } account ? new AccountLuaView(account) : null;
 
     [ScriptFunction("list", "Returns every account's username.")]
     public List<string> List()

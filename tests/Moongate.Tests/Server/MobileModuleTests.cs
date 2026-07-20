@@ -77,7 +77,7 @@ public class MobileModuleTests
         var (module, _) = Build();
         var serial = module.Create("Guard", 1, 100, 200, 5)!.Value;
 
-        var table = module.Get(serial);
+        var table = module.Get(serial)?.ToDictionary();
 
         Assert.NotNull(table);
         Assert.Equal("Guard", table!["name"]);
