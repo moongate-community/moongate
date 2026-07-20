@@ -19,6 +19,10 @@ glance. The extension methods live in the assembly named in each row — referen
 The last row is plain DryIoc: register any service your plugin needs internally, then inject it
 into the components above.
 
+`Moongate.Server.Abstractions` and its dependency closure are published as NuGet packages of the
+same name on GitHub Packages; the `SquidStd.*` packages and DryIoc are on NuGet.org. See
+[referencing the assemblies](first-plugin.md#reference-the-assemblies).
+
 ## Per-plugin config file
 
 `RegisterConfigSection<T>("x")` binds a section of the shared `moongate.yaml`. To give a plugin its
