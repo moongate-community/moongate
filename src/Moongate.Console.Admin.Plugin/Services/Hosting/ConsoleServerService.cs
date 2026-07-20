@@ -1,6 +1,9 @@
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using Moongate.Console.Admin.Plugin.Data.Config;
+using Moongate.Console.Admin.Plugin.Services.Console;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Commands;
 using Serilog;
@@ -21,6 +24,7 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
     private readonly ICommandService _commands;
     private readonly IAccountService _accounts;
     private readonly IMainThreadDispatcher _dispatcher;
+    private readonly ConcurrentDictionary<ConsoleSession, byte> _sessions = new();
 
     private TcpListener? _listener;
     private CancellationTokenSource? _cts;
@@ -81,12 +85,52 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
             {
                 var client = await _listener!.AcceptTcpClientAsync(ct);
 
-                // Task 5 replaces this with a ConsoleSession; the lifecycle just refuses connections for now.
-                client.Close();
+                if (_sessions.Count >= _config.MaxSessions)
+                {
+                    await RejectAsync(client);
+
+                    continue;
+                }
+
+                var session = new ConsoleSession(client, _commands, _accounts, _dispatcher);
+                _sessions.TryAdd(session, 0);
+
+                _ = Task.Run(
+                    async () =>
+                    {
+                        try
+                        {
+                            await session.RunAsync(ct);
+                        }
+                        finally
+                        {
+                            _sessions.TryRemove(session, out _);
+                        }
+                    },
+                    ct
+                );
             }
         }
         catch (OperationCanceledException) { }
         catch (ObjectDisposedException) { }
+    }
+
+    private static async Task RejectAsync(TcpClient client)
+    {
+        try
+        {
+            var stream = client.GetStream();
+            var bytes = Encoding.UTF8.GetBytes("Console busy; too many sessions.\r\n");
+            await stream.WriteAsync(bytes);
+        }
+        catch (Exception ex) when (ex is IOException or ObjectDisposedException)
+        {
+            // client gone before the notice landed
+        }
+        finally
+        {
+            client.Close();
+        }
     }
 
     public async ValueTask StopAsync(CancellationToken cancellationToken = default)
@@ -98,6 +142,11 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
 
         _cts?.Cancel();
         _listener.Stop();
+
+        foreach (var session in _sessions.Keys)
+        {
+            session.Close();
+        }
 
         if (_acceptLoop is not null)
         {
