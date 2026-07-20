@@ -3,6 +3,7 @@ using DryIoc;
 using Moongate.Console.Admin.Plugin;
 using Moongate.Core.Interfaces;
 using Moongate.Http.Plugin;
+using Moongate.News.Plugin;
 using Moongate.Persistence;
 using Moongate.Scripting;
 using Moongate.Server;
@@ -125,6 +126,7 @@ await ConsoleApp.RunAsync(
                 }
 
                 builder.Add<MoongateConsolePlugin>();
+                builder.Add<MoongateNewsPlugin>();
             }
         );
 

@@ -6,3 +6,5 @@
   href: admin-console.md
 - name: Console over REST
   href: rest-console.md
+- name: News API
+  href: news-api.md
