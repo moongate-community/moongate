@@ -1,12 +1,12 @@
 namespace Moongate.Server.Abstractions.Types;
 
 /// <summary>
-/// Where a command invocation originated. Only <see cref="InGame" /> is implemented today — the
-/// <c>[Flags]</c> shape leaves room for a future console/REPL source without breaking existing
-/// command registrations or <see cref="Attributes.CommandAttribute" /> declarations.
+/// Where a command invocation originated. The <c>[Flags]</c> shape lets a command opt into more than
+/// one source; the dispatcher runs a command only for sources its registration lists.
 /// </summary>
 [Flags]
 public enum CommandSourceType : byte
 {
-    InGame = 1 << 0
+    InGame  = 1 << 0,
+    Console = 1 << 1
 }

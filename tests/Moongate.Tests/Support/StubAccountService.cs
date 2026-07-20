@@ -38,8 +38,10 @@ public sealed class StubAccountService : IAccountService
     public IReadOnlyList<AccountEntity> GetAll()
         => throw new NotSupportedException();
 
+    // The in-game command adapter resolves the actor's level via GetById; this stub does not model
+    // account storage, so it reports "no such account" and the caller defaults to the Player level.
     public AccountEntity? GetById(Serial accountId)
-        => throw new NotSupportedException();
+        => null;
 
     public AccountEntity? GetByUsername(string username)
         => throw new NotSupportedException();
