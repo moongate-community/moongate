@@ -6,6 +6,7 @@ on:
     paths:
       - docs/**
       - src/**
+      - plugins/**
       - .github/workflows/docs.yml
       - .config/dotnet-tools.json
   pull_request:
@@ -13,6 +14,7 @@ on:
     paths:
       - docs/**
       - src/**
+      - plugins/**
       - .github/workflows/docs.yml
       - .config/dotnet-tools.json
   workflow_dispatch:
