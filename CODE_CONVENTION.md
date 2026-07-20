@@ -110,7 +110,7 @@ public enum DirectoryType { Scripts, Logs, Plugins, Configs }
 private readonly ILogger _logger = Log.ForContext<MyService>();
 ```
 
-- When both Serilog and Microsoft.Extensions.Logging are in scope (e.g., `Moongate.Service` which uses `Microsoft.NET.Sdk.Web`), add a using alias to resolve the ambiguity:
+- When both Serilog and Microsoft.Extensions.Logging are in scope (e.g. in `Moongate.Http.Plugin`, where ASP.NET Core brings `Microsoft.Extensions.Logging` in), add a using alias to resolve the ambiguity:
 
 ```csharp
 using Serilog;
@@ -122,20 +122,13 @@ using ILogger = Serilog.ILogger;
 
 ## 9. Event Bus
 
-- All event types must implement `IMoongateEvent`.
-- Use `IEventBus.Subscribe<T>` to register handlers; use `IEventBus.PublishAsync<T>` to emit events.
-- Subscriber classes live in `Subscribers/` and register themselves in the constructor.
-
-```csharp
-// Pattern: SocketBroadcastSubscriber
-internal class MySubscriber
-{
-    public MySubscriber(IEventBus eventBus, ...)
-    {
-        eventBus.Subscribe<Notification>(HandleAsync);
-    }
-}
-```
+- The event bus is `IEventBus` (`SquidStd.Core.Interfaces.Events`). Events are plain records/classes —
+  there is no marker interface to implement.
+- Emit with `eventBus.Publish(new SomeEvent(...))` (or `PublishAsync` when you need to await delivery);
+  subscribe with `eventBus.Subscribe<SomeEvent>(handler)`, where a handler is
+  `Task Handler(SomeEvent message, CancellationToken ct)`.
+- Subscriber classes live in `Subscribers/` and are wired as `IEventSubscriberRegistration` (see §12);
+  domain-event handlers run on the game loop.
 
 ## 10. Plugin System
 
@@ -185,9 +178,9 @@ namespace Moongate.Tests.<Domain>.<Subdomain>;
 
 Examples:
 ```
-tests/Moongate.Tests/Core/EventBusServiceTests.cs   → namespace Moongate.Tests.Core;
-tests/Moongate.Tests/Service/UnixSocketServerTests.cs → namespace Moongate.Tests.Service;
-tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests.Support;
+tests/Moongate.Tests/Network/PacketDocumentationTests.cs → namespace Moongate.Tests.Network;
+tests/Moongate.Tests/Server/CharacterServiceTests.cs     → namespace Moongate.Tests.Server;
+tests/Moongate.Tests/Support/<SharedFixture>.cs          → namespace Moongate.Tests.Support;
 ```
 
 ### 13.2 Naming
@@ -202,17 +195,10 @@ tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests
 - Shared fakes, builders, and helpers go in `tests/Moongate.Tests/Support/`.
 - Do not mix reusable test infrastructure into domain test files.
 
-### 13.4 InternalsVisibleTo
-
-`Moongate.Service.csproj` exposes internals to `Moongate.Tests` via:
-```xml
-<InternalsVisibleTo Include="Moongate.Tests"/>
-```
-
 ## 14. Commits
 
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, etc.).
-- Scope commits to the affected subsystem: `feat(dbus):`, `fix(socket):`, `test(eventbus):`.
+- Scope commits to the affected subsystem: `feat(console):`, `fix(network):`, `test(scripting):`.
 - Never add `Co-Authored-By: Claude` to commits.
 
 ## 15. Non-Negotiable Hygiene
