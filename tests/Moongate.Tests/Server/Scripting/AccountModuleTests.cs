@@ -78,7 +78,7 @@ public class AccountModuleTests
         var (module, _) = Build();
         module.Create("tom", "secret", null, "Player");
 
-        Assert.DoesNotContain(module.Get("tom")!.Keys, key => key.Contains("password", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(module.Get("tom")!.ToDictionary().Keys, key => key.Contains("password", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]
@@ -87,7 +87,7 @@ public class AccountModuleTests
         var (module, accounts) = Build();
         module.Create("tom", "secret", "tom@example.com", "GrandMaster");
 
-        var table = module.Get("tom");
+        var table = module.Get("tom")?.ToDictionary();
 
         Assert.NotNull(table);
         Assert.Equal("tom", table!["username"]);
