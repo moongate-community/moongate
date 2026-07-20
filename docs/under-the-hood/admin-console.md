@@ -12,7 +12,8 @@ a Tailscale interface.
 
 ## Turning it on
 
-Set the `console:` section of `moongate.yaml`:
+The console has its **own** config file, `moongate_root/plugins/configs/console.yaml`, generated with
+defaults on first start (it does not live in `moongate.yaml`). Set its `console:` section:
 
 ```yaml
 console:
