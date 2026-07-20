@@ -1,5 +1,6 @@
 <Solution>
     <Folder Name="/src/">
+        <Project Path="src/Moongate.Console.Admin.Plugin/Moongate.Console.Admin.Plugin.csproj"/>
         <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
         <Project Path="src/Moongate.Http.Plugin/Moongate.Http.Plugin.csproj"/>
         <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>
