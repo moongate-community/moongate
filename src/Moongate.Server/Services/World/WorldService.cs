@@ -62,6 +62,24 @@ public sealed class WorldService : IWorldService
         _sessions = sessions;
     }
 
+    public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+    {
+        var recipients = 0;
+
+        foreach (var session in _sessions.All)
+        {
+            if (session.State != SessionStateType.InWorld)
+            {
+                continue;
+            }
+
+            session.Send(packet);
+            recipients++;
+        }
+
+        return recipients;
+    }
+
     /// <summary>
     /// Builds the ordered self-only enter-world packet sequence for <paramref name="mobile" /> without
     /// sending it, so the ordering and contents can be inspected in isolation.
@@ -166,24 +184,6 @@ public sealed class WorldService : IWorldService
         session.SetState(SessionStateType.InWorld);
 
         _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
-    }
-
-    public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
-    {
-        var recipients = 0;
-
-        foreach (var session in _sessions.All)
-        {
-            if (session.State != SessionStateType.InWorld)
-            {
-                continue;
-            }
-
-            session.Send(packet);
-            recipients++;
-        }
-
-        return recipients;
     }
 
     public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)

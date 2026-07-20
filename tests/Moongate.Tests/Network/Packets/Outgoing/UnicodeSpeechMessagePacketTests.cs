@@ -1,5 +1,5 @@
 using System.Buffers.Binary;
-using Moongate.Core.Primitives;
+using System.Text;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.UO.Data.Hues;
@@ -28,14 +28,14 @@ public class UnicodeSpeechMessagePacketTests
         Assert.Equal((ushort)0x44, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(10)));
         Assert.Equal((ushort)3, BinaryPrimitives.ReadUInt16BigEndian(bytes.AsSpan(12))); // font, constant
 
-        var language = System.Text.Encoding.ASCII.GetString(bytes.AsSpan(14, 4)).TrimEnd('\0');
+        var language = Encoding.ASCII.GetString(bytes.AsSpan(14, 4)).TrimEnd('\0');
         Assert.Equal("ENU", language);
 
-        var name = System.Text.Encoding.ASCII.GetString(bytes.AsSpan(18, 30)).TrimEnd('\0');
+        var name = Encoding.ASCII.GetString(bytes.AsSpan(18, 30)).TrimEnd('\0');
         Assert.Equal("Hero", name);
 
         // "Hi" (4 bytes) + a 2-byte null terminator = 6 bytes of big-endian unicode.
-        var text = System.Text.Encoding.BigEndianUnicode.GetString(bytes.AsSpan(48, 6));
+        var text = Encoding.BigEndianUnicode.GetString(bytes.AsSpan(48, 6));
         Assert.Equal("Hi\0", text);
     }
 

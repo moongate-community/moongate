@@ -34,7 +34,7 @@ public class ChatMessageFactoryTests
             "Hi"
         );
 
-        Assert.Equal(new Hue(0x21), packet.Hue);
+        Assert.Equal(new(0x21), packet.Hue);
     }
 
     [Fact]
@@ -54,6 +54,6 @@ public class ChatMessageFactoryTests
     {
         var packet = ChatMessageFactory.CreateSystem("Hi", new Hue(0x21));
 
-        Assert.Equal(new Hue(0x21), packet.Hue);
+        Assert.Equal(new(0x21), packet.Hue);
     }
 }

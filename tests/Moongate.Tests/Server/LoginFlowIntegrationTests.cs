@@ -3,17 +3,20 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Commands;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Commands;
 using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
@@ -57,6 +60,316 @@ public class LoginFlowIntegrationTests
 
         public void Post(Action action)
             => action();
+    }
+
+    [Fact]
+    public async Task Chat_SayBroadcastAndRateLimit_BehaveAsDesigned()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)2, Username = "bob" });
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var chat = new ChatService(world, eventBus);
+
+        var testCities = new StartingCityService();
+        testCities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
+
+        using var aliceEntered = new ManualResetEventSlim();
+        using var bobEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
+            {
+                if (e.Mobile.Name == "Alice")
+                {
+                    aliceEntered.Set();
+                }
+                else if (e.Mobile.Name == "Bob")
+                {
+                    bobEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerWithChatAsync(config, eventBus, characters, world, chat, opl, sessions);
+
+        try
+        {
+            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
+            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
+
+            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(bobSocket, network.Port, "bob", "Bob");
+            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
+
+            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
+
+            // Alice says "hi" (plain Regular speech, in range of Bob).
+            var say = Speech("hi");
+            aliceSocket.Send(say);
+
+            var bobCompressed = new List<byte>();
+
+            // Unlike the fixed-length 0x77 UpdatePlayerPacket the movement test matches on, 0xAE carries
+            // a 2-byte length between the opcode and the serial, so matching on the serial's 4 bytes alone
+            // (rather than hand-computing the length prefix) is what actually identifies this as Alice's
+            // packet reaching Bob — nothing else in this test's packet traffic carries Alice's own serial
+            // to Bob.
+            Assert.True(
+                PollUntil(bobSocket, bobCompressed, SerialBytes(aliceMobile.Id)),
+                "Bob never received Alice's speech (0xAE)."
+            );
+
+            // Alice sends a "." command: no broadcast reaches Bob, but Alice gets a system reply
+            // (sender serial 0x00000000) instead.
+            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
+            var command = Speech(".kick Bob");
+            aliceSocket.Send(command);
+
+            var aliceCompressed = new List<byte>();
+
+            // Matches on the reply text itself (big-endian unicode, via the same encoding
+            // CommandService writes with) rather than hand-computing the packet's length-prefixed
+            // byte offsets. ".kick" is not a registered command, so CommandService.Execute replies
+            // with its generic "Unknown command." message — the same reply an unauthorized caller
+            // of a real command would get, by design (see the command-system design doc).
+            var systemPattern = Encoding.BigEndianUnicode.GetBytes("Unknown command");
+            Assert.True(
+                PollUntil(aliceSocket, aliceCompressed, systemPattern),
+                "Alice never received the \"Unknown command.\" reply."
+            );
+            Assert.False(
+                PollUntil(
+                    bobSocket,
+                    bobCompressed,
+                    new byte[] { 0, (byte)'k', 0, (byte)'i', 0, (byte)'c' },
+                    TimeSpan.FromMilliseconds(300)
+                ),
+                "Bob must not receive any broadcast for a \".\" command."
+            );
+
+            // Two sends back-to-back: the second is dropped by the 25ms rate limit, so Bob only ever
+            // sees one occurrence of "spam" on the wire, not two.
+            aliceSocket.Send(Speech("spam"));
+            aliceSocket.Send(Speech("spam"));
+
+            var spamPattern = new byte[] { 0, (byte)'s', 0, (byte)'p', 0, (byte)'a', 0, (byte)'m' };
+            Assert.True(PollUntil(bobSocket, bobCompressed, spamPattern), "Bob never received the first \"spam\".");
+
+            // Give the second (rate-limited) send time to arrive and be dropped server-side before
+            // counting occurrences on the wire.
+            await Task.Delay(100);
+
+            var decoded = HuffmanDecoder.Decode(bobCompressed.ToArray().AsSpan());
+            var occurrences = 0;
+            var searchFrom = 0;
+
+            while (true)
+            {
+                var index = decoded.AsSpan(searchFrom).IndexOf(spamPattern.AsSpan());
+
+                if (index < 0)
+                {
+                    break;
+                }
+
+                occurrences++;
+                searchFrom += index + spamPattern.Length;
+            }
+
+            Assert.Equal(1, occurrences); // the second "spam" was dropped by the 25ms rate limit
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
+    [Fact]
+    public async Task Command_BroadcastAuthorizedAndUnauthorized_BehaveAsDesigned()
+    {
+        var config = LoopbackConfig();
+        var persistence = new FakePersistenceService();
+        await persistence.Store<AccountEntity>()
+                         .UpsertAsync(
+                             new()
+                             {
+                                 Id = (Serial)1,
+                                 Username = "gm",
+                                 PasswordHash = HashUtils.HashPassword("secret"),
+                                 IsActive = true,
+                                 AccountLevel = AccountLevelType.GrandMaster
+                             }
+                         );
+        await persistence.Store<AccountEntity>()
+                         .UpsertAsync(
+                             new()
+                             {
+                                 Id = (Serial)2,
+                                 Username = "player",
+                                 PasswordHash = HashUtils.HashPassword("secret"),
+                                 IsActive = true,
+                                 AccountLevel = AccountLevelType.Player
+                             }
+                         );
+
+        var eventBus = new EventBusService();
+        var opl = new OplService(persistence, new ItemTemplateService());
+        var sessions = new SessionManager();
+
+        var world = new WorldService(
+            new ItemService(persistence, opl),
+            CharacterServiceFixture.Skills(),
+            new VirtualSerialService(),
+            eventBus,
+            TimeProvider.System,
+            opl,
+            sessions
+        );
+        var chat = new ChatService(world, eventBus);
+
+        var testCities = new StartingCityService();
+        testCities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Trammel
+            }
+        );
+        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
+        var accounts = new AccountService(persistence, characters, sessions);
+        // Mirrors the runtime path: register the command declaratively (name/level/help) instead of
+        // scanning an attribute. The resolver is a throwaway container — the registration below closes
+        // over an already-built instance, so it never actually resolves through it.
+        var commands = new CommandService(
+            [
+                new CommandRegistration(
+                    "broadcast|bc",
+                    AccountLevelType.GrandMaster,
+                    "Sends a server-wide system message.",
+                    CommandSourceType.InGame,
+                    _ => new BroadcastCommand(chat)
+                )
+            ],
+            new Container(),
+            accounts
+        );
+
+        using var gmEntered = new ManualResetEventSlim();
+        using var playerEntered = new ManualResetEventSlim();
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
+            {
+                if (e.Mobile.Name == "GM")
+                {
+                    gmEntered.Set();
+                }
+                else if (e.Mobile.Name == "Player")
+                {
+                    playerEntered.Set();
+                }
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerWithCommandsAsync(
+                          config,
+                          eventBus,
+                          characters,
+                          world,
+                          chat,
+                          commands,
+                          accounts,
+                          opl,
+                          sessions
+                      );
+
+        try
+        {
+            using var gmSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(gmSocket, network.Port, "gm", "GM");
+            Assert.True(gmEntered.Wait(TimeSpan.FromSeconds(2)), "GM's PlayerEnteredWorldEvent was not published.");
+
+            using var playerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            EnterWorld(playerSocket, network.Port, "player", "Player");
+            Assert.True(
+                playerEntered.Wait(TimeSpan.FromSeconds(2)),
+                "Player's PlayerEnteredWorldEvent was not published."
+            );
+
+            // The GM (GrandMaster) broadcasts — both sessions receive it.
+            gmSocket.Send(Speech(".broadcast Server restarting soon"));
+
+            var gmCompressed = new List<byte>();
+            var playerCompressed = new List<byte>();
+            var broadcastPattern = Encoding.BigEndianUnicode.GetBytes("restarting soon");
+            Assert.True(
+                PollUntil(gmSocket, gmCompressed, broadcastPattern),
+                "GM never received their own broadcast."
+            );
+            Assert.True(
+                PollUntil(playerSocket, playerCompressed, broadcastPattern),
+                "Player never received the GM's broadcast."
+            );
+
+            // The Player (below GrandMaster) tries the same command — no broadcast reaches anyone,
+            // and the Player gets the generic "Unknown command." reply instead.
+            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
+            playerSocket.Send(Speech(".broadcast should not work"));
+
+            var unknownPattern = Encoding.BigEndianUnicode.GetBytes("Unknown command");
+            Assert.True(
+                PollUntil(playerSocket, playerCompressed, unknownPattern),
+                "Player never received the \"Unknown command.\" reply for an unauthorized broadcast."
+            );
+            Assert.False(
+                PollUntil(
+                    gmSocket,
+                    gmCompressed,
+                    Encoding.BigEndianUnicode.GetBytes("should not work"),
+                    TimeSpan.FromMilliseconds(300)
+                ),
+                "GM must not receive a broadcast triggered by an unauthorized Player."
+            );
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
     }
 
     [Fact]
@@ -531,294 +844,6 @@ public class LoginFlowIntegrationTests
     }
 
     [Fact]
-    public async Task Chat_SayBroadcastAndRateLimit_BehaveAsDesigned()
-    {
-        var config = LoopbackConfig();
-        var persistence = new FakePersistenceService();
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
-        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)2, Username = "bob" });
-
-        var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
-        var sessions = new SessionManager();
-
-        var world = new WorldService(
-            new ItemService(persistence, opl),
-            CharacterServiceFixture.Skills(),
-            new VirtualSerialService(),
-            eventBus,
-            TimeProvider.System,
-            opl,
-            sessions
-        );
-        var chat = new ChatService(world, eventBus);
-
-        var testCities = new StartingCityService();
-        testCities.Register(
-            new()
-            {
-                City = "TestTown",
-                Building = "Origin",
-                Description = 1075072,
-                X = 5,
-                Y = 5,
-                Z = 0,
-                Map = MapType.Trammel
-            }
-        );
-        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
-
-        using var aliceEntered = new ManualResetEventSlim();
-        using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (e, _) =>
-            {
-                if (e.Mobile.Name == "Alice")
-                {
-                    aliceEntered.Set();
-                }
-                else if (e.Mobile.Name == "Bob")
-                {
-                    bobEntered.Set();
-                }
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var network = await StartServerWithChatAsync(config, eventBus, characters, world, chat, opl, sessions);
-
-        try
-        {
-            using var aliceSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(aliceSocket, network.Port, "alice", "Alice");
-            Assert.True(aliceEntered.Wait(TimeSpan.FromSeconds(2)), "Alice's PlayerEnteredWorldEvent was not published.");
-
-            using var bobSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(bobSocket, network.Port, "bob", "Bob");
-            Assert.True(bobEntered.Wait(TimeSpan.FromSeconds(2)), "Bob's PlayerEnteredWorldEvent was not published.");
-
-            var aliceMobile = persistence.Store<MobileEntity>().Query().Single(m => m.Name == "Alice");
-
-            // Alice says "hi" (plain Regular speech, in range of Bob).
-            var say = Speech("hi");
-            aliceSocket.Send(say);
-
-            var bobCompressed = new List<byte>();
-
-            // Unlike the fixed-length 0x77 UpdatePlayerPacket the movement test matches on, 0xAE carries
-            // a 2-byte length between the opcode and the serial, so matching on the serial's 4 bytes alone
-            // (rather than hand-computing the length prefix) is what actually identifies this as Alice's
-            // packet reaching Bob — nothing else in this test's packet traffic carries Alice's own serial
-            // to Bob.
-            Assert.True(
-                PollUntil(bobSocket, bobCompressed, SerialBytes(aliceMobile.Id)),
-                "Bob never received Alice's speech (0xAE)."
-            );
-
-            // Alice sends a "." command: no broadcast reaches Bob, but Alice gets a system reply
-            // (sender serial 0x00000000) instead.
-            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
-            var command = Speech(".kick Bob");
-            aliceSocket.Send(command);
-
-            var aliceCompressed = new List<byte>();
-
-            // Matches on the reply text itself (big-endian unicode, via the same encoding
-            // CommandService writes with) rather than hand-computing the packet's length-prefixed
-            // byte offsets. ".kick" is not a registered command, so CommandService.Execute replies
-            // with its generic "Unknown command." message — the same reply an unauthorized caller
-            // of a real command would get, by design (see the command-system design doc).
-            var systemPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("Unknown command");
-            Assert.True(
-                PollUntil(aliceSocket, aliceCompressed, systemPattern),
-                "Alice never received the \"Unknown command.\" reply."
-            );
-            Assert.False(
-                PollUntil(bobSocket, bobCompressed, new byte[] { 0, (byte)'k', 0, (byte)'i', 0, (byte)'c' }, TimeSpan.FromMilliseconds(300)),
-                "Bob must not receive any broadcast for a \".\" command."
-            );
-
-            // Two sends back-to-back: the second is dropped by the 25ms rate limit, so Bob only ever
-            // sees one occurrence of "spam" on the wire, not two.
-            aliceSocket.Send(Speech("spam"));
-            aliceSocket.Send(Speech("spam"));
-
-            var spamPattern = new byte[] { 0, (byte)'s', 0, (byte)'p', 0, (byte)'a', 0, (byte)'m' };
-            Assert.True(PollUntil(bobSocket, bobCompressed, spamPattern), "Bob never received the first \"spam\".");
-
-            // Give the second (rate-limited) send time to arrive and be dropped server-side before
-            // counting occurrences on the wire.
-            await Task.Delay(100);
-
-            var decoded = HuffmanDecoder.Decode(bobCompressed.ToArray().AsSpan());
-            var occurrences = 0;
-            var searchFrom = 0;
-
-            while (true)
-            {
-                var index = decoded.AsSpan(searchFrom).IndexOf(spamPattern.AsSpan());
-
-                if (index < 0)
-                {
-                    break;
-                }
-
-                occurrences++;
-                searchFrom += index + spamPattern.Length;
-            }
-
-            Assert.Equal(1, occurrences); // the second "spam" was dropped by the 25ms rate limit
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    [Fact]
-    public async Task Command_BroadcastAuthorizedAndUnauthorized_BehaveAsDesigned()
-    {
-        var config = LoopbackConfig();
-        var persistence = new FakePersistenceService();
-        await persistence.Store<AccountEntity>().UpsertAsync(
-            new()
-            {
-                Id = (Serial)1,
-                Username = "gm",
-                PasswordHash = HashUtils.HashPassword("secret"),
-                IsActive = true,
-                AccountLevel = AccountLevelType.GrandMaster
-            }
-        );
-        await persistence.Store<AccountEntity>().UpsertAsync(
-            new()
-            {
-                Id = (Serial)2,
-                Username = "player",
-                PasswordHash = HashUtils.HashPassword("secret"),
-                IsActive = true,
-                AccountLevel = AccountLevelType.Player
-            }
-        );
-
-        var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
-        var sessions = new SessionManager();
-
-        var world = new WorldService(
-            new ItemService(persistence, opl),
-            CharacterServiceFixture.Skills(),
-            new VirtualSerialService(),
-            eventBus,
-            TimeProvider.System,
-            opl,
-            sessions
-        );
-        var chat = new ChatService(world, eventBus);
-
-        var testCities = new StartingCityService();
-        testCities.Register(
-            new()
-            {
-                City = "TestTown",
-                Building = "Origin",
-                Description = 1075072,
-                X = 5,
-                Y = 5,
-                Z = 0,
-                Map = MapType.Trammel
-            }
-        );
-        var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
-        var accounts = new AccountService(persistence, characters, sessions);
-        var commands = new CommandService([new BroadcastCommand(chat)], accounts);
-
-        using var gmEntered = new ManualResetEventSlim();
-        using var playerEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (e, _) =>
-            {
-                if (e.Mobile.Name == "GM")
-                {
-                    gmEntered.Set();
-                }
-                else if (e.Mobile.Name == "Player")
-                {
-                    playerEntered.Set();
-                }
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var network = await StartServerWithCommandsAsync(
-            config,
-            eventBus,
-            characters,
-            world,
-            chat,
-            commands,
-            accounts,
-            opl,
-            sessions
-        );
-
-        try
-        {
-            using var gmSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(gmSocket, network.Port, "gm", "GM");
-            Assert.True(gmEntered.Wait(TimeSpan.FromSeconds(2)), "GM's PlayerEnteredWorldEvent was not published.");
-
-            using var playerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            EnterWorld(playerSocket, network.Port, "player", "Player");
-            Assert.True(
-                playerEntered.Wait(TimeSpan.FromSeconds(2)),
-                "Player's PlayerEnteredWorldEvent was not published."
-            );
-
-            // The GM (GrandMaster) broadcasts — both sessions receive it.
-            gmSocket.Send(Speech(".broadcast Server restarting soon"));
-
-            var gmCompressed = new List<byte>();
-            var playerCompressed = new List<byte>();
-            var broadcastPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("restarting soon");
-            Assert.True(
-                PollUntil(gmSocket, gmCompressed, broadcastPattern),
-                "GM never received their own broadcast."
-            );
-            Assert.True(
-                PollUntil(playerSocket, playerCompressed, broadcastPattern),
-                "Player never received the GM's broadcast."
-            );
-
-            // The Player (below GrandMaster) tries the same command — no broadcast reaches anyone,
-            // and the Player gets the generic "Unknown command." reply instead.
-            await Task.Delay(50); // clear the 25ms chat rate limit from the first send
-            playerSocket.Send(Speech(".broadcast should not work"));
-
-            var unknownPattern = System.Text.Encoding.BigEndianUnicode.GetBytes("Unknown command");
-            Assert.True(
-                PollUntil(playerSocket, playerCompressed, unknownPattern),
-                "Player never received the \"Unknown command.\" reply for an unauthorized broadcast."
-            );
-            Assert.False(
-                PollUntil(
-                    gmSocket,
-                    gmCompressed,
-                    System.Text.Encoding.BigEndianUnicode.GetBytes("should not work"),
-                    TimeSpan.FromMilliseconds(300)
-                ),
-                "GM must not receive a broadcast triggered by an unauthorized Player."
-            );
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    [Fact]
     public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
     {
         var config = LoopbackConfig();
@@ -1015,29 +1040,6 @@ public class LoginFlowIntegrationTests
     }
 
     /// <summary>
-    /// Builds a 0xAD Unicode Speech Request packet with Regular type, hue 0, font 3, language "ENU".
-    /// The header is type(1) + hue(2) + font(2) + lang(4) = 9 bytes, plus id(1) + length(2) = 12 bytes
-    /// before the text.
-    /// </summary>
-    private static byte[] Speech(string text)
-    {
-        var textBytes = System.Text.Encoding.BigEndianUnicode.GetBytes(text + "\0");
-        var packet = new byte[12 + textBytes.Length];
-        packet[0] = 0xAD;
-        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(1), (ushort)packet.Length);
-        packet[3] = 0x00; // ChatMessageType.Regular
-        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(4), 0); // hue
-        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(6), 3); // font
-        packet[8] = (byte)'E';
-        packet[9] = (byte)'N';
-        packet[10] = (byte)'U';
-        packet[11] = 0x00;
-        textBytes.CopyTo(packet.AsSpan(12));
-
-        return packet;
-    }
-
-    /// <summary>
     /// Drives one client through the full login handshake (seed, account login, server select, game
     /// login) and sends character creation for <paramref name="characterName" />, mirroring the inline
     /// steps every other test in this file repeats — parameterized so two independent clients can each
@@ -1183,6 +1185,29 @@ public class LoginFlowIntegrationTests
         return bytes;
     }
 
+    /// <summary>
+    /// Builds a 0xAD Unicode Speech Request packet with Regular type, hue 0, font 3, language "ENU".
+    /// The header is type(1) + hue(2) + font(2) + lang(4) = 9 bytes, plus id(1) + length(2) = 12 bytes
+    /// before the text.
+    /// </summary>
+    private static byte[] Speech(string text)
+    {
+        var textBytes = Encoding.BigEndianUnicode.GetBytes(text + "\0");
+        var packet = new byte[12 + textBytes.Length];
+        packet[0] = 0xAD;
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(1), (ushort)packet.Length);
+        packet[3] = 0x00;                                           // ChatMessageType.Regular
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(4), 0); // hue
+        BinaryPrimitives.WriteUInt16BigEndian(packet.AsSpan(6), 3); // font
+        packet[8] = (byte)'E';
+        packet[9] = (byte)'N';
+        packet[10] = (byte)'U';
+        packet[11] = 0x00;
+        textBytes.CopyTo(packet.AsSpan(12));
+
+        return packet;
+    }
+
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
         => StartServerAsync(config, new EventBusService());
 
@@ -1266,50 +1291,6 @@ public class LoginFlowIntegrationTests
         return network;
     }
 
-    private static async Task<NetworkService> StartServerWithMovementAsync(
-        MoongateConfig config,
-        IEventBus eventBus,
-        ICharacterService characters,
-        WorldService world,
-        IMovementService movement,
-        OplService opl,
-        ISessionManager sessions
-    )
-    {
-        var accounts = new StubAccountService();
-        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
-
-        var cities = new StartingCityService();
-        cities.Register(
-            new()
-            {
-                City = "TestTown",
-                Building = "Origin",
-                Description = 1075072,
-                X = 5,
-                Y = 5,
-                Z = 0,
-                Map = MapType.Felucca
-            }
-        );
-
-        var handlers = new List<IPacketHandlerRegistration>
-        {
-            new LoginSeedHandler(),
-            new AccountLoginHandler(accounts, config),
-            new SelectServerHandler(pending, config),
-            new GameServerLoginHandler(pending, cities, accounts, characters),
-            new CharacterCreationHandler(characters, world),
-            new MegaClilocHandler(opl),
-            new MoveRequestHandler(movement)
-        };
-
-        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
-        await network.StartAsync(CancellationToken.None);
-
-        return network;
-    }
-
     private static async Task<NetworkService> StartServerWithChatAsync(
         MoongateConfig config,
         IEventBus eventBus,
@@ -1321,7 +1302,7 @@ public class LoginFlowIntegrationTests
     )
     {
         var accounts = new StubAccountService();
-        var commands = new CommandService([], accounts);
+        var commands = new CommandService([], new Container(), accounts);
         var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
 
         var cities = new StartingCityService();
@@ -1392,6 +1373,50 @@ public class LoginFlowIntegrationTests
             new CharacterCreationHandler(characters, world),
             new MegaClilocHandler(opl),
             new SpeechHandler(chat, commands)
+        };
+
+        var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
+    }
+
+    private static async Task<NetworkService> StartServerWithMovementAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        ICharacterService characters,
+        WorldService world,
+        IMovementService movement,
+        OplService opl,
+        ISessionManager sessions
+    )
+    {
+        var accounts = new StubAccountService();
+        var pending = new PendingLoginStore(30000, () => Environment.TickCount64);
+
+        var cities = new StartingCityService();
+        cities.Register(
+            new()
+            {
+                City = "TestTown",
+                Building = "Origin",
+                Description = 1075072,
+                X = 5,
+                Y = 5,
+                Z = 0,
+                Map = MapType.Felucca
+            }
+        );
+
+        var handlers = new List<IPacketHandlerRegistration>
+        {
+            new LoginSeedHandler(),
+            new AccountLoginHandler(accounts, config),
+            new SelectServerHandler(pending, config),
+            new GameServerLoginHandler(pending, cities, accounts, characters),
+            new CharacterCreationHandler(characters, world),
+            new MegaClilocHandler(opl),
+            new MoveRequestHandler(movement)
         };
 
         var network = new NetworkService(sessions, config, [.. handlers], eventBus, new InlineDispatcher());

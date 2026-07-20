@@ -123,6 +123,15 @@ public sealed class PlayerSession : ISeedTarget
         }
     }
 
+    /// <summary>Records when the last accepted speech packet arrived, for the chat rate limit.</summary>
+    public void SetLastChat(DateTimeOffset at)
+    {
+        lock (_stateSync)
+        {
+            LastChatAt = at;
+        }
+    }
+
     /// <summary>
     /// Records the outcome of a movement rate-limit check: the accepted sequence (or null to force a
     /// resync, so the next packet's sequence is accepted unconditionally) and when it happened.
@@ -133,15 +142,6 @@ public sealed class PlayerSession : ISeedTarget
         {
             LastMoveSequence = sequence;
             LastMoveAt = at;
-        }
-    }
-
-    /// <summary>Records when the last accepted speech packet arrived, for the chat rate limit.</summary>
-    public void SetLastChat(DateTimeOffset at)
-    {
-        lock (_stateSync)
-        {
-            LastChatAt = at;
         }
     }
 

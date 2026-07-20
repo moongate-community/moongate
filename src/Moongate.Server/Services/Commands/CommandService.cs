@@ -1,8 +1,8 @@
-using System.Reflection;
+using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Abstractions.Attributes;
 using Moongate.Server.Abstractions.Data.Commands;
+using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Commands;
@@ -17,7 +17,7 @@ namespace Moongate.Server.Services.Commands;
 /// <see cref="BuildRegistry" /> are the pure decision core — public and static so they are
 /// unit-testable without a live session, mirroring <c>ChatService.Classify</c>/
 /// <c>MovementService.Evaluate</c>. <see cref="Execute" /> is the impure orchestrator: resolves the
-/// actor's level, checks authorization, dispatches, replies.
+/// actor's level, checks authorization, resolves and dispatches the command, replies.
 /// </summary>
 public sealed class CommandService : ICommandService
 {
@@ -25,51 +25,35 @@ public sealed class CommandService : ICommandService
     private const string CommandFailedMessage = "Command failed. Check server logs.";
 
     private readonly ILogger _logger = Log.ForContext<CommandService>();
-    private readonly Dictionary<string, (ICommand Command, CommandAttribute Attribute)> _registry;
+    private readonly Dictionary<string, CommandRegistration> _registry;
+    private readonly IResolverContext _resolver;
     private readonly IAccountService _accounts;
 
-    public CommandService(IEnumerable<ICommand> commands, IAccountService accounts)
+    public CommandService(IReadOnlyList<CommandRegistration> registrations, IResolverContext resolver, IAccountService accounts)
     {
-        _registry = BuildRegistry(commands);
+        _registry = BuildRegistry(registrations);
+        _resolver = resolver;
         _accounts = accounts;
     }
 
     /// <summary>
-    /// Reads each command's <see cref="CommandAttribute" /> once and indexes it under every
-    /// pipe-delimited alias in <see cref="CommandAttribute.Name" />, case-insensitively. Pure aside
-    /// from reflection (no I/O), so it is unit-testable without any session/account infrastructure.
+    /// Indexes each registration under every pipe-delimited alias in
+    /// <see cref="CommandRegistration.Name" />, case-insensitively. Pure (no reflection, no I/O), so it
+    /// is unit-testable without any session/account/container infrastructure.
     /// </summary>
-    public static Dictionary<string, (ICommand Command, CommandAttribute Attribute)> BuildRegistry(
-        IEnumerable<ICommand> commands
-    )
+    public static Dictionary<string, CommandRegistration> BuildRegistry(IEnumerable<CommandRegistration> registrations)
     {
-        var registry = new Dictionary<string, (ICommand, CommandAttribute)>(StringComparer.OrdinalIgnoreCase);
+        var registry = new Dictionary<string, CommandRegistration>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var command in commands)
+        foreach (var registration in registrations)
         {
-            var attribute = command.GetType().GetCustomAttribute<CommandAttribute>()
-                          ?? throw new InvalidOperationException(
-                                 $"{command.GetType().Name} is missing [Command]."
-                             );
-
-            foreach (var alias in attribute.Name.Split('|'))
+            foreach (var alias in registration.Name.Split('|'))
             {
-                registry[alias] = (command, attribute);
+                registry[alias] = registration;
             }
         }
 
         return registry;
-    }
-
-    public static bool IsAuthorized(AccountLevelType actorLevel, AccountLevelType minLevel)
-        => actorLevel >= minLevel;
-
-    public static (string Name, string[] Arguments) Parse(string rawText)
-    {
-        var withoutPrefix = rawText[1..]; // strip the leading "."
-        var tokens = withoutPrefix.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        return tokens.Length == 0 ? (string.Empty, []) : (tokens[0], tokens[1..]);
     }
 
     public void Execute(PlayerSession session, MobileEntity actor, string rawText)
@@ -85,7 +69,7 @@ public sealed class CommandService : ICommandService
 
         var actorLevel = _accounts.GetById(session.AccountId)?.AccountLevel ?? AccountLevelType.Player;
 
-        if (!IsAuthorized(actorLevel, registration.Attribute.MinLevel))
+        if (!IsAuthorized(actorLevel, registration.MinLevel))
         {
             session.Send(ChatMessageFactory.CreateSystem(UnknownCommandMessage));
 
@@ -101,12 +85,23 @@ public sealed class CommandService : ICommandService
 
         try
         {
-            registration.Command.Execute(context);
+            registration.Resolve(_resolver).Execute(context);
         }
         catch (Exception ex)
         {
             _logger.Error(ex, "Command '{Name}' failed", name);
             session.Send(ChatMessageFactory.CreateSystem(CommandFailedMessage));
         }
+    }
+
+    public static bool IsAuthorized(AccountLevelType actorLevel, AccountLevelType minLevel)
+        => actorLevel >= minLevel;
+
+    public static (string Name, string[] Arguments) Parse(string rawText)
+    {
+        var withoutPrefix = rawText[1..]; // strip the leading "."
+        var tokens = withoutPrefix.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        return tokens.Length == 0 ? (string.Empty, []) : (tokens[0], tokens[1..]);
     }
 }

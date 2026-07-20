@@ -34,7 +34,7 @@ public class MapTileGeometryTests
     // Malas: 2560/256 = 10, ceil(log2 10) = 4
     // Tokuno: 1448/256 = 5.65, ceil(log2 5.65) = 3
     // TerMur: tall, so height drives it: 4096/256 = 16, log2 16 = 4
-     // one tile already: no pyramid
+    // one tile already: no pyramid
     public void MaxZoom_IsTheSmallestZoomWholeMapFitsOneTileAtZero(int width, int height, int expected)
         => Assert.Equal(expected, MapTileGeometry.MaxZoom(width, height));
 

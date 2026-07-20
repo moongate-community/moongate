@@ -1,14 +1,14 @@
 using Moongate.Core.Types;
-using Moongate.Server.Abstractions.Attributes;
 using Moongate.Server.Abstractions.Data.Commands;
+using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Interfaces.Commands;
+using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.Commands;
 
 namespace Moongate.Tests.Server.Commands;
 
 public class CommandServiceTests
 {
-    [Command("test|t", AccountLevelType.GrandMaster, "A recording test command.")]
     private sealed class RecordingCommand : ICommand
     {
         public CommandContext? LastContext { get; private set; }
@@ -17,46 +17,42 @@ public class CommandServiceTests
             => LastContext = context;
     }
 
-    private sealed class UndecoratedCommand : ICommand
-    {
-        public void Execute(CommandContext context) { }
-    }
+    private static CommandRegistration Registration(string name)
+        => new(
+            name,
+            AccountLevelType.GrandMaster,
+            "A recording test command.",
+            CommandSourceType.InGame,
+            static _ => new RecordingCommand()
+        );
 
     [Fact]
     public void BuildRegistry_LookupIsCaseInsensitive()
     {
-        var command = new RecordingCommand();
-
-        var registry = CommandService.BuildRegistry([command]);
+        var registry = CommandService.BuildRegistry([Registration("test|t")]);
 
         Assert.True(registry.ContainsKey("TEST"));
         Assert.True(registry.ContainsKey("Test"));
     }
 
     [Fact]
-    public void BuildRegistry_MissingCommandAttribute_Throws()
-        => Assert.Throws<InvalidOperationException>(() => CommandService.BuildRegistry([new UndecoratedCommand()]));
-
-    [Fact]
-    public void BuildRegistry_PipeDelimitedAliases_RegisterBothNamesToTheSameCommand()
+    public void BuildRegistry_PipeDelimitedAliases_RegisterBothNamesToTheSameRegistration()
     {
-        var command = new RecordingCommand();
+        var registration = Registration("test|t");
 
-        var registry = CommandService.BuildRegistry([command]);
+        var registry = CommandService.BuildRegistry([registration]);
 
-        Assert.Same(command, registry["test"].Command);
-        Assert.Same(command, registry["t"].Command);
+        Assert.Same(registration, registry["test"]);
+        Assert.Same(registration, registry["t"]);
     }
 
     [Fact]
-    public void BuildRegistry_SingleCommand_RegistersItsCanonicalName()
+    public void BuildRegistry_SingleCommand_RegistersItsCanonicalNameAndMetadata()
     {
-        var command = new RecordingCommand();
-
-        var registry = CommandService.BuildRegistry([command]);
+        var registry = CommandService.BuildRegistry([Registration("test|t")]);
 
         Assert.True(registry.ContainsKey("test"));
-        Assert.Equal(AccountLevelType.GrandMaster, registry["test"].Attribute.MinLevel);
+        Assert.Equal(AccountLevelType.GrandMaster, registry["test"].MinLevel);
     }
 
     [Fact]
@@ -70,6 +66,15 @@ public class CommandServiceTests
     [Fact]
     public void IsAuthorized_ActorBelowMinLevel_IsFalse()
         => Assert.False(CommandService.IsAuthorized(AccountLevelType.Player, AccountLevelType.GrandMaster));
+
+    [Fact]
+    public void Parse_ExtraWhitespaceBetweenTokens_IsIgnored()
+    {
+        var (name, arguments) = CommandService.Parse(".broadcast   hello    world");
+
+        Assert.Equal("broadcast", name);
+        Assert.Equal(["hello", "world"], arguments);
+    }
 
     [Fact]
     public void Parse_JustThePrefix_ReturnsEmptyNameAndNoArguments()
@@ -96,14 +101,5 @@ public class CommandServiceTests
 
         Assert.Equal("broadcast", name);
         Assert.Equal(["Server", "restarting", "soon"], arguments);
-    }
-
-    [Fact]
-    public void Parse_ExtraWhitespaceBetweenTokens_IsIgnored()
-    {
-        var (name, arguments) = CommandService.Parse(".broadcast   hello    world");
-
-        Assert.Equal("broadcast", name);
-        Assert.Equal(["hello", "world"], arguments);
     }
 }

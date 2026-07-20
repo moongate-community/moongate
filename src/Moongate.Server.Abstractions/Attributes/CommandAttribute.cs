@@ -5,7 +5,11 @@ namespace Moongate.Server.Abstractions.Attributes;
 
 /// <summary>
 /// Declares an <see cref="Interfaces.Commands.ICommand" />'s dispatch name(s), minimum
-/// <see cref="AccountLevelType" />, and help text.
+/// <see cref="AccountLevelType" />, and help text. This is <b>declarative metadata for tooling</b>
+/// (documentation generation and/or a future source generator that emits the registrations) — it is
+/// <b>not</b> scanned at runtime. The dispatcher indexes commands from the explicit
+/// <c>RegisterCommand</c> calls (see <see cref="Extensions.CommandRegistrationExtensions" />), so the
+/// attribute and the registration currently state the same metadata until a generator unifies them.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class CommandAttribute : Attribute

@@ -34,6 +34,9 @@ public sealed class ChatService : IChatService
         _events = events;
     }
 
+    public void Broadcast(string text, Hue? hue = null)
+        => _world.Broadcast(ChatMessageFactory.CreateSystem(text, hue));
+
     public static ChatDecision Classify(string rawText)
     {
         if (rawText.StartsWith('.'))
@@ -61,9 +64,6 @@ public sealed class ChatService : IChatService
 
     public static bool IsRateLimited(DateTimeOffset lastChatAt, DateTimeOffset now)
         => now - lastChatAt < MinInterval;
-
-    public void Broadcast(string text, Hue? hue = null)
-        => _world.Broadcast(ChatMessageFactory.CreateSystem(text, hue));
 
     public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
     {

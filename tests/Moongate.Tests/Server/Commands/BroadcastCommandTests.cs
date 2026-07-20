@@ -26,7 +26,7 @@ public class BroadcastCommandTests
         var chat = new RecordingChatService();
         var command = new BroadcastCommand(chat);
         var replies = new List<string>();
-        var context = new CommandContext(CommandSourceType.InGame, new MobileEntity(), [], replies.Add);
+        var context = new CommandContext(CommandSourceType.InGame, new(), [], replies.Add);
 
         command.Execute(context);
 
@@ -42,7 +42,7 @@ public class BroadcastCommandTests
         var replies = new List<string>();
         var context = new CommandContext(
             CommandSourceType.InGame,
-            new MobileEntity(),
+            new(),
             ["Server", "restarting", "soon"],
             replies.Add
         );

@@ -12,7 +12,7 @@ public class ContainerSubscriberTests
     [Theory, InlineData(0), InlineData(-5)]
 
     // an item that never had its amount set
-     // nonsense, but the wire field is unsigned
+    // nonsense, but the wire field is unsigned
     public void BuildContents_AmountBelowOne_IsSentAsOne(int amount)
     {
         var item = new ItemEntity { Id = new(0x40000005), ItemId = 1, Amount = amount };

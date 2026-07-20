@@ -14,16 +14,16 @@ namespace Moongate.Server.Abstractions.Interfaces.World;
 public interface IWorldService
 {
     /// <summary>
-    /// Streams the enter-world sequence for <paramref name="mobile" /> to <paramref name="session" />
-    /// and raises <see cref="Data.Events.PlayerEnteredWorldEvent" />.
-    /// </summary>
-    void SendEnterWorld(PlayerSession session, MobileEntity mobile);
-
-    /// <summary>
     /// Sends <paramref name="packet" /> to every in-world player session, regardless of map or
     /// position. Returns the number of recipients.
     /// </summary>
     int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket;
+
+    /// <summary>
+    /// Streams the enter-world sequence for <paramref name="mobile" /> to <paramref name="session" />
+    /// and raises <see cref="Data.Events.PlayerEnteredWorldEvent" />.
+    /// </summary>
+    void SendEnterWorld(PlayerSession session, MobileEntity mobile);
 
     /// <summary>
     /// Sends <paramref name="packet" /> to every in-world player session whose character is on

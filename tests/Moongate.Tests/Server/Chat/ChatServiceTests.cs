@@ -1,4 +1,3 @@
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.Accounts;

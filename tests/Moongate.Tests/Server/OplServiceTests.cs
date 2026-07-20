@@ -59,7 +59,7 @@ public class OplServiceTests
     public void Item_Single_UsesStringClilocName()
     {
         var (opl, items, _) = Build();
-        var item = NewItem(items, 1, "a dagger");
+        var item = NewItem(items);
 
         var snapshot = opl.GetOrBuild(item.Id);
 

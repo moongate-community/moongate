@@ -27,6 +27,14 @@ public class WorldServiceTests
     }
 
     [Fact]
+    public void Broadcast_NoSessions_ReturnsZero()
+    {
+        var service = Service(new([]));
+
+        Assert.Equal(0, service.Broadcast(new NoopPacket()));
+    }
+
+    [Fact]
     public void BuildSequence_EmitsExpectedOrderedOpcodes()
     {
         var opcodes = Service(new([]))
@@ -292,14 +300,6 @@ public class WorldServiceTests
         var character = new MobileEntity { Id = new(0x1), MapId = 1, Position = new(100, 100, 0) };
 
         Assert.False(WorldService.IsRecipient(SessionStateType.InWorld, character, 0, new(100, 100, 0), 18, null));
-    }
-
-    [Fact]
-    public void Broadcast_NoSessions_ReturnsZero()
-    {
-        var service = Service(new([]));
-
-        Assert.Equal(0, service.Broadcast(new NoopPacket()));
     }
 
     [Fact]
