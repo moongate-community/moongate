@@ -11,6 +11,8 @@ using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Registration;
+using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
@@ -18,6 +20,7 @@ using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;
+using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http;
 
@@ -54,6 +57,9 @@ public class MoongateHttpPluginTests
                 typeof(MobileTemplateImageEndpoints),
                 typeof(PaperdollEndpoints),
                 typeof(PlayerEndpoints),
+                typeof(RegistrationEndpoints),
+                typeof(ServerInfoEndpoints),
+                typeof(ServerSettingsAdminEndpoints),
                 typeof(VersionEndpoints)
             ],
             registered
@@ -82,6 +88,9 @@ public class MoongateHttpPluginTests
         var container = new Container();
         container.RegisterInstance(new MoongateHttpConfig());
         container.RegisterInstance(TimeProvider.System);
+        container.RegisterInstance(
+            new DirectoriesConfig(Path.Combine(Path.GetTempPath(), "mg-plugin-test-" + Guid.NewGuid().ToString("N")), [])
+        );
 
         new MoongateHttpPlugin().Configure(container, new());
 
