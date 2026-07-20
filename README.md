@@ -119,6 +119,39 @@ Images are published to Docker Hub as `tgiachi/moongate-server` and to GHCR as
 `ghcr.io/moongate-community/moongate`, tagged `latest`, `X.Y`, `X.Y.Z` and
 `sha-<commit>`.
 
+## NuGet packages
+
+The abstraction assemblies plugin authors compile against are published to **GitHub Packages** on
+each release: `Moongate.Server.Abstractions` plus its dependency closure (`Moongate.Core`,
+`Moongate.Network`, `Moongate.Persistence`, `Moongate.UO.Data`, `Moongate.Ultima`).
+
+GitHub Packages requires authentication even for public feeds, so add a `nuget.config` next to your
+plugin project with a GitHub token that has the `read:packages` scope:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <add key="moongate" value="https://nuget.pkg.github.com/moongate-community/index.json" />
+  </packageSources>
+  <packageSourceCredentials>
+    <moongate>
+      <add key="Username" value="%GITHUB_USER%" />
+      <add key="ClearTextPassword" value="%GITHUB_TOKEN%" />
+    </moongate>
+  </packageSourceCredentials>
+</configuration>
+```
+
+Then reference the abstractions — the rest of the closure comes transitively:
+
+```xml
+<PackageReference Include="Moongate.Server.Abstractions" Version="X.Y.Z" />
+```
+
+Match the version to the server you target. See the [Writing plugins](https://moongate.sh/contributing/writing-plugins/)
+guide for the full walkthrough.
+
 ## What Is In Scope Today
 
 - UO TCP networking with typed packet records and opcode dispatch.
