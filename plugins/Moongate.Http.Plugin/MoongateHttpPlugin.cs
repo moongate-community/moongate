@@ -10,25 +10,32 @@ using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Registration;
+using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Extensions;
+using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Interfaces.Console;
 using Moongate.Http.Plugin.Interfaces.Images;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
+using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Interfaces.Ultima;
+using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Console;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Images;
 using Moongate.Http.Plugin.Services.Maps;
 using Moongate.Http.Plugin.Services.Mobiles;
+using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Interfaces;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
+using SquidStd.Core.Directories;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
@@ -107,6 +114,28 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // the endpoints POST commands and stream their output.
         container.Register<IConsoleStreamRegistry, ConsoleStreamRegistry>(Reuse.Singleton);
         container.RegisterApiEndpoint<ConsoleEndpoints>();
+
+        // The web-asset directory lives under the runtime root; resolve it here where DirectoriesConfig
+        // is available and hand the concrete path to the file store. IServerSettingsService itself is a
+        // server service registered in the composition root, not by the plugin.
+        var assetsPath = container.Resolve<DirectoriesConfig>().GetPath("web/assets");
+        container.RegisterInstance<IServerAssetFileStore>(new ServerAssetFileStore(assetsPath));
+
+        // TimeProvider.System rather than a resolved TimeProvider: plugin Configure runs before the
+        // composition root's ConfigureServices, so the DI-registered TimeProvider does not exist yet. The
+        // limiter only needs a real clock, and tests drive RegistrationRateLimiter with a fake clock directly.
+        var httpConfig = container.Resolve<MoongateHttpConfig>();
+        container.RegisterInstance<IRegistrationRateLimiter>(
+            new RegistrationRateLimiter(
+                TimeProvider.System,
+                httpConfig.RegistrationRateLimitPermits,
+                TimeSpan.FromMinutes(httpConfig.RegistrationRateLimitWindowMinutes)
+            )
+        );
+
+        container.RegisterApiEndpoint<ServerInfoEndpoints>();
+        container.RegisterApiEndpoint<ServerSettingsAdminEndpoints>();
+        container.RegisterApiEndpoint<RegistrationEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }

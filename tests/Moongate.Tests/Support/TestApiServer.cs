@@ -9,13 +9,20 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Registration;
+using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Version;
+using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
+using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Server;
 using SquidStd.Core.Interfaces.Config;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Services.Core.Services;
@@ -36,7 +43,8 @@ public sealed class TestApiServer : IAsyncDisposable
         IAccountService accounts,
         CharacterService characters,
         StubSessionManager sessions,
-        FakePersistenceService persistence
+        FakePersistenceService persistence,
+        ServerSettingsService serverSettings
     )
     {
         _service = service;
@@ -45,11 +53,15 @@ public sealed class TestApiServer : IAsyncDisposable
         Characters = characters;
         Sessions = sessions;
         Persistence = persistence;
+        ServerSettings = serverSettings;
     }
 
     public HttpClient Client { get; }
 
     public IAccountService Accounts { get; }
+
+    /// <summary>The real server-settings service behind the endpoints, so a test can seed settings and assets.</summary>
+    public ServerSettingsService ServerSettings { get; }
 
     /// <summary>Real, over the same fake persistence: a test can give an account a character.</summary>
     public CharacterService Characters { get; }
@@ -95,8 +107,9 @@ public sealed class TestApiServer : IAsyncDisposable
         var container = new Container();
         var persistence = new FakePersistenceService();
         var sessions = new StubSessionManager();
-        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
-        var accounts = new AccountService(persistence, characters, sessions);
+        var bus = new EventBusService();
+        var characters = CharacterServiceFixture.Create(persistence, bus, sessions);
+        var accounts = new AccountService(persistence, characters, sessions, bus);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig
@@ -135,6 +148,19 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterApiEndpointInstance(new PlayerEndpoints());
         container.RegisterApiEndpointInstance(new CharacterEndpoints(accounts, characters));
 
+        var serverSettings = new ServerSettingsService(persistence);
+        var assetStore = new ServerAssetFileStore(
+            Path.Combine(Path.GetTempPath(), "mg-test-assets-" + Guid.NewGuid().ToString("N"))
+        );
+        container.RegisterInstance<IServerSettingsService>(serverSettings);
+        container.RegisterInstance<IServerAssetFileStore>(assetStore);
+        container.RegisterApiEndpointInstance(new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore));
+        container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
+
+        // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
+        var rateLimiter = new RegistrationRateLimiter(TimeProvider.System, permitPerWindow: 2, window: TimeSpan.FromMinutes(10));
+        container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
+
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
 
@@ -147,7 +173,8 @@ public sealed class TestApiServer : IAsyncDisposable
             accounts,
             characters,
             sessions,
-            persistence
+            persistence,
+            serverSettings
         );
     }
 }

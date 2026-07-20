@@ -26,11 +26,13 @@ public class AccountServiceGetAllTests
     private static AccountService Build()
     {
         var persistence = new FakePersistenceService();
+        var bus = new EventBusService();
 
         return new(
             persistence,
-            CharacterServiceFixture.Create(persistence, new EventBusService()),
-            new StubSessionManager()
+            CharacterServiceFixture.Create(persistence, bus),
+            new StubSessionManager(),
+            bus
         );
     }
 }

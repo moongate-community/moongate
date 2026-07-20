@@ -25,6 +25,20 @@ public interface IAccountService
     AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level);
 
     /// <summary>
+    /// Creates a pending Player account for web self-registration: inactive, carrying a single-use
+    /// verification token, with the (required, validated) email stored. Publishes
+    /// <see cref="Moongate.Server.Abstractions.Data.Events.AccountRegistrationRequestedEvent" />. The
+    /// account cannot log in until verified.
+    /// </summary>
+    AccountRegisterResult RegisterPending(string username, string password, string email);
+
+    /// <summary>
+    /// Activates the account holding <paramref name="token" /> and clears the token. Idempotent by
+    /// construction: a consumed or unknown token matches nothing.
+    /// </summary>
+    AccountVerifyResultType VerifyEmail(string token);
+
+    /// <summary>
     /// Deletes the account along with every character it owns and everything those characters carry.
     /// Refused outright while any of them is being played.
     /// </summary>

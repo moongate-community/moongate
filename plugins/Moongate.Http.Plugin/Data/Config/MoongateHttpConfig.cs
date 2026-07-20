@@ -16,4 +16,13 @@ public sealed class MoongateHttpConfig
     public int Port { get; set; } = 8933;
 
     public HttpJwtConfig Jwt { get; set; } = new();
+
+    /// <summary>Maximum size, in bytes, of an uploaded server asset (logo/favicon/banner). Default 2 MB.</summary>
+    public long MaxAssetUploadBytes { get; set; } = 2_097_152;
+
+    /// <summary>How many web-registration attempts one caller may make per window. Default 5.</summary>
+    public int RegistrationRateLimitPermits { get; set; } = 5;
+
+    /// <summary>The rate-limit window for web registration, in minutes. Default 10.</summary>
+    public int RegistrationRateLimitWindowMinutes { get; set; } = 10;
 }

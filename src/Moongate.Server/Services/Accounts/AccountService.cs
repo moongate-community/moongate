@@ -1,12 +1,15 @@
+using System.Security.Cryptography;
 using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Types;
 using Serilog;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
@@ -19,16 +22,19 @@ public class AccountService : IAccountService
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
     private readonly ICharacterService _characterService;
     private readonly ISessionManager _sessions;
+    private readonly IEventBus _eventBus;
 
     public AccountService(
         IPersistenceService persistenceService,
         ICharacterService characterService,
-        ISessionManager sessions
+        ISessionManager sessions,
+        IEventBus eventBus
     )
     {
         _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
         _characterService = characterService;
         _sessions = sessions;
+        _eventBus = eventBus;
     }
 
     public AccountAuthResult Authenticate(string username, string password)
@@ -81,6 +87,78 @@ public class AccountService : IAccountService
         _logger.Information("Account created: {Username} at level {Level}", username, level);
 
         return AccountCreateResultType.Created;
+    }
+
+    public AccountRegisterResult RegisterPending(string username, string password, string email)
+    {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return new() { Result = AccountRegisterResultType.UsernameEmpty };
+        }
+
+        if (string.IsNullOrEmpty(password))
+        {
+            return new() { Result = AccountRegisterResultType.PasswordEmpty };
+        }
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return new() { Result = AccountRegisterResultType.EmailEmpty };
+        }
+
+        if (!System.Net.Mail.MailAddress.TryCreate(email, out _))
+        {
+            return new() { Result = AccountRegisterResultType.EmailInvalid };
+        }
+
+        if (GetByUsername(username) is not null)
+        {
+            return new() { Result = AccountRegisterResultType.UsernameTaken };
+        }
+
+        var token = RandomNumberGenerator.GetHexString(64);
+
+        var account = new AccountEntity
+        {
+            Username = username,
+            Email = email,
+            PasswordHash = HashUtils.HashPassword(password),
+            IsActive = false,
+            ActivationToken = token,
+            AccountLevel = AccountLevelType.Player
+        };
+
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Web registration pending for {Username}; awaiting email verification", username);
+        _eventBus.Publish(new AccountRegistrationRequestedEvent(account.Id, username, email, token));
+
+        return new() { Result = AccountRegisterResultType.Created, Token = token };
+    }
+
+    public AccountVerifyResultType VerifyEmail(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return AccountVerifyResultType.InvalidToken;
+        }
+
+        var account = _accountStore
+                      .Query()
+                      .FirstOrDefault(a => !string.IsNullOrEmpty(a.ActivationToken) && a.ActivationToken == token);
+
+        if (account is null)
+        {
+            return AccountVerifyResultType.InvalidToken;
+        }
+
+        account.IsActive = true;
+        account.ActivationToken = string.Empty;
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _logger.Information("Account {Username} verified and activated", account.Username);
+
+        return AccountVerifyResultType.Verified;
     }
 
     public AccountDeleteResultType Delete(string username)

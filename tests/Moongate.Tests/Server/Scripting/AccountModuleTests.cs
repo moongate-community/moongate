@@ -170,10 +170,12 @@ public class AccountModuleTests
     private static (AccountModule Module, AccountService Accounts) Build()
     {
         var persistence = new FakePersistenceService();
+        var bus = new EventBusService();
         var accounts = new AccountService(
             persistence,
-            CharacterServiceFixture.Create(persistence, new EventBusService()),
-            new StubSessionManager()
+            CharacterServiceFixture.Create(persistence, bus),
+            new StubSessionManager(),
+            bus
         );
 
         return (new(accounts, new StubLoopThread()), accounts);

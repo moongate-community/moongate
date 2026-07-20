@@ -275,9 +275,14 @@ public class AccountServiceTests
         ICharacterService? characters = null,
         ISessionManager? sessions = null
     )
-        => new(
+    {
+        var bus = new EventBusService();
+
+        return new(
             persistence,
-            characters ?? CharacterServiceFixture.Create(persistence, new EventBusService()),
-            sessions ?? new StubSessionManager()
+            characters ?? CharacterServiceFixture.Create(persistence, bus),
+            sessions ?? new StubSessionManager(),
+            bus
         );
+    }
 }
