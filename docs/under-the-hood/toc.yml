@@ -4,3 +4,5 @@
   href: rest-api.md
 - name: Admin console
   href: admin-console.md
+- name: Console over REST
+  href: rest-console.md
