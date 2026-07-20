@@ -18,7 +18,7 @@ namespace Moongate.Server.Commands;
     "broadcast|bc",
     AccountLevelType.GrandMaster,
     "Sends a server-wide system message.",
-    Sources = CommandSourceType.InGame | CommandSourceType.Console
+    Sources = CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest
 )]
 public sealed class BroadcastCommand : ICommand
 {

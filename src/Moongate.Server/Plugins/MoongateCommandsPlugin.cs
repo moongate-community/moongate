@@ -27,6 +27,6 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
             "broadcast|bc",
             AccountLevelType.GrandMaster,
             "Sends a server-wide system message.",
-            CommandSourceType.InGame | CommandSourceType.Console
+            CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest
         );
 }
