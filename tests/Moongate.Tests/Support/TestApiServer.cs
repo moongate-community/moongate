@@ -95,8 +95,9 @@ public sealed class TestApiServer : IAsyncDisposable
         var container = new Container();
         var persistence = new FakePersistenceService();
         var sessions = new StubSessionManager();
-        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
-        var accounts = new AccountService(persistence, characters, sessions);
+        var bus = new EventBusService();
+        var characters = CharacterServiceFixture.Create(persistence, bus, sessions);
+        var accounts = new AccountService(persistence, characters, sessions, bus);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig

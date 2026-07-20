@@ -29,6 +29,12 @@ public sealed class StubAccountService : IAccountService
     public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
         => throw new NotSupportedException();
 
+    public AccountRegisterResult RegisterPending(string username, string password, string email)
+        => throw new NotSupportedException();
+
+    public AccountVerifyResultType VerifyEmail(string token)
+        => throw new NotSupportedException();
+
     public AccountDeleteResultType Delete(string username)
         => throw new NotSupportedException();
 
