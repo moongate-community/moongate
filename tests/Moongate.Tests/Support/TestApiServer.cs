@@ -9,6 +9,7 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Assets;
@@ -16,6 +17,7 @@ using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
+using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Server;
@@ -154,6 +156,10 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
         container.RegisterApiEndpointInstance(new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore));
         container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
+
+        // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
+        var rateLimiter = new RegistrationRateLimiter(TimeProvider.System, permitPerWindow: 2, window: TimeSpan.FromMinutes(10));
+        container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
