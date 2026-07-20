@@ -29,11 +29,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="SquidStd.Abstractions" Version="0.37.0"/>
-        <PackageReference Include="SquidStd.Core" Version="0.37.0"/>
-        <PackageReference Include="SquidStd.Plugin" Version="0.37.0"/>
-        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.37.0"/>
-        <PackageReference Include="SquidStd.Services.Core" Version="0.37.0"/>
+        <PackageReference Include="SquidStd.Abstractions" Version="0.38.0"/>
+        <PackageReference Include="SquidStd.Core" Version="0.38.0"/>
+        <PackageReference Include="SquidStd.Plugin" Version="0.38.0"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.38.0"/>
+        <PackageReference Include="SquidStd.Services.Core" Version="0.38.0"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

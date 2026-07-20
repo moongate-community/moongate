@@ -32,4 +32,7 @@ public sealed class StubConfigManagerService : IConfigManagerService
 
     public void Save()
         => SaveCount++;
+
+    public void EnsureFiles()
+        => throw new NotSupportedException();
 }
