@@ -1,2 +1,20 @@
 - name: Build, test & conventions
   href: build-test-conventions.md
+- name: Writing plugins
+  items:
+    - name: Overview
+      href: writing-plugins/index.md
+    - name: Your first plugin
+      href: writing-plugins/first-plugin.md
+    - name: Hosted services
+      href: writing-plugins/hosted-service.md
+    - name: Commands
+      href: writing-plugins/commands.md
+    - name: Packet handlers
+      href: writing-plugins/packet-handlers.md
+    - name: Event subscribers
+      href: writing-plugins/event-subscribers.md
+    - name: Data loaders
+      href: writing-plugins/data-loaders.md
+    - name: Registration reference
+      href: writing-plugins/registration.md
