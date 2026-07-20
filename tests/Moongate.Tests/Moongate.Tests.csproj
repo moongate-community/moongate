@@ -32,6 +32,7 @@
         <ProjectReference Include="..\..\plugins\Moongate.Console.Admin.Plugin\Moongate.Console.Admin.Plugin.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
         <ProjectReference Include="..\..\plugins\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.News.Plugin\Moongate.News.Plugin.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj"/>

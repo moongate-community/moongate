@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Persistence\Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.39.0"/>
+        <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
