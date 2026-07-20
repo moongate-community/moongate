@@ -3,6 +3,7 @@ using Moongate.Server.Abstractions.Attributes;
 using Moongate.Server.Abstractions.Data.Commands;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Commands;
+using Moongate.Server.Abstractions.Types;
 
 namespace Moongate.Server.Commands;
 
@@ -13,7 +14,8 @@ namespace Moongate.Server.Commands;
 /// tooling (docs/source generation); the runtime dispatcher indexes it from the explicit
 /// <c>RegisterCommand</c> call in <c>MoongateCommandsPlugin</c>, not by scanning the attribute.
 /// </summary>
-[Command("broadcast|bc", AccountLevelType.GrandMaster, "Sends a server-wide system message.")]
+[Command("broadcast|bc", AccountLevelType.GrandMaster, "Sends a server-wide system message.",
+    Sources = CommandSourceType.InGame | CommandSourceType.Console)]
 public sealed class BroadcastCommand : ICommand
 {
     private readonly IChatService _chat;

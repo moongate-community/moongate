@@ -1,5 +1,6 @@
 using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Console.Admin.Plugin;
 using Moongate.Core.Interfaces;
 using Moongate.Http.Plugin;
 using Moongate.Persistence;
@@ -121,6 +122,8 @@ await ConsoleApp.RunAsync(
                 {
                     Log.Logger.Warning("HTTP is disabled");
                 }
+
+                builder.Add<MoongateConsolePlugin>();
             }
         );
 

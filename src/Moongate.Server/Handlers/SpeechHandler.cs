@@ -11,7 +11,8 @@ namespace Moongate.Server.Handlers;
 /// <summary>
 /// Handles player speech (0xAD): rate-limits, classifies the raw text (say/emote/whisper/yell/
 /// command) via <see cref="ChatService" />'s pure core, and either dispatches the "." prefix to
-/// <see cref="ICommandService.Execute" /> or hands the classified message to
+/// <see cref="ICommandService.Execute(Moongate.Server.Abstractions.Data.Session.PlayerSession, Moongate.Persistence.Entities.MobileEntity, string)" />
+/// or hands the classified message to
 /// <see cref="IChatService.Say" />. Packets with the classic-client "encoded" (keyword-menu) flag
 /// are dropped, as is any text that is empty or longer than 128 characters after trimming.
 /// </summary>
