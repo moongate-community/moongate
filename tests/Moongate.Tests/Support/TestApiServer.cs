@@ -153,6 +153,7 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance<IServerSettingsService>(serverSettings);
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
         container.RegisterApiEndpointInstance(new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore));
+        container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
