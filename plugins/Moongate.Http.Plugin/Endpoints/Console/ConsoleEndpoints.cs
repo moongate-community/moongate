@@ -1,3 +1,4 @@
+using System.Net.ServerSentEvents;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using Moongate.Http.Plugin.Data.Api.Console;
 using Moongate.Http.Plugin.Data.Console;
 using Moongate.Http.Plugin.Interfaces.Console;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Services.Console;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Server.Abstractions.Data.Commands;
 using Moongate.Server.Abstractions.Interfaces.Commands;
@@ -30,10 +32,28 @@ public sealed class ConsoleEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-        => routes.MapPost("/api/v1/admin/console", Send)
-                 .WithName("SendConsoleCommand")
-                 .WithTags("console")
-                 .RequireAuthorization(HttpServerService.AdminPolicy);
+    {
+        routes.MapGet("/api/v1/admin/console/stream", Stream)
+              .WithName("StreamConsole")
+              .WithTags("console")
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+
+        routes.MapPost("/api/v1/admin/console", Send)
+              .WithName("SendConsoleCommand")
+              .WithTags("console")
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+    }
+
+    /// <summary>Opens a per-connection SSE feed; its first event carries the connection id to POST with.</summary>
+    /// <remarks>Emits <c>ready</c> (data = the connection id), then a <c>line</c> per command reply and a
+    /// <c>done</c> when a command finishes. The connection is closed when the client disconnects.</remarks>
+    private IResult Stream(HttpContext context)
+    {
+        var (connectionId, reader) = _registry.Open();
+        context.RequestAborted.Register(() => _registry.Close(connectionId));
+
+        return TypedResults.ServerSentEvents(ConsoleSseStream.From(connectionId, reader, context.RequestAborted));
+    }
 
     /// <summary>Runs a console command; its reply lines stream to the given connection's SSE feed.</summary>
     /// <remarks>Returns 202 immediately — the command is dispatched onto the game loop and its output
