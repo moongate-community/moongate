@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Server;
+using Moongate.Server.Plugins;
 using Moongate.Server.Scripting;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;

@@ -3,6 +3,7 @@ using Moongate.Server;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Loading;
 using Moongate.Server.Loaders;
+using Moongate.Server.Plugins;
 using Moongate.Server.Services.Items;
 using SquidStd.Core.Directories;
 

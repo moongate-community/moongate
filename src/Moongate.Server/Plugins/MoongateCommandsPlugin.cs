@@ -7,7 +7,7 @@ using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 
-namespace Moongate.Server;
+namespace Moongate.Server.Plugins;
 
 /// <summary>Registers Moongate's GM/admin commands, keeping the command wiring out of Program.cs.</summary>
 public class MoongateCommandsPlugin : ISquidStdPlugin

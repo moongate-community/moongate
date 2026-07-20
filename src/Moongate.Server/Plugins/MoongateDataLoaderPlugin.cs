@@ -14,7 +14,7 @@ using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 
-namespace Moongate.Server;
+namespace Moongate.Server.Plugins;
 
 public class MoongateDataLoaderPlugin : ISquidStdPlugin
 {

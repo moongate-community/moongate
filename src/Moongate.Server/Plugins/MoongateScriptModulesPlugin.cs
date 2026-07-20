@@ -8,7 +8,7 @@ using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
 
-namespace Moongate.Server;
+namespace Moongate.Server.Plugins;
 
 /// <summary>Registers Moongate's Server-side Lua script modules, which depend on Server services.</summary>
 public class MoongateScriptModulesPlugin : ISquidStdPlugin

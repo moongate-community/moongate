@@ -8,7 +8,7 @@ using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 
-namespace Moongate.Server;
+namespace Moongate.Server.Plugins;
 
 /// <summary>Registers Moongate's domain event subscribers and the service that wires them to the bus.</summary>
 public class MoongateEventSubscribersPlugin : ISquidStdPlugin

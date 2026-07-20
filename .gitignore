@@ -598,3 +598,5 @@ benchmarks/.compare
 docs/_site/
 docs/obj/
 docs/api/
+# Added by code-review-graph
+.code-review-graph/
