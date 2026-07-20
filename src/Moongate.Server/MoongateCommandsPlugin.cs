@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Extensions;
+using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Commands;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Data;
@@ -25,6 +26,7 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
         => container.RegisterCommand<BroadcastCommand>(
             "broadcast|bc",
             AccountLevelType.GrandMaster,
-            "Sends a server-wide system message."
+            "Sends a server-wide system message.",
+            CommandSourceType.InGame | CommandSourceType.Console
         );
 }
