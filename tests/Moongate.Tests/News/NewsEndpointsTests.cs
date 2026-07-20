@@ -66,4 +66,30 @@ public class NewsEndpointsTests
         var del = await server.Client.DeleteAsync("/api/v1/admin/news/999999");
         Assert.Equal(HttpStatusCode.NotFound, del.StatusCode);
     }
+
+    [Fact]
+    public async Task Public_list_returns_only_published()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+        await server.Client.PostAsJsonAsync("/api/v1/admin/news", new CreateNewsRequest("draft", "b", false));
+        await server.Client.PostAsJsonAsync("/api/v1/admin/news", new CreateNewsRequest("live", "b", true));
+
+        var list = await server.Client.GetFromJsonAsync<List<NewsResponse>>("/api/v1/news");
+
+        Assert.Equal("live", Assert.Single(list!).Title);
+    }
+
+    [Fact]
+    public async Task Public_get_hides_drafts_as_404()
+    {
+        await using var server = await StartAsync();
+        await server.AuthenticateAsync();
+        var draft = await (await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/news", new CreateNewsRequest("draft", "b", false))).Content.ReadFromJsonAsync<NewsResponse>();
+
+        var res = await server.Client.GetAsync($"/api/v1/news/{draft!.Id}");
+
+        Assert.Equal(HttpStatusCode.NotFound, res.StatusCode);
+    }
 }
