@@ -139,20 +139,40 @@ internal class MySubscriber
 
 ## 10. Plugin System
 
-- Plugins implement `ISourcePlugin` (Id in reverse-domain format: `com.github.author.Moongate.plugins.name`).
-- Plugins receive an `IPluginContext` — use `context.EventBus` to publish, `context.Logger` to log, `context.ConfigPath` for config.
-- Plugin hosts are loaded via `PluginLoadContext` (`AssemblyLoadContext(isCollectible: true)`) for hot-reload support.
+- Plugins implement `ISquidStdPlugin` (`SquidStd.Plugin.Abstractions`): a `Metadata` property
+  (`PluginMetadata` — a stable lowercase-dotted `Id` such as `moongate.http.plugin`, plus `Name`,
+  `Version`, `Author`, `Description`, `Dependencies`) and `Configure(IContainer, PluginContext)`.
+- A plugin class needs a **public parameterless constructor**. Plugins load either from the
+  `plugins/` directory (`builder.FromDirectory("plugins")`) or in-tree (`builder.Add<T>()` in
+  `Program.cs`), into the **default** `AssemblyLoadContext` — there is no version isolation, so a
+  plugin must be built against the exact host assembly versions.
+- `Configure` registers everything the plugin contributes into the DryIoc container. Seams:
+  `RegisterConfigSection` / `RegisterConfigFile` and `RegisterStdService` (`SquidStd.Abstractions`);
+  `RegisterCommand`, `RegisterPacketHandler`, `RegisterEventSubscriber`, `RegisterDataLoader`
+  (`Moongate.Server.Abstractions.Extensions`); `RegisterApiEndpoint` (`Moongate.Http.Plugin`).
+- Plugins reference `Moongate.Server.Abstractions`, **never `Moongate.Server`**. See
+  `docs/contributing/writing-plugins/`.
 
-## 11. D-Bus Interfaces
+## 11. Networking & Packets
 
-- D-Bus proxy interfaces live in `DBus/` and must be `public` (required by Tmds.DBus runtime proxy generation via Reflection.Emit).
-- Annotate with `[DBusInterface("...")]` and inherit `IDBusObject`.
+- Packets are typed records under `Moongate.Network/Packets/` (`Incoming/`, `Outgoing/`). Each packet
+  class carries `[PacketDocumentation(family, Length | IsVariableLength, SubCommand?, Name?)]` — the
+  attribute is mandatory; doc generation and tests fail without it.
+- Inbound handlers implement `IPacketHandler<TPacket>` **and** `IPacketHandlerRegistration`, and are
+  registered with `RegisterPacketHandler<T>()`.
+- After **any** change to a packet class, regenerate the packet reference from the repo root and
+  commit the result: `dotnet run scripts/generate-packet-docs.cs` (writes `docs/packets/`).
 
-## 12. Hosted Services / Subscribers
+## 12. Hosted Services & Event Subscribers
 
-- Background services implement `IHostedService` (or extend `BackgroundService`).
-- If an optional external dependency (e.g., D-Bus session bus) is unavailable at startup, log a `Warning` and return cleanly — do not crash the host.
-- Subscribers that are not hosted services are registered as singletons and force-resolved in `Program.cs` to trigger constructor subscription registration.
+- Lifecycle/background services implement `ISquidStdService` (`ValueTask StartAsync` / `StopAsync`),
+  registered with `RegisterStdService<TImpl, TImpl>()`. `Dispose` stays last (§4.2).
+- An **optional** service must never take the server down: if a resource it needs at startup is
+  unavailable (e.g. a port to bind), log a `Warning` and return cleanly rather than throwing — an
+  exception out of `Configure` / `StartAsync` aborts startup.
+- Event subscribers implement `IEventSubscriberRegistration` (`Subscribe(IEventBus)`), registered with
+  `RegisterEventSubscriber<T>()`; they attach handlers via `eventBus.Subscribe<TEvent>(...)` and run on
+  the game loop. Work started off the loop reaches world state through `IMainThreadDispatcher`.
 
 ## 13. Test Conventions
 
