@@ -27,6 +27,9 @@ public sealed class StubGameLoopContext : IGameLoopContext
     /// <summary>The interval the last repeating timer was registered with.</summary>
     public TimeSpan RepeatingInterval { get; private set; }
 
+    /// <summary>The initial delay the last repeating timer was registered with, if any.</summary>
+    public TimeSpan? RepeatingDelay { get; private set; }
+
     public IMainThreadDispatcher Dispatcher => throw new NotSupportedException();
 
     public ITimerService Timers => throw new NotSupportedException();
@@ -51,6 +54,7 @@ public sealed class StubGameLoopContext : IGameLoopContext
     {
         Repeating[name] = callback;
         RepeatingInterval = interval;
+        RepeatingDelay = delay;
 
         return name;
     }

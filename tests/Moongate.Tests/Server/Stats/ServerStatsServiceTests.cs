@@ -1,12 +1,16 @@
 using Moongate.Core.Extensions;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Stats;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Server;
 using Moongate.Tests.Support;
+using SquidStd.Core.Interfaces.Events;
+using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server.Stats;
 
@@ -120,20 +124,16 @@ public sealed class ServerStatsServiceTests
     public async Task StartAsync_RegistersTheRepeatingRefreshTimer_AndStopAsyncCancelsIt()
     {
         var loop = new StubGameLoopContext();
-        var service = new ServerStatsService(
-            new FakePersistenceService(),
-            new StubSessionManager(),
-            new ItemTemplateService(),
-            new MobileTemplateService(),
-            loop,
-            TimeProvider.System,
-            new() { UltimaDirectory = "/tmp", StatsRefreshSeconds = 45 }
-        );
+        var service = Started(loop, new EventBusService(), refreshSeconds: 45);
 
         await service.StartAsync();
 
         Assert.True(loop.Repeating.ContainsKey("server-stats"));
         Assert.Equal(TimeSpan.FromSeconds(45), loop.RepeatingInterval);
+
+        // No explicit first delay: the timer wheel rejects a non-positive one outright, and the first
+        // snapshot is world-ready's job anyway.
+        Assert.Null(loop.RepeatingDelay);
 
         // The registered callback is the refresh itself: firing it publishes a snapshot.
         loop.Repeating["server-stats"]();
@@ -143,29 +143,63 @@ public sealed class ServerStatsServiceTests
         Assert.False(loop.Repeating.ContainsKey("server-stats"));
     }
 
+    [Fact]
+    public async Task StartAsync_TakesTheFirstSnapshotOnWorldReady()
+    {
+        var bus = new EventBusService();
+        var service = Started(new StubGameLoopContext(), bus, refreshSeconds: 30);
+
+        await service.StartAsync();
+        Assert.Same(ServerStatsSnapshot.Empty, service.Current);
+
+        // This service starts before the data loaders do, so the first snapshot has to wait for the world
+        // to be ready — otherwise it would publish zero templates for a whole interval.
+        await bus.PublishAsync(new WorldReadyEvent());
+
+        Assert.NotEqual(DateTimeOffset.MinValue, service.Current.GeneratedAt);
+        Assert.Equal(1, service.Current.ItemTemplates);
+        Assert.Equal(1, service.Current.MobileTemplates);
+    }
+
     /// <summary>A service over fake persistence, one item template and one mobile template.</summary>
     private static (ServerStatsService Service, FakePersistenceService Persistence, StubSessionManager Sessions) Build()
     {
         var persistence = new FakePersistenceService();
         var sessions = new StubSessionManager();
 
+        var service = Create(persistence, sessions, new StubGameLoopContext(), new EventBusService(), 30);
+
+        return (service, persistence, sessions);
+    }
+
+    /// <summary>The same service, when the test drives the loop or the bus rather than the stores.</summary>
+    private static ServerStatsService Started(IGameLoopContext loop, IEventBus eventBus, int refreshSeconds)
+        => Create(new FakePersistenceService(), new StubSessionManager(), loop, eventBus, refreshSeconds);
+
+    private static ServerStatsService Create(
+        FakePersistenceService persistence,
+        StubSessionManager sessions,
+        IGameLoopContext loop,
+        IEventBus eventBus,
+        int refreshSeconds
+    )
+    {
         var itemTemplates = new ItemTemplateService();
         itemTemplates.Register(new() { Id = "sword" });
 
         var mobileTemplates = new MobileTemplateService();
         mobileTemplates.Register(new() { Id = "orc" });
 
-        var service = new ServerStatsService(
+        return new(
             persistence,
             sessions,
             itemTemplates,
             mobileTemplates,
-            new StubGameLoopContext(),
+            loop,
+            eventBus,
             TimeProvider.System,
-            new() { UltimaDirectory = "/tmp" }
+            new() { UltimaDirectory = "/tmp", StatsRefreshSeconds = refreshSeconds }
         );
-
-        return (service, persistence, sessions);
     }
 
     /// <summary>Stores an account owning <paramref name="characters" /> freshly created mobiles.</summary>

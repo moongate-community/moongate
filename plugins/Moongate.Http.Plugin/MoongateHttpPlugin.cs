@@ -12,6 +12,7 @@ using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
+using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Extensions;
 using Moongate.Http.Plugin.Interfaces.Assets;
@@ -136,6 +137,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<ServerInfoEndpoints>();
         container.RegisterApiEndpoint<ServerSettingsAdminEndpoints>();
         container.RegisterApiEndpoint<RegistrationEndpoints>();
+        container.RegisterApiEndpoint<StatsEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }

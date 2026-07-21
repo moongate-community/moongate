@@ -2,6 +2,7 @@ using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Stats;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Items;
@@ -9,6 +10,7 @@ using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.Server.Services.Server;
@@ -29,6 +31,7 @@ public sealed class ServerStatsService : IServerStatsService, ISquidStdService
     private readonly IItemTemplateService _itemTemplates;
     private readonly IMobileTemplateService _mobileTemplates;
     private readonly IGameLoopContext _loop;
+    private readonly IEventBus _eventBus;
     private readonly TimeProvider _timeProvider;
     private readonly TimeSpan _interval;
     private readonly DateTimeOffset _startedAt;
@@ -42,6 +45,7 @@ public sealed class ServerStatsService : IServerStatsService, ISquidStdService
         IItemTemplateService itemTemplates,
         IMobileTemplateService mobileTemplates,
         IGameLoopContext loop,
+        IEventBus eventBus,
         TimeProvider timeProvider,
         MoongateConfig config
     )
@@ -53,6 +57,7 @@ public sealed class ServerStatsService : IServerStatsService, ISquidStdService
         _itemTemplates = itemTemplates;
         _mobileTemplates = mobileTemplates;
         _loop = loop;
+        _eventBus = eventBus;
         _timeProvider = timeProvider;
         _interval = TimeSpan.FromSeconds(config.StatsRefreshSeconds);
         _startedAt = timeProvider.GetUtcNow();
@@ -95,7 +100,21 @@ public sealed class ServerStatsService : IServerStatsService, ISquidStdService
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        _timerId = _loop.ScheduleRepeating(TimerName, _interval, Refresh, TimeSpan.Zero);
+        // World-ready, not the timer, produces the first snapshot: this service starts before the data
+        // loaders do, so a refresh scheduled for the next tick would count zero templates and publish that
+        // for a whole interval. The event fires on the loop once the world is loaded, which is both the
+        // earliest correct moment and the right thread. Refreshing inline here is not an option — StartAsync
+        // runs off the loop, and reading the world stores from there is what this snapshot exists to avoid.
+        _eventBus.Subscribe<WorldReadyEvent>(
+            (_, _) =>
+            {
+                Refresh();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        _timerId = _loop.ScheduleRepeating(TimerName, _interval, Refresh);
 
         return ValueTask.CompletedTask;
     }

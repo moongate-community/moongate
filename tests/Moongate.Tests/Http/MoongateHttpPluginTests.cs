@@ -13,6 +13,7 @@ using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
+using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
@@ -60,6 +61,7 @@ public class MoongateHttpPluginTests
                 typeof(RegistrationEndpoints),
                 typeof(ServerInfoEndpoints),
                 typeof(ServerSettingsAdminEndpoints),
+                typeof(StatsEndpoints),
                 typeof(VersionEndpoints)
             ],
             registered
