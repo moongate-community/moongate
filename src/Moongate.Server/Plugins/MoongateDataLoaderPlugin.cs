@@ -2,12 +2,14 @@ using DryIoc;
 using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Extensions;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Loading;
 using Moongate.Server.Services.Mobiles;
+using Moongate.Server.Services.Notifications;
 using Moongate.Server.Services.World;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Utils;
@@ -81,6 +83,9 @@ public class MoongateDataLoaderPlugin : ISquidStdPlugin
 
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.RegisterDataLoader<MobileTemplatesLoader>(150);
+
+        container.Register<INotificationTemplateService, NotificationTemplateService>(Reuse.Singleton);
+        container.RegisterDataLoader<NotificationTemplatesLoader>(160);
 
         container.RegisterDataLoaderService();
     }
