@@ -49,6 +49,22 @@ Confirm your account:
 
 Channels without a subject simply omit the front matter block.
 
+Front matter also carries the **content type**. A template that renders HTML
+says so, and anything else — including omitting the line — is plain text:
+
+```
++++
+subject = "Verify your " + shard_name + " account"
+content_type = "html"
++++
+<p>Hello {{ username }},</p>
+```
+
+The rule is deliberately forgiving: only the exact value `html` selects HTML, so
+a mistyped `htlm` costs you a plain-text mail rather than a lost notification.
+An HTML mail is sent as a single HTML part, not as HTML with a plain-text
+alternative.
+
 Note that the verification URL is composed **here**, not in the server: its
 shape belongs to your website, so changing it costs an edit rather than a
 release.
@@ -64,11 +80,12 @@ it is unset the value is empty, and any link built from it will be broken.
 
 ## Channels
 
-`log` is the only channel shipped today: it writes the rendered notification to
-the server log, which is how the verification token is reachable on a shard with
-no transport configured. The `email/` templates ship ready for the SMTP channel
-that follows; addressing a channel that is not registered logs a warning and
-drops the notification.
+`log` writes the rendered notification to the server log. It always works, which
+makes it the channel a shard falls back on before a real transport is set up,
+and it is where the account verification token appears by default.
+
+`email` is provided by the SMTP plugin, described below. Addressing a channel
+that is not registered logs a warning and drops the notification.
 
 A plugin adds a transport by implementing `INotificationChannel` and registering
 it from its `Configure`:
@@ -81,12 +98,49 @@ The channel's `Id` is the only coordination point: notifications addressed to
 that id reach it, and it reads its templates from the directory of the same
 name.
 
+## Sending email
+
+Email is delivered by `Moongate.Smtp.Plugin`, configured in
+`<root>/plugins/configs/smtp.yaml`:
+
+| Key | Type | Default | Meaning |
+|---|---|---|---|
+| `Host` | string | `''` | SMTP host. **Empty leaves the channel unregistered.** |
+| `Port` | int | `587` | Submission port. |
+| `Security` | enum | `Auto` | `None`, `StartTls`, `SslOnConnect`, or `Auto` — implicit TLS on 465, STARTTLS elsewhere when offered. |
+| `Username` | string | `''` | Empty means no authentication, as a local relay usually wants. |
+| `Password` | string | `''` | See the note on secrets below. |
+| `FromAddress` | string | `''` | Sender. **Empty leaves the channel unregistered.** |
+| `FromName` | string | `''` | Display name; falls back to the shard name. |
+| `TimeoutSeconds` | int | `30` | Connect and send timeout. |
+
+> [!IMPORTANT]
+> **Configuring SMTP is not enough to send verification mail.** Point
+> `notifications.AccountVerificationChannel` in `moongate.yaml` at `email` as
+> well. The server states which channel it will use at startup, and warns when
+> that channel is not registered — check the log if nothing arrives.
+
+### Secrets
+
+`MOONGATE_SMTP_PASSWORD` overrides `Password` when it is set, which is how a
+container deployment should supply it. When you do keep the password in the
+file, `chmod 600` it and keep it out of version control.
+
+### What is retried
+
+The channel decides. A timeout, an unreachable host or a `4xx` reply is
+transient, so it is retried up to `MaxAttempts`. An authentication failure or a
+`5xx` reply is permanent: it is logged once and not retried, because the answer
+will not change and repeatedly presenting bad credentials can trip a provider's
+rate limits.
+
 ## Configuration
 
 The `notifications` section of `moongate.yaml`:
 
 | Key | Type | Default | Meaning |
 |---|---|---|---|
+| `AccountVerificationChannel` | string | `log` | Which channel account verification is delivered on. |
 | `MaxAttempts` | int | `3` | Total delivery attempts per notification. |
 | `RetryDelaySeconds` | int | `5` | Wait between one attempt and the next. |
 
