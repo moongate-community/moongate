@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Extensions;
 using Moongate.News.Plugin.Endpoints;
+using Moongate.News.Plugin.Entities;
 using Moongate.News.Plugin.Interfaces;
 using Moongate.News.Plugin.Services;
 using Moongate.Persistence.Generators;

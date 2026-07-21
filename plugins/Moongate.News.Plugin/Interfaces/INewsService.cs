@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.News.Plugin.Entities;
 
 namespace Moongate.News.Plugin.Interfaces;
 

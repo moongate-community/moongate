@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.News.Plugin.Entities;
 using Moongate.News.Plugin.Interfaces;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 

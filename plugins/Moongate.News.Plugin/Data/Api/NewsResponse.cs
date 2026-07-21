@@ -1,3 +1,5 @@
+using Moongate.News.Plugin.Entities;
+
 namespace Moongate.News.Plugin.Data.Api;
 
 /// <summary>A news entry as returned by the API.</summary>
