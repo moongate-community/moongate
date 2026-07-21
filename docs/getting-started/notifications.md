@@ -107,7 +107,7 @@ Email is delivered by `Moongate.Smtp.Plugin`, configured in
 |---|---|---|---|
 | `Host` | string | `''` | SMTP host. **Empty leaves the channel unregistered.** |
 | `Port` | int | `587` | Submission port. |
-| `Security` | enum | `Auto` | `None`, `StartTls`, `SslOnConnect`, or `Auto` — implicit TLS on 465, STARTTLS elsewhere when offered. |
+| `Security` | enum | `Auto` | `None`, `StartTls`, `SslOnConnect`, or `Auto`. See the warning below before relying on `Auto`. |
 | `Username` | string | `''` | Empty means no authentication, as a local relay usually wants. |
 | `Password` | string | `''` | See the note on secrets below. |
 | `FromAddress` | string | `''` | Sender. **Empty leaves the channel unregistered.** |
@@ -119,6 +119,15 @@ Email is delivered by `Moongate.Smtp.Plugin`, configured in
 > `notifications.AccountVerificationChannel` in `moongate.yaml` at `email` as
 > well. The server states which channel it will use at startup, and warns when
 > that channel is not registered — check the log if nothing arrives.
+
+> [!WARNING]
+> **`Auto` does not guarantee encryption.** It selects implicit TLS only on port 465; on every other
+> port it uses STARTTLS *when the server advertises it* and otherwise continues in plaintext. Use
+> `StartTls` on 587 or `SslOnConnect` on 465 whenever you configure a `Username`.
+>
+> As a backstop the plugin refuses to authenticate on a connection that never became encrypted,
+> logging `SMTP connection is not encrypted; not retrying` and dropping the message rather than
+> putting your password on the wire. A relay with no credentials is unaffected.
 
 ### Secrets
 
