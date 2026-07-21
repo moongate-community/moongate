@@ -84,6 +84,9 @@ readonly → props → constructor; `Dispose` last; no primary or expression-bod
 on interfaces). Note that CODE_CONVENTION.md §10–12 (plugin/D-Bus/hosted-service) predates the current
 SquidStd architecture — trust the actual code and the plugin docs over those sections.
 
+Empty strings have **no** rule: neither `""` nor `string.Empty` is mandated. Leave whichever form is
+already in the code, never convert between them, and never flag either one in review.
+
 Tests live in `tests/Moongate.Tests/<Domain>/<Subdomain>/<Subject>Tests.cs` with a namespace matching
 the folder path; shared fixtures go in `Support/`. Commit messages are Conventional Commits, in
 English.

@@ -99,7 +99,8 @@ public enum DirectoryType { Scripts, Logs, Plugins, Configs }
 
 ## 7. Strings
 
-- Always use `""` instead of `string.Empty`.
+- Empty strings: no rule. Neither `""` nor `string.Empty` is mandated — leave whichever form is
+  already there, do not convert between them, and do not flag either one in review.
 
 ## 8. Logging
 
@@ -207,7 +208,6 @@ tests/Moongate.Tests/Support/<SharedFixture>.cs          → namespace Moongate.
 - No TODO comments without a tracked follow-up.
 - No inconsistent naming across domains.
 - Keep warnings under control; do not normalize noisy warnings.
-- No `string.Empty` — use `""`.
 - No primary constructors.
 - No expression-bodied constructors.
 
