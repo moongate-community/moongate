@@ -30,6 +30,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Scriban" Version="7.2.5"/>
         <PackageReference Include="SquidStd.Abstractions" Version="0.39.0"/>
         <PackageReference Include="SquidStd.Core" Version="0.39.0"/>
         <PackageReference Include="SquidStd.Plugin" Version="0.39.0"/>
