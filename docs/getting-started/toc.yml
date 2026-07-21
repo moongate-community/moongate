@@ -10,3 +10,5 @@
   href: configuration.md
 - name: Server settings & web registration
   href: server-settings-and-web-registration.md
+- name: Notifications
+  href: notifications.md

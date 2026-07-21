@@ -97,8 +97,10 @@ for a missing/invalid field, and `429` when the caller is rate-limited.
 > for email verification: it creates the token and raises an
 > `AccountRegistrationRequestedEvent` (carrying the account, email and token) that
 > a future email feature will subscribe to in order to send the verification link.
-> Until then no mail is sent — the token is written to the server log, and the
-> verify endpoint works with whatever token you hold.
+> Until then no mail is sent: the request goes through the
+> [notification pipeline](notifications.md) and is delivered on the `log`
+> channel, so the token appears in the server log and the verify endpoint works
+> with whatever token you hold.
 
 ### Abuse protection
 

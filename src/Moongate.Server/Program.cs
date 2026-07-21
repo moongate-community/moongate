@@ -9,6 +9,7 @@ using Moongate.Scripting;
 using Moongate.Server;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Items;
@@ -26,6 +27,9 @@ using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Services.Notifications;
+using Moongate.Server.Services.Notifications.Channels;
 using Moongate.Server.Services.Server;
 using Moongate.Server.Services.World;
 using Serilog;
@@ -137,6 +141,7 @@ await ConsoleApp.RunAsync(
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
+                container.RegisterConfigSection<NotificationConfig>("notifications");
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -157,6 +162,11 @@ await ConsoleApp.RunAsync(
                 // endpoint resolves and the hosted service owning the refresh timer, and it must be the
                 // same singleton in both roles.
                 container.RegisterStdService<IServerStatsService, ServerStatsService>();
+
+                // INotificationTemplateService is registered by the data-loader plugin, alongside the
+                // loader that fills it, the same way the template services are.
+                container.Register<INotificationService, NotificationService>(Reuse.Singleton);
+                container.RegisterNotificationChannel<LogNotificationChannel>();
                 container.RegisterCommandService();
                 container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
                 container.Register<IMapTileService, MapTileService>(Reuse.Singleton);
