@@ -39,11 +39,9 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
         container.RegisterMessagePackSerializer();
         container.RegisterPersistence(persistenceConfig);
 
-        // Type ids are process-wide: registering one twice throws at startup. Core entities take 1-99 and
-        // are listed here; external plugins take 100 and up, so the two sets cannot collide as either
-        // side grows.
+        // No type ids here: SquidStd derives one from the store name, so nothing has to know which are
+        // taken and a plugin cannot collide with the host.
         container.RegisterPersistedEntity<AccountEntity, Serial>(
-            1,
             "accounts",
             1,
             entity => entity.Id,
@@ -52,7 +50,6 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
         );
 
         container.RegisterPersistedEntity<MobileEntity, Serial>(
-            2,
             "mobiles",
             1,
             entity => entity.Id,
@@ -60,7 +57,6 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             new MobileSerialGenerator()
         );
         container.RegisterPersistedEntity<ItemEntity, Serial>(
-            3,
             "items",
             1,
             entity => entity.Id,
@@ -68,7 +64,6 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             new ItemSerialGenerator()
         );
         container.RegisterPersistedEntity<ServerSettingsEntity, Serial>(
-            4,
             "server_settings",
             1,
             entity => entity.Id,
