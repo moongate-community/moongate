@@ -117,6 +117,10 @@ Every feature follows the same flow:
    `dotnet docfx docs/docfx.json --warningsAsErrors` builds at **0 warnings**.
 6. **Merge via PR into `develop`.** Open a PR from the feature branch to `develop` with a clear
    description; merge once CI is green, then delete the branch.
+7. **Close the issue.** Once the PR is merged into `develop`, close its issue by hand, naming the PR
+   and the merge commit. A `Closes #N` keyword in the PR body is **not** enough: GitHub only acts on
+   it when a PR merges into the **default branch**, which here is `main`, so an issue integrated
+   through `develop` stays open until the next release unless it is closed explicitly.
 
 Releases are separate (see below): they go through a `develop`→`main` PR labelled `release`.
 
