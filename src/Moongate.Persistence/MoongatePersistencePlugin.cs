@@ -39,6 +39,9 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
         container.RegisterMessagePackSerializer();
         container.RegisterPersistence(persistenceConfig);
 
+        // Type ids are process-wide: registering one twice throws at startup. Core entities take 1-99 and
+        // are listed here; external plugins take 100 and up, so the two sets cannot collide as either
+        // side grows.
         container.RegisterPersistedEntity<AccountEntity, Serial>(
             1,
             "accounts",

@@ -152,6 +152,11 @@ await ConsoleApp.RunAsync(
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
+
+                // RegisterStdService rather than Register: the type is both the domain service the stats
+                // endpoint resolves and the hosted service owning the refresh timer, and it must be the
+                // same singleton in both roles.
+                container.RegisterStdService<IServerStatsService, ServerStatsService>();
                 container.RegisterCommandService();
                 container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
                 container.Register<IMapTileService, MapTileService>(Reuse.Singleton);

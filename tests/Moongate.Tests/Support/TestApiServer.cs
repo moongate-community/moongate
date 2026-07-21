@@ -11,6 +11,7 @@ using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
+using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Auth;
@@ -44,7 +45,8 @@ public sealed class TestApiServer : IAsyncDisposable
         CharacterService characters,
         StubSessionManager sessions,
         FakePersistenceService persistence,
-        ServerSettingsService serverSettings
+        ServerSettingsService serverSettings,
+        StubServerStatsService stats
     )
     {
         _service = service;
@@ -54,6 +56,7 @@ public sealed class TestApiServer : IAsyncDisposable
         Sessions = sessions;
         Persistence = persistence;
         ServerSettings = serverSettings;
+        Stats = stats;
     }
 
     public HttpClient Client { get; }
@@ -62,6 +65,9 @@ public sealed class TestApiServer : IAsyncDisposable
 
     /// <summary>The real server-settings service behind the endpoints, so a test can seed settings and assets.</summary>
     public ServerSettingsService ServerSettings { get; }
+
+    /// <summary>The snapshot the stats route serves, so a test can state the figures it expects to read.</summary>
+    public StubServerStatsService Stats { get; }
 
     /// <summary>Real, over the same fake persistence: a test can give an account a character.</summary>
     public CharacterService Characters { get; }
@@ -161,6 +167,10 @@ public sealed class TestApiServer : IAsyncDisposable
         var rateLimiter = new RegistrationRateLimiter(TimeProvider.System, permitPerWindow: 2, window: TimeSpan.FromMinutes(10));
         container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
 
+        var stats = new StubServerStatsService();
+        container.RegisterInstance<IServerStatsService>(stats);
+        container.RegisterApiEndpointInstance(new StatsEndpoints(stats, moongateConfig));
+
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
 
@@ -174,7 +184,8 @@ public sealed class TestApiServer : IAsyncDisposable
             characters,
             sessions,
             persistence,
-            serverSettings
+            serverSettings,
+            stats
         );
     }
 }
