@@ -27,8 +27,11 @@ public sealed class MoongateNewsPlugin : ISquidStdPlugin
 
     public void Configure(IContainer container, PluginContext context)
     {
+        // Type id 100, not 4: the core entities in MoongatePersistencePlugin own the low ids, and 4 is
+        // already ServerSettingsEntity. External plugins take ids from 100 up, so a new core entity can
+        // never collide with one of theirs.
         container.RegisterPersistedEntity<NewsEntity, Serial>(
-            4,
+            100,
             "news",
             1,
             entity => entity.Id,
