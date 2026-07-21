@@ -31,6 +31,7 @@ using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Services.Notifications;
 using Moongate.Server.Services.Notifications.Channels;
 using Moongate.Server.Services.Server;
+using Moongate.Smtp.Plugin;
 using Moongate.Server.Services.World;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
@@ -133,6 +134,7 @@ await ConsoleApp.RunAsync(
 
                 builder.Add<MoongateConsolePlugin>();
                 builder.Add<MoongateNewsPlugin>();
+                builder.Add<MoongateSmtpPlugin>();
             }
         );
 
