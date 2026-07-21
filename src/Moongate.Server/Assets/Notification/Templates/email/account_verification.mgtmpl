@@ -1,0 +1,9 @@
++++
+subject = "Verify your " + shard_name + " account"
++++
+Hello {{ username }},
+
+Confirm your account:
+{{ website }}/verify?token={{ token }}
+
+If you did not register, ignore this message.
