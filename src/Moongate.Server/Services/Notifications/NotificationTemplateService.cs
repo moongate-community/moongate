@@ -1,5 +1,6 @@
 using Moongate.Server.Abstractions.Data.Notifications;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Abstractions.Types;
 using Scriban;
 using Scriban.Parsing;
 using Scriban.Runtime;
@@ -13,6 +14,8 @@ namespace Moongate.Server.Services.Notifications;
 public sealed class NotificationTemplateService : INotificationTemplateService
 {
     private const string SubjectVariable = "subject";
+    private const string ContentTypeVariable = "content_type";
+    private const string HtmlContentType = "html";
     private const string FrontMatterMarker = "+++";
 
     private readonly Dictionary<string, Template> _templates = new(StringComparer.OrdinalIgnoreCase);
@@ -64,7 +67,15 @@ public sealed class NotificationTemplateService : INotificationTemplateService
         var body = template.Render(context);
         var subject = globals.TryGetValue(SubjectVariable, out var value) ? value?.ToString() : null;
 
-        return new(subject, body);
+        // Anything that is not "html" is text, including a typo: a notification must never be lost to a
+        // mistyped piece of metadata.
+        var contentType =
+            globals.TryGetValue(ContentTypeVariable, out var declared) &&
+            string.Equals(declared?.ToString(), HtmlContentType, StringComparison.OrdinalIgnoreCase)
+                ? NotificationContentType.Html
+                : NotificationContentType.Text;
+
+        return new(subject, body, contentType);
     }
 
     private static string Key(string channelId, string templateId)
