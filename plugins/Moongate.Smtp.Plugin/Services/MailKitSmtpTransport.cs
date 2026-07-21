@@ -1,9 +1,8 @@
 using MailKit.Net.Smtp;
-using MailKit.Security;
 using MimeKit;
 using Moongate.Smtp.Plugin.Data.Config;
+using Moongate.Smtp.Plugin.Extensions;
 using Moongate.Smtp.Plugin.Interfaces;
-using Moongate.Smtp.Plugin.Types;
 
 namespace Moongate.Smtp.Plugin.Services;
 
@@ -27,7 +26,7 @@ public sealed class MailKitSmtpTransport : ISmtpTransport
             Timeout = _config.TimeoutSeconds * 1000
         };
 
-        await client.ConnectAsync(_config.Host, _config.Port, ToSocketOptions(_config.Security), cancellationToken);
+        await client.ConnectAsync(_config.Host, _config.Port, _config.Security.ToSocketOptions(), cancellationToken);
 
         // Checked after connecting, because whether the connection ended up encrypted is only known
         // then: SecureSocketOptions.Auto resolves to StartTlsWhenAvailable on any port but the
@@ -43,13 +42,4 @@ public sealed class MailKitSmtpTransport : ISmtpTransport
         await client.SendAsync(message, cancellationToken);
         await client.DisconnectAsync(true, cancellationToken);
     }
-
-    private static SecureSocketOptions ToSocketOptions(SmtpSecurityType security)
-        => security switch
-        {
-            SmtpSecurityType.None         => SecureSocketOptions.None,
-            SmtpSecurityType.StartTls     => SecureSocketOptions.StartTls,
-            SmtpSecurityType.SslOnConnect => SecureSocketOptions.SslOnConnect,
-            _                             => SecureSocketOptions.Auto
-        };
 }
