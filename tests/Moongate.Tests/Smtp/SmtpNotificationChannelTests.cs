@@ -4,6 +4,7 @@ using MimeKit;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Smtp.Plugin.Data.Config;
+using Moongate.Smtp.Plugin.Data.Exceptions;
 using Moongate.Smtp.Plugin.Services;
 using Moongate.Tests.Support;
 
@@ -92,6 +93,15 @@ public sealed class SmtpNotificationChannelTests
         );
 
         await Channel(new RecordingSmtpTransport(permanent))
+              .SendAsync(new("email", "tom@example.com"), new("s", "b"));
+    }
+
+    [Fact]
+    public async Task SendAsync_InsecureConnection_DoesNotRethrow()
+    {
+        // A misconfiguration will not fix itself between attempts, so retrying it three times only
+        // delays the error in the log.
+        await Channel(new RecordingSmtpTransport(new SmtpInsecureConnectionException("unencrypted")))
               .SendAsync(new("email", "tom@example.com"), new("s", "b"));
     }
 

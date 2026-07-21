@@ -29,7 +29,13 @@ public sealed class MailKitSmtpTransport : ISmtpTransport
 
         await client.ConnectAsync(_config.Host, _config.Port, ToSocketOptions(_config.Security), cancellationToken);
 
-        if (!string.IsNullOrWhiteSpace(_config.Username))
+        // Checked after connecting, because whether the connection ended up encrypted is only known
+        // then: SecureSocketOptions.Auto resolves to StartTlsWhenAvailable on any port but the
+        // implicit-TLS one, and that proceeds in the clear when the server offers no STARTTLS.
+        var hasCredentials = !string.IsNullOrWhiteSpace(_config.Username);
+        SmtpCredentialGuard.EnsureCredentialsAreProtected(hasCredentials, client.IsSecure);
+
+        if (hasCredentials)
         {
             await client.AuthenticateAsync(_config.Username, _config.Password, cancellationToken);
         }

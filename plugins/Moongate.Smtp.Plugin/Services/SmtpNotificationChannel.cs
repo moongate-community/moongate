@@ -7,6 +7,7 @@ using Moongate.Server.Abstractions.Data.Notifications;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Smtp.Plugin.Data.Config;
+using Moongate.Smtp.Plugin.Data.Exceptions;
 using Moongate.Smtp.Plugin.Interfaces;
 using Serilog;
 
@@ -63,6 +64,12 @@ public sealed class SmtpNotificationChannel : INotificationChannel
         {
             // Also permanent, and worse to retry: repeated bad credentials can trip a provider's limits.
             _logger.Error(exception, "SMTP authentication failed; not retrying");
+        }
+        catch (SmtpInsecureConnectionException exception)
+        {
+            // A misconfiguration, so permanent by definition: the connection will be just as unencrypted
+            // on the next attempt.
+            _logger.Error(exception, "SMTP connection is not encrypted; not retrying");
         }
     }
 
