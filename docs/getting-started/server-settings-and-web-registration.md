@@ -116,3 +116,42 @@ These live in the `http` section of `moongate.yaml`:
 | `MaxAssetUploadBytes` | long | `2097152` (2 MB) | Maximum size of an uploaded asset. |
 | `RegistrationRateLimitPermits` | int | `5` | Registration attempts allowed per window, per IP. |
 | `RegistrationRateLimitWindowMinutes` | int | `10` | Length of the rate-limit window, in minutes. |
+
+## Public statistics
+
+`GET /api/v1/stats` — anonymous, like `/api/v1/server-info`. Where
+`server-info` describes the shard's identity, this reports its numbers.
+
+```json
+{
+  "generatedAt": "2026-07-21T08:31:00+00:00",
+  "uptimeSeconds": 43200,
+  "players":  { "online": 12, "connections": 15 },
+  "accounts": { "total": 340, "active": 300, "characters": 512 },
+  "world":    { "npcs": 1840, "items": 27310 },
+  "content":  { "itemTemplates": 412, "mobileTemplates": 19 }
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `players.online` | Characters currently being played — who is actually in the world. |
+| `players.connections` | Every open connection, including clients still at the login or character-select screen. |
+| `accounts.total` | Accounts registered on the shard. |
+| `accounts.active` | Accounts that are enabled — the flag web registration sets on verification. |
+| `accounts.characters` | Characters created across all accounts, online or not. |
+| `world.npcs` | Mobiles no account owns. |
+| `world.items` | Persisted world items, including container contents. |
+| `content.itemTemplates` | Item templates loaded at startup. |
+| `content.mobileTemplates` | Mobile templates loaded at startup. |
+| `uptimeSeconds` | Seconds since the server started. |
+| `generatedAt` | When the snapshot was taken. `0001-01-01T00:00:00+00:00` means the world is not ready yet, so no snapshot has been computed. |
+
+> [!NOTE]
+> The figures are a **cached snapshot**, not a live read. Counting world
+> entities has to happen on the game loop, so the server takes a first
+> snapshot there as soon as the world is ready and recomputes it every
+> `StatsRefreshSeconds` (30 by default); the endpoint serves the last one, up
+> to that many seconds old. The response carries a matching
+> `Cache-Control: public, max-age=…`, so a website polling the route cannot
+> ask for data more often than it changes.
