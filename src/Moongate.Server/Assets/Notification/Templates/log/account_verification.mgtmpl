@@ -1,0 +1,1 @@
+Verification token for {{ username }} <{{ email }}>: {{ token }}
