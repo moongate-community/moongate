@@ -21,12 +21,18 @@ public sealed class StubGameLoopContext : IGameLoopContext
     /// <summary>How many times work was handed to the loop.</summary>
     public int PostCount { get; private set; }
 
+    /// <summary>Repeating timers registered on this loop, keyed by name, holding the callback handed over.</summary>
+    public Dictionary<string, Action> Repeating { get; } = [];
+
+    /// <summary>The interval the last repeating timer was registered with.</summary>
+    public TimeSpan RepeatingInterval { get; private set; }
+
     public IMainThreadDispatcher Dispatcher => throw new NotSupportedException();
 
     public ITimerService Timers => throw new NotSupportedException();
 
     public bool Cancel(string timerId)
-        => throw new NotSupportedException();
+        => Repeating.Remove(timerId);
 
     public void Post(Action action)
     {
@@ -42,5 +48,10 @@ public sealed class StubGameLoopContext : IGameLoopContext
         => throw new NotSupportedException();
 
     public string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null)
-        => throw new NotSupportedException();
+    {
+        Repeating[name] = callback;
+        RepeatingInterval = interval;
+
+        return name;
+    }
 }
