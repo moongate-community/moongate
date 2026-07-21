@@ -1,3 +1,4 @@
+using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.Notifications;
 
 namespace Moongate.Tests.Server.Notifications;
@@ -88,5 +89,55 @@ public sealed class NotificationTemplateServiceTests
         service.Register("email", "one", "b");
 
         Assert.Equal(2, service.Count);
+    }
+
+    [Fact]
+    public void Render_FrontMatterContentTypeHtml_MarksTheContentAsHtml()
+    {
+        var service = new NotificationTemplateService();
+        service.Register(
+            "email",
+            "fancy",
+            """
+            +++
+            content_type = "html"
+            +++
+            <p>Hello {{ username }}</p>
+            """
+        );
+
+        var content = service.Render("email", "fancy", new { Username = "tom" });
+
+        Assert.Equal(NotificationContentType.Html, content!.ContentType);
+        Assert.Equal("<p>Hello tom</p>", content.Body.Trim());
+    }
+
+    [Fact]
+    public void Render_WithoutContentType_IsText()
+    {
+        var service = new NotificationTemplateService();
+        service.Register("log", "plain", "hello");
+
+        Assert.Equal(NotificationContentType.Text, service.Render("log", "plain", new { })!.ContentType);
+    }
+
+    [Fact]
+    public void Render_UnknownContentType_FallsBackToText()
+    {
+        var service = new NotificationTemplateService();
+        service.Register(
+            "email",
+            "typo",
+            """
+            +++
+            content_type = "htlm"
+            +++
+            hello
+            """
+        );
+
+        // Deliberately forgiving: a mistyped content type must not cost the notification. Anything that
+        // is not "html" is text.
+        Assert.Equal(NotificationContentType.Text, service.Render("email", "typo", new { })!.ContentType);
     }
 }

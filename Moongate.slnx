@@ -13,6 +13,7 @@
         <Project Path="plugins/Moongate.Console.Admin.Plugin/Moongate.Console.Admin.Plugin.csproj" />
         <Project Path="plugins/Moongate.Http.Plugin/Moongate.Http.Plugin.csproj" />
         <Project Path="plugins/Moongate.News.Plugin/Moongate.News.Plugin.csproj" />
+        <Project Path="plugins/Moongate.Smtp.Plugin/Moongate.Smtp.Plugin.csproj" />
     </Folder>
     <Folder Name="/tests/">
         <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj" />
