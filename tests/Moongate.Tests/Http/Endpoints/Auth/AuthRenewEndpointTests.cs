@@ -22,7 +22,7 @@ public class AuthRenewEndpointTests
     [Fact]
     public async Task Renew_WithAValidToken_ReturnsAFreshToken()
     {
-        var clock = new MutableTimeProvider(new(2026, 7, 22, 10, 0, 0, TimeSpan.Zero));
+        var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(clock: clock);
         await server.AuthenticateAsync();
 
@@ -44,7 +44,7 @@ public class AuthRenewEndpointTests
     {
         // The point of the whole design: renewing must not restart the session clock, or the absolute cap
         // could never be reached.
-        var clock = new MutableTimeProvider(new(2026, 7, 22, 10, 0, 0, TimeSpan.Zero));
+        var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(clock: clock);
         await server.AuthenticateAsync();
 
@@ -61,7 +61,7 @@ public class AuthRenewEndpointTests
     [Fact]
     public async Task Renew_PastTheSessionCap_Is401()
     {
-        var clock = new MutableTimeProvider(new(2026, 7, 22, 10, 0, 0, TimeSpan.Zero));
+        var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(clock: clock);
         await server.AuthenticateAsync();
 
@@ -79,7 +79,7 @@ public class AuthRenewEndpointTests
     {
         // Coarse revocation: the account is re-read rather than trusted from the claims, so suspending it
         // stops renewals even though the token it presents is still cryptographically valid.
-        var clock = new MutableTimeProvider(new(2026, 7, 22, 10, 0, 0, TimeSpan.Zero));
+        var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(clock: clock);
         await server.AuthenticateAsync();
 
@@ -93,7 +93,7 @@ public class AuthRenewEndpointTests
     [Fact]
     public async Task Renew_PicksUpALevelChange()
     {
-        var clock = new MutableTimeProvider(new(2026, 7, 22, 10, 0, 0, TimeSpan.Zero));
+        var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(AccountLevelType.Player, clock: clock);
         await server.AuthenticateAsync();
 
