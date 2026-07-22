@@ -7,6 +7,7 @@ import { useStats } from '../lib/queries'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
+import artwork from '../assets/moongate-logo.png'
 
 export function LoginScreen() {
   const { t } = useTranslation()
@@ -46,6 +47,16 @@ export function LoginScreen() {
         className="relative hidden flex-[1.3] flex-col justify-end border-r border-border-subtle p-10 lg:flex"
         style={{ backgroundImage: 'linear-gradient(200deg, var(--mg-surface-raised) 0%, var(--mg-bg-deep) 70%)' }}
       >
+        {/* Inset to 110px from the bottom rather than centred in the whole panel, so the artwork centres
+            on the space above the quote instead of sitting behind it. */}
+        <div className="absolute inset-x-0 top-0 bottom-[110px] flex items-center justify-center">
+          <img
+            src={artwork}
+            alt={t('login.artAlt')}
+            className="max-h-[82%] max-w-[72%] rounded-control shadow-[0_24px_70px_rgba(0,0,0,0.55)]"
+          />
+        </div>
+
         <p className="relative font-display text-[15px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
 
         {/* Real, and public: /api/v1/stats is anonymous, so the count is readable before anyone signs in.
