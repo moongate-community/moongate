@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "openapi:sync": "node scripts/sync-openapi.mjs",
+    "openapi:types": "node scripts/generate-api-types.mjs"
   },
   "dependencies": {
     "react": "^19.2.8",
