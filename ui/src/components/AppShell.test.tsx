@@ -9,7 +9,7 @@ function renderShell() {
     <MemoryRouter>
       <AuthProvider>
         <AppShell>
-          <p>contenuto</p>
+          <p>content</p>
         </AppShell>
       </AuthProvider>
     </MemoryRouter>,
@@ -24,11 +24,11 @@ describe('AppShell', () => {
 
     expect(screen.getByText('Moongate')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /dashboard/i })).toBeInTheDocument()
-    expect(screen.getByText('contenuto')).toBeInTheDocument()
+    expect(screen.getByText('content')).toBeInTheDocument()
   })
 
   it('offers the theme toggle', () => {
     renderShell()
-    expect(screen.getByRole('button', { name: /scuro/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument()
   })
 })

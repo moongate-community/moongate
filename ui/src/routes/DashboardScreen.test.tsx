@@ -61,6 +61,6 @@ describe('DashboardScreen', () => {
 
     renderDashboard()
 
-    expect(await screen.findByText(/nessun personaggio/i)).toBeInTheDocument()
+    expect(await screen.findByText(/no characters/i)).toBeInTheDocument()
   })
 })

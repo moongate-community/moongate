@@ -4,8 +4,8 @@ import en from '../locales/en.json'
 import it from '../locales/it.json'
 
 void i18n.use(initReactI18next).init({
-  resources: { it: { translation: it }, en: { translation: en } },
-  lng: localStorage.getItem('mg-lang') ?? 'it',
+  resources: { en: { translation: en }, it: { translation: it } },
+  lng: localStorage.getItem('mg-lang') ?? 'en',
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 })

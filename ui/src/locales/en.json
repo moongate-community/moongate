@@ -9,7 +9,8 @@
     "password": "Password",
     "submit": "SIGN IN",
     "failed": "Invalid account name or password.",
-    "staffNote": "Staff sign in through the same gate: the role decides the destination."
+    "staffNote": "Staff sign in through the same gate: the role decides the destination.",
+    "quote": "Sosaria never sleeps."
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}",

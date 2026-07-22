@@ -39,7 +39,7 @@ export function LoginScreen() {
   return (
     <div className="flex min-h-screen bg-surface">
       <div className="hidden flex-1 items-end bg-gradient-to-b from-raised to-deep p-10 lg:flex">
-        <p className="font-display text-[15px] text-gold">&ldquo;Sosaria non dorme mai.&rdquo;</p>
+        <p className="font-display text-[15px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
       </div>
 
       <form onSubmit={submit} className="flex w-full max-w-[420px] flex-col justify-center gap-4 px-12">

@@ -36,9 +36,9 @@ describe('LoginScreen', () => {
 
     renderLogin()
 
-    await userEvent.type(screen.getByLabelText(/nome account/i), 'tom')
-    await userEvent.type(screen.getByLabelText(/parola/i), 'secret')
-    await userEvent.click(screen.getByRole('button', { name: /entra/i }))
+    await userEvent.type(screen.getByLabelText(/account name/i), 'tom')
+    await userEvent.type(screen.getByLabelText(/password/i), 'secret')
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
 
     await waitFor(() => expect(JSON.parse(localStorage.getItem('mg-token')!).token).toBe('t'))
   })
@@ -50,10 +50,10 @@ describe('LoginScreen', () => {
 
     renderLogin()
 
-    await userEvent.type(screen.getByLabelText(/nome account/i), 'tom')
-    await userEvent.type(screen.getByLabelText(/parola/i), 'wrong')
-    await userEvent.click(screen.getByRole('button', { name: /entra/i }))
+    await userEvent.type(screen.getByLabelText(/account name/i), 'tom')
+    await userEvent.type(screen.getByLabelText(/password/i), 'wrong')
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
 
-    expect(await screen.findByText(/non validi/i)).toBeInTheDocument()
+    expect(await screen.findByText(/invalid/i)).toBeInTheDocument()
   })
 })
