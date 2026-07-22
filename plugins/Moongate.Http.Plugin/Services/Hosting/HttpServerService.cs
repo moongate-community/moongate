@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Config;
@@ -47,6 +48,9 @@ public sealed class HttpServerService : ISquidStdService
     /// <summary>The only document served. Scalar's reference for it lives at <c>/scalar/v1</c>.</summary>
     private const string DocumentName = "v1";
 
+    /// <summary>Paths the SPA fallback must never answer for: they belong to the API and its reference.</summary>
+    private static readonly string[] ReservedPrefixes = ["/api", "/health", "/swagger", "/scalar"];
+
     private readonly ILogger _logger = Log.ForContext<HttpServerService>();
     private readonly IContainer _container;
     private readonly MoongateHttpConfig _config;
@@ -61,6 +65,9 @@ public sealed class HttpServerService : ISquidStdService
 
     /// <summary>The port actually listened on — the real one when the configured port is 0.</summary>
     public int BoundPort { get; private set; }
+
+    /// <summary>The directory the portal was found in, or null when no build is present.</summary>
+    public string? UiDistPath { get; private set; }
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
@@ -138,6 +145,34 @@ public sealed class HttpServerService : ISquidStdService
 
         _app.UseExceptionHandler();
         _app.UseStatusCodePages();
+
+        // Before authentication: the portal's own files are public, and a login page behind a login is a
+        // door that opens onto itself.
+        UiDistPath = ResolveUiDist(_config.UiDistPath);
+
+        if (UiDistPath is not null)
+        {
+            var files = new PhysicalFileProvider(UiDistPath);
+
+            _app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = files });
+            _app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    FileProvider = files,
+
+                    // Vite fingerprints every asset it emits, so those may be cached forever; index.html
+                    // carries the pointers to them and must not be, or a deploy would keep handing out the
+                    // previous bundle's names.
+                    OnPrepareResponse = context => context.Context.Response.Headers.CacheControl =
+                        context.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase)
+                            ? "no-cache"
+                            : "public, max-age=31536000, immutable"
+                }
+            );
+
+            _logger.Information("Serving the portal from {UiDistPath}", UiDistPath);
+        }
+
         _app.UseAuthentication();
         _app.UseAuthorization();
 
@@ -151,11 +186,47 @@ public sealed class HttpServerService : ISquidStdService
         );
         _app.MapGet("/health", () => Results.Ok(new { status = "ok" })).ExcludeFromDescription();
 
-        _app.MapGet("/", () => Results.Ok(new { message = "Welcome to Moongate API" })).ExcludeFromDescription();
+        // Only when no portal is being served. StaticFileMiddleware stands down as soon as routing has
+        // selected an endpoint, so leaving this mapped would have "/" answer with the welcome JSON while
+        // index.html sat unread beside it — routing wins, and the portal would never appear at the root.
+        if (UiDistPath is null)
+        {
+            _app.MapGet("/", () => Results.Ok(new { message = "Welcome to Moongate API" })).ExcludeFromDescription();
+        }
 
         foreach (var endpoints in _container.Resolve<IEnumerable<IApiEndpointRegistration>>())
         {
             endpoints.Register(_app);
+        }
+
+        // The single-page app owns client-side routes, so an unmatched path must hand it index.html rather
+        // than 404 — but only a path that could be one. A REST caller asking for a route that does not exist
+        // has to receive its JSON 404, not an HTML page with status 200.
+        if (UiDistPath is { } uiDist)
+        {
+            var indexPath = Path.Combine(uiDist, "index.html");
+
+            _app.MapFallback(
+                async context =>
+                {
+                    var path = context.Request.Path;
+                    var reserved = ReservedPrefixes.Any(
+                        prefix => path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase)
+                    );
+
+                    if (!HttpMethods.IsGet(context.Request.Method) || reserved)
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+
+                        return;
+                    }
+
+                    context.Response.Headers.CacheControl = "no-cache";
+                    context.Response.ContentType = "text/html; charset=utf-8";
+
+                    await context.Response.SendFileAsync(indexPath);
+                }
+            );
         }
 
         await _app.StartAsync(cancellationToken);
@@ -230,6 +301,36 @@ public sealed class HttpServerService : ISquidStdService
         _container.Resolve<IConfigManagerService>().Save();
 
         _logger.Information("No http.Jwt.SigningKey was configured; minted one and saved it to moongate.yaml");
+    }
+
+    /// <summary>
+    /// The first candidate that exists, or null. Configuration wins, then the environment variable — which is
+    /// what lets a developer point a published server at a working tree without copying anything — then the
+    /// conventional locations.
+    /// </summary>
+    private static string? ResolveUiDist(string configured)
+    {
+        IEnumerable<string> Candidates()
+        {
+            if (!string.IsNullOrWhiteSpace(configured))
+            {
+                yield return configured;
+            }
+
+            if (Environment.GetEnvironmentVariable("MOONGATE_UI_DIST") is { Length: > 0 } fromEnvironment)
+            {
+                yield return fromEnvironment;
+            }
+
+            yield return Path.Combine(Directory.GetCurrentDirectory(), "ui", "dist");
+            yield return Path.Combine(AppContext.BaseDirectory, "ui", "dist");
+        }
+
+        // index.html rather than the directory: a directory that exists but holds no entry point would pass
+        // the check and then serve nothing.
+        return Candidates()
+              .Select(Path.GetFullPath)
+              .FirstOrDefault(candidate => File.Exists(Path.Combine(candidate, "index.html")));
     }
 
     /// <summary>

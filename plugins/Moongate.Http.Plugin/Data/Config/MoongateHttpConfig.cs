@@ -15,6 +15,12 @@ public sealed class MoongateHttpConfig
 
     public int Port { get; set; } = 8933;
 
+    /// <summary>
+    /// Where the built portal lives. Empty means "look in the usual places": <c>$MOONGATE_UI_DIST</c>, then
+    /// <c>ui/dist</c> under the working directory, then <c>ui/dist</c> beside the executable.
+    /// </summary>
+    public string UiDistPath { get; set; } = string.Empty;
+
     public HttpJwtConfig Jwt { get; set; } = new();
 
     /// <summary>Maximum size, in bytes, of an uploaded server asset (logo/favicon/banner). Default 2 MB.</summary>
