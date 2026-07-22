@@ -22,7 +22,11 @@ public sealed class StatsEndpoints : IApiEndpointRegistration
     }
 
     public void Register(IEndpointRouteBuilder routes)
-        => routes.MapGet("/api/v1/stats", Get).WithName("GetServerStats").WithTags("stats").AllowAnonymous();
+        => routes.MapGet("/api/v1/stats", Get)
+                 .WithName("GetServerStats")
+                 .WithTags("stats")
+                 .Produces<ServerStatsResponse>()
+                 .AllowAnonymous();
 
     internal static ServerStatsResponse ToResponse(ServerStatsSnapshot snapshot)
         => new(

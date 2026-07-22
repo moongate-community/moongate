@@ -838,6 +838,58 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * @description A character as the API reports it. Deliberately not `MobileEntity`, which carries BrainScriptId,
+         *     LootTableId and BackpackId: returning the entity would publish the shard's internals to every caller,
+         *     and a field added to the entity later would publish itself. Naming the fields here means that cannot
+         *     happen by default — the same reason Moongate.Http.Plugin.Data.Api.Accounts.AccountResponse exists rather than returning
+         *     AccountEntity with its PasswordHash.
+         */
+        CharacterResponse: {
+            /** @description The character's serial, as `0x40000001`. */
+            serial?: string | null;
+            name?: string | null;
+            /** @description The owning account. Null on the player's own route, where it is the caller. */
+            accountUsername?: string | null;
+            race?: string | null;
+            gender?: string | null;
+            /** Format: int32 */
+            body?: number;
+            /** Format: int32 */
+            strength?: number;
+            /** Format: int32 */
+            dexterity?: number;
+            /** Format: int32 */
+            intelligence?: number;
+            /** Format: int32 */
+            hits?: number;
+            /** Format: int32 */
+            hitsMax?: number;
+            /** Format: int32 */
+            stamina?: number;
+            /** Format: int32 */
+            staminaMax?: number;
+            /** Format: int32 */
+            mana?: number;
+            /** Format: int32 */
+            manaMax?: number;
+            /** Format: int32 */
+            kills?: number;
+            /** Format: int32 */
+            skinHue?: number;
+            /** Format: int32 */
+            hairStyle?: number;
+            /** Format: int32 */
+            hairHue?: number;
+            /** Format: int32 */
+            mapId?: number;
+            /** Format: int32 */
+            x?: number;
+            /** Format: int32 */
+            y?: number;
+            /** Format: int32 */
+            z?: number;
+        };
         /** @description A console command to run and the SSE connection its output should stream to. */
         ConsoleCommandRequest: {
             command?: string | null;
@@ -864,6 +916,11 @@ export interface components {
             username?: string | null;
             password?: string | null;
         };
+        /** @description Who the caller's token says they are. Deliberately not their characters — see PlayerEndpoints. */
+        PlayerMeResponse: {
+            username?: string | null;
+            level?: string | null;
+        };
         /** @description A web self-registration request. */
         RegisterRequest: {
             username?: string | null;
@@ -875,6 +932,47 @@ export interface components {
             website?: string | null;
             email?: string | null;
             discord?: string | null;
+        };
+        /** @description The shard's public statistics, as a website or launcher reads them. */
+        ServerStatsResponse: {
+            /** Format: date-time */
+            generatedAt?: string;
+            /** Format: int64 */
+            uptimeSeconds?: number;
+            players?: components["schemas"]["StatsPlayersResponse"];
+            accounts?: components["schemas"]["StatsAccountsResponse"];
+            world?: components["schemas"]["StatsWorldResponse"];
+            content?: components["schemas"]["StatsContentResponse"];
+        };
+        /** @description The shard's user base: accounts registered, accounts verified, and characters created. */
+        StatsAccountsResponse: {
+            /** Format: int32 */
+            total?: number;
+            /** Format: int32 */
+            active?: number;
+            /** Format: int32 */
+            characters?: number;
+        };
+        /** @description How much content the shard has loaded: the templates available to spawn from. */
+        StatsContentResponse: {
+            /** Format: int32 */
+            itemTemplates?: number;
+            /** Format: int32 */
+            mobileTemplates?: number;
+        };
+        /** @description Who is connected: players in the world, and every open connection including the login screen. */
+        StatsPlayersResponse: {
+            /** Format: int32 */
+            online?: number;
+            /** Format: int32 */
+            connections?: number;
+        };
+        /** @description How much the world holds: creatures nobody plays, and persisted items. */
+        StatsWorldResponse: {
+            /** Format: int32 */
+            npcs?: number;
+            /** Format: int32 */
+            items?: number;
         };
         /**
          * @description The fields to change. Every one is optional: absent means "leave alone", which is what makes this a
@@ -1679,7 +1777,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PlayerMeResponse"];
+                };
             };
         };
     };
@@ -1697,7 +1797,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CharacterResponse"][];
+                };
             };
         };
     };
@@ -1884,7 +1986,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ServerStatsResponse"];
+                };
             };
         };
     };

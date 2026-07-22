@@ -943,7 +943,14 @@
         "operationId": "GetPlayerMe",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerMeResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -958,7 +965,17 @@
         "operationId": "GetMyCharacters",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CharacterResponse"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1168,7 +1185,14 @@
         "operationId": "GetServerStats",
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerStatsResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -1191,6 +1215,107 @@
   },
   "components": {
     "schemas": {
+      "CharacterResponse": {
+        "type": "object",
+        "properties": {
+          "serial": {
+            "type": "string",
+            "description": "The character's serial, as `0x40000001`.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountUsername": {
+            "type": "string",
+            "description": "The owning account. Null on the player's own route, where it is the caller.",
+            "nullable": true
+          },
+          "race": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "body": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "strength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dexterity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "intelligence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hitsMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stamina": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staminaMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mana": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "manaMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kills": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skinHue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hairStyle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hairHue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A character as the API reports it. Deliberately not `MobileEntity`, which carries BrainScriptId,\nLootTableId and BackpackId: returning the entity would publish the shard's internals to every caller,\nand a field added to the entity later would publish itself. Naming the fields here means that cannot\nhappen by default — the same reason Moongate.Http.Plugin.Data.Api.Accounts.AccountResponse exists rather than returning\nAccountEntity with its PasswordHash."
+      },
       "ConsoleCommandRequest": {
         "type": "object",
         "properties": {
@@ -1262,6 +1387,21 @@
         "additionalProperties": false,
         "description": "Credentials posted to the login endpoint."
       },
+      "PlayerMeResponse": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "level": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Who the caller's token says they are. Deliberately not their characters — see PlayerEndpoints."
+      },
       "RegisterRequest": {
         "type": "object",
         "properties": {
@@ -1299,6 +1439,97 @@
         },
         "additionalProperties": false,
         "description": "The shard's public contact points."
+      },
+      "ServerStatsResponse": {
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "uptimeSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "players": {
+            "$ref": "#/components/schemas/StatsPlayersResponse"
+          },
+          "accounts": {
+            "$ref": "#/components/schemas/StatsAccountsResponse"
+          },
+          "world": {
+            "$ref": "#/components/schemas/StatsWorldResponse"
+          },
+          "content": {
+            "$ref": "#/components/schemas/StatsContentResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The shard's public statistics, as a website or launcher reads them."
+      },
+      "StatsAccountsResponse": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "characters": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The shard's user base: accounts registered, accounts verified, and characters created."
+      },
+      "StatsContentResponse": {
+        "type": "object",
+        "properties": {
+          "itemTemplates": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mobileTemplates": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "How much content the shard has loaded: the templates available to spawn from."
+      },
+      "StatsPlayersResponse": {
+        "type": "object",
+        "properties": {
+          "online": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "connections": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Who is connected: players in the world, and every open connection including the login screen."
+      },
+      "StatsWorldResponse": {
+        "type": "object",
+        "properties": {
+          "npcs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "How much the world holds: creatures nobody plays, and persisted items."
       },
       "UpdateAccountRequest": {
         "type": "object",
