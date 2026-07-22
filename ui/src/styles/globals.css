@@ -80,6 +80,19 @@
   --radius-xl: var(--mg-radius-card);
 }
 
+/* The one thing `shadcn init` contributes to a stylesheet that is genuinely needed. Tailwind 4 defaults
+   border-color to currentColor, and the registry's components write a bare `border` trusting a base rule
+   to pin it to the theme — without one a card draws a hairline in its own text colour, which on a dark
+   panel is a white outline. Caught by measuring the rendered page, not by any test: jsdom applies none
+   of this. */
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--mg-border);
+  }
+}
+
 body {
   margin: 0;
   background: var(--mg-bg-page);
