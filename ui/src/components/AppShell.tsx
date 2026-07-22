@@ -3,6 +3,7 @@ import { NavLink } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useSession } from '../lib/auth'
 import { ThemeToggle } from './ThemeToggle'
+import icon from '../assets/moongate-icon.png'
 
 /** The design's double bar: a 50px identity row above a 46px tab row. */
 export function AppShell({ children }: { children: ReactNode }) {
@@ -12,13 +13,17 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-page text-ink">
       <header className="flex h-[var(--mg-topbar-h)] items-center gap-3 border-b border-border-subtle bg-surface px-5">
+        <img src={icon} alt="" className="size-[26px] rounded-control object-cover" />
         <span className="font-display text-[15px] font-bold tracking-wider text-gold">{t('app.name')}</span>
         <div className="flex-1" />
         <span className="text-xs tracking-widest text-faint">{t('theme.label')}</span>
         <ThemeToggle />
+
+        {/* A rule of its own, not just a gap: theme and identity are unrelated controls, and without a
+            separator the four of them read as one block. */}
         {username !== null && (
           <>
-            <span className="text-sm text-ink">{username}</span>
+            <span className="ml-2 border-l border-border-subtle pl-4 text-sm text-ink">{username}</span>
             <button type="button" onClick={signOut} className="text-sm text-muted hover:text-gold">
               {t('common.signOut')}
             </button>

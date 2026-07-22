@@ -1,7 +1,15 @@
 {
-  "app": { "name": "Moongate" },
-  "theme": { "dark": "Scuro", "light": "Chiaro", "label": "Tema" },
-  "nav": { "dashboard": "Dashboard" },
+  "app": {
+    "name": "Moongate"
+  },
+  "theme": {
+    "dark": "Scuro",
+    "light": "Chiaro",
+    "label": "Tema"
+  },
+  "nav": {
+    "dashboard": "Dashboard"
+  },
   "login": {
     "title": "MOONGATE",
     "subtitle": "Accedi con le credenziali del tuo account di gioco.",
@@ -10,7 +18,9 @@
     "submit": "ENTRA",
     "failed": "Nome account o parola d'ordine non validi.",
     "staffNote": "Lo staff accede dallo stesso cancello: il ruolo decide la destinazione.",
-    "quote": "Sosaria non dorme mai."
+    "quote": "Sosaria non dorme mai.",
+    "remember": "Ricordami su questo dispositivo",
+    "online": "{{count}} avventurieri online in questo momento"
   },
   "dashboard": {
     "welcome": "Bentornato, {{name}}",
@@ -21,6 +31,11 @@
     "accounts": "Account",
     "charactersTotal": "Personaggi"
   },
-  "common": { "signOut": "Esci", "loading": "Caricamento…" },
-  "error": { "generic": "Qualcosa è andato storto. Riprova." }
+  "common": {
+    "signOut": "Esci",
+    "loading": "Caricamento…"
+  },
+  "error": {
+    "generic": "Qualcosa è andato storto. Riprova."
+  }
 }

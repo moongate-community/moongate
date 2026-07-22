@@ -3,6 +3,7 @@ import { Navigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../lib/api'
 import { useSession } from '../lib/auth'
+import { useStats } from '../lib/queries'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -10,8 +11,10 @@ import { Label } from '../components/ui/label'
 export function LoginScreen() {
   const { t } = useTranslation()
   const { status, signIn } = useSession()
+  const stats = useStats()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -21,7 +24,7 @@ export function LoginScreen() {
     setBusy(true)
 
     try {
-      await signIn(username, password)
+      await signIn(username, password, remember)
     } catch (caught) {
       // 401 is the one failure worth naming. Anything else — the shard is down, the reply was not JSON —
       // says nothing useful about the credentials, and guessing would send people to reset a password
@@ -38,8 +41,21 @@ export function LoginScreen() {
 
   return (
     <div className="flex min-h-screen bg-surface">
-      <div className="hidden flex-1 items-end bg-gradient-to-b from-raised to-deep p-10 lg:flex">
-        <p className="font-display text-[15px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
+      {/* 200deg, matching the design: the light falls from the upper right rather than straight down. */}
+      <div
+        className="relative hidden flex-[1.3] flex-col justify-end border-r border-border-subtle p-10 lg:flex"
+        style={{ backgroundImage: 'linear-gradient(200deg, var(--mg-surface-raised) 0%, var(--mg-bg-deep) 70%)' }}
+      >
+        <p className="relative font-display text-[15px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
+
+        {/* Real, and public: /api/v1/stats is anonymous, so the count is readable before anyone signs in.
+            Rendered only once the reply lands — a zero here means an empty shard, which is worth saying,
+            but saying it before asking would be a guess. */}
+        {stats.data !== undefined && (
+          <p className="relative mt-1 text-sm text-muted">
+            {t('login.online', { count: stats.data.players.online })}
+          </p>
+        )}
       </div>
 
       <form onSubmit={submit} className="flex w-full max-w-[420px] flex-col justify-center gap-4 px-12">
@@ -69,13 +85,24 @@ export function LoginScreen() {
           />
         </div>
 
+        <Label htmlFor="remember" className="flex items-center gap-2 text-sm font-normal text-muted">
+          <input
+            id="remember"
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            className="size-[15px] appearance-none rounded-control border border-border-strong checked:bg-gold"
+          />
+          {t('login.remember')}
+        </Label>
+
         {error !== null && (
           <p role="alert" className="text-sm text-danger-text">
             {error}
           </p>
         )}
 
-        <Button type="submit" disabled={busy}>
+        <Button type="submit" disabled={busy} className="py-3 text-sm tracking-[0.14em]">
           {t('login.submit')}
         </Button>
 

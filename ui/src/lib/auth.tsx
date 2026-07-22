@@ -22,7 +22,7 @@ type Session = {
   status: Status
   username: string | null
   level: string | null
-  signIn: (username: string, password: string) => Promise<void>
+  signIn: (username: string, password: string, remember?: boolean) => Promise<void>
   signOut: () => void
 }
 
@@ -36,18 +36,36 @@ export function useSession(): Session {
   return session
 }
 
-function read(): StoredToken | null {
-  const raw = localStorage.getItem(STORAGE_KEY)
-  if (raw === null) {
-    return null
+/**
+ * Where "remember me" lives. Ticking it keeps the session in localStorage, so it survives the browser
+ * closing; leaving it clear puts the token in sessionStorage, where it dies with the tab. Nothing else
+ * in the app needs to know which one holds it — read() checks both, and the writer picks.
+ */
+function stores(): Storage[] {
+  return [localStorage, sessionStorage]
+}
+
+/** The stored session and the store holding it, so a renewal can be written back to the same one. */
+function read(): { token: StoredToken; store: Storage } | null {
+  for (const store of stores()) {
+    const raw = store.getItem(STORAGE_KEY)
+
+    if (raw === null) {
+      continue
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as StoredToken
+
+      if (typeof parsed.token === 'string') {
+        return { token: parsed, store }
+      }
+    } catch {
+      // Unparseable: treat as absent and let the next store answer.
+    }
   }
 
-  try {
-    const parsed = JSON.parse(raw) as StoredToken
-    return typeof parsed.token === 'string' ? parsed : null
-  } catch {
-    return null
-  }
+  return null
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -56,9 +74,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [level, setLevel] = useState<string | null>(null)
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
+  // Which store the live session is in. Renewals have to land back where sign-in put it, or an
+  // unremembered session would silently promote itself to a remembered one on its first renewal.
+  const store = useRef<Storage>(localStorage)
+
   const clear = useCallback(() => {
     clearTimeout(timer.current)
-    localStorage.removeItem(STORAGE_KEY)
+
+    for (const candidate of stores()) {
+      candidate.removeItem(STORAGE_KEY)
+    }
+
     setAuthToken(null)
     setUsername(null)
     setLevel(null)
@@ -69,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const renew = useRef<() => Promise<void>>(async () => {})
 
   const adopt = useCallback((stored: StoredToken) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored))
+    store.current.setItem(STORAGE_KEY, JSON.stringify(stored))
     setAuthToken(stored.token)
 
     const delay = new Date(stored.expiresAt).getTime() - Date.now() - RENEW_MARGIN_MS
@@ -89,12 +115,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const signIn = useCallback(
-    async (user: string, password: string) => {
+    async (user: string, password: string, remember = true) => {
       const issued = await apiFetch<StoredToken>('/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({ username: user, password }),
       })
 
+      store.current = remember ? localStorage : sessionStorage
       adopt(issued)
 
       const me = await apiFetch<{ username: string; level: string }>('/api/v1/player/me')
@@ -116,7 +143,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return
     }
 
-    adopt(stored)
+    // Renewals go back where the session already lives, so reloading an unremembered session does not
+    // quietly turn it into a remembered one.
+    store.current = stored.store
+    adopt(stored.token)
 
     void (async () => {
       try {
@@ -143,7 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (stored === null) {
         return
       }
-      if (new Date(stored.expiresAt).getTime() - Date.now() < RENEW_MARGIN_MS) {
+      if (new Date(stored.token.expiresAt).getTime() - Date.now() < RENEW_MARGIN_MS) {
         void renew.current()
       }
     }

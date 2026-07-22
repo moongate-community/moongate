@@ -9,7 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        // Moongate's own, not the registry's. The token bridge gets the colours right on its own, but the
+        // design's primary button is a piece of brand: Cinzel, letter-spaced, with a hairline of light
+        // along the top edge that reads as struck metal. `bg-primary text-primary-foreground` alone came
+        // out flat and in the body font.
+        default:
+          "bg-primary text-primary-foreground border border-gold-hi font-display font-bold tracking-[0.1em] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] hover:bg-gold-hi",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
