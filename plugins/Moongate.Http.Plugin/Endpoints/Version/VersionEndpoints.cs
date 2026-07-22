@@ -28,6 +28,7 @@ public sealed class VersionEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/version", Version)
                  .WithName("GetVersion")
                  .WithTags("version")
+                 .Produces<VersionResponse>()
                  .AllowAnonymous();
 
     /// <summary>Reports the shard's name and build.</summary>

@@ -35,10 +35,15 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
                           .WithTags("server-settings")
                           .RequireAuthorization(HttpServerService.AdminPolicy);
 
-        group.MapGet("/", Get).WithName("GetServerSettings");
-        group.MapPut("/", Update).WithName("UpdateServerSettings");
-        group.MapPost("/assets/{slot}", UploadAsset).WithName("UploadServerAsset").DisableAntiforgery();
-        group.MapDelete("/assets/{slot}", DeleteAsset).WithName("DeleteServerAsset");
+        group.MapGet("/", Get).WithName("GetServerSettings").Produces<ServerSettingsResponse>();
+        group.MapPut("/", Update).WithName("UpdateServerSettings").Produces<ServerSettingsResponse>();
+        group.MapPost("/assets/{slot}", UploadAsset)
+             .WithName("UploadServerAsset")
+             .DisableAntiforgery()
+             .Produces<ServerSettingsResponse>();
+        group.MapDelete("/assets/{slot}", DeleteAsset)
+             .WithName("DeleteServerAsset")
+             .Produces(StatusCodes.Status204NoContent);
     }
 
     internal static ServerSettingsResponse ToResponse(ServerSettingsEntity settings)

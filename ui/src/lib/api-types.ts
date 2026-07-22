@@ -839,6 +839,93 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /**
+         * @description An account as the API reports it. Deliberately not `AccountEntity`, which carries PasswordHash
+         *     and ActivationToken: returning the entity would publish both to every caller, log and proxy cache on
+         *     the way. Naming the fields here means a field added to the entity later cannot leak by default.
+         */
+        AccountResponse: {
+            username: string;
+            email?: string | null;
+            level: string;
+            isActive: boolean;
+            /** Format: int32 */
+            characterCount: number;
+        };
+        /** @description A staff-level snapshot of the shard. No uptime: there is no "shard started at" to read. */
+        AdminStatusResponse: {
+            shardName: string;
+            version: string;
+            /** Format: int32 */
+            onlineSessions: number;
+        };
+        /** @description An issued API token and the moment it stops being valid. */
+        ApiTokenResult: {
+            token: string;
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        /** @description How far the bulk body-image export has got. */
+        BodyImageExportStatus: {
+            /** @description Idle, Running, Completed or Failed. */
+            state: string;
+            /**
+             * Format: int32
+             * @description Bodies processed so far.
+             */
+            done: number;
+            /**
+             * Format: int32
+             * @description Classified, non-equipment bodies to process. 0 until the export has counted them.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description Bodies whose frame could not be rendered or written. The reasons are in the log.
+             */
+            failed: number;
+            /**
+             * Format: date-time
+             * @description When the current or last export started; null if none ever has.
+             */
+            startedAt?: string | null;
+        };
+        /** @description One row of the staff body picker. */
+        BodySummary: {
+            /** Format: int32 */
+            body: number;
+            hex: string;
+            type: string;
+            imageUrl: string;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        BodySummaryPagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["BodySummary"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
+        BookSpec: {
+            bookId: string;
+        };
+        /**
          * @description A character as the API reports it. Deliberately not `MobileEntity`, which carries BrainScriptId,
          *     LootTableId and BackpackId: returning the entity would publish the shard's internals to every caller,
          *     and a field added to the entity later would publish itself. Naming the fields here means that cannot
@@ -847,85 +934,379 @@ export interface components {
          */
         CharacterResponse: {
             /** @description The character's serial, as `0x40000001`. */
-            serial?: string | null;
-            name?: string | null;
+            serial: string;
+            name: string;
             /** @description The owning account. Null on the player's own route, where it is the caller. */
             accountUsername?: string | null;
-            race?: string | null;
-            gender?: string | null;
+            race: string;
+            gender: string;
             /** Format: int32 */
-            body?: number;
+            body: number;
             /** Format: int32 */
-            strength?: number;
+            strength: number;
             /** Format: int32 */
-            dexterity?: number;
+            dexterity: number;
             /** Format: int32 */
-            intelligence?: number;
+            intelligence: number;
             /** Format: int32 */
-            hits?: number;
+            hits: number;
             /** Format: int32 */
-            hitsMax?: number;
+            hitsMax: number;
             /** Format: int32 */
-            stamina?: number;
+            stamina: number;
             /** Format: int32 */
-            staminaMax?: number;
+            staminaMax: number;
             /** Format: int32 */
-            mana?: number;
+            mana: number;
             /** Format: int32 */
-            manaMax?: number;
+            manaMax: number;
             /** Format: int32 */
-            kills?: number;
+            kills: number;
             /** Format: int32 */
-            skinHue?: number;
+            skinHue: number;
             /** Format: int32 */
-            hairStyle?: number;
+            hairStyle: number;
             /** Format: int32 */
-            hairHue?: number;
+            hairHue: number;
             /** Format: int32 */
-            mapId?: number;
+            mapId: number;
             /** Format: int32 */
-            x?: number;
+            x: number;
             /** Format: int32 */
-            y?: number;
+            y: number;
             /** Format: int32 */
-            z?: number;
+            z: number;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        CharacterResponsePagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["CharacterResponse"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
         };
         /** @description A console command to run and the SSE connection its output should stream to. */
         ConsoleCommandRequest: {
-            command?: string | null;
-            connectionId?: string | null;
+            command: string;
+            connectionId: string;
+        };
+        ContainerSpec: {
+            /** Format: int32 */
+            weightMax?: number | null;
+            /** Format: int32 */
+            maxItems?: number | null;
+            /** Format: int32 */
+            gumpId?: number | null;
+            containerLayoutId?: string | null;
+            contents?: string[] | null;
+            isQuiver?: boolean | null;
+            /** Format: int32 */
+            weightReduction?: number | null;
+            /** Format: int32 */
+            quiverDamageIncrease?: number | null;
+            /** Format: int32 */
+            lowerAmmoCost?: number | null;
+            /** Format: int32 */
+            defenseChanceIncrease?: number | null;
         };
         /**
          * @description A new account. `Level` is the `AccountLevelType` name; omitted means Player, the safe
          *     default — an account that gains staff rights by accident is the wrong way to fail.
          */
         CreateAccountRequest: {
-            username?: string | null;
-            password?: string | null;
+            username: string;
+            password: string;
             email?: string | null;
             level?: string | null;
         };
         /** @description Body for creating a news entry; the author is taken from the caller's token. */
         CreateNewsRequest: {
-            title?: string | null;
-            body?: string | null;
-            isPublished?: boolean;
+            title: string;
+            body: string;
+            isPublished: boolean;
         };
+        EquipSpec: {
+            layer: components["schemas"]["LayerType"];
+            /** Format: int32 */
+            hitPoints?: number | null;
+            /** Format: int32 */
+            strengthReq?: number | null;
+            /** Format: int32 */
+            dexterityReq?: number | null;
+            /** Format: int32 */
+            intelligenceReq?: number | null;
+        };
+        /** @description One row of the staff hair-style picker. */
+        HairStyleSummary: {
+            /** Format: int32 */
+            style: number;
+            hex: string;
+            name: string;
+            facial: boolean;
+            imageUrl: string;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        HairStyleSummaryPagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["HairStyleSummary"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
+        /** @description How far the bulk item-image export has got. */
+        ItemImageExportStatus: {
+            /** @description Idle, Running, Completed or Failed. */
+            state: string;
+            /**
+             * Format: int32
+             * @description Items exported so far.
+             */
+            done: number;
+            /**
+             * Format: int32
+             * @description Items with art to export. 0 until the export has counted them.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description Items whose art could not be written. The reasons are in the log.
+             */
+            failed: number;
+            /**
+             * Format: date-time
+             * @description When the current or last export started; null if none ever has.
+             */
+            startedAt?: string | null;
+        };
+        ItemParam: {
+            type: string;
+            value: string;
+        };
+        /**
+         * @description The full template: everything the summary carries plus the typed specs, passed through as the
+         *     Moongate.UO.Data types — they are the documented data contract of the YAML templates.
+         */
+        ItemTemplateResponse: {
+            id: string;
+            name: string;
+            category: string;
+            description: string;
+            /** Format: int32 */
+            itemId: number;
+            /** Format: int32 */
+            hue: number;
+            rarity: string;
+            /** Format: int32 */
+            goldValue: number;
+            /** Format: double */
+            weight: number;
+            scriptId: string;
+            isMovable: boolean;
+            stackable?: boolean | null;
+            dyeable?: boolean | null;
+            visibility?: string | null;
+            lootType?: string | null;
+            tags: string[];
+            flippableItemIds?: number[] | null;
+            lootTables?: string[] | null;
+            params?: {
+                [key: string]: components["schemas"]["ItemParam"];
+            } | null;
+            equip?: components["schemas"]["EquipSpec"];
+            weapon?: components["schemas"]["WeaponSpec"];
+            container?: components["schemas"]["ContainerSpec"];
+            book?: components["schemas"]["BookSpec"];
+            imageUrl: string;
+        };
+        /** @description One row of the staff item template listing. */
+        ItemTemplateSummaryResponse: {
+            id: string;
+            name: string;
+            category: string;
+            /** Format: int32 */
+            itemId: number;
+            /** Format: int32 */
+            hue: number;
+            rarity: string;
+            /** Format: int32 */
+            goldValue: number;
+            /** Format: double */
+            weight: number;
+            tags: string[];
+            imageUrl: string;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        ItemTemplateSummaryResponsePagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["ItemTemplateSummaryResponse"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
+        /**
+         * Format: int32
+         * @enum {integer}
+         */
+        LayerType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29;
         /** @description Credentials posted to the login endpoint. */
         LoginRequest: {
-            username?: string | null;
-            password?: string | null;
+            username: string;
+            password: string;
+        };
+        /** @description A map facet as the API describes it, so a viewer can configure itself rather than guess. */
+        MapFacetInfo: {
+            /** @description The facet's name, as used in the tile route. */
+            name: string;
+            /**
+             * Format: int32
+             * @description Facet width in map tiles, which is its width in pixels at native zoom.
+             */
+            width: number;
+            /**
+             * Format: int32
+             * @description Facet height in map tiles.
+             */
+            height: number;
+            /**
+             * Format: int32
+             * @description The deepest zoom, where one pixel is one map tile. Zoom 0 is always one tile.
+             */
+            maxZoom: number;
+            /**
+             * Format: int32
+             * @description Tile edge in pixels.
+             */
+            tileSize: number;
+            /**
+             * Format: int32
+             * @description Tiles across the grid at MaxZoom.
+             */
+            tilesAcross: number;
+            /**
+             * Format: int32
+             * @description Tiles down the grid at MaxZoom.
+             */
+            tilesDown: number;
+        };
+        /** @description How far the map image pre-warm has got. */
+        MapImageExportStatus: {
+            /** @description Idle, Running, Completed or Failed. */
+            state: string;
+            /**
+             * Format: int32
+             * @description Tiles and whole-facet images produced so far.
+             */
+            done: number;
+            /**
+             * Format: int32
+             * @description How many there are to produce. 0 until the pre-warm has counted them.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description How many could not be produced. The reasons are in the log.
+             */
+            failed: number;
+            /**
+             * Format: date-time
+             * @description When the current or last pre-warm started; null if none ever has.
+             */
+            startedAt?: string | null;
+        };
+        /** @description A news entry as returned by the API. */
+        NewsResponse: {
+            /** Format: int32 */
+            id: number;
+            title: string;
+            body: string;
+            author: string;
+            /** Format: date-time */
+            publishedAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            isPublished: boolean;
         };
         /** @description Who the caller's token says they are. Deliberately not their characters — see PlayerEndpoints. */
         PlayerMeResponse: {
-            username?: string | null;
-            level?: string | null;
+            username: string;
+            level: string;
+        };
+        /**
+         * @description One activated plugin and everything it exposes over HTTP. `version` goes over the wire as a
+         *     string, e.g. `"0.1.0"`.
+         */
+        PluginInfoResponse: {
+            id: string;
+            name: string;
+            version: string;
+            author: string;
+            description: string;
+            assembly: string;
+            isExternal: boolean;
+            routes: components["schemas"]["PluginRouteResponse"][];
+        };
+        /** @description One HTTP route a plugin declares. `policy` is null when the route is open. */
+        PluginRouteResponse: {
+            method: string;
+            path: string;
+            policy?: string | null;
         };
         /** @description A web self-registration request. */
         RegisterRequest: {
-            username?: string | null;
-            password?: string | null;
-            email?: string | null;
+            username: string;
+            password: string;
+            email: string;
         };
         /** @description The shard's public contact points. */
         ServerContactsResponse: {
@@ -933,46 +1314,65 @@ export interface components {
             email?: string | null;
             discord?: string | null;
         };
+        /** @description The public server profile a website or launcher reads: identity, contacts, assets, and whether registration is open. */
+        ServerInfoResponse: {
+            shardName: string;
+            description?: string | null;
+            contacts: components["schemas"]["ServerContactsResponse"];
+            registrationEnabled: boolean;
+            assets: {
+                [key: string]: string;
+            };
+        };
+        /** @description The full settings view returned to staff (identical fields to the public info minus the shard name). */
+        ServerSettingsResponse: {
+            description?: string | null;
+            contacts: components["schemas"]["ServerContactsResponse"];
+            registrationEnabled: boolean;
+            assets: {
+                [key: string]: string;
+            };
+        };
         /** @description The shard's public statistics, as a website or launcher reads them. */
         ServerStatsResponse: {
             /** Format: date-time */
-            generatedAt?: string;
+            generatedAt: string;
             /** Format: int64 */
-            uptimeSeconds?: number;
-            players?: components["schemas"]["StatsPlayersResponse"];
-            accounts?: components["schemas"]["StatsAccountsResponse"];
-            world?: components["schemas"]["StatsWorldResponse"];
-            content?: components["schemas"]["StatsContentResponse"];
+            uptimeSeconds: number;
+            players: components["schemas"]["StatsPlayersResponse"];
+            accounts: components["schemas"]["StatsAccountsResponse"];
+            world: components["schemas"]["StatsWorldResponse"];
+            content: components["schemas"]["StatsContentResponse"];
         };
         /** @description The shard's user base: accounts registered, accounts verified, and characters created. */
         StatsAccountsResponse: {
             /** Format: int32 */
-            total?: number;
+            total: number;
             /** Format: int32 */
-            active?: number;
+            active: number;
             /** Format: int32 */
-            characters?: number;
+            characters: number;
         };
         /** @description How much content the shard has loaded: the templates available to spawn from. */
         StatsContentResponse: {
             /** Format: int32 */
-            itemTemplates?: number;
+            itemTemplates: number;
             /** Format: int32 */
-            mobileTemplates?: number;
+            mobileTemplates: number;
         };
         /** @description Who is connected: players in the world, and every open connection including the login screen. */
         StatsPlayersResponse: {
             /** Format: int32 */
-            online?: number;
+            online: number;
             /** Format: int32 */
-            connections?: number;
+            connections: number;
         };
         /** @description How much the world holds: creatures nobody plays, and persisted items. */
         StatsWorldResponse: {
             /** Format: int32 */
-            npcs?: number;
+            npcs: number;
             /** Format: int32 */
-            items?: number;
+            items: number;
         };
         /**
          * @description The fields to change. Every one is optional: absent means "leave alone", which is what makes this a
@@ -986,9 +1386,9 @@ export interface components {
         };
         /** @description Body for updating a news entry. */
         UpdateNewsRequest: {
-            title?: string | null;
-            body?: string | null;
-            isPublished?: boolean;
+            title: string;
+            body: string;
+            isPublished: boolean;
         };
         /** @description A partial settings update: an omitted (null) field is left unchanged. */
         UpdateServerSettingsRequest: {
@@ -998,7 +1398,33 @@ export interface components {
         };
         /** @description Carries the single-use token that verifies an account's email. */
         VerifyEmailRequest: {
-            token?: string | null;
+            token: string;
+        };
+        /** @description What the shard calls itself and which build it runs. */
+        VersionResponse: {
+            shardName: string;
+            version: string;
+        };
+        WeaponSpec: {
+            /** Format: int32 */
+            lowDamage: number;
+            /** Format: int32 */
+            highDamage: number;
+            /** Format: int32 */
+            speed: number;
+            /** Format: int32 */
+            baseRange: number;
+            /** Format: int32 */
+            maxRange: number;
+            /** Format: int32 */
+            hitSound: number;
+            /** Format: int32 */
+            missSound: number;
+            weaponSkill?: string | null;
+            /** Format: int32 */
+            ammo?: number | null;
+            /** Format: int32 */
+            ammoFx?: number | null;
         };
     };
     responses: never;
@@ -1023,7 +1449,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"][];
+                };
             };
         };
     };
@@ -1040,12 +1468,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"];
+                };
             };
         };
     };
@@ -1065,7 +1495,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"];
+                };
             };
         };
     };
@@ -1080,8 +1512,8 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1109,7 +1541,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AccountResponse"];
+                };
             };
         };
     };
@@ -1127,7 +1561,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AdminStatusResponse"];
+                };
             };
         };
     };
@@ -1145,7 +1581,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PluginInfoResponse"][];
+                };
             };
         };
     };
@@ -1167,7 +1605,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiTokenResult"];
+                };
             };
         };
     };
@@ -1185,7 +1625,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ApiTokenResult"];
+                };
             };
         };
     };
@@ -1207,7 +1649,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["CharacterResponsePagedResponse"];
+                };
             };
         };
     };
@@ -1225,7 +1669,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "text/event-stream": string;
+                };
             };
         };
     };
@@ -1242,8 +1688,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1269,7 +1715,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1287,7 +1735,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["MapFacetInfo"][];
+                };
             };
         };
     };
@@ -1309,7 +1759,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1334,7 +1786,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1352,7 +1806,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["MapImageExportStatus"];
+                };
             };
         };
     };
@@ -1365,12 +1821,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["MapImageExportStatus"];
+                };
             };
         };
     };
@@ -1388,7 +1846,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ItemImageExportStatus"];
+                };
             };
         };
     };
@@ -1401,12 +1861,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ItemImageExportStatus"];
+                };
             };
         };
     };
@@ -1428,7 +1890,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ItemTemplateSummaryResponsePagedResponse"];
+                };
             };
         };
     };
@@ -1448,7 +1912,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ItemTemplateResponse"];
+                };
             };
         };
     };
@@ -1470,7 +1936,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1494,7 +1962,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1514,7 +1984,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1536,7 +2008,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BodySummaryPagedResponse"];
+                };
             };
         };
     };
@@ -1559,7 +2033,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["HairStyleSummaryPagedResponse"];
+                };
             };
         };
     };
@@ -1581,7 +2057,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "image/png": string;
+                };
             };
         };
     };
@@ -1599,7 +2077,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BodyImageExportStatus"];
+                };
             };
         };
     };
@@ -1612,12 +2092,14 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["BodyImageExportStatus"];
+                };
             };
         };
     };
@@ -1635,7 +2117,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"][];
+                };
             };
         };
     };
@@ -1652,12 +2136,14 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Created */
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"];
+                };
             };
         };
     };
@@ -1677,7 +2163,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"];
+                };
             };
         };
     };
@@ -1701,7 +2189,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"];
+                };
             };
         };
     };
@@ -1716,8 +2206,8 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1739,7 +2229,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"][];
+                };
             };
         };
     };
@@ -1759,7 +2251,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["NewsResponse"];
+                };
             };
         };
     };
@@ -1816,8 +2310,8 @@ export interface operations {
             };
         };
         responses: {
-            /** @description OK */
-            200: {
+            /** @description Accepted */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1861,7 +2355,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ServerInfoResponse"];
+                };
             };
         };
     };
@@ -1881,7 +2377,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": string;
+                };
             };
         };
     };
@@ -1899,7 +2397,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ServerSettingsResponse"];
+                };
             };
         };
     };
@@ -1921,7 +2421,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ServerSettingsResponse"];
+                };
             };
         };
     };
@@ -1948,7 +2450,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ServerSettingsResponse"];
+                };
             };
         };
     };
@@ -1963,8 +2467,8 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description OK */
-            200: {
+            /** @description No Content */
+            204: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2006,7 +2510,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["VersionResponse"];
+                };
             };
         };
     };

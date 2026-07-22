@@ -52,14 +52,14 @@ export function DashboardScreen() {
           </p>
         )}
 
-        {/* Optional all the way down because the schema says so: Swashbuckle marks nothing required
-            without SupportNonNullableReferenceTypes, so the generated types cannot promise these nested
-            objects exist. Figure renders an em dash for a missing number, which is also what should show
-            while the first snapshot is still being taken. */}
+        {/* One `?.`, on the query result: the response itself is absent until it arrives, but the schema
+            now declares the nested objects required, so nothing below that needs guarding. Figure renders
+            an em dash for a missing number, which is also what should show while the first snapshot on
+            the game loop is still being taken. */}
         <dl className="grid grid-cols-3 gap-4">
-          <Figure label={t('dashboard.playersOnline')} value={stats.data?.players?.online} />
-          <Figure label={t('dashboard.accounts')} value={stats.data?.accounts?.total} />
-          <Figure label={t('dashboard.charactersTotal')} value={stats.data?.accounts?.characters} />
+          <Figure label={t('dashboard.playersOnline')} value={stats.data?.players.online} />
+          <Figure label={t('dashboard.accounts')} value={stats.data?.accounts.total} />
+          <Figure label={t('dashboard.charactersTotal')} value={stats.data?.accounts.characters} />
         </dl>
       </Card>
     </div>

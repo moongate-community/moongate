@@ -23,6 +23,7 @@ public sealed class CharacterAdminEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/admin/characters", List)
                  .WithName("ListCharacters")
                  .WithTags("characters")
+                 .Produces<PagedResponse<CharacterResponse>>()
                  .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Every player character on the shard, paged.</summary>

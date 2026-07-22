@@ -82,6 +82,15 @@ public sealed class HttpServerService : ISquidStdService
         builder.Services.AddSwaggerGen(
             options =>
             {
+                // Every DTO here is a record of non-nullable properties, but by default Swashbuckle marks
+                // nothing required — so a generated client has to treat every field as possibly absent and
+                // guard a value the server always sends. These two read the nullable annotations the
+                // compiler already enforces: the first makes the property non-nullable in the schema, the
+                // second is what actually puts it in `required`. One without the other changes nothing a
+                // client can act on.
+                options.SupportNonNullableReferenceTypes();
+                options.NonNullableReferenceTypesAsRequired();
+
                 foreach (var path in EndpointXmlDocumentationPaths())
                 {
                     options.IncludeXmlComments(path);

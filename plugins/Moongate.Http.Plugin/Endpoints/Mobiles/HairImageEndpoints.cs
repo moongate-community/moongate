@@ -21,7 +21,8 @@ public sealed class HairImageEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/images/hair/{style}.png", Get)
                  .WithName("GetHairImage")
-                 .WithTags("mobiles");
+                 .WithTags("mobiles")
+                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
     /// <summary>Serves a hair (or facial-hair) style as PNG, rendered over a reference body.</summary>
     /// <remarks>

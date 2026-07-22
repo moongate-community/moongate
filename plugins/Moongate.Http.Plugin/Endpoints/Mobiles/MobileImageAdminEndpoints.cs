@@ -36,17 +36,21 @@ public sealed class MobileImageAdminEndpoints : IApiEndpointRegistration
                            .WithTags("mobiles")
                            .RequireAuthorization(HttpServerService.AdminPolicy);
 
-        export.MapPost("/", Start).WithName("StartBodyImageExport");
-        export.MapGet("/", GetStatus).WithName("GetBodyImageExportStatus");
+        export.MapPost("/", Start)
+              .WithName("StartBodyImageExport")
+              .Produces<BodyImageExportStatus>(StatusCodes.Status202Accepted);
+        export.MapGet("/", GetStatus).WithName("GetBodyImageExportStatus").Produces<BodyImageExportStatus>();
 
         routes.MapGet("/api/v1/admin/bodies", ListBodies)
               .WithName("ListBodies")
               .WithTags("mobiles")
+              .Produces<PagedResponse<BodySummary>>()
               .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapGet("/api/v1/admin/hair-styles", ListHairStyles)
               .WithName("ListHairStyles")
               .WithTags("mobiles")
+              .Produces<PagedResponse<HairStyleSummary>>()
               .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 

@@ -28,11 +28,13 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
     {
         routes.MapPost("/api/v1/register", RegisterAccount)
               .WithName("RegisterAccount")
+              .Produces(StatusCodes.Status202Accepted)
               .WithTags("registration")
               .AllowAnonymous();
         routes.MapPost("/api/v1/register/verify", Verify)
               .WithName("VerifyRegistration")
               .WithTags("registration")
+              .Produces(StatusCodes.Status200OK)
               .AllowAnonymous();
     }
 

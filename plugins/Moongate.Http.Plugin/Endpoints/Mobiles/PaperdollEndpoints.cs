@@ -19,7 +19,8 @@ public sealed class PaperdollEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/images/mobiles/templates/{id}/paperdoll.png", Get)
                  .WithName("GetMobileTemplatePaperdoll")
-                 .WithTags("mobiles");
+                 .WithTags("mobiles")
+                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
     /// <summary>Serves the template's classic client paperdoll as PNG: background, body, hair, equipment.</summary>
     /// <remarks>

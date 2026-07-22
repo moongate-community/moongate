@@ -26,6 +26,7 @@ public sealed class AdminEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/admin/status", Status)
                  .WithName("GetAdminStatus")
                  .WithTags("admin")
+                 .Produces<AdminStatusResponse>()
                  .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Reports the shard's name, build and how many sessions are connected.</summary>

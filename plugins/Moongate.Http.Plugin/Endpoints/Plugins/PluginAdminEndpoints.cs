@@ -31,6 +31,7 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/admin/plugins", Get)
                  .WithName("GetAdminPlugins")
                  .WithTags("admin")
+                 .Produces<IReadOnlyList<PluginInfoResponse>>()
                  .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Lists the plugins this shard activated, each with the HTTP routes it declares.</summary>
