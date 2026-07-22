@@ -12,15 +12,22 @@ WORKDIR /src
 COPY ["Directory.Build.props", "global.json", "./"]
 
 # Copy every referenced project file before restore: Moongate.Server pulls in the whole
-# graph (Network, Persistence, Scripting -> Core, UO.Data -> Ultima), so restore fails
-# unless all of them are present. Kept as a separate layer for dependency caching.
+# graph — the src libraries plus the four plugin projects it references. All twelve must be
+# here, because `dotnet restore` does NOT fail on a missing ProjectReference: it prints
+# "Skipping project ... because it was not found" and carries on, so an incomplete set
+# restores a partial graph, silently, and this layer stops being worth caching.
 COPY ["src/Moongate.Core/Moongate.Core.csproj", "src/Moongate.Core/"]
 COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
 COPY ["src/Moongate.UO.Data/Moongate.UO.Data.csproj", "src/Moongate.UO.Data/"]
 COPY ["src/Moongate.Network/Moongate.Network.csproj", "src/Moongate.Network/"]
 COPY ["src/Moongate.Persistence/Moongate.Persistence.csproj", "src/Moongate.Persistence/"]
 COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
+COPY ["src/Moongate.Server.Abstractions/Moongate.Server.Abstractions.csproj", "src/Moongate.Server.Abstractions/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
+COPY ["plugins/Moongate.Console.Admin.Plugin/Moongate.Console.Admin.Plugin.csproj", "plugins/Moongate.Console.Admin.Plugin/"]
+COPY ["plugins/Moongate.Http.Plugin/Moongate.Http.Plugin.csproj", "plugins/Moongate.Http.Plugin/"]
+COPY ["plugins/Moongate.News.Plugin/Moongate.News.Plugin.csproj", "plugins/Moongate.News.Plugin/"]
+COPY ["plugins/Moongate.Smtp.Plugin/Moongate.Smtp.Plugin.csproj", "plugins/Moongate.Smtp.Plugin/"]
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
 
 COPY . .
