@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
+using Moongate.Http.Plugin;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Endpoints.Accounts;
@@ -9,6 +10,7 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Plugins;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Stats;
@@ -18,11 +20,14 @@ using Moongate.Http.Plugin.Interfaces.Auth;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
+using Moongate.Http.Plugin.Services.Plugins;
 using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Server;
 using SquidStd.Core.Interfaces.Config;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -170,6 +175,16 @@ public sealed class TestApiServer : IAsyncDisposable
         var stats = new StubServerStatsService();
         container.RegisterInstance<IServerStatsService>(stats);
         container.RegisterApiEndpointInstance(new StatsEndpoints(stats, moongateConfig));
+
+        // The fixture's endpoints all live in Moongate.Http.Plugin, so recording that plugin is what makes
+        // their routes attributable — the same join the real bootstrap makes.
+        var pluginCatalog = new PluginCatalog();
+        pluginCatalog.Record(new MoongateHttpPlugin(), isExternal: false);
+
+        container.RegisterInstance<IPluginCatalog>(pluginCatalog);
+        container.RegisterApiEndpointInstance(
+            new PluginAdminEndpoints(pluginCatalog, new EndpointPluginRouteInspector())
+        );
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);

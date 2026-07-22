@@ -11,6 +11,7 @@ using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Plugins;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Stats;
@@ -58,6 +59,7 @@ public class MoongateHttpPluginTests
                 typeof(MobileTemplateImageEndpoints),
                 typeof(PaperdollEndpoints),
                 typeof(PlayerEndpoints),
+                typeof(PluginAdminEndpoints),
                 typeof(RegistrationEndpoints),
                 typeof(ServerInfoEndpoints),
                 typeof(ServerSettingsAdminEndpoints),

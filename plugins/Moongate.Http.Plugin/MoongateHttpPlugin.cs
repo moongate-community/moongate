@@ -10,6 +10,7 @@ using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
 using Moongate.Http.Plugin.Endpoints.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Plugins;
 using Moongate.Http.Plugin.Endpoints.Registration;
 using Moongate.Http.Plugin.Endpoints.ServerInfo;
 using Moongate.Http.Plugin.Endpoints.Stats;
@@ -21,6 +22,7 @@ using Moongate.Http.Plugin.Interfaces.Console;
 using Moongate.Http.Plugin.Interfaces.Images;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
+using Moongate.Http.Plugin.Interfaces.Plugins;
 using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Services.Assets;
@@ -30,6 +32,7 @@ using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Images;
 using Moongate.Http.Plugin.Services.Maps;
 using Moongate.Http.Plugin.Services.Mobiles;
+using Moongate.Http.Plugin.Services.Plugins;
 using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Http.Plugin.Services.Ultima;
 using Moongate.Ultima.Catalog;
@@ -138,6 +141,11 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<ServerSettingsAdminEndpoints>();
         container.RegisterApiEndpoint<RegistrationEndpoints>();
         container.RegisterApiEndpoint<StatsEndpoints>();
+
+        // Diagnostics for the staff console: which plugins are running and what each one serves. The
+        // catalogue itself is a server service — the composition root registers it.
+        container.Register<IPluginRouteInspector, EndpointPluginRouteInspector>(Reuse.Singleton);
+        container.RegisterApiEndpoint<PluginAdminEndpoints>();
 
         container.RegisterStdService<HttpServerService, HttpServerService>();
     }
