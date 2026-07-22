@@ -16,6 +16,13 @@ public sealed class JwtTokenService : IJwtTokenService
 {
     private const int MinimumKeyBytes = 32;
 
+    /// <summary>
+    /// The claim carrying the session start. Same value as <c>JwtRegisteredClaimNames.AuthTime</c>; spelled
+    /// out because — unlike <c>sub</c>, <c>name</c> and <c>role</c> — it is NOT remapped to a long URI when a
+    /// token is validated, so this is the exact string a reader has to ask for.
+    /// </summary>
+    internal const string AuthTimeClaim = "auth_time";
+
     private readonly MoongateHttpConfig _config;
     private readonly TimeProvider _timeProvider;
 
@@ -25,7 +32,7 @@ public sealed class JwtTokenService : IJwtTokenService
         _timeProvider = timeProvider;
     }
 
-    public ApiTokenResult Issue(Serial accountId, string username, AccountLevelType level)
+    public ApiTokenResult Issue(Serial accountId, string username, AccountLevelType level, DateTimeOffset authTime)
     {
         var key = SigningKey(_config.Jwt.SigningKey);
         var expiresAt = _timeProvider.GetUtcNow().AddMinutes(_config.Jwt.LifetimeMinutes);
@@ -36,7 +43,8 @@ public sealed class JwtTokenService : IJwtTokenService
             [
                 new(JwtRegisteredClaimNames.Sub, accountId.Value.ToString()),
                 new(ClaimTypes.Name, username),
-                new(ClaimTypes.Role, level.ToString())
+                new(ClaimTypes.Role, level.ToString()),
+                new(AuthTimeClaim, authTime.ToUnixTimeSeconds().ToString())
             ],
             expires: expiresAt.UtcDateTime,
             signingCredentials: new(key, SecurityAlgorithms.HmacSha256)

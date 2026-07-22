@@ -13,6 +13,13 @@ public sealed class HttpJwtConfig
     /// <summary>How long an issued token stays valid.</summary>
     public int LifetimeMinutes { get; set; } = 60;
 
+    /// <summary>
+    /// How long a session may be renewed for, counted from the login that started it rather than from the
+    /// last renewal. Without this ceiling a stolen token could be renewed forever, since every renewal
+    /// issues a token that is itself renewable.
+    /// </summary>
+    public int MaxSessionHours { get; set; } = 12;
+
     /// <summary>The <c>iss</c> claim, and the issuer tokens are validated against.</summary>
     public string Issuer { get; set; } = "moongate";
 }
