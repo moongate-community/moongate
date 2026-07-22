@@ -1,0 +1,104 @@
+/* Vendored from the Claude Design project "Moongate web dashboard design"
+   (aaa08b06-507a-4970-a610-fb6ca53047cf), file moongate-tokens.css.
+   Authored there, not here: edits made by hand are lost on the next sync.
+
+   The Google Fonts @import was dropped on purpose — the fonts are <link>ed from index.html,
+   because a CSS @import blocks rendering until it resolves. */
+
+
+:root {
+  /* Superfici */
+  --mg-bg-deep: #12151d;      /* console, log, input */
+  --mg-bg-page: #161a22;      /* sfondo pagina */
+  --mg-surface: #1a1f2a;      /* card, pannelli, top bar */
+  --mg-surface-raised: #232936;
+
+  /* Bordi */
+  --mg-border: #2a3040;
+  --mg-border-strong: #4a5262;
+  --mg-border-soft: #3a4256;
+
+  /* Testo */
+  --mg-text: #eef1f5;
+  --mg-text-muted: #9aa3b2;
+  --mg-text-faint: #616b7d;
+  --mg-text-ghost: #3d4658;
+
+  /* Accento primario (oro) */
+  --mg-gold: #e2b856;
+  --mg-gold-hi: #ecc76a;
+  --mg-gold-lo: #c99a3c;
+  --mg-gold-ink: #1c1608;     /* testo su bottoni gold */
+  --mg-gradient-cta: linear-gradient(180deg, var(--mg-gold-hi), var(--mg-gold-lo));
+
+  /* Semantici */
+  --mg-success: #6fc98d;
+  --mg-danger: #d05548;
+  --mg-danger-text: #e88f83;
+  --mg-info: #7fa7d9;         /* anche: mana, freddo */
+  --mg-staff: #a86fd1;        /* badge STAFF, GM */
+  --mg-staff-text: #cda3e8;
+
+  /* Rarità item (nome item + bordo tile; sfondo = tinta 10%) */
+  --mg-rarity-common: #a3a9b3;
+  --mg-rarity-uncommon: #43cf5c;
+  --mg-rarity-rare: #4a9eff;
+  --mg-rarity-epic: #b160e8;
+  --mg-rarity-legendary: #f5923e;
+
+  /* Tipografia */
+  --mg-font-display: 'Cinzel', serif;              /* titoli, brand, bottoni — 600/700 */
+  --mg-font-body: 'Alegreya Sans', system-ui, sans-serif; /* UI e testo — 400/500/700 */
+  --mg-font-mono: 'Victor Mono', ui-monospace, Menlo, monospace; /* numeri, gp, timestamp, log, ID, codice */
+
+  /* Forme & spazi */
+  --mg-radius-control: 2px;
+  --mg-radius-card: 2px;
+  --mg-radius-pill: 2px;
+  --mg-pad-card: 20px;
+  --mg-gap-grid: 16px;
+  --mg-topbar-h: 50px;
+  --mg-tabrow-h: 46px;
+
+  /* Focus */
+  --mg-focus-ring: 0 0 0 3px rgba(226, 184, 86, .12);
+}
+
+/* ── Tema chiaro ─────────────────────────────────────────
+   Applica data-theme="light" su <html> o su un contenitore.
+   Forme, spazi, font e --mg-gold-ink restano invariati. */
+[data-theme="light"] {
+  --mg-bg-deep: #eceef2;
+  --mg-bg-page: #f4f5f8;
+  --mg-surface: #ffffff;
+  --mg-surface-raised: #eef0f4;
+
+  --mg-border: #d9dde5;
+  --mg-border-strong: #b4bcc9;
+  --mg-border-soft: #c6ccd6;
+
+  --mg-text: #1a1f2a;
+  --mg-text-muted: #5a6473;
+  --mg-text-faint: #8a93a3;
+  --mg-text-ghost: #aab2be;
+
+  --mg-gold: #b8892f;
+  --mg-gold-hi: #d8ab4e;
+  --mg-gold-lo: #b8892f;
+  --mg-gradient-cta: linear-gradient(180deg, var(--mg-gold-hi), var(--mg-gold-lo));
+
+  --mg-success: #2f9e5c;
+  --mg-danger: #c0392b;
+  --mg-danger-text: #b23325;
+  --mg-info: #2f6fb0;
+  --mg-staff: #8b4bc4;
+  --mg-staff-text: #7a3bb0;
+
+  --mg-rarity-common: #6b7280;
+  --mg-rarity-uncommon: #2f9e4f;
+  --mg-rarity-rare: #2f7fd6;
+  --mg-rarity-epic: #8b3fc4;
+  --mg-rarity-legendary: #d97a1e;
+
+  --mg-focus-ring: 0 0 0 3px rgba(184, 137, 47, .18);
+}
