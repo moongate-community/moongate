@@ -20,8 +20,14 @@ public sealed class NewsEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/v1/news", List).WithName("ListNews").WithTags("news");
-        routes.MapGet("/api/v1/news/{id}", GetOne).WithName("GetNews").WithTags("news");
+        routes.MapGet("/api/v1/news", List)
+              .WithName("ListNews")
+              .WithTags("news")
+              .Produces<IReadOnlyList<NewsResponse>>();
+        routes.MapGet("/api/v1/news/{id}", GetOne)
+              .WithName("GetNews")
+              .WithTags("news")
+              .Produces<NewsResponse>();
     }
 
     /// <summary>Lists published news, newest first.</summary>

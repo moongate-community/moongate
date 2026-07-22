@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Api.Auth;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces.Auth;
@@ -40,11 +41,13 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
         routes.MapPost("/api/v1/auth/login", Login)
               .WithName("Login")
               .WithTags("auth")
+              .Produces<ApiTokenResult>()
               .AllowAnonymous();
 
         routes.MapPost("/api/v1/auth/renew", Renew)
               .WithName("RenewToken")
               .WithTags("auth")
+              .Produces<ApiTokenResult>()
               .RequireAuthorization(HttpServerService.PlayerPolicy);
     }
 

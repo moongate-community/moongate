@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Interfaces.Images;
 using Moongate.Http.Plugin.Services.Hosting;
@@ -25,8 +26,10 @@ public sealed class ItemImageAdminEndpoints : IApiEndpointRegistration
                           .WithTags("images")
                           .RequireAuthorization(HttpServerService.AdminPolicy);
 
-        group.MapPost("/", Start).WithName("StartItemImageExport");
-        group.MapGet("/", GetStatus).WithName("GetItemImageExportStatus");
+        group.MapPost("/", Start)
+             .WithName("StartItemImageExport")
+             .Produces<ItemImageExportStatus>(StatusCodes.Status202Accepted);
+        group.MapGet("/", GetStatus).WithName("GetItemImageExportStatus").Produces<ItemImageExportStatus>();
     }
 
     /// <summary>Reports how far the item image export has got.</summary>

@@ -39,11 +39,13 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
                           .WithTags("accounts")
                           .RequireAuthorization(HttpServerService.AdminPolicy);
 
-        group.MapGet("/", List).WithName("ListAccounts");
-        group.MapGet("/{username}", Get).WithName("GetAccount");
-        group.MapPost("/", Create).WithName("CreateAccount");
-        group.MapPatch("/{username}", Update).WithName("UpdateAccount");
-        group.MapDelete("/{username}", Delete).WithName("DeleteAccount");
+        group.MapGet("/", List).WithName("ListAccounts").Produces<IReadOnlyList<AccountResponse>>();
+        group.MapGet("/{username}", Get).WithName("GetAccount").Produces<AccountResponse>();
+        group.MapPost("/", Create)
+             .WithName("CreateAccount")
+             .Produces<AccountResponse>(StatusCodes.Status201Created);
+        group.MapPatch("/{username}", Update).WithName("UpdateAccount").Produces<AccountResponse>();
+        group.MapDelete("/{username}", Delete).WithName("DeleteAccount").Produces(StatusCodes.Status204NoContent);
     }
 
     internal static IResult InvalidLevel(string? name)

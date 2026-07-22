@@ -19,7 +19,8 @@ public sealed class MobileTemplateImageEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/images/mobiles/templates/{id}.png", Get)
                  .WithName("GetMobileTemplateImage")
-                 .WithTags("mobiles");
+                 .WithTags("mobiles")
+                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
     /// <summary>Serves a mobile template's dressed figure as PNG: body, hair and worn equipment.</summary>
     /// <remarks>

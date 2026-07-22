@@ -1,11 +1,16 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './styles/globals.css'
-import { ThemeToggle } from './components/ThemeToggle'
+import './lib/i18n'
+import { applyStoredTheme } from './lib/theme'
+import { App } from './App'
 
-// Placeholder entry point: Task 6 replaces this body with the router.
+// Before the first render, and outside the component tree: the login screen carries no theme toggle,
+// so nothing inside the tree would apply the remembered choice on the screen most visitors see first.
+applyStoredTheme()
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ThemeToggle />
+    <App />
   </StrictMode>,
 )

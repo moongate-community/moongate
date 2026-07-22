@@ -1,5 +1,7 @@
 - name: Build, test & conventions
   href: build-test-conventions.md
+- name: The web portal
+  href: web-portal.md
 - name: Writing plugins
   items:
     - name: Overview

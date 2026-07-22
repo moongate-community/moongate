@@ -25,11 +25,13 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
         routes.MapGet("/api/v1/admin/items/templates", List)
               .WithName("ListItemTemplates")
               .WithTags("items")
+              .Produces<PagedResponse<ItemTemplateSummaryResponse>>()
               .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapGet("/api/v1/admin/items/templates/{id}", Get)
               .WithName("GetItemTemplate")
               .WithTags("items")
+              .Produces<ItemTemplateResponse>()
               .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 

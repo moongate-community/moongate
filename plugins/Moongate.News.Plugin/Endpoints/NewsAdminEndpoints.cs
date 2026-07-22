@@ -22,11 +22,26 @@ public sealed class NewsAdminEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
     {
-        routes.MapPost("/api/v1/admin/news", Create).WithName("CreateNews").WithTags("news").RequireAuthorization(HttpServerService.AdminPolicy);
-        routes.MapGet("/api/v1/admin/news", ListAll).WithName("ListAllNews").WithTags("news").RequireAuthorization(HttpServerService.AdminPolicy);
-        routes.MapGet("/api/v1/admin/news/{id}", GetOne).WithName("GetNewsAdmin").WithTags("news").RequireAuthorization(HttpServerService.AdminPolicy);
-        routes.MapPut("/api/v1/admin/news/{id}", Update).WithName("UpdateNews").WithTags("news").RequireAuthorization(HttpServerService.AdminPolicy);
-        routes.MapDelete("/api/v1/admin/news/{id}", Delete).WithName("DeleteNews").WithTags("news").RequireAuthorization(HttpServerService.AdminPolicy);
+        routes.MapPost("/api/v1/admin/news", Create).WithName("CreateNews")
+              .WithTags("news")
+              .Produces<NewsResponse>(StatusCodes.Status201Created)
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+        routes.MapGet("/api/v1/admin/news", ListAll).WithName("ListAllNews")
+              .WithTags("news")
+              .Produces<IReadOnlyList<NewsResponse>>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+        routes.MapGet("/api/v1/admin/news/{id}", GetOne).WithName("GetNewsAdmin")
+              .WithTags("news")
+              .Produces<NewsResponse>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+        routes.MapPut("/api/v1/admin/news/{id}", Update).WithName("UpdateNews")
+              .WithTags("news")
+              .Produces<NewsResponse>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
+        routes.MapDelete("/api/v1/admin/news/{id}", Delete).WithName("DeleteNews")
+              .WithTags("news")
+              .Produces(StatusCodes.Status204NoContent)
+              .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     /// <summary>Creates a news entry, authored by the calling staff member.</summary>

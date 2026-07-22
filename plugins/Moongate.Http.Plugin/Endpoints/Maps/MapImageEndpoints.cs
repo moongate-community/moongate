@@ -29,17 +29,20 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
         routes.MapGet("/api/v1/images/maps", List)
               .WithName("ListMaps")
               .WithTags("images")
+              .Produces<IReadOnlyList<MapFacetInfo>>()
               .AllowAnonymous();
 
         // Before the tile route, so "full" is never read as a zoom.
         routes.MapGet("/api/v1/images/maps/{map}/full.png", GetFull)
               .WithName("GetFullMapImage")
               .WithTags("images")
+              .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
               .AllowAnonymous();
 
         routes.MapGet("/api/v1/images/maps/{map}/{z}/{x}/{y}.png", GetTile)
               .WithName("GetMapTile")
               .WithTags("images")
+              .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
               .AllowAnonymous();
     }
 

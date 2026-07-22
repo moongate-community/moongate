@@ -27,6 +27,7 @@ public sealed class ItemImageEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/images/items/{id}.png", Get)
                  .WithName("GetItemImage")
                  .WithTags("images")
+                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
                  .AllowAnonymous();
 
     /// <summary>

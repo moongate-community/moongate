@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Data.Api.Plugins;
 using Moongate.Http.Plugin.Data.Plugins;
@@ -30,6 +31,7 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/admin/plugins", Get)
                  .WithName("GetAdminPlugins")
                  .WithTags("admin")
+                 .Produces<IReadOnlyList<PluginInfoResponse>>()
                  .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Lists the plugins this shard activated, each with the HTTP routes it declares.</summary>
@@ -42,7 +44,12 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
 
     // EndpointDataSource arrives as a parameter rather than a constructor dependency: it does not exist in
     // the container while plugins are being configured, only once the web application has been built.
-    private IResult Get(EndpointDataSource endpoints)
+    //
+    // [FromServices] is what keeps it out of the OpenAPI document. Minimal APIs resolve it from the
+    // container either way, but the API explorer does not infer that, and describes it as a bindable
+    // parameter — dragging Endpoint, RequestDelegate, MethodInfo, Assembly, Type and the rest of the
+    // reflection graph in as schema components, roughly thirty of them, for a route that takes no input.
+    private IResult Get([FromServices] EndpointDataSource endpoints)
     {
         var byAssembly = _inspector.RoutesByAssembly(endpoints);
         var catalogued = _catalog.Plugins.Select(plugin => plugin.AssemblyName).ToHashSet(StringComparer.Ordinal);

@@ -1,0 +1,98 @@
+import { render, screen, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import '../lib/i18n'
+import { AuthProvider } from '../lib/auth'
+import { LoginScreen } from './LoginScreen'
+
+function renderLogin() {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+
+  return render(
+    <MemoryRouter>
+      <QueryClientProvider client={client}>
+        <AuthProvider>
+          <LoginScreen />
+        </AuthProvider>
+      </QueryClientProvider>
+    </MemoryRouter>,
+  )
+}
+
+describe('LoginScreen', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    sessionStorage.clear()
+    vi.restoreAllMocks()
+  })
+
+  function json(body: unknown, status = 200) {
+    return new Response(JSON.stringify(body), {
+      status,
+      headers: { 'content-type': 'application/json' },
+    })
+  }
+
+  /**
+   * Answers each route with its real shape. A catch-all that returned the account body for everything
+   * would hand /api/v1/stats a payload with no `players`, and the screen would crash on a field the
+   * contract declares required — a failure invented by the mock, not by the code.
+   */
+  function serveApi() {
+    return vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+      const url = String(input)
+
+      if (url.endsWith('/api/v1/auth/login')) {
+        return json({ token: 't', expiresAt: new Date(Date.now() + 3.6e6).toISOString() })
+      }
+      if (url.endsWith('/api/v1/stats')) {
+        return json({
+          players: { online: 184, connections: 190 },
+          accounts: { total: 7, active: 5, characters: 19 },
+        })
+      }
+      return json({ username: 'tom', level: 'Player' })
+    })
+  }
+
+  it('sends the credentials and stores the issued token', async () => {
+    serveApi()
+
+    renderLogin()
+
+    await userEvent.type(screen.getByLabelText(/account name/i), 'tom')
+    await userEvent.type(screen.getByLabelText(/password/i), 'secret')
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
+
+    await waitFor(() => expect(JSON.parse(localStorage.getItem('mg-token')!).token).toBe('t'))
+  })
+
+  // The checkbox has to move the token, not just look checkable: unticked, the session must not outlive
+  // the tab, which is the whole promise "remember me on this device" makes by being optional.
+  it('keeps an unremembered session out of localStorage', async () => {
+    serveApi()
+
+    renderLogin()
+
+    await userEvent.type(screen.getByLabelText(/account name/i), 'tom')
+    await userEvent.type(screen.getByLabelText(/password/i), 'secret')
+    await userEvent.click(screen.getByLabelText(/remember me/i))
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
+
+    await waitFor(() => expect(JSON.parse(sessionStorage.getItem('mg-token')!).token).toBe('t'))
+    expect(localStorage.getItem('mg-token')).toBeNull()
+  })
+
+  it('shows a message when the credentials are refused', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json({}, 401))
+
+    renderLogin()
+
+    await userEvent.type(screen.getByLabelText(/account name/i), 'tom')
+    await userEvent.type(screen.getByLabelText(/password/i), 'wrong')
+    await userEvent.click(screen.getByRole('button', { name: /sign in/i }))
+
+    expect(await screen.findByText(/invalid/i)).toBeInTheDocument()
+  })
+})

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Interfaces.Maps;
 using Moongate.Http.Plugin.Services.Hosting;
@@ -25,8 +26,10 @@ public sealed class MapImageAdminEndpoints : IApiEndpointRegistration
                           .WithTags("images")
                           .RequireAuthorization(HttpServerService.AdminPolicy);
 
-        group.MapPost("/", Start).WithName("StartMapImageExport");
-        group.MapGet("/", GetStatus).WithName("GetMapImageExportStatus");
+        group.MapPost("/", Start)
+             .WithName("StartMapImageExport")
+             .Produces<MapImageExportStatus>(StatusCodes.Status202Accepted);
+        group.MapGet("/", GetStatus).WithName("GetMapImageExportStatus").Produces<MapImageExportStatus>();
     }
 
     /// <summary>Reports how far the map image export has got.</summary>

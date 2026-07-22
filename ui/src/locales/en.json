@@ -1,0 +1,41 @@
+{
+  "app": {
+    "name": "Moongate"
+  },
+  "theme": {
+    "dark": "Dark",
+    "light": "Light",
+    "label": "Theme"
+  },
+  "nav": {
+    "dashboard": "Dashboard"
+  },
+  "login": {
+    "title": "MOONGATE",
+    "subtitle": "Sign in with your game account credentials.",
+    "account": "Account name",
+    "password": "Password",
+    "submit": "SIGN IN",
+    "failed": "Invalid account name or password.",
+    "staffNote": "Staff sign in through the same gate: the role decides the destination.",
+    "quote": "Sosaria never sleeps.",
+    "remember": "Remember me on this device",
+    "online": "{{count}} adventurers online right now"
+  },
+  "dashboard": {
+    "welcome": "Welcome back, {{name}}",
+    "characters": "Your characters",
+    "noCharacters": "No characters on this account.",
+    "shard": "The shard right now",
+    "playersOnline": "Players online",
+    "accounts": "Accounts",
+    "charactersTotal": "Characters"
+  },
+  "common": {
+    "signOut": "Sign out",
+    "loading": "Loading…"
+  },
+  "error": {
+    "generic": "Something went wrong. Please try again."
+  }
+}

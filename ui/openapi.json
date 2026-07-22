@@ -1,0 +1,3034 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Moongate.Server",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/admin/accounts": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Lists every account on the shard.",
+        "description": "Passwords are never returned, by any account route.",
+        "operationId": "ListAccounts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Creates an account.",
+        "description": "Username and password are required, and the username must be free — a taken one answers 409. Level\nis optional and defaults to Player; when sent it must name an account level, case-insensitively.",
+        "operationId": "CreateAccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/accounts/{username}": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Fetches a single account by username.",
+        "description": "Answers 404 when no account carries that username.",
+        "operationId": "GetAccount",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Updates an account, changing only the fields that are sent.",
+        "description": "Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and\n400 when the level does not name one. Returns the account as it stands after the update.",
+        "operationId": "UpdateAccount",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Deletes an account, along with its characters and everything they carry.",
+        "description": "Permanent, and the only account route that changes the world rather than just the account record.\nAn account whose character is currently being played cannot be deleted: the request answers 409\nuntil that character logs out. A 503 means the game loop did not respond and nothing was deleted.",
+        "operationId": "DeleteAccount",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/admin/status": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Reports the shard's name, build and how many sessions are connected.",
+        "description": "A snapshot taken when the request is served, not a live figure.",
+        "operationId": "GetAdminStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminStatusResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/plugins": {
+      "get": {
+        "tags": [
+          "admin"
+        ],
+        "summary": "Lists the plugins this shard activated, each with the HTTP routes it declares.",
+        "description": "Routes belonging to no plugin — the API reference and framework middleware — are gathered under a\nfinal synthetic entry with id `moongate.host`, so that everything the shard serves appears\nsomewhere. `policy` names the authorization policy guarding a route, and is null when the\nroute is open.",
+        "operationId": "GetAdminPlugins",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PluginInfoResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Trades account credentials for a bearer token.",
+        "description": "The token carries the account's username and level, and every other route reads authorisation from\nit. Send it as `Authorization: Bearer <token>`. Any failure answers 401 without saying\nwhich part was wrong.",
+        "operationId": "Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/renew": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Exchanges a still-valid token for a fresh one, so an active session does not expire mid-use.",
+        "description": "Send the current token as `Authorization: Bearer <token>`; the reply has the same shape as\n`/api/v1/auth/login`. The new token keeps the `auth_time` of the one presented, so renewing\nnever restarts the session: past `http.Jwt.MaxSessionHours` from the original login the answer is\n401 and the user must sign in again. A 401 also means the account has been deactivated.",
+        "operationId": "RenewToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiTokenResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/characters": {
+      "get": {
+        "tags": [
+          "characters"
+        ],
+        "summary": "Every player character on the shard, paged.",
+        "description": "Ordered by character name. Pass search to filter: it is free text, case-insensitive, and matches\neither the character's name or the owning account's username, so \"find me so-and-so's character\" is\none query. Page is 1-based and defaults to 1; pageSize defaults to 25 and cannot exceed 100. NPCs\nare not characters and never appear. A search matching nothing is an empty page, not an error.",
+        "operationId": "ListCharacters",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CharacterResponsePagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/console/stream": {
+      "get": {
+        "tags": [
+          "console"
+        ],
+        "summary": "Opens a per-connection SSE feed; its first event carries the connection id to POST with.",
+        "description": "Emits `ready` (data = the connection id), then a `line` per command reply and a\n            `done` when a command finishes. The connection is closed when the client disconnects.",
+        "operationId": "StreamConsole",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/console": {
+      "post": {
+        "tags": [
+          "console"
+        ],
+        "summary": "Runs a console command; its reply lines stream to the given connection's SSE feed.",
+        "description": "Returns 202 immediately — the command is dispatched onto the game loop and its output\n            arrives asynchronously on `GET /api/v1/admin/console/stream`.",
+        "operationId": "SendConsoleCommand",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsoleCommandRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    },
+    "/api/v1/images/items/{id}.png": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Item art as a PNG, optionally hued.",
+        "description": "Open without a token: the art is client data every player already has on disk. The id is hex, with\nor without the 0x prefix — 0x1234.png and 1234.png are the same item. Pass hue for a coloured\nvariant; 0, or omitting it, gives the raw art, and the range is 0 to 3000. Images are decoded on\nfirst request and cached, so the first call for an item is slower than every call after it.",
+        "operationId": "GetItemImage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hue",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/maps": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "The facets this shard serves, and the shape of each one's tile grid.",
+        "description": "Open without a token. Read this before requesting tiles: the facets' sizes come from the shard's own\nclient files, so maxZoom and the grid differ between shards and must not be hardcoded.",
+        "operationId": "ListMaps",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MapFacetInfo"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/maps/{map}/full.png": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "A whole facet as one PNG.",
+        "description": "Open without a token. The entire facet at one pixel per map tile — 6144×4096 for Felucca — for\ndownloading or printing rather than browsing; use the tiles for a viewer. Optional `?style=`\npicks `flat` (default) or `relief` as on the tile route. It is generated once and\ncached, and the first request is slow and memory-hungry if the staff pre-warm has not run.",
+        "operationId": "GetFullMapImage",
+        "parameters": [
+          {
+            "name": "map",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "style",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/maps/{map}/{z}/{x}/{y}.png": {
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "One map tile.",
+        "description": "Open without a token: map data is client data every player already has on disk. The facet is named,\ncase-insensitively — felucca, trammel, ilshenar, malas, tokuno, termur. Zoom counts up to detail: 0\nis the whole facet in one tile, and maxZoom — which GET /api/v1/images/maps reports per facet — is\none pixel per map tile. Tiles are 256×256. A tile at the facet's edge is padded transparent. Tiles\nare rendered on first request and cached, so the first call at a low zoom builds everything beneath\nit and is slow; the staff pre-warm exists to do that in advance. Optional `?style=` chooses the\nrender: `flat` (default) is the radar map, `relief` adds altitude shading; each caches on\nits own.",
+        "operationId": "GetMapTile",
+        "parameters": [
+          {
+            "name": "map",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "z",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "y",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "style",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/images/maps": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Builds every map tile and whole-facet image into the cache.",
+        "description": "Answers 202 and works in the background; poll this same route with GET for progress. Only one runs\nat a time, so a second request while one is going answers 409. Worth running before anyone opens a\nviewer: the first request at a low zoom otherwise builds every tile beneath it, and the first\nrequest for a whole facet renders a facet-sized image. Progress is kept in memory and does not\nsurvive a restart.",
+        "operationId": "StartMapImageExport",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Reports how far the map image export has got.",
+        "description": "State is Idle before any export has run, then Running, and finally Completed or Failed. Failed counts\nimages that could not be produced; the reasons are in the server log.",
+        "operationId": "GetMapImageExportStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MapImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/images/items": {
+      "post": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Generates every item's art into the cache.",
+        "description": "Answers 202 and works in the background; poll this same route with GET for progress. Only one\nexport runs at a time, so a second request while one is going answers 409. Unhued art only — hued\nvariants are generated on demand by the public image route. Progress is kept in memory and does\nnot survive a restart.",
+        "operationId": "StartItemImageExport",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "images"
+        ],
+        "summary": "Reports how far the item image export has got.",
+        "description": "State is Idle before any export has run, then Running, and finally Completed or Failed. Failed\ncounts items whose art could not be written; the reasons are in the server log.",
+        "operationId": "GetItemImageExportStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/items/templates": {
+      "get": {
+        "tags": [
+          "items"
+        ],
+        "summary": "Every item template, paged.",
+        "description": "Ordered by template id. Pass search to filter: free text, case-insensitive, matching the\ntemplate's id, name, category or any tag. Page is 1-based and defaults to 1; pageSize defaults\nto 25 and cannot exceed 100. A search matching nothing is an empty page, not an error.",
+        "operationId": "ListItemTemplates",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemTemplateSummaryResponsePagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/items/templates/{id}": {
+      "get": {
+        "tags": [
+          "items"
+        ],
+        "summary": "Fetches one item template by id, specs included.",
+        "description": "Ids are case-insensitive. Answers 404 when no template carries the id.",
+        "operationId": "GetItemTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/bodies/{body}.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves a body's idle, front-facing frame as PNG.",
+        "description": "The body is a decimal graphic id; pass hue for a skin-hued variant. Generated lazily and cached\non disk. A body with no usable animation answers 404. Anonymous on purpose: it is client data\nevery player already has on disk.",
+        "operationId": "GetBodyImage",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hue",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/hair/{style}.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves a hair (or facial-hair) style as PNG, rendered over a reference body.",
+        "description": "The style is the hair item's decimal graphic id (see /api/v1/admin/hair-styles). Pass hue to dye\nit, body to change the reference body (default 400, the human male), facial=true for beards.\n404 when nothing decodes for the pair.",
+        "operationId": "GetHairImage",
+        "parameters": [
+          {
+            "name": "style",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hue",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "body",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "facial",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/mobiles/templates/{id}.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves a mobile template's dressed figure as PNG: body, hair and worn equipment.",
+        "description": "Hue specs on the template resolve to their low end so the image is stable and cacheable. 404 on\nan unknown template id, or when the template's body has no animation.",
+        "operationId": "GetMobileTemplateImage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/bodies": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Every classified body, paged, for the picker.",
+        "description": "Classification comes from mobtypes.txt; Equipment-type bodies never appear. Search matches the\ndecimal id or the 0x-prefixed hex. Ordered by body id.",
+        "operationId": "ListBodies",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodySummaryPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/hair-styles": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "The selectable hair (or facial-hair) styles, paged.",
+        "description": "Pass facial=true for beards. Search matches the style name, case-insensitively.",
+        "operationId": "ListHairStyles",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "facial",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HairStyleSummaryPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/mobiles/templates/{id}/paperdoll.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves the template's classic client paperdoll as PNG: background, body, hair, equipment.",
+        "description": "Pass background=false to drop the backdrop gump. Hue and gender-random specs on the template\nresolve deterministically so the image is stable and cacheable. 404 on an unknown template id or\nwhen its body has no paperdoll gump.",
+        "operationId": "GetMobileTemplatePaperdoll",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "background",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/images/bodies": {
+      "post": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Generates every classified body's image into the cache.",
+        "description": "Answers 202 and works in the background; poll this same route with GET for progress. Only one\nexport runs at a time, so a second request while one is going answers 409. Unhued frames only —\nhued variants are generated on demand by the public image route.",
+        "operationId": "StartBodyImageExport",
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Reports how far the body image export has got.",
+        "description": "State is Idle before any export has run, then Running, and finally Completed or Failed.",
+        "operationId": "GetBodyImageExportStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodyImageExportStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/news": {
+      "post": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Creates a news entry, authored by the calling staff member.",
+        "operationId": "CreateNews",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNewsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Lists every news entry, drafts included, newest first.",
+        "operationId": "ListAllNews",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/news/{id}": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Returns one news entry in any state.",
+        "operationId": "GetNewsAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Updates a news entry's title, body and published state.",
+        "operationId": "UpdateNews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNewsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Deletes a news entry.",
+        "operationId": "DeleteNews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/news": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Lists published news, newest first.",
+        "operationId": "ListNews",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NewsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/news/{id}": {
+      "get": {
+        "tags": [
+          "news"
+        ],
+        "summary": "Returns one published news entry; 404 if it is missing or a draft.",
+        "operationId": "GetNews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/player/me": {
+      "get": {
+        "tags": [
+          "player"
+        ],
+        "summary": "Reports the account the bearer token belongs to.",
+        "description": "Username and level, read straight from the token — useful for confirming a token is still valid\nand what it grants. It does not list the account's characters.",
+        "operationId": "GetPlayerMe",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlayerMeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/player/me/characters": {
+      "get": {
+        "tags": [
+          "player"
+        ],
+        "summary": "The caller's own characters.",
+        "description": "Reports every character on the account the bearer token belongs to, with its stats, appearance and\nwhere it stands. Never another account's. The owner field is null here: the caller is the owner. An\naccount with no characters gets an empty list, not an error.",
+        "operationId": "GetMyCharacters",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CharacterResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/register": {
+      "post": {
+        "tags": [
+          "registration"
+        ],
+        "summary": "Registers a new account when web registration is open.",
+        "description": "Answers 403 when registration is disabled, 429 when the caller is rate-limited, 409 for a taken\nusername, 400 for a missing or malformed field, and 202 on success — the account is created\ninactive and must verify its email before it can log in.",
+        "operationId": "RegisterAccount",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          }
+        }
+      }
+    },
+    "/api/v1/register/verify": {
+      "post": {
+        "tags": [
+          "registration"
+        ],
+        "summary": "Verifies an account's email with its token, activating the account.",
+        "description": "Answers 400 for an unknown or already-used token.",
+        "operationId": "VerifyRegistration",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/v1/server-info": {
+      "get": {
+        "tags": [
+          "server-info"
+        ],
+        "summary": "Returns the shard's public profile: name, description, contacts, asset URLs and whether registration is open.",
+        "operationId": "GetServerInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerInfoResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/server-info/assets/{slot}": {
+      "get": {
+        "tags": [
+          "server-info"
+        ],
+        "summary": "Streams a visual asset (logo, favicon or banner) by slot.",
+        "description": "Answers 400 for an unknown slot and 404 when the slot has no asset.",
+        "operationId": "GetServerAsset",
+        "parameters": [
+          {
+            "name": "slot",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/server-settings": {
+      "get": {
+        "tags": [
+          "server-settings"
+        ],
+        "summary": "Returns the full server settings.",
+        "operationId": "GetServerSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerSettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "server-settings"
+        ],
+        "summary": "Updates the server settings; every field is optional and an omitted one is left unchanged.",
+        "operationId": "UpdateServerSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServerSettingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerSettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/server-settings/assets/{slot}": {
+      "post": {
+        "tags": [
+          "server-settings"
+        ],
+        "summary": "Uploads the image for a slot (logo, favicon or banner), replacing any previous one.",
+        "description": "Answers 400 for an unknown slot, 415 for a non-image type, and 413 when the file is too large.",
+        "operationId": "UploadServerAsset",
+        "parameters": [
+          {
+            "name": "slot",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerSettingsResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "server-settings"
+        ],
+        "summary": "Removes the image for a slot.",
+        "operationId": "DeleteServerAsset",
+        "parameters": [
+          {
+            "name": "slot",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/v1/stats": {
+      "get": {
+        "tags": [
+          "stats"
+        ],
+        "summary": "Reports the shard's public statistics: players online, accounts, world size and loaded content.",
+        "description": "The figures come from a snapshot recomputed on the game loop every `StatsRefreshSeconds`;\n`generatedAt` says when it was taken, and equals `0001-01-01T00:00:00+00:00` until the\nfirst one has been computed. The response caches for the same interval.",
+        "operationId": "GetServerStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServerStatsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/version": {
+      "get": {
+        "tags": [
+          "version"
+        ],
+        "summary": "Reports the shard's name and build.",
+        "description": "Open without a token, so a launcher or the website can check compatibility before anyone logs in.",
+        "operationId": "GetVersion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VersionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountResponse": {
+        "required": [
+          "characterCount",
+          "isActive",
+          "level",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "level": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "characterCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An account as the API reports it. Deliberately not `AccountEntity`, which carries PasswordHash\nand ActivationToken: returning the entity would publish both to every caller, log and proxy cache on\nthe way. Naming the fields here means a field added to the entity later cannot leak by default."
+      },
+      "AdminStatusResponse": {
+        "required": [
+          "onlineSessions",
+          "shardName",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "shardName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "onlineSessions": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A staff-level snapshot of the shard. No uptime: there is no \"shard started at\" to read."
+      },
+      "ApiTokenResult": {
+        "required": [
+          "expiresAt",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "An issued API token and the moment it stops being valid."
+      },
+      "BodyImageExportStatus": {
+        "required": [
+          "done",
+          "failed",
+          "state",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Idle, Running, Completed or Failed."
+          },
+          "done": {
+            "type": "integer",
+            "description": "Bodies processed so far.",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Classified, non-equipment bodies to process. 0 until the export has counted them.",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "description": "Bodies whose frame could not be rendered or written. The reasons are in the log.",
+            "format": "int32"
+          },
+          "startedAt": {
+            "type": "string",
+            "description": "When the current or last export started; null if none ever has.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "How far the bulk body-image export has got."
+      },
+      "BodySummary": {
+        "required": [
+          "body",
+          "hex",
+          "imageUrl",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hex": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the staff body picker."
+      },
+      "BodySummaryPagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BodySummary"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "BookSpec": {
+        "required": [
+          "bookId"
+        ],
+        "type": "object",
+        "properties": {
+          "bookId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CharacterResponse": {
+        "required": [
+          "body",
+          "dexterity",
+          "gender",
+          "hairHue",
+          "hairStyle",
+          "hits",
+          "hitsMax",
+          "intelligence",
+          "kills",
+          "mana",
+          "manaMax",
+          "mapId",
+          "name",
+          "race",
+          "serial",
+          "skinHue",
+          "stamina",
+          "staminaMax",
+          "strength",
+          "x",
+          "y",
+          "z"
+        ],
+        "type": "object",
+        "properties": {
+          "serial": {
+            "type": "string",
+            "description": "The character's serial, as `0x40000001`."
+          },
+          "name": {
+            "type": "string"
+          },
+          "accountUsername": {
+            "type": "string",
+            "description": "The owning account. Null on the player's own route, where it is the caller.",
+            "nullable": true
+          },
+          "race": {
+            "type": "string"
+          },
+          "gender": {
+            "type": "string"
+          },
+          "body": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "strength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dexterity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "intelligence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hitsMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stamina": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staminaMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mana": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "manaMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kills": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skinHue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hairStyle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hairHue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mapId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A character as the API reports it. Deliberately not `MobileEntity`, which carries BrainScriptId,\nLootTableId and BackpackId: returning the entity would publish the shard's internals to every caller,\nand a field added to the entity later would publish itself. Naming the fields here means that cannot\nhappen by default — the same reason Moongate.Http.Plugin.Data.Api.Accounts.AccountResponse exists rather than returning\nAccountEntity with its PasswordHash."
+      },
+      "CharacterResponsePagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterResponse"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "ConsoleCommandRequest": {
+        "required": [
+          "command",
+          "connectionId"
+        ],
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "connectionId": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A console command to run and the SSE connection its output should stream to."
+      },
+      "ContainerSpec": {
+        "type": "object",
+        "properties": {
+          "weightMax": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maxItems": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "gumpId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "containerLayoutId": {
+            "type": "string",
+            "nullable": true
+          },
+          "contents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "isQuiver": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "weightReduction": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "quiverDamageIncrease": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "lowerAmmoCost": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "defenseChanceIncrease": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateAccountRequest": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "level": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A new account. `Level` is the `AccountLevelType` name; omitted means Player, the safe\ndefault — an account that gains staff rights by accident is the wrong way to fail."
+      },
+      "CreateNewsRequest": {
+        "required": [
+          "body",
+          "isPublished",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "isPublished": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Body for creating a news entry; the author is taken from the caller's token."
+      },
+      "EquipSpec": {
+        "required": [
+          "layer"
+        ],
+        "type": "object",
+        "properties": {
+          "layer": {
+            "$ref": "#/components/schemas/LayerType"
+          },
+          "hitPoints": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "strengthReq": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "dexterityReq": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "intelligenceReq": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HairStyleSummary": {
+        "required": [
+          "facial",
+          "hex",
+          "imageUrl",
+          "name",
+          "style"
+        ],
+        "type": "object",
+        "properties": {
+          "style": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hex": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "facial": {
+            "type": "boolean"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the staff hair-style picker."
+      },
+      "HairStyleSummaryPagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HairStyleSummary"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "ItemImageExportStatus": {
+        "required": [
+          "done",
+          "failed",
+          "state",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Idle, Running, Completed or Failed."
+          },
+          "done": {
+            "type": "integer",
+            "description": "Items exported so far.",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "description": "Items with art to export. 0 until the export has counted them.",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "description": "Items whose art could not be written. The reasons are in the log.",
+            "format": "int32"
+          },
+          "startedAt": {
+            "type": "string",
+            "description": "When the current or last export started; null if none ever has.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "How far the bulk item-image export has got."
+      },
+      "ItemParam": {
+        "required": [
+          "type",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ItemTemplateResponse": {
+        "required": [
+          "category",
+          "description",
+          "goldValue",
+          "hue",
+          "id",
+          "imageUrl",
+          "isMovable",
+          "itemId",
+          "name",
+          "rarity",
+          "scriptId",
+          "tags",
+          "weight"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "goldValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "scriptId": {
+            "type": "string"
+          },
+          "isMovable": {
+            "type": "boolean"
+          },
+          "stackable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "dyeable": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "visibility": {
+            "type": "string",
+            "nullable": true
+          },
+          "lootType": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flippableItemIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "lootTables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ItemParam"
+            },
+            "nullable": true
+          },
+          "equip": {
+            "$ref": "#/components/schemas/EquipSpec"
+          },
+          "weapon": {
+            "$ref": "#/components/schemas/WeaponSpec"
+          },
+          "container": {
+            "$ref": "#/components/schemas/ContainerSpec"
+          },
+          "book": {
+            "$ref": "#/components/schemas/BookSpec"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The full template: everything the summary carries plus the typed specs, passed through as the\nMoongate.UO.Data types — they are the documented data contract of the YAML templates."
+      },
+      "ItemTemplateSummaryResponse": {
+        "required": [
+          "category",
+          "goldValue",
+          "hue",
+          "id",
+          "imageUrl",
+          "itemId",
+          "name",
+          "rarity",
+          "tags",
+          "weight"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "itemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rarity": {
+            "type": "string"
+          },
+          "goldValue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the staff item template listing."
+      },
+      "ItemTemplateSummaryResponsePagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemTemplateSummaryResponse"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "LayerType": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "LoginRequest": {
+        "required": [
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Credentials posted to the login endpoint."
+      },
+      "MapFacetInfo": {
+        "required": [
+          "height",
+          "maxZoom",
+          "name",
+          "tilesAcross",
+          "tilesDown",
+          "tileSize",
+          "width"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The facet's name, as used in the tile route."
+          },
+          "width": {
+            "type": "integer",
+            "description": "Facet width in map tiles, which is its width in pixels at native zoom.",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "description": "Facet height in map tiles.",
+            "format": "int32"
+          },
+          "maxZoom": {
+            "type": "integer",
+            "description": "The deepest zoom, where one pixel is one map tile. Zoom 0 is always one tile.",
+            "format": "int32"
+          },
+          "tileSize": {
+            "type": "integer",
+            "description": "Tile edge in pixels.",
+            "format": "int32"
+          },
+          "tilesAcross": {
+            "type": "integer",
+            "description": "Tiles across the grid at MaxZoom.",
+            "format": "int32"
+          },
+          "tilesDown": {
+            "type": "integer",
+            "description": "Tiles down the grid at MaxZoom.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A map facet as the API describes it, so a viewer can configure itself rather than guess."
+      },
+      "MapImageExportStatus": {
+        "required": [
+          "done",
+          "failed",
+          "state",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Idle, Running, Completed or Failed."
+          },
+          "done": {
+            "type": "integer",
+            "description": "Tiles and whole-facet images produced so far.",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many there are to produce. 0 until the pre-warm has counted them.",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "description": "How many could not be produced. The reasons are in the log.",
+            "format": "int32"
+          },
+          "startedAt": {
+            "type": "string",
+            "description": "When the current or last pre-warm started; null if none ever has.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "How far the map image pre-warm has got."
+      },
+      "NewsResponse": {
+        "required": [
+          "author",
+          "body",
+          "id",
+          "isPublished",
+          "publishedAt",
+          "title",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isPublished": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A news entry as returned by the API."
+      },
+      "PlayerMeResponse": {
+        "required": [
+          "level",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Who the caller's token says they are. Deliberately not their characters — see PlayerEndpoints."
+      },
+      "PluginInfoResponse": {
+        "required": [
+          "assembly",
+          "author",
+          "description",
+          "id",
+          "isExternal",
+          "name",
+          "routes",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "assembly": {
+            "type": "string"
+          },
+          "isExternal": {
+            "type": "boolean"
+          },
+          "routes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PluginRouteResponse"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "One activated plugin and everything it exposes over HTTP. `version` goes over the wire as a\nstring, e.g. `\"0.1.0\"`."
+      },
+      "PluginRouteResponse": {
+        "required": [
+          "method",
+          "path"
+        ],
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "policy": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One HTTP route a plugin declares. `policy` is null when the route is open."
+      },
+      "RegisterRequest": {
+        "required": [
+          "email",
+          "password",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "A web self-registration request."
+      },
+      "ServerContactsResponse": {
+        "type": "object",
+        "properties": {
+          "website": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "discord": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The shard's public contact points."
+      },
+      "ServerInfoResponse": {
+        "required": [
+          "assets",
+          "contacts",
+          "registrationEnabled",
+          "shardName"
+        ],
+        "type": "object",
+        "properties": {
+          "shardName": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/ServerContactsResponse"
+          },
+          "registrationEnabled": {
+            "type": "boolean"
+          },
+          "assets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "The public server profile a website or launcher reads: identity, contacts, assets, and whether registration is open."
+      },
+      "ServerSettingsResponse": {
+        "required": [
+          "assets",
+          "contacts",
+          "registrationEnabled"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/ServerContactsResponse"
+          },
+          "registrationEnabled": {
+            "type": "boolean"
+          },
+          "assets": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "The full settings view returned to staff (identical fields to the public info minus the shard name)."
+      },
+      "ServerStatsResponse": {
+        "required": [
+          "accounts",
+          "content",
+          "generatedAt",
+          "players",
+          "uptimeSeconds",
+          "world"
+        ],
+        "type": "object",
+        "properties": {
+          "generatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "uptimeSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "players": {
+            "$ref": "#/components/schemas/StatsPlayersResponse"
+          },
+          "accounts": {
+            "$ref": "#/components/schemas/StatsAccountsResponse"
+          },
+          "world": {
+            "$ref": "#/components/schemas/StatsWorldResponse"
+          },
+          "content": {
+            "$ref": "#/components/schemas/StatsContentResponse"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The shard's public statistics, as a website or launcher reads them."
+      },
+      "StatsAccountsResponse": {
+        "required": [
+          "active",
+          "characters",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "characters": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The shard's user base: accounts registered, accounts verified, and characters created."
+      },
+      "StatsContentResponse": {
+        "required": [
+          "itemTemplates",
+          "mobileTemplates"
+        ],
+        "type": "object",
+        "properties": {
+          "itemTemplates": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mobileTemplates": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "How much content the shard has loaded: the templates available to spawn from."
+      },
+      "StatsPlayersResponse": {
+        "required": [
+          "connections",
+          "online"
+        ],
+        "type": "object",
+        "properties": {
+          "online": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "connections": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Who is connected: players in the world, and every open connection including the login screen."
+      },
+      "StatsWorldResponse": {
+        "required": [
+          "items",
+          "npcs"
+        ],
+        "type": "object",
+        "properties": {
+          "npcs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "How much the world holds: creatures nobody plays, and persisted items."
+      },
+      "UpdateAccountRequest": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The fields to change. Every one is optional: absent means \"leave alone\", which is what makes this a\nPATCH rather than a PUT. Password is write-only — it enters here and never appears in a response.\nEmail is not here: the account service has no setter for it."
+      },
+      "UpdateNewsRequest": {
+        "required": [
+          "body",
+          "isPublished",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "isPublished": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Body for updating a news entry."
+      },
+      "UpdateServerSettingsRequest": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "contacts": {
+            "$ref": "#/components/schemas/ServerContactsResponse"
+          },
+          "registrationEnabled": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "A partial settings update: an omitted (null) field is left unchanged."
+      },
+      "VerifyEmailRequest": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Carries the single-use token that verifies an account's email."
+      },
+      "VersionResponse": {
+        "required": [
+          "shardName",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "shardName": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What the shard calls itself and which build it runs."
+      },
+      "WeaponSpec": {
+        "required": [
+          "baseRange",
+          "highDamage",
+          "hitSound",
+          "lowDamage",
+          "maxRange",
+          "missSound",
+          "speed"
+        ],
+        "type": "object",
+        "properties": {
+          "lowDamage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "highDamage": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "speed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseRange": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxRange": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hitSound": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missSound": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weaponSkill": {
+            "type": "string",
+            "nullable": true
+          },
+          "ammo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ammoFx": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "accounts"
+    },
+    {
+      "name": "admin"
+    },
+    {
+      "name": "auth"
+    },
+    {
+      "name": "characters"
+    },
+    {
+      "name": "console"
+    },
+    {
+      "name": "images"
+    },
+    {
+      "name": "items"
+    },
+    {
+      "name": "mobiles"
+    },
+    {
+      "name": "news"
+    },
+    {
+      "name": "player"
+    },
+    {
+      "name": "registration"
+    },
+    {
+      "name": "server-info"
+    },
+    {
+      "name": "server-settings"
+    },
+    {
+      "name": "stats"
+    },
+    {
+      "name": "version"
+    }
+  ]
+}

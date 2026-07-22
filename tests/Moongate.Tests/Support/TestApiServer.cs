@@ -113,7 +113,8 @@ public sealed class TestApiServer : IAsyncDisposable
         IGameLoopContext? loop = null,
         TimeSpan? deleteTimeout = null,
         Action<IContainer>? configure = null,
-        TimeProvider? clock = null
+        TimeProvider? clock = null,
+        string? uiDistPath = null
     )
     {
         var container = new Container();
@@ -128,7 +129,13 @@ public sealed class TestApiServer : IAsyncDisposable
         {
             Address = "127.0.0.1",
             Port = 0,
-            Jwt = new() { SigningKey = TestHttpServer.SigningKey, LifetimeMinutes = 60, Issuer = "moongate" }
+            Jwt = new() { SigningKey = TestHttpServer.SigningKey, LifetimeMinutes = 60, Issuer = "moongate" },
+
+            // Through configuration rather than a property, because that is the path production takes. The
+            // default is a directory that exists nowhere: the resolver also probes ./ui/dist and the one
+            // beside the executable, so a test wanting no portal would otherwise find a real build and
+            // start passing or failing depending on whether someone had run npm.
+            UiDistPath = uiDistPath ?? Path.Combine(Path.GetTempPath(), "mg-no-ui-" + Guid.NewGuid().ToString("N"))
         };
         var moongateConfig = new MoongateConfig { ShardName = "Moongate", UltimaDirectory = "/tmp" };
 

@@ -31,6 +31,7 @@ public sealed class CharacterEndpoints : IApiEndpointRegistration
         => routes.MapGet("/api/v1/player/me/characters", GetMine)
                  .WithName("GetMyCharacters")
                  .WithTags("player")
+                 .Produces<IReadOnlyList<CharacterResponse>>()
                  .RequireAuthorization(HttpServerService.PlayerPolicy);
 
     /// <summary>

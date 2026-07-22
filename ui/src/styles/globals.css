@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "./tokens.css";
 
+/* Tailwind's stock `dark:` follows the operating system. This codebase switches on a `data-theme`
+   attribute instead, so the two would disagree the moment a viewer's OS preference differed from the
+   choice they made in the app: Moongate's own colours would flip while the shadcn refinements below
+   stayed put. Redeclaring the variant puts everything back on one switch. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* `inline` makes each utility reference the custom property instead of copying its value. That is what
    lets [data-theme="light"] re-point every colour at once: no `dark:` variants exist anywhere in this
    codebase, and none should be added. */
@@ -34,6 +40,57 @@
 
   --radius-control: var(--mg-radius-control);
   --radius-card: var(--mg-radius-card);
+
+  /* ── shadcn bridge ──────────────────────────────────────────────────────────────────────────────
+     Components from the registry speak a fixed vocabulary — bg-primary, text-foreground, border-input
+     and so on. Aliasing those names onto the Moongate tokens here, rather than rewriting the classes in
+     each generated file, means a component arrives already themed and every future `shadcn add` needs
+     no edit. The mapping runs through the same custom properties, so [data-theme] still repoints the
+     whole interface at once.
+
+     Two names carry a caveat:
+
+     `muted` already means muted *text* above (--color-muted → --mg-text-muted), whereas the registry
+     uses it for a muted *surface*. Only `text-muted-foreground` is aliased, so `text-muted` and
+     `text-muted-foreground` agree; `bg-muted` would come out the colour of secondary text and should
+     not be used — reach for `bg-raised`.
+
+     `input` has to serve both `border-input` and `dark:bg-input/30`, which the design separates:
+     --mg-border for field borders, --mg-bg-deep for field fills. The border wins, since it is the
+     structural, always-visible half; the fill only ever appears as a 30% wash. */
+  --color-background: var(--mg-bg-page);
+  --color-foreground: var(--mg-text);
+  --color-card: var(--mg-surface);
+  --color-card-foreground: var(--mg-text);
+  --color-primary: var(--mg-gold);
+  --color-primary-foreground: var(--mg-gold-ink);
+  --color-secondary: var(--mg-surface-raised);
+  --color-secondary-foreground: var(--mg-text);
+  --color-accent: var(--mg-surface-raised);
+  --color-accent-foreground: var(--mg-text);
+  --color-muted-foreground: var(--mg-text-muted);
+  --color-destructive: var(--mg-danger);
+  --color-border: var(--mg-border);
+  --color-input: var(--mg-border);
+  --color-ring: var(--mg-gold-hi);
+
+  /* The registry reaches for rounded-md and rounded-xl; Moongate is square-cornered throughout, so
+     these point at the design's own radii instead of Tailwind's 6px and 12px defaults. */
+  --radius-md: var(--mg-radius-control);
+  --radius-xl: var(--mg-radius-card);
+}
+
+/* The one thing `shadcn init` contributes to a stylesheet that is genuinely needed. Tailwind 4 defaults
+   border-color to currentColor, and the registry's components write a bare `border` trusting a base rule
+   to pin it to the theme — without one a card draws a hairline in its own text colour, which on a dark
+   panel is a white outline. Caught by measuring the rendered page, not by any test: jsdom applies none
+   of this. */
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--mg-border);
+  }
 }
 
 body {
