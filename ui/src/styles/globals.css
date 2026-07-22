@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "./tokens.css";
+
+/* `inline` makes each utility reference the custom property instead of copying its value. That is what
+   lets [data-theme="light"] re-point every colour at once: no `dark:` variants exist anywhere in this
+   codebase, and none should be added. */
+@theme inline {
+  --color-deep: var(--mg-bg-deep);
+  --color-page: var(--mg-bg-page);
+  --color-surface: var(--mg-surface);
+  --color-raised: var(--mg-surface-raised);
+  --color-border-subtle: var(--mg-border);
+  --color-border-strong: var(--mg-border-strong);
+  --color-ink: var(--mg-text);
+  --color-muted: var(--mg-text-muted);
+  --color-faint: var(--mg-text-faint);
+  --color-gold: var(--mg-gold);
+  --color-gold-hi: var(--mg-gold-hi);
+  --color-gold-ink: var(--mg-gold-ink);
+  --color-success: var(--mg-success);
+  --color-danger: var(--mg-danger);
+  --color-danger-text: var(--mg-danger-text);
+  --color-info: var(--mg-info);
+  --color-staff: var(--mg-staff-text);
+  --color-common: var(--mg-rarity-common);
+  --color-uncommon: var(--mg-rarity-uncommon);
+  --color-rare: var(--mg-rarity-rare);
+  --color-epic: var(--mg-rarity-epic);
+  --color-legendary: var(--mg-rarity-legendary);
+
+  --font-display: var(--mg-font-display);
+  --font-sans: var(--mg-font-body);
+  --font-mono: var(--mg-font-mono);
+
+  --radius-control: var(--mg-radius-control);
+  --radius-card: var(--mg-radius-card);
+}
+
+body {
+  margin: 0;
+  background: var(--mg-bg-page);
+  color: var(--mg-text);
+  font-family: var(--mg-font-body);
+}

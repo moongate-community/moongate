@@ -112,7 +112,8 @@ public sealed class TestApiServer : IAsyncDisposable
         AccountLevelType level = AccountLevelType.Administrator,
         IGameLoopContext? loop = null,
         TimeSpan? deleteTimeout = null,
-        Action<IContainer>? configure = null
+        Action<IContainer>? configure = null,
+        TimeProvider? clock = null
     )
     {
         var container = new Container();
@@ -132,7 +133,11 @@ public sealed class TestApiServer : IAsyncDisposable
         var moongateConfig = new MoongateConfig { ShardName = "Moongate", UltimaDirectory = "/tmp" };
 
         container.RegisterInstance(config);
-        container.RegisterInstance(TimeProvider.System);
+
+        // A test that needs to move time forward passes its own; everything else gets the real clock.
+        var timeProvider = clock ?? TimeProvider.System;
+
+        container.RegisterInstance(timeProvider);
         container.RegisterInstance(moongateConfig);
         container.RegisterInstance<IAccountService>(accounts);
 
@@ -154,7 +159,9 @@ public sealed class TestApiServer : IAsyncDisposable
             }
         );
         container.RegisterApiEndpointInstance(new VersionEndpoints(moongateConfig));
-        container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
+        container.RegisterApiEndpointInstance(
+            new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>(), config, timeProvider)
+        );
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
         container.RegisterApiEndpointInstance(new PlayerEndpoints());
         container.RegisterApiEndpointInstance(new CharacterEndpoints(accounts, characters));
