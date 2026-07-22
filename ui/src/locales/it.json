@@ -1,0 +1,25 @@
+{
+  "app": { "name": "Moongate" },
+  "theme": { "dark": "Scuro", "light": "Chiaro", "label": "Tema" },
+  "nav": { "dashboard": "Dashboard" },
+  "login": {
+    "title": "MOONGATE",
+    "subtitle": "Accedi con le credenziali del tuo account di gioco.",
+    "account": "Nome account",
+    "password": "Parola d'ordine",
+    "submit": "ENTRA",
+    "failed": "Nome account o parola d'ordine non validi.",
+    "staffNote": "Lo staff accede dallo stesso cancello: il ruolo decide la destinazione."
+  },
+  "dashboard": {
+    "welcome": "Bentornato, {{name}}",
+    "characters": "I tuoi personaggi",
+    "noCharacters": "Nessun personaggio su questo account.",
+    "shard": "Lo shard adesso",
+    "playersOnline": "Giocatori online",
+    "accounts": "Account",
+    "charactersTotal": "Personaggi"
+  },
+  "common": { "signOut": "Esci", "loading": "Caricamento…" },
+  "error": { "generic": "Qualcosa è andato storto. Riprova." }
+}

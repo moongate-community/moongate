@@ -1,0 +1,46 @@
+import type { ReactNode } from 'react'
+import { NavLink } from 'react-router'
+import { useTranslation } from 'react-i18next'
+import { useSession } from '../lib/auth'
+import { ThemeToggle } from './ThemeToggle'
+
+/** The design's double bar: a 50px identity row above a 46px tab row. */
+export function AppShell({ children }: { children: ReactNode }) {
+  const { t } = useTranslation()
+  const { username, signOut } = useSession()
+
+  return (
+    <div className="min-h-screen bg-page text-ink">
+      <header className="flex h-[var(--mg-topbar-h)] items-center gap-3 border-b border-border-subtle bg-surface px-5">
+        <span className="font-display text-[15px] font-bold tracking-wider text-gold">{t('app.name')}</span>
+        <div className="flex-1" />
+        <span className="text-xs tracking-widest text-faint">{t('theme.label')}</span>
+        <ThemeToggle />
+        {username !== null && (
+          <>
+            <span className="text-sm text-ink">{username}</span>
+            <button type="button" onClick={signOut} className="text-sm text-muted hover:text-gold">
+              {t('common.signOut')}
+            </button>
+          </>
+        )}
+      </header>
+
+      <nav className="flex h-[var(--mg-tabrow-h)] items-stretch gap-6 border-b border-border-subtle bg-surface px-5">
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            isActive
+              ? 'flex items-center border-b-2 border-gold text-sm font-bold text-gold'
+              : 'flex items-center border-b-2 border-transparent text-sm text-muted hover:text-ink'
+          }
+        >
+          {t('nav.dashboard')}
+        </NavLink>
+      </nav>
+
+      <main className="mx-auto max-w-[1300px] p-6">{children}</main>
+    </div>
+  )
+}

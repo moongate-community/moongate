@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import '../lib/i18n'
 import { ThemeToggle } from './ThemeToggle'
 
 describe('ThemeToggle', () => {

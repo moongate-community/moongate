@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export type Theme = 'dark' | 'light'
 
@@ -15,6 +16,7 @@ function initialTheme(): Theme {
 }
 
 export function ThemeToggle() {
+  const { t } = useTranslation()
   const [theme, setTheme] = useState<Theme>(initialTheme)
 
   useEffect(() => {
@@ -36,7 +38,7 @@ export function ThemeToggle() {
               : 'rounded-control px-3 py-1 text-xs font-bold text-muted'
           }
         >
-          {option === 'dark' ? 'Scuro' : 'Chiaro'}
+          {t(option === 'dark' ? 'theme.dark' : 'theme.light')}
         </button>
       ))}
     </div>
