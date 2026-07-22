@@ -21,11 +21,11 @@ npm --prefix ui run build
 dotnet run --project src/Moongate.Server -- --root-directory ~/moongate --uo-directory ~/uo
 ```
 
-`dotnet run` sets the working directory to the project folder, so the probe below will not find
-`ui/dist` from there. Point at it explicitly:
+Run that from the repository root and the server finds `ui/dist` on its own — `dotnet run` keeps the
+shell's working directory, so the third candidate below matches. From anywhere else, say so explicitly:
 
 ```bash
-MOONGATE_UI_DIST=$PWD/ui/dist dotnet run --project src/Moongate.Server -- --root-directory ~/moongate
+MOONGATE_UI_DIST=/path/to/repo/ui/dist dotnet run --project src/Moongate.Server -- --root-directory ~/moongate
 ```
 
 ### Where the server looks
