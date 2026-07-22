@@ -18,3 +18,5 @@
       href: writing-plugins/data-loaders.md
     - name: Registration reference
       href: writing-plugins/registration.md
+    - name: Plugin diagnostics
+      href: writing-plugins/plugin-diagnostics.md

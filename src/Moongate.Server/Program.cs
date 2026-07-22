@@ -29,7 +29,9 @@ using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Services.Notifications;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Services.Notifications.Channels;
+using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Server;
 using Moongate.Smtp.Plugin;
 using Moongate.Server.Services.World;
@@ -41,6 +43,7 @@ using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Utils;
+using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Plugin.Extensions;
 using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
@@ -111,30 +114,45 @@ await ConsoleApp.RunAsync(
         // Safe with config-first: sections bind eagerly at registration, even after this call.
         stdBootstrap.ConfigureLogging();
 
+        // Built before the plugins are added and registered after, because the two halves happen in
+        // different bootstrap phases: activation here, container registration in ConfigureServices below.
+        var pluginCatalog = new PluginCatalog();
+
         stdBootstrap.UsePlugins(
             builder =>
             {
                 builder.FromDirectory("plugins");
-                builder.Add<MoongatePersistencePlugin>();
-                builder.Add<MoongateScriptingPlugin>();
-                builder.Add<MoongateScriptModulesPlugin>();
-                builder.Add<MoongateDataLoaderPlugin>();
-                builder.Add<MoongateCommandsPlugin>();
-                builder.Add<MoongatePacketHandlersPlugin>();
-                builder.Add<MoongateEventSubscribersPlugin>();
+
+                // Recorded at the point of activation rather than scanned for afterwards: MoongateHttpPlugin
+                // sits behind a flag, and its assembly stays loaded even when the flag switches it off.
+                void AddTracked<TPlugin>() where TPlugin : ISquidStdPlugin, new()
+                {
+                    var plugin = new TPlugin();
+
+                    pluginCatalog.Record(plugin, isExternal: false);
+                    builder.Add(plugin);
+                }
+
+                AddTracked<MoongatePersistencePlugin>();
+                AddTracked<MoongateScriptingPlugin>();
+                AddTracked<MoongateScriptModulesPlugin>();
+                AddTracked<MoongateDataLoaderPlugin>();
+                AddTracked<MoongateCommandsPlugin>();
+                AddTracked<MoongatePacketHandlersPlugin>();
+                AddTracked<MoongateEventSubscribersPlugin>();
 
                 if (!disableWebPlugin)
                 {
-                    builder.Add<MoongateHttpPlugin>();
+                    AddTracked<MoongateHttpPlugin>();
                 }
                 else
                 {
                     Log.Logger.Warning("HTTP is disabled");
                 }
 
-                builder.Add<MoongateConsolePlugin>();
-                builder.Add<MoongateNewsPlugin>();
-                builder.Add<MoongateSmtpPlugin>();
+                AddTracked<MoongateConsolePlugin>();
+                AddTracked<MoongateNewsPlugin>();
+                AddTracked<MoongateSmtpPlugin>();
             }
         );
 
@@ -144,6 +162,24 @@ await ConsoleApp.RunAsync(
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
                 container.RegisterConfigSection<NotificationConfig>("notifications");
+
+                // FromDirectory loads whatever it finds but hands back no list of it, so those plugins are
+                // recovered by elimination. Swept here rather than inside UsePlugins above because by now
+                // every plugin has certainly been loaded, and recorded after the explicit ones so that a
+                // duplicate id loses.
+                foreach (var type in PluginDiscovery.ExternalPluginTypes(
+                             typeof(Program).Assembly,
+                             AppDomain.CurrentDomain.GetAssemblies()
+                         ))
+                {
+                    if (Activator.CreateInstance(type) is ISquidStdPlugin external)
+                    {
+                        pluginCatalog.Record(external, isExternal: true);
+                    }
+                }
+
+                // The instance the plugin phase filled in, not a fresh one.
+                container.RegisterInstance<IPluginCatalog>(pluginCatalog);
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
