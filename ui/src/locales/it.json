@@ -20,7 +20,8 @@
     "staffNote": "Lo staff accede dallo stesso cancello: il ruolo decide la destinazione.",
     "quote": "Sosaria non dorme mai.",
     "remember": "Ricordami su questo dispositivo",
-    "online": "{{count}} avventurieri online in questo momento"
+    "online": "{{count}} avventurieri online in questo momento",
+    "artAlt": "Il Moongate — un portale runico aperto"
   },
   "dashboard": {
     "welcome": "Bentornato, {{name}}",
