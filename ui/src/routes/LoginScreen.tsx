@@ -7,7 +7,7 @@ import { useServerInfo, useStats, useVersion } from '../lib/queries'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
-import artwork from '../assets/moongate-logo.png'
+import heroArt from '../assets/login-hero.jpg'
 
 export function LoginScreen() {
   const { t } = useTranslation()
@@ -47,20 +47,14 @@ export function LoginScreen() {
 
   return (
     <div className="flex min-h-screen bg-surface">
-      {/* 200deg, matching the design: the light falls from the upper right rather than straight down. */}
+      {/* Full-bleed hero art, cropped to fill the tall panel rather than letterboxed inside it. */}
       <div
-        className="relative hidden flex-[1.3] flex-col justify-end border-r border-border-subtle p-10 lg:flex"
-        style={{ backgroundImage: 'linear-gradient(200deg, var(--mg-surface-raised) 0%, var(--mg-bg-deep) 70%)' }}
+        className="relative hidden flex-[1.3] flex-col justify-end border-r border-border-subtle bg-cover bg-center p-10 lg:flex"
+        style={{ backgroundImage: `url(${heroArt})` }}
       >
-        {/* Inset to 110px from the bottom rather than centred in the whole panel, so the artwork centres
-            on the space above the quote instead of sitting behind it. */}
-        <div className="absolute inset-x-0 top-0 bottom-[110px] flex items-center justify-center">
-          <img
-            src={artwork}
-            alt={t('login.artAlt')}
-            className="max-h-[82%] max-w-[72%] rounded-control shadow-[0_24px_70px_rgba(0,0,0,0.55)]"
-          />
-        </div>
+        {/* A bottom-up scrim: the art is bright and busy, so the quote and count need a dark ground under
+            them to stay legible. */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
         <p className="relative font-display text-[18px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
 
