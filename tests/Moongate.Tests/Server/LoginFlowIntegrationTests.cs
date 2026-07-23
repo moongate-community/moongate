@@ -753,7 +753,7 @@ public class LoginFlowIntegrationTests
 
             var loopThread = new LoopThreadMarker();
             loopThread.Capture();
-            var spatial = new SpatialIndexService(persistence, loopThread);
+            var spatial = new SpatialIndexService(persistence, loopThread, eventBus);
             new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
 
             var mapTiles = new MapTileService(mapProvider);
@@ -995,7 +995,7 @@ public class LoginFlowIntegrationTests
 
         var loopThread = new LoopThreadMarker();
         loopThread.Capture();
-        var spatial = new SpatialIndexService(persistence, loopThread);
+        var spatial = new SpatialIndexService(persistence, loopThread, eventBus);
         new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
 
         var world = new WorldService(
