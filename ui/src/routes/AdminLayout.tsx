@@ -25,6 +25,9 @@ export function AdminLayout() {
         <NavLink to="/admin/settings" className={linkClass}>
           {t('admin.nav.settings')}
         </NavLink>
+        <NavLink to="/admin/console" className={linkClass}>
+          {t('admin.nav.console')}
+        </NavLink>
       </nav>
       <Outlet />
     </div>

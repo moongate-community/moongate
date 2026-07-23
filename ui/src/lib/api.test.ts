@@ -1,4 +1,4 @@
-import { ApiError, apiFetch, apiPath, setAuthToken, setUnauthorizedHandler } from './api'
+import { ApiError, apiFetch, apiPath, apiStream, setAuthToken, setUnauthorizedHandler } from './api'
 
 describe('apiFetch', () => {
   beforeEach(() => {
@@ -66,5 +66,38 @@ describe('apiFetch', () => {
 
     const headers = new Headers((fetchSpy.mock.calls[0][1] as RequestInit).headers)
     expect(headers.get('content-type')).toBe('application/json')
+  })
+
+  it('treats 202 Accepted as an empty body', async () => {
+    // The console POST answers 202 with no body; parsing it as JSON would throw.
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 202 }))
+    await expect(apiFetch<void>('/api/v1/admin/console', { method: 'POST', body: '{}' })).resolves.toBeUndefined()
+  })
+
+  it('apiStream sends the bearer and event-stream accept, returning the response', async () => {
+    const streamResponse = new Response(new ReadableStream(), {
+      status: 200,
+      headers: { 'content-type': 'text/event-stream' },
+    })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(streamResponse)
+    setAuthToken('tok')
+
+    const response = await apiStream('/api/v1/admin/console/stream', new AbortController().signal)
+
+    const headers = new Headers((fetchSpy.mock.calls[0][1] as RequestInit).headers)
+    expect(headers.get('accept')).toBe('text/event-stream')
+    expect(headers.get('authorization')).toBe('Bearer tok')
+    expect(response).toBe(streamResponse)
+  })
+
+  it('apiStream runs the unauthorized handler on 401', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 401 }))
+    const onUnauthorized = vi.fn()
+    setUnauthorizedHandler(onUnauthorized)
+
+    await expect(apiStream('/api/v1/admin/console/stream', new AbortController().signal)).rejects.toBeInstanceOf(
+      ApiError,
+    )
+    expect(onUnauthorized).toHaveBeenCalledOnce()
   })
 })

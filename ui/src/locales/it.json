@@ -71,7 +71,8 @@
       "overview": "Panoramica",
       "accounts": "Account",
       "plugins": "Plugin",
-      "settings": "Impostazioni"
+      "settings": "Impostazioni",
+      "console": "Console"
     },
     "accounts": {
       "title": "Account",
@@ -129,6 +130,22 @@
       "notImage": "Il file non è un'immagine.",
       "tooLarge": "L'immagine è troppo grande.",
       "tagline": "Slogan"
+    },
+    "console": {
+      "title": "Console",
+      "session": "Console · {{user}}",
+      "live": "Produzione",
+      "warning": "I comandi girano davvero sul server in produzione.",
+      "banner": "— sessione avviata",
+      "placeholder": "Scrivi un comando…",
+      "execute": "Esegui",
+      "clear": "Pulisci",
+      "connected": "connesso",
+      "connecting": "connessione…",
+      "closed": "disconnesso",
+      "empty": "Nessun output. Scrivi un comando per iniziare.",
+      "hint": "↑ / ↓ per la cronologia",
+      "snippets": "Comandi rapidi"
     }
   }
 }

@@ -53,9 +53,35 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
     throw new ApiError(response.status, `${init.method ?? 'GET'} ${path} failed with ${response.status}`)
   }
 
-  if (response.status === 204) {
+  // 204 No Content and 202 Accepted (the console POST) have no JSON body to parse.
+  if (response.status === 204 || response.status === 202) {
     return undefined as T
   }
 
   return (await response.json()) as T
+}
+
+/**
+ * Opens an authenticated streaming GET (Server-Sent Events). EventSource can't send the bearer token,
+ * so the caller reads the frames off the returned Response's body itself. Shares the 401 handling with
+ * {@link apiFetch}; the caller aborts by passing a signal.
+ */
+export async function apiStream(path: string, signal: AbortSignal): Promise<Response> {
+  const headers = new Headers({ accept: 'text/event-stream' })
+  if (authToken !== null) {
+    headers.set('authorization', `Bearer ${authToken}`)
+  }
+
+  const response = await fetch(path, { headers, signal })
+
+  if (response.status === 401) {
+    onUnauthorized()
+    throw new ApiError(401, 'unauthorized')
+  }
+
+  if (!response.ok || response.body === null) {
+    throw new ApiError(response.status, `GET ${path} stream failed with ${response.status}`)
+  }
+
+  return response
 }
