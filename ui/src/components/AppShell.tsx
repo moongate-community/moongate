@@ -15,7 +15,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-page text-ink">
       <header className="flex h-[var(--mg-topbar-h)] items-center gap-3 border-b border-border-subtle bg-surface px-5">
         <img src={icon} alt="" className="size-[26px] rounded-control object-cover" />
-        <span className="font-display text-[15px] font-bold tracking-wider text-gold">{t('app.name')}</span>
+        <span className="font-display text-[16px] font-bold tracking-wider text-gold">{t('app.name')}</span>
         <div className="flex-1" />
         <span className="text-xs tracking-widest text-faint">{t('theme.label')}</span>
         <ThemeToggle />

@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 // Faithful to mg-badge: 700 11px, radius 2px, padding 3px 10px, with the variant tinting text at full
 // colour, background at 10% and border at 40%. The staff variant is letter-spaced.
 const badgeVariants = cva(
-  'inline-flex items-center rounded-control border px-2.5 py-[3px] text-[11px] font-bold leading-none',
+  'inline-flex items-center rounded-control border px-2.5 py-[3px] text-[12px] font-bold leading-none',
   {
     variants: {
       variant: {
