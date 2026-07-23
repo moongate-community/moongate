@@ -69,7 +69,8 @@
     "nav": {
       "overview": "Panoramica",
       "accounts": "Account",
-      "plugins": "Plugin"
+      "plugins": "Plugin",
+      "settings": "Impostazioni"
     },
     "accounts": {
       "title": "Account",
@@ -104,6 +105,28 @@
       "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
       "deleteYes": "Elimina",
       "deleted": "Account eliminato."
+    },
+    "settings": {
+      "title": "Impostazioni shard",
+      "general": "Generale",
+      "description": "Descrizione",
+      "registration": "Registrazione web aperta",
+      "contacts": "Contatti",
+      "website": "Sito web",
+      "email": "Email",
+      "discord": "Discord",
+      "assets": "Asset",
+      "upload": "Carica",
+      "remove": "Rimuovi",
+      "logo": "Logo",
+      "favicon": "Favicon",
+      "banner": "Banner",
+      "save": "Salva",
+      "saved": "Impostazioni salvate.",
+      "assetUpdated": "Immagine aggiornata.",
+      "assetRemoved": "Immagine rimossa.",
+      "notImage": "Il file non è un'immagine.",
+      "tooLarge": "L'immagine è troppo grande."
     }
   }
 }
