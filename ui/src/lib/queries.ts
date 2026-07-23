@@ -21,6 +21,13 @@ export const useMyCharacters = () =>
 export const useStats = () =>
   useQuery({ queryKey: ['stats'], queryFn: () => apiFetch<ServerStats>('/api/v1/stats') })
 
+export type ServerInfo = components['schemas']['ServerInfoResponse']
+
+// Public and anonymous, like /stats and /version — the login screen reads it before anyone signs in,
+// to brand the page with the shard's own logo.
+export const useServerInfo = () =>
+  useQuery({ queryKey: ['server-info'], queryFn: () => apiFetch<ServerInfo>('/api/v1/server-info') })
+
 export type ServerVersion = components['schemas']['VersionResponse']
 
 export const useVersion = () =>

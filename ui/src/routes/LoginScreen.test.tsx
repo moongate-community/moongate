@@ -25,6 +25,7 @@ describe('LoginScreen', () => {
     localStorage.clear()
     sessionStorage.clear()
     vi.restoreAllMocks()
+    assets = {}
   })
 
   function json(body: unknown, status = 200) {
@@ -55,15 +56,44 @@ describe('LoginScreen', () => {
       if (url.endsWith('/api/v1/version')) {
         return json({ shardName: 'Moongate', version: '9.9.9' })
       }
+      if (url.endsWith('/api/v1/server-info')) {
+        return json({
+          shardName: 'Moongate',
+          contacts: { website: null, email: null, discord: null },
+          registrationEnabled: false,
+          assets,
+        })
+      }
       return json({ username: 'tom', level: 'Player' })
     })
   }
+
+  // The assets map the /server-info mock reports; tests override it before rendering.
+  let assets: Record<string, string> = {}
 
   it('shows the server version once it resolves', async () => {
     serveApi()
     renderLogin()
 
     expect(await screen.findByText(/Moongate · v9\.9\.9/)).toBeInTheDocument()
+  })
+
+  it('shows the shard logo when the server publishes one', async () => {
+    assets = { Logo: '/api/v1/server-info/assets/logo' }
+    serveApi()
+    renderLogin()
+
+    const logo = await screen.findByRole('img', { name: /shard logo/i })
+    expect(logo).toHaveAttribute('src', expect.stringContaining('/api/v1/server-info/assets/logo'))
+  })
+
+  it('shows no shard logo when the server has none', async () => {
+    serveApi()
+    renderLogin()
+
+    // The version resolving proves server-info also had time to; the logo is genuinely absent.
+    await screen.findByText(/Moongate · v9\.9\.9/)
+    expect(screen.queryByRole('img', { name: /shard logo/i })).not.toBeInTheDocument()
   })
 
   it('sends the credentials and stores the issued token', async () => {

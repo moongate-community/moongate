@@ -22,7 +22,8 @@
     "quote": "Sosaria non dorme mai.",
     "remember": "Ricordami su questo dispositivo",
     "online": "{{count}} avventurieri online in questo momento",
-    "artAlt": "Il Moongate — un portale runico aperto"
+    "artAlt": "Il Moongate — un portale runico aperto",
+    "logoAlt": "Logo dello shard"
   },
   "dashboard": {
     "welcome": "Bentornato, {{name}}",

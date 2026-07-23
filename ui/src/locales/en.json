@@ -22,7 +22,8 @@
     "quote": "Sosaria never sleeps.",
     "remember": "Remember me on this device",
     "online": "{{count}} adventurers online right now",
-    "artAlt": "The Moongate — a runic portal standing open"
+    "artAlt": "The Moongate — a runic portal standing open",
+    "logoAlt": "Shard logo"
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}",
