@@ -52,9 +52,19 @@ describe('LoginScreen', () => {
           accounts: { total: 7, active: 5, characters: 19 },
         })
       }
+      if (url.endsWith('/api/v1/version')) {
+        return json({ shardName: 'Moongate', version: '9.9.9' })
+      }
       return json({ username: 'tom', level: 'Player' })
     })
   }
+
+  it('shows the server version once it resolves', async () => {
+    serveApi()
+    renderLogin()
+
+    expect(await screen.findByText(/Moongate · v9\.9\.9/)).toBeInTheDocument()
+  })
 
   it('sends the credentials and stores the issued token', async () => {
     serveApi()

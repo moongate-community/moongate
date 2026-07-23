@@ -8,7 +8,8 @@
     "label": "Theme"
   },
   "nav": {
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "admin": "Admin"
   },
   "login": {
     "title": "MOONGATE",
@@ -38,5 +39,27 @@
   },
   "error": {
     "generic": "Something went wrong. Please try again."
+  },
+  "admin": {
+    "title": "Administration",
+    "status": {
+      "title": "Shard status",
+      "build": "Build",
+      "sessions": "Connected sessions"
+    },
+    "stats": {
+      "title": "Statistics",
+      "players": "Players online",
+      "accounts": "Accounts",
+      "npcs": "NPCs",
+      "items": "World items"
+    },
+    "plugins": {
+      "title": "Active plugins",
+      "routes": "{{count}} routes",
+      "external": "external",
+      "host": "host",
+      "empty": "No plugins reported."
+    }
   }
 }

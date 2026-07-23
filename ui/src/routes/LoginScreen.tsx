@@ -3,7 +3,7 @@ import { Navigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../lib/api'
 import { useSession } from '../lib/auth'
-import { useStats } from '../lib/queries'
+import { useStats, useVersion } from '../lib/queries'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -13,6 +13,7 @@ export function LoginScreen() {
   const { t } = useTranslation()
   const { status, signIn } = useSession()
   const stats = useStats()
+  const version = useVersion()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(true)
@@ -120,6 +121,14 @@ export function LoginScreen() {
         <p className="border-t border-border-subtle pt-4 text-xs leading-relaxed text-faint">
           {t('login.staffNote')}
         </p>
+
+        {/* Data from the anonymous /api/v1/version, not UI copy — no i18n key needed. Rendered only once
+            it resolves, so an unreached shard shows nothing rather than "undefined". */}
+        {version.data?.version !== undefined && (
+          <p className="text-xs text-faint">
+            {version.data.shardName} · v{version.data.version}
+          </p>
+        )}
       </form>
     </div>
   )
