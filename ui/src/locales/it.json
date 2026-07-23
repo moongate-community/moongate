@@ -60,6 +60,44 @@
       "external": "esterno",
       "host": "host",
       "empty": "Nessun plugin riportato."
+    },
+    "nav": {
+      "overview": "Panoramica",
+      "accounts": "Account"
+    },
+    "accounts": {
+      "title": "Account",
+      "new": "Nuovo account",
+      "search": "Cerca username, email…",
+      "username": "Username",
+      "email": "Email",
+      "level": "Livello",
+      "status": "Stato",
+      "characters": "Personaggi",
+      "active": "attivo",
+      "suspended": "sospeso",
+      "manage": "Gestisci",
+      "none": "—",
+      "password": "Password",
+      "create": "Crea",
+      "cancel": "Annulla",
+      "taken": "Questo username è già in uso.",
+      "created": "Account creato.",
+      "levels": {
+        "Player": "Player",
+        "GrandMaster": "GrandMaster",
+        "Administrator": "Administrator"
+      },
+      "edit": "Gestisci {{username}}",
+      "suspendedLabel": "Sospeso",
+      "newPassword": "Nuova password",
+      "newPasswordHint": "Lascia vuoto per non cambiarla.",
+      "save": "Salva",
+      "saved": "Account aggiornato.",
+      "delete": "Elimina account",
+      "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
+      "deleteYes": "Elimina",
+      "deleted": "Account eliminato."
     }
   }
 }
