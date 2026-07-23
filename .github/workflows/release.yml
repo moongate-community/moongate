@@ -477,3 +477,67 @@ jobs:
               --api-key "${{ github.token }}" \
               --skip-duplicate
           done
+
+  publish_release_assets:
+    name: Publish release zips
+    needs:
+      - gate
+      - verify
+      - semantic_release
+      - reconcile_release
+    if: >-
+      always() &&
+      needs.gate.outputs.should_release == 'true' &&
+      needs.verify.result == 'success' &&
+      (needs.semantic_release.result == 'success' || needs.semantic_release.result == 'skipped') &&
+      (needs.reconcile_release.result == 'success' || needs.reconcile_release.result == 'skipped') &&
+      (needs.semantic_release.outputs.version != '' || needs.gate.outputs.version != '')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        rid:
+          - linux-x64
+          - win-x64
+          - linux-arm64
+    env:
+      RELEASE_VERSION: ${{ needs.semantic_release.outputs.version || needs.gate.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: v${{ env.RELEASE_VERSION }}
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.10.0
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Build the portal
+        run: |
+          npm ci --prefix ui
+          npm --prefix ui run build
+
+      - name: Package ${{ matrix.rid }}
+        run: |
+          scripts/package_release.sh \
+            --rid "${{ matrix.rid }}" \
+            --version "${RELEASE_VERSION}" \
+            --ui-dist ui/dist \
+            --out ./artifacts
+
+      - name: Upload to the release
+        run: gh release upload "v${RELEASE_VERSION}" ./artifacts/*.zip --clobber
