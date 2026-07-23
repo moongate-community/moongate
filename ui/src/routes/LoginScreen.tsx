@@ -58,7 +58,7 @@ export function LoginScreen() {
           />
         </div>
 
-        <p className="relative font-display text-[16px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
+        <p className="relative font-display text-[18px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
 
         {/* Real, and public: /api/v1/stats is anonymous, so the count is readable before anyone signs in.
             Rendered only once the reply lands — a zero here means an empty shard, which is worth saying,
@@ -71,7 +71,7 @@ export function LoginScreen() {
       </div>
 
       <form onSubmit={submit} className="flex w-full max-w-[420px] flex-col justify-center gap-4 px-12">
-        <h1 className="font-display text-[23px] font-bold tracking-wider text-gold">{t('login.title')}</h1>
+        <h1 className="font-display text-[25px] font-bold tracking-wider text-gold">{t('login.title')}</h1>
         <p className="text-sm text-muted">{t('login.subtitle')}</p>
 
         <div className="flex flex-col gap-1.5">

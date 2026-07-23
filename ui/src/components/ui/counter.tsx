@@ -6,7 +6,7 @@ export function Counter({ children, className }: { children: ReactNode; classNam
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-control bg-danger px-2 py-0.5 text-[12px] font-bold leading-none text-white',
+        'inline-flex items-center rounded-control bg-danger px-2 py-0.5 text-[14px] font-bold leading-none text-white',
         className,
       )}
     >

@@ -38,15 +38,15 @@
   --font-sans: var(--mg-font-body);
   --font-mono: var(--mg-font-mono);
 
-  /* Type scale, each step one pixel above Tailwind's default (12/14/16/18/20/24 → 13/15/17/19/21/25).
+  /* Type scale, each step three pixels above Tailwind's default (12/14/16/18/20/24 → 15/17/19/21/23/27).
      Line-heights stay on Tailwind's default ratios. The arbitrary text-[Npx] literals across the
-     components are bumped by the same +1px so every size grows together. */
-  --text-xs: 13px;
-  --text-sm: 15px;
-  --text-base: 17px;
-  --text-lg: 19px;
-  --text-xl: 21px;
-  --text-2xl: 25px;
+     components are bumped by the same +3px so every size grows together. */
+  --text-xs: 15px;
+  --text-sm: 17px;
+  --text-base: 19px;
+  --text-lg: 21px;
+  --text-xl: 23px;
+  --text-2xl: 27px;
 
   --radius-control: var(--mg-radius-control);
   --radius-card: var(--mg-radius-card);

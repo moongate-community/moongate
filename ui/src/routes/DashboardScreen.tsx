@@ -15,7 +15,7 @@ export function DashboardScreen() {
       </h1>
 
       <Card className="p-5">
-        <h2 className="mb-3 font-display text-[14px] tracking-widest text-gold">
+        <h2 className="mb-3 font-display text-[16px] tracking-widest text-gold">
           {t('dashboard.characters')}
         </h2>
 
@@ -44,7 +44,7 @@ export function DashboardScreen() {
       </Card>
 
       <Card className="p-5">
-        <h2 className="mb-3 font-display text-[14px] tracking-widest text-gold">{t('dashboard.shard')}</h2>
+        <h2 className="mb-3 font-display text-[16px] tracking-widest text-gold">{t('dashboard.shard')}</h2>
 
         {stats.isError && (
           <p role="alert" className="text-sm text-danger-text">
@@ -69,7 +69,7 @@ export function DashboardScreen() {
 function Figure({ label, value }: { label: string; value: number | undefined }) {
   return (
     <div>
-      <dt className="text-[12px] uppercase tracking-widest text-faint">{label}</dt>
+      <dt className="text-[14px] uppercase tracking-widest text-faint">{label}</dt>
       <dd className="font-mono text-2xl font-bold text-ink">{value ?? '—'}</dd>
     </div>
   )

@@ -17,8 +17,8 @@ export function StatCard({
 }) {
   return (
     <div className={cn('rounded-card border border-border-subtle bg-surface px-[18px] py-4', className)}>
-      <div className="mb-2 text-[12.5px] uppercase tracking-[0.1em] text-faint">{label}</div>
-      <div className={cn('font-mono text-[27px] font-bold text-ink', tone)}>{value ?? '—'}</div>
+      <div className="mb-2 text-[14.5px] uppercase tracking-[0.1em] text-faint">{label}</div>
+      <div className={cn('font-mono text-[29px] font-bold text-ink', tone)}>{value ?? '—'}</div>
       {sub !== undefined && <div className="mt-[3px] text-xs text-muted">{sub}</div>}
     </div>
   )
