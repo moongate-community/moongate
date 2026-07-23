@@ -329,7 +329,7 @@ public class ItemServiceTests
         var persistence = new FakePersistenceService();
         var marker = new LoopThreadMarker();
         marker.Capture();
-        var spatial = new SpatialIndexService(persistence, marker);
+        var spatial = new SpatialIndexService(persistence, marker, new StubEventBus());
 
         return (new(persistence, null, spatial), spatial, persistence);
     }

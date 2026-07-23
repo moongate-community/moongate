@@ -1,5 +1,6 @@
 using Moongate.Core.Extensions;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
@@ -136,13 +137,101 @@ public class SpatialIndexServiceTests
         index.Remove(new(0xDEAD));
     }
 
+    [Fact]
+    public void AddOrUpdate_NewMobile_PublishesEnteredSectorOnly()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100)); // sector (6, 6)
+
+        var entered = Assert.Single(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Equal(new(0x1), entered.Mobile);
+        Assert.Equal((0, 6, 6), (entered.MapId, entered.SectorX, entered.SectorY));
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
+    }
+
+    [Fact]
+    public void AddOrUpdate_MoveAcrossSectors_PublishesLeftEnteredAndChanged()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 15, 0); // sector (0, 0)
+        index.AddOrUpdate(mobile);
+
+        mobile.Position = new(400, 400, 0); // sector (25, 25)
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        index.AddOrUpdate(mobile);
+
+        // Left and Changed are unique to the move; Entered also fired once on the initial spawn, so the
+        // move's entry is the later of the two.
+        var left = Assert.Single(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Equal((0, 0, 0), (left.MapId, left.SectorX, left.SectorY));
+
+        var entered = bus.Published.OfType<MobileEnteredSectorEvent>().Last();
+        Assert.Equal((0, 25, 25), (entered.MapId, entered.SectorX, entered.SectorY));
+
+        var changed = Assert.Single(bus.Published.OfType<MobileChangedSectorEvent>());
+        Assert.Equal((0, 0, 0), (changed.FromMapId, changed.FromSectorX, changed.FromSectorY));
+        Assert.Equal((0, 25, 25), (changed.ToMapId, changed.ToSectorX, changed.ToSectorY));
+    }
+
+    [Fact]
+    public void AddOrUpdate_SameSector_PublishesNoFurtherSectorEvents()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+
+        index.AddOrUpdate(mobile);
+        index.AddOrUpdate(mobile); // same tile, same sector
+
+        Assert.Single(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+    }
+
+    [Fact]
+    public void Remove_Mobile_PublishesLeftSector()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+        index.AddOrUpdate(mobile);
+
+        index.Remove(mobile.Id);
+
+        var left = Assert.Single(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Equal(new(0x1), left.Mobile);
+        Assert.Equal((0, 6, 6), (left.MapId, left.SectorX, left.SectorY));
+    }
+
+    [Fact]
+    public void Items_ProduceNoSectorEvents()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var item = SeedItem(persistence, 0x40000001, 0, 50, 50);
+
+        index.AddOrUpdate(item);
+        index.Remove(item.Id);
+
+        Assert.Empty(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
+    }
+
     private static (SpatialIndexService Index, FakePersistenceService Persistence) Build()
     {
+        var (index, persistence, _) = BuildWithBus();
+
+        return (index, persistence);
+    }
+
+    private static (SpatialIndexService Index, FakePersistenceService Persistence, StubEventBus Bus) BuildWithBus()
+    {
         var persistence = new FakePersistenceService();
+        var bus = new StubEventBus();
         var marker = new LoopThreadMarker();
         marker.Capture();
 
-        return (new(persistence, marker), persistence);
+        return (new(persistence, marker, bus), persistence, bus);
     }
 
     private static ItemEntity SeedItem(FakePersistenceService persistence, uint serial, int mapId, int x, int y)
