@@ -69,7 +69,8 @@
     "nav": {
       "overview": "Overview",
       "accounts": "Accounts",
-      "plugins": "Plugins"
+      "plugins": "Plugins",
+      "settings": "Settings"
     },
     "accounts": {
       "title": "Accounts",
@@ -104,6 +105,28 @@
       "deleteConfirm": "Delete {{username}} for good? This cannot be undone.",
       "deleteYes": "Delete",
       "deleted": "Account deleted."
+    },
+    "settings": {
+      "title": "Shard settings",
+      "general": "General",
+      "description": "Description",
+      "registration": "Web registration open",
+      "contacts": "Contacts",
+      "website": "Website",
+      "email": "Email",
+      "discord": "Discord",
+      "assets": "Assets",
+      "upload": "Upload",
+      "remove": "Remove",
+      "logo": "Logo",
+      "favicon": "Favicon",
+      "banner": "Banner",
+      "save": "Save",
+      "saved": "Settings saved.",
+      "assetUpdated": "Image updated.",
+      "assetRemoved": "Image removed.",
+      "notImage": "That file is not an image.",
+      "tooLarge": "That image is too large."
     }
   }
 }

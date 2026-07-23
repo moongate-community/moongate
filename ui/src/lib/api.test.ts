@@ -49,4 +49,22 @@ describe('apiFetch', () => {
       '/api/v1/admin/accounts/bob%23x',
     )
   })
+
+  it('lets the browser set the content-type for a FormData body', async () => {
+    const fetchSpy = respond(200)
+    const form = new FormData()
+    form.append('file', new Blob(['x'], { type: 'image/png' }), 'logo.png')
+    await apiFetch('/api/v1/admin/server-settings/assets/logo', { method: 'POST', body: form })
+
+    const headers = new Headers((fetchSpy.mock.calls[0][1] as RequestInit).headers)
+    expect(headers.has('content-type')).toBe(false)
+  })
+
+  it('still sets JSON content-type for a string body', async () => {
+    const fetchSpy = respond(200)
+    await apiFetch('/api/v1/x', { method: 'POST', body: JSON.stringify({ a: 1 }) })
+
+    const headers = new Headers((fetchSpy.mock.calls[0][1] as RequestInit).headers)
+    expect(headers.get('content-type')).toBe('application/json')
+  })
 })
