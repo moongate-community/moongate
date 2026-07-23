@@ -6,9 +6,11 @@ import { Label } from '../components/ui/label'
 import { Button } from '../components/ui/button'
 import { Switch } from '../components/ui/switch'
 import { toast } from '../components/ui/sonner'
+import { AssetSlotRow } from '../components/settings/AssetSlotRow'
 import { useServerSettings, useUpdateSettings, type Contacts } from '../lib/settings'
 
 const EMPTY_CONTACTS: Contacts = { website: null, email: null, discord: null }
+const ASSET_SLOTS = ['logo', 'favicon', 'banner'] as const
 
 export function SettingsScreen() {
   const { t } = useTranslation()
@@ -93,6 +95,18 @@ export function SettingsScreen() {
           {t('admin.settings.save')}
         </Button>
       </div>
+
+      <Card className="flex flex-col gap-4 p-5">
+        <h2 className="font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.settings.assets')}</h2>
+        {ASSET_SLOTS.map((slot) => (
+          <AssetSlotRow
+            key={slot}
+            slot={slot}
+            label={t(`admin.settings.${slot}`)}
+            url={settings.data?.assets[slot]}
+          />
+        ))}
+      </Card>
     </form>
   )
 }

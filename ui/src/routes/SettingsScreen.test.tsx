@@ -35,6 +35,16 @@ describe('SettingsScreen', () => {
     expect(screen.getByDisplayValue('https://x.io')).toBeInTheDocument()
   })
 
+  it('renders an upload row for every asset slot', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(settings))
+    renderScreen()
+
+    await screen.findByDisplayValue('The finest shard')
+    expect(screen.getByTestId('asset-input-logo')).toBeInTheDocument()
+    expect(screen.getByTestId('asset-input-favicon')).toBeInTheDocument()
+    expect(screen.getByTestId('asset-input-banner')).toBeInTheDocument()
+  })
+
   it('PUTs the current form state on Save', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(settings))
     renderScreen()
