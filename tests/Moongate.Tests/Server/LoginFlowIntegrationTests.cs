@@ -1,4 +1,5 @@
 using System.Buffers.Binary;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -60,6 +61,49 @@ public class LoginFlowIntegrationTests
 
         public void Post(Action action)
             => action();
+    }
+
+    // A stand-in game loop: drains posted work on one dedicated thread and exposes its id, so a test can
+    // prove that work meant for the loop actually ran there and not on the transport thread that posted it.
+    private sealed class LoopThreadDispatcher : IMainThreadDispatcher, IDisposable
+    {
+        private readonly BlockingCollection<Action> _queue = new();
+        private readonly Thread _thread;
+        private readonly ManualResetEventSlim _ready = new();
+
+        public int LoopThreadId { get; private set; }
+
+        public LoopThreadDispatcher()
+        {
+            _thread = new Thread(Run) { IsBackground = true, Name = "test-game-loop" };
+            _thread.Start();
+            _ready.Wait();
+        }
+
+        public int PendingCount => _queue.Count;
+
+        public int DrainPending(double? budgetMs = null)
+            => 0;
+
+        public void Post(Action action)
+            => _queue.Add(action);
+
+        private void Run()
+        {
+            LoopThreadId = Environment.CurrentManagedThreadId;
+            _ready.Set();
+
+            foreach (var action in _queue.GetConsumingEnumerable())
+            {
+                action();
+            }
+        }
+
+        public void Dispose()
+        {
+            _queue.CompleteAdding();
+            _thread.Join(TimeSpan.FromSeconds(2));
+        }
     }
 
     [Fact]
@@ -887,6 +931,46 @@ public class LoginFlowIntegrationTests
         }
     }
 
+    // A client disconnect is raised on the transport thread, but its SessionDestroyedEvent subscribers
+    // mutate world state (SpatialSubscriber removes the character from the spatial index), so they must
+    // run on the game loop — never on the transport thread. This drives a real connect/disconnect through
+    // a dedicated-loop dispatcher and asserts the event surfaces on the loop thread.
+    [Fact]
+    public async Task SessionDestroyed_IsPublishedOnTheGameLoopThread_NotTheTransportThread()
+    {
+        var config = LoopbackConfig();
+        var eventBus = new EventBusService();
+        using var loop = new LoopThreadDispatcher();
+
+        using var destroyed = new ManualResetEventSlim();
+        var subscriberThreadId = 0;
+        eventBus.Subscribe<SessionDestroyedEvent>(
+            (_, _) =>
+            {
+                subscriberThreadId = Environment.CurrentManagedThreadId;
+                destroyed.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerAsync(config, eventBus, loop);
+
+        try
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+            socket.Close();
+
+            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
+            Assert.Equal(loop.LoopThreadId, subscriberThreadId);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
     /// <summary>
     /// End-to-end proof that the spatial index and its consumers work together: two real characters log
     /// in and enter the world (same default starting city, so they land on the same tile), the
@@ -1210,6 +1294,22 @@ public class LoginFlowIntegrationTests
 
     private static Task<NetworkService> StartServerAsync(MoongateConfig config)
         => StartServerAsync(config, new EventBusService());
+
+    /// <summary>
+    /// Minimal server (no packet handlers) started with a specific dispatcher — enough to exercise the
+    /// connect/disconnect lifecycle, where the session events are published, without a full login flow.
+    /// </summary>
+    private static async Task<NetworkService> StartServerAsync(
+        MoongateConfig config,
+        IEventBus eventBus,
+        IMainThreadDispatcher dispatcher
+    )
+    {
+        var network = new NetworkService(new SessionManager(), config, [], eventBus, dispatcher);
+        await network.StartAsync(CancellationToken.None);
+
+        return network;
+    }
 
     private static Task<NetworkService> StartServerAsync(MoongateConfig config, IEventBus eventBus)
         => StartServerAsync(config, eventBus, new StubCharacterService(), null);
