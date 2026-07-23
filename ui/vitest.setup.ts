@@ -9,6 +9,8 @@ if (!Element.prototype.hasPointerCapture) {
   Element.prototype.releasePointerCapture = () => {}
 }
 Element.prototype.scrollIntoView = () => {}
+// jsdom has no scrollTo either; the console pane calls it to keep the newest line in view.
+Element.prototype.scrollTo = () => {}
 
 // jsdom has no ResizeObserver, which the Radix Switch measures its thumb with.
 if (!('ResizeObserver' in globalThis)) {

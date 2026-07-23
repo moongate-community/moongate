@@ -23,6 +23,7 @@ describe('AdminLayout', () => {
     expect(screen.getByRole('link', { name: /accounts/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /plugins/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /settings/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /console/i })).toBeInTheDocument()
     expect(screen.getByText('overview page')).toBeInTheDocument()
   })
 
