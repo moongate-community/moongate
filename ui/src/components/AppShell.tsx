@@ -2,13 +2,14 @@ import type { ReactNode } from 'react'
 import { NavLink } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { useSession } from '../lib/auth'
+import { isAdmin } from '../lib/roles'
 import { ThemeToggle } from './ThemeToggle'
 import icon from '../assets/moongate-icon.png'
 
 /** The design's double bar: a 50px identity row above a 46px tab row. */
 export function AppShell({ children }: { children: ReactNode }) {
   const { t } = useTranslation()
-  const { username, signOut } = useSession()
+  const { username, level, signOut } = useSession()
 
   return (
     <div className="min-h-screen bg-page text-ink">
@@ -43,6 +44,19 @@ export function AppShell({ children }: { children: ReactNode }) {
         >
           {t('nav.dashboard')}
         </NavLink>
+
+        {isAdmin(level) && (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              isActive
+                ? 'flex items-center border-b-2 border-gold text-sm font-bold text-gold'
+                : 'flex items-center border-b-2 border-transparent text-sm text-muted hover:text-ink'
+            }
+          >
+            {t('nav.admin')}
+          </NavLink>
+        )}
       </nav>
 
       <main className="mx-auto max-w-[1300px] p-6">{children}</main>
