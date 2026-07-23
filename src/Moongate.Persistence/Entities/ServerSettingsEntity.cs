@@ -9,6 +9,8 @@ public sealed class ServerSettingsEntity : ISerialIdEntity
 
     public string? Description { get; set; }
 
+    public string? Tagline { get; set; }
+
     public ServerContacts Contacts { get; set; } = new();
 
     public bool RegistrationEnabled { get; set; }

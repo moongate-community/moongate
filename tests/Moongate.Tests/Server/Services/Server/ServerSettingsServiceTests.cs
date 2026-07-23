@@ -46,6 +46,16 @@ public sealed class ServerSettingsServiceTests
     }
 
     [Fact]
+    public void Update_Tagline_RoundTrips()
+    {
+        var service = Create();
+
+        service.Update(new() { Tagline = "Sosaria never sleeps." });
+
+        Assert.Equal("Sosaria never sleeps.", service.Get().Tagline);
+    }
+
+    [Fact]
     public void SetAsset_ThenClear_RoundTrips()
     {
         var service = Create();

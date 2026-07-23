@@ -4,6 +4,7 @@ namespace Moongate.Http.Plugin.Data.Api.ServerInfo;
 public sealed record ServerInfoResponse(
     string ShardName,
     string? Description,
+    string? Tagline,
     ServerContactsResponse Contacts,
     bool RegistrationEnabled,
     IReadOnlyDictionary<string, string> Assets

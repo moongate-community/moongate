@@ -13,7 +13,9 @@ public sealed class ServerInfoEndpointsTests
     public async Task ServerInfo_IsPublic_AndReflectsSettings()
     {
         await using var server = await TestApiServer.StartAsync();
-        server.ServerSettings.Update(new ServerSettingsUpdate { Description = "A fun shard", RegistrationEnabled = true });
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate { Description = "A fun shard", Tagline = "Sosaria never sleeps.", RegistrationEnabled = true }
+        );
 
         var response = await server.Client.GetAsync("/api/v1/server-info"); // no auth header
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -21,6 +23,7 @@ public sealed class ServerInfoEndpointsTests
         var info = await response.Content.ReadFromJsonAsync<ServerInfoResponse>();
         Assert.Equal("Moongate", info!.ShardName);
         Assert.Equal("A fun shard", info.Description);
+        Assert.Equal("Sosaria never sleeps.", info.Tagline);
         Assert.True(info.RegistrationEnabled);
     }
 

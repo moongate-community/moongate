@@ -28,12 +28,13 @@ public sealed class ServerSettingsAdminEndpointsTests
 
         var response = await server.Client.PutAsJsonAsync(
             "/api/v1/admin/server-settings",
-            new UpdateServerSettingsRequest { RegistrationEnabled = true, Description = "Hi" }
+            new UpdateServerSettingsRequest { RegistrationEnabled = true, Description = "Hi", Tagline = "Welcome" }
         );
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         Assert.True(server.ServerSettings.Get().RegistrationEnabled);
         Assert.Equal("Hi", server.ServerSettings.Get().Description);
+        Assert.Equal("Welcome", server.ServerSettings.Get().Tagline);
     }
 
     [Fact]

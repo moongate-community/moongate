@@ -49,6 +49,7 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     internal static ServerSettingsResponse ToResponse(ServerSettingsEntity settings)
         => new(
             settings.Description,
+            settings.Tagline,
             new(settings.Contacts.Website, settings.Contacts.Email, settings.Contacts.Discord),
             settings.RegistrationEnabled,
             settings.Assets.Keys.ToDictionary(slot => slot, slot => $"/api/v1/server-info/assets/{slot.ToLowerInvariant()}")
@@ -65,6 +66,7 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             new ServerSettingsUpdate
             {
                 Description = request.Description,
+                Tagline = request.Tagline,
                 RegistrationEnabled = request.RegistrationEnabled,
                 Contacts = request.Contacts is null
                                ? null

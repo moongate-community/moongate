@@ -1318,6 +1318,7 @@ export interface components {
         ServerInfoResponse: {
             shardName: string;
             description?: string | null;
+            tagline?: string | null;
             contacts: components["schemas"]["ServerContactsResponse"];
             registrationEnabled: boolean;
             assets: {
@@ -1327,6 +1328,7 @@ export interface components {
         /** @description The full settings view returned to staff (identical fields to the public info minus the shard name). */
         ServerSettingsResponse: {
             description?: string | null;
+            tagline?: string | null;
             contacts: components["schemas"]["ServerContactsResponse"];
             registrationEnabled: boolean;
             assets: {
@@ -1393,6 +1395,7 @@ export interface components {
         /** @description A partial settings update: an omitted (null) field is left unchanged. */
         UpdateServerSettingsRequest: {
             description?: string | null;
+            tagline?: string | null;
             contacts?: components["schemas"]["ServerContactsResponse"];
             registrationEnabled?: boolean | null;
         };
