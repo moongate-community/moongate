@@ -52,6 +52,7 @@ public sealed class ServerInfoEndpoints : IApiEndpointRegistration
         return new(
             shardName,
             settings.Description,
+            settings.Tagline,
             new(settings.Contacts.Website, settings.Contacts.Email, settings.Contacts.Discord),
             settings.RegistrationEnabled,
             assets

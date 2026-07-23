@@ -19,6 +19,7 @@ function json(body: unknown) {
 
 const settings = {
   description: 'The finest shard',
+  tagline: 'Sosaria never sleeps.',
   contacts: { website: 'https://x.io', email: null, discord: null },
   registrationEnabled: true,
   assets: {},
@@ -32,6 +33,7 @@ describe('SettingsScreen', () => {
     renderScreen()
 
     expect(await screen.findByDisplayValue('The finest shard')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('Sosaria never sleeps.')).toBeInTheDocument()
     expect(screen.getByDisplayValue('https://x.io')).toBeInTheDocument()
   })
 
@@ -68,6 +70,7 @@ describe('SettingsScreen', () => {
       expect(JSON.parse((put[1] as RequestInit).body as string)).toMatchObject({
         registrationEnabled: false,
         description: 'The finest shard',
+        tagline: 'Sosaria never sleeps.',
       })
     })
   })

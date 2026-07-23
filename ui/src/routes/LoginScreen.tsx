@@ -56,7 +56,10 @@ export function LoginScreen() {
             them to stay legible. */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
 
-        <p className="relative font-display text-[18px] text-gold">&ldquo;{t('login.quote')}&rdquo;</p>
+        {/* The shard's own tagline when it has set one, otherwise the bundled default. */}
+        <p className="relative font-display text-[18px] text-gold">
+          &ldquo;{serverInfo.data?.tagline || t('login.quote')}&rdquo;
+        </p>
 
         {/* Real, and public: /api/v1/stats is anonymous, so the count is readable before anyone signs in.
             Rendered only once the reply lands — a zero here means an empty shard, which is worth saying,

@@ -127,7 +127,8 @@
       "assetUpdated": "Immagine aggiornata.",
       "assetRemoved": "Immagine rimossa.",
       "notImage": "Il file non è un'immagine.",
-      "tooLarge": "L'immagine è troppo grande."
+      "tooLarge": "L'immagine è troppo grande.",
+      "tagline": "Slogan"
     }
   }
 }

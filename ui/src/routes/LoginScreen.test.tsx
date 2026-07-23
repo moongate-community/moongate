@@ -26,6 +26,7 @@ describe('LoginScreen', () => {
     sessionStorage.clear()
     vi.restoreAllMocks()
     assets = {}
+    tagline = null
   })
 
   function json(body: unknown, status = 200) {
@@ -59,6 +60,7 @@ describe('LoginScreen', () => {
       if (url.endsWith('/api/v1/server-info')) {
         return json({
           shardName: 'Moongate',
+          tagline,
           contacts: { website: null, email: null, discord: null },
           registrationEnabled: false,
           assets,
@@ -68,8 +70,9 @@ describe('LoginScreen', () => {
     })
   }
 
-  // The assets map the /server-info mock reports; tests override it before rendering.
+  // What the /server-info mock reports; tests override these before rendering.
   let assets: Record<string, string> = {}
+  let tagline: string | null = null
 
   it('shows the server version once it resolves', async () => {
     serveApi()
@@ -94,6 +97,21 @@ describe('LoginScreen', () => {
     // The version resolving proves server-info also had time to; the logo is genuinely absent.
     await screen.findByText(/Moongate · v9\.9\.9/)
     expect(screen.queryByRole('img', { name: /shard logo/i })).not.toBeInTheDocument()
+  })
+
+  it('shows the shard tagline when the server sets one', async () => {
+    tagline = 'The moongates hum tonight.'
+    serveApi()
+    renderLogin()
+
+    expect(await screen.findByText(/The moongates hum tonight\./)).toBeInTheDocument()
+  })
+
+  it('falls back to the default quote without a tagline', async () => {
+    serveApi()
+    renderLogin()
+
+    expect(await screen.findByText(/Sosaria never sleeps\./)).toBeInTheDocument()
   })
 
   it('sends the credentials and stores the issued token', async () => {

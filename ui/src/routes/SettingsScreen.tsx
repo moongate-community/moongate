@@ -18,6 +18,7 @@ export function SettingsScreen() {
   const update = useUpdateSettings()
 
   const [description, setDescription] = useState('')
+  const [tagline, setTagline] = useState('')
   const [registration, setRegistration] = useState(false)
   const [contacts, setContacts] = useState<Contacts>(EMPTY_CONTACTS)
 
@@ -28,6 +29,7 @@ export function SettingsScreen() {
     if (settings.data && !seeded.current) {
       seeded.current = true
       setDescription(settings.data.description ?? '')
+      setTagline(settings.data.tagline ?? '')
       setRegistration(settings.data.registrationEnabled)
       setContacts(settings.data.contacts ?? EMPTY_CONTACTS)
     }
@@ -38,6 +40,7 @@ export function SettingsScreen() {
     try {
       await update.mutateAsync({
         description: description || null,
+        tagline: tagline || null,
         registrationEnabled: registration,
         contacts,
       })
@@ -70,6 +73,10 @@ export function SettingsScreen() {
             rows={3}
             className="rounded-control border border-border-subtle bg-deep px-3.5 py-2.5 text-sm text-ink outline-none focus-visible:border-gold"
           />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="tagline">{t('admin.settings.tagline')}</Label>
+          <Input id="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} />
         </div>
         <Label className="flex items-center gap-2 text-sm">
           <Switch

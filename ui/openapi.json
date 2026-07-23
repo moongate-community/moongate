@@ -2677,6 +2677,10 @@
             "type": "string",
             "nullable": true
           },
+          "tagline": {
+            "type": "string",
+            "nullable": true
+          },
           "contacts": {
             "$ref": "#/components/schemas/ServerContactsResponse"
           },
@@ -2702,6 +2706,10 @@
         "type": "object",
         "properties": {
           "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tagline": {
             "type": "string",
             "nullable": true
           },
@@ -2881,6 +2889,10 @@
         "type": "object",
         "properties": {
           "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "tagline": {
             "type": "string",
             "nullable": true
           },

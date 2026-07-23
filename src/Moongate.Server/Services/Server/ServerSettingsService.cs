@@ -41,6 +41,11 @@ public sealed class ServerSettingsService : IServerSettingsService
             settings.Description = update.Description;
         }
 
+        if (update.Tagline is not null)
+        {
+            settings.Tagline = update.Tagline;
+        }
+
         if (update.Contacts is not null)
         {
             settings.Contacts = update.Contacts;

@@ -7,6 +7,8 @@ public sealed class ServerSettingsUpdate
 {
     public string? Description { get; set; }
 
+    public string? Tagline { get; set; }
+
     public ServerContacts? Contacts { get; set; }
 
     public bool? RegistrationEnabled { get; set; }
