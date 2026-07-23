@@ -50,6 +50,11 @@ export function SettingsScreen() {
   const setContact = (key: keyof Contacts) => (value: string) =>
     setContacts((current) => ({ ...current, [key]: value || null }))
 
+  // The API keys the assets map in PascalCase ("Logo"), while the slot (and its upload path) is
+  // lowercase — match case-insensitively so the preview finds the stored image.
+  const assetUrl = (slot: string) =>
+    Object.entries(settings.data?.assets ?? {}).find(([key]) => key.toLowerCase() === slot)?.[1]
+
   return (
     <form onSubmit={save} className="flex flex-col gap-4">
       <h1 className="font-display text-xl text-ink">{t('admin.settings.title')}</h1>
@@ -99,12 +104,7 @@ export function SettingsScreen() {
       <Card className="flex flex-col gap-4 p-5">
         <h2 className="font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.settings.assets')}</h2>
         {ASSET_SLOTS.map((slot) => (
-          <AssetSlotRow
-            key={slot}
-            slot={slot}
-            label={t(`admin.settings.${slot}`)}
-            url={settings.data?.assets[slot]}
-          />
+          <AssetSlotRow key={slot} slot={slot} label={t(`admin.settings.${slot}`)} url={assetUrl(slot)} />
         ))}
       </Card>
     </form>

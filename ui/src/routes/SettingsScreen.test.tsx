@@ -45,6 +45,15 @@ describe('SettingsScreen', () => {
     expect(screen.getByTestId('asset-input-banner')).toBeInTheDocument()
   })
 
+  it('matches a stored asset to its slot regardless of key casing', async () => {
+    // The API keys the assets map in PascalCase ("Logo"); the slot is lowercase.
+    const withLogo = { ...settings, assets: { Logo: '/api/v1/server-info/assets/logo' } }
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(withLogo))
+    renderScreen()
+
+    expect(await screen.findByRole('img', { name: /^logo$/i })).toBeInTheDocument()
+  })
+
   it('PUTs the current form state on Save', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(settings))
     renderScreen()
