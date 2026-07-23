@@ -60,6 +60,10 @@
       "external": "esterno",
       "host": "host",
       "empty": "Nessun plugin riportato."
+    },
+    "nav": {
+      "overview": "Panoramica",
+      "accounts": "Account"
     }
   }
 }

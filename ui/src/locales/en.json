@@ -60,6 +60,10 @@
       "external": "external",
       "host": "host",
       "empty": "No plugins reported."
+    },
+    "nav": {
+      "overview": "Overview",
+      "accounts": "Accounts"
     }
   }
 }

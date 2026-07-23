@@ -7,6 +7,8 @@ import { RequireAdmin } from './routes/RequireAdmin'
 import { LoginScreen } from './routes/LoginScreen'
 import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
+import { AdminLayout } from './routes/AdminLayout'
+import { AccountsScreen } from './routes/AccountsScreen'
 
 const queryClient = new QueryClient()
 
@@ -33,12 +35,15 @@ export function App() {
                 <RequireAuth>
                   <RequireAdmin>
                     <AppShell>
-                      <AdminScreen />
+                      <AdminLayout />
                     </AppShell>
                   </RequireAdmin>
                 </RequireAuth>
               }
-            />
+            >
+              <Route index element={<AdminScreen />} />
+              <Route path="accounts" element={<AccountsScreen />} />
+            </Route>
           </Routes>
         </AuthProvider>
       </BrowserRouter>
