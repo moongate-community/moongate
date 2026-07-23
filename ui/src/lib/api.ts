@@ -32,7 +32,9 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
   const headers = new Headers(init.headers)
   headers.set('accept', 'application/json')
 
-  if (init.body !== undefined && !headers.has('content-type')) {
+  // A FormData body must keep the content-type the browser assigns, boundary and all; only a
+  // hand-built (JSON) body gets the JSON type.
+  if (init.body !== undefined && !headers.has('content-type') && !(init.body instanceof FormData)) {
     headers.set('content-type', 'application/json')
   }
 
