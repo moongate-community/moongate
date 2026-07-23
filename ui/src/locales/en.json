@@ -59,7 +59,12 @@
       "routes": "{{count}} routes",
       "external": "external",
       "host": "host",
-      "empty": "No plugins reported."
+      "empty": "No plugins reported.",
+      "name": "Name",
+      "version": "Version",
+      "routesHeader": "Routes",
+      "type": "Type",
+      "search": "Search plugins…"
     },
     "nav": {
       "overview": "Overview",

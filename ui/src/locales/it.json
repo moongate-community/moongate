@@ -59,7 +59,12 @@
       "routes": "{{count}} rotte",
       "external": "esterno",
       "host": "host",
-      "empty": "Nessun plugin riportato."
+      "empty": "Nessun plugin riportato.",
+      "name": "Nome",
+      "version": "Versione",
+      "routesHeader": "Rotte",
+      "type": "Tipo",
+      "search": "Cerca plugin…"
     },
     "nav": {
       "overview": "Panoramica",
