@@ -5,7 +5,7 @@
   "theme": {
     "dark": "Scuro",
     "light": "Chiaro",
-    "label": "Tema"
+    "switchTo": "Passa a {{theme}}"
   },
   "nav": {
     "dashboard": "Dashboard",

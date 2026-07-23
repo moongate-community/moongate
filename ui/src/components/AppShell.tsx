@@ -17,7 +17,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         <img src={icon} alt="" className="size-[26px] rounded-control object-cover" />
         <span className="font-display text-[18px] font-bold tracking-wider text-gold">{t('app.name')}</span>
         <div className="flex-1" />
-        <span className="text-xs tracking-widest text-faint">{t('theme.label')}</span>
         <ThemeToggle />
 
         {/* A rule of its own, not just a gap: theme and identity are unrelated controls, and without a
