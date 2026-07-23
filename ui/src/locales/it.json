@@ -64,6 +64,20 @@
     "nav": {
       "overview": "Panoramica",
       "accounts": "Account"
+    },
+    "accounts": {
+      "title": "Account",
+      "new": "Nuovo account",
+      "search": "Cerca username, email…",
+      "username": "Username",
+      "email": "Email",
+      "level": "Livello",
+      "status": "Stato",
+      "characters": "Personaggi",
+      "active": "attivo",
+      "suspended": "sospeso",
+      "manage": "Gestisci",
+      "none": "—"
     }
   }
 }

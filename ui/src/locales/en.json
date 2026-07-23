@@ -64,6 +64,20 @@
     "nav": {
       "overview": "Overview",
       "accounts": "Accounts"
+    },
+    "accounts": {
+      "title": "Accounts",
+      "new": "New account",
+      "search": "Search username, email…",
+      "username": "Username",
+      "email": "Email",
+      "level": "Level",
+      "status": "Status",
+      "characters": "Characters",
+      "active": "active",
+      "suspended": "suspended",
+      "manage": "Manage",
+      "none": "—"
     }
   }
 }
