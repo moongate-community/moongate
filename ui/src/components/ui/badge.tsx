@@ -1,48 +1,31 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { Slot } from "radix-ui"
+import * as React from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
-import { cn } from "@/lib/utils"
-
+// Faithful to mg-badge: 700 11px, radius 2px, padding 3px 10px, with the variant tinting text at full
+// colour, background at 10% and border at 40%. The staff variant is letter-spaced.
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
+  'inline-flex items-center rounded-control border px-2.5 py-[3px] text-[11px] font-bold leading-none',
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
-        secondary:
-          "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
-        destructive:
-          "bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
-        outline:
-          "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 [a&]:hover:underline",
+        success: 'text-success bg-success/10 border-success/40',
+        warning: 'text-gold bg-gold/10 border-gold/40',
+        danger: 'text-danger-text bg-danger/10 border-danger/40',
+        info: 'text-info bg-info/10 border-info/40',
+        staff: 'text-staff bg-staff/10 border-staff/40 tracking-[0.14em]',
       },
     },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
+    defaultVariants: { variant: 'info' },
+  },
 )
 
 function Badge({
   className,
-  variant = "default",
-  asChild = false,
+  variant,
   ...props
-}: React.ComponentProps<"span"> &
-  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
-  const Comp = asChild ? Slot.Root : "span"
-
-  return (
-    <Comp
-      data-slot="badge"
-      data-variant={variant}
-      className={cn(badgeVariants({ variant }), className)}
-      {...props}
-    />
-  )
+}: React.ComponentProps<'span'> & VariantProps<typeof badgeVariants>) {
+  return <span data-slot="badge" className={cn(badgeVariants({ variant }), className)} {...props} />
 }
 
 export { Badge, badgeVariants }
