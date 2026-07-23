@@ -5,7 +5,7 @@
   "theme": {
     "dark": "Dark",
     "light": "Light",
-    "label": "Theme"
+    "switchTo": "Switch to {{theme}}"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -59,11 +59,17 @@
       "routes": "{{count}} routes",
       "external": "external",
       "host": "host",
-      "empty": "No plugins reported."
+      "empty": "No plugins reported.",
+      "name": "Name",
+      "version": "Version",
+      "routesHeader": "Routes",
+      "type": "Type",
+      "search": "Search plugins…"
     },
     "nav": {
       "overview": "Overview",
-      "accounts": "Accounts"
+      "accounts": "Accounts",
+      "plugins": "Plugins"
     },
     "accounts": {
       "title": "Accounts",

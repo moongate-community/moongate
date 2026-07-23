@@ -55,7 +55,8 @@ describe('AppShell', () => {
 
   it('offers the theme toggle', () => {
     renderShell()
-    expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument()
+    // Dark is the default, so the toggle offers the switch to light.
+    expect(screen.getByRole('button', { name: /light/i })).toBeInTheDocument()
   })
 
   it('shows the Admin tab for an admin session', async () => {

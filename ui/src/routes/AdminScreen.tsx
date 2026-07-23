@@ -1,16 +1,13 @@
 import { useTranslation } from 'react-i18next'
-import { Card } from '../components/ui/card'
 import { StatCard } from '../components/ui/stat-card'
-import { Badge } from '../components/ui/badge'
-import { useAdminPlugins, useAdminStatus, useStats } from '../lib/queries'
+import { useAdminStatus, useStats } from '../lib/queries'
 
-// The admin area's first screen: read-only diagnostics, composed from the Moongate control kit — a row of
-// stat cards over the shard status and statistics, and a card listing the active plugins.
+// The admin overview: read-only shard status and statistics as rows of stat cards. The plugin list lives
+// on its own admin page.
 export function AdminScreen() {
   const { t } = useTranslation()
   const status = useAdminStatus()
   const stats = useStats()
-  const plugins = useAdminPlugins()
 
   return (
     <div className="flex flex-col gap-4">
@@ -34,33 +31,6 @@ export function AdminScreen() {
           <StatCard label={t('admin.stats.items')} value={stats.data?.world.items} />
         </div>
       </section>
-
-      <Card className="p-5">
-        <h2 className="mb-3 font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.plugins.title')}</h2>
-        {plugins.isError && (
-          <p role="alert" className="text-sm text-danger-text">
-            {t('error.generic')}
-          </p>
-        )}
-        {plugins.data?.length === 0 && <p className="text-sm text-muted">{t('admin.plugins.empty')}</p>}
-        <ul className="flex flex-col gap-2">
-          {plugins.data?.map((plugin) => (
-            <li
-              key={plugin.id}
-              className="flex items-center gap-3 rounded-card border border-border-subtle bg-page px-3 py-2.5"
-            >
-              <span className="text-sm font-bold text-ink">{plugin.name}</span>
-              <span className="font-mono text-xs text-muted">{plugin.version}</span>
-              <span className="text-xs text-faint">{t('admin.plugins.routes', { count: plugin.routes.length })}</span>
-              <span className="ml-auto">
-                <Badge variant={plugin.isExternal ? 'info' : 'staff'}>
-                  {plugin.isExternal ? t('admin.plugins.external') : t('admin.plugins.host')}
-                </Badge>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </Card>
     </div>
   )
 }

@@ -19,7 +19,7 @@ function json(body: unknown) {
 describe('AdminScreen', () => {
   beforeEach(() => vi.restoreAllMocks())
 
-  it('shows shard status, statistics and the plugin list', async () => {
+  it('shows shard status and statistics', async () => {
     vi.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
       const url = String(input)
 
@@ -34,20 +34,6 @@ describe('AdminScreen', () => {
           content: { itemTemplates: 1665, mobileTemplates: 19 },
         })
       }
-      if (url.endsWith('/api/v1/admin/plugins')) {
-        return json([
-          {
-            id: 'moongate.http',
-            name: 'HTTP',
-            version: '0.4.0',
-            author: 'moongate',
-            description: '',
-            assembly: 'Moongate.Http.Plugin',
-            isExternal: true,
-            routes: [{ method: 'GET', path: '/x', policy: null }],
-          },
-        ])
-      }
       return json({})
     })
 
@@ -56,6 +42,5 @@ describe('AdminScreen', () => {
     expect(await screen.findByText('1.2.3')).toBeInTheDocument() // build
     expect(await screen.findByText('4')).toBeInTheDocument() // sessions
     expect(await screen.findByText('42')).toBeInTheDocument() // players online
-    expect(await screen.findByText('HTTP')).toBeInTheDocument() // plugin name
   })
 })

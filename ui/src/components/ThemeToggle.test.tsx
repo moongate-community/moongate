@@ -9,10 +9,9 @@ describe('ThemeToggle', () => {
     localStorage.clear()
   })
 
-  it('starts from the theme already on the document', () => {
+  it('offers switching to light while dark is active', () => {
     render(<ThemeToggle />)
-
-    expect(screen.getByRole('button', { pressed: true })).toHaveAccessibleName(/dark/i)
+    expect(screen.getByRole('button', { name: /light/i })).toBeInTheDocument()
   })
 
   it('switches the document theme and remembers it', async () => {
@@ -22,5 +21,8 @@ describe('ThemeToggle', () => {
 
     expect(document.documentElement.dataset.theme).toBe('light')
     expect(localStorage.getItem('mg-theme')).toBe('light')
+
+    // The single button now offers the reverse switch.
+    expect(screen.getByRole('button', { name: /dark/i })).toBeInTheDocument()
   })
 })
