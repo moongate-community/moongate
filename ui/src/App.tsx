@@ -9,6 +9,7 @@ import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
 import { AdminLayout } from './routes/AdminLayout'
 import { AccountsScreen } from './routes/AccountsScreen'
+import { PluginsScreen } from './routes/PluginsScreen'
 import { Toaster } from './components/ui/sonner'
 
 const queryClient = new QueryClient()
@@ -45,6 +46,7 @@ export function App() {
             >
               <Route index element={<AdminScreen />} />
               <Route path="accounts" element={<AccountsScreen />} />
+              <Route path="plugins" element={<PluginsScreen />} />
             </Route>
           </Routes>
         </AuthProvider>

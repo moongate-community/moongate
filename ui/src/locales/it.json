@@ -63,7 +63,8 @@
     },
     "nav": {
       "overview": "Panoramica",
-      "accounts": "Account"
+      "accounts": "Account",
+      "plugins": "Plugin"
     },
     "accounts": {
       "title": "Account",
