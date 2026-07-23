@@ -87,7 +87,17 @@
         "Player": "Player",
         "GrandMaster": "GrandMaster",
         "Administrator": "Administrator"
-      }
+      },
+      "edit": "Gestisci {{username}}",
+      "suspendedLabel": "Sospeso",
+      "newPassword": "Nuova password",
+      "newPasswordHint": "Lascia vuoto per non cambiarla.",
+      "save": "Salva",
+      "saved": "Account aggiornato.",
+      "delete": "Elimina account",
+      "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
+      "deleteYes": "Elimina",
+      "deleted": "Account eliminato."
     }
   }
 }
