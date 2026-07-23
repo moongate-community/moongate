@@ -17,7 +17,7 @@ export function AdminScreen() {
       <h1 className="font-display text-xl text-ink">{t('admin.title')}</h1>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-display text-[14px] tracking-[0.08em] text-gold">{t('admin.status.title')}</h2>
+        <h2 className="font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.status.title')}</h2>
         <div className="grid grid-cols-3 gap-4">
           <StatCard label={t('app.name')} value={status.data?.shardName} tone="text-gold" />
           <StatCard label={t('admin.status.build')} value={status.data?.version} />
@@ -26,7 +26,7 @@ export function AdminScreen() {
       </section>
 
       <section className="flex flex-col gap-3">
-        <h2 className="font-display text-[14px] tracking-[0.08em] text-gold">{t('admin.stats.title')}</h2>
+        <h2 className="font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.stats.title')}</h2>
         <div className="grid grid-cols-4 gap-4">
           <StatCard label={t('admin.stats.players')} value={stats.data?.players.online} tone="text-success" />
           <StatCard label={t('admin.stats.accounts')} value={stats.data?.accounts.total} />
@@ -36,7 +36,7 @@ export function AdminScreen() {
       </section>
 
       <Card className="p-5">
-        <h2 className="mb-3 font-display text-[14px] tracking-[0.08em] text-gold">{t('admin.plugins.title')}</h2>
+        <h2 className="mb-3 font-display text-[16px] tracking-[0.08em] text-gold">{t('admin.plugins.title')}</h2>
         {plugins.isError && (
           <p role="alert" className="text-sm text-danger-text">
             {t('error.generic')}
