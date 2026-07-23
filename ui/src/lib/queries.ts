@@ -20,3 +20,8 @@ export const useMyCharacters = () =>
 
 export const useStats = () =>
   useQuery({ queryKey: ['stats'], queryFn: () => apiFetch<ServerStats>('/api/v1/stats') })
+
+export type ServerVersion = components['schemas']['VersionResponse']
+
+export const useVersion = () =>
+  useQuery({ queryKey: ['version'], queryFn: () => apiFetch<ServerVersion>('/api/v1/version') })
