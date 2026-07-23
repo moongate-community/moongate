@@ -3,7 +3,7 @@ import { Navigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { ApiError } from '../lib/api'
 import { useSession } from '../lib/auth'
-import { useStats, useVersion } from '../lib/queries'
+import { useServerInfo, useStats, useVersion } from '../lib/queries'
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Label } from '../components/ui/label'
@@ -14,6 +14,10 @@ export function LoginScreen() {
   const { status, signIn } = useSession()
   const stats = useStats()
   const version = useVersion()
+  const serverInfo = useServerInfo()
+
+  // The assets map is keyed in PascalCase ("Logo") while the slot is lowercase — match case-insensitively.
+  const logoUrl = Object.entries(serverInfo.data?.assets ?? {}).find(([key]) => key.toLowerCase() === 'logo')?.[1]
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [remember, setRemember] = useState(true)
@@ -71,6 +75,12 @@ export function LoginScreen() {
       </div>
 
       <form onSubmit={submit} className="flex w-full max-w-[420px] flex-col justify-center gap-4 px-12">
+        {/* The shard's own logo, if it has uploaded one — public and anonymous, so it brands the page
+            before anyone signs in. Absent by default, so a fresh shard just shows the wordmark title. */}
+        {logoUrl !== undefined && (
+          <img src={logoUrl} alt={t('login.logoAlt')} className="mb-1 max-h-16 max-w-[220px] object-contain" />
+        )}
+
         <h1 className="font-display text-[25px] font-bold tracking-wider text-gold">{t('login.title')}</h1>
         <p className="text-sm text-muted">{t('login.subtitle')}</p>
 
