@@ -9,6 +9,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "map": "Map",
     "admin": "Admin"
   },
   "login": {
@@ -33,6 +34,18 @@
     "playersOnline": "Players online",
     "accounts": "Accounts",
     "charactersTotal": "Characters"
+  },
+  "map": {
+    "title": "World Map",
+    "facet": "Facet",
+    "relief": "Relief",
+    "x": "X",
+    "y": "Y",
+    "go": "Go",
+    "copyHint": "Click to copy the coordinate",
+    "copied": "Copied {{x}}, {{y}}",
+    "jumpError": "Enter a coordinate inside the facet (0–{{width}}, 0–{{height}}).",
+    "unavailable": "The map is unavailable — the shard has not loaded its client files."
   },
   "common": {
     "signOut": "Sign out",

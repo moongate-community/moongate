@@ -44,6 +44,17 @@ export function AppShell({ children }: { children: ReactNode }) {
           {t('nav.dashboard')}
         </NavLink>
 
+        <NavLink
+          to="/map"
+          className={({ isActive }) =>
+            isActive
+              ? 'flex items-center border-b-2 border-gold text-sm font-bold text-gold'
+              : 'flex items-center border-b-2 border-transparent text-sm text-muted hover:text-ink'
+          }
+        >
+          {t('nav.map')}
+        </NavLink>
+
         {isAdmin(level) && (
           <NavLink
             to="/admin"
