@@ -9,6 +9,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "map": "Map",
     "admin": "Admin"
   },
   "login": {

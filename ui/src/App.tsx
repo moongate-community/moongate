@@ -7,6 +7,7 @@ import { RequireAdmin } from './routes/RequireAdmin'
 import { LoginScreen } from './routes/LoginScreen'
 import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
+import { MapScreen } from './routes/MapScreen'
 import { AdminLayout } from './routes/AdminLayout'
 import { AccountsScreen } from './routes/AccountsScreen'
 import { PluginsScreen } from './routes/PluginsScreen'
@@ -30,6 +31,16 @@ export function App() {
                 <RequireAuth>
                   <AppShell>
                     <DashboardScreen />
+                  </AppShell>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/map"
+              element={
+                <RequireAuth>
+                  <AppShell>
+                    <MapScreen />
                   </AppShell>
                 </RequireAuth>
               }
