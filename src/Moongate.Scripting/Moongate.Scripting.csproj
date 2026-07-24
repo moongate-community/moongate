@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
