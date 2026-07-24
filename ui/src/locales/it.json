@@ -34,6 +34,18 @@
     "accounts": "Account",
     "charactersTotal": "Personaggi"
   },
+  "map": {
+    "title": "Mappa del mondo",
+    "facet": "Facet",
+    "relief": "Rilievo",
+    "x": "X",
+    "y": "Y",
+    "go": "Vai",
+    "copyHint": "Clicca per copiare la coordinata",
+    "copied": "Copiato {{x}}, {{y}}",
+    "jumpError": "Inserisci una coordinata dentro la facet (0–{{width}}, 0–{{height}}).",
+    "unavailable": "Mappa non disponibile — lo shard non ha caricato i file client."
+  },
   "common": {
     "signOut": "Esci",
     "loading": "Caricamento…"
