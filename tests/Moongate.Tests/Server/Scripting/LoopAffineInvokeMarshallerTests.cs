@@ -15,10 +15,6 @@ public class LoopAffineInvokeMarshallerTests
         }
 
         public bool IsOnLoopThread { get; }
-
-        public void Capture()
-        {
-        }
     }
 
     [Fact]

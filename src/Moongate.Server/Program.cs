@@ -223,7 +223,7 @@ await ConsoleApp.RunAsync(
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(new());
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
-                container.Register<ILoopThread, LoopThreadMarker>(Reuse.Singleton);
+                container.Register<ILoopThread, EventLoopThread>(Reuse.Singleton);
                 container.Register<ILoopAffinity, LoopAffinity>(Reuse.Singleton);
                 container.RegisterEventLoop(
                     new()
@@ -255,14 +255,9 @@ await ConsoleApp.RunAsync(
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 
                         var loop = container.Resolve<IGameLoopContext>();
-                        var marker = container.Resolve<ILoopThread>();
 
-                        loop.Post(() =>
-                            {
-                                marker.Capture();
-                                _ = eventBus.PublishAsync(new WorldReadyEvent());
-                            }
-                        );
+                        // WorldReadyEvent must fire on the loop, once the world is loaded.
+                        loop.Post(() => _ = eventBus.PublishAsync(new WorldReadyEvent()));
 
                         return Task.CompletedTask;
                     }
