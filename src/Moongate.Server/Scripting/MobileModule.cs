@@ -1,6 +1,5 @@
 using System.Globalization;
 using Moongate.Core.Extensions;
-using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
@@ -19,7 +18,10 @@ namespace Moongate.Server.Scripting;
 /// Exposes mobile creation and manipulation to Lua. Mobiles are referenced by serial (a number).
 /// All functions are synchronous and must run on the game-loop thread — the single-writer boundary
 /// for mobile state. Event handlers (<c>events.on</c>) are dispatched there automatically; other code
-/// reaches it via <c>game.post</c> / <c>game.schedule</c>. Mutating calls log a warning if run off-loop.
+/// reaches it via <c>game.post</c> / <c>game.schedule</c>. This module has no loop-affinity guard of
+/// its own: it mutates the entity store directly with no service seam to carry one, and the Lua
+/// marshaller already keeps script calls loop-affine. A future <c>IMobileService</c> should carry the
+/// guard the way <c>IItemService</c> does.
 /// </summary>
 [ScriptModule("mobile", "Create and manipulate mobiles by serial.")]
 public sealed class MobileModule
@@ -28,28 +30,23 @@ public sealed class MobileModule
     private readonly IItemFactoryService _itemFactory;
     private readonly IItemService _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
-    private readonly ILoopThread _loopThread;
 
     public MobileModule(
         IMobileFactoryService factory,
         IItemFactoryService itemFactory,
         IItemService items,
-        IPersistenceService persistence,
-        ILoopThread loopThread
+        IPersistenceService persistence
     )
     {
         _factory = factory;
         _itemFactory = itemFactory;
         _items = items;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
-        _loopThread = loopThread;
     }
 
     [ScriptFunction("create", "Creates a mobile at a location; returns its serial.")]
     public uint? Create(string name, int map, int x, int y, int z)
     {
-        LoopGuard.Warn(_loopThread, "mobile.create");
-
         var mobile = _factory.Create(name, map, new(x, y, z));
         _mobiles.UpsertAsync(mobile).WaitSync();
 
@@ -59,8 +56,6 @@ public sealed class MobileModule
     [ScriptFunction("create_from_template", "Spawns a mobile from a template; returns its serial or nil.")]
     public uint? CreateFromTemplate(string templateId, int map, int x, int y, int z)
     {
-        LoopGuard.Warn(_loopThread, "mobile.create_from_template");
-
         var spawn = _factory.CreateFromTemplate(templateId, map, new(x, y, z));
 
         if (spawn is null)
@@ -90,8 +85,6 @@ public sealed class MobileModule
     [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
     public bool Delete(uint serial)
     {
-        LoopGuard.Warn(_loopThread, "mobile.delete");
-
         return _mobiles.RemoveAsync((Serial)serial).WaitSync();
     }
 
@@ -115,8 +108,6 @@ public sealed class MobileModule
     [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
     public bool Move(uint serial, int x, int y, int z)
     {
-        LoopGuard.Warn(_loopThread, "mobile.move");
-
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null)
@@ -133,8 +124,6 @@ public sealed class MobileModule
     [ScriptFunction("set", "Mutates mobile fields from a table; returns true on success.")]
     public bool Set(uint serial, Table fields)
     {
-        LoopGuard.Warn(_loopThread, "mobile.set");
-
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null || fields is null)
@@ -183,8 +172,6 @@ public sealed class MobileModule
     [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name or id; false on unknown serial/skill.")]
     public bool SetSkill(uint serial, object skill, int value)
     {
-        LoopGuard.Warn(_loopThread, "mobile.set_skill");
-
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null || !TryResolveSkill(skill, out var skillId))

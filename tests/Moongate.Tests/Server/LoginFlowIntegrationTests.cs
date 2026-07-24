@@ -25,7 +25,6 @@ using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Events;
-using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.World;
@@ -766,9 +765,7 @@ public class LoginFlowIntegrationTests
             var map = new Map(dir, 0, 0, 8, 8);
             var mapProvider = new StubMapProvider(MapType.Felucca, map);
 
-            var loopThread = new LoopThreadMarker();
-            loopThread.Capture();
-            var spatial = new SpatialIndexService(persistence, loopThread, eventBus);
+            var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), eventBus);
             new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
 
             var mapTiles = new MapTileService(mapProvider);
@@ -1006,9 +1003,7 @@ public class LoginFlowIntegrationTests
         var opl = new OplService(persistence, new ItemTemplateService());
         var sessions = new SessionManager();
 
-        var loopThread = new LoopThreadMarker();
-        loopThread.Capture();
-        var spatial = new SpatialIndexService(persistence, loopThread, eventBus);
+        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), eventBus);
         new SpatialSubscriber(spatial, persistence).Subscribe(eventBus);
 
         var world = new WorldService(

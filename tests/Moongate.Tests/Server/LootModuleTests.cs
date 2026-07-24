@@ -51,6 +51,6 @@ public class LootModuleTests
         var lootService = new LootService(loot, itemFactory, new(1));
         var items = new ItemService(persistence);
 
-        return (new(lootService, items, new StubLoopThread()), persistence);
+        return (new(lootService, items), persistence);
     }
 }

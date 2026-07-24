@@ -10,9 +10,9 @@ namespace Moongate.Server.Scripting;
 
 /// <summary>
 /// Exposes speaking and server-wide broadcasting to Lua. Mobiles are referenced by serial, matching
-/// <see cref="MobileModule" />. Neither function mutates an entity store, so unlike
-/// <see cref="MobileModule" />'s writers they carry no <c>LoopGuard.Warn</c> — the same reasoning
-/// already applied to <see cref="MobileModule" />'s own read-only functions (<c>Get</c>, <c>Skills</c>).
+/// <see cref="MobileModule" />. Neither function mutates an entity store, so unlike a write path they
+/// carry no loop-affinity guard — the same reasoning already applied to <see cref="MobileModule" />'s
+/// own read-only functions (<c>Get</c>, <c>Skills</c>).
 /// </summary>
 [ScriptModule("chat", "Speak or broadcast as a mobile.")]
 public sealed class ChatModule

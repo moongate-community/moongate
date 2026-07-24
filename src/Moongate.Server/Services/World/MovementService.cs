@@ -1,5 +1,6 @@
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Outgoing;
@@ -34,6 +35,7 @@ public sealed class MovementService : IMovementService
     private readonly IWorldService _world;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly TimeProvider _timeProvider;
+    private readonly ILoopAffinity? _loopAffinity;
 
     public MovementService(
         IMapTileService mapTiles,
@@ -41,7 +43,8 @@ public sealed class MovementService : IMovementService
         ISpatialIndexService spatial,
         IWorldService world,
         IPersistenceService persistenceService,
-        TimeProvider timeProvider
+        TimeProvider timeProvider,
+        ILoopAffinity? loopAffinity = null
     )
     {
         _mapTiles = mapTiles;
@@ -50,6 +53,7 @@ public sealed class MovementService : IMovementService
         _world = world;
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _timeProvider = timeProvider;
+        _loopAffinity = loopAffinity;
     }
 
     /// <summary>
@@ -111,6 +115,8 @@ public sealed class MovementService : IMovementService
 
     public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
     {
+        _loopAffinity?.AssertOnLoop("movement.try_move");
+
         var mobile = session.Character;
 
         if (mobile is null)

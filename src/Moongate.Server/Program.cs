@@ -224,6 +224,7 @@ await ConsoleApp.RunAsync(
                 container.RegisterTimerWheelService(new());
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
                 container.Register<ILoopThread, LoopThreadMarker>(Reuse.Singleton);
+                container.Register<ILoopAffinity, LoopAffinity>(Reuse.Singleton);
                 container.RegisterEventLoop(
                     new()
                     {
