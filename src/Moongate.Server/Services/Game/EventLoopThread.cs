@@ -8,10 +8,10 @@ public sealed class EventLoopThread : ILoopThread
 {
     private readonly IEventLoopService _loop;
 
+    public bool IsOnLoopThread => _loop.IsOnLoopThread;
+
     public EventLoopThread(IEventLoopService loop)
     {
         _loop = loop;
     }
-
-    public bool IsOnLoopThread => _loop.IsOnLoopThread;
 }

@@ -2,9 +2,11 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
@@ -72,6 +74,19 @@ public class CharacterServiceTests
         var shirt = Assert.Single(equipped.Where(item => item.ItemId == 5399)); // shirt from ByBody Elf/Female
         Assert.Equal(LayerType.Shirt, shirt.EquippedLayer);
         Assert.Equal((ushort)0x0765, shirt.Hue.Value); // Hue "shirt" resolved to packet.ShirtHue
+    }
+
+    [Fact]
+    public void CreateCharacter_OffLoopStrict_Throws()
+    {
+        var persistence = new FakePersistenceService();
+        var loopAffinity = new LoopAffinity(
+            new StubLoopThread(onLoop: false),
+            new MoongateConfig { StrictLoopAffinity = true }
+        );
+        var service = CharacterServiceFixture.Create(persistence, new EventBusService(), loopAffinity: loopAffinity);
+
+        Assert.Throws<InvalidOperationException>(() => service.CreateCharacter((Serial)5, Packet()));
     }
 
     [Fact]
@@ -175,6 +190,32 @@ public class CharacterServiceTests
         // The survivor kept its own gear.
         Assert.NotNull(persistence.Store<ItemEntity>().GetById(second.BackpackId));
         Assert.Null(persistence.Store<ItemEntity>().GetById(first.BackpackId));
+    }
+
+    [Fact]
+    public async Task DeleteCharacter_OffLoopStrict_Throws()
+    {
+        var persistence = new FakePersistenceService();
+        var accountId = (Serial)5;
+        await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = accountId, Username = "bob" });
+
+        var service = CharacterServiceFixture.Create(persistence, new EventBusService());
+        var mobile = service.CreateCharacter(accountId, Packet());
+
+        var loopAffinity = new LoopAffinity(
+            new StubLoopThread(onLoop: false),
+            new MoongateConfig { StrictLoopAffinity = true }
+        );
+        var guardedService = CharacterServiceFixture.Create(
+            persistence,
+            new EventBusService(),
+            loopAffinity: loopAffinity
+        );
+
+        Assert.Throws<InvalidOperationException>(() => guardedService.DeleteCharacter(accountId, 0));
+
+        // Refused before anything was touched: the mobile created above is still there.
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(mobile.Id));
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using SquidStd.Core.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Events;
 
 namespace Moongate.Server.Abstractions.Data.Events;
 
@@ -14,4 +14,4 @@ public sealed record CharacterReadyEvent(
     MobileEntity Character,
     Serial BackpackId,
     Serial BankId
-) : IEvent;
+) : ILoopAffineEvent;
