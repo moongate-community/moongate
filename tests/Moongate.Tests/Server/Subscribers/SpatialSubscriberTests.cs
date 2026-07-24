@@ -1,6 +1,5 @@
 using Moongate.Core.Extensions;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Services.Game;
 using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
@@ -57,9 +56,7 @@ public class SpatialSubscriberTests
     private static (SpatialSubscriber Subscriber, SpatialIndexService Spatial, FakePersistenceService Persistence) Build()
     {
         var persistence = new FakePersistenceService();
-        var marker = new LoopThreadMarker();
-        marker.Capture();
-        var spatial = new SpatialIndexService(persistence, marker, new StubEventBus());
+        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
 
         return (new(spatial, persistence), spatial, persistence);
     }

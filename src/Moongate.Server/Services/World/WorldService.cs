@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
@@ -42,6 +43,7 @@ public sealed class WorldService : IWorldService
     private readonly TimeProvider _timeProvider;
     private readonly IOplService _opl;
     private readonly ISessionManager _sessions;
+    private readonly ILoopAffinity? _loopAffinity;
 
     public WorldService(
         IItemService items,
@@ -50,7 +52,8 @@ public sealed class WorldService : IWorldService
         IEventBus eventBus,
         TimeProvider timeProvider,
         IOplService opl,
-        ISessionManager sessions
+        ISessionManager sessions,
+        ILoopAffinity? loopAffinity = null
     )
     {
         _items = items;
@@ -60,6 +63,7 @@ public sealed class WorldService : IWorldService
         _timeProvider = timeProvider;
         _opl = opl;
         _sessions = sessions;
+        _loopAffinity = loopAffinity;
     }
 
     public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
@@ -176,6 +180,8 @@ public sealed class WorldService : IWorldService
 
     public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
     {
+        _loopAffinity?.AssertOnLoop("world.send_enter_world");
+
         foreach (var packet in BuildSequence(mobile))
         {
             session.Send(packet);

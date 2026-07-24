@@ -181,6 +181,6 @@ public class AccountModuleTests
             bus
         );
 
-        return (new(accounts, new StubLoopThread()), accounts);
+        return (new(accounts), accounts);
     }
 }

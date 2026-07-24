@@ -1,7 +1,6 @@
 using Moongate.Core.Extensions;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
-using Moongate.Server.Services.Game;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 
@@ -228,10 +227,8 @@ public class SpatialIndexServiceTests
     {
         var persistence = new FakePersistenceService();
         var bus = new StubEventBus();
-        var marker = new LoopThreadMarker();
-        marker.Capture();
 
-        return (new(persistence, marker, bus), persistence, bus);
+        return (new(persistence, new StubLoopAffinity(), bus), persistence, bus);
     }
 
     private static ItemEntity SeedItem(FakePersistenceService persistence, uint serial, int mapId, int x, int y)

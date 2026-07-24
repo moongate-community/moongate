@@ -1,4 +1,3 @@
-using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Types;
@@ -11,8 +10,6 @@ namespace Moongate.Server.Scripting;
 /// <summary>
 /// Exposes account creation and management to Lua. Accounts are referenced by username — the handle a
 /// player logs in with — rather than by serial, which no operator ever has to hand.
-/// Only <c>account.delete</c> reaches into world state (it deletes the account's characters and what
-/// they carry) and so warns when run off the game-loop thread; the rest touch the account store alone.
 /// </summary>
 [ScriptModule("account", "Create and manage accounts by username.")]
 public sealed class AccountModule
@@ -20,12 +17,10 @@ public sealed class AccountModule
     private readonly ILogger _logger = Log.ForContext<AccountModule>();
 
     private readonly IAccountService _accounts;
-    private readonly ILoopThread _loopThread;
 
-    public AccountModule(IAccountService accounts, ILoopThread loopThread)
+    public AccountModule(IAccountService accounts)
     {
         _accounts = accounts;
-        _loopThread = loopThread;
     }
 
     [ScriptFunction("create", "Creates an active account; returns true when created.")]
@@ -49,8 +44,6 @@ public sealed class AccountModule
     [ScriptFunction("delete", "Deletes the account and its characters; false when refused.")]
     public bool Delete(string username)
     {
-        LoopGuard.Warn(_loopThread, "account.delete");
-
         var result = _accounts.Delete(username);
 
         if (result != AccountDeleteResultType.Deleted)

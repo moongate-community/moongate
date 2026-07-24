@@ -2,7 +2,6 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
@@ -327,9 +326,7 @@ public class ItemServiceTests
     private static (ItemService Service, SpatialIndexService Spatial, FakePersistenceService Persistence) BuildWithSpatial()
     {
         var persistence = new FakePersistenceService();
-        var marker = new LoopThreadMarker();
-        marker.Capture();
-        var spatial = new SpatialIndexService(persistence, marker, new StubEventBus());
+        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
 
         return (new(persistence, null, spatial), spatial, persistence);
     }
