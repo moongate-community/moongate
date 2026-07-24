@@ -226,13 +226,13 @@ public class CharacterService : ICharacterService
     private void GiveStartingItems(MobileEntity mobile, ItemEntity backpack, CharacterCreationPacket packet)
     {
         var topSkillNames = packet.Skills
-                                  .Where(skill => skill.Value > 0)
-                                  .OrderByDescending(skill => skill.Value)
-                                  .Take(3)
-                                  .Select(skill => _skills.GetById(skill.SkillId)?.Name)
-                                  .Where(name => name is not null)
-                                  .Select(name => name!)
-                                  .ToList();
+            .Where(skill => skill.Value > 0)
+            .OrderByDescending(skill => skill.Value)
+            .Take(3)
+            .Select(skill => _skills.GetById(skill.SkillId)?.Name)
+            .Where(name => name is not null)
+            .Select(name => name!)
+            .ToList();
 
         var kit = _startingItems.Resolve(packet.Race, packet.Gender, topSkillNames);
 

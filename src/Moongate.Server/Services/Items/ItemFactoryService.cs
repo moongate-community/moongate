@@ -20,14 +20,13 @@ public sealed class ItemFactoryService : IItemFactoryService
     public IReadOnlyList<ItemEntity> CreateByCategory(string category, int count = 1, int amount = 1, Hue? hue = null)
     {
         var matches = _templates.All
-                                .Where(
-                                    template => string.Equals(
-                                        template.Category,
-                                        category,
-                                        StringComparison.OrdinalIgnoreCase
-                                    )
-                                )
-                                .ToList();
+            .Where(template => string.Equals(
+                    template.Category,
+                    category,
+                    StringComparison.OrdinalIgnoreCase
+                )
+            )
+            .ToList();
 
         return CreateFromPool(matches, count, amount, hue);
     }
@@ -35,8 +34,8 @@ public sealed class ItemFactoryService : IItemFactoryService
     public IReadOnlyList<ItemEntity> CreateByTag(string tag, int count = 1, int amount = 1, Hue? hue = null)
     {
         var matches = _templates.All
-                                .Where(template => template.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
-                                .ToList();
+            .Where(template => template.Tags.Contains(tag, StringComparer.OrdinalIgnoreCase))
+            .ToList();
 
         return CreateFromPool(matches, count, amount, hue);
     }

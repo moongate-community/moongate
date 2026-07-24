@@ -37,7 +37,8 @@ public sealed class SeededAccountService : IAccountService
         {
             if (account.Id == accountId)
             {
-                return new AccountEntity { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true };
+                return new AccountEntity
+                    { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true };
             }
         }
 

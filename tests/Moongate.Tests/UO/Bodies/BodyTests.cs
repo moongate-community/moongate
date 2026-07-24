@@ -8,7 +8,7 @@ public class BodyTests
 
     // no body
     // horse
-     // ogre
+    // ogre
     public void IsHumanoid_FalseForCreatureBodies(int value)
         => Assert.False(new Body(value).IsHumanoid);
 
@@ -18,7 +18,7 @@ public class BodyTests
     // human female
     // elf male
     // elf female
-     // male ghost — still a humanoid body
+    // male ghost — still a humanoid body
     public void IsHumanoid_TrueForPlayerBodies(int value)
         => Assert.True(new Body(value).IsHumanoid);
 }

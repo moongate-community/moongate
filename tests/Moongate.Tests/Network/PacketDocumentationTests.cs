@@ -8,19 +8,18 @@ namespace Moongate.Tests.Network;
 public class PacketDocumentationTests
 {
     private static readonly List<Type> PacketTypes = typeof(IOutgoingPacket).Assembly
-                                                                            .GetTypes()
-                                                                            .Where(
-                                                                                t => t is
-                                                                                    {
-                                                                                        IsValueType: true,
-                                                                                        Namespace: not null
-                                                                                    } &&
-                                                                                    t.Namespace.StartsWith(
-                                                                                        "Moongate.Network.Packets.",
-                                                                                        StringComparison.Ordinal
-                                                                                    )
-                                                                            )
-                                                                            .ToList();
+        .GetTypes()
+        .Where(t => t is
+                    {
+                        IsValueType: true,
+                        Namespace: not null
+                    } &&
+                    t.Namespace.StartsWith(
+                        "Moongate.Network.Packets.",
+                        StringComparison.Ordinal
+                    )
+        )
+        .ToList();
 
     [Fact]
     public void AllPacketTypes_AreDiscovered()

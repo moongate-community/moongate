@@ -29,10 +29,10 @@ public sealed class CharacterEndpoints : IApiEndpointRegistration
         // A method group, not a lambda: Swashbuckle reads the /// off the handler's method, and a lambda
         // has none — the route would document itself blank.
         => routes.MapGet("/api/v1/player/me/characters", GetMine)
-                 .WithName("GetMyCharacters")
-                 .WithTags("player")
-                 .Produces<IReadOnlyList<CharacterResponse>>()
-                 .RequireAuthorization(HttpServerService.PlayerPolicy);
+            .WithName("GetMyCharacters")
+            .WithTags("player")
+            .Produces<IReadOnlyList<CharacterResponse>>()
+            .RequireAuthorization(HttpServerService.PlayerPolicy);
 
     /// <summary>
     /// Reads the account id the token was issued with. JwtTokenService writes it into <c>sub</c>, but
@@ -84,7 +84,7 @@ public sealed class CharacterEndpoints : IApiEndpointRegistration
 
         return Results.Ok(
             _characters.GetPlayerCharacters(accountId)
-                       .Select(mobile => CharacterResponse.From(mobile, null))
+                .Select(mobile => CharacterResponse.From(mobile, null))
         );
     }
 }

@@ -35,8 +35,7 @@ public class JwtTokenServiceTests
         // HS256 needs at least 32 bytes. Failing loudly beats minting tokens nobody can verify.
         var service = Service(signingKey);
 
-        Assert.Throws<InvalidOperationException>(
-            () => service.Issue(new(5), "tom", AccountLevelType.Player, SessionStart)
+        Assert.Throws<InvalidOperationException>(() => service.Issue(new(5), "tom", AccountLevelType.Player, SessionStart)
         );
     }
 

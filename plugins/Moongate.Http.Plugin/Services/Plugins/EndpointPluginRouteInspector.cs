@@ -72,8 +72,8 @@ public sealed class EndpointPluginRouteInspector : IPluginRouteInspector
         }
 
         return endpoint.Metadata
-                       .GetOrderedMetadata<IAuthorizeData>()
-                       .Select(data => data.Policy ?? data.Roles)
-                       .FirstOrDefault(value => !string.IsNullOrEmpty(value));
+            .GetOrderedMetadata<IAuthorizeData>()
+            .Select(data => data.Policy ?? data.Roles)
+            .FirstOrDefault(value => !string.IsNullOrEmpty(value));
     }
 }

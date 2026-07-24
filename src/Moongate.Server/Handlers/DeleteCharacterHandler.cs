@@ -34,8 +34,8 @@ public sealed class DeleteCharacterHandler : IPacketHandler<DeleteCharacterPacke
         }
 
         var characters = _characterService.GetPlayerCharacters(context.Session.AccountId)
-                                          .Select(character => character.Name)
-                                          .ToList();
+            .Select(character => character.Name)
+            .ToList();
 
         context.Session.Send(new CharacterListUpdatePacket(characters, CharacterSlots));
     }

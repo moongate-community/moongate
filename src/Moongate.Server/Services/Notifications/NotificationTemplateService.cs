@@ -28,8 +28,8 @@ public sealed class NotificationTemplateService : INotificationTemplateService
         // template without one fails to parse under it. Channels with no subject write no front matter,
         // so both shapes have to be accepted.
         var mode = source.TrimStart().StartsWith(FrontMatterMarker, StringComparison.Ordinal)
-                       ? ScriptMode.FrontMatterAndContent
-                       : ScriptMode.Default;
+            ? ScriptMode.FrontMatterAndContent
+            : ScriptMode.Default;
 
         var template = Template.Parse(source, templateId, null, new LexerOptions { Mode = mode });
 

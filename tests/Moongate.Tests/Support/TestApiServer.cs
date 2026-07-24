@@ -94,9 +94,9 @@ public sealed class TestApiServer : IAsyncDisposable
     public async Task AuthenticateAsync()
     {
         var response = await Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "tom", password = "secret" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "tom", password = "secret" }
+        );
         var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
 
         Client.DefaultRequestHeaders.Authorization = new("Bearer", token!.Token);
@@ -183,7 +183,11 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
 
         // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
-        var rateLimiter = new RegistrationRateLimiter(TimeProvider.System, permitPerWindow: 2, window: TimeSpan.FromMinutes(10));
+        var rateLimiter = new RegistrationRateLimiter(
+            TimeProvider.System,
+            permitPerWindow: 2,
+            window: TimeSpan.FromMinutes(10)
+        );
         container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
 
         var stats = new StubServerStatsService();

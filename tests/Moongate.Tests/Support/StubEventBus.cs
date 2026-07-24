@@ -16,7 +16,9 @@ public sealed class StubEventBus : IEventBus
     {
         public static readonly NoopDisposable Instance = new();
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
     }
 
     public void Publish<TEvent>(TEvent eventData) where TEvent : IEvent

@@ -139,19 +139,18 @@ public class MapImageEndpointsTests
     }
 
     private static async Task<TestHttpServer> StartAsync(MapImageFixture fixture)
-        => await TestHttpServer.StartAsync(
-               container =>
-               {
-                   container.RegisterInstance(fixture.Directories);
-                   container.RegisterInstance(fixture.Provider);
-                   container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
-                   container.Register<IMapImageService, MapImageService>(Reuse.Singleton);
-                   container.RegisterApiEndpointInstance(
-                       new MapImageEndpoints(
-                           container.Resolve<IMapImageService>(),
-                           container.Resolve<IUltimaMapProvider>()
-                       )
-                   );
-               }
-           );
+        => await TestHttpServer.StartAsync(container =>
+            {
+                container.RegisterInstance(fixture.Directories);
+                container.RegisterInstance(fixture.Provider);
+                container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
+                container.Register<IMapImageService, MapImageService>(Reuse.Singleton);
+                container.RegisterApiEndpointInstance(
+                    new MapImageEndpoints(
+                        container.Resolve<IMapImageService>(),
+                        container.Resolve<IUltimaMapProvider>()
+                    )
+                );
+            }
+        );
 }

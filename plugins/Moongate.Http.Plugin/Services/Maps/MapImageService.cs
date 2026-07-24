@@ -66,19 +66,19 @@ public sealed class MapImageService : IMapImageService
         // A facet-sized bitmap, unavoidably: the output is that image. The gate makes concurrent first
         // requests queue rather than each allocating their own, and the re-check means only the first pays.
         using var image = await _gate.ReadAsync(
-                              () =>
-                              {
-                                  if (File.Exists(path))
-                                  {
-                                      return null;
-                                  }
+            () =>
+            {
+                if (File.Exists(path))
+                {
+                    return null;
+                }
 
-                                  using var bitmap = RenderBlocks(map, style, 0, 0, Blocks(map.Width), Blocks(map.Height));
+                using var bitmap = RenderBlocks(map, style, 0, 0, Blocks(map.Width), Blocks(map.Height));
 
-                                  return bitmap.ToImage();
-                              },
-                              cancellationToken
-                          );
+                return bitmap.ToImage();
+            },
+            cancellationToken
+        );
 
         if (image is null)
         {
@@ -126,8 +126,8 @@ public sealed class MapImageService : IMapImageService
         }
 
         using var tile = zoom == maxZoom
-                             ? await RenderNativeAsync(map, style, x, y, cancellationToken)
-                             : await ComposeAsync(facet, style, zoom, x, y, cancellationToken);
+            ? await RenderNativeAsync(map, style, x, y, cancellationToken)
+            : await ComposeAsync(facet, style, zoom, x, y, cancellationToken);
 
         await WriteAtomicallyAsync(path, tile, cancellationToken);
 
@@ -195,8 +195,8 @@ public sealed class MapImageService : IMapImageService
         int height
     )
         => style == MapRenderStyleType.Relief
-               ? map.GetImageWithAltitude(x, y, width, height, true, MapAltitudeModeType.NormalWithAltitude)
-               : map.GetImage(x, y, width, height, true);
+            ? map.GetImageWithAltitude(x, y, width, height, true, MapAltitudeModeType.NormalWithAltitude)
+            : map.GetImage(x, y, width, height, true);
 
     /// <summary>
     /// One GetImage of exactly 32 blocks, clipped at the facet's edge. The remainder of an edge tile is
@@ -216,14 +216,14 @@ public sealed class MapImageService : IMapImageService
         var height = Math.Min(MapTileGeometry.BlocksPerTile, Blocks(map.Height) - blockY);
 
         var rendered = await _gate.ReadAsync(
-                           () =>
-                           {
-                               using var bitmap = RenderBlocks(map, style, blockX, blockY, width, height);
+            () =>
+            {
+                using var bitmap = RenderBlocks(map, style, blockX, blockY, width, height);
 
-                               return bitmap.ToImage();
-                           },
-                           cancellationToken
-                       );
+                return bitmap.ToImage();
+            },
+            cancellationToken
+        );
 
         if (rendered.Width == MapTileGeometry.TileSize && rendered.Height == MapTileGeometry.TileSize)
         {
@@ -241,9 +241,9 @@ public sealed class MapImageService : IMapImageService
 
     private string StyleDirectory(MapType facet, MapRenderStyleType style)
         => Directory.CreateDirectory(
-                        Path.Combine(_cachePath, facet.ToString().ToLowerInvariant(), style.ToString().ToLowerInvariant())
-                    )
-                    .FullName;
+                Path.Combine(_cachePath, facet.ToString().ToLowerInvariant(), style.ToString().ToLowerInvariant())
+            )
+            .FullName;
 
     private string TilePath(MapType facet, MapRenderStyleType style, int zoom, int x, int y)
     {

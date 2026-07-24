@@ -32,11 +32,10 @@ public static class PluginDiscovery
     /// <summary>Activatable plugin types found in assemblies outside the host's compile-time graph.</summary>
     public static IEnumerable<Type> ExternalPluginTypes(Assembly host, IEnumerable<Assembly> loaded)
         => loaded.Where(assembly => IsExternal(host, assembly))
-                 .SelectMany(LoadableTypes)
-                 .Where(
-                     type => type is { IsAbstract: false, IsInterface: false }
-                             && typeof(ISquidStdPlugin).IsAssignableFrom(type)
-                 );
+            .SelectMany(LoadableTypes)
+            .Where(type => type is { IsAbstract: false, IsInterface: false }
+                           && typeof(ISquidStdPlugin).IsAssignableFrom(type)
+            );
 
     /// <summary>
     /// The types an assembly can actually give up. A plugin built against different dependency versions

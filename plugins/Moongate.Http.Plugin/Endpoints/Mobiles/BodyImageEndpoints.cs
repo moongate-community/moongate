@@ -18,9 +18,9 @@ public sealed class BodyImageEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/images/bodies/{body}.png", Get)
-                 .WithName("GetBodyImage")
-                 .WithTags("mobiles")
-                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
+            .WithName("GetBodyImage")
+            .WithTags("mobiles")
+            .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
     /// <summary>Serves a body's idle, front-facing frame as PNG.</summary>
     /// <remarks>
@@ -38,7 +38,7 @@ public sealed class BodyImageEndpoints : IApiEndpointRegistration
         var path = await _bodies.GetOrCreateAsync(bodyId, hue.GetValueOrDefault(), cancellationToken);
 
         return path is null
-                   ? Results.Problem($"No animation for body {bodyId}.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.File(path, "image/png");
+            ? Results.Problem($"No animation for body {bodyId}.", statusCode: StatusCodes.Status404NotFound)
+            : Results.File(path, "image/png");
     }
 }

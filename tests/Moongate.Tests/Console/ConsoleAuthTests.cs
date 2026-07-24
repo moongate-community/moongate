@@ -15,23 +15,27 @@ public class ConsoleAuthTests
     public void Evaluate_SuccessAtOrAboveMinLevel_IsAllowed()
         => Assert.Equal(
             ConsoleAuthResultType.Allowed,
-            ConsoleAuth.Evaluate(Ok(), AccountLevelType.GrandMaster, AccountLevelType.GrandMaster));
+            ConsoleAuth.Evaluate(Ok(), AccountLevelType.GrandMaster, AccountLevelType.GrandMaster)
+        );
 
     [Fact]
     public void Evaluate_SuccessBelowMinLevel_IsInsufficientPrivileges()
         => Assert.Equal(
             ConsoleAuthResultType.InsufficientPrivileges,
-            ConsoleAuth.Evaluate(Ok(), AccountLevelType.Player, AccountLevelType.GrandMaster));
+            ConsoleAuth.Evaluate(Ok(), AccountLevelType.Player, AccountLevelType.GrandMaster)
+        );
 
     [Fact]
     public void Evaluate_AuthFailure_IsLoginFailed()
         => Assert.Equal(
             ConsoleAuthResultType.LoginFailed,
-            ConsoleAuth.Evaluate(Denied(), null, AccountLevelType.GrandMaster));
+            ConsoleAuth.Evaluate(Denied(), null, AccountLevelType.GrandMaster)
+        );
 
     [Fact]
     public void Evaluate_SuccessButUnknownAccount_IsLoginFailed()
         => Assert.Equal(
             ConsoleAuthResultType.LoginFailed,
-            ConsoleAuth.Evaluate(Ok(), null, AccountLevelType.GrandMaster));
+            ConsoleAuth.Evaluate(Ok(), null, AccountLevelType.GrandMaster)
+        );
 }

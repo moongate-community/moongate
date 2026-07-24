@@ -25,7 +25,9 @@ public class ConsoleAdminIntegrationTests
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add(text);
 
-        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
+        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
+        {
+        }
     }
 
     private static (ConsoleServerService Service, RecordingChatService Chat) Build(SeededAccountService accounts)
@@ -36,7 +38,8 @@ public class ConsoleAdminIntegrationTests
             AccountLevelType.GrandMaster,
             "Sends a server-wide system message.",
             CommandSourceType.InGame | CommandSourceType.Console,
-            _ => new BroadcastCommand(chat));
+            _ => new BroadcastCommand(chat)
+        );
         var commands = new CommandService([registration], new Container(), accounts);
         var config = new MoongateConsoleConfig { Enabled = true, Address = "127.0.0.1", Port = 0, MaxSessions = 4 };
         var service = new ConsoleServerService(config, commands, accounts, new InlineMainThreadDispatcher());

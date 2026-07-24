@@ -17,7 +17,9 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
     private readonly IServerSettingsService _settings;
     private readonly IRegistrationRateLimiter _rateLimiter;
 
-    public RegistrationEndpoints(IAccountService accounts, IServerSettingsService settings, IRegistrationRateLimiter rateLimiter)
+    public RegistrationEndpoints(
+        IAccountService accounts, IServerSettingsService settings, IRegistrationRateLimiter rateLimiter
+    )
     {
         _accounts = accounts;
         _settings = settings;
@@ -27,15 +29,15 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/v1/register", RegisterAccount)
-              .WithName("RegisterAccount")
-              .Produces(StatusCodes.Status202Accepted)
-              .WithTags("registration")
-              .AllowAnonymous();
+            .WithName("RegisterAccount")
+            .Produces(StatusCodes.Status202Accepted)
+            .WithTags("registration")
+            .AllowAnonymous();
         routes.MapPost("/api/v1/register/verify", Verify)
-              .WithName("VerifyRegistration")
-              .WithTags("registration")
-              .Produces(StatusCodes.Status200OK)
-              .AllowAnonymous();
+            .WithName("VerifyRegistration")
+            .WithTags("registration")
+            .Produces(StatusCodes.Status200OK)
+            .AllowAnonymous();
     }
 
     /// <summary>Registers a new account when web registration is open.</summary>

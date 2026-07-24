@@ -52,9 +52,9 @@ public class MapImageServiceTests
         var zoom = service.MaxZoomFor(MapType.Felucca);
 
         var paths = await Task.WhenAll(
-                        Enumerable.Range(0, 4)
-                                  .Select(x => service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, x, 0))
-                    );
+            Enumerable.Range(0, 4)
+                .Select(x => service.GetTileAsync(MapType.Felucca, MapRenderStyleType.Flat, zoom, x, 0))
+        );
 
         Assert.All(paths, path => Assert.True(File.Exists(path)));
     }
@@ -82,12 +82,12 @@ public class MapImageServiceTests
         var service = Service(fixture);
 
         var path = await service.GetTileAsync(
-                       MapType.Felucca,
-                       MapRenderStyleType.Flat,
-                       service.MaxZoomFor(MapType.Felucca),
-                       0,
-                       0
-                   );
+            MapType.Felucca,
+            MapRenderStyleType.Flat,
+            service.MaxZoomFor(MapType.Felucca),
+            0,
+            0
+        );
 
         Assert.NotNull(path);
 
@@ -107,12 +107,12 @@ public class MapImageServiceTests
         var service = Service(fixture);
 
         var path = await service.GetTileAsync(
-                       MapType.Felucca,
-                       MapRenderStyleType.Flat,
-                       service.MaxZoomFor(MapType.Felucca),
-                       0,
-                       0
-                   );
+            MapType.Felucca,
+            MapRenderStyleType.Flat,
+            service.MaxZoomFor(MapType.Felucca),
+            0,
+            0
+        );
 
         using var image = await Image.LoadAsync<Bgra32>(path!);
         var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];
@@ -138,12 +138,12 @@ public class MapImageServiceTests
         var service = Service(fixture);
 
         var path = await service.GetTileAsync(
-                       MapType.Felucca,
-                       MapRenderStyleType.Relief,
-                       service.MaxZoomFor(MapType.Felucca),
-                       0,
-                       0
-                   );
+            MapType.Felucca,
+            MapRenderStyleType.Relief,
+            service.MaxZoomFor(MapType.Felucca),
+            0,
+            0
+        );
 
         using var image = await Image.LoadAsync<Bgra32>(path!);
         var centre = image[MapTileGeometry.TileSize / 2, MapTileGeometry.TileSize / 2];

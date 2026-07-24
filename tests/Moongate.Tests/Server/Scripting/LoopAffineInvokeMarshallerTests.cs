@@ -16,7 +16,9 @@ public class LoopAffineInvokeMarshallerTests
 
         public bool IsOnLoopThread { get; }
 
-        public void Capture() { }
+        public void Capture()
+        {
+        }
     }
 
     [Fact]
@@ -26,8 +28,7 @@ public class LoopAffineInvokeMarshallerTests
         var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(false), dispatcher);
         var ran = false;
 
-        var result = marshaller.Invoke(
-            () =>
+        var result = marshaller.Invoke(() =>
             {
                 ran = true;
 
@@ -51,8 +52,7 @@ public class LoopAffineInvokeMarshallerTests
         var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
         var ran = false;
 
-        var result = marshaller.Invoke(
-            () =>
+        var result = marshaller.Invoke(() =>
             {
                 ran = true;
 

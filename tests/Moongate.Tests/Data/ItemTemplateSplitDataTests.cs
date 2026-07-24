@@ -35,8 +35,8 @@ public class ItemTemplateSplitDataTests
         var repositoryRoot = FindRepositoryRoot();
         var splitRoot = Path.Combine(repositoryRoot, "src", "Moongate.Server", "Assets", "Templates", "Items");
         var splitFiles = Directory.GetFiles(splitRoot, "*.yaml", SearchOption.AllDirectories)
-                                  .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-                                  .ToArray();
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
         var splitByFile = splitFiles.ToDictionary(
             path => Path.GetRelativePath(splitRoot, path).Replace(Path.DirectorySeparatorChar, '/'),
             path => YamlUtils.DeserializeFromFile<ItemTemplate[]>(path) ?? [],

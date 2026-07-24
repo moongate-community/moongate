@@ -21,13 +21,13 @@ public sealed class NewsEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/news", List)
-              .WithName("ListNews")
-              .WithTags("news")
-              .Produces<IReadOnlyList<NewsResponse>>();
+            .WithName("ListNews")
+            .WithTags("news")
+            .Produces<IReadOnlyList<NewsResponse>>();
         routes.MapGet("/api/v1/news/{id}", GetOne)
-              .WithName("GetNews")
-              .WithTags("news")
-              .Produces<NewsResponse>();
+            .WithName("GetNews")
+            .WithTags("news")
+            .Produces<NewsResponse>();
     }
 
     /// <summary>Lists published news, newest first.</summary>
@@ -36,5 +36,7 @@ public sealed class NewsEndpoints : IApiEndpointRegistration
 
     /// <summary>Returns one published news entry; 404 if it is missing or a draft.</summary>
     private IResult GetOne(uint id)
-        => _news.Get(new Serial(id)) is { IsPublished: true } news ? TypedResults.Ok(NewsResponse.From(news)) : TypedResults.NotFound();
+        => _news.Get(new Serial(id)) is { IsPublished: true } news
+            ? TypedResults.Ok(NewsResponse.From(news))
+            : TypedResults.NotFound();
 }

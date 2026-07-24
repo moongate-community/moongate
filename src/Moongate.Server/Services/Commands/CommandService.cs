@@ -30,7 +30,9 @@ public sealed class CommandService : ICommandService
     private readonly IResolverContext _resolver;
     private readonly IAccountService _accounts;
 
-    public CommandService(IReadOnlyList<CommandRegistration> registrations, IResolverContext resolver, IAccountService accounts)
+    public CommandService(
+        IReadOnlyList<CommandRegistration> registrations, IResolverContext resolver, IAccountService accounts
+    )
     {
         _registry = BuildRegistry(registrations);
         _resolver = resolver;
@@ -102,16 +104,15 @@ public sealed class CommandService : ICommandService
 
     public IReadOnlyList<CommandDescriptor> ListCommands(CommandSourceType source)
         => _registry.Values
-                    .Where(registration => registration.Sources.HasFlag(source))
-                    .Distinct()
-                    .Select(
-                        registration => new CommandDescriptor(
-                            registration.Name.Split('|')[0],
-                            registration.MinLevel,
-                            registration.Description
-                        )
-                    )
-                    .ToList();
+            .Where(registration => registration.Sources.HasFlag(source))
+            .Distinct()
+            .Select(registration => new CommandDescriptor(
+                    registration.Name.Split('|')[0],
+                    registration.MinLevel,
+                    registration.Description
+                )
+            )
+            .ToList();
 
     public static bool IsAuthorized(AccountLevelType actorLevel, AccountLevelType minLevel)
         => actorLevel >= minLevel;

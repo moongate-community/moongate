@@ -383,8 +383,8 @@ public sealed class TileMatrix : IDisposable
         if (_map?.CanRead != true || !_map.CanSeek)
         {
             _map = _mapPath == null
-                       ? null
-                       : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             if (IsUOPFormat && _mapPath != null && !IsUOPAlreadyRead)
             {
@@ -427,8 +427,8 @@ public sealed class TileMatrix : IDisposable
         if (_statics?.CanRead != true || !_statics.CanSeek)
         {
             _statics = _staticsPath == null
-                           ? null
-                           : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         if (_statics == null)

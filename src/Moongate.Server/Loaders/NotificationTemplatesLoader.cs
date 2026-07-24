@@ -52,12 +52,12 @@ public sealed class NotificationTemplatesLoader : IDataLoader
         var failed = 0;
 
         foreach (var channelDirectory in Directory.GetDirectories(templatesDirectory)
-                                                  .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+                     .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
         {
             var channelId = Path.GetFileName(channelDirectory);
 
             foreach (var file in Directory.GetFiles(channelDirectory, Extension, SearchOption.TopDirectoryOnly)
-                                          .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+                         .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
             {
                 var templateId = Path.GetFileNameWithoutExtension(file);
 

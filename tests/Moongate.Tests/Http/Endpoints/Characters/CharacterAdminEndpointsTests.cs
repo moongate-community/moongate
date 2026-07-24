@@ -156,13 +156,13 @@ public class CharacterAdminEndpointsTests
 
     private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
         => await TestApiServer.StartAsync(
-               level,
-               configure: container =>
-                          {
-                              container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
-                              container.RegisterApiEndpointInstance(
-                                  new CharacterAdminEndpoints(container.Resolve<ICharacterQueryService>())
-                              );
-                          }
-           );
+            level,
+            configure: container =>
+            {
+                container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
+                container.RegisterApiEndpointInstance(
+                    new CharacterAdminEndpoints(container.Resolve<ICharacterQueryService>())
+                );
+            }
+        );
 }

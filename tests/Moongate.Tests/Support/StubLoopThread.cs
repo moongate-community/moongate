@@ -12,5 +12,7 @@ public sealed class StubLoopThread : ILoopThread
 
     public bool IsOnLoopThread { get; }
 
-    public void Capture() { }
+    public void Capture()
+    {
+    }
 }

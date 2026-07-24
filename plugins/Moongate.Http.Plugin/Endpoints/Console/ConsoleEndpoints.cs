@@ -34,19 +34,19 @@ public sealed class ConsoleEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/admin/console/stream", Stream)
-              .WithName("StreamConsole")
-              .WithTags("console")
+            .WithName("StreamConsole")
+            .WithTags("console")
 
-              // An event stream, not JSON: the frames have no schema a generated client could bind to,
-              // only a content type worth stating.
-              .Produces<string>(StatusCodes.Status200OK, "text/event-stream")
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            // An event stream, not JSON: the frames have no schema a generated client could bind to,
+            // only a content type worth stating.
+            .Produces<string>(StatusCodes.Status200OK, "text/event-stream")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapPost("/api/v1/admin/console", Send)
-              .WithName("SendConsoleCommand")
-              .WithTags("console")
-              .Produces(StatusCodes.Status202Accepted)
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("SendConsoleCommand")
+            .WithTags("console")
+            .Produces(StatusCodes.Status202Accepted)
+            .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     /// <summary>Opens a per-connection SSE feed; its first event carries the connection id to POST with.</summary>
@@ -85,8 +85,7 @@ public sealed class ConsoleEndpoints : IApiEndpointRegistration
             line => writer.TryWrite(new ConsoleStreamEvent("line", line))
         );
 
-        _dispatcher.Post(
-            () =>
+        _dispatcher.Post(() =>
             {
                 _commands.Execute(invocation);
                 writer.TryWrite(new ConsoleStreamEvent("done", request.Command));

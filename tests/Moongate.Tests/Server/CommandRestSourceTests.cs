@@ -21,7 +21,12 @@ public class CommandRestSourceTests
     private static ICommandService Build(CommandSourceType sources)
     {
         var registration = new CommandRegistration(
-            "echo", AccountLevelType.GrandMaster, "Echo.", sources, _ => new Echo());
+            "echo",
+            AccountLevelType.GrandMaster,
+            "Echo.",
+            sources,
+            _ => new Echo()
+        );
 
         return new CommandService([registration], new Container(), new SeededAccountService());
     }

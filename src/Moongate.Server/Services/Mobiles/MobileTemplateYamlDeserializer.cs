@@ -7,8 +7,8 @@ namespace Moongate.Server.Services.Mobiles;
 internal static class MobileTemplateYamlDeserializer
 {
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-                                                         .WithDuplicateKeyChecking()
-                                                         .Build();
+        .WithDuplicateKeyChecking()
+        .Build();
 
     public static MobileTemplate[] DeserializeFromFile(string file, string relativePath)
     {

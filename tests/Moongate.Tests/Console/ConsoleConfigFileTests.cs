@@ -19,7 +19,10 @@ public class ConsoleConfigFileTests
             // Use DirectoriesConfig itself to resolve (and create) the dir, so the file lands exactly
             // where the plugin will look — no assumption about the snake-case path transform.
             var directories = new DirectoriesConfig(root, ["plugins/configs"]);
-            File.WriteAllText(Path.Combine(directories["plugins/configs"], "console.yaml"), "console:\n  Enabled: true\n  Port: 9999\n");
+            File.WriteAllText(
+                Path.Combine(directories["plugins/configs"], "console.yaml"),
+                "console:\n  Enabled: true\n  Port: 9999\n"
+            );
 
             using var container = new Container();
             container.RegisterInstance(SquidStdConfig.Load("moongate", root));

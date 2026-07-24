@@ -34,11 +34,11 @@ public class MoongateHttpPluginTests
         // Registrations rather than instances: the game-facing groups need services this bare
         // container has no reason to hold; what the plugin is responsible for is the registering.
         var registered = Configured()
-                         .GetServiceRegistrations()
-                         .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
-                         .Select(registration => registration.ImplementationType)
-                         .OrderBy(type => type!.Name)
-                         .ToArray();
+            .GetServiceRegistrations()
+            .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+            .Select(registration => registration.ImplementationType)
+            .OrderBy(type => type!.Name)
+            .ToArray();
 
         Assert.Equal(
             [

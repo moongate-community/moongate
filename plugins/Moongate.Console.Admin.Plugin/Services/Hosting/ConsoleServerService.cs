@@ -62,7 +62,12 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
         }
         catch (Exception ex) when (ex is SocketException or FormatException)
         {
-            _logger.Error(ex, "Admin console failed to bind {Address}:{Port}; console unavailable", _config.Address, _config.Port);
+            _logger.Error(
+                ex,
+                "Admin console failed to bind {Address}:{Port}; console unavailable",
+                _config.Address,
+                _config.Port
+            );
             _listener = null;
 
             return ValueTask.CompletedTask;
@@ -111,8 +116,12 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
                 );
             }
         }
-        catch (OperationCanceledException) { }
-        catch (ObjectDisposedException) { }
+        catch (OperationCanceledException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
     }
 
     private static async Task RejectAsync(TcpClient client)

@@ -32,8 +32,8 @@ public sealed class ServerAssetFileStore : IServerAssetFileStore
         var path = Path.Combine(_directory, fileName);
 
         return File.Exists(path)
-                   ? (File.OpenRead(path), fileName)
-                   : null;
+            ? (File.OpenRead(path), fileName)
+            : null;
     }
 
     public void Delete(string fileName)

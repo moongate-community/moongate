@@ -23,12 +23,12 @@ public sealed class ItemImageAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/v1/admin/images/items")
-                          .WithTags("images")
-                          .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithTags("images")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapPost("/", Start)
-             .WithName("StartItemImageExport")
-             .Produces<ItemImageExportStatus>(StatusCodes.Status202Accepted);
+            .WithName("StartItemImageExport")
+            .Produces<ItemImageExportStatus>(StatusCodes.Status202Accepted);
         group.MapGet("/", GetStatus).WithName("GetItemImageExportStatus").Produces<ItemImageExportStatus>();
     }
 

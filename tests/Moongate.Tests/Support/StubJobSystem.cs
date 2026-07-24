@@ -34,5 +34,7 @@ public sealed class StubJobSystem : IJobSystem
         return Task.FromResult(work());
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }

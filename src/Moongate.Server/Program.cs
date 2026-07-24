@@ -118,8 +118,7 @@ await ConsoleApp.RunAsync(
         // different bootstrap phases: activation here, container registration in ConfigureServices below.
         var pluginCatalog = new PluginCatalog();
 
-        stdBootstrap.UsePlugins(
-            builder =>
+        stdBootstrap.UsePlugins(builder =>
             {
                 builder.FromDirectory("plugins");
 
@@ -156,8 +155,7 @@ await ConsoleApp.RunAsync(
             }
         );
 
-        stdBootstrap.ConfigureServices(
-            container =>
+        stdBootstrap.ConfigureServices(container =>
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
@@ -246,16 +244,14 @@ await ConsoleApp.RunAsync(
 
                 var eventBus = container.Resolve<IEventBus>();
 
-                eventBus.Subscribe<EngineStartedEvent>(
-                    (_, _) =>
+                eventBus.Subscribe<EngineStartedEvent>((_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 
                         var loop = container.Resolve<IGameLoopContext>();
                         var marker = container.Resolve<ILoopThread>();
 
-                        loop.Post(
-                            () =>
+                        loop.Post(() =>
                             {
                                 marker.Capture();
                                 _ = eventBus.PublishAsync(new WorldReadyEvent());

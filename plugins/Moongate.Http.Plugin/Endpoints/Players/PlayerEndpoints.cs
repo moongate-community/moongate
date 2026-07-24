@@ -16,10 +16,10 @@ public sealed class PlayerEndpoints : IApiEndpointRegistration
     // generated types have no shape to bind to.
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/player/me", Me)
-                 .WithName("GetPlayerMe")
-                 .WithTags("player")
-                 .Produces<PlayerMeResponse>()
-                 .RequireAuthorization(HttpServerService.PlayerPolicy);
+            .WithName("GetPlayerMe")
+            .WithTags("player")
+            .Produces<PlayerMeResponse>()
+            .RequireAuthorization(HttpServerService.PlayerPolicy);
 
     /// <summary>Reports the account the bearer token belongs to.</summary>
     /// <remarks>

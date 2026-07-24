@@ -32,8 +32,8 @@ public class SpatialSubscriberTests
         persistence.Store<MobileEntity>().UpsertAsync(npc).WaitSync();
         persistence.Store<MobileEntity>().UpsertAsync(character).WaitSync();
         persistence.Store<AccountEntity>()
-                   .UpsertAsync(new() { Id = new(0x999), Username = "bob", MobileIds = [character.Id] })
-                   .WaitSync();
+            .UpsertAsync(new() { Id = new(0x999), Username = "bob", MobileIds = [character.Id] })
+            .WaitSync();
 
         // A ground item and a contained item: only the ground one must be indexed.
         var ground = new ItemEntity { Id = new(0x40000001), MapId = 0, Position = new(100, 100, 0) };

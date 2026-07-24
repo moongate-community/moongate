@@ -146,8 +146,7 @@ public class LoginFlowIntegrationTests
 
         using var aliceEntered = new ManualResetEventSlim();
         using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
             {
                 if (e.Mobile.Name == "Alice")
                 {
@@ -263,27 +262,27 @@ public class LoginFlowIntegrationTests
         var config = LoopbackConfig();
         var persistence = new FakePersistenceService();
         await persistence.Store<AccountEntity>()
-                         .UpsertAsync(
-                             new()
-                             {
-                                 Id = (Serial)1,
-                                 Username = "gm",
-                                 PasswordHash = HashUtils.HashPassword("secret"),
-                                 IsActive = true,
-                                 AccountLevel = AccountLevelType.GrandMaster
-                             }
-                         );
+            .UpsertAsync(
+                new()
+                {
+                    Id = (Serial)1,
+                    Username = "gm",
+                    PasswordHash = HashUtils.HashPassword("secret"),
+                    IsActive = true,
+                    AccountLevel = AccountLevelType.GrandMaster
+                }
+            );
         await persistence.Store<AccountEntity>()
-                         .UpsertAsync(
-                             new()
-                             {
-                                 Id = (Serial)2,
-                                 Username = "player",
-                                 PasswordHash = HashUtils.HashPassword("secret"),
-                                 IsActive = true,
-                                 AccountLevel = AccountLevelType.Player
-                             }
-                         );
+            .UpsertAsync(
+                new()
+                {
+                    Id = (Serial)2,
+                    Username = "player",
+                    PasswordHash = HashUtils.HashPassword("secret"),
+                    IsActive = true,
+                    AccountLevel = AccountLevelType.Player
+                }
+            );
 
         var eventBus = new EventBusService();
         var opl = new OplService(persistence, new ItemTemplateService());
@@ -334,8 +333,7 @@ public class LoginFlowIntegrationTests
 
         using var gmEntered = new ManualResetEventSlim();
         using var playerEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
             {
                 if (e.Mobile.Name == "GM")
                 {
@@ -351,16 +349,16 @@ public class LoginFlowIntegrationTests
         );
 
         var network = await StartServerWithCommandsAsync(
-                          config,
-                          eventBus,
-                          characters,
-                          world,
-                          chat,
-                          commands,
-                          accounts,
-                          opl,
-                          sessions
-                      );
+            config,
+            eventBus,
+            characters,
+            world,
+            chat,
+            commands,
+            accounts,
+            opl,
+            sessions
+        );
 
         try
         {
@@ -423,8 +421,7 @@ public class LoginFlowIntegrationTests
         var eventBus = new EventBusService();
 
         using var dispatched = new ManualResetEventSlim();
-        eventBus.Subscribe<PacketDispatchedEvent>(
-            (e, _) =>
+        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
             {
                 if (e.OpCode == 0x80)
                 {
@@ -466,8 +463,7 @@ public class LoginFlowIntegrationTests
 
         var eventBus = new EventBusService();
         using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (_, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
             {
                 enteredWorld.Set();
 
@@ -527,8 +523,8 @@ public class LoginFlowIntegrationTests
             // The response holds the 1050045 name line with "Freydis" in the UTF-16LE arguments.
             var nameArgs = Encoding.Unicode.GetBytes(" \tFreydis\t ");
             var megaClilocPattern = new byte[] { 0x00, 0x10, 0x05, 0xBD, 0x00, (byte)nameArgs.Length }
-                                    .Concat(nameArgs)
-                                    .ToArray();
+                .Concat(nameArgs)
+                .ToArray();
             Assert.True(
                 PollUntil(socket, compressed, megaClilocPattern),
                 "No MegaCliloc (0xD6) response carrying the name line arrived."
@@ -631,8 +627,7 @@ public class LoginFlowIntegrationTests
 
         var eventBus = new EventBusService();
         using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (_, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
             {
                 enteredWorld.Set();
 
@@ -791,8 +786,7 @@ public class LoginFlowIntegrationTests
 
             using var aliceEntered = new ManualResetEventSlim();
             using var bobEntered = new ManualResetEventSlim();
-            eventBus.Subscribe<PlayerEnteredWorldEvent>(
-                (e, _) =>
+            eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
                 {
                     if (e.Mobile.Name == "Alice")
                     {
@@ -895,16 +889,14 @@ public class LoginFlowIntegrationTests
 
         using var created = new ManualResetEventSlim();
         using var destroyed = new ManualResetEventSlim();
-        eventBus.Subscribe<SessionCreatedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
             {
                 created.Set();
 
                 return Task.CompletedTask;
             }
         );
-        eventBus.Subscribe<SessionDestroyedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
             {
                 destroyed.Set();
 
@@ -944,8 +936,7 @@ public class LoginFlowIntegrationTests
 
         using var destroyed = new ManualResetEventSlim();
         var subscriberThreadId = 0;
-        eventBus.Subscribe<SessionDestroyedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
             {
                 subscriberThreadId = Environment.CurrentManagedThreadId;
                 destroyed.Set();
@@ -1011,8 +1002,7 @@ public class LoginFlowIntegrationTests
 
         using var aliceEntered = new ManualResetEventSlim();
         using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(
-            (e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
             {
                 if (e.Mobile.Name == "Alice")
                 {

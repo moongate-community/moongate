@@ -22,7 +22,9 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     private readonly IServerAssetFileStore _assets;
     private readonly MoongateHttpConfig _config;
 
-    public ServerSettingsAdminEndpoints(IServerSettingsService settings, IServerAssetFileStore assets, MoongateHttpConfig config)
+    public ServerSettingsAdminEndpoints(
+        IServerSettingsService settings, IServerAssetFileStore assets, MoongateHttpConfig config
+    )
     {
         _settings = settings;
         _assets = assets;
@@ -32,18 +34,18 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/v1/admin/server-settings")
-                          .WithTags("server-settings")
-                          .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithTags("server-settings")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapGet("/", Get).WithName("GetServerSettings").Produces<ServerSettingsResponse>();
         group.MapPut("/", Update).WithName("UpdateServerSettings").Produces<ServerSettingsResponse>();
         group.MapPost("/assets/{slot}", UploadAsset)
-             .WithName("UploadServerAsset")
-             .DisableAntiforgery()
-             .Produces<ServerSettingsResponse>();
+            .WithName("UploadServerAsset")
+            .DisableAntiforgery()
+            .Produces<ServerSettingsResponse>();
         group.MapDelete("/assets/{slot}", DeleteAsset)
-             .WithName("DeleteServerAsset")
-             .Produces(StatusCodes.Status204NoContent);
+            .WithName("DeleteServerAsset")
+            .Produces(StatusCodes.Status204NoContent);
     }
 
     internal static ServerSettingsResponse ToResponse(ServerSettingsEntity settings)
@@ -69,13 +71,13 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
                 Tagline = request.Tagline,
                 RegistrationEnabled = request.RegistrationEnabled,
                 Contacts = request.Contacts is null
-                               ? null
-                               : new ServerContacts
-                               {
-                                   Website = request.Contacts.Website,
-                                   Email = request.Contacts.Email,
-                                   Discord = request.Contacts.Discord
-                               }
+                    ? null
+                    : new ServerContacts
+                    {
+                        Website = request.Contacts.Website,
+                        Email = request.Contacts.Email,
+                        Discord = request.Contacts.Discord
+                    }
             }
         );
 
@@ -96,8 +98,8 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
         if (!validation.Ok)
         {
             return validation.Error == AssetValidationError.TooLarge
-                       ? Results.Problem("Asset exceeds the maximum upload size.", statusCode: StatusCodes.Status413PayloadTooLarge)
-                       : Results.Problem("Unsupported asset content-type.", statusCode: StatusCodes.Status415UnsupportedMediaType);
+                ? Results.Problem("Asset exceeds the maximum upload size.", statusCode: StatusCodes.Status413PayloadTooLarge)
+                : Results.Problem("Unsupported asset content-type.", statusCode: StatusCodes.Status415UnsupportedMediaType);
         }
 
         await using (var stream = file.OpenReadStream())
@@ -105,7 +107,10 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             await _assets.SaveAsync(parsed, validation.Extension!, stream);
         }
 
-        _settings.SetAsset(parsed, new ServerAssetMeta { FileName = $"{parsed}.{validation.Extension}", ContentType = file.ContentType });
+        _settings.SetAsset(
+            parsed,
+            new ServerAssetMeta { FileName = $"{parsed}.{validation.Extension}", ContentType = file.ContentType }
+        );
 
         return Results.Ok(ToResponse(_settings.Get()));
     }

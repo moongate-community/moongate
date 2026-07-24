@@ -23,12 +23,12 @@ public sealed class MapImageAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/v1/admin/images/maps")
-                          .WithTags("images")
-                          .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithTags("images")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapPost("/", Start)
-             .WithName("StartMapImageExport")
-             .Produces<MapImageExportStatus>(StatusCodes.Status202Accepted);
+            .WithName("StartMapImageExport")
+            .Produces<MapImageExportStatus>(StatusCodes.Status202Accepted);
         group.MapGet("/", GetStatus).WithName("GetMapImageExportStatus").Produces<MapImageExportStatus>();
     }
 

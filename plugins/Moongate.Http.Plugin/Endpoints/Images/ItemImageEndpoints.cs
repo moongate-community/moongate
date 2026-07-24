@@ -25,10 +25,10 @@ public sealed class ItemImageEndpoints : IApiEndpointRegistration
         // A method group, not a lambda: Swashbuckle reads the /// off the handler's method, and a lambda
         // has none — the route would document itself blank.
         => routes.MapGet("/api/v1/images/items/{id}.png", Get)
-                 .WithName("GetItemImage")
-                 .WithTags("images")
-                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
-                 .AllowAnonymous();
+            .WithName("GetItemImage")
+            .WithTags("images")
+            .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
+            .AllowAnonymous();
 
     /// <summary>
     /// Hex, with or without the prefix. A bare "1234" is hex too: the route is documented as 0xITEM_ID,
@@ -110,10 +110,10 @@ public sealed class ItemImageEndpoints : IApiEndpointRegistration
         var path = await _images.GetOrCreateAsync(itemId, hueValue, cancellationToken);
 
         return path is null
-                   ? Results.Problem(
-                       $"No art for item 0x{itemId:x4}.",
-                       statusCode: StatusCodes.Status404NotFound
-                   )
-                   : Results.File(path, "image/png");
+            ? Results.Problem(
+                $"No art for item 0x{itemId:x4}.",
+                statusCode: StatusCodes.Status404NotFound
+            )
+            : Results.File(path, "image/png");
     }
 }

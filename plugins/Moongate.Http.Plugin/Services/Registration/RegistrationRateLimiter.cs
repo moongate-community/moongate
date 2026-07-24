@@ -25,8 +25,8 @@ public sealed class RegistrationRateLimiter : IRegistrationRateLimiter
             clientKey,
             _ => new Window(now, 1),
             (_, current) => now - current.Start >= _window
-                                ? new Window(now, 1)
-                                : current with { Count = current.Count + 1 }
+                ? new Window(now, 1)
+                : current with { Count = current.Count + 1 }
         );
 
         return updated.Count <= _permitPerWindow;

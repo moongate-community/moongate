@@ -24,7 +24,8 @@ public class NewsEndpointsTests
                 var news = container.Resolve<INewsService>();
                 container.RegisterApiEndpointInstance(new NewsAdminEndpoints(news));
                 container.RegisterApiEndpointInstance(new NewsEndpoints(news));
-            });
+            }
+        );
 
     [Fact]
     public async Task Admin_can_create_then_read_it_back()
@@ -33,7 +34,9 @@ public class NewsEndpointsTests
         await server.AuthenticateAsync();
 
         var create = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/news", new CreateNewsRequest("Patch 1", "notes", IsPublished: true));
+            "/api/v1/admin/news",
+            new CreateNewsRequest("Patch 1", "notes", IsPublished: true)
+        );
         Assert.Equal(HttpStatusCode.Created, create.StatusCode);
         var created = await create.Content.ReadFromJsonAsync<NewsResponse>();
         Assert.Equal("Patch 1", created!.Title);
@@ -60,7 +63,9 @@ public class NewsEndpointsTests
         await server.AuthenticateAsync();
 
         var put = await server.Client.PutAsJsonAsync(
-            "/api/v1/admin/news/999999", new UpdateNewsRequest("x", "y", true));
+            "/api/v1/admin/news/999999",
+            new UpdateNewsRequest("x", "y", true)
+        );
         Assert.Equal(HttpStatusCode.NotFound, put.StatusCode);
 
         var del = await server.Client.DeleteAsync("/api/v1/admin/news/999999");
@@ -86,7 +91,9 @@ public class NewsEndpointsTests
         await using var server = await StartAsync();
         await server.AuthenticateAsync();
         var draft = await (await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/news", new CreateNewsRequest("draft", "b", false))).Content.ReadFromJsonAsync<NewsResponse>();
+            "/api/v1/admin/news",
+            new CreateNewsRequest("draft", "b", false)
+        )).Content.ReadFromJsonAsync<NewsResponse>();
 
         var res = await server.Client.GetAsync($"/api/v1/news/{draft!.Id}");
 

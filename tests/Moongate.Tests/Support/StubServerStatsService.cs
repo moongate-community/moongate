@@ -11,5 +11,7 @@ public sealed class StubServerStatsService : IServerStatsService
 {
     public ServerStatsSnapshot Current { get; set; } = ServerStatsSnapshot.Empty;
 
-    public void Refresh() { }
+    public void Refresh()
+    {
+    }
 }

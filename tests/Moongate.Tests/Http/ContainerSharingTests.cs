@@ -44,13 +44,12 @@ public class ContainerSharingTests
     [Fact]
     public async Task Endpoint_ServesMutationsMadeThroughTheGameContainerAfterStartup()
     {
-        await using var server = await TestHttpServer.StartAsync(
-                                     container =>
-                                     {
-                                         container.Register<GameSingleton>(Reuse.Singleton);
-                                         container.RegisterApiEndpoint<SingletonProbeEndpoints>();
-                                     }
-                                 );
+        await using var server = await TestHttpServer.StartAsync(container =>
+            {
+                container.Register<GameSingleton>(Reuse.Singleton);
+                container.RegisterApiEndpoint<SingletonProbeEndpoints>();
+            }
+        );
 
         // Mutated after the routes are mapped, through the container rather than the endpoint: the marker
         // only comes back changed if the endpoint holds the game's own instance and reads it live. This is

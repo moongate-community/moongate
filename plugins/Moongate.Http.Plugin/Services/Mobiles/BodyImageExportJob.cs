@@ -70,9 +70,9 @@ public sealed class BodyImageExportJob : IBodyImageExportJob
         try
         {
             var bodies = _catalog.ClassifiedBodies
-                                 .Where(entry => entry.Type != MobType.Equipment)
-                                 .Select(entry => entry.Body)
-                                 .ToArray();
+                .Where(entry => entry.Type != MobType.Equipment)
+                .Select(entry => entry.Body)
+                .ToArray();
 
             lock (_sync)
             {
