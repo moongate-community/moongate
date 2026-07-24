@@ -74,6 +74,8 @@ public class MobileEntity : ISerialIdEntity, IPositionEntity
     /// <summary>True while the mobile is in war mode.</summary>
     public bool Warmode { get; set; }
 
+    public Serial CombatantId { get; set; }
+
     /// <summary>Murder count. From five kills the mobile reads as a murderer; see Notoriety.</summary>
     public int Kills { get; set; }
 
