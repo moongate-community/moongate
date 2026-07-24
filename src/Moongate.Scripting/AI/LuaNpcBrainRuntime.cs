@@ -1,21 +1,27 @@
+using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Abstractions.Types;
 using MoonSharp.Interpreter;
 using Serilog;
+using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Directories;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Scripting.Lua.Interfaces.Scripts;
 using SquidStd.Scripting.Lua.Services;
 
 namespace Moongate.Scripting.AI;
 
-public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
+public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDisposable
 {
     private const int MaximumBrainFileBytes = 256 * 1024;
     private const int MaximumPerceptionRange = 64;
+    private const int ReloadDebounceMilliseconds = 250;
     private static readonly string[] OptionalHookNames =
     [
         "on_activate",
@@ -50,17 +56,28 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
     private readonly NpcAiAdvancedConfig _advanced;
     private readonly Dictionary<Serial, BrainBinding> _bindings = [];
     private readonly string _brainsDirectory;
+    private readonly ConcurrentDictionary<string, CancellationTokenSource> _debounces = new(
+        OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal
+    );
     private readonly Dictionary<string, LuaBrainDefinition> _definitions = new(StringComparer.Ordinal);
+    private readonly IEventBus _eventBus;
+    private readonly IGameLoopContext _gameLoop;
     private readonly ILogger _logger = Log.ForContext<LuaNpcBrainRuntime>();
     private readonly INpcAiMetrics _metrics;
     private readonly Script _script;
     private readonly LuaBrainValueConverter _valueConverter;
 
+    private FileSystemWatcher? _watcher;
+    private int _watcherGeneration;
+    private int _watching;
+
     public LuaNpcBrainRuntime(
         IScriptEngineService scriptEngineService,
         DirectoriesConfig directoriesConfig,
         MoongateConfig config,
-        INpcAiMetrics metrics
+        INpcAiMetrics metrics,
+        IGameLoopContext gameLoop,
+        IEventBus eventBus
     )
     {
         if (scriptEngineService is not LuaScriptEngineService luaScriptEngineService)
@@ -72,6 +89,8 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
 
         _advanced = config.NpcAi.Advanced;
         _brainsDirectory = Path.Combine(directoriesConfig.GetPath("scripts"), "brains");
+        _eventBus = eventBus;
+        _gameLoop = gameLoop;
         _metrics = metrics;
         _script = luaScriptEngineService.LuaScript;
         _valueConverter = new(_script, _advanced);
@@ -229,6 +248,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
         }
 
         _definitions[brainId] = definition;
+        _eventBus.Publish(new BrainDefinitionReloadedEvent(brainId, definition.Descriptor));
         descriptor = definition.Descriptor;
         error = null;
         _metrics.RecordReload(true);
@@ -236,11 +256,81 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
         return true;
     }
 
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        BrainAssetSeeder.SeedMissing(_brainsDirectory);
+
+        if (_watcher is not null)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var watcher = new FileSystemWatcher(_brainsDirectory)
+        {
+            Filter = "*.lua",
+            IncludeSubdirectories = false,
+            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
+        };
+        watcher.Changed += OnBrainFileChanged;
+        watcher.Created += OnBrainFileChanged;
+        watcher.Renamed += OnBrainFileRenamed;
+        _watcher = watcher;
+        Interlocked.Increment(ref _watcherGeneration);
+        Volatile.Write(ref _watching, 1);
+        watcher.EnableRaisingEvents = true;
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        StopWatching();
+
+        return ValueTask.CompletedTask;
+    }
+
     public void Unbind(Serial mobileId)
         => _bindings.Remove(mobileId);
 
+    private void StopWatching()
+    {
+        Volatile.Write(ref _watching, 0);
+        Interlocked.Increment(ref _watcherGeneration);
+
+        var watcher = _watcher;
+        _watcher = null;
+
+        if (watcher is not null)
+        {
+            watcher.EnableRaisingEvents = false;
+            watcher.Changed -= OnBrainFileChanged;
+            watcher.Created -= OnBrainFileChanged;
+            watcher.Renamed -= OnBrainFileRenamed;
+            watcher.Dispose();
+        }
+
+        foreach (var debounce in _debounces)
+        {
+            CancelDebounce(debounce.Value);
+        }
+
+        _debounces.Clear();
+    }
+
     private static bool IsCallable(DynValue value)
         => value.Type is DataType.Function or DataType.ClrFunction;
+
+    private static void CancelDebounce(CancellationTokenSource cancellation)
+    {
+        try
+        {
+            cancellation.Cancel();
+        }
+        catch (ObjectDisposedException)
+        {
+            // A completed debounce may dispose its token while StopAsync is enumerating a stale entry.
+        }
+    }
 
     private static string GetHookName(NpcBrainHookType hook)
         => hook switch
@@ -348,6 +438,90 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
 
         return NpcBrainInvocationResult.Failed(error, budgetExceeded);
     }
+
+    private async Task DebounceReloadAsync(
+        string path,
+        CancellationTokenSource cancellation,
+        int watcherGeneration
+    )
+    {
+        try
+        {
+            await Task.Delay(ReloadDebounceMilliseconds, cancellation.Token).ConfigureAwait(false);
+
+            if (!RemoveDebounce(path, cancellation) ||
+                Volatile.Read(ref _watching) == 0 ||
+                Volatile.Read(ref _watcherGeneration) != watcherGeneration)
+            {
+                return;
+            }
+
+            var brainId = Path.GetFileNameWithoutExtension(path);
+
+            _gameLoop.Post(
+                () =>
+                {
+                    if (Volatile.Read(ref _watching) != 0 &&
+                        Volatile.Read(ref _watcherGeneration) == watcherGeneration)
+                    {
+                        TryReload(brainId, out _, out _);
+                    }
+                }
+            );
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+        }
+        finally
+        {
+            RemoveDebounce(path, cancellation);
+            cancellation.Dispose();
+        }
+    }
+
+    private void OnBrainFileChanged(object sender, FileSystemEventArgs eventArgs)
+        => QueueReload(eventArgs.FullPath);
+
+    private void OnBrainFileRenamed(object sender, RenamedEventArgs eventArgs)
+        => QueueReload(eventArgs.FullPath);
+
+    private void QueueReload(string path)
+    {
+        if (Volatile.Read(ref _watching) == 0)
+        {
+            return;
+        }
+
+        var normalizedPath = Path.GetFullPath(path);
+        var watcherGeneration = Volatile.Read(ref _watcherGeneration);
+        var cancellation = new CancellationTokenSource();
+
+        _debounces.AddOrUpdate(
+            normalizedPath,
+            cancellation,
+            (_, previous) =>
+            {
+                CancelDebounce(previous);
+                return cancellation;
+            }
+        );
+
+        if (Volatile.Read(ref _watching) == 0 ||
+            Volatile.Read(ref _watcherGeneration) != watcherGeneration)
+        {
+            CancelDebounce(cancellation);
+            RemoveDebounce(normalizedPath, cancellation);
+            cancellation.Dispose();
+            return;
+        }
+
+        _ = DebounceReloadAsync(normalizedPath, cancellation, watcherGeneration);
+    }
+
+    private bool RemoveDebounce(string path, CancellationTokenSource cancellation)
+        => ((ICollection<KeyValuePair<string, CancellationTokenSource>>)_debounces).Remove(
+            new(path, cancellation)
+        );
 
     private bool TryLoadDefinition(
         string brainId,
@@ -507,5 +681,10 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
             BrainId = brainId;
             State = state;
         }
+    }
+
+    public void Dispose()
+    {
+        StopWatching();
     }
 }

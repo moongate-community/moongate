@@ -4,8 +4,10 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.AI;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.AI;
+using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 using SquidStd.Core.Directories;
@@ -752,12 +754,72 @@ public class LuaNpcBrainRuntimeTests
     }
 
     [Fact]
-    public void TryReload_InvalidReplacement_PreservesSharedDefinition()
+    public void TryReload_ValidReplacement_SwapsBehaviorPreservesStateAndPublishesOnce()
     {
         using var fixture = new BrainRuntimeFixture();
         fixture.WriteBrain("counter", CounterBrain);
         fixture.Bind(1, "counter");
-        fixture.WriteBrain("counter", "return { id = 'counter' }");
+        fixture.Think(1);
+        fixture.WriteBrain(
+            "counter",
+            """
+            return {
+              id = "counter",
+              default_tick_ms = 1500,
+              perception_range = 10,
+              hearing_range = 12,
+              think = function(ctx, state)
+                state.count = (state.count or 0) + 1
+                return brain.say("reloaded:" .. tostring(state.count))
+              end
+            }
+            """
+        );
+
+        var reloadResult = fixture.Runtime.TryReload("counter", out var descriptor, out var error);
+        var invocation = fixture.Think(1);
+
+        Assert.True(reloadResult, error);
+        Assert.Equal(new("counter", 1500, 10, 12), descriptor);
+        Assert.True(invocation.Success, invocation.Error);
+        Assert.Equal("reloaded:2", Assert.Single(invocation.Decision.Intents).Text);
+        var reloaded = Assert.IsType<BrainDefinitionReloadedEvent>(Assert.Single(fixture.Bus.Published));
+        Assert.Equal("counter", reloaded.BrainId);
+        Assert.Equal(descriptor, reloaded.Descriptor);
+        Assert.Equal(1, fixture.Metrics.Current.ReloadSuccesses);
+        Assert.Equal(0, fixture.Metrics.Current.ReloadFallbacks);
+    }
+
+    [Theory]
+    [InlineData("return {")]
+    [InlineData(
+        """
+        return {
+          id = "other",
+          default_tick_ms = 1000,
+          perception_range = 12,
+          hearing_range = 15,
+          think = function() return brain.idle() end
+        }
+        """
+    )]
+    [InlineData(
+        """
+        return {
+          id = "counter",
+          default_tick_ms = 1000,
+          perception_range = 12,
+          hearing_range = 15
+        }
+        """
+    )]
+    public void TryReload_InvalidReplacement_PreservesBehaviorAndPublishesNothing(string replacement)
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain("counter", CounterBrain);
+        fixture.Bind(1, "counter");
+        fixture.Think(1);
+        fixture.WriteBrain("counter", replacement);
 
         var reloadResult = fixture.Runtime.TryReload("counter", out var descriptor, out var error);
         var invocation = fixture.Think(1);
@@ -766,8 +828,94 @@ public class LuaNpcBrainRuntimeTests
         Assert.Null(descriptor);
         Assert.NotNull(error);
         Assert.True(invocation.Success, invocation.Error);
-        Assert.Equal("1", Assert.Single(invocation.Decision.Intents).Text);
+        Assert.Equal("2", Assert.Single(invocation.Decision.Intents).Text);
         Assert.Equal(1, fixture.Metrics.Current.ReloadFallbacks);
+        Assert.Empty(fixture.Bus.Published);
+    }
+
+    [Fact]
+    public async Task StartAsync_RapidFileChanges_PostOneReloadToTheGameLoop()
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain("counter", CounterBrain);
+        fixture.Bind(1, "counter");
+        await fixture.Runtime.StartAsync();
+        var replacement = """
+                          return {
+                            id = "counter",
+                            default_tick_ms = 1500,
+                            perception_range = 10,
+                            hearing_range = 12,
+                            think = function(ctx, state) return brain.say("watched") end
+                          }
+                          """;
+
+        fixture.WriteBrain("counter", replacement);
+        fixture.WriteBrain("counter", replacement);
+        fixture.WriteBrain("counter", replacement);
+
+        await WaitUntilAsync(() => fixture.Loop.PostCount > 0);
+        await Task.Delay(400);
+
+        Assert.Equal(1, fixture.Loop.PostCount);
+        Assert.Equal(1, fixture.Metrics.Current.ReloadSuccesses);
+        Assert.Single(fixture.Bus.Published);
+        Assert.Equal("watched", Assert.Single(fixture.Think(1).Decision.Intents).Text);
+
+        await fixture.Runtime.StopAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_BuiltInBrainsExposeDeterministicDescriptorsAndBehavior()
+    {
+        using var fixture = new BrainRuntimeFixture();
+        await fixture.Runtime.StartAsync();
+
+        Assert.True(fixture.Runtime.TryBind(new(1), "guard", out var guard, out var guardError), guardError);
+        Assert.Equal(new("guard", 1000, 12, 15), guard);
+        var nonPlayerSpeech = fixture.Runtime.Invoke(
+            new(1),
+            NpcBrainHookType.SpeechHeard,
+            fixture.Context,
+            new(NpcBrainEventType.SpeechHeard, fixture.Context.Self, "hello", ChatMessageType.Regular)
+        );
+        var firstPlayerSpeech = fixture.Runtime.Invoke(
+            new(1),
+            NpcBrainHookType.SpeechHeard,
+            fixture.Context,
+            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
+        );
+        var returningPlayerSpeech = fixture.Runtime.Invoke(
+            new(1),
+            NpcBrainHookType.SpeechHeard,
+            fixture.Context,
+            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
+        );
+
+        Assert.Empty(nonPlayerSpeech.Decision.Intents);
+        Assert.Equal("Non ti avevo mai visto prima.", Assert.Single(firstPlayerSpeech.Decision.Intents).Text);
+        Assert.Equal("Bentornato.", Assert.Single(returningPlayerSpeech.Decision.Intents).Text);
+        Assert.Equal(BrainIntentType.Idle, Assert.Single(fixture.Think(1).Decision.Intents).Type);
+
+        Assert.True(fixture.Runtime.TryBind(new(2), "orion", out var orion, out var orionError), orionError);
+        Assert.Equal(new("orion", 1500, 10, 12), orion);
+        Assert.Equal(BrainIntentType.Patrol, Assert.Single(fixture.Think(2).Decision.Intents).Type);
+
+        Assert.True(fixture.Runtime.TryBind(new(3), "vega", out var vega, out var vegaError), vegaError);
+        Assert.Equal(new("vega", 1500, 10, 12), vega);
+        Assert.Equal(BrainIntentType.Patrol, Assert.Single(fixture.Think(3).Decision.Intents).Type);
+
+        await fixture.Runtime.StopAsync();
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        while (!condition())
+        {
+            await Task.Delay(25, cancellation.Token);
+        }
     }
 
     private static void AssertHookText(
@@ -794,6 +942,10 @@ public class LuaNpcBrainRuntimeTests
         public BrainContext Context { get; }
 
         public NpcAiMetrics Metrics { get; } = new();
+
+        public StubEventBus Bus { get; } = new();
+
+        public StubGameLoopContext Loop { get; } = new();
 
         public BrainMobileSnapshot Other { get; } = new(
             new(2),
@@ -834,7 +986,7 @@ public class LuaNpcBrainRuntimeTests
                     }
                 }
             };
-            Runtime = new(_engine, _directories, config, Metrics);
+            Runtime = new(_engine, _directories, config, Metrics, Loop, Bus);
             var self = new BrainMobileSnapshot(
                 new(1),
                 "Self",
@@ -904,6 +1056,7 @@ public class LuaNpcBrainRuntimeTests
 
         public void Dispose()
         {
+            Runtime.Dispose();
             _engine.Dispose();
             _container.Dispose();
             Directory.Delete(_root, true);
