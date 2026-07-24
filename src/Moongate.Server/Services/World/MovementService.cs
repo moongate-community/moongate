@@ -5,11 +5,13 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Data.Internal.World;
 using Moongate.UO.Data.Mobiles;
 using Moongate.UO.Data.Types;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.Server.Services.World;
@@ -35,6 +37,7 @@ public sealed class MovementService : IMovementService
     private readonly IWorldService _world;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly TimeProvider _timeProvider;
+    private readonly IEventBus _eventBus;
     private readonly ILoopAffinity? _loopAffinity;
 
     public MovementService(
@@ -44,6 +47,7 @@ public sealed class MovementService : IMovementService
         IWorldService world,
         IPersistenceService persistenceService,
         TimeProvider timeProvider,
+        IEventBus eventBus,
         ILoopAffinity? loopAffinity = null
     )
     {
@@ -53,6 +57,7 @@ public sealed class MovementService : IMovementService
         _world = world;
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _timeProvider = timeProvider;
+        _eventBus = eventBus;
         _loopAffinity = loopAffinity;
     }
 
@@ -156,6 +161,50 @@ public sealed class MovementService : IMovementService
         }
 
         session.SetLastMove(sequence, now);
+        Apply(mobile, decision);
+        Accept(session, mobile, sequence);
+    }
+
+    public bool TryMoveNpc(Serial mobileId, DirectionType direction)
+    {
+        _loopAffinity?.AssertOnLoop("movement.try_move_npc");
+
+        var mobile = _mobiles.GetById(mobileId);
+
+        if (mobile is null || string.IsNullOrWhiteSpace(mobile.BrainScriptId))
+        {
+            return false;
+        }
+
+        var now = _timeProvider.GetUtcNow();
+        var groundItems = _spatial.GetItemsInRange(mobile.MapId, mobile.Position, 1);
+        var decision = Evaluate(
+            mobile,
+            direction,
+            0,
+            null,
+            DateTimeOffset.MinValue,
+            now,
+            _mapTiles,
+            _regions,
+            groundItems
+        );
+
+        if (!decision.Accepted)
+        {
+            return false;
+        }
+
+        Apply(mobile, decision);
+
+        return true;
+    }
+
+    private void Apply(MobileEntity mobile, MovementDecision decision)
+    {
+        var fromMapId = mobile.MapId;
+        var fromPosition = mobile.Position;
+
         mobile.Direction = decision.NewDirection;
 
         if (decision.PositionChanged)
@@ -166,7 +215,11 @@ public sealed class MovementService : IMovementService
         _mobiles.UpsertAsync(mobile).WaitSync();
         _spatial.AddOrUpdate(mobile);
         Broadcast(mobile);
-        Accept(session, mobile, sequence);
+
+        if (decision.PositionChanged)
+        {
+            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
+        }
     }
 
     private void Accept(PlayerSession session, MobileEntity mobile, byte sequence)

@@ -96,6 +96,28 @@ public sealed class SpatialIndexService : ISpatialIndexService
         return results;
     }
 
+    public IReadOnlyList<MobileEntity> GetMobilesInSector(int mapId, int sectorX, int sectorY)
+    {
+        _loopAffinity.AssertOnLoop(nameof(SpatialIndexService) + "." + nameof(GetMobilesInSector));
+
+        if (!_sectors.TryGetValue((mapId, sectorX, sectorY), out var sector))
+        {
+            return [];
+        }
+
+        var results = new List<MobileEntity>();
+
+        foreach (var serial in sector.Mobiles)
+        {
+            if (_mobiles.GetById(serial) is { } mobile)
+            {
+                results.Add(mobile);
+            }
+        }
+
+        return results;
+    }
+
     public void Remove(Serial serial)
     {
         _loopAffinity.AssertOnLoop(nameof(SpatialIndexService) + "." + nameof(Remove));

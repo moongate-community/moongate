@@ -3,12 +3,15 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Scripting.Views;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
@@ -29,18 +32,24 @@ public sealed class MobileModule
     private readonly IMobileFactoryService _factory;
     private readonly IItemFactoryService _itemFactory;
     private readonly IItemService _items;
+    private readonly ISpatialIndexService _spatial;
+    private readonly IEventBus _eventBus;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
 
     public MobileModule(
         IMobileFactoryService factory,
         IItemFactoryService itemFactory,
         IItemService items,
-        IPersistenceService persistence
+        IPersistenceService persistence,
+        ISpatialIndexService spatial,
+        IEventBus eventBus
     )
     {
         _factory = factory;
         _itemFactory = itemFactory;
         _items = items;
+        _spatial = spatial;
+        _eventBus = eventBus;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
@@ -49,6 +58,8 @@ public sealed class MobileModule
     {
         var mobile = _factory.Create(name, map, new(x, y, z));
         _mobiles.UpsertAsync(mobile).WaitSync();
+        _spatial.AddOrUpdate(mobile);
+        _eventBus.Publish(new MobileCreatedEvent(mobile));
 
         return mobile.Id.Value;
     }
@@ -64,6 +75,7 @@ public sealed class MobileModule
         }
 
         _mobiles.UpsertAsync(spawn.Mobile).WaitSync();
+        _spatial.AddOrUpdate(spawn.Mobile);
 
         foreach (var entry in spawn.Equipment)
         {
@@ -79,13 +91,33 @@ public sealed class MobileModule
             _items.Equip(spawn.Mobile, item, entry.Layer);
         }
 
+        if (_mobiles.GetById(spawn.Mobile.Id) is { } completeMobile)
+        {
+            _eventBus.Publish(new MobileCreatedEvent(completeMobile));
+        }
+
         return spawn.Mobile.Id.Value;
     }
 
     [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
     public bool Delete(uint serial)
     {
-        return _mobiles.RemoveAsync((Serial)serial).WaitSync();
+        var mobile = _mobiles.GetById((Serial)serial);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        _spatial.Remove(mobile.Id);
+        var deleted = _mobiles.RemoveAsync(mobile.Id).WaitSync();
+
+        if (deleted)
+        {
+            _eventBus.Publish(new MobileDeletedEvent(mobile));
+        }
+
+        return deleted;
     }
 
     [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
@@ -115,8 +147,16 @@ public sealed class MobileModule
             return false;
         }
 
+        var fromMapId = mobile.MapId;
+        var fromPosition = mobile.Position;
         mobile.Position = new(x, y, z);
         _mobiles.UpsertAsync(mobile).WaitSync();
+        _spatial.AddOrUpdate(mobile);
+
+        if (mobile.MapId != fromMapId || mobile.Position != fromPosition)
+        {
+            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
+        }
 
         return true;
     }
@@ -131,6 +171,8 @@ public sealed class MobileModule
             return false;
         }
 
+        var fromMapId = mobile.MapId;
+        var fromPosition = mobile.Position;
         var name = fields.Get("name");
 
         if (name.Type == DataType.String)
@@ -165,6 +207,12 @@ public sealed class MobileModule
         }
 
         _mobiles.UpsertAsync(mobile).WaitSync();
+
+        if (mobile.MapId != fromMapId)
+        {
+            _spatial.AddOrUpdate(mobile);
+            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
+        }
 
         return true;
     }
