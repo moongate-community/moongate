@@ -71,9 +71,14 @@ export function MapScreen() {
     <div className="flex flex-col gap-4">
       <h1 className="font-display text-xl text-ink">{t('map.title')}</h1>
 
-      <Card className="flex flex-wrap items-end gap-4 p-4">
-        <div className="flex flex-col gap-1">
-          <Label htmlFor="map-facet">{t('map.facet')}</Label>
+      {/* Explicit flex-row: the Card base class is `flex flex-col`, and tailwind-merge keeps it unless a
+          flex-direction utility overrides it — without flex-row the controls stack into a tall,
+          right-aligned column. Kept as one compact toolbar row that wraps on narrow widths. */}
+      <Card className="flex flex-row flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Label htmlFor="map-facet" className="text-muted">
+            {t('map.facet')}
+          </Label>
           <select
             id="map-facet"
             value={facet.name}
@@ -100,41 +105,34 @@ export function MapScreen() {
             checked={style === 'relief'}
             onCheckedChange={(on) => setStyle(on ? 'relief' : 'flat')}
           />
-          <Label htmlFor="map-relief">{t('map.relief')}</Label>
+          <Label htmlFor="map-relief" className="text-ink">
+            {t('map.relief')}
+          </Label>
         </div>
 
-        <form onSubmit={submitJump} className="flex items-end gap-2">
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="map-x">{t('map.x')}</Label>
-            <Input
-              id="map-x"
-              inputMode="numeric"
-              value={jumpX}
-              onChange={(e) => setJumpX(e.target.value)}
-              className="w-24"
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="map-y">{t('map.y')}</Label>
-            <Input
-              id="map-y"
-              inputMode="numeric"
-              value={jumpY}
-              onChange={(e) => setJumpY(e.target.value)}
-              className="w-24"
-            />
-          </div>
+        <form onSubmit={submitJump} className="flex items-center gap-2">
+          <Label htmlFor="map-x" className="text-muted">
+            {t('map.x')}
+          </Label>
+          <Input
+            id="map-x"
+            inputMode="numeric"
+            value={jumpX}
+            onChange={(e) => setJumpX(e.target.value)}
+            className="h-9 w-20"
+          />
+          <Label htmlFor="map-y" className="text-muted">
+            {t('map.y')}
+          </Label>
+          <Input
+            id="map-y"
+            inputMode="numeric"
+            value={jumpY}
+            onChange={(e) => setJumpY(e.target.value)}
+            className="h-9 w-20"
+          />
           <Button type="submit">{t('map.go')}</Button>
         </form>
-
-        <button
-          type="button"
-          onClick={copyHover}
-          title={t('map.copyHint')}
-          className="ml-auto font-mono text-sm text-muted hover:text-gold"
-        >
-          {hover === null ? '—, —' : `${hover.x}, ${hover.y}`}
-        </button>
       </Card>
 
       {jumpError && (
@@ -143,8 +141,18 @@ export function MapScreen() {
         </p>
       )}
 
-      <Card className="h-[70vh] overflow-hidden p-0">
+      <Card className="relative h-[70vh] overflow-hidden p-0">
         <LiveMap key={facet.name} facet={facet} style={style} centerTarget={centerTarget} onHover={setHover} />
+
+        {/* Coordinate readout as a corner overlay, like a real map viewer; click to copy. */}
+        <button
+          type="button"
+          onClick={copyHover}
+          title={t('map.copyHint')}
+          className="absolute bottom-2 left-2 z-[1000] rounded-control border border-border-subtle bg-surface px-2 py-1 font-mono text-xs text-muted shadow-sm hover:text-gold"
+        >
+          {hover === null ? '—, —' : `${hover.x}, ${hover.y}`}
+        </button>
       </Card>
     </div>
   )
