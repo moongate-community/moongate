@@ -58,4 +58,16 @@ public sealed class StubGameLoopContext : IGameLoopContext
 
         return name;
     }
+
+    public Task<T> InvokeAsync<T>(Func<T> work, TimeSpan? timeout = null)
+    {
+        PostCount++;
+
+        if (_answers)
+        {
+            return Task.FromResult(work());
+        }
+
+        return Task.FromException<T>(new TimeoutException("Stub game loop is not answering."));
+    }
 }
