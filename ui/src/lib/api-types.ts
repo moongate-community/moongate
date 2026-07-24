@@ -21,6 +21,7 @@ export interface paths {
          * Creates an account.
          * @description Username and password are required, and the username must be free — a taken one answers 409. Level
          *     is optional and defaults to Player; when sent it must name an account level, case-insensitively.
+         *     A 503 means the game loop did not respond and the account was not created.
          */
         post: operations["CreateAccount"];
         delete?: never;
@@ -55,7 +56,8 @@ export interface paths {
         /**
          * Updates an account, changing only the fields that are sent.
          * @description Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and
-         *     400 when the level does not name one. Returns the account as it stands after the update.
+         *     400 when the level does not name one. Returns the account as it stands after the update. A 503
+         *     means the game loop did not respond and the account was not updated.
          */
         patch: operations["UpdateAccount"];
         trace?: never;

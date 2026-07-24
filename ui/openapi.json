@@ -34,7 +34,7 @@
           "accounts"
         ],
         "summary": "Creates an account.",
-        "description": "Username and password are required, and the username must be free — a taken one answers 409. Level\nis optional and defaults to Player; when sent it must name an account level, case-insensitively.",
+        "description": "Username and password are required, and the username must be free — a taken one answers 409. Level\nis optional and defaults to Player; when sent it must name an account level, case-insensitively.\nA 503 means the game loop did not respond and the account was not created.",
         "operationId": "CreateAccount",
         "requestBody": {
           "content": {
@@ -96,7 +96,7 @@
           "accounts"
         ],
         "summary": "Updates an account, changing only the fields that are sent.",
-        "description": "Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and\n400 when the level does not name one. Returns the account as it stands after the update.",
+        "description": "Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and\n400 when the level does not name one. Returns the account as it stands after the update. A 503\nmeans the game loop did not respond and the account was not updated.",
         "operationId": "UpdateAccount",
         "parameters": [
           {
