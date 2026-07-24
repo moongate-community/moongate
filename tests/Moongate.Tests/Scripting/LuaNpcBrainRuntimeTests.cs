@@ -690,6 +690,67 @@ public class LuaNpcBrainRuntimeTests
         );
     }
 
+    [Theory]
+    [InlineData("return 'unsupported'")]
+    [InlineData("return 42")]
+    [InlineData("return true")]
+    [InlineData("return 'first', 'second'")]
+    [InlineData("return function() end")]
+    [InlineData("return brain.say")]
+    public void Invoke_UnsupportedReturnShape_ReturnsNeutralFailure(string returnStatement)
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "unsupported",
+            $$"""
+              return {
+                id = "unsupported",
+                default_tick_ms = 1000,
+                perception_range = 12,
+                hearing_range = 15,
+                think = function()
+                  {{returnStatement}}
+                end
+              }
+              """
+        );
+        fixture.Bind(1, "unsupported");
+
+        var result = fixture.Think(1);
+
+        Assert.False(result.Success);
+        Assert.Equal(BrainDecision.Empty, result.Decision);
+        Assert.Contains("return type", result.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, fixture.Metrics.Current.HookFailures);
+    }
+
+    [Fact]
+    public void Invoke_MalformedIntentTable_RemainsSuccessfulUnknownIntent()
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "malformed",
+            """
+            return {
+              id = "malformed",
+              default_tick_ms = 1000,
+              perception_range = 12,
+              hearing_range = 15,
+              think = function()
+                return { text = "missing type" }
+              end
+            }
+            """
+        );
+        fixture.Bind(1, "malformed");
+
+        var result = fixture.Think(1);
+
+        Assert.True(result.Success, result.Error);
+        Assert.Equal(BrainIntentType.Unknown, Assert.Single(result.Decision.Intents).Type);
+        Assert.Equal(0, fixture.Metrics.Current.HookFailures);
+    }
+
     [Fact]
     public void TryReload_InvalidReplacement_PreservesSharedDefinition()
     {

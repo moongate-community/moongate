@@ -144,6 +144,16 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime
                 );
             }
 
+            if (result.Type is not DataType.Nil and not DataType.Void and not DataType.Table)
+            {
+                return FailInvocation(
+                    definition.Descriptor.BrainId,
+                    mobileId,
+                    hookName,
+                    $"Unsupported brain hook return type '{result.Type}'. Expected nil or table."
+                );
+            }
+
             return NpcBrainInvocationResult.Succeeded(_valueConverter.ToDecision(result));
         }
         catch (InterpreterException exception)
