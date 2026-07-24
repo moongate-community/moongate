@@ -11,8 +11,13 @@ export type MapStyle = 'flat' | 'relief'
 
 // One CRS shared by the renderer AND the coordinate maths, so a hover readout can never disagree with
 // where a tile is drawn. CRS.Simple maps one world pixel to one map tile at native zoom — exactly the
-// backend's pyramid (zoom 0 = whole facet in one tile, maxZoom = one pixel per tile). If the rendered
-// facet ever came out upside-down, this single CRS is the one knob to change.
+// backend's pyramid (zoom 0 = whole facet in one tile, maxZoom = one pixel per tile).
+//
+// Tile orientation is fixed by the backend's tile-y convention, NOT by this CRS: because rendering and
+// these maths read the same MAP_CRS, swapping the transformation's y-sign cancels out and yields
+// byte-identical tile requests. If a facet ever renders vertically flipped, the fix is to flip the tile
+// row in the URL (a TileLayer whose getTileUrl maps y -> tilesDown(z) - 1 - y), or a backend change —
+// not a change here.
 export const MAP_CRS = L.CRS.Simple
 
 /** The Leaflet tile-URL template for a facet + style. `{z}/{x}/{y}` stay as Leaflet placeholders. */
@@ -48,4 +53,8 @@ export function clampWorld(info: MapFacetInfo, x: number, y: number): { x: numbe
 
 /** The facets this shard serves, with the grid geometry a viewer needs to configure itself. */
 export const useMaps = () =>
-  useQuery({ queryKey: ['maps'], queryFn: () => apiFetch<MapFacetInfo[]>('/api/v1/images/maps') })
+  useQuery({
+    queryKey: ['maps'],
+    queryFn: () => apiFetch<MapFacetInfo[]>('/api/v1/images/maps'),
+    staleTime: Infinity,
+  })

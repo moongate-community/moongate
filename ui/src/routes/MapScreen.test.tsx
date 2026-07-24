@@ -88,12 +88,24 @@ describe('MapScreen', () => {
   })
 
   it('shows the hovered coordinate and copies it on click', async () => {
-    const writeText = vi.fn()
+    const writeText = vi.fn().mockResolvedValue(undefined)
     Object.assign(navigator, { clipboard: { writeText } })
     renderScreen()
     await screen.findByTestId('live-map')
     await userEvent.click(screen.getByRole('button', { name: 'hover' }))
     await userEvent.click(await screen.findByText('1234, 5678'))
     expect(writeText).toHaveBeenCalledWith('1234, 5678')
+  })
+
+  it('resets the jump target when the facet changes', async () => {
+    renderScreen()
+    await screen.findByTestId('live-map')
+    await userEvent.type(screen.getByLabelText('X'), '1000')
+    await userEvent.type(screen.getByLabelText('Y'), '2000')
+    await userEvent.click(screen.getByRole('button', { name: 'Go' }))
+    await waitFor(() => expect(screen.getByTestId('live-map')).toHaveAttribute('data-center', '1000,2000'))
+
+    await userEvent.selectOptions(screen.getByLabelText('Facet'), 'Ilshenar')
+    await waitFor(() => expect(screen.getByTestId('live-map')).toHaveAttribute('data-center', ''))
   })
 })

@@ -44,8 +44,11 @@ export function MapScreen() {
 
   function copyHover() {
     if (hover === null) return
-    void navigator.clipboard?.writeText(`${hover.x}, ${hover.y}`)
-    toast(t('map.copied', { x: hover.x, y: hover.y }))
+    const { x, y } = hover
+    const write = navigator.clipboard?.writeText(`${x}, ${y}`)
+    // No clipboard API (insecure context) or a rejected write: stay silent rather than claim success.
+    if (write === undefined) return
+    void write.then(() => toast(t('map.copied', { x, y }))).catch(() => {})
   }
 
   // Declared as a const arrow function (not `function submitJump`): a hoisted function declaration is
@@ -74,7 +77,13 @@ export function MapScreen() {
           <select
             id="map-facet"
             value={facet.name}
-            onChange={(e) => setFacetName(e.target.value)}
+            onChange={(e) => {
+              setFacetName(e.target.value)
+              setCenterTarget(null)
+              setJumpX('')
+              setJumpY('')
+              setJumpError(false)
+            }}
             className="h-9 rounded-control border border-border-subtle bg-page px-2 text-sm text-ink"
           >
             {facets.map((f) => (
