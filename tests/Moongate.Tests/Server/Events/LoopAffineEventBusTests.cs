@@ -109,9 +109,17 @@ public class LoopAffineEventBusTests
         var dispatcher = new MainThreadDispatcherService();
         var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: true));
 
-        bus.Subscribe<LoopEvent>(async (_, _) => await Task.Yield());
+        // A never-completed task models a handler that did not finish synchronously (it went async),
+        // deterministically — unlike Task.Yield(), whose thread-pool continuation can complete before
+        // the guard checks IsCompleted, racing the assertion.
+        var pending = new TaskCompletionSource();
+        bus.Subscribe<LoopEvent>((_, _) => pending.Task);
         var wrapped = (Func<LoopEvent, CancellationToken, Task>)inner.LastHandler!;
 
+        // .GetAwaiter().GetResult() makes the lambda void-returning (not Task-returning), so it binds
+        // to Assert.Throws<T>(Action) instead of the xUnit-analyzer-flagged Func<Task> overload. The
+        // guard throws synchronously before ever returning a task, so GetResult() is never reached —
+        // this is equivalent to a plain synchronous throw, just in a shape the analyzer accepts.
         Assert.Throws<InvalidOperationException>(() => wrapped(new LoopEvent(), default).GetAwaiter().GetResult());
     }
 
