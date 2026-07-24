@@ -13,6 +13,7 @@ using MoonSharp.Interpreter;
 using SquidStd.Core.Directories;
 using SquidStd.Scripting.Lua.Data.Config;
 using SquidStd.Scripting.Lua.Services;
+using ISynchronizeInvoke = System.ComponentModel.ISynchronizeInvoke;
 
 namespace Moongate.Tests.Scripting;
 
@@ -839,7 +840,6 @@ public class LuaNpcBrainRuntimeTests
         using var fixture = new BrainRuntimeFixture();
         fixture.WriteBrain("counter", CounterBrain);
         fixture.Bind(1, "counter");
-        await fixture.Runtime.StartAsync();
         var replacement = """
                           return {
                             id = "counter",
@@ -849,18 +849,62 @@ public class LuaNpcBrainRuntimeTests
                             think = function(ctx, state) return brain.say("watched") end
                           }
                           """;
+        fixture.WriteBrain("counter", replacement);
+        await fixture.Runtime.StartAsync();
+        var watcher = Assert.Single(fixture.Watchers);
 
-        fixture.WriteBrain("counter", replacement);
-        fixture.WriteBrain("counter", replacement);
-        fixture.WriteBrain("counter", replacement);
+        watcher.RaiseChanged("counter.lua");
+        watcher.RaiseChanged("counter.lua");
+        watcher.RaiseChanged("counter.lua");
 
-        await WaitUntilAsync(() => fixture.Loop.PostCount > 0);
-        await Task.Delay(400);
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(249));
+        await DrainContinuationsAsync();
+        Assert.Equal(0, fixture.Loop.PostCount);
+
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(1));
+        await DrainContinuationsAsync(() => fixture.Loop.PostCount == 1);
 
         Assert.Equal(1, fixture.Loop.PostCount);
         Assert.Equal(1, fixture.Metrics.Current.ReloadSuccesses);
         Assert.Single(fixture.Bus.Published);
         Assert.Equal("watched", Assert.Single(fixture.Think(1).Decision.Intents).Text);
+
+        await fixture.Runtime.StopAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_StoppedWatcherCallbackAfterRestart_DoesNotReload()
+    {
+        using var fixture = new BrainRuntimeFixture(queueWatcherCallbacks: true);
+        fixture.WriteBrain("counter", CounterBrain);
+        fixture.Bind(1, "counter");
+        fixture.WriteBrain(
+            "counter",
+            """
+            return {
+              id = "counter",
+              default_tick_ms = 1500,
+              perception_range = 10,
+              hearing_range = 12,
+              think = function() return brain.say("stale") end
+            }
+            """
+        );
+        await fixture.Runtime.StartAsync();
+        var stoppedWatcher = Assert.Single(fixture.Watchers);
+        stoppedWatcher.RaiseChanged("counter.lua");
+        Assert.Equal(1, fixture.WatcherCallbacks.PendingCount);
+
+        await fixture.Runtime.StopAsync();
+        await fixture.Runtime.StartAsync();
+        fixture.WatcherCallbacks.RunNext();
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(250));
+        await DrainContinuationsAsync();
+
+        Assert.Equal(0, fixture.Loop.PostCount);
+        Assert.Equal(0, fixture.Metrics.Current.ReloadSuccesses);
+        Assert.Empty(fixture.Bus.Published);
+        Assert.Equal("1", Assert.Single(fixture.Think(1).Decision.Intents).Text);
 
         await fixture.Runtime.StopAsync();
     }
@@ -908,13 +952,11 @@ public class LuaNpcBrainRuntimeTests
         await fixture.Runtime.StopAsync();
     }
 
-    private static async Task WaitUntilAsync(Func<bool> condition)
+    private static async Task DrainContinuationsAsync(Func<bool>? condition = null)
     {
-        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-
-        while (!condition())
+        for (var iteration = 0; iteration < 100 && condition?.Invoke() != true; iteration++)
         {
-            await Task.Delay(25, cancellation.Token);
+            await Task.Yield();
         }
     }
 
@@ -936,6 +978,7 @@ public class LuaNpcBrainRuntimeTests
         private readonly Container _container = new();
         private readonly DirectoriesConfig _directories;
         private readonly LuaScriptEngineService _engine;
+        private readonly bool _queueWatcherCallbacks;
         private readonly string _root;
         private readonly string _scripts;
 
@@ -946,6 +989,14 @@ public class LuaNpcBrainRuntimeTests
         public StubEventBus Bus { get; } = new();
 
         public StubGameLoopContext Loop { get; } = new();
+
+        public MutableTimeProvider Time { get; } = new(
+            new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero)
+        );
+
+        public QueueingSynchronizer WatcherCallbacks { get; } = new();
+
+        public List<ControllableFileSystemWatcher> Watchers { get; } = [];
 
         public BrainMobileSnapshot Other { get; } = new(
             new(2),
@@ -963,8 +1014,9 @@ public class LuaNpcBrainRuntimeTests
 
         public LuaNpcBrainRuntime Runtime { get; }
 
-        public BrainRuntimeFixture(int maxIntentsPerDecision = 8)
+        public BrainRuntimeFixture(int maxIntentsPerDecision = 8, bool queueWatcherCallbacks = false)
         {
+            _queueWatcherCallbacks = queueWatcherCallbacks;
             _root = Path.Combine(Path.GetTempPath(), "mg-brain-" + Guid.NewGuid().ToString("N"));
             _directories = new(_root, ["scripts"]);
             _scripts = _directories.GetPath("scripts");
@@ -986,7 +1038,7 @@ public class LuaNpcBrainRuntimeTests
                     }
                 }
             };
-            Runtime = new(_engine, _directories, config, Metrics, Loop, Bus);
+            Runtime = new(_engine, _directories, config, Metrics, Loop, Bus, Time, CreateWatcher);
             var self = new BrainMobileSnapshot(
                 new(1),
                 "Self",
@@ -1054,12 +1106,64 @@ public class LuaNpcBrainRuntimeTests
         public void WriteScript(string relativePath, string content)
             => File.WriteAllText(Path.Combine(_scripts, relativePath), content);
 
+        private FileSystemWatcher CreateWatcher(string path)
+        {
+            var watcher = new ControllableFileSystemWatcher(path);
+
+            if (_queueWatcherCallbacks)
+            {
+                watcher.SynchronizingObject = WatcherCallbacks;
+            }
+
+            Watchers.Add(watcher);
+
+            return watcher;
+        }
+
         public void Dispose()
         {
             Runtime.Dispose();
             _engine.Dispose();
             _container.Dispose();
             Directory.Delete(_root, true);
+        }
+    }
+
+    private sealed class ControllableFileSystemWatcher : FileSystemWatcher
+    {
+        public ControllableFileSystemWatcher(string path) : base(path)
+        {
+        }
+
+        public void RaiseChanged(string fileName)
+            => OnChanged(new(WatcherChangeTypes.Changed, Path, fileName));
+    }
+
+    private sealed class QueueingSynchronizer : ISynchronizeInvoke
+    {
+        private readonly Queue<Action> _pending = [];
+
+        public bool InvokeRequired => true;
+
+        public int PendingCount => _pending.Count;
+
+        public IAsyncResult BeginInvoke(Delegate method, object?[]? arguments)
+        {
+            _pending.Enqueue(() => method.DynamicInvoke(arguments));
+
+            return Task.CompletedTask;
+        }
+
+        public object? EndInvoke(IAsyncResult result)
+            => null;
+
+        public object? Invoke(Delegate method, object?[]? arguments)
+            => method.DynamicInvoke(arguments);
+
+        public void RunNext()
+        {
+            Assert.True(_pending.TryDequeue(out var callback));
+            callback();
         }
     }
 }

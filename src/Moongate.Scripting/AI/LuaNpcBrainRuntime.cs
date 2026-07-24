@@ -65,9 +65,11 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private readonly ILogger _logger = Log.ForContext<LuaNpcBrainRuntime>();
     private readonly INpcAiMetrics _metrics;
     private readonly Script _script;
+    private readonly TimeProvider _timeProvider;
     private readonly LuaBrainValueConverter _valueConverter;
+    private readonly Func<string, FileSystemWatcher> _watcherFactory;
 
-    private FileSystemWatcher? _watcher;
+    private WatcherRegistration? _watcherRegistration;
     private int _watcherGeneration;
     private int _watching;
 
@@ -77,7 +79,9 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         MoongateConfig config,
         INpcAiMetrics metrics,
         IGameLoopContext gameLoop,
-        IEventBus eventBus
+        IEventBus eventBus,
+        TimeProvider timeProvider,
+        Func<string, FileSystemWatcher>? watcherFactory = null
     )
     {
         if (scriptEngineService is not LuaScriptEngineService luaScriptEngineService)
@@ -93,7 +97,9 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         _gameLoop = gameLoop;
         _metrics = metrics;
         _script = luaScriptEngineService.LuaScript;
+        _timeProvider = timeProvider;
         _valueConverter = new(_script, _advanced);
+        _watcherFactory = watcherFactory ?? CreateFileSystemWatcher;
     }
 
     public NpcBrainInvocationResult Invoke(
@@ -260,24 +266,20 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     {
         BrainAssetSeeder.SeedMissing(_brainsDirectory);
 
-        if (_watcher is not null)
+        if (_watcherRegistration is not null)
         {
             return ValueTask.CompletedTask;
         }
 
-        var watcher = new FileSystemWatcher(_brainsDirectory)
-        {
-            Filter = "*.lua",
-            IncludeSubdirectories = false,
-            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size
-        };
-        watcher.Changed += OnBrainFileChanged;
-        watcher.Created += OnBrainFileChanged;
-        watcher.Renamed += OnBrainFileRenamed;
-        _watcher = watcher;
-        Interlocked.Increment(ref _watcherGeneration);
+        var watcher = _watcherFactory(_brainsDirectory);
+        watcher.Filter = "*.lua";
+        watcher.IncludeSubdirectories = false;
+        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size;
+        var watcherGeneration = Interlocked.Increment(ref _watcherGeneration);
+        var registration = new WatcherRegistration(watcher, watcherGeneration, QueueReload);
+        _watcherRegistration = registration;
         Volatile.Write(ref _watching, 1);
-        watcher.EnableRaisingEvents = true;
+        registration.Start();
 
         return ValueTask.CompletedTask;
     }
@@ -297,17 +299,9 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         Volatile.Write(ref _watching, 0);
         Interlocked.Increment(ref _watcherGeneration);
 
-        var watcher = _watcher;
-        _watcher = null;
-
-        if (watcher is not null)
-        {
-            watcher.EnableRaisingEvents = false;
-            watcher.Changed -= OnBrainFileChanged;
-            watcher.Created -= OnBrainFileChanged;
-            watcher.Renamed -= OnBrainFileRenamed;
-            watcher.Dispose();
-        }
+        var registration = _watcherRegistration;
+        _watcherRegistration = null;
+        registration?.Dispose();
 
         foreach (var debounce in _debounces)
         {
@@ -331,6 +325,9 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             // A completed debounce may dispose its token while StopAsync is enumerating a stale entry.
         }
     }
+
+    private static FileSystemWatcher CreateFileSystemWatcher(string path)
+        => new(path);
 
     private static string GetHookName(NpcBrainHookType hook)
         => hook switch
@@ -442,16 +439,22 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private async Task DebounceReloadAsync(
         string path,
         CancellationTokenSource cancellation,
+        FileSystemWatcher watcher,
         int watcherGeneration
     )
     {
         try
         {
-            await Task.Delay(ReloadDebounceMilliseconds, cancellation.Token).ConfigureAwait(false);
+            await Task
+                .Delay(
+                    TimeSpan.FromMilliseconds(ReloadDebounceMilliseconds),
+                    _timeProvider,
+                    cancellation.Token
+                )
+                .ConfigureAwait(false);
 
             if (!RemoveDebounce(path, cancellation) ||
-                Volatile.Read(ref _watching) == 0 ||
-                Volatile.Read(ref _watcherGeneration) != watcherGeneration)
+                !IsCurrentWatcher(watcher, watcherGeneration))
             {
                 return;
             }
@@ -461,8 +464,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             _gameLoop.Post(
                 () =>
                 {
-                    if (Volatile.Read(ref _watching) != 0 &&
-                        Volatile.Read(ref _watcherGeneration) == watcherGeneration)
+                    if (IsCurrentWatcher(watcher, watcherGeneration))
                     {
                         TryReload(brainId, out _, out _);
                     }
@@ -479,21 +481,30 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         }
     }
 
-    private void OnBrainFileChanged(object sender, FileSystemEventArgs eventArgs)
-        => QueueReload(eventArgs.FullPath);
-
-    private void OnBrainFileRenamed(object sender, RenamedEventArgs eventArgs)
-        => QueueReload(eventArgs.FullPath);
-
-    private void QueueReload(string path)
+    private bool IsCurrentWatcher(FileSystemWatcher watcher, int watcherGeneration)
     {
-        if (Volatile.Read(ref _watching) == 0)
+        var current = Volatile.Read(ref _watcherRegistration);
+
+        return Volatile.Read(ref _watching) != 0 &&
+               Volatile.Read(ref _watcherGeneration) == watcherGeneration &&
+               current is not null &&
+               current.Generation == watcherGeneration &&
+               ReferenceEquals(current.Watcher, watcher);
+    }
+
+    private void QueueReload(
+        FileSystemWatcher watcher,
+        int watcherGeneration,
+        object sender,
+        string path
+    )
+    {
+        if (!ReferenceEquals(sender, watcher) || !IsCurrentWatcher(watcher, watcherGeneration))
         {
             return;
         }
 
         var normalizedPath = Path.GetFullPath(path);
-        var watcherGeneration = Volatile.Read(ref _watcherGeneration);
         var cancellation = new CancellationTokenSource();
 
         _debounces.AddOrUpdate(
@@ -506,8 +517,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             }
         );
 
-        if (Volatile.Read(ref _watching) == 0 ||
-            Volatile.Read(ref _watcherGeneration) != watcherGeneration)
+        if (!IsCurrentWatcher(watcher, watcherGeneration))
         {
             CancelDebounce(cancellation);
             RemoveDebounce(normalizedPath, cancellation);
@@ -515,7 +525,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             return;
         }
 
-        _ = DebounceReloadAsync(normalizedPath, cancellation, watcherGeneration);
+        _ = DebounceReloadAsync(normalizedPath, cancellation, watcher, watcherGeneration);
     }
 
     private bool RemoveDebounce(string path, CancellationTokenSource cancellation)
@@ -680,6 +690,47 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         {
             BrainId = brainId;
             State = state;
+        }
+    }
+
+    private sealed class WatcherRegistration : IDisposable
+    {
+        private readonly FileSystemEventHandler _fileChanged;
+        private readonly RenamedEventHandler _fileRenamed;
+
+        public int Generation { get; }
+
+        public FileSystemWatcher Watcher { get; }
+
+        public WatcherRegistration(
+            FileSystemWatcher watcher,
+            int generation,
+            Action<FileSystemWatcher, int, object, string> queueReload
+        )
+        {
+            _fileChanged = (sender, eventArgs) =>
+                queueReload(watcher, generation, sender, eventArgs.FullPath);
+            _fileRenamed = (sender, eventArgs) =>
+                queueReload(watcher, generation, sender, eventArgs.FullPath);
+            Generation = generation;
+            Watcher = watcher;
+        }
+
+        public void Start()
+        {
+            Watcher.Changed += _fileChanged;
+            Watcher.Created += _fileChanged;
+            Watcher.Renamed += _fileRenamed;
+            Watcher.EnableRaisingEvents = true;
+        }
+
+        public void Dispose()
+        {
+            Watcher.EnableRaisingEvents = false;
+            Watcher.Changed -= _fileChanged;
+            Watcher.Created -= _fileChanged;
+            Watcher.Renamed -= _fileRenamed;
+            Watcher.Dispose();
         }
     }
 
