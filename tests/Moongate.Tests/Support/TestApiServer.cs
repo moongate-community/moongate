@@ -147,6 +147,7 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance(timeProvider);
         container.RegisterInstance(moongateConfig);
         container.RegisterInstance<IAccountService>(accounts);
+        container.RegisterInstance<ISessionManager>(sessions);
 
         // Mirrors production, where the persistence plugin registers it: a service resolved from this
         // container can ask for a store, exactly as it does on a real shard.

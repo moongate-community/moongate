@@ -676,6 +676,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/players/online": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists players who have entered the world with map-ready positions.
+         * @description Staff only. The response is an unpaged snapshot ordered by character name and serial. Login and
+         *     character-selection sessions are excluded. The snapshot is read directly while the game loop may
+         *     move or disconnect a player, so one response can be briefly stale or internally inconsistent.
+         */
+        get: operations["ListOnlinePlayers"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/register": {
         parameters: {
             query?: never;
@@ -1278,6 +1300,65 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             isPublished: boolean;
+        };
+        /** @description A map-ready snapshot of one player currently in the world. */
+        OnlinePlayerMapResponse: {
+            /** @description Stable character serial, formatted as hexadecimal. */
+            characterSerial: string;
+            /** @description Character display name. */
+            characterName: string;
+            /** @description Owning account serial, formatted as hexadecimal. */
+            accountSerial: string;
+            /** @description Owning account username. */
+            accountUsername: string;
+            /**
+             * Format: int32
+             * @description Numeric UO facet id.
+             */
+            mapId: number;
+            /** @description Known facet name, or Unknown for an unrecognised id. */
+            mapName: string;
+            /**
+             * Format: int32
+             * @description World X coordinate.
+             */
+            x: number;
+            /**
+             * Format: int32
+             * @description World Y coordinate.
+             */
+            y: number;
+            /**
+             * Format: int32
+             * @description World altitude.
+             */
+            z: number;
+            /** @description Facing direction without the running flag. */
+            direction: string;
+            /** @description Whether the latest direction carries the running flag. */
+            running: boolean;
+            /**
+             * Format: int32
+             * @description Body graphic id.
+             */
+            body: number;
+            /**
+             * Format: int32
+             * @description Skin hue id.
+             */
+            skinHue: number;
+            /**
+             * Format: int32
+             * @description Current hit points.
+             */
+            hits: number;
+            /**
+             * Format: int32
+             * @description Maximum hit points.
+             */
+            hitsMax: number;
+            /** @description Whether the character is in war mode. */
+            warmode: boolean;
         };
         /** @description Who the caller's token says they are. Deliberately not their characters — see PlayerEndpoints. */
         PlayerMeResponse: {
@@ -2298,6 +2379,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CharacterResponse"][];
+                };
+            };
+        };
+    };
+    ListOnlinePlayers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OnlinePlayerMapResponse"][];
                 };
             };
         };

@@ -1240,6 +1240,31 @@
         }
       }
     },
+    "/api/v1/admin/players/online": {
+      "get": {
+        "tags": [
+          "players"
+        ],
+        "summary": "Lists players who have entered the world with map-ready positions.",
+        "description": "Staff only. The response is an unpaged snapshot ordered by character name and serial. Login and\ncharacter-selection sessions are excluded. The snapshot is read directly while the game loop may\nmove or disconnect a player, so one response can be briefly stale or internally inconsistent.",
+        "operationId": "ListOnlinePlayers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OnlinePlayerMapResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/register": {
       "post": {
         "tags": [
@@ -2539,6 +2564,103 @@
         "additionalProperties": false,
         "description": "A news entry as returned by the API."
       },
+      "OnlinePlayerMapResponse": {
+        "required": [
+          "accountSerial",
+          "accountUsername",
+          "body",
+          "characterName",
+          "characterSerial",
+          "direction",
+          "hits",
+          "hitsMax",
+          "mapId",
+          "mapName",
+          "running",
+          "skinHue",
+          "warmode",
+          "x",
+          "y",
+          "z"
+        ],
+        "type": "object",
+        "properties": {
+          "characterSerial": {
+            "type": "string",
+            "description": "Stable character serial, formatted as hexadecimal."
+          },
+          "characterName": {
+            "type": "string",
+            "description": "Character display name."
+          },
+          "accountSerial": {
+            "type": "string",
+            "description": "Owning account serial, formatted as hexadecimal."
+          },
+          "accountUsername": {
+            "type": "string",
+            "description": "Owning account username."
+          },
+          "mapId": {
+            "type": "integer",
+            "description": "Numeric UO facet id.",
+            "format": "int32"
+          },
+          "mapName": {
+            "type": "string",
+            "description": "Known facet name, or Unknown for an unrecognised id."
+          },
+          "x": {
+            "type": "integer",
+            "description": "World X coordinate.",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "description": "World Y coordinate.",
+            "format": "int32"
+          },
+          "z": {
+            "type": "integer",
+            "description": "World altitude.",
+            "format": "int32"
+          },
+          "direction": {
+            "type": "string",
+            "description": "Facing direction without the running flag."
+          },
+          "running": {
+            "type": "boolean",
+            "description": "Whether the latest direction carries the running flag."
+          },
+          "body": {
+            "type": "integer",
+            "description": "Body graphic id.",
+            "format": "int32"
+          },
+          "skinHue": {
+            "type": "integer",
+            "description": "Skin hue id.",
+            "format": "int32"
+          },
+          "hits": {
+            "type": "integer",
+            "description": "Current hit points.",
+            "format": "int32"
+          },
+          "hitsMax": {
+            "type": "integer",
+            "description": "Maximum hit points.",
+            "format": "int32"
+          },
+          "warmode": {
+            "type": "boolean",
+            "description": "Whether the character is in war mode."
+          }
+        },
+        "additionalProperties": false,
+        "description": "A map-ready snapshot of one player currently in the world."
+      },
       "PlayerMeResponse": {
         "required": [
           "level",
@@ -3026,6 +3148,9 @@
     },
     {
       "name": "player"
+    },
+    {
+      "name": "players"
     },
     {
       "name": "registration"
