@@ -26,10 +26,10 @@ public sealed class VersionEndpoints : IApiEndpointRegistration
         // A method group rather than a lambda: Swashbuckle reads the /// off the handler's method, and a
         // lambda has no method to read it from — the route would document itself as blank.
         => routes.MapGet("/api/v1/version", Version)
-                 .WithName("GetVersion")
-                 .WithTags("version")
-                 .Produces<VersionResponse>()
-                 .AllowAnonymous();
+            .WithName("GetVersion")
+            .WithTags("version")
+            .Produces<VersionResponse>()
+            .AllowAnonymous();
 
     /// <summary>Reports the shard's name and build.</summary>
     /// <remarks>

@@ -68,9 +68,9 @@ public sealed class PaperdollImageService : IPaperdollImageService
         );
 
         var doll = await _gate.ReadAsync(
-                       () => File.Exists(path) ? null : _renderer.Render(request),
-                       cancellationToken
-                   );
+            () => File.Exists(path) ? null : _renderer.Render(request),
+            cancellationToken
+        );
 
         if (doll is null)
         {

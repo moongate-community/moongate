@@ -24,9 +24,13 @@ public class ConsoleEndpointsTests
 {
     private sealed class RecordingChat : IChatService
     {
-        public void Broadcast(string text, Hue? hue = null) { }
+        public void Broadcast(string text, Hue? hue = null)
+        {
+        }
 
-        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
+        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
+        {
+        }
     }
 
     // Wires the real ConsoleEndpoints (over real HTTP) against the given registry, an inline dispatcher
@@ -41,13 +45,16 @@ public class ConsoleEndpointsTests
                     AccountLevelType.GrandMaster,
                     "Sends a server-wide system message.",
                     CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest,
-                    _ => new BroadcastCommand(new RecordingChat()));
+                    _ => new BroadcastCommand(new RecordingChat())
+                );
                 var commands = new CommandService([registration], container, container.Resolve<IAccountService>());
 
                 container.RegisterInstance<IConsoleStreamRegistry>(registry);
                 container.RegisterApiEndpointInstance(
-                    new ConsoleEndpoints(registry, commands, new InlineMainThreadDispatcher()));
-            });
+                    new ConsoleEndpoints(registry, commands, new InlineMainThreadDispatcher())
+                );
+            }
+        );
 
     [Fact]
     public async Task Post_with_unknown_connection_returns_404()
@@ -57,7 +64,9 @@ public class ConsoleEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/console", new { command = "broadcast hi", connectionId = "nope" });
+            "/api/v1/admin/console",
+            new { command = "broadcast hi", connectionId = "nope" }
+        );
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -71,7 +80,9 @@ public class ConsoleEndpointsTests
         var (id, reader) = registry.Open();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/console", new { command = "broadcast hi", connectionId = id });
+            "/api/v1/admin/console",
+            new { command = "broadcast hi", connectionId = id }
+        );
 
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
         registry.Close(id); // inline dispatch already ran the command; complete the channel so we can drain it

@@ -36,14 +36,14 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/v1/admin/accounts")
-                          .WithTags("accounts")
-                          .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithTags("accounts")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapGet("/", List).WithName("ListAccounts").Produces<IReadOnlyList<AccountResponse>>();
         group.MapGet("/{username}", Get).WithName("GetAccount").Produces<AccountResponse>();
         group.MapPost("/", Create)
-             .WithName("CreateAccount")
-             .Produces<AccountResponse>(StatusCodes.Status201Created);
+            .WithName("CreateAccount")
+            .Produces<AccountResponse>(StatusCodes.Status201Created);
         group.MapPatch("/{username}", Update).WithName("UpdateAccount").Produces<AccountResponse>();
         group.MapDelete("/{username}", Delete).WithName("DeleteAccount").Produces(StatusCodes.Status204NoContent);
     }
@@ -191,8 +191,8 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
     /// <remarks>Answers 404 when no account carries that username.</remarks>
     private IResult Get(string username)
         => _accounts.GetByUsername(username) is { } account
-               ? Results.Ok(ToResponse(account))
-               : NotFound(username);
+            ? Results.Ok(ToResponse(account))
+            : NotFound(username);
 
     /// <summary>Lists every account on the shard.</summary>
     /// <remarks>Passwords are never returned, by any account route.</remarks>

@@ -30,8 +30,8 @@ public class MegaClilocHandlerTests
         var second = NewItem(items, "a katana");
 
         var responses = MegaClilocHandler
-                        .BuildResponses([first.Id, new(0x40009999), second.Id], opl)
-                        .ToList();
+            .BuildResponses([first.Id, new(0x40009999), second.Id], opl)
+            .ToList();
 
         Assert.Equal(2, responses.Count);
         Assert.Equal(first.Id, responses[0].Serial);

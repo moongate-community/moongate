@@ -23,7 +23,9 @@ public class WorldServiceTests
     // because there are no sessions.
     private sealed class NoopPacket : IOutgoingPacket
     {
-        public void Write(ref SpanWriter writer) { }
+        public void Write(ref SpanWriter writer)
+        {
+        }
     }
 
     [Fact]
@@ -38,12 +40,11 @@ public class WorldServiceTests
     public void BuildSequence_EmitsExpectedOrderedOpcodes()
     {
         var opcodes = Service(new([]))
-                      .BuildSequence(Player())
-                      .Select(packet => Serialize(packet)[0])
-                      .ToArray();
+            .BuildSequence(Player())
+            .Select(packet => Serialize(packet)[0])
+            .ToArray();
 
         Assert.Equal(
-
             // The second 0x11 neighbour is 0xBF/0x19, the stat lock state paired with the status.
             new byte[] { 0x1B, 0xBF, 0xBF, 0xBC, 0xB9, 0x20, 0x4F, 0x4E, 0x78, 0x11, 0xBF, 0x3A, 0x72, 0x55, 0x5B },
             opcodes

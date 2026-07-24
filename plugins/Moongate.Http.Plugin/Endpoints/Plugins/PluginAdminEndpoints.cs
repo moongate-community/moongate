@@ -29,10 +29,10 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/admin/plugins", Get)
-                 .WithName("GetAdminPlugins")
-                 .WithTags("admin")
-                 .Produces<IReadOnlyList<PluginInfoResponse>>()
-                 .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("GetAdminPlugins")
+            .WithTags("admin")
+            .Produces<IReadOnlyList<PluginInfoResponse>>()
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Lists the plugins this shard activated, each with the HTTP routes it declares.</summary>
     /// <remarks>
@@ -57,9 +57,9 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
         var plugins = _catalog.Plugins.Select(plugin => ToResponse(plugin, byAssembly)).ToList();
 
         var unattributed = byAssembly.Where(entry => !catalogued.Contains(entry.Key))
-                                     .SelectMany(entry => entry.Value)
-                                     .Select(ToResponse)
-                                     .ToList();
+            .SelectMany(entry => entry.Value)
+            .Select(ToResponse)
+            .ToList();
 
         plugins.Add(Host(unattributed));
 

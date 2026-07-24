@@ -7,7 +7,7 @@ namespace Moongate.Server.Abstractions.Types;
 [Flags]
 public enum CommandSourceType : byte
 {
-    InGame  = 1 << 0,
+    InGame = 1 << 0,
     Console = 1 << 1,
-    Rest    = 1 << 2
+    Rest = 1 << 2
 }

@@ -53,8 +53,8 @@ public sealed class ItemTemplatesLoader : IDataLoader
         }
 
         var files = Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories)
-                             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-                             .ToArray();
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
         if (files.Length == 0)
         {

@@ -73,8 +73,7 @@ public sealed class NotificationTemplateServiceTests
 
         // Compiling at registration is the whole point: a broken template must fail at load, not on the
         // first notification months later.
-        var exception = Assert.Throws<InvalidDataException>(
-            () => service.Register("log", "broken", "{{ if }}")
+        var exception = Assert.Throws<InvalidDataException>(() => service.Register("log", "broken", "{{ if }}")
         );
 
         Assert.Contains("broken", exception.Message, StringComparison.Ordinal);

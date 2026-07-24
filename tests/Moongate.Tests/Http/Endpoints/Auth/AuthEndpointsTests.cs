@@ -16,9 +16,9 @@ public class AuthEndpointsTests
         server.Accounts.SetActive("tom", false);
 
         var response = await server.Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "tom", password = "secret" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "tom", password = "secret" }
+        );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
         Assert.DoesNotContain("block", await response.Content.ReadAsStringAsync(), StringComparison.OrdinalIgnoreCase);
@@ -30,9 +30,9 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "tom", password = "secret" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "tom", password = "secret" }
+        );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -48,9 +48,9 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "tom", password = "secret" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "tom", password = "secret" }
+        );
 
         var body = await response.Content.ReadAsStringAsync();
         Assert.Contains("\"expiresAt\"", body, StringComparison.Ordinal);
@@ -63,9 +63,9 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "nobody", password = "secret" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "nobody", password = "secret" }
+        );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -76,9 +76,9 @@ public class AuthEndpointsTests
         await using var server = await TestApiServer.StartAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-                           "/api/v1/auth/login",
-                           new { username = "tom", password = "wrong" }
-                       );
+            "/api/v1/auth/login",
+            new { username = "tom", password = "wrong" }
+        );
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }

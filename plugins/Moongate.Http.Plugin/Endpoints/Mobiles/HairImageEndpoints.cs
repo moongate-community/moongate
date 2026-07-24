@@ -20,9 +20,9 @@ public sealed class HairImageEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/images/hair/{style}.png", Get)
-                 .WithName("GetHairImage")
-                 .WithTags("mobiles")
-                 .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
+            .WithName("GetHairImage")
+            .WithTags("mobiles")
+            .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
     /// <summary>Serves a hair (or facial-hair) style as PNG, rendered over a reference body.</summary>
     /// <remarks>
@@ -39,15 +39,15 @@ public sealed class HairImageEndpoints : IApiEndpointRegistration
 
         var referenceBody = body is > 0 ? body.Value : DefaultReferenceBody;
         var path = await _hair.GetOrCreateAsync(
-                       styleId,
-                       hue.GetValueOrDefault(),
-                       referenceBody,
-                       facial.GetValueOrDefault(),
-                       cancellationToken
-                   );
+            styleId,
+            hue.GetValueOrDefault(),
+            referenceBody,
+            facial.GetValueOrDefault(),
+            cancellationToken
+        );
 
         return path is null
-                   ? Results.Problem($"Nothing decodes for style {styleId}.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.File(path, "image/png");
+            ? Results.Problem($"Nothing decodes for style {styleId}.", statusCode: StatusCodes.Status404NotFound)
+            : Results.File(path, "image/png");
     }
 }

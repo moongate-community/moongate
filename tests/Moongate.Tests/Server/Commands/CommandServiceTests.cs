@@ -102,8 +102,15 @@ public class CommandServiceTests
         var command = new RecordingCommand();
         var service = Service(Registration("test|t", CommandSourceType.Console, AccountLevelType.GrandMaster, command));
 
-        service.Execute(new CommandInvocation(
-            CommandSourceType.Console, AccountLevelType.GrandMaster, null, "test a b", _ => { }));
+        service.Execute(
+            new CommandInvocation(
+                CommandSourceType.Console,
+                AccountLevelType.GrandMaster,
+                null,
+                "test a b",
+                _ => { }
+            )
+        );
 
         Assert.NotNull(command.LastContext);
         Assert.Equal(["a", "b"], command.LastContext!.Value.Arguments);
@@ -116,8 +123,15 @@ public class CommandServiceTests
         var replies = new List<string>();
         var service = Service(Registration("test", CommandSourceType.Console));
 
-        service.Execute(new CommandInvocation(
-            CommandSourceType.Console, AccountLevelType.Administrator, null, "nope", replies.Add));
+        service.Execute(
+            new CommandInvocation(
+                CommandSourceType.Console,
+                AccountLevelType.Administrator,
+                null,
+                "nope",
+                replies.Add
+            )
+        );
 
         Assert.Equal("Unknown command.", Assert.Single(replies));
     }
@@ -128,8 +142,15 @@ public class CommandServiceTests
         var replies = new List<string>();
         var service = Service(Registration("test", CommandSourceType.InGame)); // in-game only
 
-        service.Execute(new CommandInvocation(
-            CommandSourceType.Console, AccountLevelType.Administrator, null, "test", replies.Add));
+        service.Execute(
+            new CommandInvocation(
+                CommandSourceType.Console,
+                AccountLevelType.Administrator,
+                null,
+                "test",
+                replies.Add
+            )
+        );
 
         Assert.Equal("Unknown command.", Assert.Single(replies));
     }
@@ -140,8 +161,15 @@ public class CommandServiceTests
         var replies = new List<string>();
         var service = Service(Registration("test", CommandSourceType.Console, AccountLevelType.GrandMaster));
 
-        service.Execute(new CommandInvocation(
-            CommandSourceType.Console, AccountLevelType.Player, null, "test", replies.Add));
+        service.Execute(
+            new CommandInvocation(
+                CommandSourceType.Console,
+                AccountLevelType.Player,
+                null,
+                "test",
+                replies.Add
+            )
+        );
 
         Assert.Equal("Unknown command.", Assert.Single(replies));
     }
@@ -153,7 +181,8 @@ public class CommandServiceTests
     {
         var service = Service(
             Registration("broadcast|bc", CommandSourceType.InGame | CommandSourceType.Console),
-            Registration("ingameonly", CommandSourceType.InGame));
+            Registration("ingameonly", CommandSourceType.InGame)
+        );
 
         var console = service.ListCommands(CommandSourceType.Console);
 

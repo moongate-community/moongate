@@ -40,8 +40,8 @@ public class AccountService : IAccountService
     public AccountAuthResult Authenticate(string username, string password)
     {
         var account = _accountStore
-                      .Query()
-                      .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
+            .Query()
+            .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
 
         if (account == null)
         {
@@ -144,8 +144,8 @@ public class AccountService : IAccountService
         }
 
         var account = _accountStore
-                      .Query()
-                      .FirstOrDefault(a => !string.IsNullOrEmpty(a.ActivationToken) && a.ActivationToken == token);
+            .Query()
+            .FirstOrDefault(a => !string.IsNullOrEmpty(a.ActivationToken) && a.ActivationToken == token);
 
         if (account is null)
         {

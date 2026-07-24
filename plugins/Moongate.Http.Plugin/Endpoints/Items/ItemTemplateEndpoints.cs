@@ -23,16 +23,16 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/admin/items/templates", List)
-              .WithName("ListItemTemplates")
-              .WithTags("items")
-              .Produces<PagedResponse<ItemTemplateSummaryResponse>>()
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("ListItemTemplates")
+            .WithTags("items")
+            .Produces<PagedResponse<ItemTemplateSummaryResponse>>()
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapGet("/api/v1/admin/items/templates/{id}", Get)
-              .WithName("GetItemTemplate")
-              .WithTags("items")
-              .Produces<ItemTemplateResponse>()
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("GetItemTemplate")
+            .WithTags("items")
+            .Produces<ItemTemplateResponse>()
+            .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     private static List<ItemTemplate> Filter(IReadOnlyList<ItemTemplate> all, string? search)
@@ -44,12 +44,11 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
 
         return
         [
-            .. all.Where(
-                template =>
-                    Matches(template.Id, search) ||
-                    Matches(template.Name, search) ||
-                    Matches(template.Category, search) ||
-                    template.Tags.Any(tag => Matches(tag, search))
+            .. all.Where(template =>
+                Matches(template.Id, search) ||
+                Matches(template.Name, search) ||
+                Matches(template.Category, search) ||
+                template.Tags.Any(tag => Matches(tag, search))
             )
         ];
     }
@@ -61,8 +60,8 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
         var template = _templates.GetById(id);
 
         return template is null
-                   ? Results.Problem($"No item template with id '{id}'.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.Ok(ItemTemplateResponse.From(template));
+            ? Results.Problem($"No item template with id '{id}'.", statusCode: StatusCodes.Status404NotFound)
+            : Results.Ok(ItemTemplateResponse.From(template));
     }
 
     /// <summary>Every item template, paged.</summary>
@@ -83,9 +82,9 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
         IReadOnlyList<ItemTemplateSummaryResponse> items =
         [
             .. matched.OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)
-                      .Skip(request.Skip)
-                      .Take(request.PageSize)
-                      .Select(ItemTemplateSummaryResponse.From)
+                .Skip(request.Skip)
+                .Take(request.PageSize)
+                .Select(ItemTemplateSummaryResponse.From)
         ];
 
         return Results.Ok(PagedResponse<ItemTemplateSummaryResponse>.From(items, matched.Count, request));

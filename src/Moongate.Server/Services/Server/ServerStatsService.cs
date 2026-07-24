@@ -105,8 +105,7 @@ public sealed class ServerStatsService : IServerStatsService, ISquidStdService
         // for a whole interval. The event fires on the loop once the world is loaded, which is both the
         // earliest correct moment and the right thread. Refreshing inline here is not an option — StartAsync
         // runs off the loop, and reading the world stores from there is what this snapshot exists to avoid.
-        _eventBus.Subscribe<WorldReadyEvent>(
-            (_, _) =>
+        _eventBus.Subscribe<WorldReadyEvent>((_, _) =>
             {
                 Refresh();
 

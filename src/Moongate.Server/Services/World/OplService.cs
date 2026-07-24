@@ -114,7 +114,7 @@ public sealed class OplService : IOplService
 
     private static string FirstNonEmpty(string? first, string? second, string fallback)
         => !string.IsNullOrWhiteSpace(first) ? first :
-           !string.IsNullOrWhiteSpace(second) ? second : fallback;
+            !string.IsNullOrWhiteSpace(second) ? second : fallback;
 
     private static int Fnv1a(string text)
     {

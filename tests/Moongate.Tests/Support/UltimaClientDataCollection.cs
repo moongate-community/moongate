@@ -6,4 +6,6 @@ namespace Moongate.Tests.Support;
 /// these tests would race on the shared client-file paths.
 /// </summary>
 [CollectionDefinition("UltimaClientData", DisableParallelization = true)]
-public sealed class UltimaClientDataCollection { }
+public sealed class UltimaClientDataCollection
+{
+}

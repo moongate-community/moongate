@@ -27,23 +27,23 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
         // Method groups, not lambdas: Swashbuckle reads the /// off the handler's method, and a lambda has
         // none — the route would document itself blank.
         routes.MapGet("/api/v1/images/maps", List)
-              .WithName("ListMaps")
-              .WithTags("images")
-              .Produces<IReadOnlyList<MapFacetInfo>>()
-              .AllowAnonymous();
+            .WithName("ListMaps")
+            .WithTags("images")
+            .Produces<IReadOnlyList<MapFacetInfo>>()
+            .AllowAnonymous();
 
         // Before the tile route, so "full" is never read as a zoom.
         routes.MapGet("/api/v1/images/maps/{map}/full.png", GetFull)
-              .WithName("GetFullMapImage")
-              .WithTags("images")
-              .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
-              .AllowAnonymous();
+            .WithName("GetFullMapImage")
+            .WithTags("images")
+            .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
+            .AllowAnonymous();
 
         routes.MapGet("/api/v1/images/maps/{map}/{z}/{x}/{y}.png", GetTile)
-              .WithName("GetMapTile")
-              .WithTags("images")
-              .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
-              .AllowAnonymous();
+            .WithName("GetMapTile")
+            .WithTags("images")
+            .Produces<byte[]>(StatusCodes.Status200OK, "image/png")
+            .AllowAnonymous();
     }
 
     /// <summary>A whole facet as one PNG.</summary>
@@ -73,8 +73,8 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
         var path = await _maps.GetFullAsync(facet, renderStyle, cancellationToken);
 
         return path is null
-                   ? Results.Problem($"{facet} is not served by this shard.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.File(path, "image/png");
+            ? Results.Problem($"{facet} is not served by this shard.", statusCode: StatusCodes.Status404NotFound)
+            : Results.File(path, "image/png");
     }
 
     /// <summary>One map tile.</summary>
@@ -137,11 +137,11 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
         var path = await _maps.GetTileAsync(facet, renderStyle, zoom, x, y, cancellationToken);
 
         return path is null
-                   ? Results.Problem(
-                       $"No tile {x},{y} at zoom {zoom} for {facet}.",
-                       statusCode: StatusCodes.Status404NotFound
-                   )
-                   : Results.File(path, "image/png");
+            ? Results.Problem(
+                $"No tile {x},{y} at zoom {zoom} for {facet}.",
+                statusCode: StatusCodes.Status404NotFound
+            )
+            : Results.File(path, "image/png");
     }
 
     private static IResult InvalidFacet(string name)
@@ -170,24 +170,23 @@ public sealed class MapImageEndpoints : IApiEndpointRegistration
 
         return Results.Ok(
             _provider.Facets
-                     .Select(facet => (Facet: facet, Map: _provider.Get(facet)))
-                     .Where(entry => entry.Map is not null)
-                     .Select(
-                         entry =>
-                         {
-                             var maxZoom = _maps.MaxZoomFor(entry.Facet);
+                .Select(facet => (Facet: facet, Map: _provider.Get(facet)))
+                .Where(entry => entry.Map is not null)
+                .Select(entry =>
+                    {
+                        var maxZoom = _maps.MaxZoomFor(entry.Facet);
 
-                             return new MapFacetInfo(
-                                 entry.Facet.ToString(),
-                                 entry.Map!.Width,
-                                 entry.Map.Height,
-                                 maxZoom,
-                                 MapTileGeometry.TileSize,
-                                 MapTileGeometry.TilesAcross(entry.Map.Width, maxZoom, maxZoom),
-                                 MapTileGeometry.TilesDown(entry.Map.Height, maxZoom, maxZoom)
-                             );
-                         }
-                     )
+                        return new MapFacetInfo(
+                            entry.Facet.ToString(),
+                            entry.Map!.Width,
+                            entry.Map.Height,
+                            maxZoom,
+                            MapTileGeometry.TileSize,
+                            MapTileGeometry.TilesAcross(entry.Map.Width, maxZoom, maxZoom),
+                            MapTileGeometry.TilesDown(entry.Map.Height, maxZoom, maxZoom)
+                        );
+                    }
+                )
         );
     }
 

@@ -90,8 +90,8 @@ public class ItemTemplateEndpointsTests
         await server.AuthenticateAsync();
 
         var page = await server.Client.GetFromJsonAsync<PagedResponse<ItemTemplateSummaryResponse>>(
-                       $"{Route}?search=nothing"
-                   );
+            $"{Route}?search=nothing"
+        );
 
         Assert.Equal(0, page!.Total);
         Assert.Empty(page.Items);
@@ -122,26 +122,26 @@ public class ItemTemplateEndpointsTests
 
     private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
         => await TestApiServer.StartAsync(
-               level,
-               configure: container =>
-                          {
-                              var templates = new ItemTemplateService();
-                              templates.Register(Template("katana", "a katana", "weapons", 0x13FF, ["weapon", "sword"]));
-                              templates.Register(Template("bread", "a bread loaf", "food", 0x103B, ["food"]));
-                              templates.Register(
-                                  Template(
-                                      "elder_katana",
-                                      "an elder katana",
-                                      "weapons",
-                                      0x13FF,
-                                      ["weapon", "sword"],
-                                      ItemRarityType.Legendary
-                                  )
-                              );
-                              container.RegisterInstance<IItemTemplateService>(templates);
-                              container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates));
-                          }
-           );
+            level,
+            configure: container =>
+            {
+                var templates = new ItemTemplateService();
+                templates.Register(Template("katana", "a katana", "weapons", 0x13FF, ["weapon", "sword"]));
+                templates.Register(Template("bread", "a bread loaf", "food", 0x103B, ["food"]));
+                templates.Register(
+                    Template(
+                        "elder_katana",
+                        "an elder katana",
+                        "weapons",
+                        0x13FF,
+                        ["weapon", "sword"],
+                        ItemRarityType.Legendary
+                    )
+                );
+                container.RegisterInstance<IItemTemplateService>(templates);
+                container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates));
+            }
+        );
 
     private static ItemTemplate Template(
         string id,
@@ -163,7 +163,7 @@ public class ItemTemplateEndpointsTests
             Rarity = rarity,
             Tags = [.. tags],
             Params = id == "katana"
-                         ? new() { ["durability"] = new() { Type = "int", Value = "100" } }
-                         : null
+                ? new() { ["durability"] = new() { Type = "int", Value = "100" } }
+                : null
         };
 }

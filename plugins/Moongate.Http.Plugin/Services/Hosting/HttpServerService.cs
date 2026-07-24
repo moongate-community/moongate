@@ -86,8 +86,7 @@ public sealed class HttpServerService : ISquidStdService
 
         builder.Services.AddProblemDetails();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(
-            options =>
+        builder.Services.AddSwaggerGen(options =>
             {
                 // Every DTO here is a record of non-nullable properties, but by default Swashbuckle marks
                 // nothing required — so a generated client has to treat every field as possibly absent and
@@ -108,38 +107,37 @@ public sealed class HttpServerService : ISquidStdService
         // camelCase over the wire while the DTOs stay PascalCase in C#. ASP.NET already defaults to this,
         // but the wire format is a contract clients are written against: stated here it cannot be changed
         // by a default shifting under us.
-        builder.Services.ConfigureHttpJsonOptions(
-            options => options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        builder.Services.ConfigureHttpJsonOptions(options =>
+            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         );
 
         builder.Services
-               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-               .AddJwtBearer(
-                   options =>
-                   {
-                       options.TokenValidationParameters = new()
-                       {
-                           ValidateIssuer = true,
-                           ValidIssuer = _config.Jwt.Issuer,
-                           ValidateAudience = true,
-                           ValidAudience = _config.Jwt.Issuer,
-                           ValidateIssuerSigningKey = true,
-                           IssuerSigningKey = signingKey,
-                           ValidateLifetime = true
-                       };
-                   }
-               );
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = _config.Jwt.Issuer,
+                        ValidateAudience = true,
+                        ValidAudience = _config.Jwt.Issuer,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = signingKey,
+                        ValidateLifetime = true
+                    };
+                }
+            );
 
         builder.Services
-               .AddAuthorizationBuilder()
-               .AddPolicy(
-                   AdminPolicy,
-                   policy => policy.RequireRole(
-                       nameof(AccountLevelType.Administrator),
-                       nameof(AccountLevelType.GrandMaster)
-                   )
-               )
-               .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
+            .AddAuthorizationBuilder()
+            .AddPolicy(
+                AdminPolicy,
+                policy => policy.RequireRole(
+                    nameof(AccountLevelType.Administrator),
+                    nameof(AccountLevelType.GrandMaster)
+                )
+            )
+            .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
 
         _app = builder.Build();
 
@@ -177,8 +175,7 @@ public sealed class HttpServerService : ISquidStdService
         _app.UseAuthorization();
 
         _app.UseSwagger();
-        _app.MapScalarApiReference(
-            options =>
+        _app.MapScalarApiReference(options =>
             {
                 options.WithOpenApiRoutePattern(SwaggerRoutePattern);
                 options.AddDocument(DocumentName);
@@ -206,12 +203,13 @@ public sealed class HttpServerService : ISquidStdService
         {
             var indexPath = Path.Combine(uiDist, "index.html");
 
-            _app.MapFallback(
-                async context =>
+            _app.MapFallback(async context =>
                 {
                     var path = context.Request.Path;
-                    var reserved = ReservedPrefixes.Any(
-                        prefix => path.StartsWithSegments(prefix, StringComparison.OrdinalIgnoreCase)
+                    var reserved = ReservedPrefixes.Any(prefix => path.StartsWithSegments(
+                            prefix,
+                            StringComparison.OrdinalIgnoreCase
+                        )
                     );
 
                     if (!HttpMethods.IsGet(context.Request.Method) || reserved)
@@ -269,12 +267,12 @@ public sealed class HttpServerService : ISquidStdService
     /// </summary>
     private IEnumerable<string> EndpointXmlDocumentationPaths()
         => _container.GetServiceRegistrations()
-                     .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
-                     .Select(registration => registration.ImplementationType?.Assembly)
-                     .Where(assembly => assembly is not null)
-                     .Select(assembly => Path.Combine(AppContext.BaseDirectory, $"{assembly!.GetName().Name}.xml"))
-                     .Distinct()
-                     .Where(File.Exists);
+            .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+            .Select(registration => registration.ImplementationType?.Assembly)
+            .Where(assembly => assembly is not null)
+            .Select(assembly => Path.Combine(AppContext.BaseDirectory, $"{assembly!.GetName().Name}.xml"))
+            .Distinct()
+            .Where(File.Exists);
 
     /// <summary>
     /// Mints a signing key for a server that has not configured one, and writes it to moongate.yaml.
@@ -329,8 +327,8 @@ public sealed class HttpServerService : ISquidStdService
         // index.html rather than the directory: a directory that exists but holds no entry point would pass
         // the check and then serve nothing.
         return Candidates()
-              .Select(Path.GetFullPath)
-              .FirstOrDefault(candidate => File.Exists(Path.Combine(candidate, "index.html")));
+            .Select(Path.GetFullPath)
+            .FirstOrDefault(candidate => File.Exists(Path.Combine(candidate, "index.html")));
     }
 
     /// <summary>

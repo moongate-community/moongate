@@ -34,9 +34,9 @@ internal static class ItemTemplateYamlDeserializer
     };
 
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-                                                         .WithDuplicateKeyChecking()
-                                                         .WithEnforceNullability()
-                                                         .Build();
+        .WithDuplicateKeyChecking()
+        .WithEnforceNullability()
+        .Build();
 
     public static ItemTemplate[] DeserializeFromFile(string file, string relativePath)
     {

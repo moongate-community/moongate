@@ -49,8 +49,8 @@ public sealed class MobileImageEndpointsTests : IDisposable
 
         var hair = await server.Client.GetFromJsonAsync<PagedResponse<HairStyleSummary>>("/api/v1/admin/hair-styles");
         var facial = await server.Client.GetFromJsonAsync<PagedResponse<HairStyleSummary>>(
-                         "/api/v1/admin/hair-styles?facial=true"
-                     );
+            "/api/v1/admin/hair-styles?facial=true"
+        );
 
         Assert.Equal(10, hair!.Total);
         Assert.Equal(7, facial!.Total);
@@ -164,41 +164,41 @@ public sealed class MobileImageEndpointsTests : IDisposable
         templates.Register(new() { Id = "villager", Appearance = new() { Body = 400 } });
 
         return await TestApiServer.StartAsync(
-                   level,
-                   configure: container =>
-                              {
-                                  var gate = new StubUltimaReadGate();
-                                  var directories = new DirectoriesConfig(_root, Array.Empty<string>());
-                                  var bodies = new BodyImageService(catalog, directories, gate);
-                                  var renderer = new MobileFigureRenderer(catalog, new ItemTemplateService());
+            level,
+            configure: container =>
+            {
+                var gate = new StubUltimaReadGate();
+                var directories = new DirectoriesConfig(_root, Array.Empty<string>());
+                var bodies = new BodyImageService(catalog, directories, gate);
+                var renderer = new MobileFigureRenderer(catalog, new ItemTemplateService());
 
-                                  container.RegisterApiEndpointInstance(new BodyImageEndpoints(bodies));
-                                  container.RegisterApiEndpointInstance(
-                                      new HairImageEndpoints(new HairImageService(renderer, directories, gate))
-                                  );
-                                  container.RegisterApiEndpointInstance(
-                                      new MobileTemplateImageEndpoints(
-                                          new MobileTemplateImageService(renderer, templates, directories, gate)
-                                      )
-                                  );
-                                  container.RegisterApiEndpointInstance(
-                                      new MobileImageAdminEndpoints(catalog, new BodyImageExportJob(bodies, catalog), bodies)
-                                  );
+                container.RegisterApiEndpointInstance(new BodyImageEndpoints(bodies));
+                container.RegisterApiEndpointInstance(
+                    new HairImageEndpoints(new HairImageService(renderer, directories, gate))
+                );
+                container.RegisterApiEndpointInstance(
+                    new MobileTemplateImageEndpoints(
+                        new MobileTemplateImageService(renderer, templates, directories, gate)
+                    )
+                );
+                container.RegisterApiEndpointInstance(
+                    new MobileImageAdminEndpoints(catalog, new BodyImageExportJob(bodies, catalog), bodies)
+                );
 
-                                  var gumps = new FakeGumpCatalog();
-                                  gumps.Gumps[(0x000C, 0)] = (W: 40, H: 100); // male body gump
+                var gumps = new FakeGumpCatalog();
+                gumps.Gumps[(0x000C, 0)] = (W: 40, H: 100); // male body gump
 
-                                  container.RegisterApiEndpointInstance(
-                                      new PaperdollEndpoints(
-                                          new PaperdollImageService(
-                                              new PaperdollRenderer(gumps, catalog, new ItemTemplateService()),
-                                              templates,
-                                              directories,
-                                              gate
-                                          )
-                                      )
-                                  );
-                              }
-               );
+                container.RegisterApiEndpointInstance(
+                    new PaperdollEndpoints(
+                        new PaperdollImageService(
+                            new PaperdollRenderer(gumps, catalog, new ItemTemplateService()),
+                            templates,
+                            directories,
+                            gate
+                        )
+                    )
+                );
+            }
+        );
     }
 }

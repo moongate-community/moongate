@@ -11,8 +11,8 @@ public sealed class SmtpCredentialGuardTests
         // Security: Auto resolves to StartTlsWhenAvailable on any port but the implicit-TLS one, and that
         // proceeds in the clear when the server does not advertise STARTTLS. Authenticating there puts the
         // password on the wire.
-        var exception = Assert.Throws<SmtpInsecureConnectionException>(
-            () => SmtpCredentialGuard.EnsureCredentialsAreProtected(hasCredentials: true, isSecure: false)
+        var exception = Assert.Throws<SmtpInsecureConnectionException>(() =>
+            SmtpCredentialGuard.EnsureCredentialsAreProtected(hasCredentials: true, isSecure: false)
         );
 
         Assert.Contains("unencrypted", exception.Message, StringComparison.OrdinalIgnoreCase);

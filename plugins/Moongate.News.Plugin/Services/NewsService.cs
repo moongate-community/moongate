@@ -15,7 +15,9 @@ public sealed class NewsService : INewsService
         _store = persistence.GetStore<NewsEntity, Serial>();
     }
 
-    public async ValueTask<NewsEntity> CreateAsync(string title, string body, string author, bool isPublished, CancellationToken ct = default)
+    public async ValueTask<NewsEntity> CreateAsync(
+        string title, string body, string author, bool isPublished, CancellationToken ct = default
+    )
     {
         var now = DateTime.UtcNow;
         var news = new NewsEntity
@@ -32,7 +34,9 @@ public sealed class NewsService : INewsService
         return news;
     }
 
-    public async ValueTask<NewsEntity?> UpdateAsync(Serial id, string title, string body, bool isPublished, CancellationToken ct = default)
+    public async ValueTask<NewsEntity?> UpdateAsync(
+        Serial id, string title, string body, bool isPublished, CancellationToken ct = default
+    )
     {
         if (_store.GetById(id) is not { } news)
         {

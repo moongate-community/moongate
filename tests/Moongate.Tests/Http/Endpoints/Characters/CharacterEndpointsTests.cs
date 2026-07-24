@@ -19,8 +19,8 @@ public class CharacterEndpointsTests
         // Every NPC on a real shard looks like this in the store: a mobile no account lists.
         await using var server = await TestApiServer.StartAsync();
         await server.Persistence
-                    .Store<MobileEntity>()
-                    .UpsertAsync(new() { Name = "a wandering healer" });
+            .Store<MobileEntity>()
+            .UpsertAsync(new() { Name = "a wandering healer" });
         await server.AuthenticateAsync();
 
         var characters = await server.Client.GetFromJsonAsync<List<CharacterResponse>>(Route);

@@ -24,8 +24,8 @@ public class ItemImageEndpointsTests
 
         var plain = await server.Client.GetByteArrayAsync($"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png");
         var hued = await server.Client.GetByteArrayAsync(
-                       $"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png?hue=0x{ItemImageFixture.Hue:x4}"
-                   );
+            $"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png?hue=0x{ItemImageFixture.Hue:x4}"
+        );
 
         using var plainImage = Image.Load<Bgra32>(plain);
         using var huedImage = Image.Load<Bgra32>(hued);
@@ -108,14 +108,13 @@ public class ItemImageEndpointsTests
     }
 
     private static async Task<TestHttpServer> StartAsync(ItemImageFixture fixture)
-        => await TestHttpServer.StartAsync(
-               container =>
-               {
-                   container.RegisterInstance(fixture.Directories);
-                   container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
-                   container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
-                   container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
-                   container.RegisterApiEndpointInstance(new ItemImageEndpoints(container.Resolve<IItemImageService>()));
-               }
-           );
+        => await TestHttpServer.StartAsync(container =>
+            {
+                container.RegisterInstance(fixture.Directories);
+                container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+                container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
+                container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
+                container.RegisterApiEndpointInstance(new ItemImageEndpoints(container.Resolve<IItemImageService>()));
+            }
+        );
 }

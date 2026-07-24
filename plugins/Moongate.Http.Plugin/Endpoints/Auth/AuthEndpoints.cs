@@ -39,16 +39,16 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/v1/auth/login", Login)
-              .WithName("Login")
-              .WithTags("auth")
-              .Produces<ApiTokenResult>()
-              .AllowAnonymous();
+            .WithName("Login")
+            .WithTags("auth")
+            .Produces<ApiTokenResult>()
+            .AllowAnonymous();
 
         routes.MapPost("/api/v1/auth/renew", Renew)
-              .WithName("RenewToken")
-              .WithTags("auth")
-              .Produces<ApiTokenResult>()
-              .RequireAuthorization(HttpServerService.PlayerPolicy);
+            .WithName("RenewToken")
+            .WithTags("auth")
+            .Produces<ApiTokenResult>()
+            .RequireAuthorization(HttpServerService.PlayerPolicy);
     }
 
     /// <summary>Trades account credentials for a bearer token.</summary>

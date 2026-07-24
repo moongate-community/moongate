@@ -29,8 +29,8 @@ public static partial class HueSpec
         }
 
         return ushort.TryParse(spec, NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
-                   ? value
-                   : (ushort)0;
+            ? value
+            : (ushort)0;
     }
 
     [GeneratedRegex(@"^hue\(\s*(\d+)\s*:\s*(\d+)\s*\)$", RegexOptions.IgnoreCase)]

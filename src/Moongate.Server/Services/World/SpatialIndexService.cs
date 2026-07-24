@@ -146,7 +146,13 @@ public sealed class SpatialIndexService : ISpatialIndexService
             return;
         }
 
-        _logger.Debug("Mobile {Mobile} entered sector {MapId}:{SectorX},{SectorY}", serial, key.MapId, key.SectorX, key.SectorY);
+        _logger.Debug(
+            "Mobile {Mobile} entered sector {MapId}:{SectorX},{SectorY}",
+            serial,
+            key.MapId,
+            key.SectorX,
+            key.SectorY
+        );
         _eventBus.Publish(new MobileEnteredSectorEvent(serial, key.MapId, key.SectorX, key.SectorY));
 
         if (moved)
@@ -162,7 +168,15 @@ public sealed class SpatialIndexService : ISpatialIndexService
                 key.SectorY
             );
             _eventBus.Publish(
-                new MobileChangedSectorEvent(serial, from.MapId, from.SectorX, from.SectorY, key.MapId, key.SectorX, key.SectorY)
+                new MobileChangedSectorEvent(
+                    serial,
+                    from.MapId,
+                    from.SectorX,
+                    from.SectorY,
+                    key.MapId,
+                    key.SectorX,
+                    key.SectorY
+                )
             );
         }
     }
@@ -188,7 +202,13 @@ public sealed class SpatialIndexService : ISpatialIndexService
 
             if (wasMobile)
             {
-                _logger.Debug("Mobile {Mobile} left sector {MapId}:{SectorX},{SectorY}", serial, key.MapId, key.SectorX, key.SectorY);
+                _logger.Debug(
+                    "Mobile {Mobile} left sector {MapId}:{SectorX},{SectorY}",
+                    serial,
+                    key.MapId,
+                    key.SectorX,
+                    key.SectorY
+                );
                 _eventBus.Publish(new MobileLeftSectorEvent(serial, key.MapId, key.SectorX, key.SectorY));
             }
         }

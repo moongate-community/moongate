@@ -40,8 +40,7 @@ public sealed class AccountRegistrationTests
     {
         var (accounts, bus) = Create();
         AccountRegistrationRequestedEvent? seen = null;
-        bus.Subscribe<AccountRegistrationRequestedEvent>(
-            (e, _) =>
+        bus.Subscribe<AccountRegistrationRequestedEvent>((e, _) =>
             {
                 seen = e;
 

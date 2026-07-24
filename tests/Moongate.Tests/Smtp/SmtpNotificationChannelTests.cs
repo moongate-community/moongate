@@ -46,10 +46,11 @@ public sealed class SmtpNotificationChannelTests
     {
         var transport = new RecordingSmtpTransport();
 
-        await Channel(transport).SendAsync(
-            new("email", "tom@example.com"),
-            new("Verify", "<p>hi</p>", NotificationContentType.Html)
-        );
+        await Channel(transport)
+            .SendAsync(
+                new("email", "tom@example.com"),
+                new("Verify", "<p>hi</p>", NotificationContentType.Html)
+            );
 
         var message = Assert.Single(transport.Sent);
         Assert.Equal("<p>hi</p>", message.HtmlBody!.Trim());
@@ -76,9 +77,8 @@ public sealed class SmtpNotificationChannelTests
             "try later"
         );
 
-        await Assert.ThrowsAsync<SmtpCommandException>(
-            async () => await Channel(new RecordingSmtpTransport(transient))
-                              .SendAsync(new("email", "tom@example.com"), new("s", "b"))
+        await Assert.ThrowsAsync<SmtpCommandException>(async () => await Channel(new RecordingSmtpTransport(transient))
+            .SendAsync(new("email", "tom@example.com"), new("s", "b"))
         );
     }
 
@@ -93,7 +93,7 @@ public sealed class SmtpNotificationChannelTests
         );
 
         await Channel(new RecordingSmtpTransport(permanent))
-              .SendAsync(new("email", "tom@example.com"), new("s", "b"));
+            .SendAsync(new("email", "tom@example.com"), new("s", "b"));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public sealed class SmtpNotificationChannelTests
         // A misconfiguration will not fix itself between attempts, so retrying it three times only
         // delays the error in the log.
         await Channel(new RecordingSmtpTransport(new SmtpInsecureConnectionException("unencrypted")))
-              .SendAsync(new("email", "tom@example.com"), new("s", "b"));
+            .SendAsync(new("email", "tom@example.com"), new("s", "b"));
     }
 
     [Fact]
@@ -110,7 +110,7 @@ public sealed class SmtpNotificationChannelTests
     {
         // Retrying bad credentials can trip a provider's rate limits.
         await Channel(new RecordingSmtpTransport(new AuthenticationException("bad credentials")))
-              .SendAsync(new("email", "tom@example.com"), new("s", "b"));
+            .SendAsync(new("email", "tom@example.com"), new("s", "b"));
     }
 
     private static SmtpNotificationChannel Channel(RecordingSmtpTransport transport, string fromName = "Shard Mail")

@@ -56,8 +56,8 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
         var matched = filter is null ? _items.Values.ToList() : _items.Values.Where(filter).ToList();
 
         var ordered = descending
-                          ? matched.OrderByDescending(orderBy).ThenByDescending(entity => entity.Id)
-                          : matched.OrderBy(orderBy).ThenBy(entity => entity.Id);
+            ? matched.OrderByDescending(orderBy).ThenByDescending(entity => entity.Id)
+            : matched.OrderBy(orderBy).ThenBy(entity => entity.Id);
 
         IReadOnlyList<TEntity> page = [.. ordered.Skip(skip).Take(take)];
 

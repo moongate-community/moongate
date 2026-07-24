@@ -33,25 +33,25 @@ public sealed class MobileImageAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var export = routes.MapGroup("/api/v1/admin/images/bodies")
-                           .WithTags("mobiles")
-                           .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithTags("mobiles")
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         export.MapPost("/", Start)
-              .WithName("StartBodyImageExport")
-              .Produces<BodyImageExportStatus>(StatusCodes.Status202Accepted);
+            .WithName("StartBodyImageExport")
+            .Produces<BodyImageExportStatus>(StatusCodes.Status202Accepted);
         export.MapGet("/", GetStatus).WithName("GetBodyImageExportStatus").Produces<BodyImageExportStatus>();
 
         routes.MapGet("/api/v1/admin/bodies", ListBodies)
-              .WithName("ListBodies")
-              .WithTags("mobiles")
-              .Produces<PagedResponse<BodySummary>>()
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("ListBodies")
+            .WithTags("mobiles")
+            .Produces<PagedResponse<BodySummary>>()
+            .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapGet("/api/v1/admin/hair-styles", ListHairStyles)
-              .WithName("ListHairStyles")
-              .WithTags("mobiles")
-              .Produces<PagedResponse<HairStyleSummary>>()
-              .RequireAuthorization(HttpServerService.AdminPolicy);
+            .WithName("ListHairStyles")
+            .WithTags("mobiles")
+            .Produces<PagedResponse<HairStyleSummary>>()
+            .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     /// <summary>Reports how far the body image export has got.</summary>
@@ -72,16 +72,16 @@ public sealed class MobileImageAdminEndpoints : IApiEndpointRegistration
         }
 
         var classified = _catalog.ClassifiedBodies
-                                 .Where(entry => entry.Type != MobType.Equipment)
-                                 .Where(entry => Matches(entry.Body, request.Search))
-                                 .OrderBy(entry => entry.Body)
-                                 .ToArray();
+            .Where(entry => entry.Type != MobType.Equipment)
+            .Where(entry => Matches(entry.Body, request.Search))
+            .OrderBy(entry => entry.Body)
+            .ToArray();
 
         IReadOnlyList<BodySummary> items =
         [
             .. classified.Skip(request.Skip)
-                         .Take(request.PageSize)
-                         .Select(entry => BodySummary.From(entry.Body, entry.Type))
+                .Take(request.PageSize)
+                .Select(entry => BodySummary.From(entry.Body, entry.Type))
         ];
 
         return Results.Ok(PagedResponse<BodySummary>.From(items, classified.Length, request));
@@ -98,11 +98,10 @@ public sealed class MobileImageAdminEndpoints : IApiEndpointRegistration
 
         var source = facial.GetValueOrDefault() ? HairStyleCatalog.Facial : HairStyleCatalog.Hair;
         var matched = source
-                      .Where(
-                          entry => request.Search is null ||
-                                   entry.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase)
-                      )
-                      .ToArray();
+            .Where(entry => request.Search is null ||
+                            entry.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase)
+            )
+            .ToArray();
 
         IReadOnlyList<HairStyleSummary> items =
         [

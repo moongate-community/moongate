@@ -64,8 +64,8 @@ public sealed class LootService : ILootService
     private IReadOnlyList<ItemEntity> Materialize(LootTemplateEntry entry)
     {
         var amount = entry is { AmountMin: { } low, AmountMax: { } high }
-                         ? _random.Next(low, high + 1)
-                         : entry.Amount ?? 1;
+            ? _random.Next(low, high + 1)
+            : entry.Amount ?? 1;
 
         var hasId = !string.IsNullOrWhiteSpace(entry.ItemTemplateId);
         var hasTag = !string.IsNullOrWhiteSpace(entry.ItemTag);
@@ -78,8 +78,8 @@ public sealed class LootService : ILootService
         }
 
         return hasId
-                   ? _itemFactory.CreateFromTemplate(entry.ItemTemplateId!, amount: amount)
-                   : _itemFactory.CreateByTag(entry.ItemTag!, amount: amount);
+            ? _itemFactory.CreateFromTemplate(entry.ItemTemplateId!, amount: amount)
+            : _itemFactory.CreateByTag(entry.ItemTag!, amount: amount);
     }
 
     private LootTemplateEntry? PickWeighted(LootTemplate template)

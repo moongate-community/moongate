@@ -14,7 +14,8 @@ public sealed class ServerInfoEndpointsTests
     {
         await using var server = await TestApiServer.StartAsync();
         server.ServerSettings.Update(
-            new ServerSettingsUpdate { Description = "A fun shard", Tagline = "Sosaria never sleeps.", RegistrationEnabled = true }
+            new ServerSettingsUpdate
+                { Description = "A fun shard", Tagline = "Sosaria never sleeps.", RegistrationEnabled = true }
         );
 
         var response = await server.Client.GetAsync("/api/v1/server-info"); // no auth header

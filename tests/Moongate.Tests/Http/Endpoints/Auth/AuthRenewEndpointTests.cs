@@ -53,7 +53,7 @@ public class AuthRenewEndpointTests
         clock.Advance(TimeSpan.FromMinutes(45));
 
         var renewed = (await (await server.Client.PostAsync(Route, null)).Content
-                          .ReadFromJsonAsync<ApiTokenResult>()).Token;
+            .ReadFromJsonAsync<ApiTokenResult>()).Token;
 
         Assert.Equal(loginAuthTime, AuthTimeOf(renewed));
     }

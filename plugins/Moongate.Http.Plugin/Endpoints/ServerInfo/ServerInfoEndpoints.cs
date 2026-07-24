@@ -28,18 +28,18 @@ public sealed class ServerInfoEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/server-info", Get)
-              .WithName("GetServerInfo")
-              .WithTags("server-info")
-              .Produces<ServerInfoResponse>()
-              .AllowAnonymous();
+            .WithName("GetServerInfo")
+            .WithTags("server-info")
+            .Produces<ServerInfoResponse>()
+            .AllowAnonymous();
         routes.MapGet("/api/v1/server-info/assets/{slot}", GetAsset)
-              .WithName("GetServerAsset")
-              .WithTags("server-info")
+            .WithName("GetServerAsset")
+            .WithTags("server-info")
 
-              // Binary, but no content type stated: the slot decides it. An operator's logo may be a PNG,
-              // an SVG or an ICO, and naming one here would document a promise the route does not make.
-              .Produces<byte[]>(StatusCodes.Status200OK)
-              .AllowAnonymous();
+            // Binary, but no content type stated: the slot decides it. An operator's logo may be a PNG,
+            // an SVG or an ICO, and naming one here would document a promise the route does not make.
+            .Produces<byte[]>(StatusCodes.Status200OK)
+            .AllowAnonymous();
     }
 
     internal static ServerInfoResponse ToResponse(string shardName, ServerSettingsEntity settings)
