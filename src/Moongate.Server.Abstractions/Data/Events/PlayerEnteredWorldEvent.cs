@@ -1,6 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using SquidStd.Core.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Events;
 
 namespace Moongate.Server.Abstractions.Data.Events;
 
@@ -9,4 +9,4 @@ namespace Moongate.Server.Abstractions.Data.Events;
 /// systems react to a character coming online (spawns, greetings, presence) without touching the
 /// network layer.
 /// </summary>
-public sealed record PlayerEnteredWorldEvent(long SessionId, Serial AccountId, MobileEntity Mobile) : IEvent;
+public sealed record PlayerEnteredWorldEvent(long SessionId, Serial AccountId, MobileEntity Mobile) : ILoopAffineEvent;

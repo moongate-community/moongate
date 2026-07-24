@@ -1,6 +1,6 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Abstractions.Interfaces.Events;
 using Moongate.UO.Data.Types;
-using SquidStd.Core.Interfaces.Events;
 
 namespace Moongate.Server.Abstractions.Data.Events;
 
@@ -9,4 +9,4 @@ namespace Moongate.Server.Abstractions.Data.Events;
 /// script systems react to nearby speech without touching the network layer — auto-exposed to Lua
 /// as <c>events.on("mobile_speech", ...)</c> by the existing event-bus-to-Lua bridge.
 /// </summary>
-public sealed record MobileSpeechEvent(Serial Speaker, ChatMessageType Type, string Text) : IEvent;
+public sealed record MobileSpeechEvent(Serial Speaker, ChatMessageType Type, string Text) : ILoopAffineEvent;

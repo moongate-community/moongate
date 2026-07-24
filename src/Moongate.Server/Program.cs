@@ -23,6 +23,7 @@ using Moongate.Server.Extensions;
 using Moongate.Server.Plugins;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -241,6 +242,10 @@ await ConsoleApp.RunAsync(
                 );
 
                 container.RegisterEventBusService();
+
+                // Decorate the bus so loop-affine events route onto the game loop structurally,
+                // instead of each publisher remembering to marshal by hand.
+                container.Register<IEventBus, LoopAffineEventBus>(setup: Setup.Decorator);
 
                 var eventBus = container.Resolve<IEventBus>();
 
