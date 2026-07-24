@@ -9,7 +9,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "openapi:sync": "node scripts/sync-openapi.mjs",
-    "openapi:types": "node scripts/generate-api-types.mjs"
+    "openapi:types": "node scripts/generate-api-types.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.101.4",
@@ -36,6 +38,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "jsdom": "^29.1.1",
+    "prettier": "^3.9.6",
     "shadcn": "^4.13.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",

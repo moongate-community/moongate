@@ -65,9 +65,7 @@ export function LoginScreen() {
             Rendered only once the reply lands — a zero here means an empty shard, which is worth saying,
             but saying it before asking would be a guess. */}
         {stats.data !== undefined && (
-          <p className="relative mt-1 text-sm text-muted">
-            {t('login.online', { count: stats.data.players.online })}
-          </p>
+          <p className="relative mt-1 text-sm text-muted">{t('login.online', { count: stats.data.players.online })}</p>
         )}
       </div>
 
@@ -125,9 +123,7 @@ export function LoginScreen() {
           {t('login.submit')}
         </Button>
 
-        <p className="border-t border-border-subtle pt-4 text-xs leading-relaxed text-faint">
-          {t('login.staffNote')}
-        </p>
+        <p className="border-t border-border-subtle pt-4 text-xs leading-relaxed text-faint">{t('login.staffNote')}</p>
 
         {/* Data from the anonymous /api/v1/version, not UI copy — no i18n key needed. Rendered only once
             it resolves, so an unreached shard shows nothing rather than "undefined". */}

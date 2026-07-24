@@ -13,9 +13,7 @@ export function FilterPill({
       aria-pressed={active}
       className={cn(
         'rounded-control border px-3 py-1 text-xs',
-        active
-          ? 'border-gold/35 bg-gold/10 font-bold text-gold'
-          : 'border-border-subtle text-muted hover:text-ink',
+        active ? 'border-gold/35 bg-gold/10 font-bold text-gold' : 'border-border-subtle text-muted hover:text-ink',
         className,
       )}
       {...props}

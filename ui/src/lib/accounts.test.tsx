@@ -26,9 +26,11 @@ describe('accounts data module', () => {
   })
 
   it('useCreateAccount POSTs the body', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      json({ username: 'new', email: null, level: 'Player', isActive: true, characterCount: 0 }, 201),
-    )
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        json({ username: 'new', email: null, level: 'Player', isActive: true, characterCount: 0 }, 201),
+      )
     const { result } = renderHook(() => useCreateAccount(), { wrapper: wrapper() })
     await result.current.mutateAsync({ username: 'new', password: 'pw' })
 
@@ -39,9 +41,11 @@ describe('accounts data module', () => {
   })
 
   it('useUpdateAccount PATCHes the named account', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      json({ username: 'tom', email: null, level: 'Administrator', isActive: false, characterCount: 2 }),
-    )
+    const fetchSpy = vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        json({ username: 'tom', email: null, level: 'Administrator', isActive: false, characterCount: 2 }),
+      )
     const { result } = renderHook(() => useUpdateAccount(), { wrapper: wrapper() })
     await result.current.mutateAsync({ username: 'tom', patch: { isActive: false } })
 

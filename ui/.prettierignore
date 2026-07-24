@@ -1,0 +1,7 @@
+dist
+coverage
+node_modules
+
+# Generated from the server's OpenAPI document; reformatting it would just diff against the generator.
+src/lib/api-types.ts
+openapi.json

@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "./tokens.css";
+@import 'tailwindcss';
+@import './tokens.css';
 
 /* Tailwind's stock `dark:` follows the operating system. This codebase switches on a `data-theme`
    attribute instead, so the two would disagree the moment a viewer's OS preference differed from the

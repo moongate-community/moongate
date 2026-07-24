@@ -24,10 +24,7 @@ export function parseSseFrame(frame: string): SseFrame {
 }
 
 /** Reads an SSE byte stream and yields one frame per blank-line-separated block until it ends or aborts. */
-export async function* readSseFrames(
-  body: ReadableStream<Uint8Array>,
-  signal: AbortSignal,
-): AsyncGenerator<SseFrame> {
+export async function* readSseFrames(body: ReadableStream<Uint8Array>, signal: AbortSignal): AsyncGenerator<SseFrame> {
   const reader = body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
