@@ -5,12 +5,11 @@
    The Google Fonts @import was dropped on purpose — the fonts are <link>ed from index.html,
    because a CSS @import blocks rendering until it resolves. */
 
-
 :root {
   /* Superfici */
-  --mg-bg-deep: #12151d;      /* console, log, input */
-  --mg-bg-page: #161a22;      /* sfondo pagina */
-  --mg-surface: #1a1f2a;      /* card, pannelli, top bar */
+  --mg-bg-deep: #12151d; /* console, log, input */
+  --mg-bg-page: #161a22; /* sfondo pagina */
+  --mg-surface: #1a1f2a; /* card, pannelli, top bar */
   --mg-surface-raised: #232936;
 
   /* Bordi */
@@ -28,15 +27,15 @@
   --mg-gold: #e2b856;
   --mg-gold-hi: #ecc76a;
   --mg-gold-lo: #c99a3c;
-  --mg-gold-ink: #1c1608;     /* testo su bottoni gold */
+  --mg-gold-ink: #1c1608; /* testo su bottoni gold */
   --mg-gradient-cta: linear-gradient(180deg, var(--mg-gold-hi), var(--mg-gold-lo));
 
   /* Semantici */
   --mg-success: #6fc98d;
   --mg-danger: #d05548;
   --mg-danger-text: #e88f83;
-  --mg-info: #7fa7d9;         /* anche: mana, freddo */
-  --mg-staff: #a86fd1;        /* badge STAFF, GM */
+  --mg-info: #7fa7d9; /* anche: mana, freddo */
+  --mg-staff: #a86fd1; /* badge STAFF, GM */
   --mg-staff-text: #cda3e8;
 
   /* Rarità item (nome item + bordo tile; sfondo = tinta 10%) */
@@ -47,7 +46,7 @@
   --mg-rarity-legendary: #f5923e;
 
   /* Tipografia */
-  --mg-font-display: 'Cinzel', serif;              /* titoli, brand, bottoni — 600/700 */
+  --mg-font-display: 'Cinzel', serif; /* titoli, brand, bottoni — 600/700 */
   --mg-font-body: 'Alegreya Sans', system-ui, sans-serif; /* UI e testo — 400/500/700 */
   --mg-font-mono: 'Victor Mono', ui-monospace, Menlo, monospace; /* numeri, gp, timestamp, log, ID, codice */
 
@@ -61,13 +60,13 @@
   --mg-tabrow-h: 46px;
 
   /* Focus */
-  --mg-focus-ring: 0 0 0 3px rgba(226, 184, 86, .12);
+  --mg-focus-ring: 0 0 0 3px rgba(226, 184, 86, 0.12);
 }
 
 /* ── Tema chiaro ─────────────────────────────────────────
    Applica data-theme="light" su <html> o su un contenitore.
    Forme, spazi, font e --mg-gold-ink restano invariati. */
-[data-theme="light"] {
+[data-theme='light'] {
   --mg-bg-deep: #eceef2;
   --mg-bg-page: #f4f5f8;
   --mg-surface: #ffffff;
@@ -100,5 +99,5 @@
   --mg-rarity-epic: #8b3fc4;
   --mg-rarity-legendary: #d97a1e;
 
-  --mg-focus-ring: 0 0 0 3px rgba(184, 137, 47, .18);
+  --mg-focus-ring: 0 0 0 3px rgba(184, 137, 47, 0.18);
 }

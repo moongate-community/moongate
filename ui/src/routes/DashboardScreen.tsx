@@ -10,14 +10,10 @@ export function DashboardScreen() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="font-display text-xl text-ink">
-        {t('dashboard.welcome', { name: me.data?.username ?? '' })}
-      </h1>
+      <h1 className="font-display text-xl text-ink">{t('dashboard.welcome', { name: me.data?.username ?? '' })}</h1>
 
       <Card className="p-5">
-        <h2 className="mb-3 font-display text-[16px] tracking-widest text-gold">
-          {t('dashboard.characters')}
-        </h2>
+        <h2 className="mb-3 font-display text-[16px] tracking-widest text-gold">{t('dashboard.characters')}</h2>
 
         {characters.isPending && <p className="text-sm text-muted">{t('common.loading')}</p>}
         {characters.isError && (
@@ -25,9 +21,7 @@ export function DashboardScreen() {
             {t('error.generic')}
           </p>
         )}
-        {characters.data?.length === 0 && (
-          <p className="text-sm text-muted">{t('dashboard.noCharacters')}</p>
-        )}
+        {characters.data?.length === 0 && <p className="text-sm text-muted">{t('dashboard.noCharacters')}</p>}
 
         <ul className="flex flex-col gap-2">
           {characters.data?.map((character) => (

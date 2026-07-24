@@ -1,13 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ApiError, apiFetch, setAuthToken, setUnauthorizedHandler } from './api'
 
 const STORAGE_KEY = 'mg-token'
@@ -101,9 +92,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const delay = new Date(stored.expiresAt).getTime() - Date.now() - RENEW_MARGIN_MS
 
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => {
-      void renew.current()
-    }, Math.max(delay, 0))
+    timer.current = setTimeout(
+      () => {
+        void renew.current()
+      },
+      Math.max(delay, 0),
+    )
   }, [])
 
   renew.current = async () => {

@@ -9,8 +9,7 @@ export type PlayerMe = components['schemas']['PlayerMeResponse']
 export type Character = components['schemas']['CharacterResponse']
 export type ServerStats = components['schemas']['ServerStatsResponse']
 
-export const useMe = () =>
-  useQuery({ queryKey: ['me'], queryFn: () => apiFetch<PlayerMe>('/api/v1/player/me') })
+export const useMe = () => useQuery({ queryKey: ['me'], queryFn: () => apiFetch<PlayerMe>('/api/v1/player/me') })
 
 export const useMyCharacters = () =>
   useQuery({
@@ -18,8 +17,7 @@ export const useMyCharacters = () =>
     queryFn: () => apiFetch<Character[]>('/api/v1/player/me/characters'),
   })
 
-export const useStats = () =>
-  useQuery({ queryKey: ['stats'], queryFn: () => apiFetch<ServerStats>('/api/v1/stats') })
+export const useStats = () => useQuery({ queryKey: ['stats'], queryFn: () => apiFetch<ServerStats>('/api/v1/stats') })
 
 export type ServerInfo = components['schemas']['ServerInfoResponse']
 

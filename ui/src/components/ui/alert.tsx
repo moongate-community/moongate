@@ -14,11 +14,7 @@ const alertVariants = cva('rounded-card border p-4 text-sm', {
   defaultVariants: { variant: 'info' },
 })
 
-function Alert({
-  className,
-  variant,
-  ...props
-}: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
+function Alert({ className, variant, ...props }: React.ComponentProps<'div'> & VariantProps<typeof alertVariants>) {
   return <div role="alert" data-slot="alert" className={cn(alertVariants({ variant }), className)} {...props} />
 }
 

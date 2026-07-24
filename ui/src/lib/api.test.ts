@@ -8,9 +8,11 @@ describe('apiFetch', () => {
   })
 
   function respond(status: number, body: unknown = {}) {
-    return vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }),
-    )
+    return vi
+      .spyOn(globalThis, 'fetch')
+      .mockResolvedValue(
+        new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }),
+      )
   }
 
   it('returns the parsed body on success', async () => {
@@ -45,9 +47,7 @@ describe('apiFetch', () => {
   it('encodes path parameters', () => {
     // Without encoding, an account named `bob#x` would address `bob` and the operation would silently hit
     // the wrong record.
-    expect(apiPath('/api/v1/admin/accounts/{username}', { username: 'bob#x' })).toBe(
-      '/api/v1/admin/accounts/bob%23x',
-    )
+    expect(apiPath('/api/v1/admin/accounts/{username}', { username: 'bob#x' })).toBe('/api/v1/admin/accounts/bob%23x')
   })
 
   it('lets the browser set the content-type for a FormData body', async () => {

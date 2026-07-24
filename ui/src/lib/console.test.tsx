@@ -34,7 +34,9 @@ describe('useConsole', () => {
 
     await waitFor(() => expect(result.current.status).toBe('connected'))
     await waitFor(() =>
-      expect(result.current.lines.some((line) => line.kind === 'output' && line.text === '2 players online')).toBe(true),
+      expect(result.current.lines.some((line) => line.kind === 'output' && line.text === '2 players online')).toBe(
+        true,
+      ),
     )
   })
 

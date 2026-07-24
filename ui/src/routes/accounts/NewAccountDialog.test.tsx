@@ -23,7 +23,9 @@ describe('NewAccountDialog', () => {
   it('posts the new account', async () => {
     const fetchSpy = vi
       .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(json({ username: 'new', email: null, level: 'Player', isActive: true, characterCount: 0 }, 201))
+      .mockResolvedValue(
+        json({ username: 'new', email: null, level: 'Player', isActive: true, characterCount: 0 }, 201),
+      )
     renderDialog()
 
     await userEvent.type(screen.getByLabelText(/username/i), 'new')
