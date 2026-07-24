@@ -65,9 +65,8 @@
      `text-muted-foreground` agree; `bg-muted` would come out the colour of secondary text and should
      not be used — reach for `bg-raised`.
 
-     `input` has to serve both `border-input` and `dark:bg-input/30`, which the design separates:
-     --mg-border for field borders, --mg-bg-deep for field fills. The border wins, since it is the
-     structural, always-visible half; the fill only ever appears as a 30% wash. */
+     `input` feeds only `border-input`: the registry's `dark:bg-input/30` fill is not used here (the
+     design gives fields an explicit recessed `bg-deep` in both themes), so it maps to --mg-border. */
   --color-background: var(--mg-bg-page);
   --color-foreground: var(--mg-text);
   --color-card: var(--mg-surface);
