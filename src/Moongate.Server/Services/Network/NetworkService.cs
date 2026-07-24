@@ -151,10 +151,8 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         var session = _sessions.GetOrCreate(e.Client);
         _logger.Information("Client connected: {SessionId}", e.Client.SessionId);
 
-        // Session lifecycle subscribers mutate world state (the spatial index), so their event must be
-        // published on the game loop — like inbound packets (see OnDataReceived) — never on this
-        // transport thread.
-        _mainThreadDispatcher.Post(() => _eventBus.Publish(new SessionCreatedEvent(session)));
+        // SessionCreatedEvent is loop-affine; the event bus decorator marshals it onto the game loop.
+        _eventBus.Publish(new SessionCreatedEvent(session));
     }
 
     private void OnClientDisconnect(object? sender, SquidStdTcpClientEventArgs e)
@@ -163,10 +161,8 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         {
             _sessions.Remove(e.Client.SessionId);
 
-            // Publish on the game loop, not this transport thread: SpatialSubscriber removes the character
-            // from the spatial index here, and that world mutation must be loop-affine to avoid racing the
-            // loop's own reads/writes (movement re-indexing, range queries).
-            _mainThreadDispatcher.Post(() => _eventBus.Publish(new SessionDestroyedEvent(session)));
+            // SessionDestroyedEvent is loop-affine; the decorator marshals it onto the game loop.
+            _eventBus.Publish(new SessionDestroyedEvent(session));
         }
 
         _logger.Information("Client disconnected: {SessionId}", e.Client.SessionId);

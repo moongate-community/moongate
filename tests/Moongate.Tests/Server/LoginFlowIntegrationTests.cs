@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using DryIoc;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Network.Packets.Outgoing;
@@ -23,6 +24,7 @@ using Moongate.Server.Handlers;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Chat;
 using Moongate.Server.Services.Commands;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Network;
@@ -103,6 +105,24 @@ public class LoginFlowIntegrationTests
         {
             _queue.CompleteAdding();
             _thread.Join(TimeSpan.FromSeconds(2));
+        }
+    }
+
+    // Tells LoopAffineEventBus whether the calling thread is a LoopThreadDispatcher's dedicated
+    // thread — the same on-loop check the decorator makes in production against LoopThreadMarker.
+    private sealed class LoopThreadDispatcherAdapter : ILoopThread
+    {
+        private readonly int _loopThreadId;
+
+        public LoopThreadDispatcherAdapter(int loopThreadId)
+        {
+            _loopThreadId = loopThreadId;
+        }
+
+        public bool IsOnLoopThread => Environment.CurrentManagedThreadId == _loopThreadId;
+
+        public void Capture()
+        {
         }
     }
 
@@ -925,14 +945,16 @@ public class LoginFlowIntegrationTests
 
     // A client disconnect is raised on the transport thread, but its SessionDestroyedEvent subscribers
     // mutate world state (SpatialSubscriber removes the character from the spatial index), so they must
-    // run on the game loop — never on the transport thread. This drives a real connect/disconnect through
-    // a dedicated-loop dispatcher and asserts the event surfaces on the loop thread.
+    // run on the game loop — never on the transport thread. NetworkService now publishes directly and
+    // relies on LoopAffineEventBus to marshal the event onto the loop, exactly as production wires it
+    // (Program.cs registers the decorator around the raw bus), so this test wraps the bus the same way.
     [Fact]
     public async Task SessionDestroyed_IsPublishedOnTheGameLoopThread_NotTheTransportThread()
     {
         var config = LoopbackConfig();
-        var eventBus = new EventBusService();
+        var inner = new EventBusService();
         using var loop = new LoopThreadDispatcher();
+        IEventBus eventBus = new LoopAffineEventBus(inner, loop, new LoopThreadDispatcherAdapter(loop.LoopThreadId));
 
         using var destroyed = new ManualResetEventSlim();
         var subscriberThreadId = 0;

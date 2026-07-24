@@ -1,5 +1,5 @@
 using Moongate.Core.Primitives;
-using SquidStd.Core.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Events;
 
 namespace Moongate.Server.Abstractions.Data.Events;
 
@@ -9,4 +9,4 @@ namespace Moongate.Server.Abstractions.Data.Events;
 /// mobiles (not items). Auto-exposed to Lua as <c>events.on("mobile_left_sector", ...)</c>, with a table
 /// carrying <c>mobile</c>, <c>map_id</c>, <c>sector_x</c> and <c>sector_y</c>.
 /// </summary>
-public sealed record MobileLeftSectorEvent(Serial Mobile, int MapId, int SectorX, int SectorY) : IEvent;
+public sealed record MobileLeftSectorEvent(Serial Mobile, int MapId, int SectorX, int SectorY) : ILoopAffineEvent;
