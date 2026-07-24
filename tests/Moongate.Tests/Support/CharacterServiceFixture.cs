@@ -1,3 +1,4 @@
+using Moongate.Core.Interfaces;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
@@ -35,7 +36,8 @@ public static class CharacterServiceFixture
         FakePersistenceService persistence,
         IEventBus eventBus,
         ISessionManager? sessions = null,
-        IStartingCityService? cities = null
+        IStartingCityService? cities = null,
+        ILoopAffinity? loopAffinity = null
     )
     {
         var templates = Templates();
@@ -51,7 +53,8 @@ public static class CharacterServiceFixture
             Skills(),
             random,
             eventBus,
-            sessions ?? new StubSessionManager()
+            sessions ?? new StubSessionManager(),
+            loopAffinity
         );
     }
 

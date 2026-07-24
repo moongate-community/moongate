@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
@@ -19,17 +20,20 @@ public sealed class SkillLockChangeHandler : IPacketHandler<SkillLockChangePacke
 {
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly ISkillService _skills;
+    private readonly ILoopAffinity? _loopAffinity;
 
-    public SkillLockChangeHandler(IPersistenceService persistence, ISkillService skills)
+    public SkillLockChangeHandler(IPersistenceService persistence, ISkillService skills, ILoopAffinity? loopAffinity = null)
     {
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
         _skills = skills;
+        _loopAffinity = loopAffinity;
     }
 
     public void Handle(SkillLockChangePacket packet, in PacketContext context)
     {
         if (context.Session.Character is { } mobile && TryApplyLock(mobile, packet.SkillId, packet.Lock, _skills))
         {
+            _loopAffinity?.AssertOnLoop("skill.lock_change");
             _mobiles.UpsertAsync(mobile).WaitSync();
         }
     }
