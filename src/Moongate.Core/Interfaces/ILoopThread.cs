@@ -1,14 +1,11 @@
 namespace Moongate.Core.Interfaces;
 
 /// <summary>
-/// Tracks the game-loop thread so callers can tell whether they are running on the single-writer
-/// thread. <see cref="Capture" /> must be invoked once, on the loop thread, at startup.
+/// Tells callers whether they are running on the single-writer game-loop thread. Backed by the
+/// SquidStd event loop, which owns and reports its own thread.
 /// </summary>
 public interface ILoopThread
 {
-    /// <summary>True when the calling thread is the captured game-loop thread.</summary>
+    /// <summary>True when the calling thread is the game-loop thread.</summary>
     bool IsOnLoopThread { get; }
-
-    /// <summary>Records the calling thread as the game-loop thread.</summary>
-    void Capture();
 }

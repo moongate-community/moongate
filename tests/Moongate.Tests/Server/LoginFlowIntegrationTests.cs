@@ -108,7 +108,7 @@ public class LoginFlowIntegrationTests
     }
 
     // Tells LoopAffineEventBus whether the calling thread is a LoopThreadDispatcher's dedicated
-    // thread — the same on-loop check the decorator makes in production against LoopThreadMarker.
+    // thread — the same on-loop check the decorator makes in production against EventLoopThread.
     private sealed class LoopThreadDispatcherAdapter : ILoopThread
     {
         private readonly int _loopThreadId;
@@ -119,10 +119,6 @@ public class LoginFlowIntegrationTests
         }
 
         public bool IsOnLoopThread => Environment.CurrentManagedThreadId == _loopThreadId;
-
-        public void Capture()
-        {
-        }
     }
 
     [Fact]
