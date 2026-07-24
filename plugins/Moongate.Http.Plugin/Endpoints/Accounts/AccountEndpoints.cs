@@ -97,7 +97,7 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
     /// Username and password are required, and the username must be free — a taken one answers 409. Level
     /// is optional and defaults to Player; when sent it must name an account level, case-insensitively.
     /// </remarks>
-    private IResult Create(CreateAccountRequest request)
+    private async Task<IResult> Create(CreateAccountRequest request)
     {
         // Before the write, so an unknown level cannot leave a half-made account behind.
         if (!TryParseLevel(request.Level, AccountLevelType.Player, out var level))
@@ -105,7 +105,26 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
             return InvalidLevel(request.Level);
         }
 
-        return _accounts.Create(request.Username, request.Password, request.Email, level) switch
+        // The write runs on the game loop: account creation mutates the store the loop's login flow
+        // reads, so check-and-write must not interleave with it.
+        AccountCreateResultType created;
+
+        try
+        {
+            created = await _loop.InvokeAsync(
+                () => _accounts.Create(request.Username, request.Password, request.Email, level),
+                DeleteTimeout
+            );
+        }
+        catch (TimeoutException)
+        {
+            return Results.Problem(
+                "The game loop did not respond; the account was not created.",
+                statusCode: StatusCodes.Status503ServiceUnavailable
+            );
+        }
+
+        return created switch
         {
             AccountCreateResultType.Created => Results.Created(
                 $"/api/v1/admin/accounts/{request.Username}",
@@ -138,25 +157,14 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
     /// </remarks>
     private async Task<IResult> Delete(string username)
     {
-        // Runs on the game loop rather than here. This checks IsCharacterPlayed and then deletes, and
-        // login runs on the loop — so off the loop a player can log in between the two and lose their
-        // character from under them. The stores lock internally, so the damage would not be corruption; it
-        // would be a silent, permanent loss. Handing the work to the loop puts check and act on login's
-        // own thread, where they cannot interleave.
-        //
-        // The timeout is why a stalled loop fails the request instead of hanging it forever, and 503 is
-        // the honest answer: the game loop is not responding.
-        var completion = new TaskCompletionSource<AccountDeleteResultType>(
-            TaskCreationOptions.RunContinuationsAsynchronously
-        );
-
-        _loop.Post(() => completion.SetResult(_accounts.Delete(username)));
-
+        // Runs on the game loop: this checks IsCharacterPlayed then deletes, and login runs on the
+        // loop — off it a player could log in between the two and lose their character. A stalled loop
+        // fails the request with 503 rather than hanging it.
         AccountDeleteResultType result;
 
         try
         {
-            result = await completion.Task.WaitAsync(DeleteTimeout);
+            result = await _loop.InvokeAsync(() => _accounts.Delete(username), DeleteTimeout);
         }
         catch (TimeoutException)
         {
@@ -204,13 +212,8 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
     /// Every field is optional; an omitted one is left as it is. Answers 404 for an unknown account, and
     /// 400 when the level does not name one. Returns the account as it stands after the update.
     /// </remarks>
-    private IResult Update(string username, UpdateAccountRequest request)
+    private async Task<IResult> Update(string username, UpdateAccountRequest request)
     {
-        // Applying several fields is not atomic: nothing rolls the level back if a later setter fails.
-        // Accepted rather than solved — the setters fail only when the account is missing, which is ruled
-        // out a line below, so a delete would have to race this patch for the window to open at all, and
-        // closing it properly needs a transaction the store does not offer. The level, the one input a
-        // caller can get wrong, is validated before any setter runs.
         if (_accounts.GetByUsername(username) is null)
         {
             return NotFound(username);
@@ -221,19 +224,38 @@ public sealed class AccountEndpoints : IApiEndpointRegistration
             return InvalidLevel(request.Level);
         }
 
-        if (request.Level is not null)
+        // The setters run together on the loop so a concurrent delete cannot land between them.
+        try
         {
-            _accounts.SetLevel(username, level);
-        }
+            await _loop.InvokeAsync<bool>(
+                () =>
+                {
+                    if (request.Level is not null)
+                    {
+                        _accounts.SetLevel(username, level);
+                    }
 
-        if (request.IsActive is { } isActive)
-        {
-            _accounts.SetActive(username, isActive);
-        }
+                    if (request.IsActive is { } isActive)
+                    {
+                        _accounts.SetActive(username, isActive);
+                    }
 
-        if (!string.IsNullOrEmpty(request.Password))
+                    if (!string.IsNullOrEmpty(request.Password))
+                    {
+                        _accounts.SetPassword(username, request.Password);
+                    }
+
+                    return true;
+                },
+                DeleteTimeout
+            );
+        }
+        catch (TimeoutException)
         {
-            _accounts.SetPassword(username, request.Password);
+            return Results.Problem(
+                "The game loop did not respond; the account was not updated.",
+                statusCode: StatusCodes.Status503ServiceUnavailable
+            );
         }
 
         return Results.Ok(ToResponse(_accounts.GetByUsername(username)!));

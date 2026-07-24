@@ -55,6 +55,38 @@ public class AccountEndpointsTests
     }
 
     [Fact]
+    public async Task Create_RunsOnTheGameLoop()
+    {
+        var loop = new StubGameLoopContext();
+        await using var server = await TestApiServer.StartAsync(loop: loop);
+        await server.AuthenticateAsync();
+
+        await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "alice", password = "secret" }
+        );
+
+        Assert.True(loop.PostCount >= 1);
+    }
+
+    [Fact]
+    public async Task Create_LoopNeverAnswers_Is503()
+    {
+        await using var server = await TestApiServer.StartAsync(
+            loop: new StubGameLoopContext(false),
+            deleteTimeout: TimeSpan.FromMilliseconds(50)
+        );
+        await server.AuthenticateAsync();
+
+        var response = await server.Client.PostAsJsonAsync(
+            "/api/v1/admin/accounts",
+            new { username = "alice", password = "secret" }
+        );
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+    }
+
+    [Fact]
     public async Task Create_TakenUsername_Is409()
     {
         await using var server = await TestApiServer.StartAsync();
@@ -276,6 +308,21 @@ public class AccountEndpointsTests
         // authenticate and the old one must not.
         Assert.True(server.Accounts.Authenticate("tom", "nuova").Success);
         Assert.False(server.Accounts.Authenticate("tom", "secret").Success);
+    }
+
+    [Fact]
+    public async Task Update_RunsOnTheGameLoop()
+    {
+        var loop = new StubGameLoopContext();
+        await using var server = await TestApiServer.StartAsync(loop: loop);
+        await server.AuthenticateAsync();
+
+        await server.Client.PatchAsJsonAsync(
+            "/api/v1/admin/accounts/tom",
+            new { isActive = false }
+        );
+
+        Assert.True(loop.PostCount >= 1);
     }
 
     [Fact]
