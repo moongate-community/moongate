@@ -85,6 +85,7 @@ public sealed class AccountRegistrationSubscriber : IEventSubscriberRegistration
     internal static string BuildVerificationUrl(string website, string token)
     {
         if (!Uri.TryCreate(website, UriKind.Absolute, out var websiteUri)
+            || string.IsNullOrEmpty(websiteUri.Host)
             || (websiteUri.Scheme != Uri.UriSchemeHttp && websiteUri.Scheme != Uri.UriSchemeHttps))
         {
             throw new ArgumentException("Website must be an absolute HTTP(S) URI.", nameof(website));

@@ -24,6 +24,7 @@ public sealed class RegistrationReadinessService : IRegistrationReadinessService
     public RegistrationReadiness Evaluate(string? website)
     {
         var websiteValid = Uri.TryCreate(website, UriKind.Absolute, out var uri)
+            && !string.IsNullOrEmpty(uri.Host)
             && (string.Equals(uri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
                 || string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase));
         var emailChannelSelected = string.Equals(

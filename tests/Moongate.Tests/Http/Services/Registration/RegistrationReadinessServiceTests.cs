@@ -30,4 +30,22 @@ public sealed class RegistrationReadinessServiceTests
 
         Assert.Equal(expected, service.Evaluate(website).Ready);
     }
+
+    [Theory]
+    [InlineData("http:/portal")]
+    [InlineData("https:/portal")]
+    [InlineData("http:portal")]
+    [InlineData("http:///portal")]
+    public void Evaluate_HostlessHttpWebsite_IsNotValidOrReady(string website)
+    {
+        var service = new RegistrationReadinessService(
+            new NotificationConfig { AccountVerificationChannel = "email" },
+            [new RecordingNotificationChannel("email")]
+        );
+
+        var readiness = service.Evaluate(website);
+
+        Assert.False(readiness.WebsiteValid);
+        Assert.False(readiness.Ready);
+    }
 }

@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.Notifications;
 using Moongate.Server.Services.Server;
@@ -55,6 +57,32 @@ public sealed class AccountRegistrationSubscriberTests
             content.Body,
             StringComparison.Ordinal
         );
+    }
+
+    [Theory]
+    [InlineData("http:/portal")]
+    [InlineData("https:/portal")]
+    [InlineData("http:portal")]
+    [InlineData("http:///portal")]
+    public void BuildVerificationUrl_HostlessHttpWebsite_ThrowsArgumentException(string website)
+    {
+        var method = typeof(AccountRegistrationSubscriber).GetMethod(
+            "BuildVerificationUrl",
+            BindingFlags.Static | BindingFlags.NonPublic
+        );
+
+        if (method is null)
+        {
+            throw new InvalidOperationException("BuildVerificationUrl was not found.");
+        }
+
+        var invocationException = Assert.Throws<TargetInvocationException>(
+            () => method.Invoke(null, [website, "abc123"])
+        );
+        var exception = Assert.IsType<ArgumentException>(invocationException.InnerException);
+
+        Assert.Equal("website", exception.ParamName);
+        Assert.Contains("absolute HTTP(S) URI", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
