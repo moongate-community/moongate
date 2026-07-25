@@ -118,7 +118,8 @@ public sealed class TestApiServer : IAsyncDisposable
         TimeProvider? clock = null,
         string? uiDistPath = null,
         bool emailChannelReady = true,
-        string accountVerificationChannel = "email"
+        string accountVerificationChannel = "email",
+        IRegistrationRateLimiter? registrationRateLimiter = null
     )
     {
         var container = new Container();
@@ -197,13 +198,17 @@ public sealed class TestApiServer : IAsyncDisposable
             new ServerSettingsAdminEndpoints(serverSettings, assetStore, config, registrationReadiness)
         );
 
-        // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
-        var rateLimiter = new RegistrationRateLimiter(
-            TimeProvider.System,
-            permitPerWindow: 2,
-            window: TimeSpan.FromMinutes(10)
+        // The default is deliberately low so a test can prove the throttle without flooding; callers can
+        // inject a recording limiter when exact budget keys or independent budgets are the behavior at stake.
+        var rateLimiter = registrationRateLimiter
+            ?? new RegistrationRateLimiter(
+                TimeProvider.System,
+                permitPerWindow: 2,
+                window: TimeSpan.FromMinutes(10)
+            );
+        container.RegisterApiEndpointInstance(
+            new RegistrationEndpoints(accounts, serverSettings, registrationReadiness, rateLimiter)
         );
-        container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
 
         var stats = new StubServerStatsService();
         container.RegisterInstance<IServerStatsService>(stats);
