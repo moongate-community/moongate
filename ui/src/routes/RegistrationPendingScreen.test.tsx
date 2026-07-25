@@ -173,6 +173,18 @@ describe('RegistrationPendingScreen', () => {
     })
   })
 
+  it('keeps an empty polite resend status region mounted before submission', async () => {
+    servePublicApi()
+    renderPending()
+
+    await screen.findByLabelText(/account name/i)
+    const status = screen.getByRole('status')
+
+    expect(status).toHaveAttribute('aria-live', 'polite')
+    expect(status).toHaveAttribute('aria-atomic', 'true')
+    expect(status).toBeEmptyDOMElement()
+  })
+
   it('shows the identical generic confirmation for distinct accepted identities', async () => {
     const confirmations: string[] = []
 

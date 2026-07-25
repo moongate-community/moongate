@@ -38,7 +38,8 @@ public interface IAccountService
     /// Valid requests that do not match a pending account return <see cref="AccountResendResultType.Ignored" />
     /// so callers do not disclose account state.
     /// </summary>
-    AccountResendResultType ResendVerification(string username, string email);
+    AccountResendResultType ResendVerification(string username, string email)
+        => AccountResendResultType.Ignored;
 
     /// <summary>
     /// Activates the account holding an unexpired <paramref name="token" /> and clears its token state.

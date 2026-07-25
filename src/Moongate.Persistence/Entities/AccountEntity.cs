@@ -22,6 +22,8 @@ public class AccountEntity : ISerialIdEntity
 
     public DateTimeOffset? ActivationTokenExpiresAtUtc { get; set; }
 
+    public bool IsPublicRegistrationPending { get; set; }
+
     public AccountLevelType AccountLevel { get; set; }
 
     public List<Serial> MobileIds { get; set; } = new();

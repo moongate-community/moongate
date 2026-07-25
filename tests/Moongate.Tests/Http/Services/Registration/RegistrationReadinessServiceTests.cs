@@ -32,6 +32,36 @@ public sealed class RegistrationReadinessServiceTests
     }
 
     [Theory]
+    [InlineData(null, "email", "email", false, true, true)]
+    [InlineData("https://shard.example", "log", "email", true, false, true)]
+    [InlineData("https://shard.example", "email", null, true, true, false)]
+    [InlineData("https://shard.example", "EMAIL", "EMAIL", true, true, true)]
+    public void Evaluate_ReportsEveryReadinessProperty(
+        string? website,
+        string selected,
+        string? registeredChannel,
+        bool websiteValid,
+        bool emailChannelSelected,
+        bool emailChannelAvailable
+    )
+    {
+        INotificationChannel[] channels = registeredChannel is null
+            ? []
+            : [new RecordingNotificationChannel(registeredChannel)];
+        var service = new RegistrationReadinessService(
+            new NotificationConfig { AccountVerificationChannel = selected },
+            channels
+        );
+
+        var readiness = service.Evaluate(website);
+
+        Assert.Equal(websiteValid, readiness.WebsiteValid);
+        Assert.Equal(emailChannelSelected, readiness.EmailChannelSelected);
+        Assert.Equal(emailChannelAvailable, readiness.EmailChannelAvailable);
+        Assert.Equal(websiteValid && emailChannelSelected && emailChannelAvailable, readiness.Ready);
+    }
+
+    [Theory]
     [InlineData("http:/portal")]
     [InlineData("https:/portal")]
     [InlineData("http:portal")]

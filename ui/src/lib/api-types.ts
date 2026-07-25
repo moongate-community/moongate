@@ -2718,6 +2718,15 @@ export interface operations {
                     "application/json": components["schemas"]["ServerSettingsResponse"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
         };
     };
     UploadServerAsset: {

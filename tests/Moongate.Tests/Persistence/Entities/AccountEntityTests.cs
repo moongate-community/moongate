@@ -21,6 +21,29 @@ public sealed class AccountEntityTests
         Assert.Equal("legacy-token", account.ActivationToken);
         Assert.Empty(account.ActivationTokenHash);
         Assert.Null(account.ActivationTokenExpiresAtUtc);
+        Assert.False(account.IsPublicRegistrationPending);
+    }
+
+    [Fact]
+    public void RoundTrip_CurrentVerificationState_PreservesHashedPendingRegistration()
+    {
+        var expiresAt = new DateTimeOffset(2026, 7, 26, 12, 0, 0, TimeSpan.Zero);
+        var original = new AccountEntity
+        {
+            Username = "pending-account",
+            PasswordHash = "password-hash",
+            ActivationToken = string.Empty,
+            ActivationTokenHash = new string('A', 64),
+            ActivationTokenExpiresAtUtc = expiresAt,
+            IsPublicRegistrationPending = true
+        };
+
+        var restored = RoundTrip<AccountEntity, AccountEntity>(original);
+
+        Assert.Equal(original.ActivationTokenHash, restored.ActivationTokenHash);
+        Assert.Equal(expiresAt, restored.ActivationTokenExpiresAtUtc);
+        Assert.True(restored.IsPublicRegistrationPending);
+        Assert.Empty(restored.ActivationToken);
     }
 
     // Mirrors the persistence layer, which registers MessagePack's contractless resolver.

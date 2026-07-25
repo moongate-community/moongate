@@ -1,7 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Api.Registration;
 using Moongate.Server.Abstractions.Data;
 using Moongate.Tests.Support;
@@ -169,6 +172,64 @@ public sealed class RegistrationEndpointsTests
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.True(server.Accounts.GetByUsername("newbie")!.IsActive);
+    }
+
+    [Fact]
+    public async Task VerifyAndResend_AdminBlockedPendingAccount_CannotReactivateOrRotate()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate { Contacts = new() { Website = "https://shard.example" } }
+        );
+        var token = server.Accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+
+        Assert.True(server.Accounts.SetActive("newbie", false));
+
+        var verify = await server.Client.PostAsJsonAsync(
+            "/api/v1/register/verify",
+            new VerifyEmailRequest(token)
+        );
+        var resend = await server.Client.PostAsJsonAsync(
+            "/api/v1/register/resend",
+            new { username = "newbie", email = "new@bie.test" }
+        );
+        var account = server.Accounts.GetByUsername("newbie")!;
+
+        Assert.Equal(HttpStatusCode.BadRequest, verify.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, resend.StatusCode);
+        Assert.False(account.IsActive);
+        Assert.False(account.IsPublicRegistrationPending);
+        Assert.Empty(account.ActivationTokenHash);
+        Assert.Null(account.ActivationTokenExpiresAtUtc);
+    }
+
+    [Fact]
+    public async Task VerifyAndResend_PrivilegedAccount_CannotReactivateOrRotate()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate { Contacts = new() { Website = "https://shard.example" } }
+        );
+        server.Accounts.Create("staff", "secret99", "staff@bie.test", AccountLevelType.Administrator);
+        server.Accounts.SetActive("staff", false);
+        var account = server.Accounts.GetByUsername("staff")!;
+        account.IsPublicRegistrationPending = true;
+        account.ActivationTokenHash = HashToken("staff-token");
+        account.ActivationTokenExpiresAtUtc = DateTimeOffset.UtcNow.AddHours(1);
+
+        var verify = await server.Client.PostAsJsonAsync(
+            "/api/v1/register/verify",
+            new VerifyEmailRequest("staff-token")
+        );
+        var resend = await server.Client.PostAsJsonAsync(
+            "/api/v1/register/resend",
+            new { username = "staff", email = "staff@bie.test" }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, verify.StatusCode);
+        Assert.Equal(HttpStatusCode.Accepted, resend.StatusCode);
+        Assert.False(account.IsActive);
+        Assert.Equal(HashToken("staff-token"), account.ActivationTokenHash);
     }
 
     [Fact]
@@ -391,4 +452,7 @@ public sealed class RegistrationEndpointsTests
                 { RegistrationEnabled = true, Contacts = new() { Website = "https://shard.example" } }
         );
     }
+
+    private static string HashToken(string token)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
 }

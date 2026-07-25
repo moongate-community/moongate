@@ -171,6 +171,7 @@ describe('VerifyRegistrationScreen', () => {
     expect(status).toHaveAttribute('aria-atomic', 'true')
     expect(screen.getByRole('heading', { name: /verifying your account/i })).toBeVisible()
     await waitFor(() => expect(verifyCalls(fetchSpy)).toHaveLength(1))
+    expect(tokenBearingMutations(client, token)).toHaveLength(0)
 
     view.unmount()
 

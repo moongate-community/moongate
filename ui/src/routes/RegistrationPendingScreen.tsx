@@ -98,11 +98,9 @@ export function RegistrationPendingScreen() {
             onChange={setEmail}
           />
 
-          {formMessage !== null && (
-            <p aria-live="polite" aria-atomic="true" className="text-sm text-muted">
-              {formMessage}
-            </p>
-          )}
+          <p role="status" aria-live="polite" aria-atomic="true" className="text-sm text-muted">
+            {formMessage ?? ''}
+          </p>
 
           <Button type="submit" disabled={resendVerification.isPending} className="py-3 text-sm tracking-[0.14em]">
             {t('register.pending.resendSubmit')}

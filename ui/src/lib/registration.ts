@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useId, useMemo } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { apiFetch } from './api'
 import type { components } from './api-types'
 
@@ -84,25 +84,39 @@ export function useResendVerification() {
 }
 
 export function useVerifyRegistration() {
-  const client = useQueryClient()
-  const scopeId = useId()
-  const mutationKey = useMemo(() => ['registration-verification', scopeId] as const, [scopeId])
-  const removeScopedMutations = useCallback(() => {
-    const cache = client.getMutationCache()
-
-    for (const mutation of cache.findAll({ mutationKey, exact: true })) {
-      cache.remove(mutation)
-    }
-  }, [client, mutationKey])
+  const [isPending, setIsPending] = useState(false)
+  const requestId = useRef(0)
+  const mounted = useRef(true)
 
   useEffect(() => {
-    return removeScopedMutations
-  }, [removeScopedMutations])
+    mounted.current = true
 
-  return useMutation({
-    mutationKey,
-    mutationFn: (body: VerifyRegistration) =>
-      apiFetch<void>('/api/v1/register/verify', { method: 'POST', body: JSON.stringify(body) }),
-    onSettled: removeScopedMutations,
-  })
+    return () => {
+      mounted.current = false
+      requestId.current += 1
+    }
+  }, [])
+
+  const mutateAsync = useCallback(async (body: VerifyRegistration) => {
+    const currentRequest = ++requestId.current
+    setIsPending(true)
+
+    try {
+      await apiFetch<void>('/api/v1/register/verify', {
+        method: 'POST',
+        body: JSON.stringify(body),
+      })
+    } finally {
+      if (mounted.current && requestId.current === currentRequest) {
+        setIsPending(false)
+      }
+    }
+  }, [])
+
+  const reset = useCallback(() => {
+    requestId.current += 1
+    setIsPending(false)
+  }, [])
+
+  return { mutateAsync, reset, isPending }
 }

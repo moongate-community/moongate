@@ -38,8 +38,10 @@ public sealed class NotificationTemplatesLoaderTests
             var log = templates.Render("log", "account_verification", model);
             var email = templates.Render("email", "account_verification", model);
 
-            Assert.Contains(model.VerificationUrl, log!.Body, StringComparison.Ordinal);
-            Assert.Contains(model.VerificationUrl, email!.Body, StringComparison.Ordinal);
+            Assert.NotNull(log);
+            Assert.NotNull(email);
+            Assert.Contains(model.VerificationUrl, log.Body, StringComparison.Ordinal);
+            Assert.Contains(model.VerificationUrl, email.Body, StringComparison.Ordinal);
         }
         finally
         {
@@ -66,7 +68,8 @@ public sealed class NotificationTemplatesLoaderTests
             // The directory is the channel id and the file name is the template id — no registry, no
             // configuration: a plugin channel ships its own directory and is picked up.
             var content = templates.Render("discord", "shard_online", new { ShardName = "Britannia" });
-            Assert.Equal("Britannia is up", content!.Body.Trim());
+            Assert.NotNull(content);
+            Assert.Equal("Britannia is up", content.Body.Trim());
         }
         finally
         {

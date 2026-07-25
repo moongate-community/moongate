@@ -44,7 +44,10 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapGet("/", Get).WithName("GetServerSettings").Produces<ServerSettingsResponse>();
-        group.MapPut("/", Update).WithName("UpdateServerSettings").Produces<ServerSettingsResponse>();
+        group.MapPut("/", Update)
+            .WithName("UpdateServerSettings")
+            .Produces<ServerSettingsResponse>()
+            .ProducesValidationProblem();
         group.MapPost("/assets/{slot}", UploadAsset)
             .WithName("UploadServerAsset")
             .DisableAntiforgery()

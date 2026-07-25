@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text;
 using Moongate.Core.Types;
@@ -57,6 +58,29 @@ public sealed class AccountRegistrationTests
     private static string Hash(string token)
         => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
 
+    private static async Task<TResult[]> RunConcurrently<TResult>(params Func<TResult>[] actions)
+    {
+        using var start = new Barrier(actions.Length + 1);
+        var tasks = actions
+            .Select(action =>
+                Task.Factory.StartNew(
+                    () =>
+                    {
+                        start.SignalAndWait();
+                        return action();
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.LongRunning,
+                    TaskScheduler.Default
+                )
+            )
+            .ToArray();
+
+        start.SignalAndWait();
+
+        return await Task.WhenAll(tasks);
+    }
+
     [Fact]
     public void ResendVerification_RotatesTokenAndPublishesOneEvent()
     {
@@ -82,6 +106,7 @@ public sealed class AccountRegistrationTests
         Assert.Equal(upsertsBefore + 1, accountStore.UpsertCount);
         Assert.NotEqual(first, resent!.Token);
         Assert.Equal(Hash(resent.Token), accounts.GetByUsername("newbie")!.ActivationTokenHash);
+        Assert.True(accounts.GetByUsername("newbie")!.IsPublicRegistrationPending);
     }
 
     [Fact]
@@ -127,6 +152,65 @@ public sealed class AccountRegistrationTests
         Assert.Null(resent);
         Assert.Equal(upsertsBefore, accountStore.UpsertCount);
         Assert.True(accounts.GetByUsername("newbie")!.IsActive);
+    }
+
+    [Fact]
+    public void ResendVerification_BlockedPlayer_IsIgnoredWithoutRotatingOrPublishingAnEvent()
+    {
+        var (accounts, bus, persistence, _, _) = Create();
+        accounts.Create("newbie", "secret99", "new@bie.test", AccountLevelType.Player);
+        accounts.SetActive("newbie", false);
+        var account = accounts.GetByUsername("newbie")!;
+        account.ActivationTokenHash = Hash("blocked-token");
+        account.ActivationTokenExpiresAtUtc = Now.AddHours(1);
+        var originalHash = account.ActivationTokenHash;
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
+        var eventCount = 0;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((_, _) =>
+            {
+                eventCount++;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "new@bie.test");
+
+        Assert.Equal(AccountResendResultType.Ignored, result);
+        Assert.Equal(0, eventCount);
+        Assert.Equal(upsertsBefore, accountStore.UpsertCount);
+        Assert.Equal(originalHash, account.ActivationTokenHash);
+        Assert.False(account.IsActive);
+    }
+
+    [Fact]
+    public void ResendVerification_PrivilegedAccount_IsIgnoredEvenWithPendingMarker()
+    {
+        var (accounts, bus, persistence, _, _) = Create();
+        accounts.Create("staff", "secret99", "staff@bie.test", AccountLevelType.Administrator);
+        accounts.SetActive("staff", false);
+        var account = accounts.GetByUsername("staff")!;
+        account.IsPublicRegistrationPending = true;
+        account.ActivationTokenHash = Hash("staff-token");
+        account.ActivationTokenExpiresAtUtc = Now.AddHours(1);
+        var originalHash = account.ActivationTokenHash;
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
+        var eventCount = 0;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((_, _) =>
+            {
+                eventCount++;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("staff", "staff@bie.test");
+
+        Assert.Equal(AccountResendResultType.Ignored, result);
+        Assert.Equal(0, eventCount);
+        Assert.Equal(upsertsBefore, accountStore.UpsertCount);
+        Assert.Equal(originalHash, account.ActivationTokenHash);
+        Assert.False(account.IsActive);
     }
 
     [Fact]
@@ -198,6 +282,7 @@ public sealed class AccountRegistrationTests
         Assert.NotNull(resent);
         Assert.Empty(account.ActivationToken);
         Assert.Equal(Hash(resent!.Token), account.ActivationTokenHash);
+        Assert.True(account.IsPublicRegistrationPending);
     }
 
     [Fact]
@@ -241,6 +326,7 @@ public sealed class AccountRegistrationTests
         );
         Assert.Matches("^[0-9A-F]{64}$", account.ActivationTokenHash);
         Assert.Equal(Now.AddHours(24), account.ActivationTokenExpiresAtUtc);
+        Assert.True(account.IsPublicRegistrationPending);
     }
 
     [Fact]
@@ -361,6 +447,7 @@ public sealed class AccountRegistrationTests
         Assert.True(accounts.GetByUsername("newbie")!.IsActive);
         Assert.Empty(accounts.GetByUsername("newbie")!.ActivationTokenHash);
         Assert.Null(accounts.GetByUsername("newbie")!.ActivationTokenExpiresAtUtc);
+        Assert.False(accounts.GetByUsername("newbie")!.IsPublicRegistrationPending);
 
         // consumed token no longer matches
         Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail(token));
@@ -385,6 +472,7 @@ public sealed class AccountRegistrationTests
         Assert.Empty(account.ActivationToken);
         Assert.Empty(account.ActivationTokenHash);
         Assert.Null(account.ActivationTokenExpiresAtUtc);
+        Assert.True(account.IsPublicRegistrationPending);
     }
 
     [Fact]
@@ -401,6 +489,187 @@ public sealed class AccountRegistrationTests
         Assert.Equal(AccountVerifyResultType.ExpiredToken, accounts.VerifyEmail("legacy-token"));
         Assert.False(accounts.GetByUsername("newbie")!.IsActive);
         Assert.Empty(accounts.GetByUsername("newbie")!.ActivationToken);
+        Assert.True(accounts.GetByUsername("newbie")!.IsPublicRegistrationPending);
+    }
+
+    [Fact]
+    public void VerifyEmail_BlockedPlayerAndPrivilegedAccount_CannotBeReactivated()
+    {
+        var (accounts, _, _, _, _) = Create();
+        accounts.Create("blocked", "secret99", "blocked@bie.test", AccountLevelType.Player);
+        accounts.SetActive("blocked", false);
+        var blocked = accounts.GetByUsername("blocked")!;
+        blocked.ActivationTokenHash = Hash("blocked-token");
+        blocked.ActivationTokenExpiresAtUtc = Now.AddHours(1);
+
+        accounts.Create("staff", "secret99", "staff@bie.test", AccountLevelType.Administrator);
+        accounts.SetActive("staff", false);
+        var staff = accounts.GetByUsername("staff")!;
+        staff.IsPublicRegistrationPending = true;
+        staff.ActivationTokenHash = Hash("staff-token");
+        staff.ActivationTokenExpiresAtUtc = Now.AddHours(1);
+
+        Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail("blocked-token"));
+        Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail("staff-token"));
+        Assert.False(blocked.IsActive);
+        Assert.False(staff.IsActive);
+        Assert.Equal(Hash("blocked-token"), blocked.ActivationTokenHash);
+        Assert.Equal(Hash("staff-token"), staff.ActivationTokenHash);
+    }
+
+    [Fact]
+    public void SetActive_BlocksPendingRegistrationAndClearsVerificationState()
+    {
+        var (accounts, _, _, _, _) = Create();
+        var token = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+
+        Assert.True(accounts.SetActive("newbie", false));
+
+        var account = accounts.GetByUsername("newbie")!;
+        Assert.False(account.IsPublicRegistrationPending);
+        Assert.Empty(account.ActivationTokenHash);
+        Assert.Null(account.ActivationTokenExpiresAtUtc);
+        Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail(token));
+        Assert.Equal(AccountResendResultType.Ignored, accounts.ResendVerification("newbie", "new@bie.test"));
+    }
+
+    [Fact]
+    public void SetLevel_PromotingPendingRegistrationClearsVerificationState()
+    {
+        var (accounts, _, _, _, _) = Create();
+        var token = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+
+        Assert.True(accounts.SetLevel("newbie", AccountLevelType.Administrator));
+
+        var account = accounts.GetByUsername("newbie")!;
+        Assert.False(account.IsPublicRegistrationPending);
+        Assert.Empty(account.ActivationTokenHash);
+        Assert.Null(account.ActivationTokenExpiresAtUtc);
+        Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail(token));
+    }
+
+    [Fact]
+    public void LegacyPlaintextToken_PrivilegedAccountCannotMigrateOrVerify()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        accounts.Create("staff", "secret99", "staff@bie.test", AccountLevelType.Administrator);
+        accounts.SetActive("staff", false);
+        var staff = accounts.GetByUsername("staff")!;
+        staff.ActivationToken = "legacy-staff-token";
+        var eventCount = 0;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((_, _) =>
+            {
+                eventCount++;
+                return Task.CompletedTask;
+            }
+        );
+
+        Assert.Equal(AccountResendResultType.Ignored, accounts.ResendVerification("staff", "staff@bie.test"));
+        Assert.Equal(AccountVerifyResultType.InvalidToken, accounts.VerifyEmail("legacy-staff-token"));
+        Assert.Equal("legacy-staff-token", staff.ActivationToken);
+        Assert.False(staff.IsActive);
+        Assert.Equal(0, eventCount);
+    }
+
+    [Fact]
+    public async Task RegisterPending_ConcurrentDuplicateUsername_CreatesOnlyOneAccount()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        var events = new ConcurrentQueue<AccountRegistrationRequestedEvent>();
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                events.Enqueue(message);
+                return Task.CompletedTask;
+            }
+        );
+
+        var results = await RunConcurrently(
+            () => accounts.RegisterPending("newbie", "secret99", "one@bie.test").Result,
+            () => accounts.RegisterPending("newbie", "secret99", "two@bie.test").Result
+        );
+
+        Assert.Equal(1, results.Count(result => result == AccountRegisterResultType.Created));
+        Assert.Equal(1, results.Count(result => result == AccountRegisterResultType.UsernameTaken));
+        Assert.Single(accounts.GetAll());
+        Assert.Single(events);
+    }
+
+    [Fact]
+    public async Task RegisterPending_ConcurrentDuplicateEmail_CreatesOnlyOneAccount()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        var events = new ConcurrentQueue<AccountRegistrationRequestedEvent>();
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                events.Enqueue(message);
+                return Task.CompletedTask;
+            }
+        );
+
+        var results = await RunConcurrently(
+            () => accounts.RegisterPending("first", "secret99", "same@bie.test").Result,
+            () => accounts.RegisterPending("second", "secret99", "SAME@BIE.TEST").Result
+        );
+
+        Assert.Equal(1, results.Count(result => result == AccountRegisterResultType.Created));
+        Assert.Equal(1, results.Count(result => result == AccountRegisterResultType.EmailTaken));
+        Assert.Single(accounts.GetAll());
+        Assert.Single(events);
+    }
+
+    [Fact]
+    public async Task VerifyEmail_ConcurrentRequests_ConsumeTokenExactlyOnce()
+    {
+        var (accounts, _, _, _, _) = Create();
+        var token = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        var actions = Enumerable
+            .Range(0, 16)
+            .Select(_ => (Func<AccountVerifyResultType>)(() => accounts.VerifyEmail(token)))
+            .ToArray();
+
+        var results = await RunConcurrently(actions);
+
+        Assert.Equal(1, results.Count(result => result == AccountVerifyResultType.Verified));
+        Assert.Equal(15, results.Count(result => result == AccountVerifyResultType.InvalidToken));
+        Assert.True(accounts.GetByUsername("newbie")!.IsActive);
+    }
+
+    [Fact]
+    public async Task VerifyAndResend_ConcurrentRequests_LeaveOneConsistentTransition()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        var token = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        var resendEvents = 0;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((_, _) =>
+            {
+                Interlocked.Increment(ref resendEvents);
+                return Task.CompletedTask;
+            }
+        );
+
+        var results = await RunConcurrently(
+            () => $"verify:{accounts.VerifyEmail(token)}",
+            () => $"resend:{accounts.ResendVerification("newbie", "new@bie.test")}"
+        );
+        var account = accounts.GetByUsername("newbie")!;
+
+        var verifiedFirst = results.Contains("verify:Verified") && results.Contains("resend:Ignored");
+        var resentFirst = results.Contains("resend:Sent") && results.Contains("verify:InvalidToken");
+        Assert.True(verifiedFirst || resentFirst);
+
+        if (verifiedFirst)
+        {
+            Assert.True(account.IsActive);
+            Assert.False(account.IsPublicRegistrationPending);
+            Assert.Equal(0, resendEvents);
+        }
+        else
+        {
+            Assert.False(account.IsActive);
+            Assert.True(account.IsPublicRegistrationPending);
+            Assert.NotEmpty(account.ActivationTokenHash);
+            Assert.Equal(1, resendEvents);
+        }
     }
 
     [Fact]

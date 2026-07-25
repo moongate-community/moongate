@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Moongate.Http.Plugin.Data.Api.ServerInfo;
 using Moongate.Persistence.Entities;
@@ -115,6 +116,29 @@ public sealed class ServerSettingsAdminEndpointsTests
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.False(server.ServerSettings.Get().RegistrationEnabled);
+    }
+
+    [Fact]
+    public async Task OpenApi_UpdateDocumentsValidationProblemResponse()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        var document = await server.Client.GetStringAsync("/swagger/v1/swagger.json");
+        using var json = JsonDocument.Parse(document);
+        var responses = json.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/admin/server-settings")
+            .GetProperty("put")
+            .GetProperty("responses");
+        var schemaReference = responses
+            .GetProperty("400")
+            .GetProperty("content")
+            .GetProperty("application/problem+json")
+            .GetProperty("schema")
+            .GetProperty("$ref")
+            .GetString();
+
+        Assert.Equal("#/components/schemas/HttpValidationProblemDetails", schemaReference);
     }
 
     [Fact]

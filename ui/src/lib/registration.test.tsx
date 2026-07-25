@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react'
+import { act, renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 import {
@@ -9,8 +9,7 @@ import {
   validateResend,
 } from './registration'
 
-function wrapper() {
-  const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+function wrapper(client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })) {
   return ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={client}>{children}</QueryClientProvider>
   )
@@ -54,6 +53,22 @@ describe('registration data module', () => {
     }
 
     expect(validateRegistration(data)).toEqual(expected)
+  })
+
+  it.each([
+    ['three-character username', { username: 'abc' }],
+    ['thirty-character username', { username: 'a'.repeat(30) }],
+    ['thirty-character password', { password: 'p'.repeat(30), confirmation: 'p'.repeat(30) }],
+  ])('accepts the %s boundary', (_, changes) => {
+    expect(
+      validateRegistration({
+        username: 'newbie',
+        email: 'newbie@example.test',
+        password: 'password',
+        confirmation: 'password',
+        ...changes,
+      }),
+    ).toEqual({})
   })
 
   it('trims username and email but preserves the password', () => {
@@ -131,5 +146,30 @@ describe('registration data module', () => {
     expect(url).toBe('/api/v1/register/verify')
     expect((init as RequestInit).method).toBe('POST')
     expect(JSON.parse((init as RequestInit).body as string)).toEqual({ token: 'verification-token' })
+  })
+
+  it('keeps a pending verification bearer out of the mutation cache', async () => {
+    const token = 'pending-verification-token'
+    const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(
+      () =>
+        new Promise<Response>(() => {
+          // Intentionally pending: the assertion observes the in-flight request.
+        }),
+    )
+    const { result, unmount } = renderHook(() => useVerifyRegistration(), { wrapper: wrapper(client) })
+
+    act(() => {
+      void result.current.mutateAsync({ token })
+    })
+    await waitFor(() => expect(fetchSpy).toHaveBeenCalledOnce())
+
+    const tokenBearingMutations = client
+      .getMutationCache()
+      .getAll()
+      .filter((mutation) => (mutation.state.variables as { token?: unknown } | undefined)?.token === token)
+    expect(tokenBearingMutations).toHaveLength(0)
+
+    unmount()
   })
 })

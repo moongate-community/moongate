@@ -5,9 +5,6 @@ namespace Moongate.Server.Services.Accounts;
 
 internal static partial class PublicRegistrationValidator
 {
-    [GeneratedRegex("^[A-Za-z0-9._-]{3,30}$", RegexOptions.CultureInvariant)]
-    private static partial Regex UsernameRegex();
-
     public static string NormalizeUsername(string? username)
         => username?.Trim() ?? string.Empty;
 
@@ -23,4 +20,7 @@ internal static partial class PublicRegistrationValidator
 
     public static bool IsEmailValid(string email)
         => MailAddress.TryCreate(email, out _);
+
+    [GeneratedRegex("^[A-Za-z0-9._-]{3,30}$", RegexOptions.CultureInvariant)]
+    private static partial Regex UsernameRegex();
 }

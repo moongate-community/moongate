@@ -89,7 +89,7 @@ export function LoginScreen() {
 
         <p className="border-t border-border-subtle pt-4 text-xs leading-relaxed text-faint">{t('login.staffNote')}</p>
 
-        {serverInfo.data?.registrationEnabled === true && (
+        {!serverInfo.isError && !serverInfo.isRefetchError && serverInfo.data?.registrationEnabled === true && (
           <Link to="/register" className="text-center text-sm text-gold hover:text-gold-hi">
             {t('login.createAccount')}
           </Link>
