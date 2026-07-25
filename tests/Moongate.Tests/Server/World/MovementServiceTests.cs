@@ -1,5 +1,12 @@
+using Moongate.Core.Extensions;
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
 using Moongate.Core.Types;
+using Moongate.Network.Interfaces;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Io;
@@ -195,6 +202,46 @@ public class MovementServiceTests
         Assert.False(decision.Accepted);
     }
 
+    [Fact]
+    public void TryMoveNpc_BrainMobile_StepsAndPublishesMovedEvent()
+    {
+        var (service, persistence, spatial, bus) = BuildMovementService();
+        var mobile = Mobile();
+        mobile.BrainScriptId = "guard";
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        spatial.AddOrUpdate(mobile);
+
+        Assert.True(service.TryMoveNpc(mobile.Id, DirectionType.East));
+
+        var stored = persistence.Store<MobileEntity>().GetById(mobile.Id)!;
+        Assert.Equal(new Point3D(2, 1, 0), stored.Position);
+        var moved = Assert.Single(bus.Published.OfType<MobileMovedEvent>());
+        Assert.Equal(mobile.Id, moved.Mobile);
+        Assert.Equal((0, new Point3D(1, 1, 0)), (moved.FromMapId, moved.FromPosition));
+        Assert.Equal((0, new Point3D(2, 1, 0)), (moved.ToMapId, moved.ToPosition));
+    }
+
+    [Fact]
+    public void TryMoveNpc_MissingMobile_ReturnsFalse()
+    {
+        var (service, _, _, bus) = BuildMovementService();
+
+        Assert.False(service.TryMoveNpc(new(0xDEAD), DirectionType.East));
+        Assert.Empty(bus.Published.OfType<MobileMovedEvent>());
+    }
+
+    [Fact]
+    public void TryMoveNpc_MobileWithoutBrain_ReturnsFalse()
+    {
+        var (service, persistence, spatial, bus) = BuildMovementService();
+        var mobile = Mobile();
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        spatial.AddOrUpdate(mobile);
+
+        Assert.False(service.TryMoveNpc(mobile.Id, DirectionType.East));
+        Assert.Empty(bus.Published.OfType<MobileMovedEvent>());
+    }
+
     private static (MapTileService MapTiles, RegionService Regions) Build(bool withWall = false)
     {
         var tileData = UltimaFixtures.BuildTileData();
@@ -220,6 +267,41 @@ public class MovementServiceTests
         return (new(provider), new());
     }
 
+    private static (
+        MovementService Service,
+        FakePersistenceService Persistence,
+        SpatialIndexService Spatial,
+        StubEventBus Bus
+    ) BuildMovementService()
+    {
+        var (mapTiles, regions) = Build();
+        var persistence = new FakePersistenceService();
+        var bus = new StubEventBus();
+        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), bus);
+        var world = new StubWorldService();
+
+        return (new(mapTiles, regions, spatial, world, persistence, TimeProvider.System, bus, new StubLoopAffinity()), persistence, spatial, bus);
+    }
+
     private static MobileEntity Mobile(int x = 1, int y = 1, int z = 0, DirectionType direction = DirectionType.East)
         => new() { Id = new(0x1), MapId = 0, Position = new(x, y, z), Direction = direction };
+
+    private sealed class StubWorldService : IWorldService
+    {
+        public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
+            => 0;
+
+        public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
+        {
+        }
+
+        public int SendToPlayersInRange<TPacket>(
+            int mapId,
+            Point3D center,
+            int range,
+            TPacket packet,
+            Serial? exclude = null
+        ) where TPacket : IOutgoingPacket
+            => 0;
+    }
 }

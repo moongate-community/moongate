@@ -1,5 +1,6 @@
 using MessagePack;
 using MessagePack.Resolvers;
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.UO.Data.Types;
 
@@ -7,6 +8,12 @@ namespace Moongate.Tests.Persistence.Entities;
 
 public class MobileEntityTests
 {
+    [Fact]
+    public void CombatantId_DefaultsToZero()
+    {
+        Assert.Equal(Serial.Zero, new MobileEntity().CombatantId);
+    }
+
     [Fact]
     public void Deserialize_SaveWrittenBeforeTheNewFieldsExisted_KeepsTheDefaults()
     {

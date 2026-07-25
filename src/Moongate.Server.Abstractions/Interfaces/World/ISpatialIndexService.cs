@@ -30,6 +30,12 @@ public interface ISpatialIndexService
     /// <summary>Mobiles on <paramref name="mapId" /> within <paramref name="range" /> tiles of <paramref name="center" />.</summary>
     IReadOnlyList<MobileEntity> GetMobilesInRange(int mapId, Point3D center, int range);
 
+    /// <summary>
+    /// Mobiles indexed in the exact sector identified by <paramref name="mapId" />, <paramref name="sectorX" />
+    /// and <paramref name="sectorY" />.
+    /// </summary>
+    IReadOnlyList<MobileEntity> GetMobilesInSector(int mapId, int sectorX, int sectorY);
+
     /// <summary>Removes an entity from the index; unknown serials are a no-op.</summary>
     void Remove(Serial serial);
 }

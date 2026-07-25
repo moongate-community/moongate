@@ -776,7 +776,7 @@ public class LoginFlowIntegrationTests
                 opl,
                 sessions
             );
-            var movement = new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System);
+            var movement = new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System, eventBus);
 
             // CharacterServiceFixture.Create wires its own MobileFactoryService, whose starting-city
             // lookup is independent of the city StartServerWithMovementAsync registers for the

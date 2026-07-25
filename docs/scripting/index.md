@@ -6,6 +6,10 @@ subscribe to server events, and create or manipulate items and mobiles by
 serial. Each module is a C# class bridged into the Lua runtime (the SquidStd
 scripting engine, built on MoonSharp).
 
+NPC behavior is authored separately as [NPC brains](guides/npc-brains.md).
+Brain files use their own `brain` helper environment and return validated
+intents; they do not receive the ordinary scripting modules below.
+
 ## Modules
 
 | Module | Purpose | Reference |

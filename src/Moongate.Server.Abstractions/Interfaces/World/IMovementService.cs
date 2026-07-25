@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Data.Session;
 
@@ -16,4 +17,10 @@ public interface IMovementService
     /// no character attached yet.
     /// </summary>
     void TryMove(PlayerSession session, DirectionType direction, byte sequence);
+
+    /// <summary>
+    /// Attempts to turn or step an NPC with a configured brain. Uses the authoritative movement rules without
+    /// client sequence or timing state, returning <see langword="true" /> only when the move is accepted.
+    /// </summary>
+    bool TryMoveNpc(Serial mobileId, DirectionType direction);
 }

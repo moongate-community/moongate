@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions;
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.World;
@@ -79,6 +80,19 @@ public class SpatialIndexServiceTests
         index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100));
 
         Assert.Empty(index.GetMobilesInRange(0, new(300, 300, 0), 18));
+    }
+
+    [Fact]
+    public void GetMobilesInSector_ExactSector_ReturnsOnlyMobilesOnRequestedMap()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100));
+
+        var sectorSix = index.GetMobilesInSector(0, 6, 6);
+
+        Assert.Single(sectorSix);
+        Assert.Equal(new Serial(0x1), sectorSix[0].Id);
+        Assert.Empty(index.GetMobilesInSector(1, 6, 6));
     }
 
     [Fact]
