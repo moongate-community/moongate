@@ -38,6 +38,18 @@
     "submit": "Create account",
     "unavailableTitle": "Registration is unavailable",
     "unavailableBody": "This shard is not accepting public registrations right now.",
+    "pending": {
+      "title": "Check your email",
+      "guidance": "Look for a verification email in your inbox. You can request another message below.",
+      "resendTitle": "Resend verification email",
+      "resendSubmit": "Resend verification email",
+      "confirmation": "Your request has been received. Check your inbox for a verification email.",
+      "errors": {
+        "invalidDetails": "Check the account name and email and try again.",
+        "rateLimited": "Too many resend attempts. Try again later.",
+        "emailUnavailable": "Verification email is temporarily unavailable."
+      }
+    },
     "errors": {
       "username": "Enter a valid account name.",
       "email": "Enter a valid email address.",
