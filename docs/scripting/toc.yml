@@ -4,6 +4,8 @@
   items:
     - name: How scripting works
       href: guides/how-scripting-works.md
+    - name: NPC brains
+      href: guides/npc-brains.md
     - name: Items
       href: guides/items.md
     - name: Mobiles
@@ -14,6 +16,8 @@
   items:
     - name: log
       href: reference/log.md
+    - name: brain
+      href: reference/brain.md
     - name: game
       href: reference/game.md
     - name: events

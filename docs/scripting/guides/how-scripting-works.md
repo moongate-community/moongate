@@ -35,8 +35,10 @@ and pull them in with Lua's `require`; the loader searches the `scripts/`
 directory (including a `modules/` subfolder), so `require("modules/spawns")`
 loads `scripts/modules/spawns.lua`.
 
-The server also watches `scripts/` for changes while running, so edits to your
-`.lua` files are picked up without a restart.
+Bootstrap-script reload is handled by SquidStd. NPC brain files are different:
+`scripts/brains/*.lua` has its own dedicated watcher which validates a changed
+candidate before replacing the active brain definition. See
+[NPC brains](npc-brains.md#runtime-behavior).
 
 ## The game-loop thread
 
