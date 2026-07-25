@@ -26,15 +26,16 @@ public interface IAccountService
 
     /// <summary>
     /// Creates a pending Player account for web self-registration: inactive, carrying a single-use
-    /// verification token, with the (required, validated) email stored. Publishes
+    /// verification token stored as a hash with a 24-hour expiry, with the required, validated email
+    /// stored. Publishes
     /// <see cref="Moongate.Server.Abstractions.Data.Events.AccountRegistrationRequestedEvent" />. The
     /// account cannot log in until verified.
     /// </summary>
     AccountRegisterResult RegisterPending(string username, string password, string email);
 
     /// <summary>
-    /// Activates the account holding <paramref name="token" /> and clears the token. Idempotent by
-    /// construction: a consumed or unknown token matches nothing.
+    /// Activates the account holding an unexpired <paramref name="token" /> and clears its token state.
+    /// Consumed, expired, or unknown tokens cannot activate an account.
     /// </summary>
     AccountVerifyResultType VerifyEmail(string token);
 

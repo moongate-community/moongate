@@ -32,7 +32,8 @@ public class AccountServiceGetAllTests
             persistence,
             CharacterServiceFixture.Create(persistence, bus),
             new StubSessionManager(),
-            bus
+            bus,
+            TimeProvider.System
         );
     }
 }

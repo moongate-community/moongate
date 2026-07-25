@@ -16,7 +16,7 @@ public sealed class RegistrationEndpointsTests
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/register",
-            new RegisterRequest("newbie", "secret", "new@bie.test")
+            new RegisterRequest("newbie", "secret99", "new@bie.test")
         );
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
@@ -30,7 +30,7 @@ public sealed class RegistrationEndpointsTests
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/register",
-            new RegisterRequest("newbie", "secret", "new@bie.test")
+            new RegisterRequest("newbie", "secret99", "new@bie.test")
         );
 
         Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
@@ -42,7 +42,7 @@ public sealed class RegistrationEndpointsTests
     {
         await using var server = await TestApiServer.StartAsync();
         server.ServerSettings.Update(new ServerSettingsUpdate { RegistrationEnabled = true });
-        var token = server.Accounts.RegisterPending("newbie", "secret", "new@bie.test").Token!;
+        var token = server.Accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
 
         var response = await server.Client.PostAsJsonAsync("/api/v1/register/verify", new VerifyEmailRequest(token));
 

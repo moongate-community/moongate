@@ -122,7 +122,10 @@ public sealed class TestApiServer : IAsyncDisposable
         var sessions = new StubSessionManager();
         var bus = new EventBusService();
         var characters = CharacterServiceFixture.Create(persistence, bus, sessions);
-        var accounts = new AccountService(persistence, characters, sessions, bus);
+
+        // A test that needs to move time forward passes its own; everything else gets the real clock.
+        var timeProvider = clock ?? TimeProvider.System;
+        var accounts = new AccountService(persistence, characters, sessions, bus, timeProvider);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig
@@ -140,9 +143,6 @@ public sealed class TestApiServer : IAsyncDisposable
         var moongateConfig = new MoongateConfig { ShardName = "Moongate", UltimaDirectory = "/tmp" };
 
         container.RegisterInstance(config);
-
-        // A test that needs to move time forward passes its own; everything else gets the real clock.
-        var timeProvider = clock ?? TimeProvider.System;
 
         container.RegisterInstance(timeProvider);
         container.RegisterInstance(moongateConfig);

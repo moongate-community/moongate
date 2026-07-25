@@ -178,7 +178,8 @@ public class AccountModuleTests
             persistence,
             CharacterServiceFixture.Create(persistence, bus),
             new StubSessionManager(),
-            bus
+            bus,
+            TimeProvider.System
         );
 
         return (new(accounts), accounts);

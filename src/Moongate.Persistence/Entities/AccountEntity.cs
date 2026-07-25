@@ -16,7 +16,11 @@ public class AccountEntity : ISerialIdEntity
 
     public bool IsActive { get; set; }
 
-    public string ActivationToken { get; set; }
+    public string ActivationToken { get; set; } = string.Empty;
+
+    public string ActivationTokenHash { get; set; } = string.Empty;
+
+    public DateTimeOffset? ActivationTokenExpiresAtUtc { get; set; }
 
     public AccountLevelType AccountLevel { get; set; }
 

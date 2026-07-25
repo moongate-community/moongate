@@ -282,7 +282,8 @@ public class AccountServiceTests
             persistence,
             characters ?? CharacterServiceFixture.Create(persistence, bus),
             sessions ?? new StubSessionManager(),
-            bus
+            bus,
+            TimeProvider.System
         );
     }
 }
