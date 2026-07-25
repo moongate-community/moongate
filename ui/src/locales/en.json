@@ -45,7 +45,25 @@
     "copyHint": "Click to copy the coordinate",
     "copied": "Copied {{x}}, {{y}}",
     "jumpError": "Enter a coordinate inside the facet (0–{{width}}, 0–{{height}}).",
-    "unavailable": "The map is unavailable — the shard has not loaded its client files."
+    "unavailable": "The map is unavailable — the shard has not loaded its client files.",
+    "players": {
+      "toggle": "Online players",
+      "count": "{{visible}} / {{total}}",
+      "unavailable": "Player positions are temporarily unavailable.",
+      "markerAlt": "{{name}} on the map",
+      "account": "Account",
+      "facet": "Facet",
+      "coordinates": "Coordinates",
+      "hits": "Hits",
+      "direction": "Direction",
+      "running": "Running",
+      "warmode": "War mode",
+      "technical": "Technical details",
+      "characterSerial": "Character serial",
+      "accountSerial": "Account serial",
+      "body": "Body",
+      "skinHue": "Skin hue"
+    }
   },
   "common": {
     "signOut": "Sign out",

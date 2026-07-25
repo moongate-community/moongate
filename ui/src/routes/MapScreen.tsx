@@ -142,7 +142,14 @@ export function MapScreen() {
       )}
 
       <Card className="relative h-[70vh] overflow-hidden p-0">
-        <LiveMap key={facet.name} facet={facet} style={style} centerTarget={centerTarget} onHover={setHover} />
+        <LiveMap
+          key={facet.name}
+          facet={facet}
+          style={style}
+          centerTarget={centerTarget}
+          onHover={setHover}
+          players={[]}
+        />
 
         {/* Coordinate readout as a corner overlay, like a real map viewer; click to copy. */}
         <button

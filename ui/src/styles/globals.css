@@ -108,3 +108,105 @@ body {
   color: var(--mg-text);
   font-family: var(--mg-font-body);
 }
+
+.mg-player-marker-host {
+  border: 0;
+  background: transparent;
+}
+
+.mg-player-marker {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 2px solid var(--mg-gold-hi);
+  border-radius: 50%;
+  background: var(--mg-gold);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 45%);
+}
+
+.mg-player-marker--warmode {
+  border-color: var(--mg-danger-text);
+  background: var(--mg-danger);
+}
+
+.mg-player-marker__arrow {
+  color: var(--mg-gold-ink);
+  font-size: 12px;
+  line-height: 1;
+  transform-origin: center;
+}
+
+.mg-player-popup-shell .leaflet-popup-content-wrapper,
+.mg-player-popup-shell .leaflet-popup-tip {
+  border: 1px solid var(--mg-border-strong);
+  border-radius: var(--mg-radius-card);
+  background: var(--mg-surface);
+  color: var(--mg-text);
+}
+
+.mg-player-popup-shell .leaflet-popup-content {
+  margin: 14px;
+}
+
+.mg-player-popup {
+  min-width: 220px;
+  font-family: var(--mg-font-body);
+}
+
+.mg-player-popup__title {
+  margin: 0;
+  color: var(--mg-gold);
+  font-family: var(--mg-font-display);
+  font-size: 17px;
+}
+
+.mg-player-popup__account {
+  margin: 2px 0 10px;
+  color: var(--mg-text-muted);
+}
+
+.mg-player-popup__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 3px 10px;
+  margin: 0;
+}
+
+.mg-player-popup__label {
+  color: var(--mg-text-faint);
+}
+
+.mg-player-popup__value {
+  margin: 0;
+  color: var(--mg-text);
+  text-align: right;
+}
+
+.mg-player-popup__statuses {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.mg-player-popup__status {
+  border: 1px solid var(--mg-border-strong);
+  padding: 1px 5px;
+  color: var(--mg-text-muted);
+  font-size: 13px;
+}
+
+.mg-player-popup__status--danger {
+  border-color: var(--mg-danger);
+  color: var(--mg-danger-text);
+}
+
+.mg-player-popup__technical {
+  margin-top: 10px;
+  color: var(--mg-text-faint);
+}
+
+.mg-player-popup__summary {
+  cursor: pointer;
+}
