@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react'
-import { Link, useLocation } from 'react-router'
+import { useEffect, useState, type FormEvent } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
 import { PublicAuthLayout } from '../components/PublicAuthLayout'
 import { Button } from '../components/ui/button'
@@ -18,6 +18,7 @@ type PendingState = { username?: unknown; email?: unknown }
 export function RegistrationPendingScreen() {
   const { t } = useTranslation()
   const location = useLocation()
+  const navigate = useNavigate()
   const resendVerification = useResendVerification()
   const state = (location.state ?? {}) as PendingState
   const initialUsername = typeof state.username === 'string' ? state.username : ''
@@ -27,6 +28,12 @@ export function RegistrationPendingScreen() {
   const [email, setEmail] = useState(initialEmail)
   const [fieldErrors, setFieldErrors] = useState<RegistrationValidationErrors>({})
   const [formMessage, setFormMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (location.state !== null) {
+      navigate(`${location.pathname}${location.search}${location.hash}`, { replace: true, state: null })
+    }
+  }, [location.hash, location.pathname, location.search, location.state, navigate])
 
   function fieldMessage(field: RegistrationField): string {
     return t(`register.errors.${field}`)

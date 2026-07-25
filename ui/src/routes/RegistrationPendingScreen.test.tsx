@@ -1,7 +1,7 @@
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { MemoryRouter, Route, Routes } from 'react-router'
+import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router'
 import i18n from '../lib/i18n'
 import { AuthProvider } from '../lib/auth'
 import { RegistrationPendingScreen } from './RegistrationPendingScreen'
@@ -83,6 +83,20 @@ function renderPending(state?: unknown) {
   )
 }
 
+function renderBrowserPending() {
+  return render(
+    <BrowserRouter>
+      <QueryClientProvider client={createTestClient()}>
+        <AuthProvider>
+          <Routes>
+            <Route path="/register/pending" element={<RegistrationPendingScreen />} />
+          </Routes>
+        </AuthProvider>
+      </QueryClientProvider>
+    </BrowserRouter>,
+  )
+}
+
 function resendCalls(fetchSpy: ReturnType<typeof servePublicApi>) {
   return fetchSpy.mock.calls.filter(([input]) => String(input).endsWith('/api/v1/register/resend'))
 }
@@ -91,6 +105,7 @@ describe('RegistrationPendingScreen', () => {
   beforeEach(async () => {
     localStorage.clear()
     sessionStorage.clear()
+    window.history.replaceState(null, '', '/')
     vi.restoreAllMocks()
     await i18n.changeLanguage('en')
   })
@@ -108,6 +123,26 @@ describe('RegistrationPendingScreen', () => {
     expect(screen.getByText(/look for a verification email/i)).toBeVisible()
     expect(localStorage.length).toBe(0)
     expect(sessionStorage.length).toBe(0)
+  })
+
+  it('uses navigation state once and clears it before a subsequent browser reload', async () => {
+    servePublicApi()
+    window.history.replaceState(
+      { usr: { username: 'player.one', email: 'player@example.test' }, key: 'pending', idx: 0 },
+      '',
+      '/register/pending',
+    )
+
+    const firstMount = renderBrowserPending()
+
+    expect(await screen.findByLabelText(/account name/i)).toHaveValue('player.one')
+    expect(screen.getByLabelText(/^email$/i)).toHaveValue('player@example.test')
+
+    firstMount.unmount()
+    renderBrowserPending()
+
+    expect(await screen.findByLabelText(/account name/i)).toHaveValue('')
+    expect(screen.getByLabelText(/^email$/i)).toHaveValue('')
   })
 
   it.each([undefined, { username: 123, email: null }])(
