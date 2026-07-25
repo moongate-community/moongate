@@ -6,7 +6,10 @@ public enum AccountRegisterResultType
     Created,
     UsernameTaken,
     UsernameEmpty,
+    UsernameInvalid,
     PasswordEmpty,
+    PasswordInvalid,
     EmailEmpty,
-    EmailInvalid
+    EmailInvalid,
+    EmailTaken
 }

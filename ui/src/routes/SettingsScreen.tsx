@@ -12,6 +12,19 @@ import { useServerSettings, useUpdateSettings, type Contacts } from '../lib/sett
 const EMPTY_CONTACTS: Contacts = { website: null, email: null, discord: null }
 const ASSET_SLOTS = ['logo', 'favicon', 'banner'] as const
 
+function isValidWebsite(website: string | null | undefined): boolean {
+  if (website === null || website === undefined || !/^https?:\/\/[^/]/i.test(website)) {
+    return false
+  }
+
+  try {
+    const url = new URL(website)
+    return (url.protocol === 'http:' || url.protocol === 'https:') && url.host !== ''
+  } catch {
+    return false
+  }
+}
+
 export function SettingsScreen() {
   const { t } = useTranslation()
   const settings = useServerSettings()
@@ -53,6 +66,11 @@ export function SettingsScreen() {
   const setContact = (key: keyof Contacts) => (value: string) =>
     setContacts((current) => ({ ...current, [key]: value || null }))
 
+  const websiteValid = isValidWebsite(contacts.website)
+  const emailChannelSelected = settings.data?.registrationReadiness.emailChannelSelected ?? false
+  const emailChannelAvailable = settings.data?.registrationReadiness.emailChannelAvailable ?? false
+  const registrationReady = websiteValid && emailChannelSelected && emailChannelAvailable
+
   // The API keys the assets map in PascalCase ("Logo"), while the slot (and its upload path) is
   // lowercase — match case-insensitively so the preview finds the stored image.
   const assetUrl = (slot: string) =>
@@ -82,10 +100,44 @@ export function SettingsScreen() {
           <Switch
             checked={registration}
             onCheckedChange={setRegistration}
+            disabled={!registration && !registrationReady}
             aria-label={t('admin.settings.registration')}
           />
           {t('admin.settings.registration')}
         </Label>
+
+        <section aria-labelledby="registration-readiness-title" className="flex flex-col gap-3">
+          <h3 id="registration-readiness-title" className="font-display text-sm tracking-wide text-ink">
+            {t('admin.settings.readiness.title')}
+          </h3>
+          <dl className="grid gap-2 text-sm">
+            <ReadinessRow
+              label={t('admin.settings.readiness.overall')}
+              value={registrationReady}
+              positive={t('admin.settings.readiness.ready')}
+              negative={t('admin.settings.readiness.notReady')}
+            />
+            <ReadinessRow
+              label={t('admin.settings.readiness.website')}
+              value={websiteValid}
+              positive={t('admin.settings.readiness.valid')}
+              negative={t('admin.settings.readiness.invalid')}
+            />
+            <ReadinessRow
+              label={t('admin.settings.readiness.emailSelected')}
+              value={emailChannelSelected}
+              positive={t('admin.settings.readiness.selected')}
+              negative={t('admin.settings.readiness.notSelected')}
+            />
+            <ReadinessRow
+              label={t('admin.settings.readiness.emailAvailable')}
+              value={emailChannelAvailable}
+              positive={t('admin.settings.readiness.available')}
+              negative={t('admin.settings.readiness.unavailable')}
+            />
+          </dl>
+          <p className="text-xs leading-relaxed text-faint">{t('admin.settings.readiness.guidance')}</p>
+        </section>
       </Card>
 
       <Card className="flex flex-col gap-4 p-5">
@@ -115,5 +167,24 @@ export function SettingsScreen() {
         ))}
       </Card>
     </form>
+  )
+}
+
+function ReadinessRow({
+  label,
+  value,
+  positive,
+  negative,
+}: {
+  label: string
+  value: boolean
+  positive: string
+  negative: string
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <dt className="text-muted">{label}</dt>
+      <dd className={value ? 'text-success' : 'text-danger-text'}>{value ? positive : negative}</dd>
+    </div>
   )
 }

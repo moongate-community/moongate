@@ -17,6 +17,7 @@ using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
@@ -25,6 +26,7 @@ using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Plugins;
@@ -114,7 +116,10 @@ public sealed class TestApiServer : IAsyncDisposable
         TimeSpan? deleteTimeout = null,
         Action<IContainer>? configure = null,
         TimeProvider? clock = null,
-        string? uiDistPath = null
+        string? uiDistPath = null,
+        bool emailChannelReady = true,
+        string accountVerificationChannel = "email",
+        IRegistrationRateLimiter? registrationRateLimiter = null
     )
     {
         var container = new Container();
@@ -122,7 +127,10 @@ public sealed class TestApiServer : IAsyncDisposable
         var sessions = new StubSessionManager();
         var bus = new EventBusService();
         var characters = CharacterServiceFixture.Create(persistence, bus, sessions);
-        var accounts = new AccountService(persistence, characters, sessions, bus);
+
+        // A test that needs to move time forward passes its own; everything else gets the real clock.
+        var timeProvider = clock ?? TimeProvider.System;
+        var accounts = new AccountService(persistence, characters, sessions, bus, timeProvider);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig
@@ -140,9 +148,6 @@ public sealed class TestApiServer : IAsyncDisposable
         var moongateConfig = new MoongateConfig { ShardName = "Moongate", UltimaDirectory = "/tmp" };
 
         container.RegisterInstance(config);
-
-        // A test that needs to move time forward passes its own; everything else gets the real clock.
-        var timeProvider = clock ?? TimeProvider.System;
 
         container.RegisterInstance(timeProvider);
         container.RegisterInstance(moongateConfig);
@@ -180,16 +185,30 @@ public sealed class TestApiServer : IAsyncDisposable
         );
         container.RegisterInstance<IServerSettingsService>(serverSettings);
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
-        container.RegisterApiEndpointInstance(new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore));
-        container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
-
-        // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
-        var rateLimiter = new RegistrationRateLimiter(
-            TimeProvider.System,
-            permitPerWindow: 2,
-            window: TimeSpan.FromMinutes(10)
+        INotificationChannel[] channels = emailChannelReady ? [new RecordingNotificationChannel("email")] : [];
+        var registrationReadiness = new RegistrationReadinessService(
+            new NotificationConfig { AccountVerificationChannel = accountVerificationChannel },
+            channels
         );
-        container.RegisterApiEndpointInstance(new RegistrationEndpoints(accounts, serverSettings, rateLimiter));
+        container.RegisterInstance<IRegistrationReadinessService>(registrationReadiness);
+        container.RegisterApiEndpointInstance(
+            new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore, registrationReadiness)
+        );
+        container.RegisterApiEndpointInstance(
+            new ServerSettingsAdminEndpoints(serverSettings, assetStore, config, registrationReadiness)
+        );
+
+        // The default is deliberately low so a test can prove the throttle without flooding; callers can
+        // inject a recording limiter when exact budget keys or independent budgets are the behavior at stake.
+        var rateLimiter = registrationRateLimiter
+            ?? new RegistrationRateLimiter(
+                TimeProvider.System,
+                permitPerWindow: 2,
+                window: TimeSpan.FromMinutes(10)
+            );
+        container.RegisterApiEndpointInstance(
+            new RegistrationEndpoints(accounts, serverSettings, registrationReadiness, rateLimiter)
+        );
 
         var stats = new StubServerStatsService();
         container.RegisterInstance<IServerStatsService>(stats);

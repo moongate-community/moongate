@@ -731,9 +731,30 @@ export interface paths {
         put?: never;
         /**
          * Verifies an account's email with its token, activating the account.
-         * @description Answers 400 for an unknown or already-used token.
+         * @description Answers 410 for an expired token and 400 for an unknown or already-used token.
          */
         post: operations["VerifyRegistration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/register/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Resends the verification message for a matching pending public registration.
+         * @description Answers 202 whether or not the supplied identity matches a pending account, so callers cannot
+         *     discover registered usernames or email addresses.
+         */
+        post: operations["ResendRegistrationVerification"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1111,6 +1132,19 @@ export interface components {
              */
             totalPages: number;
         };
+        HttpValidationProblemDetails: {
+            type?: string | null;
+            title?: string | null;
+            /** Format: int32 */
+            status?: number | null;
+            detail?: string | null;
+            instance?: string | null;
+            errors: {
+                [key: string]: string[];
+            };
+        } & {
+            [key: string]: unknown;
+        };
         /** @description How far the bulk item-image export has got. */
         ItemImageExportStatus: {
             /** @description Idle, Running, Completed or Failed. */
@@ -1385,10 +1419,32 @@ export interface components {
             path: string;
             policy?: string | null;
         };
+        ProblemDetails: {
+            type?: string | null;
+            title?: string | null;
+            /** Format: int32 */
+            status?: number | null;
+            detail?: string | null;
+            instance?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
         /** @description A web self-registration request. */
         RegisterRequest: {
             username: string;
             password: string;
+            email: string;
+        };
+        /** @description The local prerequisites behind public account registration availability. */
+        RegistrationReadinessResponse: {
+            ready: boolean;
+            websiteValid: boolean;
+            emailChannelSelected: boolean;
+            emailChannelAvailable: boolean;
+        };
+        /** @description Identifies a pending public registration for a verification-message resend. */
+        ResendVerificationRequest: {
+            username: string;
             email: string;
         };
         /** @description The shard's public contact points. */
@@ -1397,7 +1453,7 @@ export interface components {
             email?: string | null;
             discord?: string | null;
         };
-        /** @description The public server profile a website or launcher reads: identity, contacts, assets, and whether registration is open. */
+        /** @description The public server profile a website or launcher reads: identity, contacts, assets, and effective registration availability. */
         ServerInfoResponse: {
             shardName: string;
             description?: string | null;
@@ -1408,12 +1464,13 @@ export interface components {
                 [key: string]: string;
             };
         };
-        /** @description The full settings view returned to staff (identical fields to the public info minus the shard name). */
+        /** @description The full settings view returned to staff, including persisted registration state and readiness. */
         ServerSettingsResponse: {
             description?: string | null;
             tagline?: string | null;
             contacts: components["schemas"]["ServerContactsResponse"];
             registrationEnabled: boolean;
+            registrationReadiness: components["schemas"]["RegistrationReadinessResponse"];
             assets: {
                 [key: string]: string;
             };
@@ -2423,6 +2480,60 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
         };
     };
     VerifyRegistration: {
@@ -2444,6 +2555,82 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Gone */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    ResendRegistrationVerification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResendVerificationRequest"];
+            };
+        };
+        responses: {
+            /** @description Accepted */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
             };
         };
     };
@@ -2529,6 +2716,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ServerSettingsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["HttpValidationProblemDetails"];
                 };
             };
         };

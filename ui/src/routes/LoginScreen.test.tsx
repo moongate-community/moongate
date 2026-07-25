@@ -6,9 +6,7 @@ import '../lib/i18n'
 import { AuthProvider } from '../lib/auth'
 import { LoginScreen } from './LoginScreen'
 
-function renderLogin() {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
-
+function renderLogin(client = new QueryClient({ defaultOptions: { queries: { retry: false } } })) {
   return render(
     <MemoryRouter>
       <QueryClientProvider client={client}>
@@ -27,6 +25,8 @@ describe('LoginScreen', () => {
     vi.restoreAllMocks()
     assets = {}
     tagline = null
+    registrationEnabled = false
+    serverInfoAvailable = true
   })
 
   function json(body: unknown, status = 200) {
@@ -58,11 +58,15 @@ describe('LoginScreen', () => {
         return json({ shardName: 'Moongate', version: '9.9.9' })
       }
       if (url.endsWith('/api/v1/server-info')) {
+        if (!serverInfoAvailable) {
+          throw new TypeError('offline')
+        }
+
         return json({
           shardName: 'Moongate',
           tagline,
           contacts: { website: null, email: null, discord: null },
-          registrationEnabled: false,
+          registrationEnabled,
           assets,
         })
       }
@@ -73,6 +77,8 @@ describe('LoginScreen', () => {
   // What the /server-info mock reports; tests override these before rendering.
   let assets: Record<string, string> = {}
   let tagline: string | null = null
+  let registrationEnabled = false
+  let serverInfoAvailable = true
 
   it('shows the server version once it resolves', async () => {
     serveApi()
@@ -112,6 +118,42 @@ describe('LoginScreen', () => {
     renderLogin()
 
     expect(await screen.findByText(/Sosaria never sleeps\./)).toBeInTheDocument()
+  })
+
+  it('links to registration only when the server reports it available', async () => {
+    registrationEnabled = true
+    serveApi()
+    renderLogin()
+
+    expect(await screen.findByRole('link', { name: /create account/i })).toHaveAttribute('href', '/register')
+  })
+
+  it('does not link to registration when the server reports it unavailable', async () => {
+    serveApi()
+    renderLogin()
+
+    await screen.findByText(/Moongate · v9\.9\.9/)
+    expect(screen.queryByRole('link', { name: /create account/i })).not.toBeInTheDocument()
+  })
+
+  it('hides registration when cached enabled server info fails to refetch', async () => {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+    client.setQueryData(['server-info'], {
+      shardName: 'Moongate',
+      tagline: null,
+      contacts: { website: null, email: null, discord: null },
+      registrationEnabled: true,
+      assets: {},
+    })
+    serverInfoAvailable = false
+    const fetchSpy = serveApi()
+
+    renderLogin(client)
+
+    await waitFor(() =>
+      expect(fetchSpy.mock.calls.some(([input]) => String(input).endsWith('/api/v1/server-info'))).toBe(true),
+    )
+    await waitFor(() => expect(screen.queryByRole('link', { name: /create account/i })).not.toBeInTheDocument())
   })
 
   it('sends the credentials and stores the issued token', async () => {

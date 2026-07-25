@@ -5,6 +5,7 @@ using Moongate.Http.Plugin.Data.Api.ServerInfo;
 using Moongate.Http.Plugin.Data.Config;
 using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
+using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Types;
@@ -21,14 +22,19 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     private readonly IServerSettingsService _settings;
     private readonly IServerAssetFileStore _assets;
     private readonly MoongateHttpConfig _config;
+    private readonly IRegistrationReadinessService _registrationReadiness;
 
     public ServerSettingsAdminEndpoints(
-        IServerSettingsService settings, IServerAssetFileStore assets, MoongateHttpConfig config
+        IServerSettingsService settings,
+        IServerAssetFileStore assets,
+        MoongateHttpConfig config,
+        IRegistrationReadinessService registrationReadiness
     )
     {
         _settings = settings;
         _assets = assets;
         _config = config;
+        _registrationReadiness = registrationReadiness;
     }
 
     public void Register(IEndpointRouteBuilder routes)
@@ -38,7 +44,10 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapGet("/", Get).WithName("GetServerSettings").Produces<ServerSettingsResponse>();
-        group.MapPut("/", Update).WithName("UpdateServerSettings").Produces<ServerSettingsResponse>();
+        group.MapPut("/", Update)
+            .WithName("UpdateServerSettings")
+            .Produces<ServerSettingsResponse>()
+            .ProducesValidationProblem();
         group.MapPost("/assets/{slot}", UploadAsset)
             .WithName("UploadServerAsset")
             .DisableAntiforgery()
@@ -48,22 +57,49 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             .Produces(StatusCodes.Status204NoContent);
     }
 
-    internal static ServerSettingsResponse ToResponse(ServerSettingsEntity settings)
-        => new(
+    internal static ServerSettingsResponse ToResponse(
+        ServerSettingsEntity settings,
+        IRegistrationReadinessService registrationReadiness
+    )
+    {
+        var readiness = registrationReadiness.Evaluate(settings.Contacts.Website);
+
+        return new(
             settings.Description,
             settings.Tagline,
             new(settings.Contacts.Website, settings.Contacts.Email, settings.Contacts.Discord),
             settings.RegistrationEnabled,
+            new(
+                readiness.Ready,
+                readiness.WebsiteValid,
+                readiness.EmailChannelSelected,
+                readiness.EmailChannelAvailable
+            ),
             settings.Assets.Keys.ToDictionary(slot => slot, slot => $"/api/v1/server-info/assets/{slot.ToLowerInvariant()}")
         );
+    }
 
     /// <summary>Returns the full server settings.</summary>
     private IResult Get()
-        => Results.Ok(ToResponse(_settings.Get()));
+        => Results.Ok(ToResponse(_settings.Get(), _registrationReadiness));
 
     /// <summary>Updates the server settings; every field is optional and an omitted one is left unchanged.</summary>
     private IResult Update(UpdateServerSettingsRequest request)
     {
+        var current = _settings.Get();
+        var resultingWebsite = request.Contacts is null ? current.Contacts.Website : request.Contacts.Website;
+        var resultingRegistrationEnabled = request.RegistrationEnabled ?? current.RegistrationEnabled;
+
+        if (resultingRegistrationEnabled && !_registrationReadiness.Evaluate(resultingWebsite).Ready)
+        {
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]>
+                {
+                    ["registrationEnabled"] = ["Registration requires a valid website and an available email channel."]
+                }
+            );
+        }
+
         _settings.Update(
             new ServerSettingsUpdate
             {
@@ -81,7 +117,7 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             }
         );
 
-        return Results.Ok(ToResponse(_settings.Get()));
+        return Results.Ok(ToResponse(_settings.Get(), _registrationReadiness));
     }
 
     /// <summary>Uploads the image for a slot (logo, favicon or banner), replacing any previous one.</summary>
@@ -112,7 +148,7 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
             new ServerAssetMeta { FileName = $"{parsed}.{validation.Extension}", ContentType = file.ContentType }
         );
 
-        return Results.Ok(ToResponse(_settings.Get()));
+        return Results.Ok(ToResponse(_settings.Get(), _registrationReadiness));
     }
 
     /// <summary>Removes the image for a slot.</summary>

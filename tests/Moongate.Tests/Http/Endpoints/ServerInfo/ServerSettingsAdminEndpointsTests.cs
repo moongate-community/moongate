@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Moongate.Http.Plugin.Data.Api.ServerInfo;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Types;
@@ -28,13 +30,115 @@ public sealed class ServerSettingsAdminEndpointsTests
 
         var response = await server.Client.PutAsJsonAsync(
             "/api/v1/admin/server-settings",
-            new UpdateServerSettingsRequest { RegistrationEnabled = true, Description = "Hi", Tagline = "Welcome" }
+            new UpdateServerSettingsRequest
+            {
+                RegistrationEnabled = true,
+                Description = "Hi",
+                Tagline = "Welcome",
+                Contacts = new("https://shard.example", null, null)
+            }
         );
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
         Assert.True(server.ServerSettings.Get().RegistrationEnabled);
         Assert.Equal("Hi", server.ServerSettings.Get().Description);
         Assert.Equal("Welcome", server.ServerSettings.Get().Tagline);
+    }
+
+    [Fact]
+    public async Task Get_ReturnsPersistedToggleAndRegistrationReadiness()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await server.AuthenticateAsync();
+        server.ServerSettings.Update(
+            new()
+            {
+                RegistrationEnabled = true,
+                Contacts = new() { Website = "https://shard.example" }
+            }
+        );
+
+        var response = await server.Client.GetAsync("/api/v1/admin/server-settings");
+        var settings = await response.Content.ReadFromJsonAsync<ServerSettingsResponse>();
+
+        Assert.True(settings!.RegistrationEnabled);
+        Assert.True(settings.RegistrationReadiness.Ready);
+        Assert.True(settings.RegistrationReadiness.WebsiteValid);
+        Assert.True(settings.RegistrationReadiness.EmailChannelSelected);
+        Assert.True(settings.RegistrationReadiness.EmailChannelAvailable);
+    }
+
+    [Theory]
+    [InlineData("ftp://shard.example", "email", true)]
+    [InlineData("https://shard.example", "log", true)]
+    [InlineData("https://shard.example", "email", false)]
+    public async Task Put_EnablingWithoutReadiness_RejectsAndPersistsNothing(
+        string website,
+        string accountVerificationChannel,
+        bool emailChannelReady
+    )
+    {
+        await using var server = await TestApiServer.StartAsync(
+            emailChannelReady: emailChannelReady,
+            accountVerificationChannel: accountVerificationChannel
+        );
+        await server.AuthenticateAsync();
+
+        var response = await server.Client.PutAsJsonAsync(
+            "/api/v1/admin/server-settings",
+            new UpdateServerSettingsRequest
+            {
+                Description = "Must not persist",
+                RegistrationEnabled = true,
+                Contacts = new(website, null, null)
+            }
+        );
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        Assert.Contains("registrationEnabled", problem!.Errors.Keys);
+        Assert.False(server.ServerSettings.Get().RegistrationEnabled);
+        Assert.Null(server.ServerSettings.Get().Description);
+        Assert.Null(server.ServerSettings.Get().Contacts.Website);
+    }
+
+    [Fact]
+    public async Task Put_DisablingAnUnhealthyEnabledState_Succeeds()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await server.AuthenticateAsync();
+        server.ServerSettings.Update(new() { RegistrationEnabled = true });
+
+        var response = await server.Client.PutAsJsonAsync(
+            "/api/v1/admin/server-settings",
+            new UpdateServerSettingsRequest { RegistrationEnabled = false }
+        );
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.False(server.ServerSettings.Get().RegistrationEnabled);
+    }
+
+    [Fact]
+    public async Task OpenApi_UpdateDocumentsValidationProblemResponse()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        var document = await server.Client.GetStringAsync("/swagger/v1/swagger.json");
+        using var json = JsonDocument.Parse(document);
+        var responses = json.RootElement
+            .GetProperty("paths")
+            .GetProperty("/api/v1/admin/server-settings")
+            .GetProperty("put")
+            .GetProperty("responses");
+        var schemaReference = responses
+            .GetProperty("400")
+            .GetProperty("content")
+            .GetProperty("application/problem+json")
+            .GetProperty("schema")
+            .GetProperty("$ref")
+            .GetString();
+
+        Assert.Equal("#/components/schemas/HttpValidationProblemDetails", schemaReference);
     }
 
     [Fact]

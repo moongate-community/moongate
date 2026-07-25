@@ -328,7 +328,7 @@ public class LoginFlowIntegrationTests
             }
         );
         var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
-        var accounts = new AccountService(persistence, characters, sessions, eventBus);
+        var accounts = new AccountService(persistence, characters, sessions, eventBus, TimeProvider.System);
         // Mirrors the runtime path: register the command declaratively (name/level/help) instead of
         // scanning an attribute. The resolver is a throwaway container — the registration below closes
         // over an already-built instance, so it never actually resolves through it.

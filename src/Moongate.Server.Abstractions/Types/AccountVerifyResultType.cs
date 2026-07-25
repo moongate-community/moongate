@@ -4,5 +4,6 @@ namespace Moongate.Server.Abstractions.Types;
 public enum AccountVerifyResultType
 {
     Verified,
-    InvalidToken
+    InvalidToken,
+    ExpiredToken
 }

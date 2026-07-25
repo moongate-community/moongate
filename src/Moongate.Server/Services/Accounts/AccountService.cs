@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
@@ -17,24 +18,30 @@ namespace Moongate.Server.Services.Accounts;
 
 public class AccountService : IAccountService
 {
+    private static readonly TimeSpan VerificationLifetime = TimeSpan.FromHours(24);
+
     private readonly ILogger _logger = Log.ForContext<AccountService>();
 
+    private readonly object _registrationTransitionLock = new();
     private readonly IEntityStore<AccountEntity, Serial> _accountStore;
     private readonly ICharacterService _characterService;
     private readonly ISessionManager _sessions;
     private readonly IEventBus _eventBus;
+    private readonly TimeProvider _timeProvider;
 
     public AccountService(
         IPersistenceService persistenceService,
         ICharacterService characterService,
         ISessionManager sessions,
-        IEventBus eventBus
+        IEventBus eventBus,
+        TimeProvider timeProvider
     )
     {
         _accountStore = persistenceService.GetStore<AccountEntity, Serial>();
         _characterService = characterService;
         _sessions = sessions;
         _eventBus = eventBus;
+        _timeProvider = timeProvider;
     }
 
     public AccountAuthResult Authenticate(string username, string password)
@@ -68,30 +75,36 @@ public class AccountService : IAccountService
             return AccountCreateResultType.PasswordEmpty;
         }
 
-        if (GetByUsername(username) is not null)
+        lock (_registrationTransitionLock)
         {
-            return AccountCreateResultType.UsernameTaken;
+            if (GetByUsername(username) is not null)
+            {
+                return AccountCreateResultType.UsernameTaken;
+            }
+
+            var account = new AccountEntity
+            {
+                Username = username,
+                Email = email,
+                PasswordHash = HashUtils.HashPassword(password),
+                IsActive = true,
+                AccountLevel = level
+            };
+
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _logger.Information("Account created: {Username} at level {Level}", username, level);
+
+            return AccountCreateResultType.Created;
         }
-
-        var account = new AccountEntity
-        {
-            Username = username,
-            Email = email,
-            PasswordHash = HashUtils.HashPassword(password),
-            IsActive = true,
-            AccountLevel = level
-        };
-
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account created: {Username} at level {Level}", username, level);
-
-        return AccountCreateResultType.Created;
     }
 
     public AccountRegisterResult RegisterPending(string username, string password, string email)
     {
-        if (string.IsNullOrWhiteSpace(username))
+        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
+        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
+
+        if (string.IsNullOrEmpty(normalizedUsername))
         {
             return new() { Result = AccountRegisterResultType.UsernameEmpty };
         }
@@ -101,39 +114,114 @@ public class AccountService : IAccountService
             return new() { Result = AccountRegisterResultType.PasswordEmpty };
         }
 
-        if (string.IsNullOrWhiteSpace(email))
+        if (string.IsNullOrEmpty(normalizedEmail))
         {
             return new() { Result = AccountRegisterResultType.EmailEmpty };
         }
 
-        if (!System.Net.Mail.MailAddress.TryCreate(email, out _))
+        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
+        {
+            return new() { Result = AccountRegisterResultType.UsernameInvalid };
+        }
+
+        if (!PublicRegistrationValidator.IsPasswordValid(password))
+        {
+            return new() { Result = AccountRegisterResultType.PasswordInvalid };
+        }
+
+        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
         {
             return new() { Result = AccountRegisterResultType.EmailInvalid };
         }
 
-        if (GetByUsername(username) is not null)
+        lock (_registrationTransitionLock)
         {
-            return new() { Result = AccountRegisterResultType.UsernameTaken };
+            if (GetByUsername(normalizedUsername) is not null)
+            {
+                return new() { Result = AccountRegisterResultType.UsernameTaken };
+            }
+
+            if (_accountStore.Query().Any(account => string.Equals(
+                    account.Email,
+                    normalizedEmail,
+                    StringComparison.OrdinalIgnoreCase
+                )))
+            {
+                return new() { Result = AccountRegisterResultType.EmailTaken };
+            }
+
+            var token = RandomNumberGenerator.GetHexString(64);
+
+            var account = new AccountEntity
+            {
+                Username = normalizedUsername,
+                Email = normalizedEmail,
+                PasswordHash = HashUtils.HashPassword(password),
+                IsActive = false,
+                ActivationToken = string.Empty,
+                ActivationTokenHash = HashActivationToken(token),
+                ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime),
+                IsPublicRegistrationPending = true,
+                AccountLevel = AccountLevelType.Player
+            };
+
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _logger.Information(
+                "Web registration pending for {Username}; awaiting email verification",
+                normalizedUsername
+            );
+            _eventBus.Publish(
+                new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token)
+            );
+
+            return new() { Result = AccountRegisterResultType.Created, Token = token };
+        }
+    }
+
+    public AccountResendResultType ResendVerification(string username, string email)
+    {
+        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
+        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
+
+        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
+        {
+            return AccountResendResultType.UsernameInvalid;
         }
 
-        var token = RandomNumberGenerator.GetHexString(64);
-
-        var account = new AccountEntity
+        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
         {
-            Username = username,
-            Email = email,
-            PasswordHash = HashUtils.HashPassword(password),
-            IsActive = false,
-            ActivationToken = token,
-            AccountLevel = AccountLevelType.Player
-        };
+            return AccountResendResultType.EmailInvalid;
+        }
 
-        _accountStore.UpsertAsync(account).WaitSync();
+        lock (_registrationTransitionLock)
+        {
+            var account = _accountStore.Query().FirstOrDefault(candidate =>
+                !candidate.IsActive
+                && candidate.AccountLevel == AccountLevelType.Player
+                && (candidate.IsPublicRegistrationPending || !string.IsNullOrEmpty(candidate.ActivationToken))
+                && candidate.Username == normalizedUsername
+                && string.Equals(candidate.Email, normalizedEmail, StringComparison.OrdinalIgnoreCase)
+            );
 
-        _logger.Information("Web registration pending for {Username}; awaiting email verification", username);
-        _eventBus.Publish(new AccountRegistrationRequestedEvent(account.Id, username, email, token));
+            if (account is null)
+            {
+                return AccountResendResultType.Ignored;
+            }
 
-        return new() { Result = AccountRegisterResultType.Created, Token = token };
+            var token = RandomNumberGenerator.GetHexString(64);
+            ClearActivationTokenState(account);
+            account.ActivationTokenHash = HashActivationToken(token);
+            account.ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime);
+            account.IsPublicRegistrationPending = true;
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _eventBus.Publish(
+                new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token)
+            );
+
+            return AccountResendResultType.Sent;
+        }
     }
 
     public AccountVerifyResultType VerifyEmail(string token)
@@ -143,22 +231,56 @@ public class AccountService : IAccountService
             return AccountVerifyResultType.InvalidToken;
         }
 
-        var account = _accountStore
-            .Query()
-            .FirstOrDefault(a => !string.IsNullOrEmpty(a.ActivationToken) && a.ActivationToken == token);
+        var tokenHash = HashActivationToken(token);
 
-        if (account is null)
+        lock (_registrationTransitionLock)
         {
-            return AccountVerifyResultType.InvalidToken;
+            var account = _accountStore.Query().FirstOrDefault(candidate =>
+                !candidate.IsActive
+                && candidate.AccountLevel == AccountLevelType.Player
+                && candidate.IsPublicRegistrationPending
+                && candidate.ActivationTokenHash == tokenHash
+            );
+
+            if (account is not null)
+            {
+                if (account.ActivationTokenExpiresAtUtc is null
+                    || account.ActivationTokenExpiresAtUtc <= _timeProvider.GetUtcNow())
+                {
+                    ClearActivationTokenState(account);
+                    _accountStore.UpsertAsync(account).WaitSync();
+
+                    return AccountVerifyResultType.ExpiredToken;
+                }
+
+                account.IsActive = true;
+                ClearActivationTokenState(account);
+                account.IsPublicRegistrationPending = false;
+                _accountStore.UpsertAsync(account).WaitSync();
+
+                _logger.Information("Account {Username} verified and activated", account.Username);
+
+                return AccountVerifyResultType.Verified;
+            }
+
+            account = _accountStore.Query().FirstOrDefault(candidate =>
+                !candidate.IsActive
+                && candidate.AccountLevel == AccountLevelType.Player
+                && !string.IsNullOrEmpty(candidate.ActivationToken)
+                && candidate.ActivationToken == token
+            );
+
+            if (account is null)
+            {
+                return AccountVerifyResultType.InvalidToken;
+            }
+
+            ClearActivationTokenState(account);
+            account.IsPublicRegistrationPending = true;
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            return AccountVerifyResultType.ExpiredToken;
         }
-
-        account.IsActive = true;
-        account.ActivationToken = string.Empty;
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account {Username} verified and activated", account.Username);
-
-        return AccountVerifyResultType.Verified;
     }
 
     public AccountDeleteResultType Delete(string username)
@@ -214,32 +336,44 @@ public class AccountService : IAccountService
 
     public bool SetActive(string username, bool isActive)
     {
-        if (GetByUsername(username) is not { } account)
+        lock (_registrationTransitionLock)
         {
-            return false;
+            if (GetByUsername(username) is not { } account)
+            {
+                return false;
+            }
+
+            account.IsActive = isActive;
+            ClearPublicRegistrationState(account);
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _logger.Information("Account {Username} is now {State}", username, isActive ? "active" : "blocked");
+
+            return true;
         }
-
-        account.IsActive = isActive;
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account {Username} is now {State}", username, isActive ? "active" : "blocked");
-
-        return true;
     }
 
     public bool SetLevel(string username, AccountLevelType level)
     {
-        if (GetByUsername(username) is not { } account)
+        lock (_registrationTransitionLock)
         {
-            return false;
+            if (GetByUsername(username) is not { } account)
+            {
+                return false;
+            }
+
+            account.AccountLevel = level;
+            if (level != AccountLevelType.Player)
+            {
+                ClearPublicRegistrationState(account);
+            }
+
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _logger.Information("Account {Username} set to level {Level}", username, level);
+
+            return true;
         }
-
-        account.AccountLevel = level;
-        _accountStore.UpsertAsync(account).WaitSync();
-
-        _logger.Information("Account {Username} set to level {Level}", username, level);
-
-        return true;
     }
 
     public bool SetPassword(string username, string password)
@@ -255,5 +389,21 @@ public class AccountService : IAccountService
         _logger.Information("Password changed for account {Username}", username);
 
         return true;
+    }
+
+    private static string HashActivationToken(string token)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+
+    private static void ClearActivationTokenState(AccountEntity account)
+    {
+        account.ActivationToken = string.Empty;
+        account.ActivationTokenHash = string.Empty;
+        account.ActivationTokenExpiresAtUtc = null;
+    }
+
+    private static void ClearPublicRegistrationState(AccountEntity account)
+    {
+        ClearActivationTokenState(account);
+        account.IsPublicRegistrationPending = false;
     }
 }

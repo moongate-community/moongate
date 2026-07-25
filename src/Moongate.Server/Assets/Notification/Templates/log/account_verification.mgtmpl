@@ -1,1 +1,1 @@
-Verification token for {{ username }} <{{ email }}>: {{ token }}
+Verification link for {{ username }} <{{ email }}>: {{ verification_url }}

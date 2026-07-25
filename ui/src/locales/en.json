@@ -24,7 +24,57 @@
     "remember": "Remember me on this device",
     "online": "{{count}} adventurers online right now",
     "artAlt": "The Moongate — a runic portal standing open",
-    "logoAlt": "Shard logo"
+    "logoAlt": "Shard logo",
+    "createAccount": "Create account"
+  },
+  "register": {
+    "title": "Create account",
+    "subtitle": "Create your player account and verify it by email.",
+    "username": "Account name",
+    "email": "Email",
+    "password": "Password",
+    "confirmation": "Confirm password",
+    "requirements": "Use 3–30 letters, numbers, dots, underscores or hyphens. Passwords must be 8–30 printable characters.",
+    "submit": "Create account",
+    "unavailableTitle": "Registration is unavailable",
+    "unavailableBody": "This shard is not accepting public registrations right now.",
+    "pending": {
+      "title": "Check your email",
+      "guidance": "Look for a verification email in your inbox. You can request another message below.",
+      "resendTitle": "Resend verification email",
+      "resendSubmit": "Resend verification email",
+      "confirmation": "Your request has been received. Check your inbox for a verification email.",
+      "errors": {
+        "invalidDetails": "Check the account name and email and try again.",
+        "rateLimited": "Too many resend attempts. Try again later.",
+        "emailUnavailable": "Verification email is temporarily unavailable."
+      }
+    },
+    "verify": {
+      "verifyingTitle": "Verifying your account",
+      "verifyingBody": "Please wait while we confirm your email address.",
+      "verifiedTitle": "Email verified",
+      "verifiedBody": "Your account is ready. You can now sign in.",
+      "expiredTitle": "Verification link expired",
+      "expiredBody": "This verification link has expired. Request a new email to continue.",
+      "invalidTitle": "Verification link invalid",
+      "invalidBody": "This verification link is invalid. Request a new email or sign in.",
+      "unavailableTitle": "Verification temporarily unavailable",
+      "unavailableBody": "We could not verify your email right now. Please try again.",
+      "resend": "Request another email",
+      "signIn": "Sign in",
+      "retry": "Try again"
+    },
+    "errors": {
+      "username": "Enter a valid account name.",
+      "email": "Enter a valid email address.",
+      "password": "Enter a valid password.",
+      "confirmation": "Passwords do not match.",
+      "conflict": "That username or email is unavailable.",
+      "disabled": "Registration is no longer available.",
+      "rateLimited": "Too many attempts. Try again later.",
+      "emailUnavailable": "Verification email is temporarily unavailable."
+    }
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}",
@@ -67,7 +117,8 @@
   },
   "common": {
     "signOut": "Sign out",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "backToLogin": "Back to sign in"
   },
   "error": {
     "generic": "Something went wrong. Please try again."
@@ -160,7 +211,23 @@
       "assetRemoved": "Image removed.",
       "notImage": "That file is not an image.",
       "tooLarge": "That image is too large.",
-      "tagline": "Tagline"
+      "tagline": "Tagline",
+      "readiness": {
+        "title": "Registration readiness",
+        "overall": "Overall",
+        "website": "Website",
+        "emailSelected": "Verification channel",
+        "emailAvailable": "Email channel",
+        "ready": "Ready",
+        "notReady": "Not ready",
+        "valid": "Valid",
+        "invalid": "Invalid",
+        "selected": "Selected",
+        "notSelected": "Not selected",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "guidance": "Set notifications.AccountVerificationChannel to email in moongate.yaml. Configure the email plugin through plugins/configs/smtp.yaml or environment variables, then restart the server."
+      }
     },
     "console": {
       "title": "Console",

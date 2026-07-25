@@ -1286,6 +1286,66 @@
         "responses": {
           "202": {
             "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1296,7 +1356,7 @@
           "registration"
         ],
         "summary": "Verifies an account's email with its token, activating the account.",
-        "description": "Answers 400 for an unknown or already-used token.",
+        "description": "Answers 410 for an expired token and 400 for an unknown or already-used token.",
         "operationId": "VerifyRegistration",
         "requestBody": {
           "content": {
@@ -1311,6 +1371,91 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "Gone",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/register/resend": {
+      "post": {
+        "tags": [
+          "registration"
+        ],
+        "summary": "Resends the verification message for a matching pending public registration.",
+        "description": "Answers 202 whether or not the supplied identity matches a pending account, so callers cannot\ndiscover registered usernames or email addresses.",
+        "operationId": "ResendRegistrationVerification",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -1412,6 +1557,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ServerSettingsResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
                 }
               }
             }
@@ -2114,6 +2269,45 @@
         "additionalProperties": false,
         "description": "One page of results, and what a caller needs to walk the rest."
       },
+      "HttpValidationProblemDetails": {
+        "required": [
+          "errors"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": {}
+      },
       "ItemImageExportStatus": {
         "required": [
           "done",
@@ -2743,6 +2937,33 @@
         "additionalProperties": false,
         "description": "One HTTP route a plugin declares. `policy` is null when the route is open."
       },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": {}
+      },
       "RegisterRequest": {
         "required": [
           "email",
@@ -2763,6 +2984,48 @@
         },
         "additionalProperties": false,
         "description": "A web self-registration request."
+      },
+      "RegistrationReadinessResponse": {
+        "required": [
+          "emailChannelAvailable",
+          "emailChannelSelected",
+          "ready",
+          "websiteValid"
+        ],
+        "type": "object",
+        "properties": {
+          "ready": {
+            "type": "boolean"
+          },
+          "websiteValid": {
+            "type": "boolean"
+          },
+          "emailChannelSelected": {
+            "type": "boolean"
+          },
+          "emailChannelAvailable": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The local prerequisites behind public account registration availability."
+      },
+      "ResendVerificationRequest": {
+        "required": [
+          "email",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Identifies a pending public registration for a verification-message resend."
       },
       "ServerContactsResponse": {
         "type": "object",
@@ -2817,13 +3080,14 @@
           }
         },
         "additionalProperties": false,
-        "description": "The public server profile a website or launcher reads: identity, contacts, assets, and whether registration is open."
+        "description": "The public server profile a website or launcher reads: identity, contacts, assets, and effective registration availability."
       },
       "ServerSettingsResponse": {
         "required": [
           "assets",
           "contacts",
-          "registrationEnabled"
+          "registrationEnabled",
+          "registrationReadiness"
         ],
         "type": "object",
         "properties": {
@@ -2841,6 +3105,9 @@
           "registrationEnabled": {
             "type": "boolean"
           },
+          "registrationReadiness": {
+            "$ref": "#/components/schemas/RegistrationReadinessResponse"
+          },
           "assets": {
             "type": "object",
             "additionalProperties": {
@@ -2849,7 +3116,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The full settings view returned to staff (identical fields to the public info minus the shard name)."
+        "description": "The full settings view returned to staff, including persisted registration state and readiness."
       },
       "ServerStatsResponse": {
         "required": [

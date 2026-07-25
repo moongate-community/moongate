@@ -25,9 +25,23 @@ public sealed class NotificationTemplatesLoaderTests
             Assert.True(File.Exists(Path.Combine(templatesDirectory, "email", "account_verification.mgtmpl")));
 
             Assert.Equal(2, templates.Count);
-            Assert.NotNull(
-                templates.Render("log", "account_verification", new { Username = "tom", Email = "t@x", Token = "abc" })
-            );
+            var model = new
+            {
+                Username = "tom",
+                Email = "t@x",
+                Token = "abc+123",
+                Website = "https://shard.example/moongate/",
+                VerificationUrl = "https://shard.example/moongate/verify?token=abc%2B123",
+                ShardName = "Britannia"
+            };
+
+            var log = templates.Render("log", "account_verification", model);
+            var email = templates.Render("email", "account_verification", model);
+
+            Assert.NotNull(log);
+            Assert.NotNull(email);
+            Assert.Contains(model.VerificationUrl, log.Body, StringComparison.Ordinal);
+            Assert.Contains(model.VerificationUrl, email.Body, StringComparison.Ordinal);
         }
         finally
         {
@@ -54,7 +68,8 @@ public sealed class NotificationTemplatesLoaderTests
             // The directory is the channel id and the file name is the template id — no registry, no
             // configuration: a plugin channel ships its own directory and is picked up.
             var content = templates.Render("discord", "shard_online", new { ShardName = "Britannia" });
-            Assert.Equal("Britannia is up", content!.Body.Trim());
+            Assert.NotNull(content);
+            Assert.Equal("Britannia is up", content.Body.Trim());
         }
         finally
         {

@@ -18,6 +18,8 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
     private readonly Dictionary<Serial, TEntity> _items = new();
     private uint _nextId = typeof(TEntity) == typeof(ItemEntity) ? Serial.MinItem : 1;
 
+    public int UpsertCount { get; private set; }
+
     public int Count()
         => _items.Count;
 
@@ -69,6 +71,8 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
 
     public ValueTask UpsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
+        UpsertCount++;
+
         if (entity.Id == Serial.Zero)
         {
             entity.Id = (Serial)_nextId++;
