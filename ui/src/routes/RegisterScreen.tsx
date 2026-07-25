@@ -93,7 +93,7 @@ export function RegisterScreen() {
     }
   }
 
-  if (serverInfo.data?.registrationEnabled !== true) {
+  if (serverInfo.isError || serverInfo.isRefetchError || serverInfo.data?.registrationEnabled !== true) {
     return (
       <PublicAuthLayout>
         <h1 className="font-display text-[25px] font-bold tracking-wider text-gold">

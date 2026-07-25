@@ -82,14 +82,13 @@ function PendingProbe() {
   return <pre>{JSON.stringify(location.state)}</pre>
 }
 
-function renderRegister() {
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: { retry: false },
-      mutations: { retry: false },
-    },
+function createTestClient() {
+  return new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   })
+}
 
+function renderRegister(client = createTestClient()) {
   return render(
     <MemoryRouter initialEntries={['/register']}>
       <QueryClientProvider client={client}>
@@ -145,6 +144,27 @@ describe('RegisterScreen', () => {
     expect(screen.getByRole('link', { name: /back to sign in/i })).toHaveAttribute('href', '/login')
     expect(screen.queryByRole('form')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /create account/i })).not.toBeInTheDocument()
+  })
+
+  it('hides a cached enabled form when the current server-info refetch fails', async () => {
+    const client = createTestClient()
+    client.setQueryData(['server-info'], {
+      shardName: 'Moongate',
+      tagline: null,
+      contacts: { website: null, email: null, discord: null },
+      registrationEnabled: true,
+      assets: {},
+    })
+    const fetchSpy = servePublicApi({ serverInfoAvailable: false })
+
+    renderRegister(client)
+
+    await waitFor(() =>
+      expect(fetchSpy.mock.calls.some(([input]) => String(input).endsWith('/api/v1/server-info'))).toBe(true),
+    )
+    expect(await screen.findByRole('heading', { name: /registration is unavailable/i })).toBeInTheDocument()
+    expect(screen.queryByRole('form', { name: /create account/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /back to sign in/i })).toHaveAttribute('href', '/login')
   })
 
   it('shows visible requirements and the exact registration autocomplete values', async () => {
