@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Types;
@@ -66,6 +68,11 @@ public sealed class AccountRegistrationTests
         Assert.False(account!.IsActive);
         Assert.Empty(account.ActivationToken);
         Assert.NotEqual(result.Token, account.ActivationTokenHash);
+        Assert.Equal(
+            Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(result.Token))),
+            account.ActivationTokenHash
+        );
+        Assert.Matches("^[0-9A-F]{64}$", account.ActivationTokenHash);
         Assert.Equal(Now.AddHours(24), account.ActivationTokenExpiresAtUtc);
     }
 
