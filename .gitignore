@@ -604,3 +604,9 @@ docs/obj/
 docs/api/
 # Added by code-review-graph
 .code-review-graph/
+
+# Local Claude workspace and worktrees (never commit)
+.claude/
+
+# Local Gemini backup
+.gemini/settings.json.bak
