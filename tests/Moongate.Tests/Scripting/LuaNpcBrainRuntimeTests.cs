@@ -1006,8 +1006,8 @@ public class LuaNpcBrainRuntimeTests
         );
 
         Assert.Empty(nonPlayerSpeech.Decision.Intents);
-        Assert.Equal("Non ti avevo mai visto prima.", Assert.Single(firstPlayerSpeech.Decision.Intents).Text);
-        Assert.Equal("Bentornato.", Assert.Single(returningPlayerSpeech.Decision.Intents).Text);
+        Assert.Equal("I haven't seen you before.", Assert.Single(firstPlayerSpeech.Decision.Intents).Text);
+        Assert.Equal("Welcome back.", Assert.Single(returningPlayerSpeech.Decision.Intents).Text);
         Assert.Equal(BrainIntentType.Idle, Assert.Single(fixture.Think(1).Decision.Intents).Type);
 
         Assert.True(fixture.Runtime.TryBind(new(2), "orion", out var orion, out var orionError), orionError);

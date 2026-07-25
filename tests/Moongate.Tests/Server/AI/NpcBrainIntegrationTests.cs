@@ -26,8 +26,8 @@ namespace Moongate.Tests.Server.AI;
 
 public sealed class NpcBrainIntegrationTests
 {
-    private const string FirstMeetingReply = "Non ti avevo mai visto prima.";
-    private const string ReturningPlayerReply = "Bentornato.";
+    private const string FirstMeetingReply = "I haven't seen you before.";
+    private const string ReturningPlayerReply = "Welcome back.";
 
     [Fact]
     public async Task PlayerSpeech_CompleteGuardLifecycle_RepliesWithRetainedMemory()

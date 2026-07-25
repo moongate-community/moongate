@@ -22,13 +22,13 @@ function guard.on_speech_heard(ctx, state, event)
             conversations = 1,
         }
 
-        return brain.say("Non ti avevo mai visto prima.")
+        return brain.say("I haven't seen you before.")
     end
 
     known.last_seen_at = ctx.now_ms
     known.conversations = known.conversations + 1
 
-    return brain.say("Bentornato.")
+    return brain.say("Welcome back.")
 end
 
 function guard.think()
