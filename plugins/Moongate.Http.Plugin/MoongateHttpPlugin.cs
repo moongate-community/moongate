@@ -66,6 +66,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterConfigSection<MoongateHttpConfig>("http");
 
         container.Register<IJwtTokenService, JwtTokenService>(Reuse.Singleton);
+        container.Register<IRegistrationReadinessService, RegistrationReadinessService>(Reuse.Singleton);
 
         // The catalog reads the UO client files through Moongate.Ultima's process-wide statics, which
         // FilesLoaderService initialises at startup. It carries no state of its own, so a singleton costs

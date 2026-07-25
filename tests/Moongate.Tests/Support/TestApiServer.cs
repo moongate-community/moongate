@@ -17,6 +17,7 @@ using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
 using Moongate.Http.Plugin.Interfaces.Assets;
 using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
 using Moongate.Http.Plugin.Services.Hosting;
@@ -25,6 +26,7 @@ using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Plugins;
@@ -114,7 +116,9 @@ public sealed class TestApiServer : IAsyncDisposable
         TimeSpan? deleteTimeout = null,
         Action<IContainer>? configure = null,
         TimeProvider? clock = null,
-        string? uiDistPath = null
+        string? uiDistPath = null,
+        bool emailChannelReady = true,
+        string accountVerificationChannel = "email"
     )
     {
         var container = new Container();
@@ -180,8 +184,18 @@ public sealed class TestApiServer : IAsyncDisposable
         );
         container.RegisterInstance<IServerSettingsService>(serverSettings);
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
-        container.RegisterApiEndpointInstance(new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore));
-        container.RegisterApiEndpointInstance(new ServerSettingsAdminEndpoints(serverSettings, assetStore, config));
+        INotificationChannel[] channels = emailChannelReady ? [new RecordingNotificationChannel("email")] : [];
+        var registrationReadiness = new RegistrationReadinessService(
+            new NotificationConfig { AccountVerificationChannel = accountVerificationChannel },
+            channels
+        );
+        container.RegisterInstance<IRegistrationReadinessService>(registrationReadiness);
+        container.RegisterApiEndpointInstance(
+            new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore, registrationReadiness)
+        );
+        container.RegisterApiEndpointInstance(
+            new ServerSettingsAdminEndpoints(serverSettings, assetStore, config, registrationReadiness)
+        );
 
         // A low limit (2/window) so a test can prove the throttle without flooding: the 3rd call is denied.
         var rateLimiter = new RegistrationRateLimiter(

@@ -26,7 +26,10 @@ public sealed class RegistrationEndpointsTests
     public async Task Register_WhenEnabled_CreatesInactive_202()
     {
         await using var server = await TestApiServer.StartAsync();
-        server.ServerSettings.Update(new ServerSettingsUpdate { RegistrationEnabled = true });
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate
+                { RegistrationEnabled = true, Contacts = new() { Website = "https://shard.example" } }
+        );
 
         var response = await server.Client.PostAsJsonAsync(
             "/api/v1/register",
@@ -41,7 +44,10 @@ public sealed class RegistrationEndpointsTests
     public async Task Verify_ActivatesAccount()
     {
         await using var server = await TestApiServer.StartAsync();
-        server.ServerSettings.Update(new ServerSettingsUpdate { RegistrationEnabled = true });
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate
+                { RegistrationEnabled = true, Contacts = new() { Website = "https://shard.example" } }
+        );
         var token = server.Accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
 
         var response = await server.Client.PostAsJsonAsync("/api/v1/register/verify", new VerifyEmailRequest(token));
@@ -65,7 +71,10 @@ public sealed class RegistrationEndpointsTests
     {
         // The fixture seeds a limiter of 2/window; the 3rd call from the same loopback IP is throttled.
         await using var server = await TestApiServer.StartAsync();
-        server.ServerSettings.Update(new ServerSettingsUpdate { RegistrationEnabled = true });
+        server.ServerSettings.Update(
+            new ServerSettingsUpdate
+                { RegistrationEnabled = true, Contacts = new() { Website = "https://shard.example" } }
+        );
 
         await server.Client.PostAsJsonAsync("/api/v1/register", new RegisterRequest("a", "secret", "a@b.test"));
         await server.Client.PostAsJsonAsync("/api/v1/register", new RegisterRequest("b", "secret", "b@b.test"));
