@@ -25,9 +25,21 @@ public sealed class NotificationTemplatesLoaderTests
             Assert.True(File.Exists(Path.Combine(templatesDirectory, "email", "account_verification.mgtmpl")));
 
             Assert.Equal(2, templates.Count);
-            Assert.NotNull(
-                templates.Render("log", "account_verification", new { Username = "tom", Email = "t@x", Token = "abc" })
-            );
+            var model = new
+            {
+                Username = "tom",
+                Email = "t@x",
+                Token = "abc+123",
+                Website = "https://shard.example/moongate/",
+                VerificationUrl = "https://shard.example/moongate/verify?token=abc%2B123",
+                ShardName = "Britannia"
+            };
+
+            var log = templates.Render("log", "account_verification", model);
+            var email = templates.Render("email", "account_verification", model);
+
+            Assert.Contains(model.VerificationUrl, log!.Body, StringComparison.Ordinal);
+            Assert.Contains(model.VerificationUrl, email!.Body, StringComparison.Ordinal);
         }
         finally
         {

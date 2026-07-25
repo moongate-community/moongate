@@ -63,8 +63,8 @@ public sealed class AccountRegistrationSubscriber : IEventSubscriberRegistration
         CancellationToken cancellationToken
     )
     {
-        // The verify URL is composed by the template, not here: its shape belongs to the website, and
-        // changing it should cost an edit rather than a release.
+        var website = _settings.Get().Contacts.Website ?? string.Empty;
+
         _notifications.Notify(
             TemplateId,
             new(_channelId, message.Email),
@@ -73,11 +73,30 @@ public sealed class AccountRegistrationSubscriber : IEventSubscriberRegistration
                 message.Username,
                 message.Email,
                 message.Token,
-                Website = _settings.Get().Contacts.Website ?? string.Empty,
+                Website = website,
+                VerificationUrl = BuildVerificationUrl(website, message.Token),
                 _config.ShardName
             }
         );
 
         return Task.CompletedTask;
+    }
+
+    internal static string BuildVerificationUrl(string website, string token)
+    {
+        if (!Uri.TryCreate(website, UriKind.Absolute, out var websiteUri)
+            || (websiteUri.Scheme != Uri.UriSchemeHttp && websiteUri.Scheme != Uri.UriSchemeHttps))
+        {
+            throw new ArgumentException("Website must be an absolute HTTP(S) URI.", nameof(website));
+        }
+
+        var uriBuilder = new UriBuilder(websiteUri)
+        {
+            Path = string.Concat(websiteUri.AbsolutePath.TrimEnd('/'), "/verify"),
+            Query = $"token={Uri.EscapeDataString(token)}",
+            Fragment = string.Empty
+        };
+
+        return uriBuilder.Uri.AbsoluteUri;
     }
 }
