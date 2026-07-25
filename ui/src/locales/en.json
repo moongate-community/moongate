@@ -27,6 +27,28 @@
     "logoAlt": "Shard logo",
     "createAccount": "Create account"
   },
+  "register": {
+    "title": "Create account",
+    "subtitle": "Create your player account and verify it by email.",
+    "username": "Account name",
+    "email": "Email",
+    "password": "Password",
+    "confirmation": "Confirm password",
+    "requirements": "Use 3–30 letters, numbers, dots, underscores or hyphens. Passwords must be 8–30 printable characters.",
+    "submit": "Create account",
+    "unavailableTitle": "Registration is unavailable",
+    "unavailableBody": "This shard is not accepting public registrations right now.",
+    "errors": {
+      "username": "Enter a valid account name.",
+      "email": "Enter a valid email address.",
+      "password": "Enter a valid password.",
+      "confirmation": "Passwords do not match.",
+      "conflict": "That username or email is unavailable.",
+      "disabled": "Registration is no longer available.",
+      "rateLimited": "Too many attempts. Try again later.",
+      "emailUnavailable": "Verification email is temporarily unavailable."
+    }
+  },
   "dashboard": {
     "welcome": "Welcome back, {{name}}",
     "characters": "Your characters",
@@ -68,7 +90,8 @@
   },
   "common": {
     "signOut": "Sign out",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "backToLogin": "Back to sign in"
   },
   "error": {
     "generic": "Something went wrong. Please try again."
