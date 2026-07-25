@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Moongate.Core.Types;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.Accounts;
@@ -59,8 +60,10 @@ public sealed class AccountRegistrationTests
     [Fact]
     public void ResendVerification_RotatesTokenAndPublishesOneEvent()
     {
-        var (accounts, bus, _, _, _) = Create();
+        var (accounts, bus, persistence, _, _) = Create();
         var first = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
         AccountRegistrationRequestedEvent? resent = null;
         var eventCount = 0;
         bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
@@ -76,6 +79,7 @@ public sealed class AccountRegistrationTests
         Assert.Equal(AccountResendResultType.Sent, result);
         Assert.NotNull(resent);
         Assert.Equal(1, eventCount);
+        Assert.Equal(upsertsBefore + 1, accountStore.UpsertCount);
         Assert.NotEqual(first, resent!.Token);
         Assert.Equal(Hash(resent.Token), accounts.GetByUsername("newbie")!.ActivationTokenHash);
     }
@@ -83,7 +87,9 @@ public sealed class AccountRegistrationTests
     [Fact]
     public void ResendVerification_MissingAccount_IsIgnoredWithoutPublishingAnEvent()
     {
-        var (accounts, bus, _, _, _) = Create();
+        var (accounts, bus, persistence, _, _) = Create();
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
         AccountRegistrationRequestedEvent? resent = null;
         bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
             {
@@ -96,14 +102,17 @@ public sealed class AccountRegistrationTests
 
         Assert.Equal(AccountResendResultType.Ignored, result);
         Assert.Null(resent);
+        Assert.Equal(upsertsBefore, accountStore.UpsertCount);
         Assert.Null(accounts.GetByUsername("newbie"));
     }
 
     [Fact]
     public void ResendVerification_ActiveAccount_IsIgnoredWithoutPublishingAnEvent()
     {
-        var (accounts, bus, _, _, _) = Create();
+        var (accounts, bus, persistence, _, _) = Create();
         accounts.Create("newbie", "secret99", "new@bie.test", AccountLevelType.Player);
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
         AccountRegistrationRequestedEvent? resent = null;
         bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
             {
@@ -116,14 +125,17 @@ public sealed class AccountRegistrationTests
 
         Assert.Equal(AccountResendResultType.Ignored, result);
         Assert.Null(resent);
+        Assert.Equal(upsertsBefore, accountStore.UpsertCount);
         Assert.True(accounts.GetByUsername("newbie")!.IsActive);
     }
 
     [Fact]
     public void ResendVerification_MismatchedEmail_IsIgnoredWithoutChangingTokenOrPublishingAnEvent()
     {
-        var (accounts, bus, _, _, _) = Create();
+        var (accounts, bus, persistence, _, _) = Create();
         var first = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        var accountStore = persistence.Store<AccountEntity>();
+        var upsertsBefore = accountStore.UpsertCount;
         AccountRegistrationRequestedEvent? resent = null;
         bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
             {
@@ -136,6 +148,7 @@ public sealed class AccountRegistrationTests
 
         Assert.Equal(AccountResendResultType.Ignored, result);
         Assert.Null(resent);
+        Assert.Equal(upsertsBefore, accountStore.UpsertCount);
         Assert.Equal(Hash(first), accounts.GetByUsername("newbie")!.ActivationTokenHash);
     }
 
