@@ -8,28 +8,40 @@ import { Switch } from '../components/ui/switch'
 import { Button } from '../components/ui/button'
 import { LiveMap, type WorldCoord } from '../components/map/LiveMap'
 import { clampWorld, useMaps, type MapFacetInfo, type MapStyle } from '../lib/maps'
+import { useSession } from '../lib/auth'
+import { isAdmin } from '../lib/roles'
+import { playersForFacet, useOnlinePlayers } from '../lib/online-players'
 
 // The default facet when the shard serves it; otherwise the first one it does serve (see below).
 const PREFERRED_FACET = 'Felucca'
 
 export function MapScreen() {
   const { t } = useTranslation()
+  const { level } = useSession()
+  const staff = isAdmin(level)
   const maps = useMaps()
 
   const facets = maps.data ?? []
   const [facetName, setFacetName] = useState<string | null>(null)
   const [style, setStyle] = useState<MapStyle>('flat')
+  const [playersVisible, setPlayersVisible] = useState(true)
   const [hover, setHover] = useState<WorldCoord | null>(null)
   const [centerTarget, setCenterTarget] = useState<WorldCoord | null>(null)
   const [jumpX, setJumpX] = useState('')
   const [jumpY, setJumpY] = useState('')
   const [jumpError, setJumpError] = useState(false)
+  const onlinePlayers = useOnlinePlayers(staff && playersVisible)
 
   // The selected facet: the user's pick, else Felucca, else the first the shard serves.
   const facet: MapFacetInfo | undefined = useMemo(() => {
     if (facets.length === 0) return undefined
     return facets.find((f) => f.name === facetName) ?? facets.find((f) => f.name === PREFERRED_FACET) ?? facets[0]
   }, [facets, facetName])
+
+  const visiblePlayers = useMemo(
+    () => (facet !== undefined && playersVisible ? playersForFacet(onlinePlayers.data ?? [], facet) : []),
+    [facet, onlinePlayers.data, playersVisible],
+  )
 
   if (maps.isPending) {
     return <p className="text-sm text-muted">{t('common.loading')}</p>
@@ -110,6 +122,28 @@ export function MapScreen() {
           </Label>
         </div>
 
+        {staff && (
+          <div className="flex items-center gap-2">
+            <Switch id="map-online-players" checked={playersVisible} onCheckedChange={setPlayersVisible} />
+            <Label htmlFor="map-online-players" className="text-ink">
+              {t('map.players.toggle')}
+            </Label>
+            <span aria-live="polite" className="font-mono text-xs text-muted">
+              {onlinePlayers.isPending
+                ? '…'
+                : t('map.players.count', {
+                    visible: visiblePlayers.length,
+                    total: onlinePlayers.data?.length ?? 0,
+                  })}
+            </span>
+            {playersVisible && onlinePlayers.isError && (
+              <span role="status" className="text-xs text-danger-text">
+                {t('map.players.unavailable')}
+              </span>
+            )}
+          </div>
+        )}
+
         <form onSubmit={submitJump} className="flex items-center gap-2">
           <Label htmlFor="map-x" className="text-muted">
             {t('map.x')}
@@ -148,7 +182,7 @@ export function MapScreen() {
           style={style}
           centerTarget={centerTarget}
           onHover={setHover}
-          players={[]}
+          players={staff && playersVisible ? visiblePlayers : []}
         />
 
         {/* Coordinate readout as a corner overlay, like a real map viewer; click to copy. */}
