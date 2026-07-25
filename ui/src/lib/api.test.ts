@@ -35,6 +35,33 @@ describe('apiFetch', () => {
     await expect(apiFetch('/api/v1/nope')).rejects.toBeInstanceOf(ApiError)
   })
 
+  it.each(['application/json; charset=utf-8', 'application/problem+json; charset=utf-8'])(
+    'attaches %s problem details to an API error',
+    async (contentType) => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        new Response(JSON.stringify({ errors: { username: ['invalid'] } }), {
+          status: 400,
+          headers: { 'content-type': contentType },
+        }),
+      )
+
+      await expect(apiFetch('/api/v1/register')).rejects.toMatchObject({
+        status: 400,
+        problem: { errors: { username: ['invalid'] } },
+      })
+    },
+  )
+
+  it.each([
+    ['an empty body', new Response(null, { status: 400, headers: { 'content-type': 'application/json' } })],
+    ['a non-JSON body', new Response('invalid', { status: 400, headers: { 'content-type': 'text/plain' } })],
+    ['a malformed JSON body', new Response('{', { status: 400, headers: { 'content-type': 'application/json' } })],
+  ])('keeps problem undefined for %s', async (_, response) => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(response)
+
+    await expect(apiFetch('/api/v1/register')).rejects.toMatchObject({ status: 400, problem: undefined })
+  })
+
   it('runs the unauthorized handler on 401 and still throws', async () => {
     respond(401)
     const onUnauthorized = vi.fn()
@@ -99,5 +126,19 @@ describe('apiFetch', () => {
       ApiError,
     )
     expect(onUnauthorized).toHaveBeenCalledOnce()
+  })
+
+  it('apiStream attaches JSON problem details to an API error', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      new Response(JSON.stringify({ title: 'Rate limited' }), {
+        status: 429,
+        headers: { 'content-type': 'application/problem+json' },
+      }),
+    )
+
+    await expect(apiStream('/api/v1/admin/console/stream', new AbortController().signal)).rejects.toMatchObject({
+      status: 429,
+      problem: { title: 'Rate limited' },
+    })
   })
 })

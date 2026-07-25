@@ -1,10 +1,17 @@
 // Transport only: no React, no cache, no component state. Keeping this layer ignorant of React is what
 // makes the server-state layer above it replaceable without touching a line here.
 
+export type ApiProblem = {
+  title?: string
+  detail?: string
+  errors?: Record<string, string[]>
+}
+
 export class ApiError extends Error {
   constructor(
     readonly status: number,
     message: string,
+    readonly problem?: ApiProblem,
   ) {
     super(message)
     this.name = 'ApiError'
@@ -13,6 +20,23 @@ export class ApiError extends Error {
 
 let authToken: string | null = null
 let onUnauthorized: () => void = () => {}
+
+function acceptsJsonProblem(contentType: string | null): boolean {
+  const mediaType = contentType?.split(';', 1)[0]?.trim().toLowerCase()
+  return mediaType === 'application/json' || mediaType === 'application/problem+json'
+}
+
+async function readProblem(response: Response): Promise<ApiProblem | undefined> {
+  if (!acceptsJsonProblem(response.headers.get('content-type'))) {
+    return undefined
+  }
+
+  try {
+    return (await response.json()) as ApiProblem
+  } catch {
+    return undefined
+  }
+}
 
 export function setAuthToken(token: string | null): void {
   authToken = token
@@ -44,17 +68,19 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 
   const response = await fetch(path, { ...init, headers })
 
-  if (response.status === 401) {
-    onUnauthorized()
-    throw new ApiError(401, 'unauthorized')
-  }
-
   if (!response.ok) {
-    throw new ApiError(response.status, `${init.method ?? 'GET'} ${path} failed with ${response.status}`)
+    const problem = await readProblem(response)
+
+    if (response.status === 401) {
+      onUnauthorized()
+      throw new ApiError(401, 'unauthorized', problem)
+    }
+
+    throw new ApiError(response.status, `${init.method ?? 'GET'} ${path} failed with ${response.status}`, problem)
   }
 
   // 204 No Content and 202 Accepted (the console POST) have no JSON body to parse.
-  if (response.status === 204 || response.status === 202) {
+  if (response.status === 204 || response.status === 202 || response.body === null) {
     return undefined as T
   }
 
@@ -74,12 +100,18 @@ export async function apiStream(path: string, signal: AbortSignal): Promise<Resp
 
   const response = await fetch(path, { headers, signal })
 
-  if (response.status === 401) {
-    onUnauthorized()
-    throw new ApiError(401, 'unauthorized')
+  if (!response.ok) {
+    const problem = await readProblem(response)
+
+    if (response.status === 401) {
+      onUnauthorized()
+      throw new ApiError(401, 'unauthorized', problem)
+    }
+
+    throw new ApiError(response.status, `GET ${path} stream failed with ${response.status}`, problem)
   }
 
-  if (!response.ok || response.body === null) {
+  if (response.body === null) {
     throw new ApiError(response.status, `GET ${path} stream failed with ${response.status}`)
   }
 
