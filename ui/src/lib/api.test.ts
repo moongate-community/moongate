@@ -101,6 +101,15 @@ describe('apiFetch', () => {
     await expect(apiFetch<void>('/api/v1/admin/console', { method: 'POST', body: '{}' })).resolves.toBeUndefined()
   })
 
+  it('treats a successful zero-byte response stream as an empty body', async () => {
+    // Kestrel can return 200 with Content-Length: 0, which Fetch exposes as a non-null empty stream.
+    const response = new Response('', { status: 200 })
+    expect(response.body).not.toBeNull()
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(response)
+
+    await expect(apiFetch<void>('/api/v1/register/verify', { method: 'POST', body: '{}' })).resolves.toBeUndefined()
+  })
+
   it('apiStream sends the bearer and event-stream accept, returning the response', async () => {
     const streamResponse = new Response(new ReadableStream(), {
       status: 200,

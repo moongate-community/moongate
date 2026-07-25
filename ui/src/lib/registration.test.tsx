@@ -72,6 +72,18 @@ describe('registration data module', () => {
     expect(validateResend({ username: '  newbie  ', email: '  newbie@example.test  ' })).toEqual({})
   })
 
+  it('matches backend email validation for dot atoms and quoted local parts', () => {
+    expect(
+      validateRegistration({
+        username: 'newbie',
+        email: 'a..b@example.com',
+        password: 'password',
+        confirmation: 'password',
+      }),
+    ).toEqual({ email: 'invalid' })
+    expect(validateResend({ username: 'newbie', email: '"quoted.local"@example.com' })).toEqual({})
+  })
+
   it('useRegisterAccount POSTs the generated request body and resolves void', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 202 }))
     const { result } = renderHook(() => useRegisterAccount(), { wrapper: wrapper() })
@@ -108,7 +120,9 @@ describe('registration data module', () => {
   })
 
   it('useVerifyRegistration POSTs the generated request body and resolves void', async () => {
-    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 200 }))
+    const response = new Response('', { status: 200 })
+    expect(response.body).not.toBeNull()
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(response)
     const { result } = renderHook(() => useVerifyRegistration(), { wrapper: wrapper() })
 
     await expect(result.current.mutateAsync({ token: 'verification-token' })).resolves.toBeUndefined()

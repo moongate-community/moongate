@@ -13,11 +13,23 @@ export type RegistrationValidationErrors = Partial<Record<RegistrationField, Reg
 type RegistrationInput = RegisterAccount & { confirmation: string }
 
 const USERNAME_PATTERN = /^[A-Za-z0-9._-]{3,30}$/
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+$/
+const UNQUOTED_EMAIL_LOCAL_PART_PATTERN = /^[^\s@.]+(?:\.[^\s@.]+)*$/
+const QUOTED_EMAIL_LOCAL_PART_PATTERN = /^"(?:[^"\\\r\n]|\\.)*"$/
+const EMAIL_DOMAIN_PATTERN = /^[^\s@]+$/
 const PRINTABLE_ASCII_PATTERN = /^[ -~]{8,30}$/
 
 function isEmailValid(email: string): boolean {
-  return EMAIL_PATTERN.test(email)
+  const separator = email.lastIndexOf('@')
+  if (separator <= 0 || separator === email.length - 1) {
+    return false
+  }
+
+  const localPart = email.slice(0, separator)
+  const domain = email.slice(separator + 1)
+  return (
+    EMAIL_DOMAIN_PATTERN.test(domain) &&
+    (UNQUOTED_EMAIL_LOCAL_PART_PATTERN.test(localPart) || QUOTED_EMAIL_LOCAL_PART_PATTERN.test(localPart))
+  )
 }
 
 export function validateRegistration(input: RegistrationInput): RegistrationValidationErrors {
