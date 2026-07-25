@@ -4,14 +4,18 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Scripting.AI;
+using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.AI;
 using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
+using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Directories;
 using SquidStd.Scripting.Lua.Data.Config;
@@ -29,6 +33,7 @@ public sealed class NpcBrainIntegrationTests
     public async Task PlayerSpeech_CompleteGuardLifecycle_RepliesWithRetainedMemory()
     {
         using var fixture = new IntegrationFixture();
+        var hookOffset = 0;
 
         // 1. Seed one played character and one guard using the real built-in brain.
         await fixture.SeedAsync();
@@ -47,7 +52,9 @@ public sealed class NpcBrainIntegrationTests
         Assert.Equal("guard", sleepingDescriptor!.BrainId);
         Assert.Equal(0, fixture.Metrics.Current.HookInvocations);
         Assert.Equal(0, fixture.Metrics.Current.IntentsAccepted);
+        Assert.Empty(fixture.Runtime.Invocations);
         Assert.Empty(fixture.Chat.Messages);
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 4. A player activates exactly the same-map 3×3 sector coverage.
         fixture.Activity.TrackPlayer(fixture.Player);
@@ -66,37 +73,52 @@ public sealed class NpcBrainIntegrationTests
         Assert.False(fixture.Activity.IsActive(1, 2, 2));
 
         // 5. The first wake invokes activate, the seeded range event, and think; think returns idle.
-        var hooksBeforeActivation = fixture.Metrics.Current.HookInvocations;
         var intentsBeforeActivation = fixture.Metrics.Current.IntentsAccepted;
         fixture.Scheduler.Tick();
         Assert.True(fixture.Scheduler.IsActive(fixture.Guard.Id));
-        Assert.Equal(hooksBeforeActivation + 3, fixture.Metrics.Current.HookInvocations);
+        AssertNextHooks(
+            fixture,
+            ref hookOffset,
+            NpcBrainHookType.Activate,
+            NpcBrainHookType.MobileEnteredRange,
+            NpcBrainHookType.Think
+        );
         Assert.Equal(intentsBeforeActivation + 1, fixture.Metrics.Current.IntentsAccepted);
 
         // 6. Speech inside the guard's 15-tile hearing range only reaches its mailbox.
-        var hooksBeforeFirstSpeech = fixture.Metrics.Current.HookInvocations;
+        var hooksBeforeFirstSpeech = fixture.Runtime.Invocations.Count;
         fixture.Bus.Publish(new MobileSpeechEvent(fixture.Player.Id, ChatMessageType.Regular, "ciao"));
-        Assert.Equal(hooksBeforeFirstSpeech, fixture.Metrics.Current.HookInvocations);
+        Assert.Equal(hooksBeforeFirstSpeech, fixture.Runtime.Invocations.Count);
         Assert.Empty(fixture.Chat.Messages);
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 7. The scheduler is the component that invokes Lua and applies the returned intent.
         fixture.Scheduler.Tick();
+        AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.SpeechHeard);
 
         // 8. The real C# intent executor performs the single chat mutation.
-        var firstReply = Assert.Single(fixture.Chat.Messages);
-        Assert.Equal(fixture.Guard.Id, firstReply.Speaker);
-        Assert.Equal(ChatMessageType.Regular, firstReply.Type);
-        Assert.Equal(FirstMeetingReply, firstReply.Text);
-        Assert.Equal(15, firstReply.Range);
+        Assert.Equal(
+            [(fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15)],
+            fixture.Chat.Messages
+        );
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 9. A second routed speech observes the guard's retained per-mobile blackboard.
         fixture.Bus.Publish(new MobileSpeechEvent(fixture.Player.Id, ChatMessageType.Regular, "ciao"));
-        Assert.Single(fixture.Chat.Messages);
-        fixture.Scheduler.Tick();
         Assert.Equal(
-            [FirstMeetingReply, ReturningPlayerReply],
-            fixture.Chat.Messages.Select(message => message.Text)
+            [(fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15)],
+            fixture.Chat.Messages
         );
+        fixture.Scheduler.Tick();
+        AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.SpeechHeard);
+        Assert.Equal(
+            [
+                (fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15),
+                (fixture.Guard.Id, ChatMessageType.Regular, ReturningPlayerReply, Hue.Default, 15)
+            ],
+            fixture.Chat.Messages
+        );
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 10. Removing the player starts grace; at 59 seconds the guard remains active and thinks.
         fixture.Activity.UntrackPlayer(fixture.Player.Id);
@@ -105,47 +127,84 @@ public sealed class NpcBrainIntegrationTests
         fixture.Activity.Tick();
         Assert.True(fixture.Activity.IsActive(0, 2, 2));
         Assert.True(fixture.Scheduler.IsActive(fixture.Guard.Id));
-        var hooksBeforeGraceTick = fixture.Metrics.Current.HookInvocations;
         var intentsBeforeGraceTick = fixture.Metrics.Current.IntentsAccepted;
         fixture.Scheduler.Tick();
-        Assert.Equal(hooksBeforeGraceTick + 1, fixture.Metrics.Current.HookInvocations);
+        AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.Think);
         Assert.Equal(intentsBeforeGraceTick + 1, fixture.Metrics.Current.IntentsAccepted);
         Assert.True(fixture.Scheduler.IsActive(fixture.Guard.Id));
+        Assert.Equal(
+            [
+                (fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15),
+                (fixture.Guard.Id, ChatMessageType.Regular, ReturningPlayerReply, Hue.Default, 15)
+            ],
+            fixture.Chat.Messages
+        );
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 11. At exactly 60 seconds the sector deactivates; one deactivate hook runs, then it sleeps.
         fixture.Time.Advance(TimeSpan.FromSeconds(1));
-        var hooksBeforeDeactivation = fixture.Metrics.Current.HookInvocations;
         fixture.Activity.Tick();
         Assert.False(fixture.Activity.IsActive(0, 2, 2));
         Assert.False(fixture.Scheduler.IsActive(fixture.Guard.Id));
         fixture.Scheduler.Tick();
-        Assert.Equal(hooksBeforeDeactivation + 1, fixture.Metrics.Current.HookInvocations);
+        AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.Deactivate);
         Assert.False(fixture.Scheduler.IsActive(fixture.Guard.Id));
         Assert.Equal(1, fixture.Metrics.Current.SleepingBrains);
         Assert.True(fixture.Scheduler.TryGetDescriptor(fixture.Guard.Id, out var retainedDescriptor));
         Assert.Equal("guard", retainedDescriptor!.BrainId);
+        Assert.Equal(
+            [
+                (fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15),
+                (fixture.Guard.Id, ChatMessageType.Regular, ReturningPlayerReply, Hue.Default, 15)
+            ],
+            fixture.Chat.Messages
+        );
+        Assert.Empty(fixture.Chat.Broadcasts);
 
         // 12. Re-tracking wakes the same binding; its blackboard still recognizes the player.
         fixture.Activity.TrackPlayer(fixture.Player);
         Assert.True(fixture.Scheduler.IsActive(fixture.Guard.Id));
-        var hooksBeforeWake = fixture.Metrics.Current.HookInvocations;
         var intentsBeforeWake = fixture.Metrics.Current.IntentsAccepted;
         fixture.Scheduler.Tick();
-        Assert.Equal(hooksBeforeWake + 3, fixture.Metrics.Current.HookInvocations);
+        AssertNextHooks(
+            fixture,
+            ref hookOffset,
+            NpcBrainHookType.Activate,
+            NpcBrainHookType.MobileEnteredRange,
+            NpcBrainHookType.Think
+        );
         Assert.Equal(intentsBeforeWake + 1, fixture.Metrics.Current.IntentsAccepted);
         fixture.Bus.Publish(new MobileSpeechEvent(fixture.Player.Id, ChatMessageType.Regular, "ciao"));
         Assert.Equal(2, fixture.Chat.Messages.Count);
         fixture.Scheduler.Tick();
+        AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.SpeechHeard);
         Assert.Equal(
-            [FirstMeetingReply, ReturningPlayerReply, ReturningPlayerReply],
-            fixture.Chat.Messages.Select(message => message.Text)
+            [
+                (fixture.Guard.Id, ChatMessageType.Regular, FirstMeetingReply, Hue.Default, 15),
+                (fixture.Guard.Id, ChatMessageType.Regular, ReturningPlayerReply, Hue.Default, 15),
+                (fixture.Guard.Id, ChatMessageType.Regular, ReturningPlayerReply, Hue.Default, 15)
+            ],
+            fixture.Chat.Messages
         );
+        Assert.Empty(fixture.Chat.Broadcasts);
+    }
+
+    private static void AssertNextHooks(
+        IntegrationFixture fixture,
+        ref int offset,
+        params NpcBrainHookType[] expected
+    )
+    {
+        Assert.Equal(expected, fixture.Runtime.Invocations.Skip(offset));
+        offset += expected.Length;
+        Assert.Equal(offset, fixture.Runtime.Invocations.Count);
     }
 
     private sealed class IntegrationFixture : IDisposable
     {
         private readonly Container _container = new();
         private readonly LuaScriptEngineService _engine;
+        private readonly LuaNpcBrainRuntime _luaRuntime;
         private readonly string _root;
 
         public EventBusService Bus { get; } = new();
@@ -189,7 +248,7 @@ public sealed class NpcBrainIntegrationTests
 
         public SectorActivityService Activity { get; }
 
-        public LuaNpcBrainRuntime Runtime { get; }
+        public RecordingLuaNpcBrainRuntime Runtime { get; }
 
         public NpcBrainScheduler Scheduler { get; }
 
@@ -209,7 +268,8 @@ public sealed class NpcBrainIntegrationTests
             var loopAffinity = new StubLoopAffinity();
             Spatial = new(Persistence, loopAffinity, Bus);
             Activity = new(Loop, Bus, Time, Config, Metrics);
-            Runtime = new(_engine, directories, Config, Metrics, Loop, Bus, Time);
+            _luaRuntime = new(_engine, directories, Config, Metrics, Loop, Bus, Time);
+            Runtime = new(_luaRuntime);
             var contextFactory = new NpcBrainContextFactory(Spatial, Sessions, Time);
             var intentExecutor = new BrainIntentExecutor(
                 Persistence,
@@ -252,11 +312,64 @@ public sealed class NpcBrainIntegrationTests
 
         public void Dispose()
         {
-            Runtime.Dispose();
+            _luaRuntime.Dispose();
             _engine.Dispose();
             Bus.Dispose();
             _container.Dispose();
             Directory.Delete(_root, true);
+        }
+    }
+
+    private sealed class RecordingLuaNpcBrainRuntime : INpcBrainRuntime
+    {
+        private readonly LuaNpcBrainRuntime _inner;
+        private readonly List<NpcBrainHookType> _invocations = [];
+
+        public IReadOnlyList<NpcBrainHookType> Invocations => _invocations;
+
+        public RecordingLuaNpcBrainRuntime(LuaNpcBrainRuntime inner)
+        {
+            _inner = inner;
+        }
+
+        public bool TryBind(
+            Serial mobileId,
+            string brainId,
+            out BrainDescriptor? descriptor,
+            out string? error
+        )
+            => _inner.TryBind(mobileId, brainId, out descriptor, out error);
+
+        public bool TryGetDescriptor(Serial mobileId, out BrainDescriptor? descriptor)
+            => _inner.TryGetDescriptor(mobileId, out descriptor);
+
+        public NpcBrainInvocationResult Invoke(
+            Serial mobileId,
+            NpcBrainHookType hook,
+            BrainContext context,
+            NpcBrainEvent? brainEvent = null
+        )
+        {
+            _invocations.Add(hook);
+
+            return _inner.Invoke(mobileId, hook, context, brainEvent);
+        }
+
+        public bool TryReload(
+            string brainId,
+            out BrainDescriptor? descriptor,
+            out string? error
+        )
+            => _inner.TryReload(brainId, out descriptor, out error);
+
+        public void Reset(Serial mobileId)
+        {
+            _inner.Reset(mobileId);
+        }
+
+        public void Unbind(Serial mobileId)
+        {
+            _inner.Unbind(mobileId);
         }
     }
 
