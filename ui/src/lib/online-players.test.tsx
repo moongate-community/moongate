@@ -82,10 +82,7 @@ describe('online players data module', () => {
       { ...freydis, characterSerial: '0x47', y: felucca.height },
     ]
 
-    expect(playersForFacet(players, felucca).map((player) => player.characterSerial)).toEqual([
-      '0x00000042',
-      '0x43',
-    ])
+    expect(playersForFacet(players, felucca).map((player) => player.characterSerial)).toEqual(['0x00000042', '0x43'])
   })
 
   it('describes five-second foreground polling only while enabled', () => {
