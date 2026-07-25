@@ -5,6 +5,9 @@ import { AppShell } from './components/AppShell'
 import { RequireAuth } from './routes/RequireAuth'
 import { RequireAdmin } from './routes/RequireAdmin'
 import { LoginScreen } from './routes/LoginScreen'
+import { RegisterScreen } from './routes/RegisterScreen'
+import { RegistrationPendingScreen } from './routes/RegistrationPendingScreen'
+import { VerifyRegistrationScreen } from './routes/VerifyRegistrationScreen'
 import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
 import { MapScreen } from './routes/MapScreen'
@@ -25,6 +28,9 @@ export function App() {
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<LoginScreen />} />
+            <Route path="/register" element={<RegisterScreen />} />
+            <Route path="/register/pending" element={<RegistrationPendingScreen />} />
+            <Route path="/verify" element={<VerifyRegistrationScreen />} />
             <Route
               path="/"
               element={

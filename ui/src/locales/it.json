@@ -211,7 +211,23 @@
       "assetRemoved": "Immagine rimossa.",
       "notImage": "Il file non è un'immagine.",
       "tooLarge": "L'immagine è troppo grande.",
-      "tagline": "Slogan"
+      "tagline": "Slogan",
+      "readiness": {
+        "title": "Preparazione della registrazione",
+        "overall": "Stato generale",
+        "website": "Sito web",
+        "emailSelected": "Canale di verifica",
+        "emailAvailable": "Canale email",
+        "ready": "Pronto",
+        "notReady": "Non pronto",
+        "valid": "Valido",
+        "invalid": "Non valido",
+        "selected": "Selezionato",
+        "notSelected": "Non selezionato",
+        "available": "Disponibile",
+        "unavailable": "Non disponibile",
+        "guidance": "Imposta notifications.AccountVerificationChannel su email in moongate.yaml. Configura il plugin email tramite plugins/configs/smtp.yaml o variabili d'ambiente, quindi riavvia il server."
+      }
     },
     "console": {
       "title": "Console",
