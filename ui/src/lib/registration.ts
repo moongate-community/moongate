@@ -1,4 +1,5 @@
-import { useMutation } from '@tanstack/react-query'
+import { useCallback, useEffect, useId, useMemo } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from './api'
 import type { components } from './api-types'
 
@@ -83,8 +84,25 @@ export function useResendVerification() {
 }
 
 export function useVerifyRegistration() {
+  const client = useQueryClient()
+  const scopeId = useId()
+  const mutationKey = useMemo(() => ['registration-verification', scopeId] as const, [scopeId])
+  const removeScopedMutations = useCallback(() => {
+    const cache = client.getMutationCache()
+
+    for (const mutation of cache.findAll({ mutationKey, exact: true })) {
+      cache.remove(mutation)
+    }
+  }, [client, mutationKey])
+
+  useEffect(() => {
+    return removeScopedMutations
+  }, [removeScopedMutations])
+
   return useMutation({
+    mutationKey,
     mutationFn: (body: VerifyRegistration) =>
       apiFetch<void>('/api/v1/register/verify', { method: 'POST', body: JSON.stringify(body) }),
+    onSettled: removeScopedMutations,
   })
 }
