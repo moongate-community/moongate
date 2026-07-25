@@ -22,6 +22,7 @@ using Moongate.Server.Data.Exceptions;
 using Moongate.Server.Extensions;
 using Moongate.Server.Plugins;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.AI;
 using Moongate.Server.Services.Chat;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Game;
@@ -93,6 +94,8 @@ await ConsoleApp.RunAsync(
             moongateConfig.UltimaDirectory = uoDirectory;
         }
 
+        NpcAiConfigValidator.Validate(moongateConfig.NpcAi);
+
         if (string.IsNullOrEmpty(moongateConfig.UltimaDirectory))
         {
             throw new UODirectoryNotValidException(
@@ -136,6 +139,7 @@ await ConsoleApp.RunAsync(
                 AddTracked<MoongatePersistencePlugin>();
                 AddTracked<MoongateScriptingPlugin>();
                 AddTracked<MoongateScriptModulesPlugin>();
+                AddTracked<MoongateNpcAiPlugin>();
                 AddTracked<MoongateDataLoaderPlugin>();
                 AddTracked<MoongateCommandsPlugin>();
                 AddTracked<MoongatePacketHandlersPlugin>();
