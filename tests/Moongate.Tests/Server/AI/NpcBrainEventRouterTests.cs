@@ -153,7 +153,7 @@ public class NpcBrainEventRouterTests
     public async Task SectorLifecycle_ActivationSeedsAndSleepingObserverRetainsNoPerceptionSet()
     {
         var fixture = new RouterFixture();
-        var observer = fixture.AddBrain(0x1, "Observer", 0, 5, 5, 5, 5, false);
+        var observer = fixture.AddBrain(0x1, "Observer", 0, 5, 5, 5, 5, true);
         var subject = fixture.AddMobile(0x2, "Subject", 0, 8, 5);
         fixture.Sectors.Active.Add((0, 0, 0));
 
@@ -165,12 +165,14 @@ public class NpcBrainEventRouterTests
         Assert.Equal(subject.Id, initial.Event.Mobile!.Id);
 
         fixture.Scheduler.Events.Clear();
+        fixture.Scheduler.Active.Remove(observer.Id);
         fixture.Sectors.Active.Remove((0, 0, 0));
         await fixture.Router.OnSectorDeactivated(new(0, 0, 0), CancellationToken.None);
         await fixture.MoveAsync(subject, 20, 5);
         await fixture.MoveAsync(subject, 8, 5);
         Assert.Empty(fixture.Scheduler.Events);
 
+        fixture.Scheduler.Active.Add(observer.Id);
         fixture.Sectors.Active.Add((0, 0, 0));
         await fixture.Router.OnSectorActivated(new(0, 0, 0), CancellationToken.None);
 
@@ -180,7 +182,7 @@ public class NpcBrainEventRouterTests
     }
 
     [Fact]
-    public async Task OnMobileMoved_BrainEntersInactiveSector_DeactivatesAndClearsObserverSet()
+    public async Task OnMobileMoved_ExternallySleepingBrain_ClearsObserverSetWithoutLifecycleCall()
     {
         var fixture = new RouterFixture();
         fixture.Sectors.Active.Add((0, 0, 0));
@@ -189,13 +191,15 @@ public class NpcBrainEventRouterTests
         await fixture.Router.OnSectorActivated(new(0, 0, 0), CancellationToken.None);
         fixture.Scheduler.Events.Clear();
 
+        fixture.Scheduler.Active.Remove(observer.Id);
         await fixture.MoveAsync(observer, 32, 5);
         await fixture.MoveAsync(subject, 9, 5);
 
-        Assert.Contains(observer.Id, fixture.Scheduler.DeactivateCalls);
         Assert.False(fixture.Scheduler.IsActive(observer.Id));
         Assert.DoesNotContain(fixture.Scheduler.Events, entry => entry.MobileId == observer.Id);
+        Assert.Empty(fixture.Scheduler.DeactivateCalls);
 
+        fixture.Scheduler.Active.Add(observer.Id);
         fixture.Sectors.Active.Add((0, 2, 0));
         await fixture.Router.OnSectorActivated(new(0, 2, 0), CancellationToken.None);
         fixture.Scheduler.Events.Clear();
@@ -233,7 +237,7 @@ public class NpcBrainEventRouterTests
     }
 
     [Fact]
-    public async Task MobileLifecycle_CreateRoutesBothRolesAndDeleteLeavesAndUnbinds()
+    public async Task MobileLifecycle_ExternallyActiveCreateRoutesBothRolesAndDeleteClearsWithoutLifecycleCalls()
     {
         var fixture = new RouterFixture();
         fixture.Sectors.Active.Add((0, 0, 0));
@@ -242,10 +246,11 @@ public class NpcBrainEventRouterTests
         fixture.Scheduler.Events.Clear();
         var created = fixture.Mobile(0x2, "Created Brain", 0, 8, 5, "guard");
         fixture.Scheduler.Descriptors[created.Id] = new("guard", 1000, 5, 5);
+        fixture.Scheduler.Active.Add(created.Id);
 
         await fixture.Router.OnMobileCreated(new(created), CancellationToken.None);
 
-        Assert.Contains(created.Id, fixture.Scheduler.BindCalls);
+        Assert.Empty(fixture.Scheduler.BindCalls);
         Assert.Collection(
             fixture.Scheduler.Events,
             entry =>
@@ -266,7 +271,31 @@ public class NpcBrainEventRouterTests
         var leave = Assert.Single(fixture.Scheduler.Events);
         Assert.Equal(observer.Id, leave.MobileId);
         Assert.Equal(NpcBrainHookType.MobileLeftRange, leave.Hook);
-        Assert.Contains(created.Id, fixture.Scheduler.UnbindCalls);
+        Assert.Empty(fixture.Scheduler.UnbindCalls);
+    }
+
+    [Fact]
+    public async Task CanonicalEventHandlers_NeverControlSchedulerLifecycle()
+    {
+        var fixture = new RouterFixture();
+        fixture.Sectors.Active.Add((0, 0, 0));
+        var existing = fixture.AddBrain(0x1, "Existing", 0, 5, 5, 5, 5, true);
+        await fixture.Router.OnSectorActivated(new(0, 0, 0), CancellationToken.None);
+
+        fixture.Scheduler.Active.Remove(existing.Id);
+        await fixture.MoveAsync(existing, 32, 5);
+
+        var created = fixture.Mobile(0x2, "Created", 0, 6, 5, "guard");
+        fixture.Scheduler.Descriptors[created.Id] = new("guard", 1000, 5, 5);
+        fixture.Scheduler.Active.Add(created.Id);
+        await fixture.Router.OnMobileCreated(new(created), CancellationToken.None);
+        await fixture.Router.OnMobileDeleted(new(created), CancellationToken.None);
+        await fixture.Router.OnSectorDeactivated(new(0, 0, 0), CancellationToken.None);
+
+        Assert.Empty(fixture.Scheduler.BindCalls);
+        Assert.Empty(fixture.Scheduler.ActivateCalls);
+        Assert.Empty(fixture.Scheduler.DeactivateCalls);
+        Assert.Empty(fixture.Scheduler.UnbindCalls);
     }
 
     [Fact]

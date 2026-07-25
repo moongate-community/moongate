@@ -97,7 +97,7 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
 
         if (!string.IsNullOrWhiteSpace(subject.BrainScriptId))
         {
-            ReconcileMovedBrain(subject);
+            RefreshObserverSet(subject);
         }
 
         return Task.CompletedTask;
@@ -112,8 +112,7 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
 
         if (!string.IsNullOrWhiteSpace(message.Mobile.BrainScriptId))
         {
-            _scheduler.Bind(message.Mobile);
-            ReconcileBrainActivity(message.Mobile);
+            RefreshObserverSet(message.Mobile);
         }
 
         return Task.CompletedTask;
@@ -126,7 +125,6 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
     {
         RemoveSubject(message.Mobile);
         _perceivedByObserver.Remove(message.Mobile.Id);
-        _scheduler.Unbind(message.Mobile.Id);
 
         return Task.CompletedTask;
     }
@@ -165,8 +163,6 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
                      .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
                      .OrderBy(mobile => mobile.Id))
         {
-            _scheduler.Bind(mobile);
-            _scheduler.Activate(mobile.Id);
             SeedObserver(mobile);
         }
 
@@ -183,7 +179,6 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
                      .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
                      .OrderBy(mobile => mobile.Id))
         {
-            _scheduler.Deactivate(mobile.Id);
             _perceivedByObserver.Remove(mobile.Id);
         }
 
@@ -404,26 +399,21 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         }
     }
 
-    private void ReconcileMovedBrain(MobileEntity observer)
+    private void RefreshObserverSet(MobileEntity observer)
     {
-        _scheduler.Bind(observer);
-        ReconcileBrainActivity(observer);
-    }
-
-    private void ReconcileBrainActivity(MobileEntity observer)
-    {
-        if (_sectors.IsActive(
+        if (
+            _scheduler.IsActive(observer.Id) &&
+            _sectors.IsActive(
                 observer.MapId,
                 observer.Position.X >> SectorShift,
                 observer.Position.Y >> SectorShift
-            ))
+            )
+        )
         {
-            _scheduler.Activate(observer.Id);
             SeedObserver(observer);
             return;
         }
 
-        _scheduler.Deactivate(observer.Id);
         _perceivedByObserver.Remove(observer.Id);
     }
 
