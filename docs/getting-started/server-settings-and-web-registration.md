@@ -44,7 +44,7 @@ its image.
 ```bash
 curl -X PUT https://your-shard:8933/api/v1/admin/server-settings \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
-  -d '{ "description": "A friendly shard.", "registrationEnabled": true,
+  -d '{ "description": "A friendly shard.",
         "contacts": { "website": "https://example.com", "discord": "https://discord.gg/xxxx" } }'
 ```
 
@@ -70,44 +70,130 @@ curl -X POST https://your-shard:8933/api/v1/admin/server-settings/assets/logo \
 
 ## Web registration
 
-Registration is **disabled by default**. Turn it on by setting
-`registrationEnabled: true` (see the `PUT` above). While enabled, the public
-endpoint creates accounts:
+Registration is **disabled by default**. Opening it requires both the persisted
+`registrationEnabled` toggle and all local email-verification prerequisites.
+The public endpoints are:
 
 ```
-POST /api/v1/register        { "username": "...", "password": "...", "email": "..." }
+POST /api/v1/register         { "username": "...", "password": "...", "email": "..." }
+POST /api/v1/register/resend  { "username": "...", "email": "..." }
 POST /api/v1/register/verify  { "token": "..." }
 ```
 
-The flow:
+### Credential rules
 
-1. `POST /api/v1/register` validates the input (username free, password present,
-   **email required and well-formed**), then creates an **inactive** `Player`
-   account carrying a single-use verification token, and answers `202 Accepted`.
-   The account **cannot log in until it is verified**.
-2. `POST /api/v1/register/verify` consumes the token, activates the account, and
-   answers `200`. The token is single-use — a consumed or unknown token answers
-   `400`.
+Leading and trailing whitespace is removed from usernames and email addresses.
+Password whitespace is significant and is not removed.
 
-Responses: `403` when registration is disabled, `409` for a taken username, `400`
-for a missing/invalid field, and `429` when the caller is rate-limited.
+| Field | Rules |
+|---|---|
+| `username` | 3–30 ASCII letters, digits, `.`, `_` or `-`; it must not already be in use. |
+| `password` | 8–30 printable ASCII characters (space through `~`). |
+| `email` | Required, syntactically valid, and unique across active and pending accounts. Email uniqueness is case-insensitive. |
 
-> [!NOTE]
-> **Email sending is not part of this feature yet.** Registration is *predisposed*
-> for email verification: it creates the token and raises an
-> `AccountRegistrationRequestedEvent` (carrying the account, email and token) that
-> a future email feature will subscribe to in order to send the verification link.
-> Until then no mail is sent: the request goes through the
-> [notification pipeline](notifications.md) and is delivered on the `log`
-> channel, so the token appears in the server log and the verify endpoint works
-> with whatever token you hold.
+Duplicate usernames and email addresses share the same generic `409` response;
+the response does not reveal which field matched.
+
+### Verification lifecycle
+
+1. `POST /api/v1/register` creates one inactive `Player` account, queues its
+   verification email, and answers `202 Accepted`. The account cannot log in
+   until it is verified.
+2. The raw single-use token is a random 64-character hexadecimal value. Only its
+   64-character SHA-256 hexadecimal hash is persisted. The raw value exists only
+   long enough to enter the notification pipeline.
+3. The token expires exactly 24 hours after creation. At the expiry instant it
+   is already expired.
+4. `POST /api/v1/register/verify` consumes a valid token, clears its persisted
+   hash and expiry, activates the account, and answers `200`.
+
+An expired token answers `410 Gone` and its state is cleared. An unknown,
+already-used or blank token answers `400`. Verification does not depend on the
+registration toggle or readiness, so an already-issued link still works after
+an operator closes registration or an email prerequisite becomes unavailable.
+
+Pending accounts created by an older version may still carry a plaintext token.
+Those legacy tokens cannot activate an account: attempting to verify one answers
+`410` and clears it. A matching resend rotates a legacy pending account to a new
+hashed token with a fresh 24-hour lifetime.
+
+### Resending without account enumeration
+
+`POST /api/v1/register/resend` validates the username and email shapes, then
+answers the same empty `202 Accepted` whether they match a pending account, an
+active account or no account. Only a matching pending account gets a newly
+rotated token and verification email. This prevents the response from becoming
+an account-discovery oracle.
+
+Resend is available even while the persisted registration toggle is off, so a
+pending user can recover after registrations close. It still requires email
+readiness: an unavailable prerequisite answers `503`. Malformed input answers
+`400`, and a rate limit answers `429`.
 
 ### Abuse protection
 
-Two guards, on top of the off-by-default toggle:
+The registration endpoint has a fixed-window limit per client IP. Resend has
+separate fixed-window limits per client IP and per normalized username/email
+target; the target key is hashed rather than stored in the limiter as raw
+account data. The `http` keys below control the permit count and window for all
+of these budgets.
 
-- Accounts are inactive until verified, so spam produces only inert records.
-- `POST /api/v1/register` is **rate-limited per client IP** (fixed window).
+Accounts also remain inactive until verification, so accepted but abandoned
+registrations cannot log in.
+
+### Readiness and the persisted toggle
+
+The staff settings response keeps the operator's persisted
+`registrationEnabled` value and adds a `registrationReadiness` object:
+
+| Field | Meaning |
+|---|---|
+| `ready` | All three local prerequisites below are true. |
+| `websiteValid` | `Contacts.Website` is an absolute `http` or `https` URL with a host. |
+| `emailChannelSelected` | `notifications.AccountVerificationChannel` is `email` (case-insensitive). |
+| `emailChannelAvailable` | The SMTP plugin registered the `email` channel at startup. |
+
+By contrast, public `GET /api/v1/server-info` reports an **effective**
+`registrationEnabled`: the persisted toggle must be true **and** readiness must
+be true. The portal therefore hides registration when email verification cannot
+be configured locally, even if the stored toggle remains on.
+
+Enabling the toggle while readiness is false is rejected as a validation
+problem. If readiness is lost after registration was enabled, new registration
+and resend requests answer `503 Service Unavailable`; staff can still set the
+persisted toggle to false. “Ready” covers local configuration only, not SMTP
+server reachability or durable delivery; see
+[Notifications](notifications.md#registration-readiness-and-delivery).
+
+### Enable registration in this order
+
+1. Configure the SMTP plugin in `<root>/plugins/configs/smtp.yaml`, including
+   real `Host` and `FromAddress` values and the appropriate transport/security
+   settings. Follow the [SMTP configuration and secrets
+   guidance](notifications.md#sending-email).
+2. Set `notifications.AccountVerificationChannel: email` in
+   `<root>/moongate.yaml`.
+3. Restart Moongate so both configuration files are loaded and the SMTP plugin
+   can register the `email` channel. Confirm the startup log says account
+   verification will use `email`.
+4. Through `PUT /api/v1/admin/server-settings`, set `Contacts.Website` to the
+   absolute HTTP(S) base URL of the player portal. Moongate appends the
+   normalized `/verify?token=...` route to this base.
+5. Read `GET /api/v1/admin/server-settings` and confirm all four
+   `registrationReadiness` fields are `true`.
+6. Only then set `registrationEnabled: true` with another staff settings update.
+
+If a prerequisite fails later, disable the persisted toggle first, repair the
+configuration, restart when a file-based setting changed, confirm readiness,
+and re-enable it.
+
+### HTTP responses
+
+| Endpoint | Responses |
+|---|---|
+| `POST /api/v1/register` | `202` created pending; `400` invalid input; generic `409` duplicate username/email; `403` persisted toggle off; `429` rate-limited; `503` readiness unavailable. |
+| `POST /api/v1/register/resend` | Generic `202` for matching or non-matching valid identities; `400` invalid input; `429` rate-limited; `503` readiness unavailable. |
+| `POST /api/v1/register/verify` | `200` activated; `400` unknown/already-used token; `410` expired or legacy plaintext token. |
 
 ## `http` config keys
 
