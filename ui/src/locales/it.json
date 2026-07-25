@@ -45,7 +45,25 @@
     "copyHint": "Clicca per copiare la coordinata",
     "copied": "Copiato {{x}}, {{y}}",
     "jumpError": "Inserisci una coordinata dentro la facet (0–{{width}}, 0–{{height}}).",
-    "unavailable": "Mappa non disponibile — lo shard non ha caricato i file client."
+    "unavailable": "Mappa non disponibile — lo shard non ha caricato i file client.",
+    "players": {
+      "toggle": "Giocatori online",
+      "count": "{{visible}} / {{total}}",
+      "unavailable": "Le posizioni dei giocatori non sono momentaneamente disponibili.",
+      "markerAlt": "{{name}} sulla mappa",
+      "account": "Account",
+      "facet": "Facet",
+      "coordinates": "Coordinate",
+      "hits": "Punti vita",
+      "direction": "Direzione",
+      "running": "In corsa",
+      "warmode": "Modalità guerra",
+      "technical": "Dettagli tecnici",
+      "characterSerial": "Seriale personaggio",
+      "accountSerial": "Seriale account",
+      "body": "Body",
+      "skinHue": "Skin hue"
+    }
   },
   "common": {
     "signOut": "Esci",
