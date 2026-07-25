@@ -71,6 +71,40 @@ public class NpcBrainMailboxTests
         Assert.Equal(1, metrics.Current.EventsDelivered);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Enqueue_AlternatingRangeTransitions_RetainsTransitionsAndSuppressesOnlyLatestDuplicate(
+        bool enterFirst
+    )
+    {
+        var metrics = new NpcAiMetrics();
+        var mailbox = new NpcBrainMailbox(8, metrics);
+        var firstHook = enterFirst
+            ? NpcBrainHookType.MobileEnteredRange
+            : NpcBrainHookType.MobileLeftRange;
+        var firstType = enterFirst
+            ? NpcBrainEventType.MobileEnteredRange
+            : NpcBrainEventType.MobileLeftRange;
+        var secondHook = enterFirst
+            ? NpcBrainHookType.MobileLeftRange
+            : NpcBrainHookType.MobileEnteredRange;
+        var secondType = enterFirst
+            ? NpcBrainEventType.MobileLeftRange
+            : NpcBrainEventType.MobileEnteredRange;
+
+        mailbox.Enqueue(firstHook, Event(firstType, 0x2));
+        mailbox.Enqueue(secondHook, Event(secondType, 0x2));
+        mailbox.Enqueue(firstHook, Event(firstType, 0x2));
+        mailbox.Enqueue(firstHook, Event(firstType, 0x2));
+
+        var delivered = mailbox.Dequeue(8);
+
+        Assert.Equal([firstHook, secondHook, firstHook], delivered.Select(entry => entry.Hook));
+        Assert.Equal(1, metrics.Current.EventsCoalesced);
+        Assert.Equal(3, metrics.Current.EventsDelivered);
+    }
+
     [Fact]
     public void Enqueue_FullMailbox_EvictsMovementBeforeSpeechAndSpeechBeforeLifecycleOrCombat()
     {

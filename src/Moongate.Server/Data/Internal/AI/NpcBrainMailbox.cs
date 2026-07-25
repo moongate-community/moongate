@@ -72,24 +72,39 @@ public sealed class NpcBrainMailbox
             return false;
         }
 
-        for (var index = 0; index < _entries.Count; index++)
+        if (hook == NpcBrainHookType.MobileMoved)
         {
-            var entry = _entries[index];
-
-            if (entry.Hook != hook || entry.Event.Mobile?.Id != mobileId)
+            for (var index = 0; index < _entries.Count; index++)
             {
-                continue;
-            }
+                var entry = _entries[index];
 
-            if (hook == NpcBrainHookType.MobileMoved)
-            {
+                if (entry.Hook != hook || entry.Event.Mobile?.Id != mobileId)
+                {
+                    continue;
+                }
+
                 _entries[index] = (hook, brainEvent, entry.Sequence);
                 return true;
             }
+        }
 
-            if (hook is NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange)
+        if (hook is NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange)
+        {
+            for (var index = _entries.Count - 1; index >= 0; index--)
             {
-                return true;
+                var entry = _entries[index];
+
+                if (
+                    entry.Event.Mobile?.Id != mobileId ||
+                    entry.Hook is not (
+                        NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange
+                    )
+                )
+                {
+                    continue;
+                }
+
+                return entry.Hook == hook;
             }
         }
 

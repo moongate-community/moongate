@@ -10,9 +10,11 @@ using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Services.AI;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
+using Serilog.Events;
 
 namespace Moongate.Tests.Server.AI;
 
+[Collection(GlobalSerilogCollection.Name)]
 public class NpcBrainSchedulerTests
 {
     [Fact]
@@ -51,6 +53,26 @@ public class NpcBrainSchedulerTests
         Assert.Equal(1, fixture.Metrics.Current.ActiveBrains);
         Assert.Equal(2, fixture.Metrics.Current.HookInvocations);
         Assert.Equal(1, fixture.Metrics.Current.BrainsExecuted);
+    }
+
+    [Fact]
+    public void Tick_HookInvocation_UsesInjectedTimeProviderForDurationMetrics()
+    {
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Runtime.InvocationHandler = (_, _, _, _) =>
+        {
+            fixture.Time.Advance(TimeSpan.FromMilliseconds(25));
+            return NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        };
+
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        Assert.Equal(2, fixture.Metrics.Current.HookInvocations);
+        Assert.Equal(TimeSpan.FromMilliseconds(50).Ticks, fixture.Metrics.Current.TotalHookDurationTicks);
+        Assert.Equal(TimeSpan.FromMilliseconds(25).Ticks, fixture.Metrics.Current.MaxHookDurationTicks);
+        Assert.Equal(TimeSpan.FromMilliseconds(25), fixture.Metrics.Current.AverageHookDuration);
     }
 
     [Fact]
@@ -196,6 +218,29 @@ public class NpcBrainSchedulerTests
     }
 
     [Fact]
+    public void Bind_RepeatedAfterUnavailableBrainChange_DoesNotRestoreOldDescriptorRangesOrRuntime()
+    {
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+        fixture.Runtime.Invocations.Clear();
+        mobile.BrainScriptId = "missing";
+
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Bind(mobile);
+
+        Assert.False(fixture.Scheduler.TryGetDescriptor(mobile.Id, out _));
+        Assert.Equal(0, fixture.Scheduler.MaxPerceptionRange);
+        Assert.Equal(0, fixture.Scheduler.MaxHearingRange);
+
+        fixture.Time.Advance(TimeSpan.FromSeconds(1));
+        fixture.Scheduler.Tick();
+
+        Assert.Empty(fixture.Runtime.Invocations);
+    }
+
+    [Fact]
     public void Unbind_BoundBrain_RemovesSchedulerAndRuntimeState()
     {
         var fixture = new SchedulerFixture();
@@ -334,6 +379,107 @@ public class NpcBrainSchedulerTests
         Assert.Equal(5, fixture.ThinkCount(mobile.Id));
         Assert.Equal([mobile.Id], fixture.Runtime.ResetCalls);
         Assert.Empty(fixture.Intents.Executions);
+    }
+
+    [Fact]
+    public void Tick_IdenticalFaults_LogsOneSchedulerWarningPerMinute()
+    {
+        using var logs = new GlobalSerilogCapture();
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
+            hook == NpcBrainHookType.Think
+                ? NpcBrainInvocationResult.Failed("think failed")
+                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        fixture.Scheduler.Bind(mobile);
+
+        fixture.Scheduler.Tick();
+        fixture.Time.Advance(TimeSpan.FromSeconds(1));
+        fixture.Scheduler.Tick();
+        fixture.Time.Advance(TimeSpan.FromSeconds(5));
+        fixture.Scheduler.Tick();
+        fixture.Time.Advance(TimeSpan.FromSeconds(30));
+        fixture.Scheduler.Tick();
+
+        Assert.Single(SchedulerWarnings(logs));
+
+        fixture.Time.Advance(TimeSpan.FromSeconds(60));
+        fixture.Scheduler.Tick();
+
+        var warnings = SchedulerWarnings(logs);
+        Assert.Equal(2, warnings.Count);
+        var warning = warnings[0];
+        Assert.Equal("guard", Assert.IsType<ScalarValue>(warning.Properties["BrainId"]).Value);
+        Assert.Equal(mobile.Id.Value, Assert.IsType<ScalarValue>(warning.Properties["MobileId"]).Value);
+        Assert.Equal(NpcBrainHookType.Think, Assert.IsType<ScalarValue>(warning.Properties["Hook"]).Value);
+        Assert.Equal("think failed", Assert.IsType<ScalarValue>(warning.Properties["Error"]).Value);
+    }
+
+    [Fact]
+    public void Unbind_AfterFault_ClearsMobileThrottleEntry()
+    {
+        using var logs = new GlobalSerilogCapture();
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
+            hook == NpcBrainHookType.Think
+                ? NpcBrainInvocationResult.Failed("think failed")
+                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        fixture.Scheduler.Unbind(mobile.Id);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        Assert.Equal(2, SchedulerWarnings(logs).Count);
+    }
+
+    [Fact]
+    public void Bind_ChangedBrain_ClearsMobileThrottleEntriesBeforeBrainCanReturn()
+    {
+        using var logs = new GlobalSerilogCapture();
+        var fixture = new SchedulerFixture();
+        fixture.Runtime.Descriptors["scout"] = new("scout", 1000, 20, 25);
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
+            hook == NpcBrainHookType.Think
+                ? NpcBrainInvocationResult.Failed("think failed")
+                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        mobile.BrainScriptId = "scout";
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+        mobile.BrainScriptId = "guard";
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        Assert.Equal(3, SchedulerWarnings(logs).Count);
+    }
+
+    [Fact]
+    public void Tick_ExpiredFaultThrottleEntry_PrunesEntryWithoutAnotherFailure()
+    {
+        using var logs = new GlobalSerilogCapture();
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        var failThink = true;
+        fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
+            hook == NpcBrainHookType.Think && failThink
+                ? NpcBrainInvocationResult.Failed("think failed")
+                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+        Assert.Equal(1, FaultLogCount(fixture.Scheduler));
+
+        failThink = false;
+        fixture.Time.Advance(TimeSpan.FromSeconds(61));
+        fixture.Scheduler.Tick();
+
+        Assert.Equal(0, FaultLogCount(fixture.Scheduler));
+        Assert.Single(SchedulerWarnings(logs));
     }
 
     [Fact]
@@ -497,6 +643,30 @@ public class NpcBrainSchedulerTests
 
     private static NpcBrainEvent Event(NpcBrainEventType type, uint subject)
         => new(type, Snapshot(subject));
+
+    private static int FaultLogCount(NpcBrainScheduler scheduler)
+    {
+        var field = typeof(NpcBrainScheduler).GetField(
+            "_faultLogs",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
+        ) ?? throw new InvalidOperationException("Scheduler fault throttle storage was not found.");
+        var entries = Assert.IsAssignableFrom<System.Collections.IDictionary>(
+            field.GetValue(scheduler)
+        );
+
+        return entries.Count;
+    }
+
+    private static IReadOnlyList<LogEvent> SchedulerWarnings(GlobalSerilogCapture logs)
+        => logs.Events
+            .Where(logEvent =>
+                logEvent.Level == LogEventLevel.Warning &&
+                logEvent.MessageTemplate.Text.StartsWith(
+                    "NPC brain scheduler fault",
+                    StringComparison.Ordinal
+                )
+            )
+            .ToArray();
 
     private static BrainMobileSnapshot Snapshot(uint serial)
         => new(

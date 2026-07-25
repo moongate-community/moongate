@@ -8,7 +8,6 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Abstractions.Types;
 using MoonSharp.Interpreter;
-using Serilog;
 using SquidStd.Abstractions.Interfaces.Services;
 using SquidStd.Core.Directories;
 using SquidStd.Core.Interfaces.Events;
@@ -62,7 +61,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private readonly Dictionary<string, LuaBrainDefinition> _definitions = new(StringComparer.Ordinal);
     private readonly IEventBus _eventBus;
     private readonly IGameLoopContext _gameLoop;
-    private readonly ILogger _logger = Log.ForContext<LuaNpcBrainRuntime>();
     private readonly INpcAiMetrics _metrics;
     private readonly Script _script;
     private readonly TimeProvider _timeProvider;
@@ -114,15 +112,12 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         if (!_bindings.TryGetValue(mobileId, out var binding) ||
             !_definitions.TryGetValue(binding.BrainId, out var definition))
         {
-            return FailInvocation("<unbound>", mobileId, hookName, "No brain is bound to the mobile.");
+            return FailInvocation("No brain is bound to the mobile.");
         }
 
         if (!IsSupportedHook(hook))
         {
             return FailInvocation(
-                definition.Descriptor.BrainId,
-                mobileId,
-                hookName,
                 $"Unsupported brain hook value: {(int)hook}."
             );
         }
@@ -151,9 +146,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             if (coroutine.State == CoroutineState.ForceSuspended)
             {
                 return FailInvocation(
-                    definition.Descriptor.BrainId,
-                    mobileId,
-                    hookName,
                     "Instruction budget exceeded.",
                     true
                 );
@@ -161,20 +153,12 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
 
             if (coroutine.State != CoroutineState.Dead)
             {
-                return FailInvocation(
-                    definition.Descriptor.BrainId,
-                    mobileId,
-                    hookName,
-                    "Brain hooks may not yield."
-                );
+                return FailInvocation("Brain hooks may not yield.");
             }
 
             if (result.Type is not DataType.Nil and not DataType.Void and not DataType.Table)
             {
                 return FailInvocation(
-                    definition.Descriptor.BrainId,
-                    mobileId,
-                    hookName,
                     $"Unsupported brain hook return type '{result.Type}'. Expected nil or table."
                 );
             }
@@ -183,16 +167,11 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         }
         catch (InterpreterException exception)
         {
-            return FailInvocation(
-                definition.Descriptor.BrainId,
-                mobileId,
-                hookName,
-                GetInterpreterError(exception)
-            );
+            return FailInvocation(GetInterpreterError(exception));
         }
         catch (Exception exception)
         {
-            return FailInvocation(definition.Descriptor.BrainId, mobileId, hookName, exception.Message);
+            return FailInvocation(exception.Message);
         }
     }
 
@@ -416,21 +395,8 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         return environment;
     }
 
-    private NpcBrainInvocationResult FailInvocation(
-        string brainId,
-        Serial mobileId,
-        string hookName,
-        string error,
-        bool budgetExceeded = false
-    )
+    private NpcBrainInvocationResult FailInvocation(string error, bool budgetExceeded = false)
     {
-        _logger.Error(
-            "NPC brain hook failed for brain {BrainId}, mobile {MobileId}, hook {HookName}: {LuaError}",
-            brainId,
-            mobileId.Value,
-            hookName,
-            error
-        );
         _metrics.RecordHookFailure(budgetExceeded);
 
         return NpcBrainInvocationResult.Failed(error, budgetExceeded);

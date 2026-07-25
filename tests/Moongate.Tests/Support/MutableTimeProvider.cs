@@ -10,6 +10,7 @@ public sealed class MutableTimeProvider : TimeProvider
     private readonly List<MutableTimer> _timers = [];
 
     private DateTimeOffset _now;
+    private long _timestamp;
 
     public MutableTimeProvider(DateTimeOffset now)
     {
@@ -42,15 +43,25 @@ public sealed class MutableTimeProvider : TimeProvider
         {
             lock (_sync)
             {
-                _now = value;
+                SetNow(value);
             }
         }
     }
 
     public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
 
+    public override long TimestampFrequency => TimeSpan.TicksPerSecond;
+
     public override DateTimeOffset GetUtcNow()
         => Now;
+
+    public override long GetTimestamp()
+    {
+        lock (_sync)
+        {
+            return _timestamp;
+        }
+    }
 
     public override ITimer CreateTimer(
         TimerCallback callback,
@@ -88,16 +99,22 @@ public sealed class MutableTimeProvider : TimeProvider
 
                 if (timer is null)
                 {
-                    _now = target;
+                    SetNow(target);
                     return;
                 }
 
-                _now = timer.NextDue!.Value;
+                SetNow(timer.NextDue!.Value);
                 timer.PrepareCallback();
             }
 
             timer.InvokeCallback();
         }
+    }
+
+    private void SetNow(DateTimeOffset value)
+    {
+        _timestamp += (value - _now).Ticks;
+        _now = value;
     }
 
     private static void ValidateTimerDuration(TimeSpan value, string parameterName)

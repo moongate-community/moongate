@@ -10,6 +10,7 @@ using Moongate.Server.Services.AI;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
+using Serilog.Events;
 using SquidStd.Core.Directories;
 using SquidStd.Scripting.Lua.Data.Config;
 using SquidStd.Scripting.Lua.Services;
@@ -17,6 +18,7 @@ using ISynchronizeInvoke = System.ComponentModel.ISynchronizeInvoke;
 
 namespace Moongate.Tests.Scripting;
 
+[Collection(GlobalSerilogCollection.Name)]
 public class LuaNpcBrainRuntimeTests
 {
     private const string CounterBrain = """
@@ -323,8 +325,9 @@ public class LuaNpcBrainRuntimeTests
     }
 
     [Fact]
-    public void Invoke_InfiniteHook_ReturnsBudgetFailureAndRecordsMetric()
+    public void Invoke_InfiniteHook_ReturnsBudgetFailureRecordsMetricAndDoesNotLog()
     {
+        using var logs = new GlobalSerilogCapture();
         using var fixture = new BrainRuntimeFixture();
         fixture.WriteBrain(
             "infinite",
@@ -347,6 +350,7 @@ public class LuaNpcBrainRuntimeTests
         Assert.Empty(result.Decision.Intents);
         Assert.Equal(1, fixture.Metrics.Current.HookFailures);
         Assert.Equal(1, fixture.Metrics.Current.InstructionBudgetBreaches);
+        Assert.DoesNotContain(logs.Events, logEvent => logEvent.Level >= LogEventLevel.Warning);
     }
 
     [Fact]

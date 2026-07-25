@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
@@ -34,19 +33,22 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private readonly INpcAiMetrics _metrics;
     private readonly Dictionary<Serial, SchedulerEntry> _entries = [];
     private readonly PriorityQueue<(Serial MobileId, long Version), (long DueTicks, long Sequence)> _queue = new();
-    private readonly Dictionary<string, DateTimeOffset> _faultLogs = new(StringComparer.Ordinal);
+    private readonly Dictionary<
+        (string BrainId, Serial MobileId, NpcBrainHookType Hook, string Error),
+        DateTimeOffset
+    > _faultLogs = [];
 
     private string? _timerId;
     private long _nextQueueSequence;
 
     public int MaxHearingRange => _entries.Values
-        .Where(entry => entry.Descriptor is not null)
+        .Where(HasCurrentDescriptor)
         .Select(entry => entry.Descriptor!.HearingRange)
         .DefaultIfEmpty()
         .Max();
 
     public int MaxPerceptionRange => _entries.Values
-        .Where(entry => entry.Descriptor is not null)
+        .Where(HasCurrentDescriptor)
         .Select(entry => entry.Descriptor!.PerceptionRange)
         .DefaultIfEmpty()
         .Max();
@@ -87,9 +89,9 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             if (string.Equals(existing.BrainId, mobile.BrainScriptId, StringComparison.Ordinal))
             {
                 if (_runtime.TryGetDescriptor(mobile.Id, out var currentDescriptor) &&
-                    currentDescriptor is not null)
+                    !TryCacheDescriptor(existing, currentDescriptor))
                 {
-                    existing.Descriptor = currentDescriptor;
+                    existing.Descriptor = null;
                 }
 
                 return;
@@ -120,12 +122,14 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             );
         }
 
-        if (_runtime.TryBind(mobile.Id, mobile.BrainScriptId, out var descriptor, out var error) &&
-            descriptor is not null)
-        {
-            entry.Descriptor = descriptor;
-        }
-        else if (isActive)
+        var isBound = _runtime.TryBind(
+            mobile.Id,
+            mobile.BrainScriptId,
+            out var descriptor,
+            out var error
+        ) && TryCacheDescriptor(entry, descriptor);
+
+        if (!isBound && isActive)
         {
             RegisterFailure(entry, NpcBrainHookType.Activate, error ?? "Brain binding failed.", now);
         }
@@ -138,6 +142,8 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
     public void Unbind(Serial mobileId)
     {
+        ClearFaultLogs(mobileId);
+
         if (!_entries.Remove(mobileId))
         {
             return;
@@ -187,11 +193,16 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
     public void RefreshDescriptor(string brainId, BrainDescriptor descriptor)
     {
+        if (!string.Equals(descriptor.BrainId, brainId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
         foreach (var entry in _entries.Values.Where(
                      entry => string.Equals(entry.BrainId, brainId, StringComparison.Ordinal)
                  ))
         {
-            entry.Descriptor = descriptor;
+            TryCacheDescriptor(entry, descriptor);
         }
     }
 
@@ -201,7 +212,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
     public bool TryGetDescriptor(Serial mobileId, out BrainDescriptor? descriptor)
     {
-        if (_entries.TryGetValue(mobileId, out var entry) && entry.Descriptor is not null)
+        if (_entries.TryGetValue(mobileId, out var entry) && HasCurrentDescriptor(entry))
         {
             descriptor = entry.Descriptor;
             return true;
@@ -230,6 +241,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     public void Tick()
     {
         var now = _timeProvider.GetUtcNow();
+        PruneFaultLogs(now);
         var executed = 0;
         var woken = new HashSet<Serial>();
         var postponed = new List<(
@@ -317,6 +329,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private void RebindChangedBrain(SchedulerEntry entry, MobileEntity mobile)
     {
         var now = _timeProvider.GetUtcNow();
+        ClearFaultLogs(mobile.Id);
         _runtime.Reset(mobile.Id);
         entry.BrainId = mobile.BrainScriptId;
         entry.Descriptor = null;
@@ -336,12 +349,14 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             );
         }
 
-        if (_runtime.TryBind(mobile.Id, mobile.BrainScriptId, out var descriptor, out var error) &&
-            descriptor is not null)
-        {
-            entry.Descriptor = descriptor;
-        }
-        else if (entry.State == NpcBrainStateType.Active)
+        var isBound = _runtime.TryBind(
+            mobile.Id,
+            mobile.BrainScriptId,
+            out var descriptor,
+            out var error
+        ) && TryCacheDescriptor(entry, descriptor);
+
+        if (!isBound && entry.State == NpcBrainStateType.Active)
         {
             RegisterFailure(entry, NpcBrainHookType.Activate, error ?? "Brain binding failed.", now);
         }
@@ -447,17 +462,14 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private bool EnsureBinding(SchedulerEntry entry, DateTimeOffset now)
     {
         if (_runtime.TryGetDescriptor(entry.MobileId, out var descriptor) &&
-            descriptor is not null &&
-            string.Equals(descriptor.BrainId, entry.BrainId, StringComparison.Ordinal))
+            TryCacheDescriptor(entry, descriptor))
         {
-            entry.Descriptor = descriptor;
             return true;
         }
 
         if (_runtime.TryBind(entry.MobileId, entry.BrainId, out descriptor, out var error) &&
-            descriptor is not null)
+            TryCacheDescriptor(entry, descriptor))
         {
-            entry.Descriptor = descriptor;
             entry.ConsecutiveFailures = 0;
             return true;
         }
@@ -511,7 +523,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         NpcBrainEvent? brainEvent
     )
     {
-        var started = Stopwatch.GetTimestamp();
+        var started = _timeProvider.GetTimestamp();
 
         try
         {
@@ -524,7 +536,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         }
         finally
         {
-            _metrics.RecordHookInvocation(Stopwatch.GetElapsedTime(started));
+            _metrics.RecordHookInvocation(_timeProvider.GetElapsedTime(started));
         }
     }
 
@@ -592,7 +604,8 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         DateTimeOffset now
     )
     {
-        var key = $"{entry.BrainId}\n{entry.MobileId.Value}\n{(int)hook}\n{error}";
+        PruneFaultLogs(now);
+        var key = (entry.BrainId, entry.MobileId, hook, error);
 
         if (_faultLogs.TryGetValue(key, out var loggedAt) &&
             now - loggedAt < TimeSpan.FromSeconds(FaultLogIntervalSeconds))
@@ -608,6 +621,14 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             hook,
             error
         );
+    }
+
+    private void ClearFaultLogs(Serial mobileId)
+    {
+        foreach (var key in _faultLogs.Keys.Where(key => key.MobileId == mobileId).ToArray())
+        {
+            _faultLogs.Remove(key);
+        }
     }
 
     private void CompleteSleep(SchedulerEntry entry)
@@ -686,6 +707,37 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             mobile.Position.X >> SectorShift,
             mobile.Position.Y >> SectorShift
         );
+
+    private void PruneFaultLogs(DateTimeOffset now)
+    {
+        var interval = TimeSpan.FromSeconds(FaultLogIntervalSeconds);
+
+        foreach (var key in _faultLogs
+                     .Where(entry => now - entry.Value >= interval)
+                     .Select(entry => entry.Key)
+                     .ToArray())
+        {
+            _faultLogs.Remove(key);
+        }
+    }
+
+    private static bool HasCurrentDescriptor(SchedulerEntry entry)
+        => entry.Descriptor is { } descriptor &&
+           string.Equals(descriptor.BrainId, entry.BrainId, StringComparison.Ordinal);
+
+    private static bool TryCacheDescriptor(SchedulerEntry entry, BrainDescriptor? descriptor)
+    {
+        if (
+            descriptor is null ||
+            !string.Equals(descriptor.BrainId, entry.BrainId, StringComparison.Ordinal)
+        )
+        {
+            return false;
+        }
+
+        entry.Descriptor = descriptor;
+        return true;
+    }
 
     private static long DueTicks(DateTimeOffset dueAt)
         => dueAt.UtcDateTime.Ticks;
