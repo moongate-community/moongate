@@ -32,6 +32,19 @@ public sealed class NpcBrainLifecycleSubscriberTests
     }
 
     [Fact]
+    public async Task OnWorldReady_ActiveNpcSector_BindsAndActivatesBrain()
+    {
+        var fixture = new LifecycleFixture();
+        var npc = fixture.AddMobile(0x1, "guard", x: 32, y: 48);
+        fixture.Sectors.Active.Add((0, 2, 3));
+
+        await fixture.Subscriber.OnWorldReady(new(), CancellationToken.None);
+
+        Assert.Equal([npc.Id], fixture.Scheduler.Bound);
+        Assert.Equal([npc.Id], fixture.Scheduler.Activated);
+    }
+
+    [Fact]
     public async Task OnMobileCreated_ActiveSector_BindsAndActivatesBrain()
     {
         var fixture = new LifecycleFixture();
