@@ -18,17 +18,7 @@ const GENERATOR = 'openapi-typescript@7.13.0'
 
 const result = spawnSync(
   'npx',
-  [
-    '--yes',
-    '-p',
-    TYPESCRIPT,
-    '-p',
-    GENERATOR,
-    'openapi-typescript',
-    'openapi.json',
-    '-o',
-    'src/lib/api-types.ts',
-  ],
+  ['--yes', '-p', TYPESCRIPT, '-p', GENERATOR, 'openapi-typescript', 'openapi.json', '-o', 'src/lib/api-types.ts'],
   { cwd: uiRoot, stdio: 'inherit' },
 )
 
