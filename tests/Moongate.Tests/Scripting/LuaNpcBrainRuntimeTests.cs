@@ -353,6 +353,65 @@ public class LuaNpcBrainRuntimeTests
         Assert.DoesNotContain(logs.Events, logEvent => logEvent.Level >= LogEventLevel.Warning);
     }
 
+    [Theory]
+    [InlineData("string.rep('x', 4097)")]
+    [InlineData("('x'):rep(4097)")]
+    public void Invoke_StringRepAboveNativeLimit_ReturnsStructuredFailure(string nativeCall)
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "native_limit",
+            $$"""
+              return {
+                id = "native_limit",
+                default_tick_ms = 1000,
+                perception_range = 12,
+                hearing_range = 15,
+                think = function()
+                  return brain.say({{nativeCall}})
+                end
+              }
+              """
+        );
+        fixture.Bind(1, "native_limit");
+
+        var result = fixture.Think(1);
+
+        Assert.False(result.Success);
+        Assert.False(result.InstructionBudgetExceeded);
+        Assert.Equal(BrainDecision.Empty, result.Decision);
+        Assert.Contains("limit", result.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, fixture.Metrics.Current.HookFailures);
+    }
+
+    [Fact]
+    public void Invoke_BoundedNativeLibraryUsage_ReturnsExpectedDecision()
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "native_normal",
+            """
+            return {
+              id = "native_normal",
+              default_tick_ms = 1000,
+              perception_range = 12,
+              hearing_range = 15,
+              think = function()
+                local values = { "a", "b" }
+                table.insert(values, "c")
+                return brain.say(string.rep(table.concat(values), 2))
+              end
+            }
+            """
+        );
+        fixture.Bind(1, "native_normal");
+
+        var result = fixture.Think(1);
+
+        Assert.True(result.Success, result.Error);
+        Assert.Equal("abcabc", Assert.Single(result.Decision.Intents).Text);
+    }
+
     [Fact]
     public void Invoke_AbsentOptionalHook_ReturnsSuccessfulEmptyDecision()
     {

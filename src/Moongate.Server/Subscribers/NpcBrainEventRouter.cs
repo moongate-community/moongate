@@ -185,6 +185,43 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         return Task.CompletedTask;
     }
 
+    public Task OnBrainDefinitionReloaded(
+        BrainDefinitionReloadedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!string.Equals(
+                message.BrainId,
+                message.Descriptor.BrainId,
+                StringComparison.Ordinal
+            ))
+        {
+            return Task.CompletedTask;
+        }
+
+        foreach (var observer in _mobiles
+                     .GetAll()
+                     .Where(mobile =>
+                         string.Equals(
+                             mobile.BrainScriptId,
+                             message.BrainId,
+                             StringComparison.Ordinal
+                         )
+                     )
+                     .OrderBy(mobile => mobile.Id))
+        {
+            if (_scheduler.IsActive(observer.Id))
+            {
+                ReconcileObserverSet(observer, message.Descriptor);
+                continue;
+            }
+
+            _perceivedByObserver.Remove(observer.Id);
+        }
+
+        return Task.CompletedTask;
+    }
+
     public Task OnMobileAttacked(
         MobileAttackedEvent message,
         CancellationToken cancellationToken
@@ -241,6 +278,7 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
         eventBus.Subscribe<SectorActivatedEvent>(OnSectorActivated);
         eventBus.Subscribe<SectorDeactivatedEvent>(OnSectorDeactivated);
+        eventBus.Subscribe<BrainDefinitionReloadedEvent>(OnBrainDefinitionReloaded);
         eventBus.Subscribe<MobileAttackedEvent>(OnMobileAttacked);
         eventBus.Subscribe<MobileDamagedEvent>(OnMobileDamaged);
         eventBus.Subscribe<MobileDiedEvent>(OnMobileDied);
@@ -257,7 +295,7 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
 
     private void RouteSubjectMovement(MobileEntity subject, MobileMovedEvent movement)
     {
-        var candidates = _spatial
+        var candidateIds = _spatial
             .GetMobilesInRange(
                 movement.FromMapId,
                 movement.FromPosition,
@@ -270,42 +308,48 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
                     _scheduler.MaxPerceptionRange
                 )
             )
-            .Where(mobile => mobile.Id != subject.Id)
-            .GroupBy(mobile => mobile.Id)
-            .Select(group => group.First())
-            .OrderBy(mobile => mobile.Id);
+            .Select(mobile => mobile.Id)
+            .Concat(
+                _perceivedByObserver
+                    .Where(pair => pair.Value.Contains(subject.Id))
+                    .Select(pair => pair.Key)
+            )
+            .Where(observerId => observerId != subject.Id)
+            .Distinct()
+            .Order()
+            .ToArray();
         var snapshot = ToSnapshot(subject);
 
-        foreach (var observer in candidates)
+        foreach (var observerId in candidateIds)
         {
-            if (!TryGetActiveDescriptor(observer.Id, out var descriptor))
+            if (_mobiles.GetById(observerId) is not { } observer ||
+                !TryGetActiveDescriptor(observerId, out var descriptor))
             {
+                _perceivedByObserver.Remove(observerId);
                 continue;
             }
 
-            var wasInside = observer.MapId == movement.FromMapId &&
-                            observer.Position.InRange(
-                                movement.FromPosition,
-                                descriptor.PerceptionRange
-                            );
+            var wasPerceived = _perceivedByObserver.TryGetValue(
+                observerId,
+                out var perceived
+            ) && perceived.Contains(subject.Id);
             var isInside = observer.MapId == movement.ToMapId &&
                            observer.Position.InRange(
                                movement.ToPosition,
                                descriptor.PerceptionRange
                            );
 
-            if (!wasInside && !isInside)
+            if (!wasPerceived && !isInside)
             {
                 continue;
             }
 
-            var perceived = GetPerceived(observer.Id);
-
-            if (!wasInside)
+            if (!wasPerceived)
             {
+                perceived = GetPerceived(observerId);
                 perceived.Add(subject.Id);
                 EnqueuePerception(
-                    observer.Id,
+                    observerId,
                     NpcBrainHookType.MobileEnteredRange,
                     NpcBrainEventType.MobileEnteredRange,
                     snapshot,
@@ -316,9 +360,8 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
 
             if (isInside)
             {
-                perceived.Add(subject.Id);
                 EnqueuePerception(
-                    observer.Id,
+                    observerId,
                     NpcBrainHookType.MobileMoved,
                     NpcBrainEventType.MobileMoved,
                     snapshot,
@@ -327,9 +370,9 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
                 continue;
             }
 
-            perceived.Remove(subject.Id);
+            _perceivedByObserver[observerId].Remove(subject.Id);
             EnqueuePerception(
-                observer.Id,
+                observerId,
                 NpcBrainHookType.MobileLeftRange,
                 NpcBrainEventType.MobileLeftRange,
                 snapshot,
@@ -425,6 +468,14 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
             return;
         }
 
+        ReconcileObserverSet(observer, descriptor);
+    }
+
+    private void ReconcileObserverSet(
+        MobileEntity observer,
+        BrainDescriptor descriptor
+    )
+    {
         var current = _spatial
             .GetMobilesInRange(
                 observer.MapId,

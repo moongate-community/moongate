@@ -14,19 +14,32 @@ public sealed class MoongateScriptingPluginTests
     public void Configure_RegistersLuaNpcBrainRuntime()
     {
         var root = Path.Combine(Path.GetTempPath(), "mg-scripting-plugin-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(Path.Combine(root, "scripts"));
-        var container = new Container();
-        container.RegisterInstance(new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" });
-        container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
 
-        new MoongateScriptingPlugin().Configure(container, new PluginContext());
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(root, "scripts"));
+            using var container = new Container();
+            container.RegisterInstance(
+                new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" }
+            );
+            container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
 
-        Assert.True(container.IsRegistered<INpcBrainRuntime>());
-        Assert.Equal(
-            typeof(LuaNpcBrainRuntime),
-            container.GetServiceRegistrations()
-                .Single(registration => registration.ServiceType == typeof(INpcBrainRuntime))
-                .ImplementationType
-        );
+            new MoongateScriptingPlugin().Configure(container, new PluginContext());
+
+            Assert.True(container.IsRegistered<INpcBrainRuntime>());
+            Assert.Equal(
+                typeof(LuaNpcBrainRuntime),
+                container.GetServiceRegistrations()
+                    .Single(registration => registration.ServiceType == typeof(INpcBrainRuntime))
+                    .ImplementationType
+            );
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, true);
+            }
+        }
     }
 }

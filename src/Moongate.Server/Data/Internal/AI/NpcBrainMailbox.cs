@@ -21,21 +21,24 @@ public sealed class NpcBrainMailbox
         _metrics = metrics;
     }
 
-    public void Enqueue(NpcBrainHookType hook, NpcBrainEvent brainEvent)
+    public bool Enqueue(NpcBrainHookType hook, NpcBrainEvent brainEvent)
     {
         if (TryCoalesce(hook, brainEvent))
         {
             _metrics.RecordEvent(NpcBrainEventDispositionType.Coalesced);
-            return;
+            return false;
         }
 
         if (_entries.Count == _capacity && !MakeRoom(hook))
         {
             _metrics.RecordEvent(NpcBrainEventDispositionType.Dropped);
-            return;
+            return false;
         }
 
+        var schedulingChanged = _entries.Count == 0;
         _entries.Add((hook, brainEvent, _nextSequence++));
+
+        return schedulingChanged;
     }
 
     public IReadOnlyList<(NpcBrainHookType Hook, NpcBrainEvent Event)> Dequeue(int maximumCount)

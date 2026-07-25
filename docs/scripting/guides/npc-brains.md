@@ -65,7 +65,7 @@ end
 return guard
 ```
 
-The four required fields are:
+The five required fields are:
 
 | Field | Type | Rules |
 |---|---|---|
@@ -152,11 +152,15 @@ each same-id binding's private state and home.
 
 Brain files are loaded with an allowlisted authoring environment: the `brain`
 helpers, selected base functions (`assert`, `error`, `ipairs`, `next`, `pairs`,
-`pcall`, `select`, `tonumber`, `tostring`, `type`, `xpcall`), and the `math`,
-`string`, and `table` libraries. General world-mutating modules are not exposed
-to a brain file. This is the supported authoring contract; brains are loaded by
-the shared Lua engine through `Script.LoadFile`, so do not treat it as a
-stronger security sandbox than that implementation provides.
+`pcall`, `select`, `tonumber`, `tostring`, `type`, `xpcall`), and bounded
+subsets of the `math`, `string`, and `table` libraries. Native callbacks whose
+work scales with their input are capped at 4,096 characters or 1,024 values.
+Pattern matching, formatting, function dumping, and `table.sort` are
+unavailable because MoonSharp executes those operations in native callbacks
+outside the Lua instruction counter. General world-mutating modules are not
+exposed to a brain file. This is the supported authoring contract; brains are
+loaded by the shared Lua engine through `Script.LoadFile`, so do not treat it
+as a stronger security sandbox than that implementation provides.
 
 ## Intents and limits
 

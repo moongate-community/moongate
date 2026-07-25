@@ -20,6 +20,8 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private const string TimerName = "npc-brain-scheduler";
     private const int SectorShift = 4;
     private const int FaultLogIntervalSeconds = 60;
+    private const int QueueCompactionFactor = 2;
+    private const int QueueCompactionSlack = 8;
 
     private readonly ILogger _logger = Log.ForContext<NpcBrainScheduler>();
     private readonly IGameLoopContext _loop;
@@ -150,12 +152,25 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         }
 
         _runtime.Unbind(mobileId);
+        CompactQueueIfNeeded();
     }
 
     public void Activate(Serial mobileId)
     {
-        if (!_entries.TryGetValue(mobileId, out var entry) ||
-            entry.State != NpcBrainStateType.Sleeping)
+        if (!_entries.TryGetValue(mobileId, out var entry))
+        {
+            return;
+        }
+
+        if (entry.State == NpcBrainStateType.Deactivating)
+        {
+            entry.State = NpcBrainStateType.Active;
+            entry.Mailbox.Clear();
+            Requeue(entry, entry.NextThinkAt, true);
+            return;
+        }
+
+        if (entry.State != NpcBrainStateType.Sleeping)
         {
             return;
         }
@@ -230,9 +245,9 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             return;
         }
 
-        entry.Mailbox.Enqueue(hook, brainEvent);
+        var schedulingChanged = entry.Mailbox.Enqueue(hook, brainEvent);
 
-        if (entry.State == NpcBrainStateType.Active)
+        if (entry.State == NpcBrainStateType.Active && schedulingChanged)
         {
             Requeue(entry, _timeProvider.GetUtcNow());
         }
@@ -257,9 +272,14 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             var (mobileId, version) = element;
 
             if (!_entries.TryGetValue(mobileId, out var entry) ||
-                entry.QueueVersion != version ||
-                entry.State == NpcBrainStateType.Sleeping)
+                entry.QueueVersion != version)
             {
+                continue;
+            }
+
+            if (entry.State == NpcBrainStateType.Sleeping)
+            {
+                entry.ScheduledDueTicks = null;
                 continue;
             }
 
@@ -269,6 +289,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
                 continue;
             }
 
+            entry.ScheduledDueTicks = null;
             var dueAt = GetDueAt(entry, now);
 
             if (dueAt > now)
@@ -292,6 +313,8 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         {
             _queue.Enqueue(queued.Element, queued.Priority);
         }
+
+        CompactQueueIfNeeded();
 
         if (executed == _advanced.MaxBrainsPerLoop)
         {
@@ -330,6 +353,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     {
         var now = _timeProvider.GetUtcNow();
         ClearFaultLogs(mobile.Id);
+        CancelSchedule(entry);
         _runtime.Reset(mobile.Id);
         entry.BrainId = mobile.BrainScriptId;
         entry.Descriptor = null;
@@ -633,19 +657,71 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
     private void CompleteSleep(SchedulerEntry entry)
     {
+        CancelSchedule(entry);
         entry.State = NpcBrainStateType.Sleeping;
         entry.FaultUntil = null;
         entry.ConsecutiveFailures = 0;
         entry.Mailbox.Clear();
     }
 
-    private void Requeue(SchedulerEntry entry, DateTimeOffset dueAt)
+    private void Requeue(
+        SchedulerEntry entry,
+        DateTimeOffset dueAt,
+        bool replaceExisting = false
+    )
     {
+        var dueTicks = DueTicks(dueAt);
+
+        if (!replaceExisting &&
+            entry.ScheduledDueTicks is { } scheduledDueTicks &&
+            scheduledDueTicks <= dueTicks)
+        {
+            return;
+        }
+
         entry.QueueVersion++;
+        entry.ScheduledDueTicks = dueTicks;
         _queue.Enqueue(
             (entry.MobileId, entry.QueueVersion),
-            (DueTicks(dueAt), _nextQueueSequence++)
+            (dueTicks, _nextQueueSequence++)
         );
+        CompactQueueIfNeeded();
+    }
+
+    private void CancelSchedule(SchedulerEntry entry)
+    {
+        if (entry.ScheduledDueTicks is null)
+        {
+            return;
+        }
+
+        entry.QueueVersion++;
+        entry.ScheduledDueTicks = null;
+    }
+
+    private void CompactQueueIfNeeded()
+    {
+        var scheduledCount = _entries.Values.Count(entry => entry.ScheduledDueTicks is not null);
+        var maximumQueueCount = (scheduledCount * QueueCompactionFactor) + QueueCompactionSlack;
+
+        if (_queue.Count <= maximumQueueCount)
+        {
+            return;
+        }
+
+        var current = _queue.UnorderedItems
+            .Where(item =>
+                _entries.TryGetValue(item.Element.MobileId, out var entry) &&
+                entry.QueueVersion == item.Element.Version &&
+                entry.ScheduledDueTicks == item.Priority.DueTicks
+            )
+            .ToArray();
+        _queue.Clear();
+
+        foreach (var item in current)
+        {
+            _queue.Enqueue(item.Element, item.Priority);
+        }
     }
 
     private DateTimeOffset GetDueAt(SchedulerEntry entry, DateTimeOffset now)
@@ -665,6 +741,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             .Where(element =>
                 _entries.TryGetValue(element.MobileId, out var entry) &&
                 entry.QueueVersion == element.Version &&
+                entry.ScheduledDueTicks is not null &&
                 entry.State != NpcBrainStateType.Sleeping &&
                 GetDueAt(entry, now) <= now
             )
@@ -774,6 +851,8 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         public int ConsecutiveFailures { get; set; }
 
         public long QueueVersion { get; set; }
+
+        public long? ScheduledDueTicks { get; set; }
 
         public NpcBrainMailbox Mailbox { get; }
 

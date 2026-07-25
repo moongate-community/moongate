@@ -132,6 +132,36 @@ public class NpcBrainSchedulerTests
     }
 
     [Fact]
+    public void Activate_PendingDeactivation_CancelsSleepWithoutTransitionHooks()
+    {
+        var fixture = new SchedulerFixture();
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+        fixture.Runtime.Invocations.Clear();
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(500));
+
+        fixture.Scheduler.Deactivate(mobile.Id);
+        fixture.Scheduler.Activate(mobile.Id);
+        fixture.Scheduler.Tick();
+
+        Assert.True(fixture.Scheduler.IsActive(mobile.Id));
+        Assert.Empty(fixture.Runtime.Invocations);
+
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(499));
+        fixture.Scheduler.Tick();
+        Assert.Empty(fixture.Runtime.Invocations);
+
+        fixture.Time.Advance(TimeSpan.FromMilliseconds(1));
+        fixture.Scheduler.Tick();
+        Assert.Equal(
+            [NpcBrainHookType.Think],
+            fixture.Runtime.Invocations.Select(invocation => invocation.Hook)
+        );
+        Assert.True(fixture.Scheduler.IsActive(mobile.Id));
+    }
+
+    [Fact]
     public void SleepWake_Cycle_PreservesBindingAndRuntimeState()
     {
         var fixture = new SchedulerFixture();
@@ -295,6 +325,64 @@ public class NpcBrainSchedulerTests
         fixture.Scheduler.Tick();
         Assert.Equal(3, fixture.Runtime.Invocations.Count);
         Assert.Equal(4, fixture.Metrics.Current.EventsDelivered);
+    }
+
+    [Fact]
+    public void EnqueueEvent_CoalescedAndDroppedFlood_KeepsScheduleQueueBounded()
+    {
+        var fixture = new SchedulerFixture(maxEventsPerWake: 2, maxMailboxEvents: 2);
+        var mobile = fixture.AddActiveMobile(0x1);
+        fixture.Scheduler.Bind(mobile);
+        fixture.Scheduler.Tick();
+
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.MobileMoved,
+            Event(NpcBrainEventType.MobileMoved, 0x2)
+        );
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.MobileMoved,
+            Event(NpcBrainEventType.MobileMoved, 0x2)
+        );
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.Attacked,
+            Event(NpcBrainEventType.Attacked, 0x3)
+        );
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.MobileMoved,
+            Event(NpcBrainEventType.MobileMoved, 0x4)
+        );
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.MobileMoved,
+            Event(NpcBrainEventType.MobileMoved, 0x5)
+        );
+        fixture.Scheduler.EnqueueEvent(
+            mobile.Id,
+            NpcBrainHookType.MobileMoved,
+            Event(NpcBrainEventType.MobileMoved, 0x6)
+        );
+
+        Assert.Equal(1, fixture.Metrics.Current.EventsCoalesced);
+        Assert.Equal(3, fixture.Metrics.Current.EventsDropped);
+        Assert.InRange(ScheduleQueueCount(fixture.Scheduler), 1, 2);
+
+        fixture.Scheduler.Tick();
+
+        for (var index = 0; index < 32; index++)
+        {
+            fixture.Scheduler.EnqueueEvent(
+                mobile.Id,
+                NpcBrainHookType.MobileMoved,
+                Event(NpcBrainEventType.MobileMoved, (uint)(0x10 + index))
+            );
+            fixture.Scheduler.Tick();
+        }
+
+        Assert.InRange(ScheduleQueueCount(fixture.Scheduler), 1, 10);
     }
 
     [Fact]
@@ -657,6 +745,20 @@ public class NpcBrainSchedulerTests
         return entries.Count;
     }
 
+    private static int ScheduleQueueCount(NpcBrainScheduler scheduler)
+    {
+        var field = typeof(NpcBrainScheduler).GetField(
+            "_queue",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic
+        ) ?? throw new InvalidOperationException("Scheduler queue was not found.");
+        var queue = field.GetValue(scheduler) ??
+                    throw new InvalidOperationException("Scheduler queue was not initialized.");
+        var count = queue.GetType().GetProperty("Count") ??
+                    throw new InvalidOperationException("Scheduler queue count was not found.");
+
+        return Assert.IsType<int>(count.GetValue(queue));
+    }
+
     private static IReadOnlyList<LogEvent> SchedulerWarnings(GlobalSerilogCapture logs)
         => logs.Events
             .Where(logEvent =>
@@ -710,6 +812,7 @@ public class NpcBrainSchedulerTests
         public SchedulerFixture(
             int maxBrainsPerLoop = 100,
             int maxEventsPerWake = 16,
+            int? maxMailboxEvents = null,
             int minTickMilliseconds = 100,
             int maxTickMilliseconds = 60_000
         )
@@ -726,7 +829,7 @@ public class NpcBrainSchedulerTests
                         MaxTickMilliseconds = maxTickMilliseconds,
                         MaxBrainsPerLoop = maxBrainsPerLoop,
                         MaxEventsPerBrainWake = maxEventsPerWake,
-                        MaxMailboxEvents = Math.Max(16, maxEventsPerWake)
+                        MaxMailboxEvents = maxMailboxEvents ?? Math.Max(16, maxEventsPerWake)
                     }
                 }
             };

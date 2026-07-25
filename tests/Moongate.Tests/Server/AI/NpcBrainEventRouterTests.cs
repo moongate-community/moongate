@@ -105,8 +105,11 @@ public class NpcBrainEventRouterTests
     public async Task OnMobileMoved_RepeatedInsideMovement_MailboxRetainsLatestPosition()
     {
         var fixture = new RouterFixture();
+        fixture.Sectors.Active.Add((0, 0, 0));
         var observer = fixture.AddBrain(0x1, "Observer", 0, 10, 10, 5, 5, true);
         var subject = fixture.AddMobile(0x2, "Subject", 0, 11, 10);
+        await fixture.Router.OnSectorActivated(new(0, 0, 0), CancellationToken.None);
+        fixture.Scheduler.Events.Clear();
 
         await fixture.MoveAsync(subject, 12, 10);
         await fixture.MoveAsync(subject, 13, 10);
@@ -117,6 +120,81 @@ public class NpcBrainEventRouterTests
         Assert.Equal(new Point3D(12, 10, 0), queued.Event.FromPosition);
         Assert.Equal(new Point3D(13, 10, 0), queued.Event.ToPosition);
         Assert.Equal(new Point3D(13, 10, 0), queued.Event.Mobile.Position);
+    }
+
+    [Fact]
+    public async Task OnMobileCreated_RouterBeforeBrainBinding_FirstInsideMovementRecoversWithEnter()
+    {
+        var fixture = new RouterFixture();
+        fixture.Sectors.Active.Add((0, 0, 0));
+        var observer = fixture.AddMobile(0x1, "Observer", 0, 5, 5, "guard");
+        var subject = fixture.AddMobile(0x2, "Subject", 0, 8, 5);
+
+        await fixture.Router.OnMobileCreated(new(observer), CancellationToken.None);
+        fixture.Scheduler.Descriptors[observer.Id] = new("guard", 1000, 5, 5);
+        fixture.Scheduler.Active.Add(observer.Id);
+        await fixture.MoveAsync(subject, 9, 5);
+
+        var recovered = Assert.Single(fixture.Scheduler.Events);
+        Assert.Equal(observer.Id, recovered.MobileId);
+        Assert.Equal(NpcBrainHookType.MobileEnteredRange, recovered.Hook);
+        Assert.Equal(subject.Id, recovered.Event.Mobile!.Id);
+    }
+
+    [Fact]
+    public async Task OnMobileMoved_UnperceivedSubjectLeavesRange_DoesNotEmitLeave()
+    {
+        var fixture = new RouterFixture();
+        fixture.AddBrain(0x1, "Observer", 0, 10, 10, 5, 5, true);
+        var subject = fixture.AddMobile(0x2, "Subject", 0, 14, 10);
+
+        await fixture.MoveAsync(subject, 20, 10);
+
+        Assert.Empty(fixture.Scheduler.Events);
+    }
+
+    [Fact]
+    public async Task BrainDefinitionReloaded_RouterBeforeLifecycle_ReconcilesExpandedAndShrunkRanges()
+    {
+        var fixture = new RouterFixture();
+        fixture.Sectors.Active.Add((0, 0, 0));
+        var observer = fixture.AddBrain(0x1, "Observer", 0, 10, 10, 5, 5, true);
+        var near = fixture.AddMobile(0x2, "Near", 0, 13, 10);
+        var far = fixture.AddMobile(0x3, "Far", 0, 18, 10);
+        await fixture.Router.OnSectorActivated(new(0, 0, 0), CancellationToken.None);
+        fixture.Scheduler.Events.Clear();
+        var eventBus = new RecordingSubscriptionEventBus();
+        fixture.Router.Subscribe(eventBus);
+        var expanded = new BrainDescriptor("guard", 1000, 10, 5);
+
+        await eventBus.PublishAsync(
+            new BrainDefinitionReloadedEvent("guard", expanded),
+            CancellationToken.None
+        );
+
+        var entered = Assert.Single(fixture.Scheduler.Events);
+        Assert.Equal(observer.Id, entered.MobileId);
+        Assert.Equal(NpcBrainHookType.MobileEnteredRange, entered.Hook);
+        Assert.Equal(far.Id, entered.Event.Mobile!.Id);
+
+        fixture.Scheduler.Descriptors[observer.Id] = expanded;
+        fixture.Scheduler.Events.Clear();
+        await eventBus.PublishAsync(
+            new BrainDefinitionReloadedEvent(
+                "guard",
+                new("guard", 1000, 2, 5)
+            ),
+            CancellationToken.None
+        );
+
+        Assert.Equal(
+            [near.Id, far.Id],
+            fixture.Scheduler.Events.Select(entry => entry.Event.Mobile!.Id)
+        );
+        Assert.All(
+            fixture.Scheduler.Events,
+            entry => Assert.Equal(NpcBrainHookType.MobileLeftRange, entry.Hook)
+        );
     }
 
     [Fact]
@@ -356,6 +434,7 @@ public class NpcBrainEventRouterTests
                 typeof(SessionDestroyedEvent),
                 typeof(SectorActivatedEvent),
                 typeof(SectorDeactivatedEvent),
+                typeof(BrainDefinitionReloadedEvent),
                 typeof(MobileAttackedEvent),
                 typeof(MobileDamagedEvent),
                 typeof(MobileDiedEvent)
@@ -584,6 +663,11 @@ public class NpcBrainEventRouterTests
 
     private sealed class RecordingSubscriptionEventBus : IEventBus
     {
+        private readonly Dictionary<
+            Type,
+            Func<object, CancellationToken, Task>
+        > _handlers = [];
+
         public List<Type> EventTypes { get; } = [];
 
         public void Publish<TEvent>(TEvent eventData) where TEvent : IEvent
@@ -595,7 +679,9 @@ public class NpcBrainEventRouterTests
             CancellationToken cancellationToken = default
         )
             where TEvent : IEvent
-            => Task.CompletedTask;
+            => _handlers.TryGetValue(typeof(TEvent), out var handler)
+                ? handler(eventData, cancellationToken)
+                : Task.CompletedTask;
 
         public IDisposable RegisterListener<TEvent>(IEventListener<TEvent> listener)
             where TEvent : IEvent
@@ -607,6 +693,8 @@ public class NpcBrainEventRouterTests
             where TEvent : IEvent
         {
             EventTypes.Add(typeof(TEvent));
+            _handlers[typeof(TEvent)] = (eventData, cancellationToken) =>
+                handler((TEvent)eventData, cancellationToken);
 
             return NoopDisposable.Instance;
         }

@@ -31,7 +31,7 @@ public sealed class MoongateNpcAiPluginTests
     [Fact]
     public void Configure_RegistersAiServicesAndSubscribers()
     {
-        var container = new Container();
+        using var container = new Container();
 
         new MoongateNpcAiPlugin().Configure(container, new PluginContext());
 
@@ -54,32 +54,47 @@ public sealed class MoongateNpcAiPluginTests
     public void Configure_ProductionDependencies_ResolvesBrainRuntimeAndHostedAiServices()
     {
         var root = Path.Combine(Path.GetTempPath(), "mg-npc-ai-plugin-" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(Path.Combine(root, "scripts"));
-        var container = new Container();
-        var persistence = new FakePersistenceService();
-        var eventBus = new StubEventBus();
-        var loopAffinity = new StubLoopAffinity();
-        container.RegisterInstance(new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" });
-        container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
-        container.RegisterInstance(new MoongateConfig());
-        container.RegisterInstance<IPersistenceService>(persistence);
-        container.RegisterInstance<IEventBus>(eventBus);
-        container.RegisterInstance<IGameLoopContext>(new StubGameLoopContext());
-        container.RegisterInstance<ILoopAffinity>(loopAffinity);
-        container.RegisterInstance<ISessionManager>(new StubSessionManager());
-        container.RegisterInstance<ISpatialIndexService>(new SpatialIndexService(persistence, loopAffinity, eventBus));
-        container.RegisterInstance<IMovementService>(new StubMovementService());
-        container.RegisterInstance<IChatService>(new StubChatService());
-        container.RegisterInstance(Random.Shared);
-        container.RegisterInstance<TimeProvider>(TimeProvider.System);
 
-        new MoongateScriptingPlugin().Configure(container, new PluginContext());
-        new MoongateNpcAiPlugin().Configure(container, new PluginContext());
+        try
+        {
+            Directory.CreateDirectory(Path.Combine(root, "scripts"));
+            using var container = new Container();
+            var persistence = new FakePersistenceService();
+            var eventBus = new StubEventBus();
+            var loopAffinity = new StubLoopAffinity();
+            container.RegisterInstance(
+                new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" }
+            );
+            container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
+            container.RegisterInstance(new MoongateConfig());
+            container.RegisterInstance<IPersistenceService>(persistence);
+            container.RegisterInstance<IEventBus>(eventBus);
+            container.RegisterInstance<IGameLoopContext>(new StubGameLoopContext());
+            container.RegisterInstance<ILoopAffinity>(loopAffinity);
+            container.RegisterInstance<ISessionManager>(new StubSessionManager());
+            container.RegisterInstance<ISpatialIndexService>(
+                new SpatialIndexService(persistence, loopAffinity, eventBus)
+            );
+            container.RegisterInstance<IMovementService>(new StubMovementService());
+            container.RegisterInstance<IChatService>(new StubChatService());
+            container.RegisterInstance(Random.Shared);
+            container.RegisterInstance<TimeProvider>(TimeProvider.System);
 
-        Assert.IsType<LuaNpcBrainRuntime>(container.Resolve<INpcBrainRuntime>());
-        Assert.IsType<SectorActivityService>(container.Resolve<ISectorActivityService>());
-        Assert.IsType<BrainIntentExecutor>(container.Resolve<IBrainIntentExecutor>());
-        Assert.IsType<NpcBrainScheduler>(container.Resolve<INpcBrainScheduler>());
+            new MoongateScriptingPlugin().Configure(container, new PluginContext());
+            new MoongateNpcAiPlugin().Configure(container, new PluginContext());
+
+            Assert.IsType<LuaNpcBrainRuntime>(container.Resolve<INpcBrainRuntime>());
+            Assert.IsType<SectorActivityService>(container.Resolve<ISectorActivityService>());
+            Assert.IsType<BrainIntentExecutor>(container.Resolve<IBrainIntentExecutor>());
+            Assert.IsType<NpcBrainScheduler>(container.Resolve<INpcBrainScheduler>());
+        }
+        finally
+        {
+            if (Directory.Exists(root))
+            {
+                Directory.Delete(root, true);
+            }
+        }
     }
 
     private sealed class StubMovementService : IMovementService
