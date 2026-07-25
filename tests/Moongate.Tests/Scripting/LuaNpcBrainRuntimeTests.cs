@@ -356,6 +356,10 @@ public class LuaNpcBrainRuntimeTests
     [Theory]
     [InlineData("string.rep('x', 4097)")]
     [InlineData("('x'):rep(4097)")]
+    [InlineData("string.rep('', 4097, 'x')")]
+    [InlineData("(''):rep(4097, 'x')")]
+    [InlineData("string.rep('', 4097, '')")]
+    [InlineData("(''):rep(4097, '')")]
     public void Invoke_StringRepAboveNativeLimit_ReturnsStructuredFailure(string nativeCall)
     {
         using var fixture = new BrainRuntimeFixture();
@@ -399,7 +403,9 @@ public class LuaNpcBrainRuntimeTests
               think = function()
                 local values = { "a", "b" }
                 table.insert(values, "c")
-                return brain.say(string.rep(table.concat(values), 2))
+                local direct = string.rep(table.concat(values), 2)
+                local colon = ("xy"):rep(2, ":")
+                return brain.say(direct .. "|" .. colon)
               end
             }
             """
@@ -409,7 +415,7 @@ public class LuaNpcBrainRuntimeTests
         var result = fixture.Think(1);
 
         Assert.True(result.Success, result.Error);
-        Assert.Equal("abcabc", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("abcabc|xy:xy", Assert.Single(result.Decision.Intents).Text);
     }
 
     [Fact]

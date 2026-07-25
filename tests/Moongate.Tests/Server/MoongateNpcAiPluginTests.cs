@@ -90,10 +90,7 @@ public sealed class MoongateNpcAiPluginTests
         }
         finally
         {
-            if (Directory.Exists(root))
-            {
-                Directory.Delete(root, true);
-            }
+            TestDirectoryCleanup.TryDelete(root);
         }
     }
 

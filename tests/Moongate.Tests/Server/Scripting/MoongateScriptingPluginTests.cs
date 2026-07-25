@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Scripting;
 using Moongate.Scripting.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
+using Moongate.Tests.Support;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Directories;
 using SquidStd.Plugin.Abstractions.Data;
@@ -36,10 +37,7 @@ public sealed class MoongateScriptingPluginTests
         }
         finally
         {
-            if (Directory.Exists(root))
-            {
-                Directory.Delete(root, true);
-            }
+            TestDirectoryCleanup.TryDelete(root);
         }
     }
 }

@@ -5,6 +5,7 @@ namespace Moongate.Scripting.AI;
 internal sealed class LuaBrainStandardLibrary
 {
     private const int MaximumCallbackArguments = 1024;
+    private const int MaximumStringRepetitions = 4096;
     private const int MaximumStringCharacters = 4096;
     private const int MaximumTableElements = 1024;
     private static readonly string[] GlobalCallbackNames =
@@ -405,24 +406,36 @@ internal sealed class LuaBrainStandardLibrary
             );
         }
 
-        if (value.String.Length == 0 || repetitions.Number < 1)
-        {
-            return;
-        }
-
-        if (repetitions.Number > int.MaxValue)
+        if (repetitions.Number > MaximumStringRepetitions)
         {
             ThrowLimit(functionName);
         }
 
-        var count = (long)repetitions.Number;
+        var count = repetitions.Number < 1 ? 0L : (long)repetitions.Number;
         var separatorLength = separator.IsNil() ? 0 : separator.String.Length;
-        var outputLength = (value.String.Length * count) +
-                           (separatorLength * (count - 1));
+        long outputLength;
+
+        try
+        {
+            outputLength = checked(
+                checked((long)value.String.Length * count) +
+                checked((long)separatorLength * Math.Max(count - 1, 0))
+            );
+        }
+        catch (OverflowException)
+        {
+            ThrowLimit(functionName);
+            return;
+        }
 
         if (outputLength > MaximumStringCharacters)
         {
             ThrowLimit(functionName);
+        }
+
+        if (value.String.Length == 0 || count == 0)
+        {
+            return;
         }
     }
 
