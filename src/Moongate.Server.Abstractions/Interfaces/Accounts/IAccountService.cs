@@ -34,6 +34,13 @@ public interface IAccountService
     AccountRegisterResult RegisterPending(string username, string password, string email);
 
     /// <summary>
+    /// Reissues a verification token for a pending account whose normalized username and email match.
+    /// Valid requests that do not match a pending account return <see cref="AccountResendResultType.Ignored" />
+    /// so callers do not disclose account state.
+    /// </summary>
+    AccountResendResultType ResendVerification(string username, string email);
+
+    /// <summary>
     /// Activates the account holding an unexpired <paramref name="token" /> and clears its token state.
     /// Consumed, expired, or unknown tokens cannot activate an account.
     /// </summary>

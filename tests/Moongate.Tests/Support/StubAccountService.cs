@@ -32,6 +32,9 @@ public sealed class StubAccountService : IAccountService
     public AccountRegisterResult RegisterPending(string username, string password, string email)
         => throw new NotSupportedException();
 
+    public AccountResendResultType ResendVerification(string username, string email)
+        => throw new NotSupportedException();
+
     public AccountVerifyResultType VerifyEmail(string token)
         => throw new NotSupportedException();
 

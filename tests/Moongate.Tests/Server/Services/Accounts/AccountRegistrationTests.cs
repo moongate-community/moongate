@@ -53,6 +53,160 @@ public sealed class AccountRegistrationTests
         );
     }
 
+    private static string Hash(string token)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+
+    [Fact]
+    public void ResendVerification_RotatesTokenAndPublishesOneEvent()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        var first = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        AccountRegistrationRequestedEvent? resent = null;
+        var eventCount = 0;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                eventCount++;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "NEW@BIE.TEST");
+
+        Assert.Equal(AccountResendResultType.Sent, result);
+        Assert.NotNull(resent);
+        Assert.Equal(1, eventCount);
+        Assert.NotEqual(first, resent!.Token);
+        Assert.Equal(Hash(resent.Token), accounts.GetByUsername("newbie")!.ActivationTokenHash);
+    }
+
+    [Fact]
+    public void ResendVerification_MissingAccount_IsIgnoredWithoutPublishingAnEvent()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        AccountRegistrationRequestedEvent? resent = null;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "new@bie.test");
+
+        Assert.Equal(AccountResendResultType.Ignored, result);
+        Assert.Null(resent);
+        Assert.Null(accounts.GetByUsername("newbie"));
+    }
+
+    [Fact]
+    public void ResendVerification_ActiveAccount_IsIgnoredWithoutPublishingAnEvent()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        accounts.Create("newbie", "secret99", "new@bie.test", AccountLevelType.Player);
+        AccountRegistrationRequestedEvent? resent = null;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "new@bie.test");
+
+        Assert.Equal(AccountResendResultType.Ignored, result);
+        Assert.Null(resent);
+        Assert.True(accounts.GetByUsername("newbie")!.IsActive);
+    }
+
+    [Fact]
+    public void ResendVerification_MismatchedEmail_IsIgnoredWithoutChangingTokenOrPublishingAnEvent()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        var first = accounts.RegisterPending("newbie", "secret99", "new@bie.test").Token!;
+        AccountRegistrationRequestedEvent? resent = null;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "other@bie.test");
+
+        Assert.Equal(AccountResendResultType.Ignored, result);
+        Assert.Null(resent);
+        Assert.Equal(Hash(first), accounts.GetByUsername("newbie")!.ActivationTokenHash);
+    }
+
+    [Theory]
+    [InlineData("ab", "new@bie.test", AccountResendResultType.UsernameInvalid)]
+    [InlineData("newbie", "not-an-email", AccountResendResultType.EmailInvalid)]
+    public void ResendVerification_InvalidInput_ReturnsValidationResultWithoutPublishingAnEvent(
+        string username,
+        string email,
+        AccountResendResultType expected
+    )
+    {
+        var (accounts, bus, _, _, _) = Create();
+        AccountRegistrationRequestedEvent? resent = null;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification(username, email);
+
+        Assert.Equal(expected, result);
+        Assert.Null(resent);
+    }
+
+    [Fact]
+    public void ResendVerification_LegacyPendingAccount_MigratesToHashedToken()
+    {
+        var (accounts, bus, _, _, _) = Create();
+        accounts.Create("newbie", "secret99", "new@bie.test", AccountLevelType.Player);
+        var account = accounts.GetByUsername("newbie")!;
+        account.IsActive = false;
+        account.ActivationToken = "legacy-token";
+        AccountRegistrationRequestedEvent? resent = null;
+        bus.Subscribe<AccountRegistrationRequestedEvent>((message, _) =>
+            {
+                resent = message;
+                return Task.CompletedTask;
+            }
+        );
+
+        var result = accounts.ResendVerification("newbie", "new@bie.test");
+
+        Assert.Equal(AccountResendResultType.Sent, result);
+        Assert.NotNull(resent);
+        Assert.Empty(account.ActivationToken);
+        Assert.Equal(Hash(resent!.Token), account.ActivationTokenHash);
+    }
+
+    [Fact]
+    public void ResendVerification_ResetsExpiryToTwentyFourHoursFromCurrentTime()
+    {
+        var (accounts, bus, persistence, characters, sessions) = Create();
+        accounts.RegisterPending("newbie", "secret99", "new@bie.test");
+        var later = Now.AddHours(1);
+        var resendingAccounts = new AccountService(
+            persistence,
+            characters,
+            sessions,
+            bus,
+            new FixedTimeProvider(later)
+        );
+
+        var result = resendingAccounts.ResendVerification("newbie", "new@bie.test");
+
+        Assert.Equal(AccountResendResultType.Sent, result);
+        Assert.Equal(later.AddHours(24), resendingAccounts.GetByUsername("newbie")!.ActivationTokenExpiresAtUtc);
+    }
+
     [Fact]
     public void RegisterPending_StoresOnlyAHashAndA24HourExpiry()
     {

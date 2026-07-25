@@ -166,6 +166,43 @@ public class AccountService : IAccountService
         return new() { Result = AccountRegisterResultType.Created, Token = token };
     }
 
+    public AccountResendResultType ResendVerification(string username, string email)
+    {
+        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
+        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
+
+        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
+        {
+            return AccountResendResultType.UsernameInvalid;
+        }
+
+        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
+        {
+            return AccountResendResultType.EmailInvalid;
+        }
+
+        var account = _accountStore.Query().FirstOrDefault(candidate =>
+            !candidate.IsActive
+            && candidate.Username == normalizedUsername
+            && string.Equals(candidate.Email, normalizedEmail, StringComparison.OrdinalIgnoreCase)
+        );
+
+        if (account is null)
+        {
+            return AccountResendResultType.Ignored;
+        }
+
+        var token = RandomNumberGenerator.GetHexString(64);
+        ClearActivationTokenState(account);
+        account.ActivationTokenHash = HashActivationToken(token);
+        account.ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime);
+        _accountStore.UpsertAsync(account).WaitSync();
+
+        _eventBus.Publish(new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token));
+
+        return AccountResendResultType.Sent;
+    }
+
     public AccountVerifyResultType VerifyEmail(string token)
     {
         if (string.IsNullOrWhiteSpace(token))
