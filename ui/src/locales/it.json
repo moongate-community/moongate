@@ -50,6 +50,21 @@
         "emailUnavailable": "L’email di verifica è temporaneamente non disponibile."
       }
     },
+    "verify": {
+      "verifyingTitle": "Verifica dell’account in corso",
+      "verifyingBody": "Attendi mentre confermiamo il tuo indirizzo email.",
+      "verifiedTitle": "Email verificata",
+      "verifiedBody": "Il tuo account è pronto. Ora puoi accedere.",
+      "expiredTitle": "Link di verifica scaduto",
+      "expiredBody": "Questo link di verifica è scaduto. Richiedi una nuova email per continuare.",
+      "invalidTitle": "Link di verifica non valido",
+      "invalidBody": "Questo link di verifica non è valido. Richiedi una nuova email oppure accedi.",
+      "unavailableTitle": "Verifica temporaneamente non disponibile",
+      "unavailableBody": "Non è stato possibile verificare la tua email. Riprova.",
+      "resend": "Richiedi un’altra email",
+      "signIn": "Accedi",
+      "retry": "Riprova"
+    },
     "errors": {
       "username": "Inserisci un nome account valido.",
       "email": "Inserisci un indirizzo email valido.",

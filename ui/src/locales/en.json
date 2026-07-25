@@ -50,6 +50,21 @@
         "emailUnavailable": "Verification email is temporarily unavailable."
       }
     },
+    "verify": {
+      "verifyingTitle": "Verifying your account",
+      "verifyingBody": "Please wait while we confirm your email address.",
+      "verifiedTitle": "Email verified",
+      "verifiedBody": "Your account is ready. You can now sign in.",
+      "expiredTitle": "Verification link expired",
+      "expiredBody": "This verification link has expired. Request a new email to continue.",
+      "invalidTitle": "Verification link invalid",
+      "invalidBody": "This verification link is invalid. Request a new email or sign in.",
+      "unavailableTitle": "Verification temporarily unavailable",
+      "unavailableBody": "We could not verify your email right now. Please try again.",
+      "resend": "Request another email",
+      "signIn": "Sign in",
+      "retry": "Try again"
+    },
     "errors": {
       "username": "Enter a valid account name.",
       "email": "Enter a valid email address.",
