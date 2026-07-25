@@ -24,7 +24,8 @@
     "remember": "Remember me on this device",
     "online": "{{count}} adventurers online right now",
     "artAlt": "The Moongate — a runic portal standing open",
-    "logoAlt": "Shard logo"
+    "logoAlt": "Shard logo",
+    "createAccount": "Create account"
   },
   "dashboard": {
     "welcome": "Welcome back, {{name}}",

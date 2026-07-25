@@ -24,7 +24,8 @@
     "remember": "Ricordami su questo dispositivo",
     "online": "{{count}} avventurieri online in questo momento",
     "artAlt": "Il Moongate — un portale runico aperto",
-    "logoAlt": "Logo dello shard"
+    "logoAlt": "Logo dello shard",
+    "createAccount": "Crea un account"
   },
   "dashboard": {
     "welcome": "Bentornato, {{name}}",

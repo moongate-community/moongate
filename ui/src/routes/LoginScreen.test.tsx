@@ -27,6 +27,7 @@ describe('LoginScreen', () => {
     vi.restoreAllMocks()
     assets = {}
     tagline = null
+    registrationEnabled = false
   })
 
   function json(body: unknown, status = 200) {
@@ -62,7 +63,7 @@ describe('LoginScreen', () => {
           shardName: 'Moongate',
           tagline,
           contacts: { website: null, email: null, discord: null },
-          registrationEnabled: false,
+          registrationEnabled,
           assets,
         })
       }
@@ -73,6 +74,7 @@ describe('LoginScreen', () => {
   // What the /server-info mock reports; tests override these before rendering.
   let assets: Record<string, string> = {}
   let tagline: string | null = null
+  let registrationEnabled = false
 
   it('shows the server version once it resolves', async () => {
     serveApi()
@@ -112,6 +114,22 @@ describe('LoginScreen', () => {
     renderLogin()
 
     expect(await screen.findByText(/Sosaria never sleeps\./)).toBeInTheDocument()
+  })
+
+  it('links to registration only when the server reports it available', async () => {
+    registrationEnabled = true
+    serveApi()
+    renderLogin()
+
+    expect(await screen.findByRole('link', { name: /create account/i })).toHaveAttribute('href', '/register')
+  })
+
+  it('does not link to registration when the server reports it unavailable', async () => {
+    serveApi()
+    renderLogin()
+
+    await screen.findByText(/Moongate · v9\.9\.9/)
+    expect(screen.queryByRole('link', { name: /create account/i })).not.toBeInTheDocument()
   })
 
   it('sends the credentials and stores the issued token', async () => {
