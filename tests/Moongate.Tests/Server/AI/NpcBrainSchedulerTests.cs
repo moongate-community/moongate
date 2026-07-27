@@ -787,6 +787,8 @@ public class NpcBrainSchedulerTests
 
         public StubAiActionService AiActions { get; } = new();
 
+        public StubNpcMemoryService Memory { get; } = new();
+
         public StubSectorActivityService Sectors { get; } = new();
 
         public StubSessionManager Sessions { get; } = new();
@@ -832,6 +834,7 @@ public class NpcBrainSchedulerTests
                 Loop,
                 Runtime,
                 AiActions,
+                Memory,
                 Sectors,
                 Persistence,
                 contextFactory,
