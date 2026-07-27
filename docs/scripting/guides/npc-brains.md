@@ -179,7 +179,11 @@ reject the action, returning `false`.
 In particular, `ai.engage(target_id)` validates a perceived target and sets the
 owner's combat target and warmode; it does **not** attack or deal damage.
 `ai.say("...")` speaks only as the brain's owner (regular speech, range 15); it
-takes no serial, so a brain cannot choose an arbitrary speaker.
+takes no serial, so a brain cannot choose an arbitrary speaker. For free
+movement, `ai.step(direction)` steps one tile in a compass direction and
+`ai.move_to(x, y)` steps greedily toward a coordinate; both are single validated
+steps with no obstacle avoidance, so the brain composes multi-tile paths across
+ticks.
 
 The complete default `moongate.npcAi.advanced` limits are:
 

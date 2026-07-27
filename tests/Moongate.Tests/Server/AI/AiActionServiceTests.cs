@@ -268,6 +268,51 @@ public class AiActionServiceTests
     }
 
     [Fact]
+    public void Step_MovesInGivenDirection()
+    {
+        var (service, persistence, _, movement, metrics) = Build();
+        var owner = AddOwner(persistence);
+
+        using (service.Begin(Context(owner)))
+        {
+            Assert.True(service.Step(DirectionType.NorthEast));
+        }
+
+        Assert.Equal([(owner.Id, DirectionType.NorthEast)], movement.Moves);
+        Assert.Equal(1, metrics.Current.IntentsAccepted);
+    }
+
+    [Fact]
+    public void MoveTo_StepsGreedilyTowardCoordinate()
+    {
+        var (service, persistence, _, movement, metrics) = Build();
+        var owner = AddOwner(persistence);
+
+        using (service.Begin(Context(owner)))
+        {
+            Assert.True(service.MoveTo(14, 8));
+        }
+
+        Assert.Equal([(owner.Id, DirectionType.NorthEast)], movement.Moves);
+        Assert.Equal(1, metrics.Current.IntentsAccepted);
+    }
+
+    [Fact]
+    public void MoveTo_AlreadyAtCoordinate_AcceptsWithoutMoving()
+    {
+        var (service, persistence, _, movement, metrics) = Build();
+        var owner = AddOwner(persistence);
+
+        using (service.Begin(Context(owner)))
+        {
+            Assert.True(service.MoveTo(10, 10));
+        }
+
+        Assert.Empty(movement.Moves);
+        Assert.Equal(1, metrics.Current.IntentsAccepted);
+    }
+
+    [Fact]
     public void OrderedActions_ApplyInSequenceAndRevalidate()
     {
         var (service, persistence, chat, movement, metrics) = Build();
