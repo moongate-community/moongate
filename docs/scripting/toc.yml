@@ -18,6 +18,8 @@
       href: reference/log.md
     - name: ai
       href: reference/ai.md
+    - name: memory
+      href: reference/memory.md
     - name: game
       href: reference/game.md
     - name: events

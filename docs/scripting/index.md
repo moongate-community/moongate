@@ -23,6 +23,7 @@ the modules below and act on themselves through the imperative
 | `loot` | Roll loot tables into items. | [loot](reference/loot.md) |
 | `account` | Create and manage accounts by username. | [account](reference/account.md) |
 | `ai` | Act as the current NPC brain (valid only inside a brain hook). | [ai](reference/ai.md) |
+| `memory` | Durable per-NPC key/value memory (valid only inside a brain hook). | [memory](reference/memory.md) |
 | enums | `skill_name`, `gender_type`, `race_type`, `layer_type`, `account_level_type`. | [Enums](reference/enums.md) |
 
 ## Values and types
