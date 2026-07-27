@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Data.AI;
 
 namespace Moongate.Server.Abstractions.Interfaces.AI;
@@ -17,6 +18,12 @@ public interface IAiActionService
 
     /// <summary>Steps one tile toward the home position; false when off the home map.</summary>
     bool ReturnHome();
+
+    /// <summary>Steps one tile in the given compass direction; false when the step is blocked.</summary>
+    bool Step(DirectionType direction);
+
+    /// <summary>Steps one tile toward (x, y) at the owner's current z; false when the step is blocked.</summary>
+    bool MoveTo(int x, int y);
 
     /// <summary>Steps one tile toward the perceived target; false when the target is not perceivable.</summary>
     bool MoveToward(Serial targetId);

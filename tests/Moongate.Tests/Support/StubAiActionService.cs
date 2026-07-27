@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
 
@@ -17,6 +18,12 @@ public sealed class StubAiActionService : IAiActionService
         => true;
 
     public bool ReturnHome()
+        => true;
+
+    public bool Step(DirectionType direction)
+        => true;
+
+    public bool MoveTo(int x, int y)
         => true;
 
     public bool MoveToward(Serial targetId)

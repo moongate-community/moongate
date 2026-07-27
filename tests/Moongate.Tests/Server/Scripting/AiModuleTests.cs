@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Core.Types;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Scripting;
@@ -40,6 +41,44 @@ public class AiModuleTests
         Assert.Equal(new Serial(0x4), Assert.Single(actions.MovedAway));
     }
 
+    [Theory]
+    [InlineData("north", DirectionType.North)]
+    [InlineData("N", DirectionType.North)]
+    [InlineData("ne", DirectionType.NorthEast)]
+    [InlineData("southwest", DirectionType.SouthWest)]
+    [InlineData(" NW ", DirectionType.NorthWest)]
+    public void Step_ParsesDirectionAndRoutesToService(string direction, DirectionType expected)
+    {
+        var actions = new RecordingAiActionService { Result = true };
+        var module = new AiModule(actions);
+
+        Assert.True(module.Step(direction));
+        Assert.Equal(expected, Assert.Single(actions.Stepped));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("up")]
+    [InlineData("nne")]
+    public void Step_UnknownDirection_ReturnsFalseWithoutCallingService(string direction)
+    {
+        var actions = new RecordingAiActionService { Result = true };
+        var module = new AiModule(actions);
+
+        Assert.False(module.Step(direction));
+        Assert.Empty(actions.Stepped);
+    }
+
+    [Fact]
+    public void MoveTo_RoutesCoordinatesToService()
+    {
+        var actions = new RecordingAiActionService { Result = true };
+        var module = new AiModule(actions);
+
+        Assert.True(module.MoveTo(42, 7));
+        Assert.Equal((42, 7), Assert.Single(actions.MovedTo));
+    }
+
     [Fact]
     public void ParameterlessActions_RouteToService()
     {
@@ -63,6 +102,8 @@ public class AiModuleTests
         public List<Serial> Engaged { get; } = [];
         public List<Serial> MovedToward { get; } = [];
         public List<Serial> MovedAway { get; } = [];
+        public List<DirectionType> Stepped { get; } = [];
+        public List<(int X, int Y)> MovedTo { get; } = [];
         public int Patrols { get; private set; }
         public int ReturnsHome { get; private set; }
         public int ClearsTarget { get; private set; }
@@ -109,6 +150,18 @@ public class AiModuleTests
         public bool ClearTarget()
         {
             ClearsTarget++;
+            return Result;
+        }
+
+        public bool Step(DirectionType direction)
+        {
+            Stepped.Add(direction);
+            return Result;
+        }
+
+        public bool MoveTo(int x, int y)
+        {
+            MovedTo.Add((x, y));
             return Result;
         }
 

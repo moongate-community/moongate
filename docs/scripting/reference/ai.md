@@ -76,3 +76,27 @@ ai.clear_target() -> boolean
 ```
 
 Clears the owner's combat target and disables warmode. Returns `true`.
+
+## ai.step
+
+```lua
+ai.step(direction) -> boolean
+```
+
+Steps one tile in a compass direction. `direction` is a case-insensitive
+string — a full name or its short alias: `north`/`n`, `northeast`/`ne`,
+`east`/`e`, `southeast`/`se`, `south`/`s`, `southwest`/`sw`, `west`/`w`,
+`northwest`/`nw`. Returns `false` on an unknown direction or a blocked step.
+The step is validated like any NPC move; there is no obstacle avoidance beyond
+that single-tile check, so the brain composes its own path.
+
+## ai.move_to
+
+```lua
+ai.move_to(x, y) -> boolean
+```
+
+Steps one tile toward `(x, y)` at the owner's current z, choosing the greedy
+eight-way direction. Returns `false` when the step is blocked; the owner
+"arrives" once `x, y` are reached. Like `ai.return_home`, this is greedy with no
+obstacle avoidance — it can stall against a wall.

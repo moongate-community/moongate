@@ -80,6 +80,12 @@ public sealed class AiActionService : IAiActionService
     public bool ClearTarget()
         => Run((owner, _) => TryClearTarget(owner, out var reason) ? Ok() : Fail(reason));
 
+    public bool Step(DirectionType direction)
+        => Run((owner, _) => _movement.TryMoveNpc(owner.Id, direction) ? Ok() : Fail("movement service rejected the step"));
+
+    public bool MoveTo(int x, int y)
+        => Run((owner, _) => TryMoveToPosition(owner, new Point3D(x, y, owner.Position.Z), out var reason) ? Ok() : Fail(reason));
+
     private bool Run(Func<MobileEntity, BrainContext, (bool Ok, string Reason)> action)
     {
         _loopAffinity.AssertOnLoop("ai.action");
