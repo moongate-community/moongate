@@ -1,7 +1,6 @@
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Scripting.Views;
-using MoonSharp.Interpreter;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
 namespace Moongate.Server.Scripting;
@@ -22,13 +21,15 @@ public sealed class MemoryModule
     }
 
     [ScriptFunction("set", "Stores a scalar (string/number/boolean) under a key; false when unsupported or rejected.")]
-    public bool Set(string key, DynValue value)
+    public bool Set(string key, object value)
     {
-        var stored = value.Type switch
+        var stored = value switch
         {
-            DataType.String => NpcMemoryValue.FromString(value.String),
-            DataType.Number => NpcMemoryValue.FromNumber(value.Number),
-            DataType.Boolean => NpcMemoryValue.FromBoolean(value.Boolean),
+            string text => NpcMemoryValue.FromString(text),
+            bool flag => NpcMemoryValue.FromBoolean(flag),
+            double number => NpcMemoryValue.FromNumber(number),
+            long number => NpcMemoryValue.FromNumber(number),
+            int number => NpcMemoryValue.FromNumber(number),
             _ => null
         };
 
