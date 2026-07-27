@@ -16,8 +16,8 @@
   items:
     - name: log
       href: reference/log.md
-    - name: brain
-      href: reference/brain.md
+    - name: ai
+      href: reference/ai.md
     - name: game
       href: reference/game.md
     - name: events

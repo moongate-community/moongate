@@ -5,10 +5,12 @@ binds one with [`BrainScript`](../data/mobile-templates.md#top-level-keys); the
 value `guard`, for example, loads `scripts/brains/guard.lua` from the server
 root.
 
-Brains observe a snapshot of the world and return **intents**. They never
-receive a `MobileEntity` and cannot mutate the world directly. The server
-validates and executes accepted intents on the game loop. See the [`brain`
-reference](../reference/brain.md) for the helper signatures.
+Brains observe a snapshot of the world and act on it. They run in the same Lua
+runtime as every other script, so a brain can use the ordinary modules
+(`mobile`, `item`, `chat`, `events`, `log`, …) and, most importantly, the
+imperative [`ai`](../reference/ai.md) module, which performs the brain's own
+bounded, validated actions (speak, move, engage). Every `ai` call acts on the
+mobile of the current tick; the brain always acts as itself.
 
 ## Write a brain
 
@@ -34,7 +36,7 @@ local guard = {
 
 function guard.on_speech_heard(ctx, state, event)
     if event == nil or event.speaker_is_player ~= true then
-        return nil
+        return
     end
 
     state.seen_players = state.seen_players or {}
@@ -49,17 +51,18 @@ function guard.on_speech_heard(ctx, state, event)
             conversations = 1,
         }
 
-        return brain.say("I haven't seen you before.")
+        ai.say("I haven't seen you before.")
+        return
     end
 
     known.last_seen_at = ctx.now_ms
     known.conversations = known.conversations + 1
 
-    return brain.say("Welcome back.")
+    ai.say("Welcome back.")
 end
 
 function guard.think()
-    return brain.idle()
+    -- idle: no action
 end
 
 return guard
@@ -76,8 +79,11 @@ The five required fields are:
 | `think` | function | Required periodic hook. |
 
 Each hook is called as `hook(ctx, state, event)`. `think` receives `nil` for
-`event`. A hook returns `nil`, one intent, or `brain.decision(next_tick_ms,
-intents)`. Hooks may not yield.
+`event`. A hook acts by calling `ai.*` (and any other module) directly; its
+return value is optional. Returning a **number** overrides the delay before the
+next `think` (finite values are truncated and clamped to the configured
+minimum/maximum); any other return value leaves the schedule unchanged. Hooks
+may not yield.
 
 ## Context, state, and events
 
@@ -129,6 +135,10 @@ resolved. `speech_type` and `text` are also `nil` when unavailable. Position
 keys are `nil` when the source event has no position; otherwise they are
 `{ x, y, z }`. `amount` is the reported damage amount.
 
+Prefer these hooks over `events.subscribe` for reacting to the world. A brain
+that subscribes registers a closure that outlives the mobile, runs outside the
+brain's instruction budget, and is never unbound when the mobile despawns.
+
 ## Runtime behavior
 
 Brain execution is activated by **players only**. Each online player keeps the
@@ -150,29 +160,26 @@ metadata, or load results leave the last known-good definition in use. A
 successful reload updates the shared strategy and metadata while preserving
 each same-id binding's private state and home.
 
-Brain files are loaded with an allowlisted authoring environment: the `brain`
-helpers, selected base functions (`assert`, `error`, `ipairs`, `next`, `pairs`,
-`pcall`, `select`, `tonumber`, `tostring`, `type`, `xpcall`), and bounded
-subsets of the `math`, `string`, and `table` libraries. Native callbacks whose
-work scales with their input are capped at 4,096 characters or 1,024 values.
-Pattern matching, formatting, function dumping, and `table.sort` are
-unavailable because MoonSharp executes those operations in native callbacks
-outside the Lua instruction counter. General world-mutating modules are not
-exposed to a brain file. This is the supported authoring contract; brains are
-loaded by the shared Lua engine through `Script.LoadFile`, so do not treat it
-as a stronger security sandbox than that implementation provides.
+Brains are loaded by the shared Lua engine with full access to the registered
+modules — there is no separate authoring sandbox. The single guard against a
+runaway brain is the **instruction budget**: definition load and each hook run
+as an instruction-counted coroutine, and a hook that exceeds the budget (an
+infinite loop, for example) is force-suspended and reported as a failure rather
+than blocking the game loop. Because there is no sandbox, a brain has the same
+reach — and the same responsibility — as any other script; keep hooks small and
+deterministic.
 
-## Intents and limits
+## Actions and limits
 
-Use [`brain`](../reference/brain.md) helpers to return intent tables. Intent
-execution is the only mutation boundary. The executor resolves the mobile
-again, validates target ids against the current perception snapshot and map,
-and may reject an intent; a returned intent is not a direct command.
+Use the [`ai`](../reference/ai.md) module for the brain's own actions. Each
+call is the mutation boundary: the action service resolves the mobile again,
+validates target ids against the current perception snapshot and map, and may
+reject the action, returning `false`.
 
-In particular, `brain.engage(target_id)` validates a visible target and, in v1,
-sets the owner's combat target and warmode. It does **not** attack or deal
-damage. `brain.say("...")` speaks only as the brain's owner (regular speech,
-range 15); it takes no serial, so a brain cannot choose an arbitrary speaker.
+In particular, `ai.engage(target_id)` validates a perceived target and sets the
+owner's combat target and warmode; it does **not** attack or deal damage.
+`ai.say("...")` speaks only as the brain's owner (regular speech, range 15); it
+takes no serial, so a brain cannot choose an arbitrary speaker.
 
 The complete default `moongate.npcAi.advanced` limits are:
 
@@ -184,12 +191,10 @@ The complete default `moongate.npcAi.advanced` limits are:
 | `maxBrainsPerLoop` | 100 | Brains the scheduler may wake in one loop. |
 | `maxEventsPerBrainWake` | 16 | Mailbox events delivered before `think` in one wake. |
 | `maxMailboxEvents` | 64 | Maximum queued mailbox events per brain. |
-| `maxIntentsPerDecision` | 8 | Intent tables read from one `brain.decision`. |
 | `instructionBudget` | 50,000 | Lua instruction budget for definition load and each hook. |
 
 All values must be positive; the minimum tick cannot exceed the maximum, and
 `maxMailboxEvents` cannot be smaller than `maxEventsPerBrainWake`. Brain files
 are limited to 256 KiB and cannot be symbolic links or reparse points. When a
 mailbox is full, lower-priority events can be dropped; movement events are
-coalesced. Invalid, unknown, malformed, or excess intents are ignored or
-rejected rather than granting extra capabilities.
+coalesced.
