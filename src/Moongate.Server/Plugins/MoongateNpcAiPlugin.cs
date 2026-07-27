@@ -29,11 +29,13 @@ public sealed class MoongateNpcAiPlugin : ISquidStdPlugin
         container.Register<INpcAiMetrics, NpcAiMetrics>(Reuse.Singleton);
         container.RegisterStdService<ISectorActivityService, SectorActivityService>();
         container.Register<IAiActionService, AiActionService>(Reuse.Singleton);
+        container.Register<INpcMemoryService, NpcMemoryService>(Reuse.Singleton);
         container.Register<NpcBrainContextFactory>(Reuse.Singleton);
         container.RegisterStdService<INpcBrainScheduler, NpcBrainScheduler>();
 
         container.RegisterEventSubscriber<SectorActivitySubscriber>();
         container.RegisterEventSubscriber<NpcBrainLifecycleSubscriber>();
         container.RegisterEventSubscriber<NpcBrainEventRouter>();
+        container.RegisterEventSubscriber<NpcMemoryLifecycleSubscriber>();
     }
 }

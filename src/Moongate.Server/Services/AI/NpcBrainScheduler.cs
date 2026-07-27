@@ -27,6 +27,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private readonly IGameLoopContext _loop;
     private readonly INpcBrainRuntime _runtime;
     private readonly IAiActionService _aiActions;
+    private readonly INpcMemoryService _memory;
     private readonly ISectorActivityService _sectors;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly NpcBrainContextFactory _contextFactory;
@@ -59,6 +60,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         IGameLoopContext loop,
         INpcBrainRuntime runtime,
         IAiActionService aiActions,
+        INpcMemoryService memory,
         ISectorActivityService sectors,
         IPersistenceService persistenceService,
         NpcBrainContextFactory contextFactory,
@@ -70,6 +72,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         _loop = loop;
         _runtime = runtime;
         _aiActions = aiActions;
+        _memory = memory;
         _sectors = sectors;
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _contextFactory = contextFactory;
@@ -552,6 +555,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         try
         {
             using (_aiActions.Begin(context))
+            using (_memory.Begin(context))
             {
                 return _runtime.Invoke(entry.MobileId, hook, context, brainEvent);
             }

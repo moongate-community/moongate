@@ -285,6 +285,7 @@ public sealed class NpcBrainIntegrationTests
                 Loop,
                 Runtime,
                 aiActions,
+                new StubNpcMemoryService(),
                 Activity,
                 Persistence,
                 contextFactory,

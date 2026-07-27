@@ -38,6 +38,7 @@ public sealed class MoongateNpcAiPluginTests
         Assert.IsType<NpcAiMetrics>(container.Resolve<INpcAiMetrics>());
         Assert.True(container.IsRegistered<ISectorActivityService>());
         Assert.True(container.IsRegistered<IAiActionService>());
+        Assert.True(container.IsRegistered<INpcMemoryService>());
         Assert.True(container.IsRegistered<NpcBrainContextFactory>());
         Assert.True(container.IsRegistered<INpcBrainScheduler>());
         var subscribers = container.GetServiceRegistrations()
@@ -45,7 +46,12 @@ public sealed class MoongateNpcAiPluginTests
             .Select(registration => registration.ImplementationType)
             .ToArray();
         Assert.Equal(
-            [typeof(SectorActivitySubscriber), typeof(NpcBrainLifecycleSubscriber), typeof(NpcBrainEventRouter)],
+            [
+                typeof(SectorActivitySubscriber),
+                typeof(NpcBrainLifecycleSubscriber),
+                typeof(NpcBrainEventRouter),
+                typeof(NpcMemoryLifecycleSubscriber)
+            ],
             subscribers
         );
     }
@@ -86,6 +92,7 @@ public sealed class MoongateNpcAiPluginTests
             Assert.IsType<LuaNpcBrainRuntime>(container.Resolve<INpcBrainRuntime>());
             Assert.IsType<SectorActivityService>(container.Resolve<ISectorActivityService>());
             Assert.IsType<AiActionService>(container.Resolve<IAiActionService>());
+            Assert.IsType<NpcMemoryService>(container.Resolve<INpcMemoryService>());
             Assert.IsType<NpcBrainScheduler>(container.Resolve<INpcBrainScheduler>());
         }
         finally
