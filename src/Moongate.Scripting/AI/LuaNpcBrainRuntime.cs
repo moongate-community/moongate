@@ -81,7 +81,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         _metrics = metrics;
         _script = luaScriptEngineService.LuaScript;
         _timeProvider = timeProvider;
-        _valueConverter = new(_script, _advanced);
+        _valueConverter = new(_script);
         _watcherFactory = watcherFactory ?? CreateFileSystemWatcher;
     }
 
