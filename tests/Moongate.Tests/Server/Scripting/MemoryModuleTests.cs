@@ -3,7 +3,6 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Scripting;
-using MoonSharp.Interpreter;
 
 namespace Moongate.Tests.Server.Scripting;
 
@@ -15,9 +14,9 @@ public class MemoryModuleTests
         var svc = new RecordingMemoryService { Result = true };
         var module = new MemoryModule(svc);
 
-        Assert.True(module.Set("s", DynValue.NewString("hi")));
-        Assert.True(module.Set("n", DynValue.NewNumber(4)));
-        Assert.True(module.Set("b", DynValue.NewBoolean(true)));
+        Assert.True(module.Set("s", "hi"));
+        Assert.True(module.Set("n", 4d));
+        Assert.True(module.Set("b", true));
 
         Assert.Equal(NpcMemoryValue.FromString("hi"), svc.Stored["s"]);
         Assert.Equal(NpcMemoryValue.FromNumber(4), svc.Stored["n"]);
@@ -30,7 +29,7 @@ public class MemoryModuleTests
         var svc = new RecordingMemoryService { Result = true };
         var module = new MemoryModule(svc);
 
-        Assert.False(module.Set("t", DynValue.NewTable(new Table(new Script()))));
+        Assert.False(module.Set("t", new object()));
         Assert.Empty(svc.Stored);
     }
 
