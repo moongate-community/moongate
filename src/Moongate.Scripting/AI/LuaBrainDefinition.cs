@@ -5,6 +5,5 @@ namespace Moongate.Scripting.AI;
 
 internal sealed record LuaBrainDefinition(
     BrainDescriptor Descriptor,
-    Table Strategy,
-    Table StringMetatable
+    Table Strategy
 );

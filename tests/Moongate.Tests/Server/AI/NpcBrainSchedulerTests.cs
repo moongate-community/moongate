@@ -63,7 +63,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, _, _, _) =>
         {
             fixture.Time.Advance(TimeSpan.FromMilliseconds(25));
-            return NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+            return NpcBrainInvocationResult.Succeeded(null);
         };
 
         fixture.Scheduler.Bind(mobile);
@@ -114,7 +114,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Deactivate
                 ? NpcBrainInvocationResult.Failed("deactivate failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
         fixture.Runtime.Invocations.Clear();
@@ -411,21 +411,16 @@ public class NpcBrainSchedulerTests
     }
 
     [Fact]
-    public void Tick_InvalidIntent_DoesNotFaultEntry()
+    public void Tick_SuccessfulThink_DoesNotFaultEntry()
     {
         var fixture = new SchedulerFixture();
         var mobile = fixture.AddActiveMobile(0x1);
-        var invalidIntent = new BrainIntent(BrainIntentType.Unknown, "explode", Serial.Zero, null);
-        fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
-            hook == NpcBrainHookType.Think
-                ? NpcBrainInvocationResult.Succeeded(new(null, [invalidIntent]))
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+        fixture.Runtime.InvocationHandler = (_, _, _, _) =>
+            NpcBrainInvocationResult.Succeeded(null);
 
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
 
-        var execution = Assert.Single(fixture.Intents.Executions);
-        Assert.Equal(invalidIntent, Assert.Single(execution.Intents));
         Assert.True(fixture.Scheduler.IsActive(mobile.Id));
         Assert.Empty(fixture.Runtime.ResetCalls);
     }
@@ -438,7 +433,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think
                 ? NpcBrainInvocationResult.Failed("think failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
 
         fixture.Scheduler.Tick();
@@ -466,7 +461,6 @@ public class NpcBrainSchedulerTests
         fixture.Scheduler.Tick();
         Assert.Equal(5, fixture.ThinkCount(mobile.Id));
         Assert.Equal([mobile.Id], fixture.Runtime.ResetCalls);
-        Assert.Empty(fixture.Intents.Executions);
     }
 
     [Fact]
@@ -478,7 +472,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think
                 ? NpcBrainInvocationResult.Failed("think failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
 
         fixture.Scheduler.Tick();
@@ -512,7 +506,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think
                 ? NpcBrainInvocationResult.Failed("think failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
 
@@ -533,7 +527,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think
                 ? NpcBrainInvocationResult.Failed("think failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
 
@@ -557,7 +551,7 @@ public class NpcBrainSchedulerTests
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think && failThink
                 ? NpcBrainInvocationResult.Failed("think failed")
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
         Assert.Equal(1, FaultLogCount(fixture.Scheduler));
@@ -580,12 +574,12 @@ public class NpcBrainSchedulerTests
         {
             if (hook != NpcBrainHookType.Think)
             {
-                return NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                return NpcBrainInvocationResult.Succeeded(null);
             }
 
             attempts++;
             return attempts == 3
-                ? NpcBrainInvocationResult.Succeeded(BrainDecision.Empty)
+                ? NpcBrainInvocationResult.Succeeded(null)
                 : NpcBrainInvocationResult.Failed("think failed");
         };
         fixture.Scheduler.Bind(mobile);
@@ -669,8 +663,8 @@ public class NpcBrainSchedulerTests
         var thinkResults = new Queue<int?>([1, 5000, null]);
         fixture.Runtime.InvocationHandler = (_, hook, _, _) =>
             hook == NpcBrainHookType.Think
-                ? NpcBrainInvocationResult.Succeeded(new(thinkResults.Dequeue(), []))
-                : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+                ? NpcBrainInvocationResult.Succeeded(thinkResults.Dequeue())
+                : NpcBrainInvocationResult.Succeeded(null);
         fixture.Scheduler.Bind(mobile);
         fixture.Scheduler.Tick();
 
@@ -791,7 +785,7 @@ public class NpcBrainSchedulerTests
 
         public RecordingNpcBrainRuntime Runtime { get; } = new();
 
-        public RecordingBrainIntentExecutor Intents { get; } = new();
+        public StubAiActionService AiActions { get; } = new();
 
         public StubSectorActivityService Sectors { get; } = new();
 
@@ -837,7 +831,7 @@ public class NpcBrainSchedulerTests
             Scheduler = new(
                 Loop,
                 Runtime,
-                Intents,
+                AiActions,
                 Sectors,
                 Persistence,
                 contextFactory,

@@ -22,17 +22,18 @@ function guard.on_speech_heard(ctx, state, event)
             conversations = 1,
         }
 
-        return brain.say("I haven't seen you before.")
+        ai.say("I haven't seen you before.")
+        return
     end
 
     known.last_seen_at = ctx.now_ms
     known.conversations = known.conversations + 1
 
-    return brain.say("Welcome back.")
+    ai.say("Welcome back.")
 end
 
 function guard.think()
-    return brain.idle()
+    -- idle: no action
 end
 
 return guard
