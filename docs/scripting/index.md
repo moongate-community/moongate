@@ -7,8 +7,9 @@ serial. Each module is a C# class bridged into the Lua runtime (the SquidStd
 scripting engine, built on MoonSharp).
 
 NPC behavior is authored separately as [NPC brains](guides/npc-brains.md).
-Brain files use their own `brain` helper environment and return validated
-intents; they do not receive the ordinary scripting modules below.
+Brain files run in the same scripting runtime as everything else: they can use
+the modules below and act on themselves through the imperative
+[`ai`](reference/ai.md) module.
 
 ## Modules
 
@@ -21,6 +22,7 @@ intents; they do not receive the ordinary scripting modules below.
 | `mobile` | Create and manipulate mobiles by serial. | [mobile](reference/mobile.md) |
 | `loot` | Roll loot tables into items. | [loot](reference/loot.md) |
 | `account` | Create and manage accounts by username. | [account](reference/account.md) |
+| `ai` | Act as the current NPC brain (valid only inside a brain hook). | [ai](reference/ai.md) |
 | enums | `skill_name`, `gender_type`, `race_type`, `layer_type`, `account_level_type`. | [Enums](reference/enums.md) |
 
 ## Values and types
