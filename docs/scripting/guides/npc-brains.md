@@ -112,6 +112,23 @@ created. It remains that bind-time origin through sleep/wake and a successful
 same-id reload. A brain-id change captures a new home, as does a server
 restart.
 
+### State vs memory
+
+`state` is **transient**: in-memory, per-mobile, lost on restart and cleared on a
+brain-id change or repeated failures. Use it for scratch within a tick or
+session. For facts an NPC must remember long-term, use the durable
+[`memory`](../reference/memory.md) module — persisted per NPC, scalar-valued and
+bounded, surviving restarts and brain changes:
+
+```lua
+function guard.on_speech_heard(ctx, state, event)
+  if event.speaker_is_player ~= true then return end
+  local seen = (memory.get("seen:" .. event.speaker_id) or 0) + 1
+  memory.set("seen:" .. event.speaker_id, seen)
+  if seen == 1 then ai.say("I haven't seen you before.") else ai.say("Welcome back.") end
+end
+```
+
 ## Hooks and event payloads
 
 `think(ctx, state, nil)` is required. All other hooks are optional; omit them
