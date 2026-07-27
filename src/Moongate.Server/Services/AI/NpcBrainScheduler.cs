@@ -26,7 +26,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     private readonly ILogger _logger = Log.ForContext<NpcBrainScheduler>();
     private readonly IGameLoopContext _loop;
     private readonly INpcBrainRuntime _runtime;
-    private readonly IBrainIntentExecutor _intentExecutor;
+    private readonly IAiActionService _aiActions;
     private readonly ISectorActivityService _sectors;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly NpcBrainContextFactory _contextFactory;
@@ -58,7 +58,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     public NpcBrainScheduler(
         IGameLoopContext loop,
         INpcBrainRuntime runtime,
-        IBrainIntentExecutor intentExecutor,
+        IAiActionService aiActions,
         ISectorActivityService sectors,
         IPersistenceService persistenceService,
         NpcBrainContextFactory contextFactory,
@@ -69,7 +69,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
     {
         _loop = loop;
         _runtime = runtime;
-        _intentExecutor = intentExecutor;
+        _aiActions = aiActions;
         _sectors = sectors;
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _contextFactory = contextFactory;
@@ -459,7 +459,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
                 return;
             }
 
-            ApplySuccess(entry, context, result.Decision, false, now);
+            ApplySuccess(entry, result, false, now);
         }
 
         if (entry.NextThinkAt > now)
@@ -480,7 +480,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
             return;
         }
 
-        ApplySuccess(entry, context, thinkResult.Decision, true, now);
+        ApplySuccess(entry, thinkResult, true, now);
     }
 
     private bool EnsureBinding(SchedulerEntry entry, DateTimeOffset now)
@@ -524,7 +524,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
             if (result.Success)
             {
-                ApplySuccess(entry, context, result.Decision, false, now);
+                ApplySuccess(entry, result, false, now);
             }
             else
             {
@@ -551,7 +551,10 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
         try
         {
-            return _runtime.Invoke(entry.MobileId, hook, context, brainEvent);
+            using (_aiActions.Begin(context))
+            {
+                return _runtime.Invoke(entry.MobileId, hook, context, brainEvent);
+            }
         }
         catch (Exception exception)
         {
@@ -566,8 +569,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
 
     private void ApplySuccess(
         SchedulerEntry entry,
-        BrainContext context,
-        BrainDecision decision,
+        NpcBrainInvocationResult result,
         bool wasThink,
         DateTimeOffset now
     )
@@ -575,12 +577,7 @@ public sealed class NpcBrainScheduler : INpcBrainScheduler, ISquidStdService
         entry.ConsecutiveFailures = 0;
         entry.FaultUntil = null;
 
-        if (decision.Intents.Count > 0)
-        {
-            _intentExecutor.Execute(entry.MobileId, context, decision.Intents);
-        }
-
-        if (decision.NextTickMilliseconds is { } nextTick)
+        if (result.NextTickMs is { } nextTick)
         {
             entry.NextThinkAt = now + TimeSpan.FromMilliseconds(
                 Math.Clamp(

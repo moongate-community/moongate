@@ -17,6 +17,7 @@ using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
+using MoonSharp.Interpreter;
 using SquidStd.Core.Directories;
 using SquidStd.Scripting.Lua.Data.Config;
 using SquidStd.Scripting.Lua.Services;
@@ -83,7 +84,7 @@ public sealed class NpcBrainIntegrationTests
             NpcBrainHookType.MobileEnteredRange,
             NpcBrainHookType.Think
         );
-        Assert.Equal(intentsBeforeActivation + 1, fixture.Metrics.Current.IntentsAccepted);
+        Assert.Equal(intentsBeforeActivation, fixture.Metrics.Current.IntentsAccepted);
 
         // 6. Speech inside the guard's 15-tile hearing range only reaches its mailbox.
         var hooksBeforeFirstSpeech = fixture.Runtime.Invocations.Count;
@@ -130,7 +131,7 @@ public sealed class NpcBrainIntegrationTests
         var intentsBeforeGraceTick = fixture.Metrics.Current.IntentsAccepted;
         fixture.Scheduler.Tick();
         AssertNextHooks(fixture, ref hookOffset, NpcBrainHookType.Think);
-        Assert.Equal(intentsBeforeGraceTick + 1, fixture.Metrics.Current.IntentsAccepted);
+        Assert.Equal(intentsBeforeGraceTick, fixture.Metrics.Current.IntentsAccepted);
         Assert.True(fixture.Scheduler.IsActive(fixture.Guard.Id));
         Assert.Equal(
             [
@@ -173,7 +174,7 @@ public sealed class NpcBrainIntegrationTests
             NpcBrainHookType.MobileEnteredRange,
             NpcBrainHookType.Think
         );
-        Assert.Equal(intentsBeforeWake + 1, fixture.Metrics.Current.IntentsAccepted);
+        Assert.Equal(intentsBeforeWake, fixture.Metrics.Current.IntentsAccepted);
         fixture.Bus.Publish(new MobileSpeechEvent(fixture.Player.Id, ChatMessageType.Regular, "ciao"));
         Assert.Equal(2, fixture.Chat.Messages.Count);
         fixture.Scheduler.Tick();
@@ -271,7 +272,7 @@ public sealed class NpcBrainIntegrationTests
             _luaRuntime = new(_engine, directories, Config, Metrics, Loop, Bus, Time);
             Runtime = new(_luaRuntime);
             var contextFactory = new NpcBrainContextFactory(Spatial, Sessions, Time);
-            var intentExecutor = new BrainIntentExecutor(
+            var aiActions = new AiActionService(
                 Persistence,
                 new UnexpectedMovementService(),
                 Chat,
@@ -279,10 +280,11 @@ public sealed class NpcBrainIntegrationTests
                 loopAffinity,
                 Metrics
             );
+            InstallAiModule(aiActions);
             Scheduler = new(
                 Loop,
                 Runtime,
-                intentExecutor,
+                aiActions,
                 Activity,
                 Persistence,
                 contextFactory,
@@ -293,6 +295,19 @@ public sealed class NpcBrainIntegrationTests
 
             new NpcBrainLifecycleSubscriber(Spatial, Persistence, Scheduler, Activity).Subscribe(Bus);
             new NpcBrainEventRouter(Spatial, Persistence, Sessions, Scheduler, Activity).Subscribe(Bus);
+        }
+
+        private void InstallAiModule(AiActionService actions)
+        {
+            var ai = new Table(_engine.LuaScript);
+            ai.Set("say", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Say(a.Count > 0 ? a[0].ToPrintString() : ""))));
+            ai.Set("patrol", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.Patrol())));
+            ai.Set("return_home", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ReturnHome())));
+            ai.Set("clear_target", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ClearTarget())));
+            ai.Set("move_toward", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveToward(new((uint)a[0].Number)))));
+            ai.Set("move_away", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveAway(new((uint)a[0].Number)))));
+            ai.Set("engage", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Engage(new((uint)a[0].Number)))));
+            _engine.LuaScript.Globals.Set("ai", DynValue.NewTable(ai));
         }
 
         public async Task SeedAsync()

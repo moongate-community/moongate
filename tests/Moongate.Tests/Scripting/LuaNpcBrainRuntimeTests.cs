@@ -29,7 +29,7 @@ public class LuaNpcBrainRuntimeTests
                                                 hearing_range = 15,
                                                 think = function(ctx, state)
                                                   state.count = (state.count or 0) + 1
-                                                  return brain.say(tostring(state.count))
+                                                  ai.say(tostring(state.count))
                                                 end
                                               }
                                               """;
@@ -83,62 +83,13 @@ public class LuaNpcBrainRuntimeTests
     }
 
     [Theory]
-    [InlineData(
-        "other",
-        1000,
-        12,
-        15,
-        "think = function() end",
-        "id"
-    )]
-    [InlineData(
-        "invalid",
-        99,
-        12,
-        15,
-        "think = function() end",
-        "default_tick_ms"
-    )]
-    [InlineData(
-        "invalid",
-        60001,
-        12,
-        15,
-        "think = function() end",
-        "default_tick_ms"
-    )]
-    [InlineData(
-        "invalid",
-        1000,
-        -1,
-        15,
-        "think = function() end",
-        "perception_range"
-    )]
-    [InlineData(
-        "invalid",
-        1000,
-        12,
-        65,
-        "think = function() end",
-        "hearing_range"
-    )]
-    [InlineData(
-        "invalid",
-        1000,
-        12,
-        15,
-        "think = nil",
-        "think"
-    )]
-    [InlineData(
-        "invalid",
-        1000,
-        12,
-        15,
-        "think = function() end, on_activate = 42",
-        "on_activate"
-    )]
+    [InlineData("other", 1000, 12, 15, "think = function() end", "id")]
+    [InlineData("invalid", 99, 12, 15, "think = function() end", "default_tick_ms")]
+    [InlineData("invalid", 60001, 12, 15, "think = function() end", "default_tick_ms")]
+    [InlineData("invalid", 1000, -1, 15, "think = function() end", "perception_range")]
+    [InlineData("invalid", 1000, 12, 65, "think = function() end", "hearing_range")]
+    [InlineData("invalid", 1000, 12, 15, "think = nil", "think")]
+    [InlineData("invalid", 1000, 12, 15, "think = function() end, on_activate = 42", "on_activate")]
     public void TryBind_InvalidDefinition_IsRejected(
         string returnedId,
         int defaultTickMilliseconds,
@@ -194,7 +145,7 @@ public class LuaNpcBrainRuntimeTests
               default_tick_ms = 1000,
               perception_range = 12,
               hearing_range = 15,
-              think = function() return brain.idle() end
+              think = function() end
             }
             """
         );
@@ -227,11 +178,10 @@ public class LuaNpcBrainRuntimeTests
         fixture.Bind(1, "counter");
         fixture.Bind(2, "counter");
 
-        var first = fixture.Think(1);
-        var second = fixture.Think(2);
+        fixture.Think(1);
+        fixture.Think(2);
 
-        Assert.Equal("1", Assert.Single(first.Decision.Intents).Text);
-        Assert.Equal("1", Assert.Single(second.Decision.Intents).Text);
+        Assert.Equal(new[] { "1", "1" }, fixture.AiSays);
     }
 
     [Fact]
@@ -241,11 +191,10 @@ public class LuaNpcBrainRuntimeTests
         fixture.WriteBrain("counter", CounterBrain);
         fixture.Bind(1, "counter");
 
-        var first = fixture.Think(1);
-        var second = fixture.Think(1);
+        fixture.Think(1);
+        fixture.Think(1);
 
-        Assert.Equal("1", Assert.Single(first.Decision.Intents).Text);
-        Assert.Equal("2", Assert.Single(second.Decision.Intents).Text);
+        Assert.Equal(new[] { "1", "2" }, fixture.AiSays);
     }
 
     [Fact]
@@ -257,10 +206,10 @@ public class LuaNpcBrainRuntimeTests
         fixture.Think(1);
 
         fixture.Runtime.Reset(new(1));
-        var result = fixture.Think(1);
+        fixture.Think(1);
 
         Assert.True(fixture.Runtime.TryGetDescriptor(new(1), out _));
-        Assert.Equal("1", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("1", fixture.AiSays[^1]);
     }
 
     [Fact]
@@ -276,9 +225,9 @@ public class LuaNpcBrainRuntimeTests
         Assert.False(fixture.Runtime.TryGetDescriptor(new(1), out _));
 
         fixture.Bind(1, "counter");
-        var result = fixture.Think(1);
+        fixture.Think(1);
 
-        Assert.Equal("1", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("1", fixture.AiSays[^1]);
     }
 
     [Fact]
@@ -296,7 +245,7 @@ public class LuaNpcBrainRuntimeTests
               hearing_range = 15,
               think = function(ctx, state)
                 state.count = (state.count or 0) + 1
-                return brain.say(tostring(state.count))
+                ai.say(tostring(state.count))
               end
             }
             """
@@ -305,9 +254,9 @@ public class LuaNpcBrainRuntimeTests
         fixture.Think(1);
 
         fixture.Bind(1, "reader");
-        var result = fixture.Think(1);
+        fixture.Think(1);
 
-        Assert.Equal("1", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("1", fixture.AiSays[^1]);
     }
 
     [Fact]
@@ -319,9 +268,9 @@ public class LuaNpcBrainRuntimeTests
         fixture.Think(1);
 
         fixture.Bind(1, "counter");
-        var result = fixture.Think(1);
+        fixture.Think(1);
 
-        Assert.Equal("2", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("2", fixture.AiSays[^1]);
     }
 
     [Fact]
@@ -347,49 +296,14 @@ public class LuaNpcBrainRuntimeTests
 
         Assert.False(result.Success);
         Assert.True(result.InstructionBudgetExceeded);
-        Assert.Empty(result.Decision.Intents);
+        Assert.Null(result.NextTickMs);
         Assert.Equal(1, fixture.Metrics.Current.HookFailures);
         Assert.Equal(1, fixture.Metrics.Current.InstructionBudgetBreaches);
         Assert.DoesNotContain(logs.Events, logEvent => logEvent.Level >= LogEventLevel.Warning);
     }
 
-    [Theory]
-    [InlineData("string.rep('x', 4097)")]
-    [InlineData("('x'):rep(4097)")]
-    [InlineData("string.rep('', 4097, 'x')")]
-    [InlineData("(''):rep(4097, 'x')")]
-    [InlineData("string.rep('', 4097, '')")]
-    [InlineData("(''):rep(4097, '')")]
-    public void Invoke_StringRepAboveNativeLimit_ReturnsStructuredFailure(string nativeCall)
-    {
-        using var fixture = new BrainRuntimeFixture();
-        fixture.WriteBrain(
-            "native_limit",
-            $$"""
-              return {
-                id = "native_limit",
-                default_tick_ms = 1000,
-                perception_range = 12,
-                hearing_range = 15,
-                think = function()
-                  return brain.say({{nativeCall}})
-                end
-              }
-              """
-        );
-        fixture.Bind(1, "native_limit");
-
-        var result = fixture.Think(1);
-
-        Assert.False(result.Success);
-        Assert.False(result.InstructionBudgetExceeded);
-        Assert.Equal(BrainDecision.Empty, result.Decision);
-        Assert.Contains("limit", result.Error, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(1, fixture.Metrics.Current.HookFailures);
-    }
-
     [Fact]
-    public void Invoke_BoundedNativeLibraryUsage_ReturnsExpectedDecision()
+    public void Invoke_StandardLibraryUsage_Works()
     {
         using var fixture = new BrainRuntimeFixture();
         fixture.WriteBrain(
@@ -405,7 +319,7 @@ public class LuaNpcBrainRuntimeTests
                 table.insert(values, "c")
                 local direct = string.rep(table.concat(values), 2)
                 local colon = ("xy"):rep(2, ":")
-                return brain.say(direct .. "|" .. colon)
+                ai.say(direct .. "|" .. colon)
               end
             }
             """
@@ -415,11 +329,11 @@ public class LuaNpcBrainRuntimeTests
         var result = fixture.Think(1);
 
         Assert.True(result.Success, result.Error);
-        Assert.Equal("abcabc|xy:xy", Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal("abcabc|xy:xy", Assert.Single(fixture.AiSays));
     }
 
     [Fact]
-    public void Invoke_AbsentOptionalHook_ReturnsSuccessfulEmptyDecision()
+    public void Invoke_AbsentOptionalHook_ReturnsSuccessWithoutNextTick()
     {
         using var fixture = new BrainRuntimeFixture();
         fixture.WriteBrain("counter", CounterBrain);
@@ -428,7 +342,7 @@ public class LuaNpcBrainRuntimeTests
         var result = fixture.Runtime.Invoke(new(1), NpcBrainHookType.Activate, fixture.Context);
 
         Assert.True(result.Success);
-        Assert.Equal(BrainDecision.Empty, result.Decision);
+        Assert.Null(result.NextTickMs);
         Assert.Equal(0, fixture.Metrics.Current.HookFailures);
     }
 
@@ -442,50 +356,91 @@ public class LuaNpcBrainRuntimeTests
         var result = fixture.Runtime.Invoke(new(1), (NpcBrainHookType)999, fixture.Context);
 
         Assert.False(result.Success);
-        Assert.Empty(result.Decision.Intents);
+        Assert.Null(result.NextTickMs);
         Assert.Contains("unsupported", result.Error, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(1, fixture.Metrics.Current.HookFailures);
     }
 
     [Fact]
-    public void Invoke_PrivilegedGlobalsAreUnavailableAndCannotMutateWorld()
+    public void Invoke_HookCanCallGlobalModules()
     {
         using var fixture = new BrainRuntimeFixture();
-        var mutationCount = 0;
-        fixture.InstallPrivilegedGlobal("mobile", "set", () => mutationCount++);
-        fixture.InstallPrivilegedGlobal("chat", "say", () => mutationCount++);
-        fixture.InstallPrivilegedGlobal("game", "post", () => mutationCount++);
-        fixture.InstallPrivilegedGlobal("events", "on", () => mutationCount++);
+        var logged = 0;
+        fixture.InstallPrivilegedGlobal("log", "info", () => logged++);
         fixture.WriteBrain(
-            "sandbox",
+            "logger",
             """
             return {
-              id = "sandbox",
+              id = "logger",
               default_tick_ms = 1000,
               perception_range = 12,
               hearing_range = 15,
               think = function()
-                local mobile_ok = pcall(function() mobile.set() end)
-                local chat_ok = pcall(function() chat.say() end)
-                local game_ok = pcall(function() game.post() end)
-                local events_ok = pcall(function() events.on() end)
-                return brain.say(
-                  tostring(mobile_ok) .. "," ..
-                  tostring(chat_ok) .. "," ..
-                  tostring(game_ok) .. "," ..
-                  tostring(events_ok)
-                )
+                log.info("hello")
+                return 750
               end
             }
             """
         );
-        fixture.Bind(1, "sandbox");
+        fixture.Bind(1, "logger");
 
         var result = fixture.Think(1);
 
         Assert.True(result.Success, result.Error);
-        Assert.Equal("false,false,false,false", Assert.Single(result.Decision.Intents).Text);
-        Assert.Equal(0, mutationCount);
+        Assert.Equal(750, result.NextTickMs);
+        Assert.Equal(1, logged);
+    }
+
+    [Fact]
+    public void Invoke_NumericReturn_SetsNextTick()
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "tick",
+            """
+            return {
+              id = "tick",
+              default_tick_ms = 1000,
+              perception_range = 4,
+              hearing_range = 4,
+              think = function() return 750 end
+            }
+            """
+        );
+        fixture.Bind(1, "tick");
+
+        var result = fixture.Think(1);
+
+        Assert.True(result.Success, result.Error);
+        Assert.Equal(750, result.NextTickMs);
+    }
+
+    [Theory]
+    [InlineData("return 'text'")]
+    [InlineData("return true")]
+    [InlineData("return {}")]
+    [InlineData("return")]
+    public void Invoke_NonNumericReturn_HasNullNextTick(string body)
+    {
+        using var fixture = new BrainRuntimeFixture();
+        fixture.WriteBrain(
+            "noret",
+            $$"""
+              return {
+                id = "noret",
+                default_tick_ms = 1000,
+                perception_range = 4,
+                hearing_range = 4,
+                think = function() {{body}} end
+              }
+              """
+        );
+        fixture.Bind(1, "noret");
+
+        var result = fixture.Think(1);
+
+        Assert.True(result.Success, result.Error);
+        Assert.Null(result.NextTickMs);
     }
 
     [Fact]
@@ -502,7 +457,7 @@ public class LuaNpcBrainRuntimeTests
               hearing_range = 15,
               think = function(ctx)
                 local other = ctx.nearby[1]
-                return brain.say(
+                ai.say(
                   table.concat({
                     tostring(ctx.now_ms),
                     tostring(ctx.self.id),
@@ -537,7 +492,7 @@ public class LuaNpcBrainRuntimeTests
         Assert.True(result.Success, result.Error);
         Assert.Equal(
             "1714566896789|1|Self|false|3|100|200|7|25|100|25|true|nil|true|5|3|90|2|1|1",
-            Assert.Single(result.Decision.Intents).Text
+            Assert.Single(fixture.AiSays)
         );
     }
 
@@ -548,16 +503,16 @@ public class LuaNpcBrainRuntimeTests
         fixture.WriteBrain(
             "events",
             """
-            local function say(value) return brain.say(value) end
+            local function say(value) ai.say(value) end
             return {
               id = "events",
               default_tick_ms = 1000,
               perception_range = 12,
               hearing_range = 15,
-              on_activate = function() return say("activate") end,
-              on_deactivate = function() return say("deactivate") end,
+              on_activate = function() say("activate") end,
+              on_deactivate = function() say("deactivate") end,
               on_speech_heard = function(ctx, state, event)
-                return say(table.concat({
+                say(table.concat({
                   tostring(event.speaker_id),
                   event.speaker_name,
                   tostring(event.speaker_is_player),
@@ -566,27 +521,27 @@ public class LuaNpcBrainRuntimeTests
                 }, "|"))
               end,
               on_mobile_entered_range = function(ctx, state, event)
-                return say("entered|" .. tostring(event.mobile_id) .. "|" ..
+                say("entered|" .. tostring(event.mobile_id) .. "|" ..
                   event.mobile_name .. "|" .. tostring(event.mobile_is_player) .. "|" ..
                   tostring(event.from_position.x) .. "|" .. tostring(event.to_position.y))
               end,
               on_mobile_left_range = function(ctx, state, event)
-                return say("left|" .. tostring(event.mobile_id))
+                say("left|" .. tostring(event.mobile_id))
               end,
               on_mobile_moved = function(ctx, state, event)
-                return say("moved|" .. tostring(event.mobile_id) .. "|" ..
+                say("moved|" .. tostring(event.mobile_id) .. "|" ..
                   tostring(event.from_position.x) .. "|" .. tostring(event.to_position.y))
               end,
               on_attacked = function(ctx, state, event)
-                return say("attacked|" .. tostring(event.attacker_id))
+                say("attacked|" .. tostring(event.attacker_id))
               end,
               on_damage = function(ctx, state, event)
-                return say("damage|" .. tostring(event.attacker_id) .. "|" .. tostring(event.amount))
+                say("damage|" .. tostring(event.attacker_id) .. "|" .. tostring(event.amount))
               end,
               on_death = function(ctx, state, event)
-                return say("death|" .. tostring(event.killer_id))
+                say("death|" .. tostring(event.killer_id))
               end,
-              think = function() return say("think") end
+              think = function() say("think") end
             }
             """
         );
@@ -651,179 +606,6 @@ public class LuaNpcBrainRuntimeTests
     }
 
     [Fact]
-    public void Invoke_BrainHelpersAndDecisionConversion_MapAndClampValues()
-    {
-        using var fixture = new BrainRuntimeFixture(maxIntentsPerDecision: 20);
-        fixture.WriteBrain(
-            "helpers",
-            """
-            return {
-              id = "helpers",
-              default_tick_ms = 1000,
-              perception_range = 12,
-              hearing_range = 15,
-              think = function()
-                return brain.decision(1, {
-                  brain.idle(),
-                  brain.say("hello"),
-                  brain.patrol(),
-                  brain.move_toward(2),
-                  brain.move_away(3),
-                  brain.engage(4),
-                  brain.clear_target(),
-                  brain.return_home()
-                })
-              end
-            }
-            """
-        );
-        fixture.Bind(1, "helpers");
-
-        var result = fixture.Think(1);
-
-        Assert.True(result.Success, result.Error);
-        Assert.Equal(100, result.Decision.NextTickMilliseconds);
-        Assert.Collection(
-            result.Decision.Intents,
-            intent => Assert.Equal(BrainIntentType.Idle, intent.Type),
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.Say, intent.Type);
-                Assert.Equal("hello", intent.Text);
-            },
-            intent => Assert.Equal(BrainIntentType.Patrol, intent.Type),
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.MoveToward, intent.Type);
-                Assert.Equal(new Serial(2), intent.TargetId);
-            },
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.MoveAway, intent.Type);
-                Assert.Equal(new Serial(3), intent.TargetId);
-            },
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.Engage, intent.Type);
-                Assert.Equal(new Serial(4), intent.TargetId);
-            },
-            intent => Assert.Equal(BrainIntentType.ClearTarget, intent.Type),
-            intent => Assert.Equal(BrainIntentType.ReturnHome, intent.Type)
-        );
-    }
-
-    [Fact]
-    public void Invoke_DecisionConversion_AcceptsNilSingleIntentAndUnknownIntents()
-    {
-        using var fixture = new BrainRuntimeFixture(maxIntentsPerDecision: 2);
-        fixture.WriteBrain(
-            "conversion",
-            """
-            return {
-              id = "conversion",
-              default_tick_ms = 1000,
-              perception_range = 12,
-              hearing_range = 15,
-              on_activate = function() return nil end,
-              on_deactivate = function() return brain.say("single") end,
-              think = function()
-                return brain.decision(999999, {
-                  { type = "teleport", target_id = "bad" },
-                  { text = "missing type" },
-                  brain.say("truncated")
-                })
-              end
-            }
-            """
-        );
-        fixture.Bind(1, "conversion");
-
-        var nilResult = fixture.Runtime.Invoke(new(1), NpcBrainHookType.Activate, fixture.Context);
-        var singleResult = fixture.Runtime.Invoke(new(1), NpcBrainHookType.Deactivate, fixture.Context);
-        var decisionResult = fixture.Think(1);
-
-        Assert.True(nilResult.Success);
-        Assert.Equal(BrainDecision.Empty, nilResult.Decision);
-        Assert.Equal(BrainIntentType.Say, Assert.Single(singleResult.Decision.Intents).Type);
-        Assert.Equal("single", Assert.Single(singleResult.Decision.Intents).Text);
-        Assert.Equal(60_000, decisionResult.Decision.NextTickMilliseconds);
-        Assert.Collection(
-            decisionResult.Decision.Intents,
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.Unknown, intent.Type);
-                Assert.Equal("teleport", intent.RawType);
-            },
-            intent =>
-            {
-                Assert.Equal(BrainIntentType.Unknown, intent.Type);
-                Assert.Equal("", intent.RawType);
-            }
-        );
-    }
-
-    [Theory]
-    [InlineData("return 'unsupported'")]
-    [InlineData("return 42")]
-    [InlineData("return true")]
-    [InlineData("return 'first', 'second'")]
-    [InlineData("return function() end")]
-    [InlineData("return brain.say")]
-    public void Invoke_UnsupportedReturnShape_ReturnsNeutralFailure(string returnStatement)
-    {
-        using var fixture = new BrainRuntimeFixture();
-        fixture.WriteBrain(
-            "unsupported",
-            $$"""
-              return {
-                id = "unsupported",
-                default_tick_ms = 1000,
-                perception_range = 12,
-                hearing_range = 15,
-                think = function()
-                  {{returnStatement}}
-                end
-              }
-              """
-        );
-        fixture.Bind(1, "unsupported");
-
-        var result = fixture.Think(1);
-
-        Assert.False(result.Success);
-        Assert.Equal(BrainDecision.Empty, result.Decision);
-        Assert.Contains("return type", result.Error, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(1, fixture.Metrics.Current.HookFailures);
-    }
-
-    [Fact]
-    public void Invoke_MalformedIntentTable_RemainsSuccessfulUnknownIntent()
-    {
-        using var fixture = new BrainRuntimeFixture();
-        fixture.WriteBrain(
-            "malformed",
-            """
-            return {
-              id = "malformed",
-              default_tick_ms = 1000,
-              perception_range = 12,
-              hearing_range = 15,
-              think = function()
-                return { text = "missing type" }
-              end
-            }
-            """
-        );
-        fixture.Bind(1, "malformed");
-
-        var result = fixture.Think(1);
-
-        Assert.True(result.Success, result.Error);
-        Assert.Equal(BrainIntentType.Unknown, Assert.Single(result.Decision.Intents).Type);
-        Assert.Equal(0, fixture.Metrics.Current.HookFailures);
-    }
-
-    [Fact]
     public void TryReload_ValidReplacement_SwapsBehaviorPreservesStateAndPublishesOnce()
     {
         using var fixture = new BrainRuntimeFixture();
@@ -840,7 +622,7 @@ public class LuaNpcBrainRuntimeTests
               hearing_range = 12,
               think = function(ctx, state)
                 state.count = (state.count or 0) + 1
-                return brain.say("reloaded:" .. tostring(state.count))
+                ai.say("reloaded:" .. tostring(state.count))
               end
             }
             """
@@ -852,7 +634,7 @@ public class LuaNpcBrainRuntimeTests
         Assert.True(reloadResult, error);
         Assert.Equal(new("counter", 1500, 10, 12), descriptor);
         Assert.True(invocation.Success, invocation.Error);
-        Assert.Equal("reloaded:2", Assert.Single(invocation.Decision.Intents).Text);
+        Assert.Equal("reloaded:2", fixture.AiSays[^1]);
         var reloaded = Assert.IsType<BrainDefinitionReloadedEvent>(Assert.Single(fixture.Bus.Published));
         Assert.Equal("counter", reloaded.BrainId);
         Assert.Equal(descriptor, reloaded.Descriptor);
@@ -869,7 +651,7 @@ public class LuaNpcBrainRuntimeTests
           default_tick_ms = 1000,
           perception_range = 12,
           hearing_range = 15,
-          think = function() return brain.idle() end
+          think = function() end
         }
         """
     )]
@@ -898,7 +680,7 @@ public class LuaNpcBrainRuntimeTests
         Assert.Null(descriptor);
         Assert.NotNull(error);
         Assert.True(invocation.Success, invocation.Error);
-        Assert.Equal("2", Assert.Single(invocation.Decision.Intents).Text);
+        Assert.Equal("2", fixture.AiSays[^1]);
         Assert.Equal(1, fixture.Metrics.Current.ReloadFallbacks);
         Assert.Empty(fixture.Bus.Published);
     }
@@ -915,7 +697,7 @@ public class LuaNpcBrainRuntimeTests
                             default_tick_ms = 1500,
                             perception_range = 10,
                             hearing_range = 12,
-                            think = function(ctx, state) return brain.say("watched") end
+                            think = function(ctx, state) ai.say("watched") end
                           }
                           """;
         fixture.WriteBrain("counter", replacement);
@@ -936,7 +718,8 @@ public class LuaNpcBrainRuntimeTests
         Assert.Equal(1, fixture.Loop.PostCount);
         Assert.Equal(1, fixture.Metrics.Current.ReloadSuccesses);
         Assert.Single(fixture.Bus.Published);
-        Assert.Equal("watched", Assert.Single(fixture.Think(1).Decision.Intents).Text);
+        fixture.Think(1);
+        Assert.Equal("watched", fixture.AiSays[^1]);
 
         await fixture.Runtime.StopAsync();
     }
@@ -955,7 +738,7 @@ public class LuaNpcBrainRuntimeTests
               default_tick_ms = 1500,
               perception_range = 10,
               hearing_range = 12,
-              think = function() return brain.say("stale") end
+              think = function() ai.say("stale") end
             }
             """
         );
@@ -973,7 +756,8 @@ public class LuaNpcBrainRuntimeTests
         Assert.Equal(0, fixture.Loop.PostCount);
         Assert.Equal(0, fixture.Metrics.Current.ReloadSuccesses);
         Assert.Empty(fixture.Bus.Published);
-        Assert.Equal("1", Assert.Single(fixture.Think(1).Decision.Intents).Text);
+        fixture.Think(1);
+        Assert.Equal("1", fixture.AiSays[^1]);
 
         await fixture.Runtime.StopAsync();
     }
@@ -986,37 +770,51 @@ public class LuaNpcBrainRuntimeTests
 
         Assert.True(fixture.Runtime.TryBind(new(1), "guard", out var guard, out var guardError), guardError);
         Assert.Equal(new("guard", 1000, 12, 15), guard);
-        var nonPlayerSpeech = fixture.Runtime.Invoke(
+
+        fixture.ClearAi();
+        fixture.Runtime.Invoke(
             new(1),
             NpcBrainHookType.SpeechHeard,
             fixture.Context,
             new(NpcBrainEventType.SpeechHeard, fixture.Context.Self, "hello", ChatMessageType.Regular)
         );
-        var firstPlayerSpeech = fixture.Runtime.Invoke(
-            new(1),
-            NpcBrainHookType.SpeechHeard,
-            fixture.Context,
-            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
-        );
-        var returningPlayerSpeech = fixture.Runtime.Invoke(
-            new(1),
-            NpcBrainHookType.SpeechHeard,
-            fixture.Context,
-            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
-        );
+        Assert.Empty(fixture.AiSays);
 
-        Assert.Empty(nonPlayerSpeech.Decision.Intents);
-        Assert.Equal("I haven't seen you before.", Assert.Single(firstPlayerSpeech.Decision.Intents).Text);
-        Assert.Equal("Welcome back.", Assert.Single(returningPlayerSpeech.Decision.Intents).Text);
-        Assert.Equal(BrainIntentType.Idle, Assert.Single(fixture.Think(1).Decision.Intents).Type);
+        fixture.ClearAi();
+        fixture.Runtime.Invoke(
+            new(1),
+            NpcBrainHookType.SpeechHeard,
+            fixture.Context,
+            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
+        );
+        Assert.Equal("I haven't seen you before.", Assert.Single(fixture.AiSays));
+
+        fixture.ClearAi();
+        fixture.Runtime.Invoke(
+            new(1),
+            NpcBrainHookType.SpeechHeard,
+            fixture.Context,
+            new(NpcBrainEventType.SpeechHeard, fixture.Other, "hello", ChatMessageType.Regular)
+        );
+        Assert.Equal("Welcome back.", Assert.Single(fixture.AiSays));
+
+        fixture.ClearAi();
+        var guardThink = fixture.Think(1);
+        Assert.True(guardThink.Success, guardThink.Error);
+        Assert.Empty(fixture.AiSays);
+        Assert.Empty(fixture.AiActions);
 
         Assert.True(fixture.Runtime.TryBind(new(2), "orion", out var orion, out var orionError), orionError);
         Assert.Equal(new("orion", 1500, 10, 12), orion);
-        Assert.Equal(BrainIntentType.Patrol, Assert.Single(fixture.Think(2).Decision.Intents).Type);
+        fixture.ClearAi();
+        fixture.Runtime.Invoke(new(2), NpcBrainHookType.Think, fixture.Context);
+        Assert.Equal("patrol", Assert.Single(fixture.AiActions));
 
         Assert.True(fixture.Runtime.TryBind(new(3), "vega", out var vega, out var vegaError), vegaError);
         Assert.Equal(new("vega", 1500, 10, 12), vega);
-        Assert.Equal(BrainIntentType.Patrol, Assert.Single(fixture.Think(3).Decision.Intents).Type);
+        fixture.ClearAi();
+        fixture.Runtime.Invoke(new(3), NpcBrainHookType.Think, fixture.Context);
+        Assert.Equal("patrol", Assert.Single(fixture.AiActions));
 
         await fixture.Runtime.StopAsync();
     }
@@ -1036,10 +834,11 @@ public class LuaNpcBrainRuntimeTests
         string expected
     )
     {
+        fixture.ClearAi();
         var result = fixture.Runtime.Invoke(new(1), hook, fixture.Context, brainEvent);
 
         Assert.True(result.Success, result.Error);
-        Assert.Equal(expected, Assert.Single(result.Decision.Intents).Text);
+        Assert.Equal(expected, Assert.Single(fixture.AiSays));
     }
 
     private sealed class BrainRuntimeFixture : IDisposable
@@ -1050,6 +849,7 @@ public class LuaNpcBrainRuntimeTests
         private readonly bool _queueWatcherCallbacks;
         private readonly string _root;
         private readonly string _scripts;
+        private readonly List<string> _aiActions = [];
 
         public BrainContext Context { get; }
 
@@ -1066,6 +866,10 @@ public class LuaNpcBrainRuntimeTests
         public QueueingSynchronizer WatcherCallbacks { get; } = new();
 
         public List<ControllableFileSystemWatcher> Watchers { get; } = [];
+
+        public List<string> AiSays { get; } = [];
+
+        public IReadOnlyList<string> AiActions => _aiActions;
 
         public BrainMobileSnapshot Other { get; } = new(
             new(2),
@@ -1108,6 +912,7 @@ public class LuaNpcBrainRuntimeTests
                 }
             };
             Runtime = new(_engine, _directories, config, Metrics, Loop, Bus, Time, CreateWatcher);
+            InstallRecordingAi();
             var self = new BrainMobileSnapshot(
                 new(1),
                 "Self",
@@ -1135,6 +940,12 @@ public class LuaNpcBrainRuntimeTests
             var result = Runtime.TryBind(new(mobileId), brainId, out _, out var error);
 
             Assert.True(result, error);
+        }
+
+        public void ClearAi()
+        {
+            AiSays.Clear();
+            _aiActions.Clear();
         }
 
         public void CreateBrainSymbolicLink(string brainId, string targetContent)
@@ -1174,6 +985,53 @@ public class LuaNpcBrainRuntimeTests
 
         public void WriteScript(string relativePath, string content)
             => File.WriteAllText(Path.Combine(_scripts, relativePath), content);
+
+        private void InstallRecordingAi()
+        {
+            var ai = new Table(_engine.LuaScript);
+            ai.Set(
+                "say",
+                DynValue.NewCallback(
+                    (_, arguments) =>
+                    {
+                        AiSays.Add(arguments.Count > 0 ? arguments[0].ToPrintString() : "");
+                        _aiActions.Add("say");
+                        return DynValue.True;
+                    }
+                )
+            );
+            RecordAction(ai, "patrol");
+            RecordAction(ai, "return_home");
+            RecordAction(ai, "clear_target");
+            RecordTargetAction(ai, "move_toward");
+            RecordTargetAction(ai, "move_away");
+            RecordTargetAction(ai, "engage");
+            _engine.LuaScript.Globals.Set("ai", DynValue.NewTable(ai));
+        }
+
+        private void RecordAction(Table ai, string name)
+            => ai.Set(
+                name,
+                DynValue.NewCallback(
+                    (_, _) =>
+                    {
+                        _aiActions.Add(name);
+                        return DynValue.True;
+                    }
+                )
+            );
+
+        private void RecordTargetAction(Table ai, string name)
+            => ai.Set(
+                name,
+                DynValue.NewCallback(
+                    (_, arguments) =>
+                    {
+                        _aiActions.Add(name + ":" + (arguments.Count > 0 ? arguments[0].ToPrintString() : ""));
+                        return DynValue.True;
+                    }
+                )
+            );
 
         private FileSystemWatcher CreateWatcher(string path)
         {

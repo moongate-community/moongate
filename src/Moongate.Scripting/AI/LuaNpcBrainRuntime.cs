@@ -48,7 +48,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private readonly IGameLoopContext _gameLoop;
     private readonly INpcAiMetrics _metrics;
     private readonly Script _script;
-    private readonly LuaBrainStandardLibrary _standardLibrary;
     private readonly TimeProvider _timeProvider;
     private readonly LuaBrainValueConverter _valueConverter;
     private readonly Func<string, FileSystemWatcher> _watcherFactory;
@@ -81,7 +80,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         _gameLoop = gameLoop;
         _metrics = metrics;
         _script = luaScriptEngineService.LuaScript;
-        _standardLibrary = new(_script);
         _timeProvider = timeProvider;
         _valueConverter = new(_script, _advanced);
         _watcherFactory = watcherFactory ?? CreateFileSystemWatcher;
@@ -113,7 +111,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
 
         if (hookValue.Type is DataType.Nil or DataType.Void)
         {
-            return NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+            return NpcBrainInvocationResult.Succeeded(null);
         }
 
         try
@@ -124,13 +122,10 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             var coroutine = coroutineValue.Coroutine;
             coroutine.AutoYieldCounter = _advanced.InstructionBudget;
 
-            var result = _standardLibrary.RunWithStringMetatable(
-                definition.StringMetatable,
-                () => coroutine.Resume(
-                    DynValue.NewTable(contextTable),
-                    DynValue.NewTable(binding.State),
-                    eventTable is null ? DynValue.Nil : DynValue.NewTable(eventTable)
-                )
+            var result = coroutine.Resume(
+                DynValue.NewTable(contextTable),
+                DynValue.NewTable(binding.State),
+                eventTable is null ? DynValue.Nil : DynValue.NewTable(eventTable)
             );
 
             if (coroutine.State == CoroutineState.ForceSuspended)
@@ -146,14 +141,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
                 return FailInvocation("Brain hooks may not yield.");
             }
 
-            if (result.Type is not DataType.Nil and not DataType.Void and not DataType.Table)
-            {
-                return FailInvocation(
-                    $"Unsupported brain hook return type '{result.Type}'. Expected nil or table."
-                );
-            }
-
-            return NpcBrainInvocationResult.Succeeded(_valueConverter.ToDecision(result));
+            return NpcBrainInvocationResult.Succeeded(ReadNextTick(result));
         }
         catch (InterpreterException exception)
         {
@@ -348,6 +336,18 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         return true;
     }
 
+    private static int? ReadNextTick(DynValue value)
+    {
+        if (value.Type != DataType.Number ||
+            !double.IsFinite(value.Number) ||
+            value.Number is < int.MinValue or > int.MaxValue)
+        {
+            return null;
+        }
+
+        return (int)value.Number;
+    }
+
     private NpcBrainInvocationResult FailInvocation(string error, bool budgetExceeded = false)
     {
         _metrics.RecordHookFailure(budgetExceeded);
@@ -492,18 +492,11 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
                 return false;
             }
 
-            var environment = _standardLibrary.CreateEnvironment(
-                LuaBrainApi.Create(_script),
-                out var stringMetatable
-            );
-            var chunk = _script.LoadFile(path, environment, path);
+            var chunk = _script.LoadFile(path, _script.Globals, path);
             var coroutineValue = _script.CreateCoroutine(chunk);
             var coroutine = coroutineValue.Coroutine;
             coroutine.AutoYieldCounter = _advanced.InstructionBudget;
-            var result = _standardLibrary.RunWithStringMetatable(
-                stringMetatable,
-                coroutine.Resume
-            );
+            var result = coroutine.Resume();
 
             if (coroutine.State == CoroutineState.ForceSuspended)
             {
@@ -520,7 +513,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             return TryValidateDefinition(
                 brainId,
                 result,
-                stringMetatable,
                 out definition,
                 out error
             );
@@ -540,7 +532,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private bool TryValidateDefinition(
         string brainId,
         DynValue value,
-        Table stringMetatable,
         out LuaBrainDefinition definition,
         out string? error
     )
@@ -605,8 +596,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
 
         definition = new(
             new(brainId, defaultTickMilliseconds, perceptionRange, hearingRange),
-            strategy,
-            stringMetatable
+            strategy
         );
         error = null;
 

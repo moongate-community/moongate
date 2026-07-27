@@ -69,7 +69,7 @@ public sealed class RecordingNpcBrainRuntime : INpcBrainRuntime
 
         return Results.TryDequeue(out var result)
             ? result
-            : NpcBrainInvocationResult.Succeeded(BrainDecision.Empty);
+            : NpcBrainInvocationResult.Succeeded(null);
     }
 
     public bool TryReload(string brainId, out BrainDescriptor? descriptor, out string? error)
