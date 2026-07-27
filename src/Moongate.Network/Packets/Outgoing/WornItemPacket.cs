@@ -2,8 +2,8 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Attributes;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Types;
-using Moongate.UO.Data.Hues;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Hues;
 using SquidStd.Network.Spans;
 
 namespace Moongate.Network.Packets.Outgoing;

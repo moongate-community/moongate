@@ -56,9 +56,52 @@ jobs:
       - name: Test
         run: dotnet test Moongate.slnx --configuration Release --no-build
 
+  ui:
+    name: UI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
+      # The contract check below boots the real server to read its OpenAPI document, so this job needs
+      # the SDK as much as it needs Node.
+      - name: Setup .NET
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          global-json-file: global.json
+
+      - name: Setup Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: 24.10.0
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install
+        run: npm ci --prefix ui
+
+      - name: Test
+        run: npm --prefix ui run test:run
+
+      - name: Build
+        run: npm --prefix ui run build
+
+      # Not a test but a gate: regenerate the API contract from the server and compare. A DTO changed
+      # without updating the portal fails here instead of surfacing as undefined in a browser.
+      # openapi:types shells out to npx, so this step needs network access — it is not served from the
+      # npm cache that `npm ci` warms.
+      - name: Check the API contract has not drifted
+        run: |
+          npm --prefix ui run openapi:sync
+          npm --prefix ui run openapi:types
+          git diff --exit-code -- ui/openapi.json ui/src/lib/api-types.ts \
+            || { echo "::error::openapi.json / api-types.ts are stale — run 'npm --prefix ui run openapi:sync && npm --prefix ui run openapi:types' and commit"; exit 1; }
+
   docker:
     name: Docker
-    needs: dotnet
+    needs: [dotnet, ui]
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

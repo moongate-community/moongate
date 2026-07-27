@@ -1,4 +1,6 @@
+using Moongate.Core.Interfaces;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
@@ -17,29 +19,6 @@ namespace Moongate.Tests.Support;
 /// </summary>
 public static class CharacterServiceFixture
 {
-    public static CharacterService Create(
-        FakePersistenceService persistence,
-        IEventBus eventBus,
-        ISessionManager? sessions = null
-    )
-    {
-        var templates = Templates();
-        var random = new Random(1);
-
-        return new(
-            persistence,
-            new MobileFactoryService(Cities(), new MobileTemplateService(), random),
-            new ItemFactoryService(templates, random),
-            new ItemService(persistence),
-            templates,
-            StartingItems(),
-            Skills(),
-            random,
-            eventBus,
-            sessions ?? new StubSessionManager()
-        );
-    }
-
     public static StartingCityService Cities()
     {
         var service = new StartingCityService();
@@ -51,6 +30,32 @@ public static class CharacterServiceFixture
         );
 
         return service;
+    }
+
+    public static CharacterService Create(
+        FakePersistenceService persistence,
+        IEventBus eventBus,
+        ISessionManager? sessions = null,
+        IStartingCityService? cities = null,
+        ILoopAffinity? loopAffinity = null
+    )
+    {
+        var templates = Templates();
+        var random = new Random(1);
+
+        return new(
+            persistence,
+            new MobileFactoryService(cities ?? Cities(), new MobileTemplateService(), random),
+            new ItemFactoryService(templates, random),
+            new ItemService(persistence),
+            templates,
+            StartingItems(),
+            Skills(),
+            random,
+            eventBus,
+            sessions ?? new StubSessionManager(),
+            loopAffinity
+        );
     }
 
     public static SkillService Skills()

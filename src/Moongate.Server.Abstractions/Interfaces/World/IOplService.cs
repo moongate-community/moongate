@@ -9,7 +9,10 @@ namespace Moongate.Server.Abstractions.Interfaces.World;
 /// </summary>
 public interface IOplService
 {
-    /// <summary>Returns the cached property list for the serial, building it on first access. Unknown serials yield an empty snapshot.</summary>
+    /// <summary>
+    /// Returns the cached property list for the serial, building it on first access. Unknown serials yield an empty
+    /// snapshot.
+    /// </summary>
     OplSnapshot GetOrBuild(Serial serial);
 
     /// <summary>Drops the cached list so the next request rebuilds it.</summary>

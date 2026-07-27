@@ -1,5 +1,8 @@
 using DryIoc;
+using Moongate.Scripting.AI;
+using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Scripting.Modules;
+using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Directories;
 using SquidStd.Core.Utils;
@@ -35,6 +38,8 @@ public class MoongateScriptingPlugin : ISquidStdPlugin
                 appConfig.AppVersion
             )
         );
+
+        container.RegisterStdService<INpcBrainRuntime, LuaNpcBrainRuntime>();
 
         container.Register<ILuaInvokeMarshaller, LoopAffineInvokeMarshaller>(Reuse.Singleton);
 

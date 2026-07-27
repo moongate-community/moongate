@@ -65,7 +65,7 @@ path order) into one flat list, then `MobileTemplateBaseResolver` resolves
 | `Equipment` | `List<MobileEquipmentEntry>` | optional, default `[]` | **Wholesale replace**: if the derived template declares any equipment at all, the entire base list is discarded (not merged item-by-item). |
 | `Variants` | `List<MobileVariant>` | optional, default `[]` | **Wholesale replace**, same rule as `Equipment`. See [Variants](#variants). |
 | `LootTableId` | `string?` | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). |
-| `BrainScript` | `string?` | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). **Reserved** — copied onto the spawned mobile's `BrainScriptId` but no AI dispatcher in this codebase reads it yet. |
+| `BrainScript` | `string?` | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). Binds the spawned NPC to `scripts/brains/<BrainScript>.lua`; the file's returned `id` must match. See [NPC brains](../guides/npc-brains.md). |
 
 ### Gender
 

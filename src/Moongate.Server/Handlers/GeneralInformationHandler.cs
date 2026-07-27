@@ -29,14 +29,17 @@ public sealed class GeneralInformationHandler : IPacketHandler<GeneralInformatio
         {
             case GeneralInformationSubCommandType.ScreenSize:
                 HandleScreenSize(packet, context.Session);
+
                 break;
 
             case GeneralInformationSubCommandType.ClientLanguage:
                 HandleLanguage(packet, context.Session);
+
                 break;
 
             case GeneralInformationSubCommandType.ExtendedStats:
                 HandleStatLockChange(packet, context.Session);
+
                 break;
 
             case GeneralInformationSubCommandType.WrestlingStun:
@@ -47,59 +50,42 @@ public sealed class GeneralInformationHandler : IPacketHandler<GeneralInformatio
 
             default:
                 WarnOnce(packet.SubCommand);
+
                 break;
         }
     }
 
-    public void Register(INetworkService network)
-        => network.RegisterHandler(this);
-
-    private static void HandleScreenSize(GeneralInformationPacket packet, PlayerSession session)
+    /// <summary>
+    /// Parses the client-language (0x0B) payload: a 3-char ASCII code (e.g. "ENU").
+    /// Returns null if the payload is empty.
+    /// </summary>
+    public static string? ParseLanguage(byte[] payload)
     {
-        if (ParseScreenSize(packet.Payload) is { } size)
+        if (payload.Length == 0)
         {
-            session.SetScreenSize(size.Width, size.Height);
+            return null;
         }
+
+        var reader = new SpanReader(payload);
+
+        return reader.ReadAscii(Math.Min(3, payload.Length)).TrimEnd('\0');
     }
 
-    private static void HandleLanguage(GeneralInformationPacket packet, PlayerSession session)
+    /// <summary>
+    /// Parses the screen-size (0x05) payload, whose layout after the sub-command is 2 bytes
+    /// unknown/flag, then ushort width and ushort height. Returns null if the payload is too short.
+    /// </summary>
+    public static (int Width, int Height)? ParseScreenSize(byte[] payload)
     {
-        if (ParseLanguage(packet.Payload) is { } language)
+        if (payload.Length < 6)
         {
-            session.SetLanguage(language);
-        }
-    }
-
-    // Applies the lock the client set to the attached mobile, then echoes the resulting state back:
-    // the echo is what keeps the arrows honest when the requested lock had to be clamped.
-    private static void HandleStatLockChange(GeneralInformationPacket packet, PlayerSession session)
-    {
-        if (session.Character is not { } mobile || ParseStatLockChange(packet.Payload) is not var (stat, statLock))
-        {
-            return;
+            return null;
         }
 
-        switch (stat)
-        {
-            case StatType.Str:
-                mobile.StrengthLock = statLock;
-                break;
+        var reader = new SpanReader(payload);
+        reader.ReadUInt16(); // unknown / flag
 
-            case StatType.Dex:
-                mobile.DexterityLock = statLock;
-                break;
-
-            case StatType.Int:
-                mobile.IntelligenceLock = statLock;
-                break;
-
-            default:
-                return;
-        }
-
-        session.Send(
-            new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock)
-        );
+        return (reader.ReadUInt16(), reader.ReadUInt16());
     }
 
     /// <summary>
@@ -133,37 +119,56 @@ public sealed class GeneralInformationHandler : IPacketHandler<GeneralInformatio
         return (stat, statLock);
     }
 
-    /// <summary>
-    /// Parses the screen-size (0x05) payload, whose layout after the sub-command is 2 bytes
-    /// unknown/flag, then ushort width and ushort height. Returns null if the payload is too short.
-    /// </summary>
-    public static (int Width, int Height)? ParseScreenSize(byte[] payload)
+    public void Register(INetworkService network)
+        => network.RegisterHandler(this);
+
+    private static void HandleLanguage(GeneralInformationPacket packet, PlayerSession session)
     {
-        if (payload.Length < 6)
+        if (ParseLanguage(packet.Payload) is { } language)
         {
-            return null;
+            session.SetLanguage(language);
         }
-
-        var reader = new SpanReader(payload);
-        reader.ReadUInt16(); // unknown / flag
-
-        return (reader.ReadUInt16(), reader.ReadUInt16());
     }
 
-    /// <summary>
-    /// Parses the client-language (0x0B) payload: a 3-char ASCII code (e.g. "ENU").
-    /// Returns null if the payload is empty.
-    /// </summary>
-    public static string? ParseLanguage(byte[] payload)
+    private static void HandleScreenSize(GeneralInformationPacket packet, PlayerSession session)
     {
-        if (payload.Length == 0)
+        if (ParseScreenSize(packet.Payload) is { } size)
         {
-            return null;
+            session.SetScreenSize(size.Width, size.Height);
+        }
+    }
+
+    // Applies the lock the client set to the attached mobile, then echoes the resulting state back:
+    // the echo is what keeps the arrows honest when the requested lock had to be clamped.
+    private static void HandleStatLockChange(GeneralInformationPacket packet, PlayerSession session)
+    {
+        if (session.Character is not { } mobile || ParseStatLockChange(packet.Payload) is not var (stat, statLock))
+        {
+            return;
         }
 
-        var reader = new SpanReader(payload);
+        switch (stat)
+        {
+            case StatType.Str:
+                mobile.StrengthLock = statLock;
 
-        return reader.ReadAscii(Math.Min(3, payload.Length)).TrimEnd('\0');
+                break;
+
+            case StatType.Dex:
+                mobile.DexterityLock = statLock;
+
+                break;
+
+            case StatType.Int:
+                mobile.IntelligenceLock = statLock;
+
+                break;
+
+            default:
+                return;
+        }
+
+        session.Send(new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock));
     }
 
     private void WarnOnce(ushort subCommand)

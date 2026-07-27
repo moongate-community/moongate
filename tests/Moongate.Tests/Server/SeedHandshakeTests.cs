@@ -1,6 +1,6 @@
 using Moongate.Server.Abstractions.Interfaces.Network;
-using Moongate.Server.Services.Network;
 using Moongate.Server.Abstractions.Types;
+using Moongate.Server.Services.Network;
 
 namespace Moongate.Tests.Server;
 

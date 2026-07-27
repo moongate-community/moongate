@@ -17,6 +17,42 @@ namespace Moongate.Tests.Http.Endpoints.Images;
 [Collection("UltimaClientData")]
 public class ItemImageAdminEndpointsTests
 {
+    [Fact]
+    public async Task Get_AsStaff_ReportsTheState()
+    {
+        using var fixture = ItemImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+        await server.AuthenticateAsync();
+
+        var status = await server.Client.GetFromJsonAsync<ItemImageExportStatus>("/api/v1/admin/images/items");
+
+        Assert.NotNull(status);
+        Assert.Equal(nameof(ItemImageExportStateType.Idle), status.State);
+    }
+
+    [Fact]
+    public async Task Post_AsStaff_IsAccepted()
+    {
+        using var fixture = ItemImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+        await server.AuthenticateAsync();
+
+        var response = await server.Client.PostAsync("/api/v1/admin/images/items", null);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Post_WithoutAToken_IsUnauthorized()
+    {
+        using var fixture = ItemImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+
+        var response = await server.Client.PostAsync("/api/v1/admin/images/items", null);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
     private static async Task<TestApiServer> StartAsync(ItemImageFixture fixture)
         => await TestApiServer.StartAsync(
             configure: container =>
@@ -34,40 +70,4 @@ public class ItemImageAdminEndpointsTests
                 );
             }
         );
-
-    [Fact]
-    public async Task Post_WithoutAToken_IsUnauthorized()
-    {
-        using var fixture = ItemImageFixture.Create();
-        await using var server = await StartAsync(fixture);
-
-        var response = await server.Client.PostAsync("/api/v1/admin/images/items", null);
-
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Post_AsStaff_IsAccepted()
-    {
-        using var fixture = ItemImageFixture.Create();
-        await using var server = await StartAsync(fixture);
-        await server.AuthenticateAsync();
-
-        var response = await server.Client.PostAsync("/api/v1/admin/images/items", null);
-
-        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Get_AsStaff_ReportsTheState()
-    {
-        using var fixture = ItemImageFixture.Create();
-        await using var server = await StartAsync(fixture);
-        await server.AuthenticateAsync();
-
-        var status = await server.Client.GetFromJsonAsync<ItemImageExportStatus>("/api/v1/admin/images/items");
-
-        Assert.NotNull(status);
-        Assert.Equal(nameof(ItemImageExportStateType.Idle), status.State);
-    }
 }

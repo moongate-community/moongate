@@ -1,23 +1,36 @@
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Types;
+using Moongate.Http.Plugin;
 using Moongate.Http.Plugin.Data;
 using Moongate.Http.Plugin.Data.Config;
-using Moongate.Http.Plugin.Interfaces.Auth;
-using Moongate.Http.Plugin.Interfaces.Endpoints;
-using Moongate.Http.Plugin.Services.Auth;
-using Moongate.Http.Plugin.Services.Hosting;
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Http.Plugin.Endpoints.Accounts;
 using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Players;
+using Moongate.Http.Plugin.Endpoints.Plugins;
+using Moongate.Http.Plugin.Endpoints.Registration;
+using Moongate.Http.Plugin.Endpoints.ServerInfo;
+using Moongate.Http.Plugin.Endpoints.Stats;
 using Moongate.Http.Plugin.Endpoints.Version;
+using Moongate.Http.Plugin.Interfaces.Assets;
+using Moongate.Http.Plugin.Interfaces.Auth;
+using Moongate.Http.Plugin.Interfaces.Registration;
+using Moongate.Http.Plugin.Services.Assets;
+using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Hosting;
+using Moongate.Http.Plugin.Services.Plugins;
+using Moongate.Http.Plugin.Services.Registration;
+using Moongate.Server.Abstractions.Data.Config;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Plugins;
+using Moongate.Server.Services.Server;
 using SquidStd.Core.Interfaces.Config;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Services.Core.Services;
@@ -38,7 +51,9 @@ public sealed class TestApiServer : IAsyncDisposable
         IAccountService accounts,
         CharacterService characters,
         StubSessionManager sessions,
-        FakePersistenceService persistence
+        FakePersistenceService persistence,
+        ServerSettingsService serverSettings,
+        StubServerStatsService stats
     )
     {
         _service = service;
@@ -47,11 +62,19 @@ public sealed class TestApiServer : IAsyncDisposable
         Characters = characters;
         Sessions = sessions;
         Persistence = persistence;
+        ServerSettings = serverSettings;
+        Stats = stats;
     }
 
     public HttpClient Client { get; }
 
     public IAccountService Accounts { get; }
+
+    /// <summary>The real server-settings service behind the endpoints, so a test can seed settings and assets.</summary>
+    public ServerSettingsService ServerSettings { get; }
+
+    /// <summary>The snapshot the stats route serves, so a test can state the figures it expects to read.</summary>
+    public StubServerStatsService Stats { get; }
 
     /// <summary>Real, over the same fake persistence: a test can give an account a character.</summary>
     public CharacterService Characters { get; }
@@ -78,35 +101,58 @@ public sealed class TestApiServer : IAsyncDisposable
         );
         var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
 
-        Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token!.Token);
+        Client.DefaultRequestHeaders.Authorization = new("Bearer", token!.Token);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        Client.Dispose();
+        await _service.StopAsync();
     }
 
     public static async Task<TestApiServer> StartAsync(
         AccountLevelType level = AccountLevelType.Administrator,
         IGameLoopContext? loop = null,
         TimeSpan? deleteTimeout = null,
-        Action<IContainer>? configure = null
+        Action<IContainer>? configure = null,
+        TimeProvider? clock = null,
+        string? uiDistPath = null,
+        bool emailChannelReady = true,
+        string accountVerificationChannel = "email",
+        IRegistrationRateLimiter? registrationRateLimiter = null
     )
     {
         var container = new Container();
         var persistence = new FakePersistenceService();
         var sessions = new StubSessionManager();
-        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
-        var accounts = new AccountService(persistence, characters, sessions);
+        var bus = new EventBusService();
+        var characters = CharacterServiceFixture.Create(persistence, bus, sessions);
+
+        // A test that needs to move time forward passes its own; everything else gets the real clock.
+        var timeProvider = clock ?? TimeProvider.System;
+        var accounts = new AccountService(persistence, characters, sessions, bus, timeProvider);
         accounts.Create("tom", "secret", null, level);
 
         var config = new MoongateHttpConfig
         {
             Address = "127.0.0.1",
             Port = 0,
-            Jwt = new() { SigningKey = TestHttpServer.SigningKey, LifetimeMinutes = 60, Issuer = "moongate" }
+            Jwt = new() { SigningKey = TestHttpServer.SigningKey, LifetimeMinutes = 60, Issuer = "moongate" },
+
+            // Through configuration rather than a property, because that is the path production takes. The
+            // default is a directory that exists nowhere: the resolver also probes ./ui/dist and the one
+            // beside the executable, so a test wanting no portal would otherwise find a real build and
+            // start passing or failing depending on whether someone had run npm.
+            UiDistPath = uiDistPath ?? Path.Combine(Path.GetTempPath(), "mg-no-ui-" + Guid.NewGuid().ToString("N"))
         };
         var moongateConfig = new MoongateConfig { ShardName = "Moongate", UltimaDirectory = "/tmp" };
 
         container.RegisterInstance(config);
-        container.RegisterInstance(TimeProvider.System);
+
+        container.RegisterInstance(timeProvider);
         container.RegisterInstance(moongateConfig);
         container.RegisterInstance<IAccountService>(accounts);
+        container.RegisterInstance<ISessionManager>(sessions);
 
         // Mirrors production, where the persistence plugin registers it: a service resolved from this
         // container can ask for a store, exactly as it does on a real shard.
@@ -126,10 +172,57 @@ public sealed class TestApiServer : IAsyncDisposable
             }
         );
         container.RegisterApiEndpointInstance(new VersionEndpoints(moongateConfig));
-        container.RegisterApiEndpointInstance(new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>()));
+        container.RegisterApiEndpointInstance(
+            new AuthEndpoints(accounts, container.Resolve<IJwtTokenService>(), config, timeProvider)
+        );
         container.RegisterApiEndpointInstance(new AdminEndpoints(moongateConfig, sessions));
         container.RegisterApiEndpointInstance(new PlayerEndpoints());
         container.RegisterApiEndpointInstance(new CharacterEndpoints(accounts, characters));
+
+        var serverSettings = new ServerSettingsService(persistence);
+        var assetStore = new ServerAssetFileStore(
+            Path.Combine(Path.GetTempPath(), "mg-test-assets-" + Guid.NewGuid().ToString("N"))
+        );
+        container.RegisterInstance<IServerSettingsService>(serverSettings);
+        container.RegisterInstance<IServerAssetFileStore>(assetStore);
+        INotificationChannel[] channels = emailChannelReady ? [new RecordingNotificationChannel("email")] : [];
+        var registrationReadiness = new RegistrationReadinessService(
+            new NotificationConfig { AccountVerificationChannel = accountVerificationChannel },
+            channels
+        );
+        container.RegisterInstance<IRegistrationReadinessService>(registrationReadiness);
+        container.RegisterApiEndpointInstance(
+            new ServerInfoEndpoints(moongateConfig, serverSettings, assetStore, registrationReadiness)
+        );
+        container.RegisterApiEndpointInstance(
+            new ServerSettingsAdminEndpoints(serverSettings, assetStore, config, registrationReadiness)
+        );
+
+        // The default is deliberately low so a test can prove the throttle without flooding; callers can
+        // inject a recording limiter when exact budget keys or independent budgets are the behavior at stake.
+        var rateLimiter = registrationRateLimiter
+            ?? new RegistrationRateLimiter(
+                TimeProvider.System,
+                permitPerWindow: 2,
+                window: TimeSpan.FromMinutes(10)
+            );
+        container.RegisterApiEndpointInstance(
+            new RegistrationEndpoints(accounts, serverSettings, registrationReadiness, rateLimiter)
+        );
+
+        var stats = new StubServerStatsService();
+        container.RegisterInstance<IServerStatsService>(stats);
+        container.RegisterApiEndpointInstance(new StatsEndpoints(stats, moongateConfig));
+
+        // The fixture's endpoints all live in Moongate.Http.Plugin, so recording that plugin is what makes
+        // their routes attributable — the same join the real bootstrap makes.
+        var pluginCatalog = new PluginCatalog();
+        pluginCatalog.Record(new MoongateHttpPlugin(), isExternal: false);
+
+        container.RegisterInstance<IPluginCatalog>(pluginCatalog);
+        container.RegisterApiEndpointInstance(
+            new PluginAdminEndpoints(pluginCatalog, new EndpointPluginRouteInspector())
+        );
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);
@@ -143,13 +236,9 @@ public sealed class TestApiServer : IAsyncDisposable
             accounts,
             characters,
             sessions,
-            persistence
+            persistence,
+            serverSettings,
+            stats
         );
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        Client.Dispose();
-        await _service.StopAsync();
     }
 }

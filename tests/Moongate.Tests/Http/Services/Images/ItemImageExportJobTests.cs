@@ -10,25 +10,18 @@ namespace Moongate.Tests.Http.Services.Images;
 [Collection("UltimaClientData")]
 public class ItemImageExportJobTests
 {
-    private static async Task<ItemImageExportStatus> WaitForCompletionAsync(ItemImageExportJob job)
+    [Fact]
+    public void Status_BeforeAnyExport_IsIdle()
     {
-        // Polls rather than sleeping a fixed span: the export is a background task, and a fixed wait would
-        // either flake on a loaded machine or waste the difference on a fast one.
-        var deadline = DateTime.UtcNow.AddSeconds(30);
+        using var fixture = ItemImageFixture.Create();
+        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
+        var job = new ItemImageExportJob(service);
 
-        while (DateTime.UtcNow < deadline)
-        {
-            var status = job.Status;
+        var status = job.Status;
 
-            if (status.State != nameof(ItemImageExportStateType.Running))
-            {
-                return status;
-            }
-
-            await Task.Delay(20);
-        }
-
-        throw new TimeoutException($"The export never left Running. Last status: {job.Status}.");
+        Assert.Equal(nameof(ItemImageExportStateType.Idle), status.State);
+        Assert.Null(status.StartedAt);
+        Assert.Equal(0, status.Done);
     }
 
     [Fact]
@@ -71,17 +64,24 @@ public class ItemImageExportJobTests
         Assert.True(refused || status.State == nameof(ItemImageExportStateType.Completed));
     }
 
-    [Fact]
-    public void Status_BeforeAnyExport_IsIdle()
+    private static async Task<ItemImageExportStatus> WaitForCompletionAsync(ItemImageExportJob job)
     {
-        using var fixture = ItemImageFixture.Create();
-        var service = new ItemImageService(new ItemCatalog(), fixture.Directories, new UltimaReadGate());
-        var job = new ItemImageExportJob(service);
+        // Polls rather than sleeping a fixed span: the export is a background task, and a fixed wait would
+        // either flake on a loaded machine or waste the difference on a fast one.
+        var deadline = DateTime.UtcNow.AddSeconds(30);
 
-        var status = job.Status;
+        while (DateTime.UtcNow < deadline)
+        {
+            var status = job.Status;
 
-        Assert.Equal(nameof(ItemImageExportStateType.Idle), status.State);
-        Assert.Null(status.StartedAt);
-        Assert.Equal(0, status.Done);
+            if (status.State != nameof(ItemImageExportStateType.Running))
+            {
+                return status;
+            }
+
+            await Task.Delay(20);
+        }
+
+        throw new TimeoutException($"The export never left Running. Last status: {job.Status}.");
     }
 }

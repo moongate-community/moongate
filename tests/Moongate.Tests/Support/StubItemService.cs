@@ -19,9 +19,6 @@ public sealed class StubItemService : IItemService
         _equipped = equipped;
     }
 
-    public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
-        => _equipped;
-
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
         => throw new NotSupportedException();
 
@@ -42,6 +39,9 @@ public sealed class StubItemService : IItemService
 
     public IReadOnlyList<ItemEntity> GetContents(Serial containerId)
         => throw new NotSupportedException();
+
+    public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
+        => _equipped;
 
     public void RemoveFromContainer(ItemEntity container, ItemEntity item)
         => throw new NotSupportedException();

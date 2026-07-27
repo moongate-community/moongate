@@ -9,6 +9,7 @@ launch generates it with defaults; edit and restart to apply changes.
 | Key | Type | Default | Meaning |
 |---|---|---|---|
 | `ShardName` | string | `Moongate` | The shard's name, shown in the client's server list. |
+| `StatsRefreshSeconds` | int | `30` | How often the public statistics snapshot is recomputed on the game loop. |
 | `UltimaDirectory` | string | — | Path to the UO client files. See the override note below. |
 | `Network.Address` | string | `0.0.0.0` | Local bind address for the TCP listener. |
 | `Network.Port` | int | `2593` | TCP port for both login and game traffic (single process, single port). |

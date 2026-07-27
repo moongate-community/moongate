@@ -7,23 +7,24 @@ namespace Moongate.Tests.Server.Handlers;
 
 public class SkillLockChangeHandlerTests
 {
-    private static SkillService Skills()
-    {
-        var skills = new SkillService();
-        skills.Register(new() { Id = 40, Name = "Swordsmanship" });
-
-        return skills;
-    }
-
     [Fact]
     public void TryApplyLock_TrainedSkill_SetsTheLockAndKeepsTheValue()
     {
-        var mobile = new MobileEntity { Skills = { [40] = new MobileSkill { Value = 733 } } };
+        var mobile = new MobileEntity { Skills = { [40] = new() { Value = 733 } } };
 
         Assert.True(SkillLockChangeHandler.TryApplyLock(mobile, 40, SkillLockType.Locked, Skills()));
 
         Assert.Equal(SkillLockType.Locked, mobile.Skills[40].Lock);
         Assert.Equal(733, mobile.Skills[40].Value); // untouched
+    }
+
+    [Fact]
+    public void TryApplyLock_UnknownSkill_ChangesNothing()
+    {
+        var mobile = new MobileEntity();
+
+        Assert.False(SkillLockChangeHandler.TryApplyLock(mobile, 200, SkillLockType.Locked, Skills()));
+        Assert.Empty(mobile.Skills);
     }
 
     [Fact]
@@ -38,12 +39,11 @@ public class SkillLockChangeHandlerTests
         Assert.Equal(1000, mobile.Skills[40].Cap); // default ceiling
     }
 
-    [Fact]
-    public void TryApplyLock_UnknownSkill_ChangesNothing()
+    private static SkillService Skills()
     {
-        var mobile = new MobileEntity();
+        var skills = new SkillService();
+        skills.Register(new() { Id = 40, Name = "Swordsmanship" });
 
-        Assert.False(SkillLockChangeHandler.TryApplyLock(mobile, 200, SkillLockType.Locked, Skills()));
-        Assert.Empty(mobile.Skills);
+        return skills;
     }
 }

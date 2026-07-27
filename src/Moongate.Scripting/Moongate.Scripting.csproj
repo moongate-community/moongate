@@ -8,15 +8,20 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Abstractions\Moongate.Server.Abstractions.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.37.0"/>
-        <PackageReference Include="SquidStd.Scripting.Lua" Version="0.37.0"/>
+        <PackageReference Include="SquidStd.Plugin.Abstractions" Version="0.41.0"/>
+        <PackageReference Include="SquidStd.Scripting.Lua" Version="0.41.0"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="Assets\Brains\**\*.lua"/>
     </ItemGroup>
 
 </Project>

@@ -1,8 +1,8 @@
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Server.Mobiles;
@@ -38,7 +38,7 @@ public class MobileTemplateRepositoryIntegrityTests
                 {
                     var token = new string(skill.Where(char.IsLetter).ToArray());
                     Assert.True(
-                        Enum.TryParse<SkillName>(token, ignoreCase: true, out _),
+                        Enum.TryParse<SkillName>(token, true, out _),
                         $"Unknown skill '{skill}' in mobile template '{template.Id}'"
                     );
                 }
@@ -46,7 +46,7 @@ public class MobileTemplateRepositoryIntegrityTests
                 foreach (var entry in template.Equipment)
                 {
                     Assert.True(
-                        Enum.TryParse<LayerType>(entry.Layer, ignoreCase: true, out _),
+                        Enum.TryParse<LayerType>(entry.Layer, true, out _),
                         $"Unknown layer '{entry.Layer}' in mobile template '{template.Id}'"
                     );
                     Assert.True(

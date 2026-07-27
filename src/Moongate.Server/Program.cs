@@ -1,25 +1,41 @@
 using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Console.Admin.Plugin;
 using Moongate.Core.Interfaces;
 using Moongate.Http.Plugin;
-using Moongate.Http.Plugin.Extensions;
+using Moongate.News.Plugin;
 using Moongate.Persistence;
 using Moongate.Scripting;
 using Moongate.Server;
-using Moongate.Server.Autostart;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
-using Moongate.Server.Data.Exceptions;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Autostart;
+using Moongate.Server.Data.Exceptions;
+using Moongate.Server.Extensions;
+using Moongate.Server.Plugins;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.AI;
+using Moongate.Server.Services.Chat;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Services.Notifications;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
+using Moongate.Server.Services.Notifications.Channels;
+using Moongate.Server.Services.Plugins;
+using Moongate.Server.Services.Server;
+using Moongate.Smtp.Plugin;
 using Moongate.Server.Services.World;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
@@ -29,6 +45,7 @@ using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Core.Utils;
+using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Plugin.Extensions;
 using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
@@ -77,6 +94,8 @@ await ConsoleApp.RunAsync(
             moongateConfig.UltimaDirectory = uoDirectory;
         }
 
+        NpcAiConfigValidator.Validate(moongateConfig.NpcAi);
+
         if (string.IsNullOrEmpty(moongateConfig.UltimaDirectory))
         {
             throw new UODirectoryNotValidException(
@@ -99,33 +118,71 @@ await ConsoleApp.RunAsync(
         // Safe with config-first: sections bind eagerly at registration, even after this call.
         stdBootstrap.ConfigureLogging();
 
-        stdBootstrap.UsePlugins(
-            builder =>
+        // Built before the plugins are added and registered after, because the two halves happen in
+        // different bootstrap phases: activation here, container registration in ConfigureServices below.
+        var pluginCatalog = new PluginCatalog();
+
+        stdBootstrap.UsePlugins(builder =>
             {
                 builder.FromDirectory("plugins");
-                builder.Add<MoongatePersistencePlugin>();
-                builder.Add<MoongateScriptingPlugin>();
-                builder.Add<MoongateScriptModulesPlugin>();
-                builder.Add<MoongateDataLoaderPlugin>();
-                builder.Add<MoongatePacketHandlersPlugin>();
-                builder.Add<MoongateEventSubscribersPlugin>();
+
+                // Recorded at the point of activation rather than scanned for afterwards: MoongateHttpPlugin
+                // sits behind a flag, and its assembly stays loaded even when the flag switches it off.
+                void AddTracked<TPlugin>() where TPlugin : ISquidStdPlugin, new()
+                {
+                    var plugin = new TPlugin();
+
+                    pluginCatalog.Record(plugin, isExternal: false);
+                    builder.Add(plugin);
+                }
+
+                AddTracked<MoongatePersistencePlugin>();
+                AddTracked<MoongateScriptingPlugin>();
+                AddTracked<MoongateScriptModulesPlugin>();
+                AddTracked<MoongateNpcAiPlugin>();
+                AddTracked<MoongateDataLoaderPlugin>();
+                AddTracked<MoongateCommandsPlugin>();
+                AddTracked<MoongatePacketHandlersPlugin>();
+                AddTracked<MoongateEventSubscribersPlugin>();
 
                 if (!disableWebPlugin)
                 {
-                    builder.Add<MoongateHttpPlugin>();
+                    AddTracked<MoongateHttpPlugin>();
                 }
                 else
                 {
                     Log.Logger.Warning("HTTP is disabled");
                 }
+
+                AddTracked<MoongateConsolePlugin>();
+                AddTracked<MoongateNewsPlugin>();
+                AddTracked<MoongateSmtpPlugin>();
             }
         );
 
-        stdBootstrap.ConfigureServices(
-            container =>
+        stdBootstrap.ConfigureServices(container =>
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
+                container.RegisterConfigSection<NotificationConfig>("notifications");
+
+                // FromDirectory loads whatever it finds but hands back no list of it, so those plugins are
+                // recovered by elimination. Swept here rather than inside UsePlugins above because by now
+                // every plugin has certainly been loaded, and recorded after the explicit ones so that a
+                // duplicate id loses.
+                foreach (var type in PluginDiscovery.ExternalPluginTypes(
+                             typeof(Program).Assembly,
+                             AppDomain.CurrentDomain.GetAssemblies()
+                         ))
+                {
+                    if (Activator.CreateInstance(type) is ISquidStdPlugin external)
+                    {
+                        pluginCatalog.Record(external, isExternal: true);
+                    }
+                }
+
+                // The instance the plugin phase filled in, not a fresh one.
+                container.RegisterInstance<IPluginCatalog>(pluginCatalog);
 
                 container.Register<IAccountService, AccountService>(Reuse.Singleton);
                 container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -139,6 +196,22 @@ await ConsoleApp.RunAsync(
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
+                container.Register<IChatService, ChatService>(Reuse.Singleton);
+                container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
+
+                // RegisterStdService rather than Register: the type is both the domain service the stats
+                // endpoint resolves and the hosted service owning the refresh timer, and it must be the
+                // same singleton in both roles.
+                container.RegisterStdService<IServerStatsService, ServerStatsService>();
+
+                // INotificationTemplateService is registered by the data-loader plugin, alongside the
+                // loader that fills it, the same way the template services are.
+                container.Register<INotificationService, NotificationService>(Reuse.Singleton);
+                container.RegisterNotificationChannel<LogNotificationChannel>();
+                container.RegisterCommandService();
+                container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
+                container.Register<IMapTileService, MapTileService>(Reuse.Singleton);
+                container.Register<IMovementService, MovementService>(Reuse.Singleton);
                 container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
 
@@ -154,7 +227,8 @@ await ConsoleApp.RunAsync(
                 container.RegisterMainThreadDispatcherService();
                 container.RegisterTimerWheelService(new());
                 container.Register<IGameLoopContext, GameLoopContext>(Reuse.Singleton);
-                container.Register<ILoopThread, LoopThreadMarker>(Reuse.Singleton);
+                container.Register<ILoopThread, EventLoopThread>(Reuse.Singleton);
+                container.Register<ILoopAffinity, LoopAffinity>(Reuse.Singleton);
                 container.RegisterEventLoop(
                     new()
                     {
@@ -174,23 +248,20 @@ await ConsoleApp.RunAsync(
 
                 container.RegisterEventBusService();
 
+                // Decorate the bus so loop-affine events route onto the game loop structurally,
+                // instead of each publisher remembering to marshal by hand.
+                container.Register<IEventBus, LoopAffineEventBus>(setup: Setup.Decorator);
+
                 var eventBus = container.Resolve<IEventBus>();
 
-                eventBus.Subscribe<EngineStartedEvent>(
-                    (_, _) =>
+                eventBus.Subscribe<EngineStartedEvent>((_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 
                         var loop = container.Resolve<IGameLoopContext>();
-                        var marker = container.Resolve<ILoopThread>();
 
-                        loop.Post(
-                            () =>
-                            {
-                                marker.Capture();
-                                _ = eventBus.PublishAsync(new WorldReadyEvent());
-                            }
-                        );
+                        // WorldReadyEvent must fire on the loop, once the world is loaded.
+                        loop.Post(() => _ = eventBus.PublishAsync(new WorldReadyEvent()));
 
                         return Task.CompletedTask;
                     }

@@ -31,4 +31,24 @@ public sealed class GameLoopContext : IGameLoopContext
 
     public string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null)
         => Timers.RegisterTimer(name, interval, callback, delay, true);
+
+    public async Task<T> InvokeAsync<T>(Func<T> work, TimeSpan? timeout = null)
+    {
+        var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        Dispatcher.Post(() =>
+            {
+                try
+                {
+                    completion.SetResult(work());
+                }
+                catch (Exception exception)
+                {
+                    completion.SetException(exception);
+                }
+            }
+        );
+
+        return await completion.Task.WaitAsync(timeout ?? TimeSpan.FromSeconds(5));
+    }
 }

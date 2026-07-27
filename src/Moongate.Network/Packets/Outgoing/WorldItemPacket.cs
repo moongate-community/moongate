@@ -39,15 +39,15 @@ public readonly record struct WorldItemPacket(
         writer.Write(ItemEntity);
         writer.Write(Serial);
         writer.Write(ItemId);
-        writer.Write((byte)0);  // facing, only meaningful for mobiles
-        writer.Write(Amount);   // min
-        writer.Write(Amount);   // max
+        writer.Write((byte)0); // facing, only meaningful for mobiles
+        writer.Write(Amount);  // min
+        writer.Write(Amount);  // max
         writer.Write((short)(Position.X & XMask));
         writer.Write((short)(Position.Y & YMask));
         writer.Write((sbyte)Position.Z);
-        writer.Write((byte)0);  // light level: we do not model item light sources
+        writer.Write((byte)0); // light level: we do not model item light sources
         writer.Write(Hue);
-        writer.Write((byte)0);  // flags: we do not model movable/hidden yet
+        writer.Write((byte)0); // flags: we do not model movable/hidden yet
         writer.Write(ModernTrailer);
     }
 }

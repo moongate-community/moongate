@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Network.Data;
 using Moongate.Network.Interfaces;
@@ -11,10 +12,10 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Abstractions.Types;
+using Moongate.Ultima.Types;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Mobiles;
 using Moongate.UO.Data.Types;
-using Moongate.Ultima.Types;
 using SquidStd.Core.Interfaces.Events;
 
 namespace Moongate.Server.Services.World;
@@ -42,6 +43,7 @@ public sealed class WorldService : IWorldService
     private readonly TimeProvider _timeProvider;
     private readonly IOplService _opl;
     private readonly ISessionManager _sessions;
+    private readonly ILoopAffinity? _loopAffinity;
 
     public WorldService(
         IItemService items,
@@ -50,7 +52,8 @@ public sealed class WorldService : IWorldService
         IEventBus eventBus,
         TimeProvider timeProvider,
         IOplService opl,
-        ISessionManager sessions
+        ISessionManager sessions,
+        ILoopAffinity? loopAffinity = null
     )
     {
         _items = items;
@@ -60,28 +63,16 @@ public sealed class WorldService : IWorldService
         _timeProvider = timeProvider;
         _opl = opl;
         _sessions = sessions;
+        _loopAffinity = loopAffinity;
     }
 
-    public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
-    {
-        foreach (var packet in BuildSequence(mobile))
-        {
-            session.Send(packet);
-        }
-
-        session.SetState(SessionStateType.InWorld);
-
-        _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
-    }
-
-    public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
-        where TPacket : IOutgoingPacket
+    public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
     {
         var recipients = 0;
 
         foreach (var session in _sessions.All)
         {
-            if (!IsRecipient(session.State, session.Character, mapId, center, range, exclude))
+            if (session.State != SessionStateType.InWorld)
             {
                 continue;
             }
@@ -92,25 +83,6 @@ public sealed class WorldService : IWorldService
 
         return recipients;
     }
-
-    /// <summary>
-    /// True when a session in <paramref name="state" /> playing <paramref name="character" /> should
-    /// receive a broadcast centered on <paramref name="center" />. Static so the filter is testable
-    /// without fabricating live sessions.
-    /// </summary>
-    public static bool IsRecipient(
-        SessionStateType state,
-        MobileEntity? character,
-        int mapId,
-        Point3D center,
-        int range,
-        Serial? exclude
-    )
-        => state == SessionStateType.InWorld &&
-           character is not null &&
-           character.MapId == mapId &&
-           character.Id != exclude &&
-           center.InRange(character.Position, range);
 
     /// <summary>
     /// Builds the ordered self-only enter-world packet sequence for <paramref name="mobile" /> without
@@ -165,6 +137,7 @@ public sealed class WorldService : IWorldService
                 BuildEquipment(mobile)
             ),
             BuildStatus(mobile),
+
             // ModernUO pairs the lock state with the status (OnStatsQuery), so the arrows are right
             // from the first frame rather than only after the player touches one.
             new StatLockInfoPacket(mobile.Id, mobile.StrengthLock, mobile.DexterityLock, mobile.IntelligenceLock),
@@ -186,6 +159,58 @@ public sealed class WorldService : IWorldService
         return packets;
     }
 
+    /// <summary>
+    /// True when a session in <paramref name="state" /> playing <paramref name="character" /> should
+    /// receive a broadcast centered on <paramref name="center" />. Static so the filter is testable
+    /// without fabricating live sessions.
+    /// </summary>
+    public static bool IsRecipient(
+        SessionStateType state,
+        MobileEntity? character,
+        int mapId,
+        Point3D center,
+        int range,
+        Serial? exclude
+    )
+        => state == SessionStateType.InWorld &&
+           character is not null &&
+           character.MapId == mapId &&
+           character.Id != exclude &&
+           center.InRange(character.Position, range);
+
+    public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
+    {
+        _loopAffinity?.AssertOnLoop("world.send_enter_world");
+
+        foreach (var packet in BuildSequence(mobile))
+        {
+            session.Send(packet);
+        }
+
+        session.SetState(SessionStateType.InWorld);
+
+        _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
+    }
+
+    public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
+        where TPacket : IOutgoingPacket
+    {
+        var recipients = 0;
+
+        foreach (var session in _sessions.All)
+        {
+            if (!IsRecipient(session.State, session.Character, mapId, center, range, exclude))
+            {
+                continue;
+            }
+
+            session.Send(packet);
+            recipients++;
+        }
+
+        return recipients;
+    }
+
     private void AppendOplInfo(List<IOutgoingPacket> packets, Serial serial)
     {
         var snapshot = _opl.GetOrBuild(serial);
@@ -194,27 +219,6 @@ public sealed class WorldService : IWorldService
         {
             packets.Add(new OplInfoPacket(serial, snapshot.Hash));
         }
-    }
-
-    /// <summary>
-    /// Builds the full skill list: every registered skill, including the ones this mobile never
-    /// trained, because the client renders exactly the rows it is sent.
-    /// </summary>
-    private List<SkillEntry> BuildSkills(MobileEntity mobile)
-    {
-        var skills = new List<SkillEntry>(_skills.All.Count);
-
-        foreach (var definition in _skills.All)
-        {
-            var skill = mobile.Skills.GetValueOrDefault(definition.Id);
-            var value = (ushort)(skill?.Value ?? 0);
-            var cap = (ushort)(skill?.Cap ?? DefaultSkillCap);
-            var skillLock = skill?.Lock ?? SkillLockType.Up;
-
-            skills.Add(new SkillEntry((ushort)definition.Id, value, value, skillLock, cap));
-        }
-
-        return skills;
     }
 
     /// <summary>
@@ -234,13 +238,13 @@ public sealed class WorldService : IWorldService
                 continue;
             }
 
-            items.Add(new MobileIncomingItem(item.Id, (ushort)item.ItemId, layer, item.Hue));
+            items.Add(new(item.Id, (ushort)item.ItemId, layer, item.Hue));
         }
 
         if (mobile.HairStyle != 0 && takenLayers.Add(LayerType.Hair))
         {
             items.Add(
-                new MobileIncomingItem(
+                new(
                     _virtualSerials.GetOrCreate(mobile.Id, LayerType.Hair),
                     mobile.HairStyle,
                     LayerType.Hair,
@@ -252,7 +256,7 @@ public sealed class WorldService : IWorldService
         if (mobile.FacialHairStyle != 0 && takenLayers.Add(LayerType.FacialHair))
         {
             items.Add(
-                new MobileIncomingItem(
+                new(
                     _virtualSerials.GetOrCreate(mobile.Id, LayerType.FacialHair),
                     mobile.FacialHairStyle,
                     LayerType.FacialHair,
@@ -262,6 +266,27 @@ public sealed class WorldService : IWorldService
         }
 
         return items;
+    }
+
+    /// <summary>
+    /// Builds the full skill list: every registered skill, including the ones this mobile never
+    /// trained, because the client renders exactly the rows it is sent.
+    /// </summary>
+    private List<SkillEntry> BuildSkills(MobileEntity mobile)
+    {
+        var skills = new List<SkillEntry>(_skills.All.Count);
+
+        foreach (var definition in _skills.All)
+        {
+            var skill = mobile.Skills.GetValueOrDefault(definition.Id);
+            var value = (ushort)(skill?.Value ?? 0);
+            var cap = (ushort)(skill?.Cap ?? DefaultSkillCap);
+            var skillLock = skill?.Lock ?? SkillLockType.Up;
+
+            skills.Add(new((ushort)definition.Id, value, value, skillLock, cap));
+        }
+
+        return skills;
     }
 
     private static MobileStatusPacket BuildStatus(MobileEntity mobile)

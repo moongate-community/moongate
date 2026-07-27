@@ -1,5 +1,6 @@
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
@@ -16,19 +17,28 @@ public sealed class ItemService : IItemService
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly IOplService? _opl;
     private readonly ISpatialIndexService? _spatial;
+    private readonly ILoopAffinity? _loopAffinity;
 
     // The property-list cache and the spatial index are optional on purpose: tests build a bare
     // ItemService, and both are concerns the item flows only need to keep in sync, not require.
-    public ItemService(IPersistenceService persistenceService, IOplService? opl = null, ISpatialIndexService? spatial = null)
+    public ItemService(
+        IPersistenceService persistenceService,
+        IOplService? opl = null,
+        ISpatialIndexService? spatial = null,
+        ILoopAffinity? loopAffinity = null
+    )
     {
         _items = persistenceService.GetStore<ItemEntity, Serial>();
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
         _opl = opl;
         _spatial = spatial;
+        _loopAffinity = loopAffinity;
     }
 
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
     {
+        _loopAffinity?.AssertOnLoop("item.add_to_container");
+
         if (container.Id == Serial.Zero)
         {
             _items.UpsertAsync(container).WaitSync();
@@ -51,6 +61,7 @@ public sealed class ItemService : IItemService
 
     public Serial Create(ItemEntity item)
     {
+        _loopAffinity?.AssertOnLoop("item.create");
         _items.UpsertAsync(item).WaitSync();
         _spatial?.AddOrUpdate(item);
 
@@ -59,6 +70,7 @@ public sealed class ItemService : IItemService
 
     public bool Delete(Serial itemId)
     {
+        _loopAffinity?.AssertOnLoop("item.delete");
         _opl?.Invalidate(itemId);
         _spatial?.Remove(itemId);
 
@@ -67,6 +79,8 @@ public sealed class ItemService : IItemService
 
     public void Equip(MobileEntity mobile, ItemEntity item, LayerType layer)
     {
+        _loopAffinity?.AssertOnLoop("item.equip");
+
         if (mobile.Id == Serial.Zero)
         {
             _mobiles.UpsertAsync(mobile).WaitSync();
@@ -91,6 +105,8 @@ public sealed class ItemService : IItemService
 
     public bool Flip(ItemEntity item)
     {
+        _loopAffinity?.AssertOnLoop("item.flip");
+
         if (item.FlippableItemIds.Count < 2)
         {
             return false;
@@ -124,6 +140,7 @@ public sealed class ItemService : IItemService
 
     public void RemoveFromContainer(ItemEntity container, ItemEntity item)
     {
+        _loopAffinity?.AssertOnLoop("item.remove_from_container");
         container.ContainedItemIds.Remove(item.Id);
         _items.UpsertAsync(container).WaitSync();
 
@@ -135,6 +152,7 @@ public sealed class ItemService : IItemService
 
     public void Save(ItemEntity item)
     {
+        _loopAffinity?.AssertOnLoop("item.save");
         _items.UpsertAsync(item).WaitSync();
         _opl?.Invalidate(item.Id);
         _spatial?.AddOrUpdate(item);
@@ -142,6 +160,8 @@ public sealed class ItemService : IItemService
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
     {
+        _loopAffinity?.AssertOnLoop("item.unequip");
+
         if (!mobile.EquippedItemIds.Remove(layer, out var itemId))
         {
             return null;

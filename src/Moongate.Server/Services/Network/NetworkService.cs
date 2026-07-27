@@ -150,6 +150,8 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
     {
         var session = _sessions.GetOrCreate(e.Client);
         _logger.Information("Client connected: {SessionId}", e.Client.SessionId);
+
+        // SessionCreatedEvent is loop-affine; the event bus decorator marshals it onto the game loop.
         _eventBus.Publish(new SessionCreatedEvent(session));
     }
 
@@ -158,6 +160,8 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         if (_sessions.TryGet(e.Client.SessionId, out var session))
         {
             _sessions.Remove(e.Client.SessionId);
+
+            // SessionDestroyedEvent is loop-affine; the decorator marshals it onto the game loop.
             _eventBus.Publish(new SessionDestroyedEvent(session));
         }
 

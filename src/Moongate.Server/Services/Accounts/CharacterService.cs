@@ -1,6 +1,7 @@
 using System.Globalization;
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
@@ -35,6 +36,7 @@ public class CharacterService : ICharacterService
     private readonly Random _random;
     private readonly IEventBus _eventBus;
     private readonly ISessionManager _sessions;
+    private readonly ILoopAffinity? _loopAffinity;
 
     private readonly ILogger _logger = Log.ForContext<CharacterService>();
 
@@ -48,7 +50,8 @@ public class CharacterService : ICharacterService
         ISkillService skills,
         Random random,
         IEventBus eventBus,
-        ISessionManager sessions
+        ISessionManager sessions,
+        ILoopAffinity? loopAffinity = null
     )
     {
         _mobileStore = persistenceService.GetStore<MobileEntity, Serial>();
@@ -62,10 +65,13 @@ public class CharacterService : ICharacterService
         _random = random;
         _eventBus = eventBus;
         _sessions = sessions;
+        _loopAffinity = loopAffinity;
     }
 
     public MobileEntity CreateCharacter(Serial accountId, CharacterCreationPacket packet)
     {
+        _loopAffinity?.AssertOnLoop("character.create");
+
         var mobile = _mobileFactory.CreatePlayerMobile(packet);
 
         // Upsert with a default serial: the store allocates the next mobile serial and writes it back
@@ -116,6 +122,8 @@ public class CharacterService : ICharacterService
 
     public DeleteResultType? DeleteCharacter(Serial accountId, int slot)
     {
+        _loopAffinity?.AssertOnLoop("character.delete");
+
         var characters = GetPlayerCharacters(accountId).ToList();
 
         if (slot < 0 || slot >= characters.Count)

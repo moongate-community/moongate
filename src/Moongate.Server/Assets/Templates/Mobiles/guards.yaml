@@ -24,16 +24,16 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: plate_chest
-        Layer: InnerTorso
-      - Item: plate_arms
-        Layer: Arms
-      - Item: long_pants
-        Layer: Pants
-      - Item: body_sash
-        Layer: Waist
-      - Item: halberd
-        Layer: TwoHanded
+        -   Item: plate_chest
+            Layer: InnerTorso
+        -   Item: plate_arms
+            Layer: Arms
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: body_sash
+            Layer: Waist
+        -   Item: halberd
+            Layer: TwoHanded
     LootTableId: guard.warrior
     BrainScript: guard
 -   Id: warrior_guard_female_npc
@@ -63,12 +63,12 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: leather_skirt
-        Layer: Pants
-      - Item: female_plate_chest
-        Layer: InnerTorso
-      - Item: halberd
-        Layer: TwoHanded
+        -   Item: leather_skirt
+            Layer: Pants
+        -   Item: female_plate_chest
+            Layer: InnerTorso
+        -   Item: halberd
+            Layer: TwoHanded
     LootTableId: guard.warrior
     BrainScript: guard
 -   Id: archer_guard_male_npc
@@ -97,22 +97,22 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: studded_chest
-        Layer: InnerTorso
-      - Item: studded_arms
-        Layer: Arms
-      - Item: studded_gloves
-        Layer: Gloves
-      - Item: studded_gorget
-        Layer: Neck
-      - Item: studded_legs
-        Layer: Pants
-      - Item: boots
-        Layer: Shoes
-      - Item: skull_cap
-        Layer: Helm
-      - Item: bow
-        Layer: TwoHanded
+        -   Item: studded_chest
+            Layer: InnerTorso
+        -   Item: studded_arms
+            Layer: Arms
+        -   Item: studded_gloves
+            Layer: Gloves
+        -   Item: studded_gorget
+            Layer: Neck
+        -   Item: studded_legs
+            Layer: Pants
+        -   Item: boots
+            Layer: Shoes
+        -   Item: skull_cap
+            Layer: Helm
+        -   Item: bow
+            Layer: TwoHanded
     LootTableId: guard.archer
     BrainScript: guard
 -   Id: archer_guard_female_npc
@@ -142,21 +142,21 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: studded_chest
-        Layer: InnerTorso
-      - Item: studded_arms
-        Layer: Arms
-      - Item: studded_gloves
-        Layer: Gloves
-      - Item: studded_gorget
-        Layer: Neck
-      - Item: studded_legs
-        Layer: Pants
-      - Item: boots
-        Layer: Shoes
-      - Item: skull_cap
-        Layer: Helm
-      - Item: bow
-        Layer: TwoHanded
+        -   Item: studded_chest
+            Layer: InnerTorso
+        -   Item: studded_arms
+            Layer: Arms
+        -   Item: studded_gloves
+            Layer: Gloves
+        -   Item: studded_gorget
+            Layer: Neck
+        -   Item: studded_legs
+            Layer: Pants
+        -   Item: boots
+            Layer: Shoes
+        -   Item: skull_cap
+            Layer: Helm
+        -   Item: bow
+            Layer: TwoHanded
     LootTableId: guard.archer
     BrainScript: guard

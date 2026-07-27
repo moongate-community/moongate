@@ -1,8 +1,5 @@
 using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using Moongate.Core.Types;
-using Moongate.Http.Plugin.Data;
 using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Http.Endpoints.Admin;
@@ -17,17 +14,6 @@ public class AdminEndpointsTests
         Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
     }
 
-    [Theory]
-    [InlineData(AccountLevelType.Administrator)]
-    [InlineData(AccountLevelType.GrandMaster)]
-    public async Task AdminStatus_WithStaffToken_Is200(AccountLevelType level)
-    {
-        await using var server = await TestApiServer.StartAsync(level);
-        await server.AuthenticateAsync();
-
-        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
-    }
-
     [Fact]
     public async Task AdminStatus_WithPlayerToken_Is403()
     {
@@ -37,6 +23,15 @@ public class AdminEndpointsTests
         await server.AuthenticateAsync();
 
         Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
+    }
+
+    [Theory, InlineData(AccountLevelType.Administrator), InlineData(AccountLevelType.GrandMaster)]
+    public async Task AdminStatus_WithStaffToken_Is200(AccountLevelType level)
+    {
+        await using var server = await TestApiServer.StartAsync(level);
+        await server.AuthenticateAsync();
+
+        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
     }
 
     [Fact]

@@ -11,12 +11,12 @@
     <ItemGroup>
         <PackageReference Include="coverlet.collector" Version="10.0.1"/>
         <PackageReference Include="DryIoc.dll" Version="5.4.3"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.8.1"/>
         <PackageReference Include="xunit" Version="2.9.3"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5"/>
         <PackageReference Update="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.302">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
@@ -29,8 +29,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\plugins\Moongate.Console.Admin.Plugin\Moongate.Console.Admin.Plugin.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
-        <ProjectReference Include="..\..\src\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.Http.Plugin\Moongate.Http.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.News.Plugin\Moongate.News.Plugin.csproj"/>
+        <ProjectReference Include="..\..\plugins\Moongate.Smtp.Plugin\Moongate.Smtp.Plugin.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj"/>
         <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj"/>

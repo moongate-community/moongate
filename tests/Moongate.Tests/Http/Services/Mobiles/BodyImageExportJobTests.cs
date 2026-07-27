@@ -1,7 +1,6 @@
 using Moongate.Http.Plugin.Services.Mobiles;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Services.Mobiles;
 
@@ -21,7 +20,7 @@ public sealed class BodyImageExportJobTests : IDisposable
         catalog.Bodies.Add((5000, MobType.Equipment)); // excluded outright
         catalog.Frames[(400, 0)] = (W: 20, H: 40, Cx: 10, Cy: 0);
         var job = new BodyImageExportJob(
-            new BodyImageService(catalog, new DirectoriesConfig(_root, Array.Empty<string>()), new StubUltimaReadGate()),
+            new BodyImageService(catalog, new(_root, Array.Empty<string>()), new StubUltimaReadGate()),
             catalog
         );
 
@@ -44,7 +43,7 @@ public sealed class BodyImageExportJobTests : IDisposable
         // state machine never reports two concurrent runs.
         var catalog = new FakeAnimationCatalog();
         var job = new BodyImageExportJob(
-            new BodyImageService(catalog, new DirectoriesConfig(_root, Array.Empty<string>()), new StubUltimaReadGate()),
+            new BodyImageService(catalog, new(_root, Array.Empty<string>()), new StubUltimaReadGate()),
             catalog
         );
 

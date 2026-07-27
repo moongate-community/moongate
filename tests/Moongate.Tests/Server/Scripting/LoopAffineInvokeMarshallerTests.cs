@@ -1,30 +1,23 @@
-using MoonSharp.Interpreter;
 using Moongate.Core.Interfaces;
 using Moongate.Scripting;
+using MoonSharp.Interpreter;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server.Scripting;
 
 public class LoopAffineInvokeMarshallerTests
 {
-    [Fact]
-    public void OnLoopThread_RunsInline_AndReturnsValue()
+    private sealed class StubLoopThread : ILoopThread
     {
-        var dispatcher = new MainThreadDispatcherService();
-        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
-        var ran = false;
+        public StubLoopThread(bool onLoop)
+        {
+            IsOnLoopThread = onLoop;
+        }
 
-        var result = marshaller.Invoke(() =>
-            {
-                ran = true;
-
-                return DynValue.NewNumber(42);
-            }
-        );
-
-        Assert.True(ran);
-        Assert.Equal(42, result.Number);
-        Assert.Equal(0, dispatcher.PendingCount);
+        public bool IsOnLoopThread { get; }
     }
 
     [Fact]
@@ -51,19 +44,49 @@ public class LoopAffineInvokeMarshallerTests
         Assert.True(ran);
     }
 
-    private sealed class StubLoopThread : ILoopThread
+    [Fact]
+    public void OffLoopThread_DroppingNonNilResult_Warns()
     {
-        private readonly bool _onLoop;
+        var sink = new ListSink();
+        var dispatcher = new MainThreadDispatcherService();
+        var marshaller = new LoopAffineInvokeMarshaller(
+            new StubLoopThread(false),
+            dispatcher,
+            new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger()
+        );
 
-        public StubLoopThread(bool onLoop)
-        {
-            _onLoop = onLoop;
-        }
+        marshaller.Invoke(() => DynValue.NewNumber(42));
 
-        public bool IsOnLoopThread => _onLoop;
+        dispatcher.DrainPending();
 
-        public void Capture()
-        {
-        }
+        Assert.Contains(sink.Events, e => e.Level == LogEventLevel.Warning);
+    }
+
+    private sealed class ListSink : ILogEventSink
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public void Emit(LogEvent logEvent)
+            => Events.Add(logEvent);
+    }
+
+    [Fact]
+    public void OnLoopThread_RunsInline_AndReturnsValue()
+    {
+        var dispatcher = new MainThreadDispatcherService();
+        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
+        var ran = false;
+
+        var result = marshaller.Invoke(() =>
+            {
+                ran = true;
+
+                return DynValue.NewNumber(42);
+            }
+        );
+
+        Assert.True(ran);
+        Assert.Equal(42, result.Number);
+        Assert.Equal(0, dispatcher.PendingCount);
     }
 }

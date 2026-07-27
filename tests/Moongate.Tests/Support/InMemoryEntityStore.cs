@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Entities;
 using Moongate.Persistence.Interfaces;
 using SquidStd.Persistence.Abstractions.Data;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -15,7 +16,9 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
     where TEntity : class, ISerialIdEntity
 {
     private readonly Dictionary<Serial, TEntity> _items = new();
-    private uint _nextId = typeof(TEntity) == typeof(Moongate.Persistence.Entities.ItemEntity) ? Serial.MinItem : 1;
+    private uint _nextId = typeof(TEntity) == typeof(ItemEntity) ? Serial.MinItem : 1;
+
+    public int UpsertCount { get; private set; }
 
     public int Count()
         => _items.Count;
@@ -55,8 +58,8 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
         var matched = filter is null ? _items.Values.ToList() : _items.Values.Where(filter).ToList();
 
         var ordered = descending
-                          ? matched.OrderByDescending(orderBy).ThenByDescending(entity => entity.Id)
-                          : matched.OrderBy(orderBy).ThenBy(entity => entity.Id);
+            ? matched.OrderByDescending(orderBy).ThenByDescending(entity => entity.Id)
+            : matched.OrderBy(orderBy).ThenBy(entity => entity.Id);
 
         IReadOnlyList<TEntity> page = [.. ordered.Skip(skip).Take(take)];
 
@@ -68,6 +71,8 @@ public sealed class InMemoryEntityStore<TEntity> : IEntityStore<TEntity, Serial>
 
     public ValueTask UpsertAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
+        UpsertCount++;
+
         if (entity.Id == Serial.Zero)
         {
             entity.Id = (Serial)_nextId++;

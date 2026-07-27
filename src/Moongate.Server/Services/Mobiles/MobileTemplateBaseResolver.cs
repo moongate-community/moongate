@@ -10,6 +10,8 @@ namespace Moongate.Server.Services.Mobiles;
 /// </summary>
 public sealed class MobileTemplateBaseResolver
 {
+    private const int DefaultStat = 50;
+
     public IReadOnlyList<MobileTemplate> Resolve(IReadOnlyList<MobileTemplate> templates)
     {
         var byId = new Dictionary<string, MobileTemplate>(StringComparer.OrdinalIgnoreCase);
@@ -20,33 +22,6 @@ public sealed class MobileTemplateBaseResolver
         }
 
         return templates.Select(template => ResolveOne(template, byId, new(StringComparer.OrdinalIgnoreCase))).ToList();
-    }
-
-    private MobileTemplate ResolveOne(
-        MobileTemplate template, Dictionary<string, MobileTemplate> byId, HashSet<string> visiting
-    )
-    {
-        if (string.IsNullOrEmpty(template.BaseMobile))
-        {
-            return template;
-        }
-
-        if (!visiting.Add(template.Id))
-        {
-            throw new InvalidDataException($"Mobile template inheritance cycle detected at '{template.Id}'.");
-        }
-
-        if (!byId.TryGetValue(template.BaseMobile, out var baseTemplate))
-        {
-            throw new InvalidDataException(
-                $"Mobile template '{template.Id}' references unknown base '{template.BaseMobile}'."
-            );
-        }
-
-        var resolvedBase = ResolveOne(baseTemplate, byId, visiting);
-        visiting.Remove(template.Id);
-
-        return Merge(resolvedBase, template);
     }
 
     private static MobileTemplate Merge(MobileTemplate baseTemplate, MobileTemplate derived)
@@ -98,5 +73,32 @@ public sealed class MobileTemplateBaseResolver
     private static string NonEmpty(string derived, string baseValue)
         => string.IsNullOrEmpty(derived) ? baseValue : derived;
 
-    private const int DefaultStat = 50;
+    private MobileTemplate ResolveOne(
+        MobileTemplate template,
+        Dictionary<string, MobileTemplate> byId,
+        HashSet<string> visiting
+    )
+    {
+        if (string.IsNullOrEmpty(template.BaseMobile))
+        {
+            return template;
+        }
+
+        if (!visiting.Add(template.Id))
+        {
+            throw new InvalidDataException($"Mobile template inheritance cycle detected at '{template.Id}'.");
+        }
+
+        if (!byId.TryGetValue(template.BaseMobile, out var baseTemplate))
+        {
+            throw new InvalidDataException(
+                $"Mobile template '{template.Id}' references unknown base '{template.BaseMobile}'."
+            );
+        }
+
+        var resolvedBase = ResolveOne(baseTemplate, byId, visiting);
+        visiting.Remove(template.Id);
+
+        return Merge(resolvedBase, template);
+    }
 }

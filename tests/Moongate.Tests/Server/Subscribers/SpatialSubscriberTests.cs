@@ -1,6 +1,5 @@
 using Moongate.Core.Extensions;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Services.Game;
 using Moongate.Server.Services.World;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
@@ -9,14 +8,16 @@ namespace Moongate.Tests.Server.Subscribers;
 
 public class SpatialSubscriberTests
 {
-    private static (SpatialSubscriber Subscriber, SpatialIndexService Spatial, FakePersistenceService Persistence) Build()
+    [Fact]
+    public async Task OnPlayerEnteredWorld_IndexesTheMobile()
     {
-        var persistence = new FakePersistenceService();
-        var marker = new LoopThreadMarker();
-        marker.Capture();
-        var spatial = new SpatialIndexService(persistence, marker);
+        var (subscriber, spatial, persistence) = Build();
+        var character = new MobileEntity { Id = new(0x20), MapId = 0, Position = new(200, 200, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(character).WaitSync();
 
-        return (new(spatial, persistence), spatial, persistence);
+        await subscriber.OnPlayerEnteredWorld(new(1, new(0x999), character), CancellationToken.None);
+
+        Assert.Single(spatial.GetMobilesInRange(0, new(200, 200, 0), 5));
     }
 
     [Fact]
@@ -30,8 +31,8 @@ public class SpatialSubscriberTests
         persistence.Store<MobileEntity>().UpsertAsync(npc).WaitSync();
         persistence.Store<MobileEntity>().UpsertAsync(character).WaitSync();
         persistence.Store<AccountEntity>()
-                   .UpsertAsync(new() { Id = new(0x999), Username = "bob", MobileIds = [character.Id] })
-                   .WaitSync();
+            .UpsertAsync(new() { Id = new(0x999), Username = "bob", MobileIds = [character.Id] })
+            .WaitSync();
 
         // A ground item and a contained item: only the ground one must be indexed.
         var ground = new ItemEntity { Id = new(0x40000001), MapId = 0, Position = new(100, 100, 0) };
@@ -52,15 +53,11 @@ public class SpatialSubscriberTests
         Assert.Equal(ground.Id, items[0].Id);
     }
 
-    [Fact]
-    public async Task OnPlayerEnteredWorld_IndexesTheMobile()
+    private static (SpatialSubscriber Subscriber, SpatialIndexService Spatial, FakePersistenceService Persistence) Build()
     {
-        var (subscriber, spatial, persistence) = Build();
-        var character = new MobileEntity { Id = new(0x20), MapId = 0, Position = new(200, 200, 0) };
-        persistence.Store<MobileEntity>().UpsertAsync(character).WaitSync();
+        var persistence = new FakePersistenceService();
+        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
 
-        await subscriber.OnPlayerEnteredWorld(new(1, new(0x999), character), CancellationToken.None);
-
-        Assert.Single(spatial.GetMobilesInRange(0, new(200, 200, 0), 5));
+        return (new(spatial, persistence), spatial, persistence);
     }
 }

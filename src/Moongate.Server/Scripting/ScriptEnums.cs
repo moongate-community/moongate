@@ -16,7 +16,7 @@ internal static class ScriptEnums
         switch (value)
         {
             case string name when !string.IsNullOrWhiteSpace(name):
-                return Enum.TryParse(name, ignoreCase: true, out result) && Enum.IsDefined(result);
+                return Enum.TryParse(name, true, out result) && Enum.IsDefined(result);
 
             case IConvertible convertible when value is not string:
                 {

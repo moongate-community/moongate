@@ -1,0 +1,1 @@
+Verification link for {{ username }} <{{ email }}>: {{ verification_url }}

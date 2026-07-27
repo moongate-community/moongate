@@ -1,15 +1,17 @@
 using System.Globalization;
-using MoonSharp.Interpreter;
 using Moongate.Core.Extensions;
-using Moongate.Core.Geometry;
-using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Scripting.Views;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
+using MoonSharp.Interpreter;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
@@ -19,7 +21,10 @@ namespace Moongate.Server.Scripting;
 /// Exposes mobile creation and manipulation to Lua. Mobiles are referenced by serial (a number).
 /// All functions are synchronous and must run on the game-loop thread — the single-writer boundary
 /// for mobile state. Event handlers (<c>events.on</c>) are dispatched there automatically; other code
-/// reaches it via <c>game.post</c> / <c>game.schedule</c>. Mutating calls log a warning if run off-loop.
+/// reaches it via <c>game.post</c> / <c>game.schedule</c>. This module has no loop-affinity guard of
+/// its own: it mutates the entity store directly with no service seam to carry one, and the Lua
+/// marshaller already keeps script calls loop-affine. A future <c>IMobileService</c> should carry the
+/// guard the way <c>IItemService</c> does.
 /// </summary>
 [ScriptModule("mobile", "Create and manipulate mobiles by serial.")]
 public sealed class MobileModule
@@ -27,31 +32,34 @@ public sealed class MobileModule
     private readonly IMobileFactoryService _factory;
     private readonly IItemFactoryService _itemFactory;
     private readonly IItemService _items;
+    private readonly ISpatialIndexService _spatial;
+    private readonly IEventBus _eventBus;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
-    private readonly ILoopThread _loopThread;
 
     public MobileModule(
         IMobileFactoryService factory,
         IItemFactoryService itemFactory,
         IItemService items,
         IPersistenceService persistence,
-        ILoopThread loopThread
+        ISpatialIndexService spatial,
+        IEventBus eventBus
     )
     {
         _factory = factory;
         _itemFactory = itemFactory;
         _items = items;
+        _spatial = spatial;
+        _eventBus = eventBus;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
-        _loopThread = loopThread;
     }
 
     [ScriptFunction("create", "Creates a mobile at a location; returns its serial.")]
     public uint? Create(string name, int map, int x, int y, int z)
     {
-        LoopGuard.Warn(_loopThread, "mobile.create");
-
-        var mobile = _factory.Create(name, map, new Point3D(x, y, z));
+        var mobile = _factory.Create(name, map, new(x, y, z));
         _mobiles.UpsertAsync(mobile).WaitSync();
+        _spatial.AddOrUpdate(mobile);
+        _eventBus.Publish(new MobileCreatedEvent(mobile));
 
         return mobile.Id.Value;
     }
@@ -59,9 +67,7 @@ public sealed class MobileModule
     [ScriptFunction("create_from_template", "Spawns a mobile from a template; returns its serial or nil.")]
     public uint? CreateFromTemplate(string templateId, int map, int x, int y, int z)
     {
-        LoopGuard.Warn(_loopThread, "mobile.create_from_template");
-
-        var spawn = _factory.CreateFromTemplate(templateId, map, new Point3D(x, y, z));
+        var spawn = _factory.CreateFromTemplate(templateId, map, new(x, y, z));
 
         if (spawn is null)
         {
@@ -69,6 +75,7 @@ public sealed class MobileModule
         }
 
         _mobiles.UpsertAsync(spawn.Mobile).WaitSync();
+        _spatial.AddOrUpdate(spawn.Mobile);
 
         foreach (var entry in spawn.Equipment)
         {
@@ -84,43 +91,79 @@ public sealed class MobileModule
             _items.Equip(spawn.Mobile, item, entry.Layer);
         }
 
+        if (_mobiles.GetById(spawn.Mobile.Id) is { } completeMobile)
+        {
+            _eventBus.Publish(new MobileCreatedEvent(completeMobile));
+        }
+
         return spawn.Mobile.Id.Value;
     }
 
-    [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
-    public Dictionary<string, object?>? Get(uint serial)
+    [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
+    public bool Delete(uint serial)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null)
         {
-            return null;
+            return false;
         }
 
-        return new()
+        _spatial.Remove(mobile.Id);
+        var deleted = _mobiles.RemoveAsync(mobile.Id).WaitSync();
+
+        if (deleted)
         {
-            ["id"] = mobile.Id.Value,
-            ["name"] = mobile.Name,
-            ["map"] = mobile.MapId,
-            ["x"] = mobile.Position.X,
-            ["y"] = mobile.Position.Y,
-            ["z"] = mobile.Position.Z,
-            ["direction"] = mobile.Direction.ToString(),
-            ["gender"] = mobile.Gender.ToString(),
-            ["race"] = mobile.Race.ToString(),
-            ["profession"] = (int)mobile.ProfessionId,
-            ["str"] = mobile.Strength,
-            ["dex"] = mobile.Dexterity,
-            ["int"] = mobile.Intelligence,
-            ["backpack"] = mobile.BackpackId.Value
-        };
+            _eventBus.Publish(new MobileDeletedEvent(mobile));
+        }
+
+        return deleted;
+    }
+
+    [ScriptFunction("get", "Returns a field table for the mobile, or nil.")]
+    public MobileLuaView? Get(uint serial)
+        => _mobiles.GetById((Serial)serial) is { } mobile ? new MobileLuaView(mobile) : null;
+
+    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
+    public int GetSkill(uint serial, object skill)
+    {
+        var mobile = _mobiles.GetById((Serial)serial);
+
+        if (mobile is null || !TryResolveSkill(skill, out var skillId))
+        {
+            return 0;
+        }
+
+        return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
+    }
+
+    [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
+    public bool Move(uint serial, int x, int y, int z)
+    {
+        var mobile = _mobiles.GetById((Serial)serial);
+
+        if (mobile is null)
+        {
+            return false;
+        }
+
+        var fromMapId = mobile.MapId;
+        var fromPosition = mobile.Position;
+        mobile.Position = new(x, y, z);
+        _mobiles.UpsertAsync(mobile).WaitSync();
+        _spatial.AddOrUpdate(mobile);
+
+        if (mobile.MapId != fromMapId || mobile.Position != fromPosition)
+        {
+            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
+        }
+
+        return true;
     }
 
     [ScriptFunction("set", "Mutates mobile fields from a table; returns true on success.")]
     public bool Set(uint serial, Table fields)
     {
-        LoopGuard.Warn(_loopThread, "mobile.set");
-
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null || fields is null)
@@ -128,6 +171,8 @@ public sealed class MobileModule
             return false;
         }
 
+        var fromMapId = mobile.MapId;
+        var fromPosition = mobile.Position;
         var name = fields.Get("name");
 
         if (name.Type == DataType.String)
@@ -163,45 +208,18 @@ public sealed class MobileModule
 
         _mobiles.UpsertAsync(mobile).WaitSync();
 
-        return true;
-    }
-
-    [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
-    public bool Move(uint serial, int x, int y, int z)
-    {
-        LoopGuard.Warn(_loopThread, "mobile.move");
-
-        var mobile = _mobiles.GetById((Serial)serial);
-
-        if (mobile is null)
+        if (mobile.MapId != fromMapId)
         {
-            return false;
+            _spatial.AddOrUpdate(mobile);
+            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
         }
 
-        mobile.Position = new Point3D(x, y, z);
-        _mobiles.UpsertAsync(mobile).WaitSync();
-
         return true;
-    }
-
-    [ScriptFunction("get_skill", "Returns the skill value for the mobile by skill name or id, or 0.")]
-    public int GetSkill(uint serial, object skill)
-    {
-        var mobile = _mobiles.GetById((Serial)serial);
-
-        if (mobile is null || !TryResolveSkill(skill, out var skillId))
-        {
-            return 0;
-        }
-
-        return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
     }
 
     [ScriptFunction("set_skill", "Sets a skill value on the mobile by skill name or id; false on unknown serial/skill.")]
     public bool SetSkill(uint serial, object skill, int value)
     {
-        LoopGuard.Warn(_loopThread, "mobile.set_skill");
-
         var mobile = _mobiles.GetById((Serial)serial);
 
         if (mobile is null || !TryResolveSkill(skill, out var skillId))
@@ -216,7 +234,7 @@ public sealed class MobileModule
         }
         else
         {
-            mobile.Skills[skillId] = new MobileSkill { Value = value };
+            mobile.Skills[skillId] = new() { Value = value };
         }
 
         _mobiles.UpsertAsync(mobile).WaitSync();
@@ -244,12 +262,24 @@ public sealed class MobileModule
         return skills;
     }
 
-    [ScriptFunction("delete", "Deletes the mobile; true when it existed.")]
-    public bool Delete(uint serial)
+    private static void ApplyHue(Table fields, string key, Action<Hue> apply)
     {
-        LoopGuard.Warn(_loopThread, "mobile.delete");
+        var value = fields.Get(key);
 
-        return _mobiles.RemoveAsync((Serial)serial).WaitSync();
+        if (value.Type == DataType.Number)
+        {
+            apply(new((ushort)value.Number));
+        }
+    }
+
+    private static void ApplyInt(Table fields, string key, Action<int> apply)
+    {
+        var value = fields.Get(key);
+
+        if (value.Type == DataType.Number)
+        {
+            apply((int)value.Number);
+        }
     }
 
     private static bool TryResolveSkill(object? skill, out int skillId)
@@ -263,7 +293,7 @@ public sealed class MobileModule
                 {
                     var token = new string(name.Where(char.IsLetter).ToArray());
 
-                    if (!Enum.TryParse<SkillName>(token, ignoreCase: true, out var parsed))
+                    if (!Enum.TryParse<SkillName>(token, true, out var parsed))
                     {
                         return false;
                     }
@@ -283,26 +313,6 @@ public sealed class MobileModule
 
             default:
                 return false;
-        }
-    }
-
-    private static void ApplyInt(Table fields, string key, Action<int> apply)
-    {
-        var value = fields.Get(key);
-
-        if (value.Type == DataType.Number)
-        {
-            apply((int)value.Number);
-        }
-    }
-
-    private static void ApplyHue(Table fields, string key, Action<Hue> apply)
-    {
-        var value = fields.Get(key);
-
-        if (value.Type == DataType.Number)
-        {
-            apply(new Hue((ushort)value.Number));
         }
     }
 }

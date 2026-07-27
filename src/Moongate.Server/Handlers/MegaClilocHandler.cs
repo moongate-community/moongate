@@ -20,6 +20,20 @@ public sealed class MegaClilocHandler : IPacketHandler<MegaClilocRequestPacket>,
         _opl = opl;
     }
 
+    /// <summary>The 0xD6 responses for a batch of requested serials; serials nothing is known about yield none.</summary>
+    public static IEnumerable<MegaClilocPacket> BuildResponses(IReadOnlyList<Serial> serials, IOplService opl)
+    {
+        foreach (var serial in serials)
+        {
+            var snapshot = opl.GetOrBuild(serial);
+
+            if (snapshot.HasEntries)
+            {
+                yield return new(serial, snapshot.Hash, snapshot.Entries);
+            }
+        }
+    }
+
     public void Handle(MegaClilocRequestPacket packet, in PacketContext context)
     {
         foreach (var response in BuildResponses(packet.Serials, _opl))
@@ -30,18 +44,4 @@ public sealed class MegaClilocHandler : IPacketHandler<MegaClilocRequestPacket>,
 
     public void Register(INetworkService network)
         => network.RegisterHandler(this);
-
-    /// <summary>The 0xD6 responses for a batch of requested serials; serials nothing is known about yield none.</summary>
-    public static IEnumerable<MegaClilocPacket> BuildResponses(IReadOnlyList<Serial> serials, IOplService opl)
-    {
-        foreach (var serial in serials)
-        {
-            var snapshot = opl.GetOrBuild(serial);
-
-            if (snapshot.HasEntries)
-            {
-                yield return new MegaClilocPacket(serial, snapshot.Hash, snapshot.Entries);
-            }
-        }
-    }
 }

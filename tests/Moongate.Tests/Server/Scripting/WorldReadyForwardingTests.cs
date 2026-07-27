@@ -1,6 +1,5 @@
-using MoonSharp.Interpreter;
 using Moongate.Server.Abstractions.Data.Events;
-using SquidStd.Core.Data.Events;
+using MoonSharp.Interpreter;
 using SquidStd.Scripting.Lua.Services;
 using SquidStd.Services.Core.Services;
 
@@ -11,7 +10,7 @@ public class WorldReadyForwardingTests
     [Fact]
     public async Task WorldReadyEvent_ReachesLuaWorldReadyHandler()
     {
-        using var bus = new EventBusService(new EventBusOptions());
+        using var bus = new EventBusService(new());
         var script = new Script();
         var bridge = new LuaEventBridge();
         bridge.Attach(script);

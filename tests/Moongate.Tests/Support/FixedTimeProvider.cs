@@ -13,8 +13,7 @@ public sealed class FixedTimeProvider : TimeProvider
         _now = now;
     }
 
-    public override TimeZoneInfo LocalTimeZone
-        => TimeZoneInfo.Utc;
+    public override TimeZoneInfo LocalTimeZone => TimeZoneInfo.Utc;
 
     public override DateTimeOffset GetUtcNow()
         => _now;

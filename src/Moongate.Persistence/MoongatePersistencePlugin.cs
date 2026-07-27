@@ -39,8 +39,9 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
         container.RegisterMessagePackSerializer();
         container.RegisterPersistence(persistenceConfig);
 
+        // No type ids here: SquidStd derives one from the store name, so nothing has to know which are
+        // taken and a plugin cannot collide with the host.
         container.RegisterPersistedEntity<AccountEntity, Serial>(
-            1,
             "accounts",
             1,
             entity => entity.Id,
@@ -48,10 +49,7 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             new DefaultSerialGenerator()
         );
 
-
-
         container.RegisterPersistedEntity<MobileEntity, Serial>(
-            2,
             "mobiles",
             1,
             entity => entity.Id,
@@ -59,15 +57,27 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             new MobileSerialGenerator()
         );
         container.RegisterPersistedEntity<ItemEntity, Serial>(
-            3,
             "items",
             1,
             entity => entity.Id,
             (entity, id) => entity.Id = id,
             new ItemSerialGenerator()
         );
-        container.RegisterPersistenceSeeder(
-            async (service, token) =>
+        container.RegisterPersistedEntity<ServerSettingsEntity, Serial>(
+            "server_settings",
+            1,
+            entity => entity.Id,
+            (entity, id) => entity.Id = id,
+            new DefaultSerialGenerator()
+        );
+        container.RegisterPersistedEntity<NpcMemoryEntity, Serial>(
+            "npc_memory",
+            1,
+            entity => entity.Id,
+            (entity, id) => entity.Id = id,
+            new DefaultSerialGenerator()
+        );
+        container.RegisterPersistenceSeeder(async (service, token) =>
             {
                 var accountStore = service.GetStore<AccountEntity, Serial>();
 

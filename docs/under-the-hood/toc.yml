@@ -2,3 +2,9 @@
   href: architecture.md
 - name: REST API
   href: rest-api.md
+- name: Admin console
+  href: admin-console.md
+- name: Console over REST
+  href: rest-console.md
+- name: News API
+  href: news-api.md

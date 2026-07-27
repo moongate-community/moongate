@@ -1,5 +1,4 @@
-using Moongate.Http.Plugin.Interfaces.Maps;
-using Moongate.Http.Plugin.Interfaces.Ultima;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Maps;
@@ -32,7 +31,7 @@ public sealed class MapImageFixture : IDisposable
         _clientDirectory = clientDirectory;
         Root = root;
         Directories = directories;
-        Provider = new StubMapProvider(new(0, 0, MapWidth, MapHeight));
+        Provider = new StubMapProvider(MapType.Felucca, new(0, 0, MapWidth, MapHeight));
     }
 
     public string Root { get; }
@@ -81,6 +80,33 @@ public sealed class MapImageFixture : IDisposable
         return new(clientDirectory, root, new(root, []));
     }
 
+    public void Dispose()
+    {
+        if (Directory.Exists(_clientDirectory))
+        {
+            Directory.Delete(_clientDirectory, true);
+        }
+
+        if (Directory.Exists(Root))
+        {
+            Directory.Delete(Root, true);
+        }
+    }
+
+    private static ushort[] BuildColors()
+    {
+        // RadarCol is indexed by land and static id, so it must span both ranges: land below 0x4000 and
+        // statics above it.
+        var colors = new ushort[0x8000];
+
+        for (var i = 0; i < colors.Length; i++)
+        {
+            colors[i] = 0x7C00;
+        }
+
+        return colors;
+    }
+
     /// <summary>
     /// One land block repeated across the whole facet. The content does not matter — the tests assert
     /// sizes, caching and composition, not pixels — but the file's length does: it must cover every block
@@ -98,48 +124,5 @@ public sealed class MapImageFixture : IDisposable
         }
 
         return file;
-    }
-
-    private static ushort[] BuildColors()
-    {
-        // RadarCol is indexed by land and static id, so it must span both ranges: land below 0x4000 and
-        // statics above it.
-        var colors = new ushort[0x8000];
-
-        for (var i = 0; i < colors.Length; i++)
-        {
-            colors[i] = 0x7C00;
-        }
-
-        return colors;
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_clientDirectory))
-        {
-            Directory.Delete(_clientDirectory, true);
-        }
-
-        if (Directory.Exists(Root))
-        {
-            Directory.Delete(Root, true);
-        }
-    }
-
-    /// <summary>Serves one small facet under Felucca's name, so a test need not render 384 tiles.</summary>
-    private sealed class StubMapProvider : IUltimaMapProvider
-    {
-        private readonly Map _map;
-
-        public StubMapProvider(Map map)
-        {
-            _map = map;
-        }
-
-        public IReadOnlyList<MapType> Facets { get; } = [MapType.Felucca];
-
-        public Map? Get(MapType facet)
-            => facet == MapType.Felucca ? _map : null;
     }
 }

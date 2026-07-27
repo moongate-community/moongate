@@ -1,0 +1,249 @@
+{
+  "app": {
+    "name": "Moongate"
+  },
+  "theme": {
+    "dark": "Scuro",
+    "light": "Chiaro",
+    "switchTo": "Passa a {{theme}}"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "map": "Mappa",
+    "admin": "Admin"
+  },
+  "login": {
+    "title": "MOONGATE",
+    "subtitle": "Accedi con le credenziali del tuo account di gioco.",
+    "account": "Nome account",
+    "password": "Parola d'ordine",
+    "submit": "ENTRA",
+    "failed": "Nome account o parola d'ordine non validi.",
+    "staffNote": "Lo staff accede dallo stesso cancello: il ruolo decide la destinazione.",
+    "quote": "Sosaria non dorme mai.",
+    "remember": "Ricordami su questo dispositivo",
+    "online": "{{count}} avventurieri online in questo momento",
+    "artAlt": "Il Moongate — un portale runico aperto",
+    "logoAlt": "Logo dello shard",
+    "createAccount": "Crea un account"
+  },
+  "register": {
+    "title": "Crea account",
+    "subtitle": "Crea il tuo account giocatore e verificalo via email.",
+    "username": "Nome account",
+    "email": "Email",
+    "password": "Password",
+    "confirmation": "Conferma password",
+    "requirements": "Usa 3–30 lettere, numeri, punti, trattini bassi o trattini. La password deve contenere 8–30 caratteri stampabili.",
+    "submit": "Crea account",
+    "unavailableTitle": "Registrazione non disponibile",
+    "unavailableBody": "Questo shard al momento non accetta registrazioni pubbliche.",
+    "pending": {
+      "title": "Controlla la tua email",
+      "guidance": "Cerca un’email di verifica nella tua casella. Puoi richiedere un altro messaggio qui sotto.",
+      "resendTitle": "Reinvia email di verifica",
+      "resendSubmit": "Reinvia email di verifica",
+      "confirmation": "La tua richiesta è stata ricevuta. Controlla la tua casella per un’email di verifica.",
+      "errors": {
+        "invalidDetails": "Controlla il nome account e l’email, poi riprova.",
+        "rateLimited": "Troppi tentativi di reinvio. Riprova più tardi.",
+        "emailUnavailable": "L’email di verifica è temporaneamente non disponibile."
+      }
+    },
+    "verify": {
+      "verifyingTitle": "Verifica dell’account in corso",
+      "verifyingBody": "Attendi mentre confermiamo il tuo indirizzo email.",
+      "verifiedTitle": "Email verificata",
+      "verifiedBody": "Il tuo account è pronto. Ora puoi accedere.",
+      "expiredTitle": "Link di verifica scaduto",
+      "expiredBody": "Questo link di verifica è scaduto. Richiedi una nuova email per continuare.",
+      "invalidTitle": "Link di verifica non valido",
+      "invalidBody": "Questo link di verifica non è valido. Richiedi una nuova email oppure accedi.",
+      "unavailableTitle": "Verifica temporaneamente non disponibile",
+      "unavailableBody": "Non è stato possibile verificare la tua email. Riprova.",
+      "resend": "Richiedi un’altra email",
+      "signIn": "Accedi",
+      "retry": "Riprova"
+    },
+    "errors": {
+      "username": "Inserisci un nome account valido.",
+      "email": "Inserisci un indirizzo email valido.",
+      "password": "Inserisci una password valida.",
+      "confirmation": "Le password non coincidono.",
+      "conflict": "Il nome account o l’email non sono disponibili.",
+      "disabled": "La registrazione non è più disponibile.",
+      "rateLimited": "Troppi tentativi. Riprova più tardi.",
+      "emailUnavailable": "L’email di verifica è temporaneamente non disponibile."
+    }
+  },
+  "dashboard": {
+    "welcome": "Bentornato, {{name}}",
+    "characters": "I tuoi personaggi",
+    "noCharacters": "Nessun personaggio su questo account.",
+    "shard": "Lo shard adesso",
+    "playersOnline": "Giocatori online",
+    "accounts": "Account",
+    "charactersTotal": "Personaggi"
+  },
+  "map": {
+    "title": "Mappa del mondo",
+    "facet": "Facet",
+    "relief": "Rilievo",
+    "x": "X",
+    "y": "Y",
+    "go": "Vai",
+    "copyHint": "Clicca per copiare la coordinata",
+    "copied": "Copiato {{x}}, {{y}}",
+    "jumpError": "Inserisci una coordinata dentro la facet (0–{{width}}, 0–{{height}}).",
+    "unavailable": "Mappa non disponibile — lo shard non ha caricato i file client.",
+    "players": {
+      "toggle": "Giocatori online",
+      "count": "{{visible}} / {{total}}",
+      "unavailable": "Le posizioni dei giocatori non sono momentaneamente disponibili.",
+      "markerAlt": "{{name}} sulla mappa",
+      "account": "Account",
+      "facet": "Facet",
+      "coordinates": "Coordinate",
+      "hits": "Punti vita",
+      "direction": "Direzione",
+      "running": "In corsa",
+      "warmode": "Modalità guerra",
+      "technical": "Dettagli tecnici",
+      "characterSerial": "Seriale personaggio",
+      "accountSerial": "Seriale account",
+      "body": "Body",
+      "skinHue": "Skin hue"
+    }
+  },
+  "common": {
+    "signOut": "Esci",
+    "loading": "Caricamento…",
+    "backToLogin": "Torna all’accesso"
+  },
+  "error": {
+    "generic": "Qualcosa è andato storto. Riprova."
+  },
+  "admin": {
+    "title": "Amministrazione",
+    "status": {
+      "title": "Stato shard",
+      "build": "Build",
+      "sessions": "Sessioni connesse"
+    },
+    "stats": {
+      "title": "Statistiche",
+      "players": "Giocatori online",
+      "accounts": "Account",
+      "npcs": "NPC",
+      "items": "Oggetti nel mondo"
+    },
+    "plugins": {
+      "title": "Plugin attivi",
+      "routes": "{{count}} rotte",
+      "external": "esterno",
+      "host": "host",
+      "empty": "Nessun plugin riportato.",
+      "name": "Nome",
+      "version": "Versione",
+      "routesHeader": "Rotte",
+      "type": "Tipo",
+      "search": "Cerca plugin…"
+    },
+    "nav": {
+      "overview": "Panoramica",
+      "accounts": "Account",
+      "plugins": "Plugin",
+      "settings": "Impostazioni",
+      "console": "Console"
+    },
+    "accounts": {
+      "title": "Account",
+      "new": "Nuovo account",
+      "search": "Cerca username, email…",
+      "username": "Username",
+      "email": "Email",
+      "level": "Livello",
+      "status": "Stato",
+      "characters": "Personaggi",
+      "active": "attivo",
+      "suspended": "sospeso",
+      "manage": "Gestisci",
+      "none": "—",
+      "password": "Password",
+      "create": "Crea",
+      "cancel": "Annulla",
+      "taken": "Questo username è già in uso.",
+      "created": "Account creato.",
+      "levels": {
+        "Player": "Player",
+        "GrandMaster": "GrandMaster",
+        "Administrator": "Administrator"
+      },
+      "edit": "Gestisci {{username}}",
+      "suspendedLabel": "Sospeso",
+      "newPassword": "Nuova password",
+      "newPasswordHint": "Lascia vuoto per non cambiarla.",
+      "save": "Salva",
+      "saved": "Account aggiornato.",
+      "delete": "Elimina account",
+      "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
+      "deleteYes": "Elimina",
+      "deleted": "Account eliminato."
+    },
+    "settings": {
+      "title": "Impostazioni shard",
+      "general": "Generale",
+      "description": "Descrizione",
+      "registration": "Registrazione web aperta",
+      "contacts": "Contatti",
+      "website": "Sito web",
+      "email": "Email",
+      "discord": "Discord",
+      "assets": "Asset",
+      "upload": "Carica",
+      "remove": "Rimuovi",
+      "logo": "Logo",
+      "favicon": "Favicon",
+      "banner": "Banner",
+      "save": "Salva",
+      "saved": "Impostazioni salvate.",
+      "assetUpdated": "Immagine aggiornata.",
+      "assetRemoved": "Immagine rimossa.",
+      "notImage": "Il file non è un'immagine.",
+      "tooLarge": "L'immagine è troppo grande.",
+      "tagline": "Slogan",
+      "readiness": {
+        "title": "Preparazione della registrazione",
+        "overall": "Stato generale",
+        "website": "Sito web",
+        "emailSelected": "Canale di verifica",
+        "emailAvailable": "Canale email",
+        "ready": "Pronto",
+        "notReady": "Non pronto",
+        "valid": "Valido",
+        "invalid": "Non valido",
+        "selected": "Selezionato",
+        "notSelected": "Non selezionato",
+        "available": "Disponibile",
+        "unavailable": "Non disponibile",
+        "guidance": "Imposta notifications.AccountVerificationChannel su email in moongate.yaml. Configura il plugin email tramite plugins/configs/smtp.yaml o variabili d'ambiente, quindi riavvia il server."
+      }
+    },
+    "console": {
+      "title": "Console",
+      "session": "Console · {{user}}",
+      "live": "Produzione",
+      "warning": "I comandi girano davvero sul server in produzione.",
+      "banner": "— sessione avviata",
+      "placeholder": "Scrivi un comando…",
+      "execute": "Esegui",
+      "clear": "Pulisci",
+      "connected": "connesso",
+      "connecting": "connessione…",
+      "closed": "disconnesso",
+      "empty": "Nessun output. Scrivi un comando per iniziare.",
+      "hint": "↑ / ↓ per la cronologia",
+      "snippets": "Comandi rapidi"
+    }
+  }
+}

@@ -14,16 +14,16 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: fancy_shirt
-        Layer: Shirt
-      - Item: long_pants
-        Layer: Pants
-      - Item: half_apron
-        Layer: Waist
-      - Item: boots
-        Layer: Shoes
-      - Item: tongs
-        Layer: OneHanded
+        -   Item: fancy_shirt
+            Layer: Shirt
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: half_apron
+            Layer: Waist
+        -   Item: boots
+            Layer: Shoes
+        -   Item: tongs
+            Layer: OneHanded
     LootTableId: vendor.blacksmith
 -   Id: weaponsmith_vendor_npc
     Title: the weaponsmith
@@ -44,16 +44,16 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: fancy_shirt
-        Layer: Shirt
-      - Item: long_pants
-        Layer: Pants
-      - Item: half_apron
-        Layer: Waist
-      - Item: boots
-        Layer: Shoes
-      - Item: hatchet
-        Layer: OneHanded
+        -   Item: fancy_shirt
+            Layer: Shirt
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: half_apron
+            Layer: Waist
+        -   Item: boots
+            Layer: Shoes
+        -   Item: hatchet
+            Layer: OneHanded
     LootTableId: vendor.weaponsmith
 -   Id: armorer_vendor_npc
     Title: an armorer
@@ -71,16 +71,16 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: fancy_shirt
-        Layer: Shirt
-      - Item: long_pants
-        Layer: Pants
-      - Item: half_apron
-        Layer: Waist
-      - Item: boots
-        Layer: Shoes
-      - Item: helmet
-        Layer: Helm
+        -   Item: fancy_shirt
+            Layer: Shirt
+        -   Item: long_pants
+            Layer: Pants
+        -   Item: half_apron
+            Layer: Waist
+        -   Item: boots
+            Layer: Shoes
+        -   Item: helmet
+            Layer: Helm
     LootTableId: vendor.armorer
 -   Id: provisioner_vendor_npc
     Title: the provisioner
@@ -98,14 +98,14 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: doublet
-        Layer: Shirt
-      - Item: short_pants
-        Layer: Pants
-      - Item: shoes
-        Layer: Shoes
-      - Item: backpack
-        Layer: Backpack
+        -   Item: doublet
+            Layer: Shirt
+        -   Item: short_pants
+            Layer: Pants
+        -   Item: shoes
+            Layer: Shoes
+        -   Item: backpack
+            Layer: Backpack
     LootTableId: vendor.provisioner
 -   Id: mage_vendor_npc
     Title: a mage
@@ -123,14 +123,14 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: robe
-        Layer: OuterTorso
-      - Item: sandals
-        Layer: Shoes
-      - Item: wizards_hat
-        Layer: Helm
-      - Item: spellbook
-        Layer: OneHanded
+        -   Item: robe
+            Layer: OuterTorso
+        -   Item: sandals
+            Layer: Shoes
+        -   Item: wizards_hat
+            Layer: Helm
+        -   Item: spellbook
+            Layer: OneHanded
     LootTableId: vendor.mage
 -   Id: healer_vendor_npc
     Title: a healer
@@ -148,8 +148,8 @@
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
     Equipment:
-      - Item: robe
-        Layer: OuterTorso
-      - Item: sandals
-        Layer: Shoes
+        -   Item: robe
+            Layer: OuterTorso
+        -   Item: sandals
+            Layer: Shoes
     LootTableId: vendor.healer

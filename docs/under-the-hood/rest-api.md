@@ -110,6 +110,7 @@ good token that is simply not staff.
 | `DELETE` | `/api/v1/admin/accounts/{username}`  | `admin`  | 204, or 404 / 409 / 503            |
 | `GET`    | `/api/v1/player/me/characters`       | `player` | the caller's own characters        |
 | `GET`    | `/api/v1/admin/characters`           | `admin`  | every character, paged             |
+| `GET`    | `/api/v1/admin/players/online`       | `admin`  | players currently in the world     |
 | `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
 | `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
 | `GET`    | `/api/v1/admin/images/items`         | `admin`  | export progress                    |
@@ -212,6 +213,23 @@ One detail worth copying if you add a route that reads the caller's identity: th
 account id is read from `NameIdentifier` before `sub`. `JwtTokenService` writes it
 into `sub`, but JwtBearer's inbound claim mapping is on by default and renames it
 before the principal reaches the route — reading only `sub` 401s every request.
+
+## Online players on the admin map
+
+`GET /api/v1/admin/players/online` returns the players who have completed login
+and entered the world. It is staff-only and intentionally unpaged: the result is
+the current marker set, not a historical character catalogue.
+
+Each row carries stable account and character serials, their names, facet id and
+name, `x/y/z`, facing and running state, body and skin hue, hit points and war
+mode. Sessions still at login or character selection are excluded. Email, IP
+address and connection ids are not part of the map contract.
+
+This route reads the live session/mobile values directly from the HTTP thread.
+The game loop can move, transfer or disconnect a character during that read, so
+one response may be momentarily stale or combine values from adjacent frames.
+The next poll naturally replaces it. This trade-off is local to this read-only
+map snapshot; world mutations still belong on the game loop.
 
 ## Item templates
 

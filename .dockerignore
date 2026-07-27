@@ -23,3 +23,7 @@
 **/values.dev.yaml
 LICENSE
 README.md
+
+# Never the local build: the image takes the portal from the node stage, and a stale dist in the context
+# would be a different portal from the one just compiled.
+ui/dist

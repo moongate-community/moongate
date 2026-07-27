@@ -9,6 +9,5 @@ internal sealed class Sector
 
     public HashSet<Serial> Items { get; } = [];
 
-    public bool IsEmpty
-        => Mobiles.Count == 0 && Items.Count == 0;
+    public bool IsEmpty => Mobiles.Count == 0 && Items.Count == 0;
 }

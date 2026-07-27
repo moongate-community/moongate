@@ -26,6 +26,20 @@ public sealed class PaperdollSubscriber : IEventSubscriberRegistration
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
+    /// <summary>
+    /// Builds the paperdoll for <paramref name="beheld" />, or null when it has no paperdoll (a creature
+    /// body). Lifting is only allowed on your own character, so it is on when the beheld is the beholder.
+    /// </summary>
+    public static PaperdollPacket? Build(MobileEntity beheld, Serial? beholderId)
+    {
+        if (!new Body(beheld.Body).IsHumanoid)
+        {
+            return null;
+        }
+
+        return new PaperdollPacket(beheld.Id, beheld.Name, beheld.Warmode, beholderId == beheld.Id);
+    }
+
     public void Subscribe(IEventBus eventBus)
         => eventBus.Subscribe<MobileDoubleClickEvent>(OnDoubleClick);
 
@@ -42,19 +56,5 @@ public sealed class PaperdollSubscriber : IEventSubscriberRegistration
         }
 
         return Task.CompletedTask;
-    }
-
-    /// <summary>
-    /// Builds the paperdoll for <paramref name="beheld" />, or null when it has no paperdoll (a creature
-    /// body). Lifting is only allowed on your own character, so it is on when the beheld is the beholder.
-    /// </summary>
-    public static PaperdollPacket? Build(MobileEntity beheld, Serial? beholderId)
-    {
-        if (!new Body(beheld.Body).IsHumanoid)
-        {
-            return null;
-        }
-
-        return new PaperdollPacket(beheld.Id, beheld.Name, beheld.Warmode, beholderId == beheld.Id);
     }
 }

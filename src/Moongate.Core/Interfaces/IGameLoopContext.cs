@@ -34,4 +34,11 @@ public interface IGameLoopContext
     /// </summary>
     /// <returns>The timer id, usable with <see cref="Cancel" />.</returns>
     string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null);
+
+    /// <summary>
+    /// Runs <paramref name="work" /> on the game-loop thread and returns its result. Throws
+    /// <see cref="TimeoutException" /> if the loop does not run it within <paramref name="timeout" />
+    /// (default 5 seconds).
+    /// </summary>
+    Task<T> InvokeAsync<T>(Func<T> work, TimeSpan? timeout = null);
 }

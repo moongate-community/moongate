@@ -29,11 +29,21 @@ public sealed class SpatialSubscriber : IEventSubscriberRegistration
         _items = persistence.GetStore<ItemEntity, Serial>();
     }
 
-    public void Subscribe(IEventBus eventBus)
+    public Task OnPlayerEnteredWorld(PlayerEnteredWorldEvent message, CancellationToken cancellationToken)
     {
-        eventBus.Subscribe<WorldReadyEvent>(OnWorldReady);
-        eventBus.Subscribe<PlayerEnteredWorldEvent>(OnPlayerEnteredWorld);
-        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
+        _spatial.AddOrUpdate(message.Mobile);
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
+    {
+        if (message.Session.Character is { } character)
+        {
+            _spatial.Remove(character.Id);
+        }
+
+        return Task.CompletedTask;
     }
 
     public Task OnWorldReady(WorldReadyEvent message, CancellationToken cancellationToken)
@@ -69,20 +79,10 @@ public sealed class SpatialSubscriber : IEventSubscriberRegistration
         return Task.CompletedTask;
     }
 
-    public Task OnPlayerEnteredWorld(PlayerEnteredWorldEvent message, CancellationToken cancellationToken)
+    public void Subscribe(IEventBus eventBus)
     {
-        _spatial.AddOrUpdate(message.Mobile);
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
-    {
-        if (message.Session.Character is { } character)
-        {
-            _spatial.Remove(character.Id);
-        }
-
-        return Task.CompletedTask;
+        eventBus.Subscribe<WorldReadyEvent>(OnWorldReady);
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(OnPlayerEnteredWorld);
+        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
     }
 }

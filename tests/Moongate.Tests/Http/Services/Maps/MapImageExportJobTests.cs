@@ -10,32 +10,17 @@ namespace Moongate.Tests.Http.Services.Maps;
 [Collection("UltimaClientData")]
 public class MapImageExportJobTests
 {
-    private static MapImageExportJob Job(MapImageFixture fixture, out MapImageService service)
+    [Fact]
+    public void Status_BeforeAnyExport_IsIdle()
     {
-        service = new(fixture.Provider, fixture.Directories, new UltimaReadGate());
+        using var fixture = MapImageFixture.Create();
+        var job = Job(fixture, out _);
 
-        return new(service, fixture.Provider);
-    }
+        var status = job.Status;
 
-    private static async Task<MapImageExportStatus> WaitForCompletionAsync(MapImageExportJob job)
-    {
-        // Polls rather than sleeping a fixed span: the export is a background task, and a fixed wait would
-        // either flake on a loaded machine or waste the difference on a fast one.
-        var deadline = DateTime.UtcNow.AddSeconds(60);
-
-        while (DateTime.UtcNow < deadline)
-        {
-            var status = job.Status;
-
-            if (status.State != nameof(MapImageExportStateType.Running))
-            {
-                return status;
-            }
-
-            await Task.Delay(50);
-        }
-
-        throw new TimeoutException($"The export never left Running. Last status: {job.Status}.");
+        Assert.Equal(nameof(MapImageExportStateType.Idle), status.State);
+        Assert.Null(status.StartedAt);
+        Assert.Equal(0, status.Done);
     }
 
     [Fact]
@@ -83,16 +68,31 @@ public class MapImageExportJobTests
         Assert.True(refused || status.State == nameof(MapImageExportStateType.Completed));
     }
 
-    [Fact]
-    public void Status_BeforeAnyExport_IsIdle()
+    private static MapImageExportJob Job(MapImageFixture fixture, out MapImageService service)
     {
-        using var fixture = MapImageFixture.Create();
-        var job = Job(fixture, out _);
+        service = new(fixture.Provider, fixture.Directories, new UltimaReadGate());
 
-        var status = job.Status;
+        return new(service, fixture.Provider);
+    }
 
-        Assert.Equal(nameof(MapImageExportStateType.Idle), status.State);
-        Assert.Null(status.StartedAt);
-        Assert.Equal(0, status.Done);
+    private static async Task<MapImageExportStatus> WaitForCompletionAsync(MapImageExportJob job)
+    {
+        // Polls rather than sleeping a fixed span: the export is a background task, and a fixed wait would
+        // either flake on a loaded machine or waste the difference on a fast one.
+        var deadline = DateTime.UtcNow.AddSeconds(60);
+
+        while (DateTime.UtcNow < deadline)
+        {
+            var status = job.Status;
+
+            if (status.State != nameof(MapImageExportStateType.Running))
+            {
+                return status;
+            }
+
+            await Task.Delay(50);
+        }
+
+        throw new TimeoutException($"The export never left Running. Last status: {job.Status}.");
     }
 }

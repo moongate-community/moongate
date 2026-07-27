@@ -1,8 +1,7 @@
 using Moongate.Core.Extensions;
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Services.Game;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 
@@ -10,77 +9,11 @@ namespace Moongate.Tests.Server.World;
 
 public class SpatialIndexServiceTests
 {
-    private static (SpatialIndexService Index, FakePersistenceService Persistence) Build()
-    {
-        var persistence = new FakePersistenceService();
-        var marker = new LoopThreadMarker();
-        marker.Capture();
-
-        return (new(persistence, marker), persistence);
-    }
-
-    private static MobileEntity SeedMobile(FakePersistenceService persistence, uint serial, int mapId, int x, int y)
-    {
-        var mobile = new MobileEntity { Id = new(serial), MapId = mapId, Position = new(x, y, 0) };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-
-        return mobile;
-    }
-
-    private static ItemEntity SeedItem(FakePersistenceService persistence, uint serial, int mapId, int x, int y)
-    {
-        var item = new ItemEntity { Id = new(serial), MapId = mapId, Position = new(x, y, 0) };
-        persistence.Store<ItemEntity>().UpsertAsync(item).WaitSync();
-
-        return item;
-    }
-
-    [Fact]
-    public void AddOrUpdate_ThenQueryInRange_ReturnsMobile()
-    {
-        var (index, persistence) = Build();
-        var mobile = SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100);
-
-        index.AddOrUpdate(mobile);
-        var found = index.GetMobilesInRange(0, new(105, 105, 0), 18);
-
-        Assert.Single(found);
-        Assert.Equal(mobile.Id, found[0].Id);
-    }
-
-    [Fact]
-    public void GetMobilesInRange_OutOfRange_ReturnsEmpty()
-    {
-        var (index, persistence) = Build();
-        index.AddOrUpdate(SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100));
-
-        Assert.Empty(index.GetMobilesInRange(0, new(300, 300, 0), 18));
-    }
-
-    [Fact]
-    public void Query_IgnoresOtherMaps()
-    {
-        var (index, persistence) = Build();
-        index.AddOrUpdate(SeedMobile(persistence, 0x1, mapId: 1, x: 100, y: 100));
-
-        Assert.Empty(index.GetMobilesInRange(0, new(100, 100, 0), 18));
-        Assert.Single(index.GetMobilesInRange(1, new(100, 100, 0), 18));
-    }
-
-    [Fact]
-    public void GetItemsInRange_ReturnsGroundItem()
-    {
-        var (index, persistence) = Build();
-        index.AddOrUpdate(SeedItem(persistence, 0x40000001, mapId: 0, x: 50, y: 50));
-
-        Assert.Single(index.GetItemsInRange(0, new(52, 52, 0), 10));
-    }
-
     [Fact]
     public void AddOrUpdate_AfterMove_RelocatesAcrossSectors()
     {
         var (index, persistence) = Build();
-        var mobile = SeedMobile(persistence, 0x1, mapId: 0, x: 15, y: 0);
+        var mobile = SeedMobile(persistence, 0x1, 0, 15, 0);
         index.AddOrUpdate(mobile);
 
         // Cross the sector boundary (tile 15 -> sector 0, tile 400 -> sector 25) and re-index.
@@ -93,10 +26,24 @@ public class SpatialIndexServiceTests
     }
 
     [Fact]
+    public void AddOrUpdate_ItemInContainer_ActsAsRemove()
+    {
+        var (index, persistence) = Build();
+        var item = SeedItem(persistence, 0x40000001, 0, 50, 50);
+        index.AddOrUpdate(item);
+
+        item.ParentContainerId = new(0x40000099);
+        persistence.Store<ItemEntity>().UpsertAsync(item).WaitSync();
+        index.AddOrUpdate(item);
+
+        Assert.Empty(index.GetItemsInRange(0, new(50, 50, 0), 10));
+    }
+
+    [Fact]
     public void AddOrUpdate_SameSectorTwice_DoesNotDuplicate()
     {
         var (index, persistence) = Build();
-        var mobile = SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100);
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
 
         index.AddOrUpdate(mobile);
         index.AddOrUpdate(mobile);
@@ -105,10 +52,89 @@ public class SpatialIndexServiceTests
     }
 
     [Fact]
+    public void AddOrUpdate_ThenQueryInRange_ReturnsMobile()
+    {
+        var (index, persistence) = Build();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+
+        index.AddOrUpdate(mobile);
+        var found = index.GetMobilesInRange(0, new(105, 105, 0), 18);
+
+        Assert.Single(found);
+        Assert.Equal(mobile.Id, found[0].Id);
+    }
+
+    [Fact]
+    public void GetItemsInRange_ReturnsGroundItem()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedItem(persistence, 0x40000001, 0, 50, 50));
+
+        Assert.Single(index.GetItemsInRange(0, new(52, 52, 0), 10));
+    }
+
+    [Fact]
+    public void GetMobilesInRange_OutOfRange_ReturnsEmpty()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100));
+
+        Assert.Empty(index.GetMobilesInRange(0, new(300, 300, 0), 18));
+    }
+
+    [Fact]
+    public void GetMobilesInSector_ExactSector_ReturnsOnlyMobilesOnRequestedMap()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100));
+
+        var sectorSix = index.GetMobilesInSector(0, 6, 6);
+
+        Assert.Single(sectorSix);
+        Assert.Equal(new Serial(0x1), sectorSix[0].Id);
+        Assert.Empty(index.GetMobilesInSector(1, 6, 6));
+    }
+
+    [Fact]
+    public void Query_IgnoresOtherMaps()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 1, 100, 100));
+
+        Assert.Empty(index.GetMobilesInRange(0, new(100, 100, 0), 18));
+        Assert.Single(index.GetMobilesInRange(1, new(100, 100, 0), 18));
+    }
+
+    [Fact]
+    public void Query_SkipsEntitiesDeletedFromStore()
+    {
+        var (index, persistence) = Build();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+        index.AddOrUpdate(mobile);
+
+        persistence.Store<MobileEntity>().RemoveAsync(mobile.Id).WaitSync();
+
+        Assert.Empty(index.GetMobilesInRange(0, new(100, 100, 0), 18));
+    }
+
+    [Fact]
+    public void Query_SpanningMultipleSectors_ReturnsAllWithoutDuplicates()
+    {
+        var (index, persistence) = Build();
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100));
+        index.AddOrUpdate(SeedMobile(persistence, 0x2, 0, 118, 118));
+
+        var found = index.GetMobilesInRange(0, new(109, 109, 0), 20);
+
+        Assert.Equal(2, found.Count);
+        Assert.Equal(2, found.Select(m => m.Id).Distinct().Count());
+    }
+
+    [Fact]
     public void Remove_ThenQuery_ReturnsEmpty()
     {
         var (index, persistence) = Build();
-        var mobile = SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100);
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
         index.AddOrUpdate(mobile);
 
         index.Remove(mobile.Id);
@@ -121,45 +147,117 @@ public class SpatialIndexServiceTests
     {
         var (index, _) = Build();
 
-        index.Remove(new Serial(0xDEAD));
+        index.Remove(new(0xDEAD));
     }
 
     [Fact]
-    public void AddOrUpdate_ItemInContainer_ActsAsRemove()
+    public void AddOrUpdate_NewMobile_PublishesEnteredSectorOnly()
     {
-        var (index, persistence) = Build();
-        var item = SeedItem(persistence, 0x40000001, mapId: 0, x: 50, y: 50);
-        index.AddOrUpdate(item);
+        var (index, persistence, bus) = BuildWithBus();
 
-        item.ParentContainerId = new(0x40000099);
-        persistence.Store<ItemEntity>().UpsertAsync(item).WaitSync();
-        index.AddOrUpdate(item);
+        index.AddOrUpdate(SeedMobile(persistence, 0x1, 0, 100, 100)); // sector (6, 6)
 
-        Assert.Empty(index.GetItemsInRange(0, new(50, 50, 0), 10));
+        var entered = Assert.Single(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Equal(new(0x1), entered.Mobile);
+        Assert.Equal((0, 6, 6), (entered.MapId, entered.SectorX, entered.SectorY));
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
     }
 
     [Fact]
-    public void Query_SpanningMultipleSectors_ReturnsAllWithoutDuplicates()
+    public void AddOrUpdate_MoveAcrossSectors_PublishesLeftEnteredAndChanged()
     {
-        var (index, persistence) = Build();
-        index.AddOrUpdate(SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100));
-        index.AddOrUpdate(SeedMobile(persistence, 0x2, mapId: 0, x: 118, y: 118));
-
-        var found = index.GetMobilesInRange(0, new(109, 109, 0), 20);
-
-        Assert.Equal(2, found.Count);
-        Assert.Equal(2, found.Select(m => m.Id).Distinct().Count());
-    }
-
-    [Fact]
-    public void Query_SkipsEntitiesDeletedFromStore()
-    {
-        var (index, persistence) = Build();
-        var mobile = SeedMobile(persistence, 0x1, mapId: 0, x: 100, y: 100);
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 15, 0); // sector (0, 0)
         index.AddOrUpdate(mobile);
 
-        persistence.Store<MobileEntity>().RemoveAsync(mobile.Id).WaitSync();
+        mobile.Position = new(400, 400, 0); // sector (25, 25)
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+        index.AddOrUpdate(mobile);
 
-        Assert.Empty(index.GetMobilesInRange(0, new(100, 100, 0), 18));
+        // Left and Changed are unique to the move; Entered also fired once on the initial spawn, so the
+        // move's entry is the later of the two.
+        var left = Assert.Single(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Equal((0, 0, 0), (left.MapId, left.SectorX, left.SectorY));
+
+        var entered = bus.Published.OfType<MobileEnteredSectorEvent>().Last();
+        Assert.Equal((0, 25, 25), (entered.MapId, entered.SectorX, entered.SectorY));
+
+        var changed = Assert.Single(bus.Published.OfType<MobileChangedSectorEvent>());
+        Assert.Equal((0, 0, 0), (changed.FromMapId, changed.FromSectorX, changed.FromSectorY));
+        Assert.Equal((0, 25, 25), (changed.ToMapId, changed.ToSectorX, changed.ToSectorY));
+    }
+
+    [Fact]
+    public void AddOrUpdate_SameSector_PublishesNoFurtherSectorEvents()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+
+        index.AddOrUpdate(mobile);
+        index.AddOrUpdate(mobile); // same tile, same sector
+
+        Assert.Single(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+    }
+
+    [Fact]
+    public void Remove_Mobile_PublishesLeftSector()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var mobile = SeedMobile(persistence, 0x1, 0, 100, 100);
+        index.AddOrUpdate(mobile);
+
+        index.Remove(mobile.Id);
+
+        var left = Assert.Single(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Equal(new(0x1), left.Mobile);
+        Assert.Equal((0, 6, 6), (left.MapId, left.SectorX, left.SectorY));
+    }
+
+    [Fact]
+    public void Items_ProduceNoSectorEvents()
+    {
+        var (index, persistence, bus) = BuildWithBus();
+        var item = SeedItem(persistence, 0x40000001, 0, 50, 50);
+
+        index.AddOrUpdate(item);
+        index.Remove(item.Id);
+
+        Assert.Empty(bus.Published.OfType<MobileEnteredSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileLeftSectorEvent>());
+        Assert.Empty(bus.Published.OfType<MobileChangedSectorEvent>());
+    }
+
+    private static (SpatialIndexService Index, FakePersistenceService Persistence) Build()
+    {
+        var (index, persistence, _) = BuildWithBus();
+
+        return (index, persistence);
+    }
+
+    private static (SpatialIndexService Index, FakePersistenceService Persistence, StubEventBus Bus) BuildWithBus()
+    {
+        var persistence = new FakePersistenceService();
+        var bus = new StubEventBus();
+
+        return (new(persistence, new StubLoopAffinity(), bus), persistence, bus);
+    }
+
+    private static ItemEntity SeedItem(FakePersistenceService persistence, uint serial, int mapId, int x, int y)
+    {
+        var item = new ItemEntity { Id = new(serial), MapId = mapId, Position = new(x, y, 0) };
+        persistence.Store<ItemEntity>().UpsertAsync(item).WaitSync();
+
+        return item;
+    }
+
+    private static MobileEntity SeedMobile(FakePersistenceService persistence, uint serial, int mapId, int x, int y)
+    {
+        var mobile = new MobileEntity { Id = new(serial), MapId = mapId, Position = new(x, y, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+
+        return mobile;
     }
 }

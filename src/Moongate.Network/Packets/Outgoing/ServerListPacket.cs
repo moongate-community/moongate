@@ -1,10 +1,10 @@
+using System.Net;
+using System.Text;
 using Moongate.Network.Attributes;
 using Moongate.Network.Helpers;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Types;
 using SquidStd.Network.Spans;
-using System.Net;
-using System.Text;
 
 namespace Moongate.Network.Packets.Outgoing;
 
