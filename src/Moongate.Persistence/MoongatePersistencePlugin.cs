@@ -70,6 +70,13 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             (entity, id) => entity.Id = id,
             new DefaultSerialGenerator()
         );
+        container.RegisterPersistedEntity<NpcMemoryEntity, Serial>(
+            "npc_memory",
+            1,
+            entity => entity.Id,
+            (entity, id) => entity.Id = id,
+            new DefaultSerialGenerator()
+        );
         container.RegisterPersistenceSeeder(async (service, token) =>
             {
                 var accountStore = service.GetStore<AccountEntity, Serial>();
