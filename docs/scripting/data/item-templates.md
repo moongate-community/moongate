@@ -89,7 +89,7 @@ Nested under `Equip:`.
 
 | Key | Type | Required / default | Meaning |
 |---|---|---|---|
-| `Layer` | `LayerType` enum | optional, default `None` (0) | The [paperdoll layer](../reference/enums.md#layer_type) this item equips to. Must be a defined member. Consumed by `CharacterService` to auto-equip starting items. |
+| `Layer` | `LayerType` enum | optional, default `None` (0) | The [paperdoll layer](../reference/enums.md#layer_type) this item equips to. Must be a defined member. Consumed by `CharacterService` to auto-equip [starting items](starting-items.md). |
 | `HitPoints` | `int?` | optional, default `null` | Durability. Must be non-negative when set. |
 | `StrengthReq` | `int?` | optional, default `null` | Strength required to equip. Must be non-negative. |
 | `DexterityReq` | `int?` | optional, default `null` | Dexterity required to equip. Must be non-negative. |
