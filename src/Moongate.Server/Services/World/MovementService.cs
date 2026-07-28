@@ -28,9 +28,6 @@ public sealed class MovementService : IMovementService
     private static readonly TimeSpan WalkInterval = TimeSpan.FromMilliseconds(400);
     private static readonly TimeSpan RunInterval = TimeSpan.FromMilliseconds(200);
 
-    // Classic UO client view range.
-    private const int ViewRange = 18;
-
     private readonly IMapTileService _mapTiles;
     private readonly IRegionService _regions;
     private readonly ISpatialIndexService _spatial;
@@ -200,6 +197,9 @@ public sealed class MovementService : IMovementService
         return true;
     }
 
+    private void Accept(PlayerSession session, MobileEntity mobile, byte sequence)
+        => session.Send(new MovementAckPacket(sequence, Notoriety.Resolve(mobile.Kills, mobile.Criminal)));
+
     private void Apply(MobileEntity mobile, MovementDecision decision)
     {
         var fromMapId = mobile.MapId;
@@ -222,14 +222,11 @@ public sealed class MovementService : IMovementService
         }
     }
 
-    private void Accept(PlayerSession session, MobileEntity mobile, byte sequence)
-        => session.Send(new MovementAckPacket(sequence, Notoriety.Resolve(mobile.Kills, mobile.Criminal)));
-
     private void Broadcast(MobileEntity mobile)
         => _world.SendToPlayersInRange(
             mobile.MapId,
             mobile.Position,
-            ViewRange,
+            PlayerSession.MaxViewRange,
             new UpdatePlayerPacket(
                 mobile.Id,
                 (ushort)mobile.Body,

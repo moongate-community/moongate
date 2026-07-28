@@ -16,6 +16,14 @@ public sealed class PlayerSession : ISeedTarget
 {
     private const int InitialWriteBufferSize = 1024;
 
+    /// <summary>Smallest view range a client may ask for, in tiles.</summary>
+    public const int MinViewRange = 5;
+
+    /// <summary>
+    /// Largest view range a client may ask for, in tiles, and the radius the server broadcasts to.
+    /// </summary>
+    public const int MaxViewRange = 18;
+
     private readonly ILogger _logger = Log.ForContext<PlayerSession>();
     private readonly SquidStdTcpClient _client;
     private readonly Lock _stateSync = new();
@@ -41,6 +49,13 @@ public sealed class PlayerSession : ISeedTarget
     public string? Language { get; private set; }
 
     /// <summary>
+    /// The update range this client asked for via 0xC8, in tiles, always within
+    /// <see cref="MinViewRange" />..<see cref="MaxViewRange" />. Starts at the maximum: the client
+    /// sees everything until it says otherwise.
+    /// </summary>
+    public int ViewRange { get; private set; } = MaxViewRange;
+
+    /// <summary>
     /// The last movement sequence number accepted from this client, or null before the first accepted move (or after a
     /// resync).
     /// </summary>
@@ -62,6 +77,14 @@ public sealed class PlayerSession : ISeedTarget
         Compression = new();
         client.AddMiddleware(Compression);
     }
+
+    /// <summary>
+    /// Holds a requested view range between <see cref="MinViewRange" /> and
+    /// <see cref="MaxViewRange" />. Static and pure so the rule can be tested without a live
+    /// session, which needs a socket.
+    /// </summary>
+    public static int ClampViewRange(int requested)
+        => Math.Clamp(requested, MinViewRange, MaxViewRange);
 
     /// <summary>Closes the underlying connection, dropping this session (fire-and-forget).</summary>
     public void Disconnect()
@@ -168,6 +191,15 @@ public sealed class PlayerSession : ISeedTarget
         lock (_stateSync)
         {
             State = state;
+        }
+    }
+
+    /// <summary>Records the view range reported via 0xC8, clamped to the range the server allows.</summary>
+    public void SetViewRange(int range)
+    {
+        lock (_stateSync)
+        {
+            ViewRange = ClampViewRange(range);
         }
     }
 
