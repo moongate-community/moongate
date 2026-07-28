@@ -55,27 +55,33 @@ internal sealed class LuaBrainValueConverter
                 break;
             case NpcBrainEventType.SpeechHeard:
                 SetSpeechFields(table, brainEvent);
+
                 break;
             case NpcBrainEventType.MobileEnteredRange:
             case NpcBrainEventType.MobileLeftRange:
                 SetMobileFields(table, brainEvent);
                 SetPosition(table, "from_position", brainEvent.FromPosition);
                 SetPosition(table, "to_position", brainEvent.ToPosition);
+
                 break;
             case NpcBrainEventType.MobileMoved:
                 SetMobileFields(table, brainEvent);
                 SetPosition(table, "from_position", brainEvent.FromPosition);
                 SetPosition(table, "to_position", brainEvent.ToPosition);
+
                 break;
             case NpcBrainEventType.Attacked:
                 SetSubjectSerial(table, "attacker_id", brainEvent.Mobile);
+
                 break;
             case NpcBrainEventType.Damage:
                 SetSubjectSerial(table, "attacker_id", brainEvent.Mobile);
                 table.Set("amount", DynValue.NewNumber(brainEvent.Amount));
+
                 break;
             case NpcBrainEventType.Death:
                 SetSubjectSerial(table, "killer_id", brainEvent.Mobile);
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(brainEvent), brainEvent.Type, null);
@@ -83,6 +89,57 @@ internal sealed class LuaBrainValueConverter
 
         return table;
     }
+
+    private void SetMobileFields(Table table, NpcBrainEvent brainEvent)
+    {
+        var mobile = brainEvent.Mobile;
+        SetSubjectSerial(table, "mobile_id", mobile);
+
+        if (mobile is null)
+        {
+            table.Set("mobile_name", DynValue.Nil);
+            table.Set("mobile_is_player", DynValue.Nil);
+
+            return;
+        }
+
+        table.Set("mobile_name", DynValue.NewString(mobile.Name));
+        table.Set("mobile_is_player", DynValue.NewBoolean(mobile.IsPlayer));
+    }
+
+    private void SetOptionalSerial(Table table, string name, Serial serial)
+        => table.Set(name, serial == Serial.Zero ? DynValue.Nil : DynValue.NewNumber(serial.Value));
+
+    private void SetPosition(Table table, string name, Point3D? position)
+        => table.Set(name, position.HasValue ? DynValue.NewTable(ToPosition(position.Value)) : DynValue.Nil);
+
+    private void SetSpeechFields(Table table, NpcBrainEvent brainEvent)
+    {
+        var speaker = brainEvent.Mobile;
+        SetSubjectSerial(table, "speaker_id", speaker);
+
+        if (speaker is null)
+        {
+            table.Set("speaker_name", DynValue.Nil);
+            table.Set("speaker_is_player", DynValue.Nil);
+        }
+        else
+        {
+            table.Set("speaker_name", DynValue.NewString(speaker.Name));
+            table.Set("speaker_is_player", DynValue.NewBoolean(speaker.IsPlayer));
+        }
+
+        table.Set(
+            "speech_type",
+            brainEvent.SpeechType.HasValue
+                ? DynValue.NewString(brainEvent.SpeechType.Value.ToString().ToLowerInvariant())
+                : DynValue.Nil
+        );
+        table.Set("text", brainEvent.Text is null ? DynValue.Nil : DynValue.NewString(brainEvent.Text));
+    }
+
+    private static void SetSubjectSerial(Table table, string name, BrainMobileSnapshot? mobile)
+        => table.Set(name, mobile is null ? DynValue.Nil : DynValue.NewNumber(mobile.Id.Value));
 
     private Table ToMobileSnapshot(BrainMobileSnapshot mobile)
     {
@@ -115,54 +172,4 @@ internal sealed class LuaBrainValueConverter
 
         return table;
     }
-
-    private void SetMobileFields(Table table, NpcBrainEvent brainEvent)
-    {
-        var mobile = brainEvent.Mobile;
-        SetSubjectSerial(table, "mobile_id", mobile);
-
-        if (mobile is null)
-        {
-            table.Set("mobile_name", DynValue.Nil);
-            table.Set("mobile_is_player", DynValue.Nil);
-            return;
-        }
-
-        table.Set("mobile_name", DynValue.NewString(mobile.Name));
-        table.Set("mobile_is_player", DynValue.NewBoolean(mobile.IsPlayer));
-    }
-
-    private void SetPosition(Table table, string name, Point3D? position)
-        => table.Set(name, position.HasValue ? DynValue.NewTable(ToPosition(position.Value)) : DynValue.Nil);
-
-    private void SetOptionalSerial(Table table, string name, Serial serial)
-        => table.Set(name, serial == Serial.Zero ? DynValue.Nil : DynValue.NewNumber(serial.Value));
-
-    private void SetSpeechFields(Table table, NpcBrainEvent brainEvent)
-    {
-        var speaker = brainEvent.Mobile;
-        SetSubjectSerial(table, "speaker_id", speaker);
-
-        if (speaker is null)
-        {
-            table.Set("speaker_name", DynValue.Nil);
-            table.Set("speaker_is_player", DynValue.Nil);
-        }
-        else
-        {
-            table.Set("speaker_name", DynValue.NewString(speaker.Name));
-            table.Set("speaker_is_player", DynValue.NewBoolean(speaker.IsPlayer));
-        }
-
-        table.Set(
-            "speech_type",
-            brainEvent.SpeechType.HasValue
-                ? DynValue.NewString(brainEvent.SpeechType.Value.ToString().ToLowerInvariant())
-                : DynValue.Nil
-        );
-        table.Set("text", brainEvent.Text is null ? DynValue.Nil : DynValue.NewString(brainEvent.Text));
-    }
-
-    private static void SetSubjectSerial(Table table, string name, BrainMobileSnapshot? mobile)
-        => table.Set(name, mobile is null ? DynValue.Nil : DynValue.NewNumber(mobile.Id.Value));
 }

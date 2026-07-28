@@ -16,11 +16,28 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/accounts",
-            new { username, password }
-        );
+                           "/api/v1/admin/accounts",
+                           new { username, password }
+                       );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_LoopNeverAnswers_Is503()
+    {
+        await using var server = await TestApiServer.StartAsync(
+                                     loop: new StubGameLoopContext(false),
+                                     deleteTimeout: TimeSpan.FromMilliseconds(50)
+                                 );
+        await server.AuthenticateAsync();
+
+        var response = await server.Client.PostAsJsonAsync(
+                           "/api/v1/admin/accounts",
+                           new { username = "alice", password = "secret" }
+                       );
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
     }
 
     [Fact]
@@ -30,9 +47,9 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/accounts",
-            new { username = "alice", password = "secret", email = "a@b.c", level = "Player" }
-        );
+                           "/api/v1/admin/accounts",
+                           new { username = "alice", password = "secret", email = "a@b.c", level = "Player" }
+                       );
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         Assert.Equal("/api/v1/admin/accounts/alice", response.Headers.Location?.ToString());
@@ -70,32 +87,15 @@ public class AccountEndpointsTests
     }
 
     [Fact]
-    public async Task Create_LoopNeverAnswers_Is503()
-    {
-        await using var server = await TestApiServer.StartAsync(
-            loop: new StubGameLoopContext(false),
-            deleteTimeout: TimeSpan.FromMilliseconds(50)
-        );
-        await server.AuthenticateAsync();
-
-        var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/accounts",
-            new { username = "alice", password = "secret" }
-        );
-
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
-    }
-
-    [Fact]
     public async Task Create_TakenUsername_Is409()
     {
         await using var server = await TestApiServer.StartAsync();
         await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/accounts",
-            new { username = "tom", password = "secret" }
-        );
+                           "/api/v1/admin/accounts",
+                           new { username = "tom", password = "secret" }
+                       );
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
@@ -108,9 +108,9 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PostAsJsonAsync(
-            "/api/v1/admin/accounts",
-            new { username = "alice", password = "secret", level = "Wizard" }
-        );
+                           "/api/v1/admin/accounts",
+                           new { username = "alice", password = "secret", level = "Wizard" }
+                       );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Null(server.Accounts.GetByUsername("alice"));
@@ -149,9 +149,9 @@ public class AccountEndpointsTests
     public async Task Delete_LoopNeverAnswers_Is503()
     {
         await using var server = await TestApiServer.StartAsync(
-            loop: new StubGameLoopContext(false),
-            deleteTimeout: TimeSpan.FromMilliseconds(50)
-        );
+                                     loop: new StubGameLoopContext(false),
+                                     deleteTimeout: TimeSpan.FromMilliseconds(50)
+                                 );
         await server.AuthenticateAsync();
 
         var response = await server.Client.DeleteAsync("/api/v1/admin/accounts/tom");
@@ -226,17 +226,6 @@ public class AccountEndpointsTests
     }
 
     [Fact]
-    public async Task List_WithoutAToken_Is401()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        Assert.Equal(
-            HttpStatusCode.Unauthorized,
-            (await server.Client.GetAsync("/api/v1/admin/accounts")).StatusCode
-        );
-    }
-
-    [Fact]
     public async Task List_WithPlayerToken_Is403()
     {
         await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
@@ -244,6 +233,17 @@ public class AccountEndpointsTests
 
         Assert.Equal(
             HttpStatusCode.Forbidden,
+            (await server.Client.GetAsync("/api/v1/admin/accounts")).StatusCode
+        );
+    }
+
+    [Fact]
+    public async Task List_WithoutAToken_Is401()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
             (await server.Client.GetAsync("/api/v1/admin/accounts")).StatusCode
         );
     }
@@ -272,9 +272,9 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
-            "/api/v1/admin/accounts/tom",
-            new { isActive = false }
-        );
+                           "/api/v1/admin/accounts/tom",
+                           new { isActive = false }
+                       );
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
@@ -332,9 +332,9 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
-            "/api/v1/admin/accounts/nobody",
-            new { isActive = false }
-        );
+                           "/api/v1/admin/accounts/nobody",
+                           new { isActive = false }
+                       );
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
@@ -346,9 +346,9 @@ public class AccountEndpointsTests
         await server.AuthenticateAsync();
 
         var response = await server.Client.PatchAsJsonAsync(
-            "/api/v1/admin/accounts/tom",
-            new { level = "Wizard", isActive = false }
-        );
+                           "/api/v1/admin/accounts/tom",
+                           new { level = "Wizard", isActive = false }
+                       );
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
 

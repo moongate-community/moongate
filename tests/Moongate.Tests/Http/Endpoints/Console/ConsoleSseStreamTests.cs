@@ -1,7 +1,5 @@
 using System.Net.ServerSentEvents;
-using Moongate.Http.Plugin.Data.Console;
 using Moongate.Http.Plugin.Services.Console;
-using Xunit;
 
 namespace Moongate.Tests.Http.Endpoints.Console;
 
@@ -14,11 +12,12 @@ public class ConsoleSseStreamTests
         var (id, reader) = registry.Open();
         Assert.True(registry.TryGetWriter(id, out var writer));
 
-        writer.TryWrite(new ConsoleStreamEvent("line", "hello"));
-        writer.TryWrite(new ConsoleStreamEvent("done", "broadcast hello"));
+        writer.TryWrite(new("line", "hello"));
+        writer.TryWrite(new("done", "broadcast hello"));
         registry.Close(id); // completes the channel so the enumeration ends
 
         var items = new List<SseItem<string>>();
+
         await foreach (var item in ConsoleSseStream.From(id, reader, CancellationToken.None))
         {
             items.Add(item);

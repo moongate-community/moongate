@@ -3,17 +3,6 @@ namespace Moongate.Tests.Support;
 public class MutableTimeProviderTests
 {
     [Fact]
-    public void GetElapsedTime_AfterAdvance_ReportsDeterministicDuration()
-    {
-        var time = new MutableTimeProvider(new(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        var started = time.GetTimestamp();
-
-        time.Advance(TimeSpan.FromMilliseconds(25));
-
-        Assert.Equal(TimeSpan.FromMilliseconds(25), time.GetElapsedTime(started));
-    }
-
-    [Fact]
     public void Advance_OneShotTimer_FiresAtDueTimeOnce()
     {
         var time = new MutableTimeProvider(new(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
@@ -76,5 +65,16 @@ public class MutableTimeProviderTests
 
         Assert.Equal(0, callbackCount);
         Assert.False(timer.Change(TimeSpan.Zero, Timeout.InfiniteTimeSpan));
+    }
+
+    [Fact]
+    public void GetElapsedTime_AfterAdvance_ReportsDeterministicDuration()
+    {
+        var time = new MutableTimeProvider(new(2026, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        var started = time.GetTimestamp();
+
+        time.Advance(TimeSpan.FromMilliseconds(25));
+
+        Assert.Equal(TimeSpan.FromMilliseconds(25), time.GetElapsedTime(started));
     }
 }

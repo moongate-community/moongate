@@ -12,31 +12,19 @@ public class AuthRenewEndpointTests
     private const string Route = "/api/v1/auth/renew";
 
     [Fact]
-    public async Task Renew_WithoutAToken_Is401()
+    public async Task Renew_ForADeactivatedAccount_Is401()
     {
-        await using var server = await TestApiServer.StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.PostAsync(Route, null)).StatusCode);
-    }
-
-    [Fact]
-    public async Task Renew_WithAValidToken_ReturnsAFreshToken()
-    {
+        // Coarse revocation: the account is re-read rather than trusted from the claims, so suspending it
+        // stops renewals even though the token it presents is still cryptographically valid.
         var clock = MutableTimeProvider.StartingNow();
         await using var server = await TestApiServer.StartAsync(clock: clock);
         await server.AuthenticateAsync();
 
-        // Move on inside the session so the new token's expiry genuinely differs from the old one.
-        clock.Advance(TimeSpan.FromMinutes(30));
+        Assert.True(server.Accounts.SetActive("tom", false));
 
-        var response = await server.Client.PostAsync(Route, null);
+        clock.Advance(TimeSpan.FromMinutes(5));
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-
-        var renewed = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
-
-        Assert.False(string.IsNullOrWhiteSpace(renewed.Token));
-        Assert.Equal(clock.GetUtcNow().AddMinutes(60), renewed.ExpiresAt);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.PostAsync(Route, null)).StatusCode);
     }
 
     [Fact]
@@ -53,7 +41,7 @@ public class AuthRenewEndpointTests
         clock.Advance(TimeSpan.FromMinutes(45));
 
         var renewed = (await (await server.Client.PostAsync(Route, null)).Content
-            .ReadFromJsonAsync<ApiTokenResult>()).Token;
+                                                                         .ReadFromJsonAsync<ApiTokenResult>()).Token;
 
         Assert.Equal(loginAuthTime, AuthTimeOf(renewed));
     }
@@ -70,22 +58,6 @@ public class AuthRenewEndpointTests
         Assert.Equal(HttpStatusCode.OK, (await server.Client.PostAsync(Route, null)).StatusCode);
 
         clock.Advance(TimeSpan.FromHours(12));
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.PostAsync(Route, null)).StatusCode);
-    }
-
-    [Fact]
-    public async Task Renew_ForADeactivatedAccount_Is401()
-    {
-        // Coarse revocation: the account is re-read rather than trusted from the claims, so suspending it
-        // stops renewals even though the token it presents is still cryptographically valid.
-        var clock = MutableTimeProvider.StartingNow();
-        await using var server = await TestApiServer.StartAsync(clock: clock);
-        await server.AuthenticateAsync();
-
-        Assert.True(server.Accounts.SetActive("tom", false));
-
-        clock.Advance(TimeSpan.FromMinutes(5));
 
         Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.PostAsync(Route, null)).StatusCode);
     }
@@ -109,6 +81,34 @@ public class AuthRenewEndpointTests
         server.Client.DefaultRequestHeaders.Authorization = new("Bearer", renewed.Token);
 
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Renew_WithAValidToken_ReturnsAFreshToken()
+    {
+        var clock = MutableTimeProvider.StartingNow();
+        await using var server = await TestApiServer.StartAsync(clock: clock);
+        await server.AuthenticateAsync();
+
+        // Move on inside the session so the new token's expiry genuinely differs from the old one.
+        clock.Advance(TimeSpan.FromMinutes(30));
+
+        var response = await server.Client.PostAsync(Route, null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var renewed = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
+
+        Assert.False(string.IsNullOrWhiteSpace(renewed.Token));
+        Assert.Equal(clock.GetUtcNow().AddMinutes(60), renewed.ExpiresAt);
+    }
+
+    [Fact]
+    public async Task Renew_WithoutAToken_Is401()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.PostAsync(Route, null)).StatusCode);
     }
 
     /// <summary>Reads the raw <c>auth_time</c> claim out of a token without validating it.</summary>

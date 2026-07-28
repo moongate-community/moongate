@@ -7,41 +7,26 @@ namespace Moongate.Tests.Server.Notifications;
 public sealed class NotificationTemplatesLoaderTests
 {
     [Fact]
-    public async Task LoadAsync_WhenMissing_SeedsTheDefaultsAndRegistersThem()
+    public async Task LoadAsync_BrokenTemplate_IsReportedAndTheRestStillLoad()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        var log = Path.Combine(directories.RegisterDirectory("notification"), "templates", "log");
+        Directory.CreateDirectory(log);
+        File.WriteAllText(Path.Combine(log, "broken.mgtmpl"), "{{ if }}");
+        File.WriteAllText(Path.Combine(log, "fine.mgtmpl"), "ok");
+
         var templates = new NotificationTemplateService();
         var loader = new NotificationTemplatesLoader(templates, directories);
 
         try
         {
+            // One bad file must not stop the shard from booting, nor hide the good templates.
             await loader.LoadAsync();
 
-            var templatesDirectory = Path.Combine(directories.GetPath("notification"), "templates");
-
-            // Seeded as directories-per-channel, with the dot-free id intact.
-            Assert.True(File.Exists(Path.Combine(templatesDirectory, "log", "account_verification.mgtmpl")));
-            Assert.True(File.Exists(Path.Combine(templatesDirectory, "email", "account_verification.mgtmpl")));
-
-            Assert.Equal(2, templates.Count);
-            var model = new
-            {
-                Username = "tom",
-                Email = "t@x",
-                Token = "abc+123",
-                Website = "https://shard.example/moongate/",
-                VerificationUrl = "https://shard.example/moongate/verify?token=abc%2B123",
-                ShardName = "Britannia"
-            };
-
-            var log = templates.Render("log", "account_verification", model);
-            var email = templates.Render("email", "account_verification", model);
-
-            Assert.NotNull(log);
-            Assert.NotNull(email);
-            Assert.Contains(model.VerificationUrl, log.Body, StringComparison.Ordinal);
-            Assert.Contains(model.VerificationUrl, email.Body, StringComparison.Ordinal);
+            Assert.Equal(1, templates.Count);
+            Assert.NotNull(templates.Render("log", "fine", new { }));
+            Assert.Null(templates.Render("log", "broken", new { }));
         }
         finally
         {
@@ -78,26 +63,41 @@ public sealed class NotificationTemplatesLoaderTests
     }
 
     [Fact]
-    public async Task LoadAsync_BrokenTemplate_IsReportedAndTheRestStillLoad()
+    public async Task LoadAsync_WhenMissing_SeedsTheDefaultsAndRegistersThem()
     {
         var root = NewRoot();
         var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        var log = Path.Combine(directories.RegisterDirectory("notification"), "templates", "log");
-        Directory.CreateDirectory(log);
-        File.WriteAllText(Path.Combine(log, "broken.mgtmpl"), "{{ if }}");
-        File.WriteAllText(Path.Combine(log, "fine.mgtmpl"), "ok");
-
         var templates = new NotificationTemplateService();
         var loader = new NotificationTemplatesLoader(templates, directories);
 
         try
         {
-            // One bad file must not stop the shard from booting, nor hide the good templates.
             await loader.LoadAsync();
 
-            Assert.Equal(1, templates.Count);
-            Assert.NotNull(templates.Render("log", "fine", new { }));
-            Assert.Null(templates.Render("log", "broken", new { }));
+            var templatesDirectory = Path.Combine(directories.GetPath("notification"), "templates");
+
+            // Seeded as directories-per-channel, with the dot-free id intact.
+            Assert.True(File.Exists(Path.Combine(templatesDirectory, "log", "account_verification.mgtmpl")));
+            Assert.True(File.Exists(Path.Combine(templatesDirectory, "email", "account_verification.mgtmpl")));
+
+            Assert.Equal(2, templates.Count);
+            var model = new
+            {
+                Username = "tom",
+                Email = "t@x",
+                Token = "abc+123",
+                Website = "https://shard.example/moongate/",
+                VerificationUrl = "https://shard.example/moongate/verify?token=abc%2B123",
+                ShardName = "Britannia"
+            };
+
+            var log = templates.Render("log", "account_verification", model);
+            var email = templates.Render("email", "account_verification", model);
+
+            Assert.NotNull(log);
+            Assert.NotNull(email);
+            Assert.Contains(model.VerificationUrl, log.Body, StringComparison.Ordinal);
+            Assert.Contains(model.VerificationUrl, email.Body, StringComparison.Ordinal);
         }
         finally
         {

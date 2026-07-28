@@ -82,6 +82,58 @@ public static class Animations
         => AnimationsUopLoader.GetAllUopBodyIds();
 
     /// <summary>
+    /// Returns Animation count in given anim file
+    /// </summary>
+    /// <param name="fileType"></param>
+    /// <returns></returns>
+    public static int GetAnimCount(int fileType)
+    {
+        switch (fileType)
+        {
+            case 1:
+            default:
+                return 400 + (int)(_fileIndex.IdxLength - 35000 * 12) / (12 * 175);
+            case 2:
+                return 200 + (int)(_fileIndex2.IdxLength - 22000 * 12) / (12 * 65);
+            case 3:
+                return 400 + (int)(_fileIndex3.IdxLength - 35000 * 12) / (12 * 175);
+            case 4:
+                return 400 + (int)(_fileIndex4.IdxLength - 35000 * 12) / (12 * 175);
+            case 5:
+                return 400 + (int)(_fileIndex5.IdxLength - 35000 * 12) / (12 * 175);
+            case 6:
+                return 400 + (int)(_fileIndex6.IdxLength - 35000 * 12) / (12 * 175);
+        }
+    }
+
+    /// <summary>
+    /// Action count of given Body in given anim file.
+    /// When <c>mobtypes.txt</c> is loaded, the count is taken from the
+    /// body's mobtype category; otherwise falls back to the historical
+    /// body-id range heuristic.
+    /// </summary>
+    /// <param name="body"></param>
+    /// <param name="fileType"></param>
+    /// <returns></returns>
+    public static int GetAnimLength(int body, int fileType)
+    {
+        // The physical idx block reserved for a body is fixed by the id-range
+        // stride used in GetFileIndex. Never report more actions than that
+        // block holds: callers iterate this count and read idx records at
+        // index + action*5, so a count larger than the block (e.g. a body
+        // classed HUMAN/35 in mobtypes.txt but sitting in a 110-record/
+        // 22-action id range) would walk into the next body's records.
+        var capacity = GetActionCapacity(body, fileType);
+
+        if (MobTypes.IsLoaded)
+        {
+            return Math.Min(MobTypes.GetActionCount(GetBodyMobType(body, fileType)), capacity);
+        }
+
+        return Math.Min(GetAnimLengthLegacy(body, fileType), capacity);
+    }
+
+    /// <summary>
     /// Returns animation frames
     /// </summary>
     /// <param name="body"></param>
@@ -256,58 +308,6 @@ public static class Animations
 
             return frames;
         }
-    }
-
-    /// <summary>
-    /// Returns Animation count in given anim file
-    /// </summary>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
-    public static int GetAnimCount(int fileType)
-    {
-        switch (fileType)
-        {
-            case 1:
-            default:
-                return 400 + (int)(_fileIndex.IdxLength - 35000 * 12) / (12 * 175);
-            case 2:
-                return 200 + (int)(_fileIndex2.IdxLength - 22000 * 12) / (12 * 65);
-            case 3:
-                return 400 + (int)(_fileIndex3.IdxLength - 35000 * 12) / (12 * 175);
-            case 4:
-                return 400 + (int)(_fileIndex4.IdxLength - 35000 * 12) / (12 * 175);
-            case 5:
-                return 400 + (int)(_fileIndex5.IdxLength - 35000 * 12) / (12 * 175);
-            case 6:
-                return 400 + (int)(_fileIndex6.IdxLength - 35000 * 12) / (12 * 175);
-        }
-    }
-
-    /// <summary>
-    /// Action count of given Body in given anim file.
-    /// When <c>mobtypes.txt</c> is loaded, the count is taken from the
-    /// body's mobtype category; otherwise falls back to the historical
-    /// body-id range heuristic.
-    /// </summary>
-    /// <param name="body"></param>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
-    public static int GetAnimLength(int body, int fileType)
-    {
-        // The physical idx block reserved for a body is fixed by the id-range
-        // stride used in GetFileIndex. Never report more actions than that
-        // block holds: callers iterate this count and read idx records at
-        // index + action*5, so a count larger than the block (e.g. a body
-        // classed HUMAN/35 in mobtypes.txt but sitting in a 110-record/
-        // 22-action id range) would walk into the next body's records.
-        var capacity = GetActionCapacity(body, fileType);
-
-        if (MobTypes.IsLoaded)
-        {
-            return Math.Min(MobTypes.GetActionCount(GetBodyMobType(body, fileType)), capacity);
-        }
-
-        return Math.Min(GetAnimLengthLegacy(body, fileType), capacity);
     }
 
     /// <summary>

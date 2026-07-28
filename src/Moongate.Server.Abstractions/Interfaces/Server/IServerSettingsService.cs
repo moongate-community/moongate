@@ -10,15 +10,15 @@ namespace Moongate.Server.Abstractions.Interfaces.Server;
 /// </summary>
 public interface IServerSettingsService
 {
+    /// <summary>Removes the asset metadata for a slot, if any.</summary>
+    void ClearAsset(ServerAssetSlotType slot);
+
     /// <summary>Returns the settings, creating the singleton with safe defaults on first access.</summary>
     ServerSettingsEntity Get();
-
-    /// <summary>Applies a partial update; a null field on <paramref name="update" /> is left unchanged.</summary>
-    void Update(ServerSettingsUpdate update);
 
     /// <summary>Records the file metadata for a slot, replacing any previous asset in it.</summary>
     void SetAsset(ServerAssetSlotType slot, ServerAssetMeta meta);
 
-    /// <summary>Removes the asset metadata for a slot, if any.</summary>
-    void ClearAsset(ServerAssetSlotType slot);
+    /// <summary>Applies a partial update; a null field on <paramref name="update" /> is left unchanged.</summary>
+    void Update(ServerSettingsUpdate update);
 }

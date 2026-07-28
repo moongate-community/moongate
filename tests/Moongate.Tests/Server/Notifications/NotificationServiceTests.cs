@@ -7,6 +7,43 @@ namespace Moongate.Tests.Server.Notifications;
 public sealed class NotificationServiceTests
 {
     [Fact]
+    public void LogChannel_IdentifiesItselfAsLog()
+        => Assert.Equal("log", new LogNotificationChannel().Id);
+
+    [Fact]
+    public void Notify_GivesUpAfterMaxAttempts_WithoutThrowing()
+    {
+        var templates = new NotificationTemplateService();
+        templates.Register("test", "greet", "hi");
+        var channel = new RecordingNotificationChannel(failuresBeforeSuccess: 99);
+        var service = new NotificationService(
+            templates,
+            [channel],
+            new StubJobSystem(),
+            new() { MaxAttempts = 2, RetryDelaySeconds = 0 }
+        );
+
+        // The job runs inline here, so an escaping exception would fail this test — which is the point:
+        // on a real worker thread it would be an unobserved crash.
+        service.Notify("greet", new("test", "somewhere"), new { });
+
+        Assert.Equal(2, channel.Attempts);
+        Assert.Empty(channel.Sent);
+    }
+
+    [Fact]
+    public void Notify_MissingTemplate_DropsWithoutSending()
+    {
+        var templates = new NotificationTemplateService();
+        var channel = new RecordingNotificationChannel();
+        var service = new NotificationService(templates, [channel], new StubJobSystem(), new());
+
+        service.Notify("absent", new("test", "somewhere"), new { });
+
+        Assert.Equal(0, channel.Attempts);
+    }
+
+    [Fact]
     public void Notify_RendersTheTemplateAndSendsItOnTheNamedChannel()
     {
         var templates = new NotificationTemplateService();
@@ -21,6 +58,25 @@ public sealed class NotificationServiceTests
         var (recipient, content) = Assert.Single(channel.Sent);
         Assert.Equal("tom@example.com", recipient.Address);
         Assert.Equal("Hello tom", content.Body.Trim());
+    }
+
+    [Fact]
+    public void Notify_RetriesUntilTheChannelSucceeds()
+    {
+        var templates = new NotificationTemplateService();
+        templates.Register("test", "greet", "hi");
+        var channel = new RecordingNotificationChannel(failuresBeforeSuccess: 2);
+        var service = new NotificationService(
+            templates,
+            [channel],
+            new StubJobSystem(),
+            new() { MaxAttempts = 3, RetryDelaySeconds = 0 }
+        );
+
+        service.Notify("greet", new("test", "somewhere"), new { });
+
+        Assert.Equal(3, channel.Attempts);
+        Assert.Single(channel.Sent);
     }
 
     [Fact]
@@ -52,60 +108,4 @@ public sealed class NotificationServiceTests
         Assert.Equal(0, jobs.Scheduled);
         Assert.Empty(channel.Sent);
     }
-
-    [Fact]
-    public void Notify_MissingTemplate_DropsWithoutSending()
-    {
-        var templates = new NotificationTemplateService();
-        var channel = new RecordingNotificationChannel();
-        var service = new NotificationService(templates, [channel], new StubJobSystem(), new());
-
-        service.Notify("absent", new("test", "somewhere"), new { });
-
-        Assert.Equal(0, channel.Attempts);
-    }
-
-    [Fact]
-    public void Notify_RetriesUntilTheChannelSucceeds()
-    {
-        var templates = new NotificationTemplateService();
-        templates.Register("test", "greet", "hi");
-        var channel = new RecordingNotificationChannel(failuresBeforeSuccess: 2);
-        var service = new NotificationService(
-            templates,
-            [channel],
-            new StubJobSystem(),
-            new() { MaxAttempts = 3, RetryDelaySeconds = 0 }
-        );
-
-        service.Notify("greet", new("test", "somewhere"), new { });
-
-        Assert.Equal(3, channel.Attempts);
-        Assert.Single(channel.Sent);
-    }
-
-    [Fact]
-    public void Notify_GivesUpAfterMaxAttempts_WithoutThrowing()
-    {
-        var templates = new NotificationTemplateService();
-        templates.Register("test", "greet", "hi");
-        var channel = new RecordingNotificationChannel(failuresBeforeSuccess: 99);
-        var service = new NotificationService(
-            templates,
-            [channel],
-            new StubJobSystem(),
-            new() { MaxAttempts = 2, RetryDelaySeconds = 0 }
-        );
-
-        // The job runs inline here, so an escaping exception would fail this test — which is the point:
-        // on a real worker thread it would be an unobserved crash.
-        service.Notify("greet", new("test", "somewhere"), new { });
-
-        Assert.Equal(2, channel.Attempts);
-        Assert.Empty(channel.Sent);
-    }
-
-    [Fact]
-    public void LogChannel_IdentifiesItselfAsLog()
-        => Assert.Equal("log", new LogNotificationChannel().Id);
 }

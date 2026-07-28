@@ -18,15 +18,37 @@ public sealed class RecordingNpcBrainRuntime : INpcBrainRuntime
 
     public List<(Serial MobileId, string BrainId)> BindCalls { get; } = [];
 
-    public List<(Serial MobileId, NpcBrainHookType Hook, BrainContext Context, NpcBrainEvent? Event)> Invocations { get; } = [];
+    public List<(Serial MobileId, NpcBrainHookType Hook, BrainContext Context, NpcBrainEvent? Event)> Invocations { get; } =
+        [];
 
     public List<Serial> ResetCalls { get; } = [];
 
     public List<Serial> UnbindCalls { get; } = [];
 
     public Func<Serial, NpcBrainHookType, BrainContext, NpcBrainEvent?, NpcBrainInvocationResult>?
-        InvocationHandler
-    { get; set; }
+        InvocationHandler { get; set; }
+
+    public NpcBrainInvocationResult Invoke(
+        Serial mobileId,
+        NpcBrainHookType hook,
+        BrainContext context,
+        NpcBrainEvent? brainEvent = null
+    )
+    {
+        Invocations.Add((mobileId, hook, context, brainEvent));
+
+        if (InvocationHandler is not null)
+        {
+            return InvocationHandler(mobileId, hook, context, brainEvent);
+        }
+
+        return Results.TryDequeue(out var result)
+                   ? result
+                   : NpcBrainInvocationResult.Succeeded(null);
+    }
+
+    public void Reset(Serial mobileId)
+        => ResetCalls.Add(mobileId);
 
     public bool TryBind(Serial mobileId, string brainId, out BrainDescriptor? descriptor, out string? error)
     {
@@ -36,6 +58,7 @@ public sealed class RecordingNpcBrainRuntime : INpcBrainRuntime
         {
             descriptor = null;
             error = $"Brain '{brainId}' is unavailable.";
+
             return false;
         }
 
@@ -53,40 +76,18 @@ public sealed class RecordingNpcBrainRuntime : INpcBrainRuntime
                Descriptors.TryGetValue(brainId, out descriptor);
     }
 
-    public NpcBrainInvocationResult Invoke(
-        Serial mobileId,
-        NpcBrainHookType hook,
-        BrainContext context,
-        NpcBrainEvent? brainEvent = null
-    )
-    {
-        Invocations.Add((mobileId, hook, context, brainEvent));
-
-        if (InvocationHandler is not null)
-        {
-            return InvocationHandler(mobileId, hook, context, brainEvent);
-        }
-
-        return Results.TryDequeue(out var result)
-            ? result
-            : NpcBrainInvocationResult.Succeeded(null);
-    }
-
     public bool TryReload(string brainId, out BrainDescriptor? descriptor, out string? error)
     {
         if (Descriptors.TryGetValue(brainId, out descriptor))
         {
             error = null;
+
             return true;
         }
 
         error = $"Brain '{brainId}' is unavailable.";
-        return false;
-    }
 
-    public void Reset(Serial mobileId)
-    {
-        ResetCalls.Add(mobileId);
+        return false;
     }
 
     public void Unbind(Serial mobileId)

@@ -25,8 +25,131 @@ public class ConsoleAdminIntegrationTests
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add(text);
 
-        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
+        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
+    }
+
+    [Fact]
+    public async Task GmLogsInAndBroadcasts()
+    {
+        var accounts = new SeededAccountService();
+        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
+        var (service, chat) = Build(accounts);
+        await service.StartAsync();
+
+        try
         {
+            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
+
+            using (client)
+            {
+                await LoginAsync(reader, writer, "gm", "secret");
+                await writer.WriteLineAsync("broadcast hello world");
+
+                await ReadUntilAsync(reader, "Broadcast sent.");
+                Assert.Equal("hello world", Assert.Single(chat.Broadcasts));
+            }
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task HelpListsBroadcast()
+    {
+        var accounts = new SeededAccountService();
+        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
+        var (service, _) = Build(accounts);
+        await service.StartAsync();
+
+        try
+        {
+            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
+
+            using (client)
+            {
+                await LoginAsync(reader, writer, "gm", "secret");
+                await writer.WriteLineAsync("help");
+                await ReadUntilAsync(reader, "broadcast");
+            }
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task PlayerLevelIsRejected()
+    {
+        var accounts = new SeededAccountService();
+        accounts.Seed("player", "secret", AccountLevelType.Player);
+        var (service, _) = Build(accounts);
+        await service.StartAsync();
+
+        try
+        {
+            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
+
+            using (client)
+            {
+                await LoginAsync(reader, writer, "player", "secret");
+                await ReadUntilAsync(reader, "Insufficient privileges.");
+            }
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task UnknownCommandRepliesUnknown()
+    {
+        var accounts = new SeededAccountService();
+        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
+        var (service, _) = Build(accounts);
+        await service.StartAsync();
+
+        try
+        {
+            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
+
+            using (client)
+            {
+                await LoginAsync(reader, writer, "gm", "secret");
+                await writer.WriteLineAsync("frobnicate");
+                await ReadUntilAsync(reader, "Unknown command.");
+            }
+        }
+        finally
+        {
+            await service.StopAsync();
+        }
+    }
+
+    [Fact]
+    public async Task WrongPasswordIsRejected()
+    {
+        var accounts = new SeededAccountService();
+        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
+        var (service, _) = Build(accounts);
+        await service.StartAsync();
+
+        try
+        {
+            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
+
+            using (client)
+            {
+                await LoginAsync(reader, writer, "gm", "wrong");
+                await ReadUntilAsync(reader, "Login failed.");
+            }
+        }
+        finally
+        {
+            await service.StopAsync();
         }
     }
 
@@ -58,6 +181,14 @@ public class ConsoleAdminIntegrationTests
         return (reader, writer, client);
     }
 
+    private static async Task LoginAsync(StreamReader reader, StreamWriter writer, string user, string password)
+    {
+        await ReadUntilAsync(reader, "login:");
+        await writer.WriteLineAsync(user);
+        await ReadUntilAsync(reader, "password:");
+        await writer.WriteLineAsync(password);
+    }
+
     /// <summary>Reads lines until one contains <paramref name="needle" />, or throws on timeout/EOF.</summary>
     private static async Task<string> ReadUntilAsync(StreamReader reader, string needle)
     {
@@ -72,134 +203,6 @@ public class ConsoleAdminIntegrationTests
             {
                 return line;
             }
-        }
-    }
-
-    private static async Task LoginAsync(StreamReader reader, StreamWriter writer, string user, string password)
-    {
-        await ReadUntilAsync(reader, "login:");
-        await writer.WriteLineAsync(user);
-        await ReadUntilAsync(reader, "password:");
-        await writer.WriteLineAsync(password);
-    }
-
-    [Fact]
-    public async Task GmLogsInAndBroadcasts()
-    {
-        var accounts = new SeededAccountService();
-        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
-        var (service, chat) = Build(accounts);
-        await service.StartAsync();
-
-        try
-        {
-            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
-            using (client)
-            {
-                await LoginAsync(reader, writer, "gm", "secret");
-                await writer.WriteLineAsync("broadcast hello world");
-
-                await ReadUntilAsync(reader, "Broadcast sent.");
-                Assert.Equal("hello world", Assert.Single(chat.Broadcasts));
-            }
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
-    }
-
-    [Fact]
-    public async Task PlayerLevelIsRejected()
-    {
-        var accounts = new SeededAccountService();
-        accounts.Seed("player", "secret", AccountLevelType.Player);
-        var (service, _) = Build(accounts);
-        await service.StartAsync();
-
-        try
-        {
-            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
-            using (client)
-            {
-                await LoginAsync(reader, writer, "player", "secret");
-                await ReadUntilAsync(reader, "Insufficient privileges.");
-            }
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
-    }
-
-    [Fact]
-    public async Task WrongPasswordIsRejected()
-    {
-        var accounts = new SeededAccountService();
-        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
-        var (service, _) = Build(accounts);
-        await service.StartAsync();
-
-        try
-        {
-            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
-            using (client)
-            {
-                await LoginAsync(reader, writer, "gm", "wrong");
-                await ReadUntilAsync(reader, "Login failed.");
-            }
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
-    }
-
-    [Fact]
-    public async Task UnknownCommandRepliesUnknown()
-    {
-        var accounts = new SeededAccountService();
-        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
-        var (service, _) = Build(accounts);
-        await service.StartAsync();
-
-        try
-        {
-            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
-            using (client)
-            {
-                await LoginAsync(reader, writer, "gm", "secret");
-                await writer.WriteLineAsync("frobnicate");
-                await ReadUntilAsync(reader, "Unknown command.");
-            }
-        }
-        finally
-        {
-            await service.StopAsync();
-        }
-    }
-
-    [Fact]
-    public async Task HelpListsBroadcast()
-    {
-        var accounts = new SeededAccountService();
-        accounts.Seed("gm", "secret", AccountLevelType.GrandMaster);
-        var (service, _) = Build(accounts);
-        await service.StartAsync();
-
-        try
-        {
-            var (reader, writer, client) = await ConnectAsync(service.BoundPort);
-            using (client)
-            {
-                await LoginAsync(reader, writer, "gm", "secret");
-                await writer.WriteLineAsync("help");
-                await ReadUntilAsync(reader, "broadcast");
-            }
-        }
-        finally
-        {
-            await service.StopAsync();
         }
     }
 }

@@ -15,10 +15,10 @@ public class BrainAssetSeederTests
             BrainAssetSeeder.SeedMissing(brainsDirectory);
 
             var files = Directory
-                .GetFiles(brainsDirectory)
-                .Select(Path.GetFileName)
-                .Order(StringComparer.Ordinal)
-                .ToArray();
+                        .GetFiles(brainsDirectory)
+                        .Select(Path.GetFileName)
+                        .Order(StringComparer.Ordinal)
+                        .ToArray();
 
             Assert.Equal(["guard.lua", "orion.lua", "vega.lua"], files);
         }

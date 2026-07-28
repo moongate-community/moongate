@@ -7,6 +7,7 @@ namespace Moongate.Http.Plugin.Data.Api.Plugins;
 public record PluginInfoResponse(
     string Id,
     string Name,
+
     // Qualified: Moongate.Http.Plugin.Data.Api.Version is a sibling namespace of this one, so an
     // unqualified Version binds to it rather than to the type.
     System.Version Version,

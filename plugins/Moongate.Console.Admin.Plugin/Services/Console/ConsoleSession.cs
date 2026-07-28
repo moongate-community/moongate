@@ -42,6 +42,20 @@ public sealed class ConsoleSession
         _dispatcher = dispatcher;
     }
 
+    public void Close()
+    {
+        _closed = true;
+
+        try
+        {
+            _client.Close();
+        }
+        catch (Exception)
+        {
+            // socket already gone
+        }
+    }
+
     public async Task RunAsync(CancellationToken ct)
     {
         try
@@ -112,6 +126,23 @@ public sealed class ConsoleSession
         return null;
     }
 
+    private async Task<string?> ReadLineAsync(StreamReader reader, CancellationToken ct)
+    {
+        var raw = await reader.ReadLineAsync(ct);
+
+        if (raw is null)
+        {
+            return null;
+        }
+
+        if (raw.Length > MaxLineLength)
+        {
+            raw = raw[..MaxLineLength];
+        }
+
+        return TelnetInput.StripControls(raw);
+    }
+
     private async Task ReplLoopAsync(StreamReader reader, AccountLevelType level, CancellationToken ct)
     {
         while (!ct.IsCancellationRequested && !_closed)
@@ -148,6 +179,9 @@ public sealed class ConsoleSession
         }
     }
 
+    private void Write(string text)
+        => WriteRaw(text, false);
+
     private void WriteHelp(AccountLevelType level)
     {
         foreach (var command in _commands.ListCommands(CommandSourceType.Console))
@@ -162,28 +196,8 @@ public sealed class ConsoleSession
         WriteLine("  quit - close the session");
     }
 
-    private async Task<string?> ReadLineAsync(StreamReader reader, CancellationToken ct)
-    {
-        var raw = await reader.ReadLineAsync(ct);
-
-        if (raw is null)
-        {
-            return null;
-        }
-
-        if (raw.Length > MaxLineLength)
-        {
-            raw = raw[..MaxLineLength];
-        }
-
-        return TelnetInput.StripControls(raw);
-    }
-
-    private void Write(string text)
-        => WriteRaw(text, newline: false);
-
     private void WriteLine(string text)
-        => WriteRaw(text, newline: true);
+        => WriteRaw(text, true);
 
     private void WriteRaw(string text, bool newline)
     {
@@ -216,20 +230,6 @@ public sealed class ConsoleSession
             {
                 _closed = true;
             }
-        }
-    }
-
-    public void Close()
-    {
-        _closed = true;
-
-        try
-        {
-            _client.Close();
-        }
-        catch (Exception)
-        {
-            // socket already gone
         }
     }
 }

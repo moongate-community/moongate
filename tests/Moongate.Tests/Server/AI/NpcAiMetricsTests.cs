@@ -41,6 +41,36 @@ public class NpcAiMetricsTests
     }
 
     [Fact]
+    public void RecordHookFailure_TracksBudgetBreachesSeparately()
+    {
+        var metrics = new NpcAiMetrics();
+
+        metrics.RecordHookFailure(false);
+        metrics.RecordHookFailure(true);
+
+        var current = metrics.Current;
+
+        Assert.Equal(2, current.HookFailures);
+        Assert.Equal(1, current.InstructionBudgetBreaches);
+    }
+
+    [Fact]
+    public void RecordHookInvocation_TracksCountTotalMaximumAndAverageDuration()
+    {
+        var metrics = new NpcAiMetrics();
+
+        metrics.RecordHookInvocation(TimeSpan.FromTicks(10));
+        metrics.RecordHookInvocation(TimeSpan.FromTicks(30));
+
+        var current = metrics.Current;
+
+        Assert.Equal(2, current.HookInvocations);
+        Assert.Equal(40, current.TotalHookDurationTicks);
+        Assert.Equal(30, current.MaxHookDurationTicks);
+        Assert.Equal(TimeSpan.FromTicks(20), current.AverageHookDuration);
+    }
+
+    [Fact]
     public void RecordIntent_AcceptedAndRejectedIncrementSeparateCounters()
     {
         var metrics = new NpcAiMetrics();
@@ -66,35 +96,5 @@ public class NpcAiMetricsTests
 
         Assert.Equal(1, current.ReloadSuccesses);
         Assert.Equal(1, current.ReloadFallbacks);
-    }
-
-    [Fact]
-    public void RecordHookInvocation_TracksCountTotalMaximumAndAverageDuration()
-    {
-        var metrics = new NpcAiMetrics();
-
-        metrics.RecordHookInvocation(TimeSpan.FromTicks(10));
-        metrics.RecordHookInvocation(TimeSpan.FromTicks(30));
-
-        var current = metrics.Current;
-
-        Assert.Equal(2, current.HookInvocations);
-        Assert.Equal(40, current.TotalHookDurationTicks);
-        Assert.Equal(30, current.MaxHookDurationTicks);
-        Assert.Equal(TimeSpan.FromTicks(20), current.AverageHookDuration);
-    }
-
-    [Fact]
-    public void RecordHookFailure_TracksBudgetBreachesSeparately()
-    {
-        var metrics = new NpcAiMetrics();
-
-        metrics.RecordHookFailure(false);
-        metrics.RecordHookFailure(true);
-
-        var current = metrics.Current;
-
-        Assert.Equal(2, current.HookFailures);
-        Assert.Equal(1, current.InstructionBudgetBreaches);
     }
 }

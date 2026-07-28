@@ -47,12 +47,12 @@ public readonly struct Rectangle3D : IEquatable<Rectangle3D>
     public override int GetHashCode()
         => HashCode.Combine(Start, End);
 
+    public override string ToString()
+        => $"{Start}+({Width}, {Height}, {Depth})";
+
     public static bool operator ==(Rectangle3D left, Rectangle3D right)
         => left.Equals(right);
 
     public static bool operator !=(Rectangle3D left, Rectangle3D right)
         => !left.Equals(right);
-
-    public override string ToString()
-        => $"{Start}+({Width}, {Height}, {Depth})";
 }

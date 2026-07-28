@@ -13,57 +13,6 @@ public class PluginAdminEndpointsTests
     private const string HostId = "moongate.host";
 
     [Fact]
-    public async Task Plugins_WithoutAToken_Is401()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
-    }
-
-    [Fact]
-    public async Task Plugins_WithPlayerToken_Is403()
-    {
-        await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
-        await server.AuthenticateAsync();
-
-        Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync(Route)).StatusCode);
-    }
-
-    [Fact]
-    public async Task Plugins_WithStaffToken_ListsTheActivatedPlugins()
-    {
-        await using var server = await TestApiServer.StartAsync();
-        await server.AuthenticateAsync();
-
-        var plugins = await GetPluginsAsync(server);
-
-        var http = Assert.Single(plugins, plugin => plugin.Id == HttpPluginId);
-
-        Assert.Equal("Moongate.Http.Plugin", http.Assembly);
-        Assert.False(http.IsExternal);
-    }
-
-    [Fact]
-    public async Task Plugins_ReportsRoutesWithTheirVerbAndPolicy()
-    {
-        await using var server = await TestApiServer.StartAsync();
-        await server.AuthenticateAsync();
-
-        var plugins = await GetPluginsAsync(server);
-        var http = Assert.Single(plugins, plugin => plugin.Id == HttpPluginId);
-
-        var status = Assert.Single(http.Routes, route => route.Path == "/api/v1/admin/status");
-
-        Assert.Equal("GET", status.Method);
-        Assert.Equal("admin", status.Policy);
-
-        var login = Assert.Single(http.Routes, route => route.Path == "/api/v1/auth/login");
-
-        Assert.Equal("POST", login.Method);
-        Assert.Null(login.Policy);
-    }
-
-    [Fact]
     public async Task Plugins_AttributesHealthToTheHttpPluginNotToTheHost()
     {
         // /health is a lambda inside HttpServerService, so its closure lives in the HTTP plugin's assembly
@@ -93,6 +42,57 @@ public class PluginAdminEndpointsTests
         var host = Assert.Single(plugins, plugin => plugin.Id == HostId);
 
         Assert.DoesNotContain(host.Routes, route => route.Path.StartsWith("/api/", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Plugins_ReportsRoutesWithTheirVerbAndPolicy()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await server.AuthenticateAsync();
+
+        var plugins = await GetPluginsAsync(server);
+        var http = Assert.Single(plugins, plugin => plugin.Id == HttpPluginId);
+
+        var status = Assert.Single(http.Routes, route => route.Path == "/api/v1/admin/status");
+
+        Assert.Equal("GET", status.Method);
+        Assert.Equal("admin", status.Policy);
+
+        var login = Assert.Single(http.Routes, route => route.Path == "/api/v1/auth/login");
+
+        Assert.Equal("POST", login.Method);
+        Assert.Null(login.Policy);
+    }
+
+    [Fact]
+    public async Task Plugins_WithPlayerToken_Is403()
+    {
+        await using var server = await TestApiServer.StartAsync(AccountLevelType.Player);
+        await server.AuthenticateAsync();
+
+        Assert.Equal(HttpStatusCode.Forbidden, (await server.Client.GetAsync(Route)).StatusCode);
+    }
+
+    [Fact]
+    public async Task Plugins_WithStaffToken_ListsTheActivatedPlugins()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        await server.AuthenticateAsync();
+
+        var plugins = await GetPluginsAsync(server);
+
+        var http = Assert.Single(plugins, plugin => plugin.Id == HttpPluginId);
+
+        Assert.Equal("Moongate.Http.Plugin", http.Assembly);
+        Assert.False(http.IsExternal);
+    }
+
+    [Fact]
+    public async Task Plugins_WithoutAToken_Is401()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
     }
 
     private static async Task<IReadOnlyList<PluginInfoResponse>> GetPluginsAsync(TestApiServer server)

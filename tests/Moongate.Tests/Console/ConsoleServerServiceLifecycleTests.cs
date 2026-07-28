@@ -9,13 +9,6 @@ namespace Moongate.Tests.Console;
 
 public class ConsoleServerServiceLifecycleTests
 {
-    private static ConsoleServerService Service(MoongateConsoleConfig config)
-    {
-        var commands = new CommandService([], new Container(), new StubAccountService());
-
-        return new ConsoleServerService(config, commands, new StubAccountService(), new InlineMainThreadDispatcher());
-    }
-
     [Fact]
     public async Task StartAsync_Disabled_DoesNotBind()
     {
@@ -43,5 +36,12 @@ public class ConsoleServerServiceLifecycleTests
         }
 
         await service.StopAsync();
+    }
+
+    private static ConsoleServerService Service(MoongateConsoleConfig config)
+    {
+        var commands = new CommandService([], new Container(), new StubAccountService());
+
+        return new(config, commands, new StubAccountService(), new InlineMainThreadDispatcher());
     }
 }

@@ -16,7 +16,11 @@ public sealed class NewsService : INewsService
     }
 
     public async ValueTask<NewsEntity> CreateAsync(
-        string title, string body, string author, bool isPublished, CancellationToken ct = default
+        string title,
+        string body,
+        string author,
+        bool isPublished,
+        CancellationToken ct = default
     )
     {
         var now = DateTime.UtcNow;
@@ -34,8 +38,24 @@ public sealed class NewsService : INewsService
         return news;
     }
 
+    public async ValueTask<bool> DeleteAsync(Serial id, CancellationToken ct = default)
+        => await _store.RemoveAsync(id, ct);
+
+    public NewsEntity? Get(Serial id)
+        => _store.GetById(id);
+
+    public IReadOnlyList<NewsEntity> GetAll()
+        => _store.GetAll().OrderByDescending(news => news.PublishedAt).ToList();
+
+    public IReadOnlyList<NewsEntity> GetPublished()
+        => _store.GetAll().Where(news => news.IsPublished).OrderByDescending(news => news.PublishedAt).ToList();
+
     public async ValueTask<NewsEntity?> UpdateAsync(
-        Serial id, string title, string body, bool isPublished, CancellationToken ct = default
+        Serial id,
+        string title,
+        string body,
+        bool isPublished,
+        CancellationToken ct = default
     )
     {
         if (_store.GetById(id) is not { } news)
@@ -51,16 +71,4 @@ public sealed class NewsService : INewsService
 
         return news;
     }
-
-    public async ValueTask<bool> DeleteAsync(Serial id, CancellationToken ct = default)
-        => await _store.RemoveAsync(id, ct);
-
-    public IReadOnlyList<NewsEntity> GetAll()
-        => _store.GetAll().OrderByDescending(news => news.PublishedAt).ToList();
-
-    public IReadOnlyList<NewsEntity> GetPublished()
-        => _store.GetAll().Where(news => news.IsPublished).OrderByDescending(news => news.PublishedAt).ToList();
-
-    public NewsEntity? Get(Serial id)
-        => _store.GetById(id);
 }

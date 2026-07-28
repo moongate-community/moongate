@@ -39,16 +39,16 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/v1/auth/login", Login)
-            .WithName("Login")
-            .WithTags("auth")
-            .Produces<ApiTokenResult>()
-            .AllowAnonymous();
+              .WithName("Login")
+              .WithTags("auth")
+              .Produces<ApiTokenResult>()
+              .AllowAnonymous();
 
         routes.MapPost("/api/v1/auth/renew", Renew)
-            .WithName("RenewToken")
-            .WithTags("auth")
-            .Produces<ApiTokenResult>()
-            .RequireAuthorization(HttpServerService.PlayerPolicy);
+              .WithName("RenewToken")
+              .WithTags("auth")
+              .Produces<ApiTokenResult>()
+              .RequireAuthorization(HttpServerService.PlayerPolicy);
     }
 
     /// <summary>Trades account credentials for a bearer token.</summary>
@@ -76,9 +76,7 @@ public sealed class AuthEndpoints : IApiEndpointRegistration
             return Results.Unauthorized();
         }
 
-        return Results.Ok(
-            _tokens.Issue(account.Id, account.Username, account.AccountLevel, _timeProvider.GetUtcNow())
-        );
+        return Results.Ok(_tokens.Issue(account.Id, account.Username, account.AccountLevel, _timeProvider.GetUtcNow()));
     }
 
     /// <summary>Exchanges a still-valid token for a fresh one, so an active session does not expire mid-use.</summary>

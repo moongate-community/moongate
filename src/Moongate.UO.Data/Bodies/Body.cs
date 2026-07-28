@@ -37,6 +37,9 @@ public readonly struct Body : IEquatable<Body>
     public override int GetHashCode()
         => Value.GetHashCode();
 
+    public override string ToString()
+        => $"0x{Value:X4}";
+
     public static bool operator ==(Body left, Body right)
         => left.Value == right.Value;
 
@@ -48,7 +51,4 @@ public readonly struct Body : IEquatable<Body>
 
     public static bool operator !=(Body left, Body right)
         => left.Value != right.Value;
-
-    public override string ToString()
-        => $"0x{Value:X4}";
 }

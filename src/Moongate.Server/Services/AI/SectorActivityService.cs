@@ -47,41 +47,21 @@ public sealed class SectorActivityService : ISectorActivityService, ISquidStdSer
         _metrics = metrics;
     }
 
-    public SectorActivitySnapshot Current => new(
-        _sectors.Count(pair => pair.Value.ReferenceCount > 0),
-        _sectors.Count(pair => pair.Value.ReferenceCount == 0)
-    );
+    public SectorActivitySnapshot Current
+        => new(
+            _sectors.Count(pair => pair.Value.ReferenceCount > 0),
+            _sectors.Count(pair => pair.Value.ReferenceCount == 0)
+        );
+
+    private sealed class SectorState
+    {
+        public int ReferenceCount { get; set; }
+
+        public DateTimeOffset? DeactivateAt { get; set; }
+    }
 
     public bool IsActive(int mapId, int sectorX, int sectorY)
         => _sectors.ContainsKey((mapId, sectorX, sectorY));
-
-    public void TrackPlayer(MobileEntity player)
-    {
-        var location = (
-            MapId: player.MapId,
-            SectorX: player.Position.X >> SectorShift,
-            SectorY: player.Position.Y >> SectorShift
-        );
-
-        if (_players.TryGetValue(player.Id, out var previous))
-        {
-            if (previous == location)
-            {
-                return;
-            }
-
-            MovePlayer(player.Id, location.MapId, location.Item2, location.Item3);
-
-            return;
-        }
-
-        _players[player.Id] = location;
-
-        foreach (var sector in Coverage(location))
-        {
-            Acquire(sector);
-        }
-    }
 
     public void MovePlayer(Serial playerId, int mapId, int sectorX, int sectorY)
     {
@@ -113,36 +93,6 @@ public sealed class SectorActivityService : ISectorActivityService, ISquidStdSer
         _players[playerId] = next;
     }
 
-    public void UntrackPlayer(Serial playerId)
-    {
-        if (!_players.Remove(playerId, out var location))
-        {
-            return;
-        }
-
-        foreach (var sector in Coverage(location))
-        {
-            Release(sector);
-        }
-    }
-
-    public void Tick()
-    {
-        var now = _timeProvider.GetUtcNow();
-        var expired = _sectors
-            .Where(pair => pair.Value.ReferenceCount == 0 && pair.Value.DeactivateAt is { } deactivateAt && deactivateAt <= now)
-            .Select(pair => pair.Key)
-            .ToArray();
-
-        foreach (var sector in expired)
-        {
-            _sectors.Remove(sector);
-            _eventBus.Publish(new SectorDeactivatedEvent(sector.MapId, sector.SectorX, sector.SectorY));
-        }
-
-        UpdateMetrics();
-    }
-
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         if (_timerId is null)
@@ -162,6 +112,68 @@ public sealed class SectorActivityService : ISectorActivityService, ISquidStdSer
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    public void Tick()
+    {
+        var now = _timeProvider.GetUtcNow();
+        var expired = _sectors
+                      .Where(
+                          pair => pair.Value.ReferenceCount == 0 &&
+                                  pair.Value.DeactivateAt is { } deactivateAt &&
+                                  deactivateAt <= now
+                      )
+                      .Select(pair => pair.Key)
+                      .ToArray();
+
+        foreach (var sector in expired)
+        {
+            _sectors.Remove(sector);
+            _eventBus.Publish(new SectorDeactivatedEvent(sector.MapId, sector.SectorX, sector.SectorY));
+        }
+
+        UpdateMetrics();
+    }
+
+    public void TrackPlayer(MobileEntity player)
+    {
+        var location = (
+                           player.MapId,
+                           SectorX: player.Position.X >> SectorShift,
+                           SectorY: player.Position.Y >> SectorShift
+                       );
+
+        if (_players.TryGetValue(player.Id, out var previous))
+        {
+            if (previous == location)
+            {
+                return;
+            }
+
+            MovePlayer(player.Id, location.MapId, location.Item2, location.Item3);
+
+            return;
+        }
+
+        _players[player.Id] = location;
+
+        foreach (var sector in Coverage(location))
+        {
+            Acquire(sector);
+        }
+    }
+
+    public void UntrackPlayer(Serial playerId)
+    {
+        if (!_players.Remove(playerId, out var location))
+        {
+            return;
+        }
+
+        foreach (var sector in Coverage(location))
+        {
+            Release(sector);
+        }
     }
 
     private void Acquire((int MapId, int SectorX, int SectorY) sector)
@@ -184,6 +196,17 @@ public sealed class SectorActivityService : ISectorActivityService, ISquidStdSer
         UpdateMetrics();
     }
 
+    private IEnumerable<(int MapId, int SectorX, int SectorY)> Coverage((int MapId, int SectorX, int SectorY) center)
+    {
+        for (var sectorX = center.SectorX - 1; sectorX <= center.SectorX + 1; sectorX++)
+        {
+            for (var sectorY = center.SectorY - 1; sectorY <= center.SectorY + 1; sectorY++)
+            {
+                yield return (center.MapId, sectorX, sectorY);
+            }
+        }
+    }
+
     private void Release((int MapId, int SectorX, int SectorY) sector)
     {
         var state = _sectors[sector];
@@ -197,29 +220,9 @@ public sealed class SectorActivityService : ISectorActivityService, ISquidStdSer
         UpdateMetrics();
     }
 
-    private IEnumerable<(int MapId, int SectorX, int SectorY)> Coverage((int MapId, int SectorX, int SectorY) center)
-    {
-        for (var sectorX = center.SectorX - 1; sectorX <= center.SectorX + 1; sectorX++)
-        {
-            for (var sectorY = center.SectorY - 1; sectorY <= center.SectorY + 1; sectorY++)
-            {
-                yield return (center.MapId, sectorX, sectorY);
-            }
-        }
-    }
-
     private void UpdateMetrics()
-    {
-        _metrics.SetActiveSectorCounts(
+        => _metrics.SetActiveSectorCounts(
             _sectors.Count(pair => pair.Value.ReferenceCount > 0),
             _sectors.Count(pair => pair.Value.ReferenceCount == 0)
         );
-    }
-
-    private sealed class SectorState
-    {
-        public int ReferenceCount { get; set; }
-
-        public DateTimeOffset? DeactivateAt { get; set; }
-    }
 }

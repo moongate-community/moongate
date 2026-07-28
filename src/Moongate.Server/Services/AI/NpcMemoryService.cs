@@ -32,12 +32,69 @@ public sealed class NpcMemoryService : INpcMemoryService
         _loopAffinity = loopAffinity;
     }
 
+    private sealed class ContextScope : IDisposable
+    {
+        private readonly NpcMemoryService _owner;
+        private readonly BrainContext? _previous;
+
+        public ContextScope(NpcMemoryService owner, BrainContext? previous)
+        {
+            _owner = owner;
+            _previous = previous;
+        }
+
+        public void Dispose()
+            => _owner._current = _previous;
+    }
+
+    public IReadOnlyDictionary<string, NpcMemoryValue> All()
+    {
+        var mobileId = Current();
+
+        return _memory.GetById(mobileId)?.Memory ?? Empty;
+    }
+
     public IDisposable Begin(BrainContext context)
     {
         _loopAffinity.AssertOnLoop("memory.begin");
         var previous = _current;
         _current = context;
+
         return new ContextScope(this, previous);
+    }
+
+    public bool Delete(string key)
+    {
+        _loopAffinity.AssertOnLoop("memory.delete");
+        var mobileId = Current();
+
+        if (_memory.GetById(mobileId) is not { } entity || !entity.Memory.Remove(key))
+        {
+            return false;
+        }
+
+        _memory.UpsertAsync(entity).WaitSync();
+
+        return true;
+    }
+
+    public void Forget(Serial mobileId)
+    {
+        _loopAffinity.AssertOnLoop("memory.forget");
+
+        if (_memory.GetById(mobileId) is not null)
+        {
+            _memory.RemoveAsync(mobileId).WaitSync();
+        }
+    }
+
+    public NpcMemoryValue? Get(string key)
+    {
+        var mobileId = Current();
+
+        return _memory.GetById(mobileId) is { } entity && entity.Memory.TryGetValue(key, out var value)
+                   ? value
+                   : null;
     }
 
     public bool Set(string key, NpcMemoryValue value)
@@ -73,64 +130,6 @@ public sealed class NpcMemoryService : INpcMemoryService
         return true;
     }
 
-    public NpcMemoryValue? Get(string key)
-    {
-        var mobileId = Current();
-
-        return _memory.GetById(mobileId) is { } entity && entity.Memory.TryGetValue(key, out var value)
-            ? value
-            : null;
-    }
-
-    public bool Delete(string key)
-    {
-        _loopAffinity.AssertOnLoop("memory.delete");
-        var mobileId = Current();
-
-        if (_memory.GetById(mobileId) is not { } entity || !entity.Memory.Remove(key))
-        {
-            return false;
-        }
-
-        _memory.UpsertAsync(entity).WaitSync();
-
-        return true;
-    }
-
-    public IReadOnlyDictionary<string, NpcMemoryValue> All()
-    {
-        var mobileId = Current();
-
-        return _memory.GetById(mobileId)?.Memory ?? Empty;
-    }
-
-    public void Forget(Serial mobileId)
-    {
-        _loopAffinity.AssertOnLoop("memory.forget");
-
-        if (_memory.GetById(mobileId) is not null)
-        {
-            _memory.RemoveAsync(mobileId).WaitSync();
-        }
-    }
-
     private Serial Current()
         => (_current ?? throw new InvalidOperationException("memory.* is only callable inside an NPC brain tick.")).Self.Id;
-
-    private sealed class ContextScope : IDisposable
-    {
-        private readonly NpcMemoryService _owner;
-        private readonly BrainContext? _previous;
-
-        public ContextScope(NpcMemoryService owner, BrainContext? previous)
-        {
-            _owner = owner;
-            _previous = previous;
-        }
-
-        public void Dispose()
-        {
-            _owner._current = _previous;
-        }
-    }
 }

@@ -7,7 +7,5 @@ namespace Moongate.Network.Exceptions;
 /// </summary>
 public sealed class UoFramingException : Exception
 {
-    public UoFramingException(string message) : base(message)
-    {
-    }
+    public UoFramingException(string message) : base(message) { }
 }

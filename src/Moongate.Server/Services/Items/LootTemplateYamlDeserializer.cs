@@ -15,9 +15,9 @@ internal static class LootTemplateYamlDeserializer
     };
 
     private static readonly IDeserializer Deserializer = new DeserializerBuilder()
-        .WithDuplicateKeyChecking()
-        .WithEnforceNullability()
-        .Build();
+                                                         .WithDuplicateKeyChecking()
+                                                         .WithEnforceNullability()
+                                                         .Build();
 
     public static LootTemplate[] DeserializeFromFile(string file, string relativePath)
     {

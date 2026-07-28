@@ -18,9 +18,7 @@ public sealed class FakeTimerServiceForContext : ITimerService
     )
         => name;
 
-    public void UnregisterAllTimers()
-    {
-    }
+    public void UnregisterAllTimers() { }
 
     public bool UnregisterTimer(string timerId)
         => true;

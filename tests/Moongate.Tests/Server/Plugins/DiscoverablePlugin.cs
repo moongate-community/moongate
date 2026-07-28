@@ -17,7 +17,5 @@ public sealed class DiscoverablePlugin : ISquidStdPlugin
             Description = "found by elimination"
         };
 
-    public void Configure(IContainer container, PluginContext context)
-    {
-    }
+    public void Configure(IContainer container, PluginContext context) { }
 }

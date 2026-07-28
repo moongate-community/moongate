@@ -68,12 +68,12 @@ public sealed class NetworkService : INetworkService, ISquidStdService, IAsyncDi
         }
 
         _handlers[opCode] = (session, packet) =>
-        {
-            var reader = new SpanReader(packet);
-            var decoded = TPacket.Read(ref reader);
+                            {
+                                var reader = new SpanReader(packet);
+                                var decoded = TPacket.Read(ref reader);
 
-            handler.Handle(decoded, new(session));
-        };
+                                handler.Handle(decoded, new(session));
+                            };
     }
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)

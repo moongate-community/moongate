@@ -7,6 +7,4 @@ namespace Moongate.Server.Abstractions.Interfaces.Events;
 /// game-loop thread. The event bus decorator routes such an event onto the loop when it is
 /// published off it, and guards its handlers against running — or going async — off the loop.
 /// </summary>
-public interface ILoopAffineEvent : IEvent
-{
-}
+public interface ILoopAffineEvent : IEvent { }

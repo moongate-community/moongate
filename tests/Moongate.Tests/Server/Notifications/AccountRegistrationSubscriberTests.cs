@@ -1,5 +1,4 @@
 using System.Reflection;
-
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Services.Notifications;
 using Moongate.Server.Services.Server;
@@ -11,24 +10,25 @@ namespace Moongate.Tests.Server.Notifications;
 
 public sealed class AccountRegistrationSubscriberTests
 {
-    [Fact]
-    public async Task RegistrationEvent_SendsCanonicalVerificationUrlAndPreservesCustomTemplateFields()
+    [Theory, InlineData("http:/portal"), InlineData("https:/portal"), InlineData("http:portal"),
+     InlineData("http:///portal")]
+    public void BuildVerificationUrl_HostlessHttpWebsite_ThrowsArgumentException(string website)
     {
-        var channel = new RecordingNotificationChannel("log");
-        var bus = Wire(channel, "log");
-
-        await bus.PublishAsync(new AccountRegistrationRequestedEvent(new(1), "tom", "tom@example.com", "abc+123"));
-
-        var (recipient, content) = Assert.Single(channel.Sent);
-        Assert.Equal("tom@example.com", recipient.Address);
-        Assert.Equal("log", recipient.ChannelId);
-        Assert.Contains(
-            "https://shard.example/moongate/verify?token=abc%2B123",
-            content.Body,
-            StringComparison.Ordinal
+        var method = typeof(AccountRegistrationSubscriber).GetMethod(
+            "BuildVerificationUrl",
+            BindingFlags.Static | BindingFlags.NonPublic
         );
-        Assert.Contains("tom/abc+123/https://shard.example/moongate/", content.Body, StringComparison.Ordinal);
-        Assert.Contains("/Britannia", content.Body, StringComparison.Ordinal);
+
+        if (method is null)
+        {
+            throw new InvalidOperationException("BuildVerificationUrl was not found.");
+        }
+
+        var invocationException = Assert.Throws<TargetInvocationException>(() => method.Invoke(null, [website, "abc123"]));
+        var exception = Assert.IsType<ArgumentException>(invocationException.InnerException);
+
+        Assert.Equal("website", exception.ParamName);
+        Assert.Contains("absolute HTTP(S) URI", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -59,30 +59,24 @@ public sealed class AccountRegistrationSubscriberTests
         );
     }
 
-    [Theory]
-    [InlineData("http:/portal")]
-    [InlineData("https:/portal")]
-    [InlineData("http:portal")]
-    [InlineData("http:///portal")]
-    public void BuildVerificationUrl_HostlessHttpWebsite_ThrowsArgumentException(string website)
+    [Fact]
+    public async Task RegistrationEvent_SendsCanonicalVerificationUrlAndPreservesCustomTemplateFields()
     {
-        var method = typeof(AccountRegistrationSubscriber).GetMethod(
-            "BuildVerificationUrl",
-            BindingFlags.Static | BindingFlags.NonPublic
+        var channel = new RecordingNotificationChannel("log");
+        var bus = Wire(channel, "log");
+
+        await bus.PublishAsync(new AccountRegistrationRequestedEvent(new(1), "tom", "tom@example.com", "abc+123"));
+
+        var (recipient, content) = Assert.Single(channel.Sent);
+        Assert.Equal("tom@example.com", recipient.Address);
+        Assert.Equal("log", recipient.ChannelId);
+        Assert.Contains(
+            "https://shard.example/moongate/verify?token=abc%2B123",
+            content.Body,
+            StringComparison.Ordinal
         );
-
-        if (method is null)
-        {
-            throw new InvalidOperationException("BuildVerificationUrl was not found.");
-        }
-
-        var invocationException = Assert.Throws<TargetInvocationException>(
-            () => method.Invoke(null, [website, "abc123"])
-        );
-        var exception = Assert.IsType<ArgumentException>(invocationException.InnerException);
-
-        Assert.Equal("website", exception.ParamName);
-        Assert.Contains("absolute HTTP(S) URI", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("tom/abc+123/https://shard.example/moongate/", content.Body, StringComparison.Ordinal);
+        Assert.Contains("/Britannia", content.Body, StringComparison.Ordinal);
     }
 
     [Fact]

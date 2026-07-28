@@ -34,36 +34,12 @@ public sealed class NpcBrainLifecycleSubscriber : IEventSubscriberRegistration
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
-    public Task OnWorldReady(WorldReadyEvent message, CancellationToken cancellationToken)
+    public Task OnBrainDefinitionReloaded(
+        BrainDefinitionReloadedEvent message,
+        CancellationToken cancellationToken
+    )
     {
-        var playerCharacters = PlayerCharacters();
-
-        foreach (var mobile in _mobiles.GetAll())
-        {
-            if (playerCharacters.Contains(mobile.Id) || string.IsNullOrWhiteSpace(mobile.BrainScriptId))
-            {
-                continue;
-            }
-
-            BindAndActivateWhenSectorIsActive(mobile);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileCreated(MobileCreatedEvent message, CancellationToken cancellationToken)
-    {
-        if (!IsPlayerCharacter(message.Mobile.Id) && !string.IsNullOrWhiteSpace(message.Mobile.BrainScriptId))
-        {
-            BindAndActivateWhenSectorIsActive(message.Mobile);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileDeleted(MobileDeletedEvent message, CancellationToken cancellationToken)
-    {
-        _scheduler.Unbind(message.Mobile.Id);
+        _scheduler.RefreshDescriptor(message.BrainId, message.Descriptor);
 
         return Task.CompletedTask;
     }
@@ -83,6 +59,23 @@ public sealed class NpcBrainLifecycleSubscriber : IEventSubscriberRegistration
         {
             _scheduler.Deactivate(message.Mobile);
         }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileCreated(MobileCreatedEvent message, CancellationToken cancellationToken)
+    {
+        if (!IsPlayerCharacter(message.Mobile.Id) && !string.IsNullOrWhiteSpace(message.Mobile.BrainScriptId))
+        {
+            BindAndActivateWhenSectorIsActive(message.Mobile);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileDeleted(MobileDeletedEvent message, CancellationToken cancellationToken)
+    {
+        _scheduler.Unbind(message.Mobile.Id);
 
         return Task.CompletedTask;
     }
@@ -107,12 +100,19 @@ public sealed class NpcBrainLifecycleSubscriber : IEventSubscriberRegistration
         return Task.CompletedTask;
     }
 
-    public Task OnBrainDefinitionReloaded(
-        BrainDefinitionReloadedEvent message,
-        CancellationToken cancellationToken
-    )
+    public Task OnWorldReady(WorldReadyEvent message, CancellationToken cancellationToken)
     {
-        _scheduler.RefreshDescriptor(message.BrainId, message.Descriptor);
+        var playerCharacters = PlayerCharacters();
+
+        foreach (var mobile in _mobiles.GetAll())
+        {
+            if (playerCharacters.Contains(mobile.Id) || string.IsNullOrWhiteSpace(mobile.BrainScriptId))
+            {
+                continue;
+            }
+
+            BindAndActivateWhenSectorIsActive(mobile);
+        }
 
         return Task.CompletedTask;
     }
@@ -140,13 +140,13 @@ public sealed class NpcBrainLifecycleSubscriber : IEventSubscriberRegistration
 
     private IEnumerable<MobileEntity> BrainMobilesInSector(int mapId, int sectorX, int sectorY)
         => _spatial
-            .GetMobilesInSector(mapId, sectorX, sectorY)
-            .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId) && !IsPlayerCharacter(mobile.Id))
-            .OrderBy(mobile => mobile.Id);
-
-    private HashSet<Serial> PlayerCharacters()
-        => _accounts.GetAll().SelectMany(account => account.MobileIds).ToHashSet();
+           .GetMobilesInSector(mapId, sectorX, sectorY)
+           .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId) && !IsPlayerCharacter(mobile.Id))
+           .OrderBy(mobile => mobile.Id);
 
     private bool IsPlayerCharacter(Serial mobileId)
         => _accounts.GetAll().Any(account => account.MobileIds.Contains(mobileId));
+
+    private HashSet<Serial> PlayerCharacters()
+        => _accounts.GetAll().SelectMany(account => account.MobileIds).ToHashSet();
 }

@@ -10,9 +10,7 @@ public class MobileEntityTests
 {
     [Fact]
     public void CombatantId_DefaultsToZero()
-    {
-        Assert.Equal(Serial.Zero, new MobileEntity().CombatantId);
-    }
+        => Assert.Equal(Serial.Zero, new MobileEntity().CombatantId);
 
     [Fact]
     public void Deserialize_SaveWrittenBeforeTheNewFieldsExisted_KeepsTheDefaults()

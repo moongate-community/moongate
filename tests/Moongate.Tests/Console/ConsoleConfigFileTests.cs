@@ -3,7 +3,6 @@ using Moongate.Console.Admin.Plugin;
 using Moongate.Console.Admin.Plugin.Data.Config;
 using SquidStd.Core.Config;
 using SquidStd.Core.Directories;
-using SquidStd.Plugin.Abstractions.Data;
 
 namespace Moongate.Tests.Console;
 
@@ -28,7 +27,7 @@ public class ConsoleConfigFileTests
             container.RegisterInstance(SquidStdConfig.Load("moongate", root));
             container.RegisterInstance(directories);
 
-            new MoongateConsolePlugin().Configure(container, new PluginContext());
+            new MoongateConsolePlugin().Configure(container, new());
 
             var config = container.Resolve<MoongateConsoleConfig>();
             Assert.True(config.Enabled);
@@ -36,7 +35,7 @@ public class ConsoleConfigFileTests
         }
         finally
         {
-            Directory.Delete(root, recursive: true);
+            Directory.Delete(root, true);
         }
     }
 }

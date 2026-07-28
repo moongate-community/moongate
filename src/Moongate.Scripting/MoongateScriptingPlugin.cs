@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Scripting.AI;
-using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Scripting.Modules;
+using Moongate.Server.Abstractions.Interfaces.AI;
 using SquidStd.Abstractions.Extensions.Services;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Directories;

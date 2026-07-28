@@ -58,6 +58,25 @@ public sealed class AccountRegistrationSubscriber : IEventSubscriberRegistration
         eventBus.Subscribe<AccountRegistrationRequestedEvent>(OnRegistrationRequested);
     }
 
+    internal static string BuildVerificationUrl(string website, string token)
+    {
+        if (!Uri.TryCreate(website, UriKind.Absolute, out var websiteUri) ||
+            string.IsNullOrEmpty(websiteUri.Host) ||
+            websiteUri.Scheme != Uri.UriSchemeHttp && websiteUri.Scheme != Uri.UriSchemeHttps)
+        {
+            throw new ArgumentException("Website must be an absolute HTTP(S) URI.", nameof(website));
+        }
+
+        var uriBuilder = new UriBuilder(websiteUri)
+        {
+            Path = string.Concat(websiteUri.AbsolutePath.TrimEnd('/'), "/verify"),
+            Query = $"token={Uri.EscapeDataString(token)}",
+            Fragment = string.Empty
+        };
+
+        return uriBuilder.Uri.AbsoluteUri;
+    }
+
     private Task OnRegistrationRequested(
         AccountRegistrationRequestedEvent message,
         CancellationToken cancellationToken
@@ -80,24 +99,5 @@ public sealed class AccountRegistrationSubscriber : IEventSubscriberRegistration
         );
 
         return Task.CompletedTask;
-    }
-
-    internal static string BuildVerificationUrl(string website, string token)
-    {
-        if (!Uri.TryCreate(website, UriKind.Absolute, out var websiteUri)
-            || string.IsNullOrEmpty(websiteUri.Host)
-            || (websiteUri.Scheme != Uri.UriSchemeHttp && websiteUri.Scheme != Uri.UriSchemeHttps))
-        {
-            throw new ArgumentException("Website must be an absolute HTTP(S) URI.", nameof(website));
-        }
-
-        var uriBuilder = new UriBuilder(websiteUri)
-        {
-            Path = string.Concat(websiteUri.AbsolutePath.TrimEnd('/'), "/verify"),
-            Query = $"token={Uri.EscapeDataString(token)}",
-            Fragment = string.Empty
-        };
-
-        return uriBuilder.Uri.AbsoluteUri;
     }
 }

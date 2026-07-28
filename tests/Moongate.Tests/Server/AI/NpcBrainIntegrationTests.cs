@@ -1,5 +1,4 @@
 using DryIoc;
-using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
@@ -19,7 +18,6 @@ using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
 using SquidStd.Core.Directories;
-using SquidStd.Scripting.Lua.Data.Config;
 using SquidStd.Scripting.Lua.Services;
 using SquidStd.Services.Core.Services;
 
@@ -29,6 +27,207 @@ public sealed class NpcBrainIntegrationTests
 {
     private const string FirstMeetingReply = "I haven't seen you before.";
     private const string ReturningPlayerReply = "Welcome back.";
+
+    private sealed class IntegrationFixture : IDisposable
+    {
+        private readonly Container _container = new();
+        private readonly LuaScriptEngineService _engine;
+        private readonly LuaNpcBrainRuntime _luaRuntime;
+        private readonly string _root;
+
+        public EventBusService Bus { get; } = new();
+
+        public RecordingChatService Chat { get; } = new();
+
+        public MoongateConfig Config { get; } = new();
+
+        public MobileEntity Guard { get; } = new()
+        {
+            Id = new(0x2),
+            Name = "Guard",
+            BrainScriptId = "guard",
+            MapId = 0,
+            Position = new(40, 32, 0),
+            Hits = 100,
+            HitsMax = 100
+        };
+
+        public StubGameLoopContext Loop { get; } = new();
+
+        public NpcAiMetrics Metrics { get; } = new();
+
+        public FakePersistenceService Persistence { get; } = new();
+
+        public MobileEntity Player { get; } = new()
+        {
+            Id = new(0x1),
+            Name = "Player",
+            MapId = 0,
+            Position = new(32, 32, 0),
+            Hits = 100,
+            HitsMax = 100
+        };
+
+        public StubSessionManager Sessions { get; } = new();
+
+        public MutableTimeProvider Time { get; } = new(new(2026, 7, 24, 12, 0, 0, TimeSpan.Zero));
+
+        public SectorActivityService Activity { get; }
+
+        public RecordingLuaNpcBrainRuntime Runtime { get; }
+
+        public NpcBrainScheduler Scheduler { get; }
+
+        public SpatialIndexService Spatial { get; }
+
+        public IntegrationFixture()
+        {
+            _root = Path.Combine(Path.GetTempPath(), "mg-npc-brain-integration-" + Guid.NewGuid().ToString("N"));
+            var directories = new DirectoriesConfig(_root, ["scripts"]);
+            _engine = new(
+                directories,
+                _container,
+                new(_root, directories.GetPath("scripts"), "MoongateTests", "1.0.0")
+            );
+            BrainAssetSeeder.SeedMissing(Path.Combine(directories.GetPath("scripts"), "brains"));
+
+            var loopAffinity = new StubLoopAffinity();
+            Spatial = new(Persistence, loopAffinity, Bus);
+            Activity = new(Loop, Bus, Time, Config, Metrics);
+            _luaRuntime = new(_engine, directories, Config, Metrics, Loop, Bus, Time);
+            Runtime = new(_luaRuntime);
+            var contextFactory = new NpcBrainContextFactory(Spatial, Sessions, Time);
+            var aiActions = new AiActionService(
+                Persistence,
+                new UnexpectedMovementService(),
+                Chat,
+                new(42),
+                loopAffinity,
+                Metrics
+            );
+            InstallAiModule(aiActions);
+            Scheduler = new(
+                Loop,
+                Runtime,
+                aiActions,
+                new StubNpcMemoryService(),
+                Activity,
+                Persistence,
+                contextFactory,
+                Time,
+                Config,
+                Metrics
+            );
+
+            new NpcBrainLifecycleSubscriber(Spatial, Persistence, Scheduler, Activity).Subscribe(Bus);
+            new NpcBrainEventRouter(Spatial, Persistence, Sessions, Scheduler, Activity).Subscribe(Bus);
+        }
+
+        public void Dispose()
+        {
+            _luaRuntime.Dispose();
+            _engine.Dispose();
+            Bus.Dispose();
+            _container.Dispose();
+            Directory.Delete(_root, true);
+        }
+
+        public async Task SeedAsync()
+        {
+            await Persistence.Store<MobileEntity>().UpsertAsync(Player);
+            await Persistence.Store<MobileEntity>().UpsertAsync(Guard);
+            await Persistence.Store<AccountEntity>()
+                             .UpsertAsync(
+                                 new()
+                                 {
+                                     Id = new(0x100),
+                                     Username = "player",
+                                     MobileIds = [Player.Id]
+                                 }
+                             );
+            Sessions.Played.Add(Player.Id);
+        }
+
+        private void InstallAiModule(AiActionService actions)
+        {
+            var ai = new Table(_engine.LuaScript);
+            ai.Set(
+                "say",
+                DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Say(a.Count > 0 ? a[0].ToPrintString() : "")))
+            );
+            ai.Set("patrol", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.Patrol())));
+            ai.Set("return_home", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ReturnHome())));
+            ai.Set("clear_target", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ClearTarget())));
+            ai.Set(
+                "move_toward",
+                DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveToward(new((uint)a[0].Number))))
+            );
+            ai.Set(
+                "move_away",
+                DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveAway(new((uint)a[0].Number))))
+            );
+            ai.Set("engage", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Engage(new((uint)a[0].Number)))));
+            _engine.LuaScript.Globals.Set("ai", DynValue.NewTable(ai));
+        }
+    }
+
+    private sealed class RecordingLuaNpcBrainRuntime : INpcBrainRuntime
+    {
+        private readonly LuaNpcBrainRuntime _inner;
+        private readonly List<NpcBrainHookType> _invocations = [];
+
+        public IReadOnlyList<NpcBrainHookType> Invocations => _invocations;
+
+        public RecordingLuaNpcBrainRuntime(LuaNpcBrainRuntime inner)
+        {
+            _inner = inner;
+        }
+
+        public NpcBrainInvocationResult Invoke(
+            Serial mobileId,
+            NpcBrainHookType hook,
+            BrainContext context,
+            NpcBrainEvent? brainEvent = null
+        )
+        {
+            _invocations.Add(hook);
+
+            return _inner.Invoke(mobileId, hook, context, brainEvent);
+        }
+
+        public void Reset(Serial mobileId)
+            => _inner.Reset(mobileId);
+
+        public bool TryBind(
+            Serial mobileId,
+            string brainId,
+            out BrainDescriptor? descriptor,
+            out string? error
+        )
+            => _inner.TryBind(mobileId, brainId, out descriptor, out error);
+
+        public bool TryGetDescriptor(Serial mobileId, out BrainDescriptor? descriptor)
+            => _inner.TryGetDescriptor(mobileId, out descriptor);
+
+        public bool TryReload(
+            string brainId,
+            out BrainDescriptor? descriptor,
+            out string? error
+        )
+            => _inner.TryReload(brainId, out descriptor, out error);
+
+        public void Unbind(Serial mobileId)
+            => _inner.Unbind(mobileId);
+    }
+
+    private sealed class UnexpectedMovementService : IMovementService
+    {
+        public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
+            => throw new InvalidOperationException("The guard integration flow must not move a player.");
+
+        public bool TryMoveNpc(Serial mobileId, DirectionType direction)
+            => throw new InvalidOperationException("The built-in guard flow must not emit movement intents.");
+    }
 
     [Fact]
     public async Task PlayerSpeech_CompleteGuardLifecycle_RepliesWithRetainedMemory()
@@ -199,206 +398,5 @@ public sealed class NpcBrainIntegrationTests
         Assert.Equal(expected, fixture.Runtime.Invocations.Skip(offset));
         offset += expected.Length;
         Assert.Equal(offset, fixture.Runtime.Invocations.Count);
-    }
-
-    private sealed class IntegrationFixture : IDisposable
-    {
-        private readonly Container _container = new();
-        private readonly LuaScriptEngineService _engine;
-        private readonly LuaNpcBrainRuntime _luaRuntime;
-        private readonly string _root;
-
-        public EventBusService Bus { get; } = new();
-
-        public RecordingChatService Chat { get; } = new();
-
-        public MoongateConfig Config { get; } = new();
-
-        public MobileEntity Guard { get; } = new()
-        {
-            Id = new(0x2),
-            Name = "Guard",
-            BrainScriptId = "guard",
-            MapId = 0,
-            Position = new(40, 32, 0),
-            Hits = 100,
-            HitsMax = 100
-        };
-
-        public StubGameLoopContext Loop { get; } = new();
-
-        public NpcAiMetrics Metrics { get; } = new();
-
-        public FakePersistenceService Persistence { get; } = new();
-
-        public MobileEntity Player { get; } = new()
-        {
-            Id = new(0x1),
-            Name = "Player",
-            MapId = 0,
-            Position = new(32, 32, 0),
-            Hits = 100,
-            HitsMax = 100
-        };
-
-        public StubSessionManager Sessions { get; } = new();
-
-        public MutableTimeProvider Time { get; } = new(
-            new DateTimeOffset(2026, 7, 24, 12, 0, 0, TimeSpan.Zero)
-        );
-
-        public SectorActivityService Activity { get; }
-
-        public RecordingLuaNpcBrainRuntime Runtime { get; }
-
-        public NpcBrainScheduler Scheduler { get; }
-
-        public SpatialIndexService Spatial { get; }
-
-        public IntegrationFixture()
-        {
-            _root = Path.Combine(Path.GetTempPath(), "mg-npc-brain-integration-" + Guid.NewGuid().ToString("N"));
-            var directories = new DirectoriesConfig(_root, ["scripts"]);
-            _engine = new(
-                directories,
-                _container,
-                new LuaEngineConfig(_root, directories.GetPath("scripts"), "MoongateTests", "1.0.0")
-            );
-            BrainAssetSeeder.SeedMissing(Path.Combine(directories.GetPath("scripts"), "brains"));
-
-            var loopAffinity = new StubLoopAffinity();
-            Spatial = new(Persistence, loopAffinity, Bus);
-            Activity = new(Loop, Bus, Time, Config, Metrics);
-            _luaRuntime = new(_engine, directories, Config, Metrics, Loop, Bus, Time);
-            Runtime = new(_luaRuntime);
-            var contextFactory = new NpcBrainContextFactory(Spatial, Sessions, Time);
-            var aiActions = new AiActionService(
-                Persistence,
-                new UnexpectedMovementService(),
-                Chat,
-                new Random(42),
-                loopAffinity,
-                Metrics
-            );
-            InstallAiModule(aiActions);
-            Scheduler = new(
-                Loop,
-                Runtime,
-                aiActions,
-                new StubNpcMemoryService(),
-                Activity,
-                Persistence,
-                contextFactory,
-                Time,
-                Config,
-                Metrics
-            );
-
-            new NpcBrainLifecycleSubscriber(Spatial, Persistence, Scheduler, Activity).Subscribe(Bus);
-            new NpcBrainEventRouter(Spatial, Persistence, Sessions, Scheduler, Activity).Subscribe(Bus);
-        }
-
-        private void InstallAiModule(AiActionService actions)
-        {
-            var ai = new Table(_engine.LuaScript);
-            ai.Set("say", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Say(a.Count > 0 ? a[0].ToPrintString() : ""))));
-            ai.Set("patrol", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.Patrol())));
-            ai.Set("return_home", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ReturnHome())));
-            ai.Set("clear_target", DynValue.NewCallback((_, _) => DynValue.NewBoolean(actions.ClearTarget())));
-            ai.Set("move_toward", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveToward(new((uint)a[0].Number)))));
-            ai.Set("move_away", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.MoveAway(new((uint)a[0].Number)))));
-            ai.Set("engage", DynValue.NewCallback((_, a) => DynValue.NewBoolean(actions.Engage(new((uint)a[0].Number)))));
-            _engine.LuaScript.Globals.Set("ai", DynValue.NewTable(ai));
-        }
-
-        public async Task SeedAsync()
-        {
-            await Persistence.Store<MobileEntity>().UpsertAsync(Player);
-            await Persistence.Store<MobileEntity>().UpsertAsync(Guard);
-            await Persistence.Store<AccountEntity>().UpsertAsync(
-                new()
-                {
-                    Id = new(0x100),
-                    Username = "player",
-                    MobileIds = [Player.Id]
-                }
-            );
-            Sessions.Played.Add(Player.Id);
-        }
-
-        public void Dispose()
-        {
-            _luaRuntime.Dispose();
-            _engine.Dispose();
-            Bus.Dispose();
-            _container.Dispose();
-            Directory.Delete(_root, true);
-        }
-    }
-
-    private sealed class RecordingLuaNpcBrainRuntime : INpcBrainRuntime
-    {
-        private readonly LuaNpcBrainRuntime _inner;
-        private readonly List<NpcBrainHookType> _invocations = [];
-
-        public IReadOnlyList<NpcBrainHookType> Invocations => _invocations;
-
-        public RecordingLuaNpcBrainRuntime(LuaNpcBrainRuntime inner)
-        {
-            _inner = inner;
-        }
-
-        public bool TryBind(
-            Serial mobileId,
-            string brainId,
-            out BrainDescriptor? descriptor,
-            out string? error
-        )
-            => _inner.TryBind(mobileId, brainId, out descriptor, out error);
-
-        public bool TryGetDescriptor(Serial mobileId, out BrainDescriptor? descriptor)
-            => _inner.TryGetDescriptor(mobileId, out descriptor);
-
-        public NpcBrainInvocationResult Invoke(
-            Serial mobileId,
-            NpcBrainHookType hook,
-            BrainContext context,
-            NpcBrainEvent? brainEvent = null
-        )
-        {
-            _invocations.Add(hook);
-
-            return _inner.Invoke(mobileId, hook, context, brainEvent);
-        }
-
-        public bool TryReload(
-            string brainId,
-            out BrainDescriptor? descriptor,
-            out string? error
-        )
-            => _inner.TryReload(brainId, out descriptor, out error);
-
-        public void Reset(Serial mobileId)
-        {
-            _inner.Reset(mobileId);
-        }
-
-        public void Unbind(Serial mobileId)
-        {
-            _inner.Unbind(mobileId);
-        }
-    }
-
-    private sealed class UnexpectedMovementService : IMovementService
-    {
-        public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
-        {
-            throw new InvalidOperationException("The guard integration flow must not move a player.");
-        }
-
-        public bool TryMoveNpc(Serial mobileId, DirectionType direction)
-        {
-            throw new InvalidOperationException("The built-in guard flow must not emit movement intents.");
-        }
     }
 }

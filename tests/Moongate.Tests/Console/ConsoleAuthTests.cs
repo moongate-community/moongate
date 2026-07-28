@@ -8,8 +8,12 @@ namespace Moongate.Tests.Console;
 
 public class ConsoleAuthTests
 {
-    private static AccountAuthResult Ok() => AccountAuthResult.Ok("gm");
-    private static AccountAuthResult Denied() => AccountAuthResult.Denied(LoginDeniedReasonType.IncorrectCredentials);
+    [Fact]
+    public void Evaluate_AuthFailure_IsLoginFailed()
+        => Assert.Equal(
+            ConsoleAuthResultType.LoginFailed,
+            ConsoleAuth.Evaluate(Denied(), null, AccountLevelType.GrandMaster)
+        );
 
     [Fact]
     public void Evaluate_SuccessAtOrAboveMinLevel_IsAllowed()
@@ -26,16 +30,15 @@ public class ConsoleAuthTests
         );
 
     [Fact]
-    public void Evaluate_AuthFailure_IsLoginFailed()
-        => Assert.Equal(
-            ConsoleAuthResultType.LoginFailed,
-            ConsoleAuth.Evaluate(Denied(), null, AccountLevelType.GrandMaster)
-        );
-
-    [Fact]
     public void Evaluate_SuccessButUnknownAccount_IsLoginFailed()
         => Assert.Equal(
             ConsoleAuthResultType.LoginFailed,
             ConsoleAuth.Evaluate(Ok(), null, AccountLevelType.GrandMaster)
         );
+
+    private static AccountAuthResult Denied()
+        => AccountAuthResult.Denied(LoginDeniedReasonType.IncorrectCredentials);
+
+    private static AccountAuthResult Ok()
+        => AccountAuthResult.Ok("gm");
 }

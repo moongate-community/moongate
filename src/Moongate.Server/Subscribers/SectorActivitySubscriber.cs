@@ -17,20 +17,20 @@ public sealed class SectorActivitySubscriber : IEventSubscriberRegistration
         _activity = activity;
     }
 
-    public Task OnPlayerEnteredWorld(PlayerEnteredWorldEvent message, CancellationToken cancellationToken)
-    {
-        _players.Add(message.Mobile.Id);
-        _activity.TrackPlayer(message.Mobile);
-
-        return Task.CompletedTask;
-    }
-
     public Task OnMobileChangedSector(MobileChangedSectorEvent message, CancellationToken cancellationToken)
     {
         if (_players.Contains(message.Mobile))
         {
             _activity.MovePlayer(message.Mobile, message.ToMapId, message.ToSectorX, message.ToSectorY);
         }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnPlayerEnteredWorld(PlayerEnteredWorldEvent message, CancellationToken cancellationToken)
+    {
+        _players.Add(message.Mobile.Id);
+        _activity.TrackPlayer(message.Mobile);
 
         return Task.CompletedTask;
     }

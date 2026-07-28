@@ -8,19 +8,21 @@ namespace Moongate.Tests.Support;
 /// <summary>No-op AI action service for scheduler tests, where brain effects are simulated by the runtime double.</summary>
 public sealed class StubAiActionService : IAiActionService
 {
+    private sealed class NoopScope : IDisposable
+    {
+        public void Dispose() { }
+    }
+
     public IDisposable Begin(BrainContext context)
         => new NoopScope();
 
-    public bool Say(string text)
+    public bool ClearTarget()
         => true;
 
-    public bool Patrol()
+    public bool Engage(Serial targetId)
         => true;
 
-    public bool ReturnHome()
-        => true;
-
-    public bool Step(DirectionType direction)
+    public bool MoveAway(Serial targetId)
         => true;
 
     public bool MoveTo(int x, int y)
@@ -29,19 +31,15 @@ public sealed class StubAiActionService : IAiActionService
     public bool MoveToward(Serial targetId)
         => true;
 
-    public bool MoveAway(Serial targetId)
+    public bool Patrol()
         => true;
 
-    public bool Engage(Serial targetId)
+    public bool ReturnHome()
         => true;
 
-    public bool ClearTarget()
+    public bool Say(string text)
         => true;
 
-    private sealed class NoopScope : IDisposable
-    {
-        public void Dispose()
-        {
-        }
-    }
+    public bool Step(DirectionType direction)
+        => true;
 }

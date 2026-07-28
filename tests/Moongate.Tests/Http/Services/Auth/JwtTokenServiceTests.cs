@@ -21,6 +21,23 @@ public class JwtTokenServiceTests
     }
 
     [Fact]
+    public void Issue_CarriesTheSessionStartRatherThanTheMintingInstant()
+    {
+        // The renewal endpoint reads this back to cap the session, so it must be the value handed in — not
+        // "now" — or a chain of renewals would never age.
+        var mintedAt = SessionStart.AddHours(3);
+
+        var token = Read(Service(now: mintedAt).Issue(new(5), "tom", AccountLevelType.Player, SessionStart).Token);
+
+        // The literal rather than the constant: the claim name is a wire contract, so renaming it in the
+        // source has to fail here instead of quietly agreeing with itself.
+        Assert.Equal(
+            SessionStart.ToUnixTimeSeconds().ToString(),
+            token.Claims.First(c => c.Type == "auth_time").Value
+        );
+    }
+
+    [Fact]
     public void Issue_ExpiresAfterTheConfiguredLifetime()
     {
         var now = new DateTimeOffset(2026, 7, 16, 12, 0, 0, TimeSpan.Zero);
@@ -35,8 +52,7 @@ public class JwtTokenServiceTests
         // HS256 needs at least 32 bytes. Failing loudly beats minting tokens nobody can verify.
         var service = Service(signingKey);
 
-        Assert.Throws<InvalidOperationException>(() => service.Issue(new(5), "tom", AccountLevelType.Player, SessionStart)
-        );
+        Assert.Throws<InvalidOperationException>(() => service.Issue(new(5), "tom", AccountLevelType.Player, SessionStart));
     }
 
     [Fact]
@@ -53,23 +69,6 @@ public class JwtTokenServiceTests
         var token = Read(Service().Issue(new(5), "tom", AccountLevelType.Player, SessionStart).Token);
 
         Assert.Equal("moongate", token.Issuer);
-    }
-
-    [Fact]
-    public void Issue_CarriesTheSessionStartRatherThanTheMintingInstant()
-    {
-        // The renewal endpoint reads this back to cap the session, so it must be the value handed in — not
-        // "now" — or a chain of renewals would never age.
-        var mintedAt = SessionStart.AddHours(3);
-
-        var token = Read(Service(now: mintedAt).Issue(new(5), "tom", AccountLevelType.Player, SessionStart).Token);
-
-        // The literal rather than the constant: the claim name is a wire contract, so renaming it in the
-        // source has to fail here instead of quietly agreeing with itself.
-        Assert.Equal(
-            SessionStart.ToUnixTimeSeconds().ToString(),
-            token.Claims.First(c => c.Type == "auth_time").Value
-        );
     }
 
     private static JwtSecurityToken Read(string token)

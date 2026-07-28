@@ -7,8 +7,9 @@ public sealed record NpcBrainInvocationResult(
     bool InstructionBudgetExceeded
 )
 {
-    public static NpcBrainInvocationResult Succeeded(int? nextTickMs) => new(true, nextTickMs, null, false);
-
     public static NpcBrainInvocationResult Failed(string error, bool budgetExceeded = false)
         => new(false, null, error, budgetExceeded);
+
+    public static NpcBrainInvocationResult Succeeded(int? nextTickMs)
+        => new(true, nextTickMs, null, false);
 }

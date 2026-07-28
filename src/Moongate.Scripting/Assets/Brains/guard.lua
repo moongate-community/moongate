@@ -33,7 +33,7 @@ function guard.on_speech_heard(ctx, state, event)
 end
 
 function guard.think()
-    -- idle: no action
+-- idle: no action
 end
 
 return guard

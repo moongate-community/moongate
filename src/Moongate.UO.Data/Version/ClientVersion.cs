@@ -261,6 +261,9 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
     public static bool IsNull(object? x)
         => ReferenceEquals(x, null);
 
+    public override string ToString()
+        => SourceString;
+
     public static bool operator ==(ClientVersion? l, ClientVersion? r)
         => Equals(l, r);
 
@@ -278,9 +281,6 @@ public class ClientVersion : IComparable<ClientVersion>, IComparer<ClientVersion
 
     public static bool operator <=(ClientVersion? l, ClientVersion? r)
         => Compare(l, r) <= 0;
-
-    public override string ToString()
-        => SourceString;
 
     int IComparer<ClientVersion>.Compare(ClientVersion? x, ClientVersion? y)
         => Compare(x, y);

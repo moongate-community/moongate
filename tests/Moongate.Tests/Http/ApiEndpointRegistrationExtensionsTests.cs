@@ -9,16 +9,12 @@ public class ApiEndpointRegistrationExtensionsTests
 {
     private sealed class FirstEndpoints : IApiEndpointRegistration
     {
-        public void Register(IEndpointRouteBuilder routes)
-        {
-        }
+        public void Register(IEndpointRouteBuilder routes) { }
     }
 
     private sealed class SecondEndpoints : IApiEndpointRegistration
     {
-        public void Register(IEndpointRouteBuilder routes)
-        {
-        }
+        public void Register(IEndpointRouteBuilder routes) { }
     }
 
     [Fact]

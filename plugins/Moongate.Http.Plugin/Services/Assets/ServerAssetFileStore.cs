@@ -13,6 +13,16 @@ public sealed class ServerAssetFileStore : IServerAssetFileStore
         Directory.CreateDirectory(_directory);
     }
 
+    public void Delete(string fileName)
+    {
+        var path = Path.Combine(_directory, fileName);
+
+        if (File.Exists(path))
+        {
+            File.Delete(path);
+        }
+    }
+
     public async Task SaveAsync(ServerAssetSlotType slot, string extension, Stream content)
     {
         var fileName = $"{slot}.{extension}";
@@ -24,7 +34,7 @@ public sealed class ServerAssetFileStore : IServerAssetFileStore
             await content.CopyToAsync(file);
         }
 
-        File.Move(tempPath, finalPath, overwrite: true);
+        File.Move(tempPath, finalPath, true);
     }
 
     public (Stream stream, string fileName)? TryOpen(string fileName)
@@ -32,17 +42,7 @@ public sealed class ServerAssetFileStore : IServerAssetFileStore
         var path = Path.Combine(_directory, fileName);
 
         return File.Exists(path)
-            ? (File.OpenRead(path), fileName)
-            : null;
-    }
-
-    public void Delete(string fileName)
-    {
-        var path = Path.Combine(_directory, fileName);
-
-        if (File.Exists(path))
-        {
-            File.Delete(path);
-        }
+                   ? (File.OpenRead(path), fileName)
+                   : null;
     }
 }

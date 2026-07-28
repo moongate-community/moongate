@@ -17,23 +17,6 @@ namespace Moongate.Tests.Http.Endpoints.Images;
 public class ItemImageEndpointsTests
 {
     [Fact]
-    public async Task Get_Hued_ReturnsDifferentPixelsFromThePlainArt()
-    {
-        using var fixture = ItemImageFixture.Create();
-        await using var server = await StartAsync(fixture);
-
-        var plain = await server.Client.GetByteArrayAsync($"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png");
-        var hued = await server.Client.GetByteArrayAsync(
-            $"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png?hue=0x{ItemImageFixture.Hue:x4}"
-        );
-
-        using var plainImage = Image.Load<Bgra32>(plain);
-        using var huedImage = Image.Load<Bgra32>(hued);
-
-        Assert.NotEqual(plainImage[0, 0], huedImage[0, 0]);
-    }
-
-    [Fact]
     public async Task Get_HueOutOfRange_IsBadRequest()
     {
         // Hues.GetHue never fails: it masks the index and falls back to hue 0. Without this check the
@@ -44,6 +27,23 @@ public class ItemImageEndpointsTests
         var response = await server.Client.GetAsync($"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png?hue=0x9999");
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Get_Hued_ReturnsDifferentPixelsFromThePlainArt()
+    {
+        using var fixture = ItemImageFixture.Create();
+        await using var server = await StartAsync(fixture);
+
+        var plain = await server.Client.GetByteArrayAsync($"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png");
+        var hued = await server.Client.GetByteArrayAsync(
+                       $"/api/v1/images/items/0x{ItemImageFixture.ItemId:x4}.png?hue=0x{ItemImageFixture.Hue:x4}"
+                   );
+
+        using var plainImage = Image.Load<Bgra32>(plain);
+        using var huedImage = Image.Load<Bgra32>(hued);
+
+        Assert.NotEqual(plainImage[0, 0], huedImage[0, 0]);
     }
 
     [Fact]
@@ -108,13 +108,14 @@ public class ItemImageEndpointsTests
     }
 
     private static async Task<TestHttpServer> StartAsync(ItemImageFixture fixture)
-        => await TestHttpServer.StartAsync(container =>
-            {
-                container.RegisterInstance(fixture.Directories);
-                container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
-                container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
-                container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
-                container.RegisterApiEndpointInstance(new ItemImageEndpoints(container.Resolve<IItemImageService>()));
-            }
-        );
+        => await TestHttpServer.StartAsync(
+               container =>
+               {
+                   container.RegisterInstance(fixture.Directories);
+                   container.Register<IItemCatalog, ItemCatalog>(Reuse.Singleton);
+                   container.Register<IUltimaReadGate, UltimaReadGate>(Reuse.Singleton);
+                   container.Register<IItemImageService, ItemImageService>(Reuse.Singleton);
+                   container.RegisterApiEndpointInstance(new ItemImageEndpoints(container.Resolve<IItemImageService>()));
+               }
+           );
 }

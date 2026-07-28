@@ -23,7 +23,5 @@ public sealed class NpcMemoryLifecycleSubscriber : IEventSubscriberRegistration
     }
 
     public void Subscribe(IEventBus eventBus)
-    {
-        eventBus.Subscribe<MobileDeletedEvent>(OnMobileDeleted);
-    }
+        => eventBus.Subscribe<MobileDeletedEvent>(OnMobileDeleted);
 }

@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.News.Plugin.Data.Api;
@@ -23,30 +22,30 @@ public sealed class NewsAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/v1/admin/news", Create)
-            .WithName("CreateNews")
-            .WithTags("news")
-            .Produces<NewsResponse>(StatusCodes.Status201Created)
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              .WithName("CreateNews")
+              .WithTags("news")
+              .Produces<NewsResponse>(StatusCodes.Status201Created)
+              .RequireAuthorization(HttpServerService.AdminPolicy);
         routes.MapGet("/api/v1/admin/news", ListAll)
-            .WithName("ListAllNews")
-            .WithTags("news")
-            .Produces<IReadOnlyList<NewsResponse>>()
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              .WithName("ListAllNews")
+              .WithTags("news")
+              .Produces<IReadOnlyList<NewsResponse>>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
         routes.MapGet("/api/v1/admin/news/{id}", GetOne)
-            .WithName("GetNewsAdmin")
-            .WithTags("news")
-            .Produces<NewsResponse>()
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              .WithName("GetNewsAdmin")
+              .WithTags("news")
+              .Produces<NewsResponse>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
         routes.MapPut("/api/v1/admin/news/{id}", Update)
-            .WithName("UpdateNews")
-            .WithTags("news")
-            .Produces<NewsResponse>()
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              .WithName("UpdateNews")
+              .WithTags("news")
+              .Produces<NewsResponse>()
+              .RequireAuthorization(HttpServerService.AdminPolicy);
         routes.MapDelete("/api/v1/admin/news/{id}", Delete)
-            .WithName("DeleteNews")
-            .WithTags("news")
-            .Produces(StatusCodes.Status204NoContent)
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              .WithName("DeleteNews")
+              .WithTags("news")
+              .Produces(StatusCodes.Status204NoContent)
+              .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     /// <summary>Creates a news entry, authored by the calling staff member.</summary>
@@ -58,23 +57,23 @@ public sealed class NewsAdminEndpoints : IApiEndpointRegistration
         return TypedResults.Created($"/api/v1/news/{news.Id.Value}", NewsResponse.From(news));
     }
 
+    /// <summary>Deletes a news entry.</summary>
+    private async Task<IResult> Delete(uint id)
+        => await _news.DeleteAsync(new(id)) ? TypedResults.NoContent() : TypedResults.NotFound();
+
+    /// <summary>Returns one news entry in any state.</summary>
+    private IResult GetOne(uint id)
+        => _news.Get(new(id)) is { } news ? TypedResults.Ok(NewsResponse.From(news)) : TypedResults.NotFound();
+
     /// <summary>Lists every news entry, drafts included, newest first.</summary>
     private IResult ListAll()
         => TypedResults.Ok(_news.GetAll().Select(NewsResponse.From).ToList());
 
-    /// <summary>Returns one news entry in any state.</summary>
-    private IResult GetOne(uint id)
-        => _news.Get(new Serial(id)) is { } news ? TypedResults.Ok(NewsResponse.From(news)) : TypedResults.NotFound();
-
     /// <summary>Updates a news entry's title, body and published state.</summary>
     private async Task<IResult> Update(uint id, UpdateNewsRequest request)
     {
-        var news = await _news.UpdateAsync(new Serial(id), request.Title, request.Body, request.IsPublished);
+        var news = await _news.UpdateAsync(new(id), request.Title, request.Body, request.IsPublished);
 
         return news is { } updated ? TypedResults.Ok(NewsResponse.From(updated)) : TypedResults.NotFound();
     }
-
-    /// <summary>Deletes a news entry.</summary>
-    private async Task<IResult> Delete(uint id)
-        => await _news.DeleteAsync(new Serial(id)) ? TypedResults.NoContent() : TypedResults.NotFound();
 }

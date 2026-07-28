@@ -60,9 +60,9 @@ public sealed class MobileTemplateImageService : IMobileTemplateImageService
         );
 
         var figure = await _gate.ReadAsync(
-            () => File.Exists(path) ? null : _renderer.Render(request),
-            cancellationToken
-        );
+                         () => File.Exists(path) ? null : _renderer.Render(request),
+                         cancellationToken
+                     );
 
         if (figure is null)
         {

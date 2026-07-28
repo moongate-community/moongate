@@ -46,8 +46,8 @@ internal static class AnimationsUopLoader
 
     public static IEnumerable<int> GetAllUopBodyIds()
         => MobTypes.GetDefinedBodies()
-            .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
-            .OrderBy(id => id);
+                   .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
+                   .OrderBy(id => id);
 
     public static AnimationFrame[] GetAnimation(
         int body,
@@ -114,8 +114,8 @@ internal static class AnimationsUopLoader
         }
 
         var result = firstFrame && frames.Length > 1
-            ? new[] { frames[0] }
-            : frames;
+                         ? new[] { frames[0] }
+                         : frames;
 
         Animations.Cache.Set(cacheKey, result);
 

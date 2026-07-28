@@ -20,31 +20,31 @@ public sealed class MemoryModule
         _memory = memory;
     }
 
-    [ScriptFunction("set", "Stores a scalar (string/number/boolean) under a key; false when unsupported or rejected.")]
-    public bool Set(string key, object value)
-    {
-        var stored = value switch
-        {
-            string text => NpcMemoryValue.FromString(text),
-            bool flag => NpcMemoryValue.FromBoolean(flag),
-            double number => NpcMemoryValue.FromNumber(number),
-            long number => NpcMemoryValue.FromNumber(number),
-            int number => NpcMemoryValue.FromNumber(number),
-            _ => null
-        };
-
-        return stored is not null && _memory.Set(key, stored);
-    }
-
-    [ScriptFunction("get", "Returns the stored value for a key, or nil.")]
-    public object? Get(string key)
-        => _memory.Get(key)?.ToScalar();
+    [ScriptFunction("all", "Returns a table of every stored key/value for the current NPC.")]
+    public NpcMemoryLuaView All()
+        => new(_memory.All());
 
     [ScriptFunction("delete", "Removes a key; true when it existed.")]
     public bool Delete(string key)
         => _memory.Delete(key);
 
-    [ScriptFunction("all", "Returns a table of every stored key/value for the current NPC.")]
-    public NpcMemoryLuaView All()
-        => new(_memory.All());
+    [ScriptFunction("get", "Returns the stored value for a key, or nil.")]
+    public object? Get(string key)
+        => _memory.Get(key)?.ToScalar();
+
+    [ScriptFunction("set", "Stores a scalar (string/number/boolean) under a key; false when unsupported or rejected.")]
+    public bool Set(string key, object value)
+    {
+        var stored = value switch
+        {
+            string text   => NpcMemoryValue.FromString(text),
+            bool flag     => NpcMemoryValue.FromBoolean(flag),
+            double number => NpcMemoryValue.FromNumber(number),
+            long number   => NpcMemoryValue.FromNumber(number),
+            int number    => NpcMemoryValue.FromNumber(number),
+            _             => null
+        };
+
+        return stored is not null && _memory.Set(key, stored);
+    }
 }

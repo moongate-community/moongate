@@ -15,52 +15,6 @@ public class ItemCatalogTests
     private const int ItemId = 0x10;
 
     [Fact]
-    public void GetItem_KnownId_ReturnsEnrichedInfo()
-    {
-        var dir = CreateFixtureDirectory();
-
-        try
-        {
-            Files.SetDirectory(dir);
-            InitializeReaders();
-
-            var catalog = new ItemCatalog();
-            var info = catalog.GetItem(ItemId);
-
-            Assert.NotNull(info);
-            Assert.Equal((uint)ItemId, info.ItemId);
-            Assert.Equal("test tunic", info.Name);
-            Assert.Equal(4, info.Height);
-            Assert.True((info.Flags & TileFlagType.Wearable) != 0);
-            Assert.True(info.HasArt);
-            Assert.Equal(2, info.ArtWidth);
-            Assert.Equal(2, info.ArtHeight);
-        }
-        finally
-        {
-            Directory.Delete(dir, true);
-        }
-    }
-
-    [Fact]
-    public void GetItem_OutOfRange_ReturnsNull()
-    {
-        var dir = CreateFixtureDirectory();
-
-        try
-        {
-            Files.SetDirectory(dir);
-            InitializeReaders();
-
-            Assert.Null(new ItemCatalog().GetItem(uint.MaxValue));
-        }
-        finally
-        {
-            Directory.Delete(dir, true);
-        }
-    }
-
-    [Fact]
     public void GetItemImage_MissingArt_ReturnsNull()
     {
         var dir = CreateFixtureDirectory();
@@ -126,6 +80,52 @@ public class ItemCatalogTests
             using var huedImage = Image.Load<Bgra32>(hued);
 
             Assert.NotEqual(plainImage[0, 0], huedImage[0, 0]);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void GetItem_KnownId_ReturnsEnrichedInfo()
+    {
+        var dir = CreateFixtureDirectory();
+
+        try
+        {
+            Files.SetDirectory(dir);
+            InitializeReaders();
+
+            var catalog = new ItemCatalog();
+            var info = catalog.GetItem(ItemId);
+
+            Assert.NotNull(info);
+            Assert.Equal((uint)ItemId, info.ItemId);
+            Assert.Equal("test tunic", info.Name);
+            Assert.Equal(4, info.Height);
+            Assert.True((info.Flags & TileFlagType.Wearable) != 0);
+            Assert.True(info.HasArt);
+            Assert.Equal(2, info.ArtWidth);
+            Assert.Equal(2, info.ArtHeight);
+        }
+        finally
+        {
+            Directory.Delete(dir, true);
+        }
+    }
+
+    [Fact]
+    public void GetItem_OutOfRange_ReturnsNull()
+    {
+        var dir = CreateFixtureDirectory();
+
+        try
+        {
+            Files.SetDirectory(dir);
+            InitializeReaders();
+
+            Assert.Null(new ItemCatalog().GetItem(uint.MaxValue));
         }
         finally
         {

@@ -31,11 +31,11 @@ public sealed class NpcBrainContextFactory
     )
     {
         var nearby = _spatial
-            .GetMobilesInRange(owner.MapId, owner.Position, descriptor.PerceptionRange)
-            .Where(mobile => mobile.Id != owner.Id)
-            .Select(ToSnapshot)
-            .OrderBy(snapshot => snapshot.Id)
-            .ToArray();
+                     .GetMobilesInRange(owner.MapId, owner.Position, descriptor.PerceptionRange)
+                     .Where(mobile => mobile.Id != owner.Id)
+                     .Select(ToSnapshot)
+                     .OrderBy(snapshot => snapshot.Id)
+                     .ToArray();
 
         return new(
             _timeProvider.GetUtcNow(),

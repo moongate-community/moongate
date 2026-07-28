@@ -1,12 +1,33 @@
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Server.Abstractions.Types;
-using Xunit;
 
 namespace Moongate.Tests.Http.Services.Assets;
 
 public sealed class ServerAssetFileStoreTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "mg-assets-" + Guid.NewGuid().ToString("N"));
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_dir))
+        {
+            Directory.Delete(_dir, true);
+        }
+    }
+
+    [Fact]
+    public async Task Save_OverwritesPreviousSlotFile()
+    {
+        var store = new ServerAssetFileStore(_dir);
+        await store.SaveAsync(ServerAssetSlotType.Logo, "png", new MemoryStream(new byte[] { 1 }));
+        await store.SaveAsync(ServerAssetSlotType.Logo, "png", new MemoryStream(new byte[] { 2, 2 }));
+
+        var opened = store.TryOpen("Logo.png")!.Value;
+        using var ms = new MemoryStream();
+        await opened.stream.CopyToAsync(ms);
+        opened.stream.Dispose();
+        Assert.Equal(new byte[] { 2, 2 }, ms.ToArray());
+    }
 
     [Fact]
     public async Task Save_ThenOpen_RoundTripsBytes()
@@ -30,27 +51,5 @@ public sealed class ServerAssetFileStoreTests : IDisposable
         var store = new ServerAssetFileStore(_dir);
 
         Assert.Null(store.TryOpen("Logo.png"));
-    }
-
-    [Fact]
-    public async Task Save_OverwritesPreviousSlotFile()
-    {
-        var store = new ServerAssetFileStore(_dir);
-        await store.SaveAsync(ServerAssetSlotType.Logo, "png", new MemoryStream(new byte[] { 1 }));
-        await store.SaveAsync(ServerAssetSlotType.Logo, "png", new MemoryStream(new byte[] { 2, 2 }));
-
-        var opened = store.TryOpen("Logo.png")!.Value;
-        using var ms = new MemoryStream();
-        await opened.stream.CopyToAsync(ms);
-        opened.stream.Dispose();
-        Assert.Equal(new byte[] { 2, 2 }, ms.ToArray());
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(_dir))
-        {
-            Directory.Delete(_dir, recursive: true);
-        }
     }
 }

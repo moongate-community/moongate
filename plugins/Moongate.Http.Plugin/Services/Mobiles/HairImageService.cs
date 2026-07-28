@@ -37,21 +37,21 @@ public sealed class HairImageService : IHairImageService
         }
 
         var figure = await _gate.ReadAsync(
-            () => File.Exists(path)
-                ? null
-                : _renderer.Render(
-                    new(
-                        referenceBody,
-                        0,
-                        facial ? 0 : style,
-                        facial ? 0 : hue,
-                        facial ? style : 0,
-                        facial ? hue : 0,
-                        []
-                    )
-                ),
-            cancellationToken
-        );
+                         () => File.Exists(path)
+                                   ? null
+                                   : _renderer.Render(
+                                       new(
+                                           referenceBody,
+                                           0,
+                                           facial ? 0 : style,
+                                           facial ? 0 : hue,
+                                           facial ? style : 0,
+                                           facial ? hue : 0,
+                                           []
+                                       )
+                                   ),
+                         cancellationToken
+                     );
 
         if (figure is null)
         {

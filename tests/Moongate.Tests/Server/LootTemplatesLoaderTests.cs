@@ -28,7 +28,8 @@ public class LootTemplatesLoaderTests
             var seedAtomic = seederType.GetMethod("SeedAtomic");
             Assert.NotNull(seedAtomic);
 
-            var exception = Assert.Throws<TargetInvocationException>(() => seedAtomic.Invoke(
+            var exception = Assert.Throws<TargetInvocationException>(
+                () => seedAtomic.Invoke(
                     null,
                     [
                         typeof(LootTemplatesLoader).Assembly,

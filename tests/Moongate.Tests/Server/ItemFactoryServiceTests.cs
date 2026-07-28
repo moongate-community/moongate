@@ -8,14 +8,6 @@ namespace Moongate.Tests.Server;
 public class ItemFactoryServiceTests
 {
     [Fact]
-    public void Create_ClampsCountAndAmountToMinimumOne()
-    {
-        var items = Factory().CreateFromTemplate("dagger", 0, 0);
-        var item = Assert.Single(items);
-        Assert.Equal(1, item.Amount);
-    }
-
-    [Fact]
     public void CreateByCategory_ReturnsItemInCategory()
     {
         var item = Assert.Single(Factory().CreateByCategory("Clothing"));
@@ -119,6 +111,14 @@ public class ItemFactoryServiceTests
     [Fact]
     public void CreateFromTemplate_UnknownId_ReturnsEmpty()
         => Assert.Empty(Factory().CreateFromTemplate("does_not_exist"));
+
+    [Fact]
+    public void Create_ClampsCountAndAmountToMinimumOne()
+    {
+        var items = Factory().CreateFromTemplate("dagger", 0, 0);
+        var item = Assert.Single(items);
+        Assert.Equal(1, item.Amount);
+    }
 
     private static ItemFactoryService Factory(int seed = 1)
         => new(Templates(), new(seed));

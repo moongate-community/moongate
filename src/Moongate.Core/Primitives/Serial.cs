@@ -59,6 +59,9 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
     public override int GetHashCode()
         => Value.GetHashCode();
 
+    public override string ToString()
+        => $"0x{Value:X8}";
+
     public static bool operator ==(Serial left, Serial right)
         => left.Value == right.Value;
 
@@ -82,7 +85,4 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
 
     public static bool operator <=(Serial left, Serial right)
         => left.Value <= right.Value;
-
-    public override string ToString()
-        => $"0x{Value:X8}";
 }

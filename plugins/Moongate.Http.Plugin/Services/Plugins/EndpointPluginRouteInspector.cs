@@ -1,7 +1,6 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Http.Plugin.Data.Plugins;
 using Moongate.Http.Plugin.Interfaces.Plugins;
@@ -28,8 +27,8 @@ public sealed class EndpointPluginRouteInspector : IPluginRouteInspector
 
         foreach (var endpoint in endpoints.Endpoints.OfType<RouteEndpoint>())
         {
-            var assembly = endpoint.Metadata.GetMetadata<MethodInfo>()?.DeclaringType?.Assembly.GetName().Name
-                           ?? string.Empty;
+            var assembly = endpoint.Metadata.GetMetadata<MethodInfo>()?.DeclaringType?.Assembly.GetName().Name ??
+                           string.Empty;
 
             if (!grouped.TryGetValue(assembly, out var routes))
             {
@@ -72,8 +71,8 @@ public sealed class EndpointPluginRouteInspector : IPluginRouteInspector
         }
 
         return endpoint.Metadata
-            .GetOrderedMetadata<IAuthorizeData>()
-            .Select(data => data.Policy ?? data.Roles)
-            .FirstOrDefault(value => !string.IsNullOrEmpty(value));
+                       .GetOrderedMetadata<IAuthorizeData>()
+                       .Select(data => data.Policy ?? data.Roles)
+                       .FirstOrDefault(value => !string.IsNullOrEmpty(value));
     }
 }

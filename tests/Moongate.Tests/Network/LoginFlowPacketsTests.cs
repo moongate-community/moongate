@@ -9,20 +9,6 @@ namespace Moongate.Tests.Network;
 public class LoginFlowPacketsTests
 {
     [Fact]
-    public void ConnectToGameServer_WritesAddressInNormalOrder()
-    {
-        var packet = new ConnectToGameServerPacket(IPAddress.Parse("192.168.1.50"), 2593, 1);
-
-        var writer = new SpanWriter(16);
-        packet.Write(ref writer);
-        var bytes = writer.Span.ToArray();
-
-        // The 0x8C redirect writes the IP in normal order (unlike the 0xA8 server list,
-        // which reverses it); otherwise the client dials a mangled address and cannot reconnect.
-        Assert.Equal(new byte[] { 192, 168, 1, 50 }, bytes.AsSpan(1, 4).ToArray());
-    }
-
-    [Fact]
     public void ConnectToGameServerPacket_Write_Is11BytesWithPortAndKey()
     {
         var packet = new ConnectToGameServerPacket(IPAddress.Parse("127.0.0.1"), 2593, 0xDEADBEEF);
@@ -35,6 +21,20 @@ public class LoginFlowPacketsTests
         Assert.Equal(0x8C, bytes[0]);
         Assert.Equal(2593, (bytes[5] << 8) | bytes[6]); // port big-endian
         Assert.Equal(0xDEADBEEFu, ((uint)bytes[7] << 24) | ((uint)bytes[8] << 16) | ((uint)bytes[9] << 8) | bytes[10]);
+    }
+
+    [Fact]
+    public void ConnectToGameServer_WritesAddressInNormalOrder()
+    {
+        var packet = new ConnectToGameServerPacket(IPAddress.Parse("192.168.1.50"), 2593, 1);
+
+        var writer = new SpanWriter(16);
+        packet.Write(ref writer);
+        var bytes = writer.Span.ToArray();
+
+        // The 0x8C redirect writes the IP in normal order (unlike the 0xA8 server list,
+        // which reverses it); otherwise the client dials a mangled address and cannot reconnect.
+        Assert.Equal(new byte[] { 192, 168, 1, 50 }, bytes.AsSpan(1, 4).ToArray());
     }
 
     [Fact]

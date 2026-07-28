@@ -307,7 +307,7 @@
           "console"
         ],
         "summary": "Opens a per-connection SSE feed; its first event carries the connection id to POST with.",
-        "description": "Emits `ready` (data = the connection id), then a `line` per command reply and a\n            `done` when a command finishes. The connection is closed when the client disconnects.",
+        "description": "Emits `ready` (data = the connection id), then a `line` per command reply and a\n`done` when a command finishes. The connection is closed when the client disconnects.",
         "operationId": "StreamConsole",
         "responses": {
           "200": {
@@ -329,7 +329,7 @@
           "console"
         ],
         "summary": "Runs a console command; its reply lines stream to the given connection's SSE feed.",
-        "description": "Returns 202 immediately — the command is dispatched onto the game loop and its output\n            arrives asynchronously on `GET /api/v1/admin/console/stream`.",
+        "description": "Returns 202 immediately — the command is dispatched onto the game loop and its output\narrives asynchronously on `GET /api/v1/admin/console/stream`.",
         "operationId": "SendConsoleCommand",
         "requestBody": {
           "content": {
@@ -3080,7 +3080,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "The public server profile a website or launcher reads: identity, contacts, assets, and effective registration availability."
+        "description": "The public server profile a website or launcher reads: identity, contacts, assets, and effective registration\navailability."
       },
       "ServerSettingsResponse": {
         "required": [

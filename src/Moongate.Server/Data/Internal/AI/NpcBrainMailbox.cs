@@ -21,25 +21,8 @@ public sealed class NpcBrainMailbox
         _metrics = metrics;
     }
 
-    public bool Enqueue(NpcBrainHookType hook, NpcBrainEvent brainEvent)
-    {
-        if (TryCoalesce(hook, brainEvent))
-        {
-            _metrics.RecordEvent(NpcBrainEventDispositionType.Coalesced);
-            return false;
-        }
-
-        if (_entries.Count == _capacity && !MakeRoom(hook))
-        {
-            _metrics.RecordEvent(NpcBrainEventDispositionType.Dropped);
-            return false;
-        }
-
-        var schedulingChanged = _entries.Count == 0;
-        _entries.Add((hook, brainEvent, _nextSequence++));
-
-        return schedulingChanged;
-    }
+    public void Clear()
+        => _entries.Clear();
 
     public IReadOnlyList<(NpcBrainHookType Hook, NpcBrainEvent Event)> Dequeue(int maximumCount)
     {
@@ -63,55 +46,26 @@ public sealed class NpcBrainMailbox
         return delivered;
     }
 
-    public void Clear()
+    public bool Enqueue(NpcBrainHookType hook, NpcBrainEvent brainEvent)
     {
-        _entries.Clear();
-    }
-
-    private bool TryCoalesce(NpcBrainHookType hook, NpcBrainEvent brainEvent)
-    {
-        if (brainEvent.Mobile is not { Id: var mobileId } || mobileId == Serial.Zero)
+        if (TryCoalesce(hook, brainEvent))
         {
+            _metrics.RecordEvent(NpcBrainEventDispositionType.Coalesced);
+
             return false;
         }
 
-        if (hook == NpcBrainHookType.MobileMoved)
+        if (_entries.Count == _capacity && !MakeRoom(hook))
         {
-            for (var index = 0; index < _entries.Count; index++)
-            {
-                var entry = _entries[index];
+            _metrics.RecordEvent(NpcBrainEventDispositionType.Dropped);
 
-                if (entry.Hook != hook || entry.Event.Mobile?.Id != mobileId)
-                {
-                    continue;
-                }
-
-                _entries[index] = (hook, brainEvent, entry.Sequence);
-                return true;
-            }
+            return false;
         }
 
-        if (hook is NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange)
-        {
-            for (var index = _entries.Count - 1; index >= 0; index--)
-            {
-                var entry = _entries[index];
+        var schedulingChanged = _entries.Count == 0;
+        _entries.Add((hook, brainEvent, _nextSequence++));
 
-                if (
-                    entry.Event.Mobile?.Id != mobileId ||
-                    entry.Hook is not (
-                        NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange
-                    )
-                )
-                {
-                    continue;
-                }
-
-                return entry.Hook == hook;
-            }
-        }
-
-        return false;
+        return schedulingChanged;
     }
 
     private bool MakeRoom(NpcBrainHookType incomingHook)
@@ -134,9 +88,56 @@ public sealed class NpcBrainMailbox
         => hook switch
         {
             NpcBrainHookType.Activate or NpcBrainHookType.Deactivate or NpcBrainHookType.Death => 4,
-            NpcBrainHookType.Attacked or NpcBrainHookType.Damage => 3,
-            NpcBrainHookType.SpeechHeard => 2,
-            NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange => 1,
-            _ => 0
+            NpcBrainHookType.Attacked or NpcBrainHookType.Damage                               => 3,
+            NpcBrainHookType.SpeechHeard                                                       => 2,
+            NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange            => 1,
+            _                                                                                  => 0
         };
+
+    private bool TryCoalesce(NpcBrainHookType hook, NpcBrainEvent brainEvent)
+    {
+        if (brainEvent.Mobile is not { Id: var mobileId } || mobileId == Serial.Zero)
+        {
+            return false;
+        }
+
+        if (hook == NpcBrainHookType.MobileMoved)
+        {
+            for (var index = 0; index < _entries.Count; index++)
+            {
+                var entry = _entries[index];
+
+                if (entry.Hook != hook || entry.Event.Mobile?.Id != mobileId)
+                {
+                    continue;
+                }
+
+                _entries[index] = (hook, brainEvent, entry.Sequence);
+
+                return true;
+            }
+        }
+
+        if (hook is NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange)
+        {
+            for (var index = _entries.Count - 1; index >= 0; index--)
+            {
+                var entry = _entries[index];
+
+                if (
+                    entry.Event.Mobile?.Id != mobileId ||
+                    entry.Hook is not (
+                        NpcBrainHookType.MobileEnteredRange or NpcBrainHookType.MobileLeftRange
+                        )
+                )
+                {
+                    continue;
+                }
+
+                return entry.Hook == hook;
+            }
+        }
+
+        return false;
+    }
 }

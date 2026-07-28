@@ -15,17 +15,6 @@ public sealed class StaticPortalTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Root_ServesThePortalIndex()
-    {
-        await using var server = await TestApiServer.StartAsync(uiDistPath: _root);
-
-        var response = await server.Client.GetAsync("/");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Contains("PORTAL_INDEX", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
-    }
-
-    [Fact]
     public async Task DeepLink_ServesTheIndexSoTheRouterCanHandleIt()
     {
         await using var server = await TestApiServer.StartAsync(uiDistPath: _root);
@@ -34,6 +23,21 @@ public sealed class StaticPortalTests : IAsyncDisposable
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("PORTAL_INDEX", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Directory.Delete(_root, true);
+
+        return ValueTask.CompletedTask;
+    }
+
+    [Fact]
+    public async Task ExistingApiRoute_StillAnswers()
+    {
+        await using var server = await TestApiServer.StartAsync(uiDistPath: _root);
+
+        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/health")).StatusCode);
     }
 
     [Fact]
@@ -58,6 +62,17 @@ public sealed class StaticPortalTests : IAsyncDisposable
         var response = await server.Client.GetAsync("/");
 
         Assert.Equal("no-cache", response.Headers.CacheControl?.ToString());
+    }
+
+    [Fact]
+    public async Task Root_ServesThePortalIndex()
+    {
+        await using var server = await TestApiServer.StartAsync(uiDistPath: _root);
+
+        var response = await server.Client.GetAsync("/");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Contains("PORTAL_INDEX", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -86,26 +101,11 @@ public sealed class StaticPortalTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task ExistingApiRoute_StillAnswers()
-    {
-        await using var server = await TestApiServer.StartAsync(uiDistPath: _root);
-
-        Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/health")).StatusCode);
-    }
-
-    [Fact]
     public async Task WithoutAWebRoot_TheServerStillRuns()
     {
         // A backend contributor who never ran npm must still get a working server.
         await using var server = await TestApiServer.StartAsync();
 
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/health")).StatusCode);
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        Directory.Delete(_root, recursive: true);
-
-        return ValueTask.CompletedTask;
     }
 }

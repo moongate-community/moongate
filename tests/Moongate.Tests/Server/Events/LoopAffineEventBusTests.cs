@@ -19,6 +19,11 @@ public class LoopAffineEventBusTests
         public List<IEvent> Published { get; } = [];
         public Delegate? LastHandler { get; private set; }
 
+        private sealed class Noop : IDisposable
+        {
+            public void Dispose() { }
+        }
+
         public void Publish<TEvent>(TEvent eventData) where TEvent : IEvent
             => Published.Add(eventData);
 
@@ -26,23 +31,18 @@ public class LoopAffineEventBusTests
             where TEvent : IEvent
         {
             Published.Add(eventData);
-            return Task.CompletedTask;
-        }
 
-        public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler) where TEvent : IEvent
-        {
-            LastHandler = handler;
-            return new Noop();
+            return Task.CompletedTask;
         }
 
         public IDisposable RegisterListener<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
             => new Noop();
 
-        private sealed class Noop : IDisposable
+        public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler) where TEvent : IEvent
         {
-            public void Dispose()
-            {
-            }
+            LastHandler = handler;
+
+            return new Noop();
         }
     }
 
@@ -51,7 +51,7 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: false));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(false));
 
         bus.Publish(new LoopEvent());
 
@@ -68,7 +68,7 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: true));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(true));
 
         bus.Publish(new LoopEvent());
 
@@ -81,7 +81,7 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: false));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(false));
 
         bus.Publish(new PlainEvent());
 
@@ -90,24 +90,11 @@ public class LoopAffineEventBusTests
     }
 
     [Fact]
-    public void Subscribe_LoopAffineHandlerOffLoop_Throws()
-    {
-        var inner = new CapturingEventBus();
-        var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: false));
-
-        bus.Subscribe<LoopEvent>((_, _) => Task.CompletedTask);
-        var wrapped = (Func<LoopEvent, CancellationToken, Task>)inner.LastHandler!;
-
-        Assert.Throws<InvalidOperationException>(() => wrapped(new LoopEvent(), default).GetAwaiter().GetResult());
-    }
-
-    [Fact]
     public void Subscribe_LoopAffineHandlerGoesAsync_Throws()
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: true));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(true));
 
         // A never-completed task models a handler that did not finish synchronously (it went async),
         // deterministically — unlike Task.Yield(), whose thread-pool continuation can complete before
@@ -120,7 +107,20 @@ public class LoopAffineEventBusTests
         // to Assert.Throws<T>(Action) instead of the xUnit-analyzer-flagged Func<Task> overload. The
         // guard throws synchronously before ever returning a task, so GetResult() is never reached —
         // this is equivalent to a plain synchronous throw, just in a shape the analyzer accepts.
-        Assert.Throws<InvalidOperationException>(() => wrapped(new LoopEvent(), default).GetAwaiter().GetResult());
+        Assert.Throws<InvalidOperationException>(() => wrapped(new(), default).GetAwaiter().GetResult());
+    }
+
+    [Fact]
+    public void Subscribe_LoopAffineHandlerOffLoop_Throws()
+    {
+        var inner = new CapturingEventBus();
+        var dispatcher = new MainThreadDispatcherService();
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(false));
+
+        bus.Subscribe<LoopEvent>((_, _) => Task.CompletedTask);
+        var wrapped = (Func<LoopEvent, CancellationToken, Task>)inner.LastHandler!;
+
+        Assert.Throws<InvalidOperationException>(() => wrapped(new(), default).GetAwaiter().GetResult());
     }
 
     [Fact]
@@ -128,17 +128,19 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(onLoop: true));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread());
         var ran = false;
 
-        bus.Subscribe<LoopEvent>((_, _) =>
+        bus.Subscribe<LoopEvent>(
+            (_, _) =>
             {
                 ran = true;
+
                 return Task.CompletedTask;
             }
         );
         var wrapped = (Func<LoopEvent, CancellationToken, Task>)inner.LastHandler!;
-        wrapped(new LoopEvent(), default).GetAwaiter().GetResult();
+        wrapped(new(), default).GetAwaiter().GetResult();
 
         Assert.True(ran);
     }

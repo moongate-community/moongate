@@ -17,9 +17,7 @@ public class BroadcastCommandTests
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add(text);
 
-        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
-        {
-        }
+        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
     }
 
     [Fact]

@@ -24,9 +24,9 @@ using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Plugins;
 using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
-using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Plugins;
@@ -96,9 +96,9 @@ public sealed class TestApiServer : IAsyncDisposable
     public async Task AuthenticateAsync()
     {
         var response = await Client.PostAsJsonAsync(
-            "/api/v1/auth/login",
-            new { username = "tom", password = "secret" }
-        );
+                           "/api/v1/auth/login",
+                           new { username = "tom", password = "secret" }
+                       );
         var token = await response.Content.ReadFromJsonAsync<ApiTokenResult>();
 
         Client.DefaultRequestHeaders.Authorization = new("Bearer", token!.Token);
@@ -187,7 +187,7 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
         INotificationChannel[] channels = emailChannelReady ? [new RecordingNotificationChannel("email")] : [];
         var registrationReadiness = new RegistrationReadinessService(
-            new NotificationConfig { AccountVerificationChannel = accountVerificationChannel },
+            new() { AccountVerificationChannel = accountVerificationChannel },
             channels
         );
         container.RegisterInstance<IRegistrationReadinessService>(registrationReadiness);
@@ -200,12 +200,12 @@ public sealed class TestApiServer : IAsyncDisposable
 
         // The default is deliberately low so a test can prove the throttle without flooding; callers can
         // inject a recording limiter when exact budget keys or independent budgets are the behavior at stake.
-        var rateLimiter = registrationRateLimiter
-            ?? new RegistrationRateLimiter(
-                TimeProvider.System,
-                permitPerWindow: 2,
-                window: TimeSpan.FromMinutes(10)
-            );
+        var rateLimiter = registrationRateLimiter ??
+                          new RegistrationRateLimiter(
+                              TimeProvider.System,
+                              2,
+                              TimeSpan.FromMinutes(10)
+                          );
         container.RegisterApiEndpointInstance(
             new RegistrationEndpoints(accounts, serverSettings, registrationReadiness, rateLimiter)
         );
@@ -217,12 +217,10 @@ public sealed class TestApiServer : IAsyncDisposable
         // The fixture's endpoints all live in Moongate.Http.Plugin, so recording that plugin is what makes
         // their routes attributable — the same join the real bootstrap makes.
         var pluginCatalog = new PluginCatalog();
-        pluginCatalog.Record(new MoongateHttpPlugin(), isExternal: false);
+        pluginCatalog.Record(new MoongateHttpPlugin(), false);
 
         container.RegisterInstance<IPluginCatalog>(pluginCatalog);
-        container.RegisterApiEndpointInstance(
-            new PluginAdminEndpoints(pluginCatalog, new EndpointPluginRouteInspector())
-        );
+        container.RegisterApiEndpointInstance(new PluginAdminEndpoints(pluginCatalog, new EndpointPluginRouteInspector()));
 
         // Lets a test add endpoint groups this fixture cannot know about — the ones the HTTP plugin owns.
         configure?.Invoke(container);

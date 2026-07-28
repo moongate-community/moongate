@@ -23,20 +23,12 @@ public sealed class GameLoopContext : IGameLoopContext
     public bool Cancel(string timerId)
         => Timers.UnregisterTimer(timerId);
 
-    public void Post(Action action)
-        => Dispatcher.Post(action);
-
-    public string Schedule(string name, TimeSpan delay, Action callback)
-        => Timers.RegisterTimer(name, delay, callback, repeat: false);
-
-    public string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null)
-        => Timers.RegisterTimer(name, interval, callback, delay, true);
-
     public async Task<T> InvokeAsync<T>(Func<T> work, TimeSpan? timeout = null)
     {
         var completion = new TaskCompletionSource<T>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        Dispatcher.Post(() =>
+        Dispatcher.Post(
+            () =>
             {
                 try
                 {
@@ -51,4 +43,13 @@ public sealed class GameLoopContext : IGameLoopContext
 
         return await completion.Task.WaitAsync(timeout ?? TimeSpan.FromSeconds(5));
     }
+
+    public void Post(Action action)
+        => Dispatcher.Post(action);
+
+    public string Schedule(string name, TimeSpan delay, Action callback)
+        => Timers.RegisterTimer(name, delay, callback, repeat: false);
+
+    public string ScheduleRepeating(string name, TimeSpan interval, Action callback, TimeSpan? delay = null)
+        => Timers.RegisterTimer(name, interval, callback, delay, true);
 }
