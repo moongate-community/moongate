@@ -126,7 +126,8 @@ public class ContainerSubscriberTests
             new StubItemService([]),
             templates,
             gumps,
-            new OplService(new FakePersistenceService(), templates)
+            new OplService(new FakePersistenceService(), templates),
+            new ContainerOpenerRegistry()
         );
     }
 }

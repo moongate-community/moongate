@@ -60,7 +60,8 @@ public class ContainerTemplatesTests
                 new StubItemService([]),
                 templates,
                 gumps,
-                new OplService(new FakePersistenceService(), templates)
+                new OplService(new FakePersistenceService(), templates),
+                new ContainerOpenerRegistry()
             );
 
             return new(root, templates, subscriber);
