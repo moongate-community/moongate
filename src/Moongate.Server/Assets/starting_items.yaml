@@ -3,32 +3,45 @@ All:
         -   Item: dagger
         -   Item: my_story
 ByBody:
+    # "shirt" and "pants" are resolved at creation time to the hues picked on the creation screen;
+    # anything else (a literal, or nothing at all) keeps the item template's own hue.
     Human/Male:
         Equip:
             -   Item: long_pants
+                Hue: pants
             -   Item: shirt
+                Hue: shirt
             -   Item: shoes
     Human/Female:
         Equip:
             -   Item: skirt
+                Hue: pants
             -   Item: fancy_shirt
+                Hue: shirt
             -   Item: shoes
     Elf/Male:
         Equip:
             -   Item: long_pants
+                Hue: pants
             -   Item: shirt
+                Hue: shirt
             -   Item: shoes
     Elf/Female:
         Equip:
             -   Item: skirt
+                Hue: pants
             -   Item: fancy_shirt
+                Hue: shirt
             -   Item: shoes
+    # A gargoyle's robe stands in for both garments, so it takes the shirt hue.
     Gargoyle/Male:
         Equip:
             -   Item: robe
+                Hue: shirt
     Gargoyle/Female:
         Equip:
             -   Item: robe
+                Hue: shirt
 BySkill:
     Alchemy:
         Equip:
