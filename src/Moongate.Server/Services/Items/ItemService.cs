@@ -77,6 +77,20 @@ public sealed class ItemService : IItemService
         return _items.RemoveAsync(itemId).WaitSync();
     }
 
+    public void Detach(ItemEntity item)
+    {
+        _loopAffinity?.AssertOnLoop("item.detach");
+
+        DetachFromCurrentLocation(item);
+
+        // DetachFromCurrentLocation unwinds containers and layers but leaves the map coordinates
+        // alone, so a ground item would otherwise keep pointing at where it used to lie.
+        item.MapId = 0;
+        item.Position = Point3D.Zero;
+        _items.UpsertAsync(item).WaitSync();
+        _spatial?.Remove(item.Id);
+    }
+
     public void Equip(MobileEntity mobile, ItemEntity item, LayerType layer)
     {
         _loopAffinity?.AssertOnLoop("item.equip");
@@ -137,6 +151,18 @@ public sealed class ItemService : IItemService
 
     public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
         => Resolve(mobile.EquippedItemIds.Values);
+
+    public void MoveToWorld(ItemEntity item, int mapId, Point3D position)
+    {
+        _loopAffinity?.AssertOnLoop("item.move_to_world");
+
+        DetachFromCurrentLocation(item);
+
+        item.MapId = mapId;
+        item.Position = position;
+        _items.UpsertAsync(item).WaitSync();
+        _spatial?.AddOrUpdate(item);
+    }
 
     public void RemoveFromContainer(ItemEntity container, ItemEntity item)
     {

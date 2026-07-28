@@ -331,6 +331,46 @@ public class ItemServiceTests
         return (new(persistence, null, spatial), spatial, persistence);
     }
 
+    [Fact]
+    public void Detach_FromAContainer_LeavesTheItemBelongingNowhere()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var backpack = new ItemEntity { ItemId = 3701 };
+        var item = new ItemEntity { ItemId = 3921, MapId = 1, Position = new(10, 20, 0) };
+        service.Create(backpack);
+        service.Create(item);
+        service.AddToContainer(backpack, item, new(50, 70));
+
+        service.Detach(item);
+
+        Assert.Equal(Serial.Zero, item.ParentContainerId);
+        Assert.Equal(0, item.MapId);
+        Assert.Equal(Point3D.Zero, item.Position);
+        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
+    }
+
+    [Fact]
+    public void MoveToWorld_FromAContainer_DetachesAndPlacesOnTheGround()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var backpack = new ItemEntity { ItemId = 3701 };
+        var item = new ItemEntity { ItemId = 3921 };
+        service.Create(backpack);
+        service.Create(item);
+        service.AddToContainer(backpack, item, new(50, 70));
+
+        service.MoveToWorld(item, 1, new(100, 200, 5));
+
+        Assert.Equal(Serial.Zero, item.ParentContainerId);
+        Assert.Equal(1, item.MapId);
+        Assert.Equal(new Point3D(100, 200, 5), item.Position);
+        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
+    }
+
     private static ItemEntity Item(string name = "Dagger", int itemId = 3921)
         => new() { Name = name, ItemId = itemId };
 }

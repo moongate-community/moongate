@@ -192,6 +192,24 @@ public sealed class WorldService : IWorldService
         _eventBus.Publish(new PlayerEnteredWorldEvent(session.SessionId, session.AccountId, mobile));
     }
 
+    public int SendToPlayer<TPacket>(Serial mobileId, TPacket packet)
+        where TPacket : IOutgoingPacket
+    {
+        foreach (var session in _sessions.All)
+        {
+            if (session.State != SessionStateType.InWorld || session.Character?.Id != mobileId)
+            {
+                continue;
+            }
+
+            session.Send(packet);
+
+            return 1;
+        }
+
+        return 0;
+    }
+
     public int SendToPlayersInRange<TPacket>(int mapId, Point3D center, int range, TPacket packet, Serial? exclude = null)
         where TPacket : IOutgoingPacket
     {

@@ -28,6 +28,9 @@ public sealed class StubItemService : IItemService
     public bool Delete(Serial itemId)
         => throw new NotSupportedException();
 
+    public void Detach(ItemEntity item)
+        => throw new NotSupportedException();
+
     public void Equip(MobileEntity mobile, ItemEntity item, LayerType layer)
         => throw new NotSupportedException();
 
@@ -42,6 +45,9 @@ public sealed class StubItemService : IItemService
 
     public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
         => _equipped;
+
+    public void MoveToWorld(ItemEntity item, int mapId, Point3D position)
+        => throw new NotSupportedException();
 
     public void RemoveFromContainer(ItemEntity container, ItemEntity item)
         => throw new NotSupportedException();
