@@ -18,7 +18,7 @@ namespace Moongate.Server.Services.Items;
 /// <c>MovementService.Evaluate</c>. The rest of the service is orchestration: detach, hold, place,
 /// bounce, and the packets that follow.
 /// </summary>
-public sealed class DragDropService
+public sealed class DragDropService : IDragDropService
 {
     /// <summary>How close the player must be to lift something, in tiles. ModernUO uses the same 2.</summary>
     public const int LiftRange = 2;
@@ -143,6 +143,32 @@ public sealed class DragDropService
         return decision;
     }
 
+    public void Bounce(MobileEntity actor, Serial itemId, HeldItemOrigin? origin)
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.bounce");
+
+        // Already gone — deleted, or merged into a stack by a drop that then failed elsewhere.
+        if (_items.GetById(itemId) is not { } item)
+        {
+            return;
+        }
+
+        if (origin is not null && BounceToOrigin(actor, item, origin))
+        {
+            return;
+        }
+
+        if (actor.BackpackId != Serial.Zero && _items.GetById(actor.BackpackId) is { } backpack)
+        {
+            _items.AddToContainer(backpack, item, BounceSlot);
+
+            return;
+        }
+
+        // No origin left and nowhere to carry it: it lands where the player stands.
+        PlaceOnGround(item, actor.MapId, actor.Position);
+    }
+
     public LiftDecision Drop(
         MobileEntity actor,
         Serial heldItemId,
@@ -182,6 +208,46 @@ public sealed class DragDropService
            existing.ItemId == dropped.ItemId &&
            existing.Hue == dropped.Hue &&
            existing.Amount + dropped.Amount <= MaxStackAmount;
+
+    /// <summary>
+    /// Puts the item back exactly where it was lifted from, or reports false so the caller can fall
+    /// back. ModernUO's Item.Bounce does the same, dropping to the player's feet when the recorded
+    /// parent has gone away.
+    /// </summary>
+    private bool BounceToOrigin(MobileEntity actor, ItemEntity item, HeldItemOrigin origin)
+    {
+        if (origin.ContainerId != Serial.Zero)
+        {
+            if (_items.GetById(origin.ContainerId) is not { } container)
+            {
+                return false;
+            }
+
+            _items.AddToContainer(container, item, origin.ContainerPosition);
+
+            return true;
+        }
+
+        if (origin.EquippedMobileId != Serial.Zero)
+        {
+            // Only ever back onto the actor's own layers, and only if the layer is still free —
+            // something else may have been equipped while this item was in the air.
+            if (origin.EquippedMobileId != actor.Id ||
+                origin.EquippedLayer is not { } layer ||
+                actor.EquippedItemIds.ContainsKey(layer))
+            {
+                return false;
+            }
+
+            _items.Equip(actor, item, layer);
+
+            return true;
+        }
+
+        PlaceOnGround(item, origin.MapId, origin.WorldPosition);
+
+        return true;
+    }
 
     private LiftDecision DropOnGround(MobileEntity actor, ItemEntity item, Point3D position)
     {
