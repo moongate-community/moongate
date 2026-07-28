@@ -64,7 +64,8 @@ public class WorldServiceTests
             new StubEventBus(),
             TimeProvider.System,
             opl,
-            new SessionManager()
+            new SessionManager(),
+            new StubLightService(0)
         );
 
         var packets = service.BuildSequence(mobile);
@@ -351,7 +352,8 @@ public class WorldServiceTests
             new StubEventBus(),
             time ?? TimeProvider.System,
             new OplService(new FakePersistenceService(), new ItemTemplateService()),
-            new SessionManager()
+            new SessionManager(),
+            new StubLightService(0)
         );
 
     // Three skills is enough to prove the list is built from the registry rather than from the mobile.

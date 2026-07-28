@@ -23,7 +23,8 @@ public class ChatServiceTests
             new StubEventBus(),
             TimeProvider.System,
             new OplService(new FakePersistenceService(), new ItemTemplateService()),
-            new SessionManager()
+            new SessionManager(),
+            new StubLightService(0)
         );
         var service = new ChatService(world, new StubEventBus());
 
@@ -131,7 +132,8 @@ public class ChatServiceTests
             new StubEventBus(),
             TimeProvider.System,
             new OplService(new FakePersistenceService(), new ItemTemplateService()),
-            new SessionManager()
+            new SessionManager(),
+            new StubLightService(0)
         );
         var bus = new StubEventBus();
         var service = new ChatService(world, bus);

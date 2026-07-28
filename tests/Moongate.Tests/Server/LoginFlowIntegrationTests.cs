@@ -139,7 +139,8 @@ public class LoginFlowIntegrationTests
             eventBus,
             TimeProvider.System,
             opl,
-            sessions
+            sessions,
+            new StubLightService(0)
         );
         var chat = new ChatService(world, eventBus);
 
@@ -310,7 +311,8 @@ public class LoginFlowIntegrationTests
             eventBus,
             TimeProvider.System,
             opl,
-            sessions
+            sessions,
+            new StubLightService(0)
         );
         var chat = new ChatService(world, eventBus);
 
@@ -779,7 +781,8 @@ public class LoginFlowIntegrationTests
                 eventBus,
                 TimeProvider.System,
                 opl,
-                sessions
+                sessions,
+                new StubLightService(0)
             );
             var movement =
                 new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System, eventBus);
@@ -1019,7 +1022,8 @@ public class LoginFlowIntegrationTests
             eventBus,
             TimeProvider.System,
             opl,
-            sessions
+            sessions,
+            new StubLightService(0)
         );
         var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions);
 
@@ -1348,7 +1352,8 @@ public class LoginFlowIntegrationTests
                 eventBus,
                 TimeProvider.System,
                 opl,
-                new SessionManager()
+                new SessionManager(),
+                new StubLightService(0)
             ),
             opl
         );

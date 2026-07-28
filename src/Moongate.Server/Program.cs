@@ -198,6 +198,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IContainerOpenerRegistry, ContainerOpenerRegistry>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
+                container.Register<ILightService, LightService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
@@ -206,6 +207,7 @@ await ConsoleApp.RunAsync(
                 // endpoint resolves and the hosted service owning the refresh timer, and it must be the
                 // same singleton in both roles.
                 container.RegisterStdService<IServerStatsService, ServerStatsService>();
+                container.RegisterStdService<LightCycleService, LightCycleService>();
 
                 // INotificationTemplateService is registered by the data-loader plugin, alongside the
                 // loader that fills it, the same way the template services are.
