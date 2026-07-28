@@ -207,6 +207,7 @@ await ConsoleApp.RunAsync(
                 // endpoint resolves and the hosted service owning the refresh timer, and it must be the
                 // same singleton in both roles.
                 container.RegisterStdService<IServerStatsService, ServerStatsService>();
+                container.RegisterStdService<LightCycleService, LightCycleService>();
 
                 // INotificationTemplateService is registered by the data-loader plugin, alongside the
                 // loader that fills it, the same way the template services are.

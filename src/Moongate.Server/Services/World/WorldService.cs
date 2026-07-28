@@ -28,7 +28,6 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public sealed class WorldService : IWorldService
 {
-    private const byte OverallLightLevel = 0; // full daylight
     private const byte PersonalLightLevel = 0;
     private const byte FemaleFlag = 0x02;
 
@@ -43,6 +42,7 @@ public sealed class WorldService : IWorldService
     private readonly TimeProvider _timeProvider;
     private readonly IOplService _opl;
     private readonly ISessionManager _sessions;
+    private readonly ILightService _light;
     private readonly ILoopAffinity? _loopAffinity;
 
     public WorldService(
@@ -53,6 +53,7 @@ public sealed class WorldService : IWorldService
         TimeProvider timeProvider,
         IOplService opl,
         ISessionManager sessions,
+        ILightService light,
         ILoopAffinity? loopAffinity = null
     )
     {
@@ -63,6 +64,7 @@ public sealed class WorldService : IWorldService
         _timeProvider = timeProvider;
         _opl = opl;
         _sessions = sessions;
+        _light = light;
         _loopAffinity = loopAffinity;
     }
 
@@ -122,7 +124,7 @@ public sealed class WorldService : IWorldService
                 (sbyte)position.Z,
                 mobile.Direction
             ),
-            new OverallLightLevelPacket(OverallLightLevel),
+            new OverallLightLevelPacket((byte)_light.LevelFor(mobile.MapId, mobile.Position)),
             new PersonalLightLevelPacket(mobile.Id, PersonalLightLevel),
             new MobileIncomingPacket(
                 mobile.Id,
