@@ -50,6 +50,8 @@
       href: incoming/0xbd-client-version.md
     - name: "0xBF — General Information"
       href: incoming/0xbf-general-information.md
+    - name: "0xC8 — Client View Range"
+      href: incoming/0xc8-client-view-range.md
     - name: "0xD6 — Mega Cliloc Request"
       href: incoming/0xd6-mega-cliloc-request.md
     - name: "0xEF — Login Seed"
@@ -124,6 +126,8 @@
       href: outgoing/0xbf-map-patches.md
     - name: "0xBF/0x19 — Stat Lock Info"
       href: outgoing/0xbf-stat-lock-info.md
+    - name: "0xC8 — Client View Range Ack"
+      href: outgoing/0xc8-client-view-range-ack.md
     - name: "0xD6 — Mega Cliloc"
       href: outgoing/0xd6-mega-cliloc.md
     - name: "0xDC — Opl Info"

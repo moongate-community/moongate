@@ -16,7 +16,7 @@
   </a>
   <a class="mg-card" href="families/world-state.md">
     <h3>World state</h3>
-    <div class="mg-card-ops">0x1D · 0x4E · 0x4F · 0x5B · 0xBC · 0xBF</div>
+    <div class="mg-card-ops">0x1D · 0x4E · 0x4F · 0x5B · 0xBC · 0xBF · 0xC8</div>
     <p>Light levels, game time, season, map change/patches, object removal.</p>
   </a>
   <a class="mg-card" href="families/items-containers.md">
