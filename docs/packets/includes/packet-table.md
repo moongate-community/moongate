@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">52</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">16</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">36</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">54</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">17</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">37</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -53,6 +53,8 @@
 | [`0xBF/0x08`](../outgoing/0xbf-map-change.md) | Map Change | S → C | 6 bytes (fixed) | Switches the client to the given map. |
 | [`0xBF/0x18`](../outgoing/0xbf-map-patches.md) | Map Patches | S → C | 41 bytes (fixed) | Declares the static/land map-diff block counts for the four classic facets. |
 | [`0xBF/0x19`](../outgoing/0xbf-stat-lock-info.md) | Stat Lock Info | S → C | 12 bytes (fixed) | The up/down/lock state of the three stats, packed two bits each into a single byte. |
+| [`0xC8`](../incoming/0xc8-client-view-range.md) | Client View Range | C → S | 2 bytes (fixed) | The client announces the update range it wants, in tiles, whenever the option changes. |
+| [`0xC8`](../outgoing/0xc8-client-view-range-ack.md) | Client View Range Ack | S → C | 2 bytes (fixed) | Reports the view range the server actually granted, so a client that asked for more than the maximum learns what it got. |
 | [`0xD6`](../incoming/0xd6-mega-cliloc-request.md) | Mega Cliloc Request | C → S | Variable | The client asks for the property lists of a batch of objects, identified by serial. |
 | [`0xD6`](../outgoing/0xd6-mega-cliloc.md) | Mega Cliloc | S → C | Variable | The property list ("tooltip") of one object — cliloc lines with UTF-16LE arguments, preceded by the content hash the client caches against. |
 | [`0xDC`](../outgoing/0xdc-opl-info.md) | Opl Info | S → C | 9 bytes (fixed) | Tells the client the current property-list revision of an object. |

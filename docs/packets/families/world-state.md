@@ -11,3 +11,5 @@ Light levels, game time, season, map change/patches, object removal.
 | [`0xBC`](../outgoing/0xbc-season-change.md) | Season Change | S → C | 3 bytes (fixed) | Sets the client's season and optionally plays the season-change sound. |
 | [`0xBF/0x08`](../outgoing/0xbf-map-change.md) | Map Change | S → C | 6 bytes (fixed) | Switches the client to the given map. |
 | [`0xBF/0x18`](../outgoing/0xbf-map-patches.md) | Map Patches | S → C | 41 bytes (fixed) | Declares the static/land map-diff block counts for the four classic facets. |
+| [`0xC8`](../incoming/0xc8-client-view-range.md) | Client View Range | C → S | 2 bytes (fixed) | The client announces the update range it wants, in tiles, whenever the option changes. |
+| [`0xC8`](../outgoing/0xc8-client-view-range-ack.md) | Client View Range Ack | S → C | 2 bytes (fixed) | Reports the view range the server actually granted, so a client that asked for more than the maximum learns what it got. |

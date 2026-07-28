@@ -38,5 +38,6 @@ public class MoongatePacketHandlersPlugin : ISquidStdPlugin
         container.RegisterPacketHandler<DoubleClickHandler>();
         container.RegisterPacketHandler<MoveRequestHandler>();
         container.RegisterPacketHandler<SpeechHandler>();
+        container.RegisterPacketHandler<ClientViewRangeHandler>();
     }
 }
