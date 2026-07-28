@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Types;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Server.Items;
@@ -73,6 +74,28 @@ public class DragDropServiceDropTests
         Assert.Equal(1, fixture.Gold.MapId);
         Assert.Equal(new Point3D(101, 100, 0), fixture.Gold.Position);
         Assert.Equal(Serial.Zero, fixture.Gold.ParentContainerId);
+    }
+
+    [Fact]
+    public void Drop_OnTheGround_PublishesItemDropped()
+    {
+        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1);
+        ItemDroppedEvent? published = null;
+        fixture.EventBus.Subscribe<ItemDroppedEvent>(
+            (evt, _) =>
+            {
+                published = evt;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, 1, Serial.Zero, out var heldId, out _);
+        fixture.Service.Drop(fixture.Actor, heldId, Serial.Zero, new(101, 100, 0), Point2D.Zero);
+
+        Assert.NotNull(published);
+        Assert.Equal(fixture.Gold.Id, published!.Item);
+        Assert.Equal(Serial.Zero, published.ContainerId);
     }
 
     [Fact]

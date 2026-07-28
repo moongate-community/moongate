@@ -3,9 +3,11 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Ultima.Types;
+using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.Server.Services.Items;
@@ -18,6 +20,7 @@ public sealed class ItemService : IItemService
     private readonly IOplService? _opl;
     private readonly ISpatialIndexService? _spatial;
     private readonly ILoopAffinity? _loopAffinity;
+    private readonly IEventBus? _eventBus;
 
     // The property-list cache and the spatial index are optional on purpose: tests build a bare
     // ItemService, and both are concerns the item flows only need to keep in sync, not require.
@@ -25,7 +28,8 @@ public sealed class ItemService : IItemService
         IPersistenceService persistenceService,
         IOplService? opl = null,
         ISpatialIndexService? spatial = null,
-        ILoopAffinity? loopAffinity = null
+        ILoopAffinity? loopAffinity = null,
+        IEventBus? eventBus = null
     )
     {
         _items = persistenceService.GetStore<ItemEntity, Serial>();
@@ -33,6 +37,7 @@ public sealed class ItemService : IItemService
         _opl = opl;
         _spatial = spatial;
         _loopAffinity = loopAffinity;
+        _eventBus = eventBus;
     }
 
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
@@ -115,6 +120,8 @@ public sealed class ItemService : IItemService
         }
 
         _mobiles.UpsertAsync(mobile).WaitSync();
+
+        _eventBus?.Publish(new ItemEquippedEvent(item.Id, mobile.Id, layer));
     }
 
     public bool Flip(ItemEntity item)
@@ -208,6 +215,8 @@ public sealed class ItemService : IItemService
             item.EquippedLayer = null;
             _items.UpsertAsync(item).WaitSync();
             _spatial?.AddOrUpdate(item);
+
+            _eventBus?.Publish(new ItemUnequippedEvent(item.Id, mobile.Id, layer));
         }
 
         return item;
