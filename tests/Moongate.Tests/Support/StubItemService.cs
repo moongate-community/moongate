@@ -52,6 +52,9 @@ public sealed class StubItemService : IItemService
     public void RemoveFromContainer(ItemEntity container, ItemEntity item)
         => throw new NotSupportedException();
 
+    public ItemEntity RootOf(ItemEntity item)
+        => throw new NotSupportedException();
+
     public void Save(ItemEntity item)
         => throw new NotSupportedException();
 

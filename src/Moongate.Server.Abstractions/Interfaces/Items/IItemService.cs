@@ -48,6 +48,12 @@ public interface IItemService
 
     void RemoveFromContainer(ItemEntity container, ItemEntity item);
 
+    /// <summary>
+    /// Walks up the container chain to the item that is actually somewhere — lying on a map or worn by
+    /// a mobile. Returns <paramref name="item" /> itself when it is already that item.
+    /// </summary>
+    ItemEntity RootOf(ItemEntity item);
+
     /// <summary>Persists changes to an existing item.</summary>
     void Save(ItemEntity item);
 
