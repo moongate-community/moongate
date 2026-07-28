@@ -23,13 +23,15 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
     private readonly IItemTemplateService _templates;
     private readonly IContainerGumpService _gumps;
     private readonly IOplService _opl;
+    private readonly IContainerOpenerRegistry _openers;
 
     public ContainerSubscriber(
         ISessionManager sessions,
         IItemService items,
         IItemTemplateService templates,
         IContainerGumpService gumps,
-        IOplService opl
+        IOplService opl,
+        IContainerOpenerRegistry openers
     )
     {
         _sessions = sessions;
@@ -37,6 +39,7 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         _templates = templates;
         _gumps = gumps;
         _opl = opl;
+        _openers = openers;
     }
 
     /// <summary>
@@ -80,10 +83,24 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         return container.GumpId ?? _gumps.GetByItemId(item.ItemId)?.GumpId ?? ContainerGumpLayout.DefaultGumpId;
     }
 
-    public void Subscribe(IEventBus eventBus)
-        => eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
+    /// <summary>A departing player has nothing open any more; their entries would otherwise linger.</summary>
+    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
+    {
+        if (message.Session.Character is { } character)
+        {
+            _openers.ForgetMobile(character.Id);
+        }
 
-    private Task OnDoubleClick(ItemDoubleClickEvent message, CancellationToken cancellationToken)
+        return Task.CompletedTask;
+    }
+
+    public void Subscribe(IEventBus eventBus)
+    {
+        eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
+        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
+    }
+
+    public Task OnDoubleClick(ItemDoubleClickEvent message, CancellationToken cancellationToken)
     {
         if (!_sessions.TryGet(message.SessionId, out var session) || _items.GetById(message.Serial) is not { } item)
         {
@@ -99,6 +116,12 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
 
         session.Send(new DrawContainerPacket(item.Id, (ushort)gumpId));
         session.Send(new ContainerContentPacket(item.Id, BuildContents(contents)));
+
+        // Remembered so a change to anything inside can be redrawn for whoever is looking at it.
+        if (session.Character is { } character)
+        {
+            _openers.Opened(item.Id, character.Id);
+        }
 
         // Prime the client's tooltip cache for what it can now see.
         foreach (var contained in contents)

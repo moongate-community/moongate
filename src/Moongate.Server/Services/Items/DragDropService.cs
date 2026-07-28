@@ -371,27 +371,6 @@ public sealed class DragDropService : IDragDropService
         => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
 
     /// <summary>
-    /// Walks up the container chain to the item that is actually somewhere — on the ground or on a
-    /// mobile. The guard stops a corrupted cycle from hanging the loop thread.
-    /// </summary>
-    private ItemEntity Root(ItemEntity item)
-    {
-        var current = item;
-
-        for (var depth = 0; current.ParentContainerId != Serial.Zero && depth < 32; depth++)
-        {
-            if (_items.GetById(current.ParentContainerId) is not { } parent)
-            {
-                break;
-            }
-
-            current = parent;
-        }
-
-        return current;
-    }
-
-    /// <summary>
     /// Where an item is in the world, for the range check: its own position when it lies on the
     /// ground, its root's otherwise. An item worn by the actor is wherever the actor is; one worn by
     /// somebody else keeps the stale coordinates of an equipped entity, which fails the range check —
@@ -399,7 +378,7 @@ public sealed class DragDropService : IDragDropService
     /// </summary>
     private (int MapId, Point3D Position) WorldLocation(ItemEntity item, MobileEntity actor)
     {
-        var root = Root(item);
+        var root = _items.RootOf(item);
 
         return root.EquippedMobileId == actor.Id
             ? (actor.MapId, actor.Position)
@@ -413,7 +392,7 @@ public sealed class DragDropService : IDragDropService
     /// </summary>
     private bool Reachable(ItemEntity item, MobileEntity actor)
     {
-        var root = Root(item);
+        var root = _items.RootOf(item);
 
         if (root.EquippedMobileId == actor.Id)
         {

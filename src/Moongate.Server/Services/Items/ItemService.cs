@@ -183,12 +183,32 @@ public sealed class ItemService : IItemService
         _spatial?.AddOrUpdate(item);
     }
 
+    public ItemEntity RootOf(ItemEntity item)
+    {
+        var current = item;
+
+        // The depth guard stops a corrupted cycle from hanging the loop thread.
+        for (var depth = 0; current.ParentContainerId != Serial.Zero && depth < 32; depth++)
+        {
+            if (_items.GetById(current.ParentContainerId) is not { } parent)
+            {
+                break;
+            }
+
+            current = parent;
+        }
+
+        return current;
+    }
+
     public void Save(ItemEntity item)
     {
         _loopAffinity?.AssertOnLoop("item.save");
         _items.UpsertAsync(item).WaitSync();
         _opl?.Invalidate(item.Id);
         _spatial?.AddOrUpdate(item);
+
+        _eventBus?.Publish(new ItemChangedEvent(item.Id));
     }
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
