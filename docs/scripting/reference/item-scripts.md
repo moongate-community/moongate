@@ -1,7 +1,9 @@
 # Item scripts
 
-An item template's `ScriptId` names a Lua script that runs when players interact with the item.
-`ScriptId: magic_torch` means `<root>/scripts/items/magic_torch.lua`.
+An item template's `ScriptId` names a Lua script that runs when players interact with the item. The
+dot is a namespace separator, so `ScriptId: items.magic_torch` means
+`<root>/scripts/items/magic_torch.lua`, and every shipped template that has a script uses the
+`items.` namespace.
 
 | Concern | Type |
 |---|---|
@@ -17,7 +19,7 @@ the hooks. Item scripts are simpler — no per-instance state, no tick, no bindi
 
 ```lua
 local magic_torch = {
-    id = "magic_torch",
+    id = "items.magic_torch",
 }
 
 function magic_torch.on_double_click(ctx)
@@ -91,8 +93,10 @@ Hooks run **on the game-loop thread**, so they may touch world state directly �
 
 The runtime is deliberately unforgiving, so a content mistake cannot take the server with it:
 
-- **A script id must match `^[a-z0-9_]+$`.** Anything else is refused, which is what stops a
-  `ScriptId` from resolving outside the items directory.
+- **A script id is dot-separated lowercase segments** — `^[a-z0-9_]+(\.[a-z0-9_]+)*$`. No path
+  separator and no empty segment can match, so no id can name a parent directory and nothing resolves
+  outside `scripts/`. A bare id with no dot, like `magic_torch`, is a script at the root of
+  `scripts/`.
 - **A file may not exceed 256 KiB**, and may not be a symbolic link.
 - **A hook gets 50 000 VM instructions.** Exceeding the budget aborts that call with a warning.
 - **A hook may not yield.**
