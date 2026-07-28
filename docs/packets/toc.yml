@@ -28,6 +28,10 @@
       href: incoming/0x02-move-request.md
     - name: "0x06 — Double Click"
       href: incoming/0x06-double-click.md
+    - name: "0x07 — Pick Up Item"
+      href: incoming/0x07-pick-up-item.md
+    - name: "0x08 — Drop Item"
+      href: incoming/0x08-drop-item.md
     - name: "0x09 — Single Click"
       href: incoming/0x09-single-click.md
     - name: "0x3A — Skill Lock Change"
@@ -78,6 +82,8 @@
       href: outgoing/0x25-add-item-to-container.md
     - name: "0x27 — Lift Reject"
       href: outgoing/0x27-lift-reject.md
+    - name: "0x29 — Drop Item Approved"
+      href: outgoing/0x29-drop-item-approved.md
     - name: "0x2E — Worn Item"
       href: outgoing/0x2e-worn-item.md
     - name: "0x3A — Skills"

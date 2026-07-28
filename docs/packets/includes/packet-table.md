@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">54</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">17</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">37</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">57</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">19</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">38</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -9,6 +9,8 @@
 |---|---|---|---|---|
 | [`0x02`](../incoming/0x02-move-request.md) | Move Request | C → S | 7 bytes (fixed) | One step or turn, with anti-fastwalk key. |
 | [`0x06`](../incoming/0x06-double-click.md) | Double Click | C → S | 5 bytes (fixed) | The client double-clicked an entity, identified by its serial. |
+| [`0x07`](../incoming/0x07-pick-up-item.md) | Pick Up Item | C → S | 7 bytes (fixed) | The client asks to lift an item onto its cursor. |
+| [`0x08`](../incoming/0x08-drop-item.md) | Drop Item | C → S | 15 bytes (fixed) | Where the client wants to put the item it is holding. |
 | [`0x09`](../incoming/0x09-single-click.md) | Single Click | C → S | 5 bytes (fixed) | The client clicked an entity, identified by its serial. |
 | [`0x11`](../outgoing/0x11-status-bar-info.md) | Status Bar Info | S → C | Variable | The player's own status window. |
 | [`0x1B`](../outgoing/0x1b-login-confirm.md) | Login Confirm | S → C | 37 bytes (fixed) | The first packet of the enter-world burst. |
@@ -19,6 +21,7 @@
 | [`0x24`](../outgoing/0x24-draw-container.md) | Draw Container | S → C | 7 bytes (fixed) | Opens the container's gump on the client. |
 | [`0x25`](../outgoing/0x25-add-item-to-container.md) | Add Item To Container | S → C | 21 bytes (fixed) | Drops one item into an already-open container gump. |
 | [`0x27`](../outgoing/0x27-lift-reject.md) | Lift Reject | S → C | 2 bytes (fixed) | The lift the client asked for is refused, and why. |
+| [`0x29`](../outgoing/0x29-drop-item-approved.md) | Drop Item Approved | S → C | 1 bytes (fixed) | The drop the client asked for went through. |
 | [`0x2E`](../outgoing/0x2e-worn-item.md) | Worn Item | S → C | 15 bytes (fixed) | Draws a single item on a mobile that the client already knows about. |
 | [`0x3A`](../incoming/0x3a-skill-lock-change.md) | Skill Lock Change | C → S | Variable | The client sets the up/down/lock arrow on one skill. |
 | [`0x3A`](../outgoing/0x3a-skills.md) | Skills | S → C | Variable | Skill list (0x3A), in the absolute-with-caps form (type 0x02): the client's whole skill list in one go. |
