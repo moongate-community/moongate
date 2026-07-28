@@ -22,6 +22,7 @@
 
     <ItemGroup>
         <EmbeddedResource Include="Assets\Brains\**\*.lua"/>
+        <EmbeddedResource Include="Assets\Items\**\*.lua"/>
     </ItemGroup>
 
 </Project>

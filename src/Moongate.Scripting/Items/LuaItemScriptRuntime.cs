@@ -26,6 +26,7 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
     private readonly Script _script;
     private readonly string _itemsDirectory;
     private readonly Dictionary<string, Table?> _definitions = new(StringComparer.Ordinal);
+    private bool _seeded;
 
     public LuaItemScriptRuntime(Script script, DirectoriesConfig directoriesConfig)
     {
@@ -216,6 +217,13 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
             string.Equals(scriptId, NoScript, StringComparison.OrdinalIgnoreCase))
         {
             return null;
+        }
+
+        // Seeded lazily rather than in the constructor: construction must not touch the disk.
+        if (!_seeded)
+        {
+            _seeded = true;
+            ItemScriptAssetSeeder.SeedMissing(_itemsDirectory);
         }
 
         if (_definitions.TryGetValue(scriptId, out var cached))

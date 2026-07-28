@@ -135,6 +135,15 @@ public class LuaItemScriptRuntimeTests
     }
 
     [Fact]
+    public void Invoke_ShippedExample_IsSeededAndLoads()
+    {
+        using var fixture = new Fixture();
+
+        // Nothing was written by the test: the runtime seeds the shipped scripts on first use.
+        Assert.True(fixture.Runtime.HasHook("magic_torch", ItemScriptHookType.DoubleClick));
+    }
+
+    [Fact]
     public void Invoke_ScriptThatThrows_IsSwallowed()
     {
         using var fixture = new Fixture();
