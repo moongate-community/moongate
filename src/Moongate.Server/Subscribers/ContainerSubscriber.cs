@@ -83,10 +83,24 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         return container.GumpId ?? _gumps.GetByItemId(item.ItemId)?.GumpId ?? ContainerGumpLayout.DefaultGumpId;
     }
 
-    public void Subscribe(IEventBus eventBus)
-        => eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
+    /// <summary>A departing player has nothing open any more; their entries would otherwise linger.</summary>
+    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
+    {
+        if (message.Session.Character is { } character)
+        {
+            _openers.ForgetMobile(character.Id);
+        }
 
-    private Task OnDoubleClick(ItemDoubleClickEvent message, CancellationToken cancellationToken)
+        return Task.CompletedTask;
+    }
+
+    public void Subscribe(IEventBus eventBus)
+    {
+        eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
+        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
+    }
+
+    public Task OnDoubleClick(ItemDoubleClickEvent message, CancellationToken cancellationToken)
     {
         if (!_sessions.TryGet(message.SessionId, out var session) || _items.GetById(message.Serial) is not { } item)
         {

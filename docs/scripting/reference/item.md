@@ -102,6 +102,11 @@ Mutates the item from a `fields` table and saves it. Recognised keys are read
 and applied; anything else is ignored. Returns `true` on success, `false` when
 the serial is unknown or `fields` is missing.
 
+The change is **redrawn on every client that can see the item** — on the ground,
+on a paperdoll, or inside a container someone has open. That is what makes a
+graphic swap visible: setting `item_id` to a lit torch lights it up on screen
+straight away, rather than the next time the item comes back into view.
+
 Recognised keys: `amount` (number), `hue` (number), `item_id` (number),
 `name` (string).
 
