@@ -4,6 +4,7 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Hues;
+using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Support;
 
@@ -16,6 +17,8 @@ namespace Moongate.Tests.Support;
 public sealed class DragDropFixture
 {
     public FakePersistenceService Persistence { get; }
+
+    public EventBusService EventBus { get; } = new();
 
     public ItemService Items { get; }
 
@@ -49,7 +52,13 @@ public sealed class DragDropFixture
             new() { Id = "bag", Name = "Bag", Category = "Container", ItemId = 3702, IsMovable = true }
         );
 
-        Service = new(Items, new ItemFactoryService(templates, new Random(1)), templates, new StubWorldService());
+        Service = new(
+            Items,
+            new ItemFactoryService(templates, new Random(1)),
+            templates,
+            new StubWorldService(),
+            eventBus: EventBus
+        );
 
         Actor = new() { MapId = 1, Position = new(100, 100, 0) };
         Persistence.Store<MobileEntity>().UpsertAsync(Actor).WaitSync();

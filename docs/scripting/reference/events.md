@@ -56,6 +56,15 @@ end)
 | `mobile_entered_sector` | When a mobile enters a spatial sector — appearing in the world, or crossing into it from another sector. Boundary-only (never per tile), mobiles only. | `mobile`, `map_id`, `sector_x`, `sector_y` |
 | `mobile_left_sector` | When a mobile leaves a spatial sector — being removed from the world, or crossing out of it into another. Boundary-only, mobiles only. | `mobile`, `map_id`, `sector_x`, `sector_y` |
 | `mobile_changed_sector` | When a mobile moves from one sector to another. Fires alongside `mobile_left_sector` (old) and `mobile_entered_sector` (new); never on spawn or removal. | `mobile`, `from_map_id`, `from_sector_x`, `from_sector_y`, `to_map_id`, `to_sector_x`, `to_sector_y` |
+| `item_single_click` | A player single-clicks an item. | `session_id`, `serial` |
+| `item_double_click` | A player double-clicks an item. | `session_id`, `serial` |
+| `item_dropped` | A held item is put down — `container_id` is `0` for a ground drop. | `item`, `actor`, `container_id` |
+| `item_equipped` | An item is placed on a paperdoll layer, including when a new character is dressed in its starting kit. | `item`, `mobile`, `layer` |
+| `item_unequipped` | An item is taken off a layer. | `item`, `mobile`, `layer` |
+
+For per-item behaviour keyed to a template's `ScriptId`, prefer
+[item scripts](item-scripts.md) over these events: an `events.on("item_double_click", …)` handler
+fires for *every* item in the world and has to filter for itself.
 
 `world_ready` is the recommended hook for bootstrap spawns: the handler runs on
 the loop, so it can create and place mobiles and items directly without

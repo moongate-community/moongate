@@ -4,11 +4,13 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Items;
+using SquidStd.Core.Interfaces.Events;
 
 namespace Moongate.Server.Services.Items;
 
@@ -33,13 +35,15 @@ public sealed class DragDropService : IDragDropService
     private readonly IItemTemplateService _templates;
     private readonly IWorldService _world;
     private readonly ILoopAffinity? _loopAffinity;
+    private readonly IEventBus? _eventBus;
 
     public DragDropService(
         IItemService items,
         IItemFactoryService itemFactory,
         IItemTemplateService templates,
         IWorldService world,
-        ILoopAffinity? loopAffinity = null
+        ILoopAffinity? loopAffinity = null,
+        IEventBus? eventBus = null
     )
     {
         _items = items;
@@ -47,6 +51,7 @@ public sealed class DragDropService : IDragDropService
         _templates = templates;
         _world = world;
         _loopAffinity = loopAffinity;
+        _eventBus = eventBus;
     }
 
     /// <summary>
@@ -258,6 +263,8 @@ public sealed class DragDropService : IDragDropService
 
         PlaceOnGround(item, actor.MapId, position);
 
+        _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, Serial.Zero));
+
         return new(true, LiftRejectReasonType.Inspecific);
     }
 
@@ -296,12 +303,16 @@ public sealed class DragDropService : IDragDropService
 
             _world.SendToPlayer(actor.Id, ContainerPacket(stack, container.Id, stack.ContainerPosition));
 
+            _eventBus?.Publish(new ItemDroppedEvent(stack.Id, actor.Id, container.Id));
+
             return new(true, LiftRejectReasonType.Inspecific);
         }
 
         _items.AddToContainer(container, item, position);
 
         _world.SendToPlayer(actor.Id, ContainerPacket(item, container.Id, position));
+
+        _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, container.Id));
 
         return new(true, LiftRejectReasonType.Inspecific);
     }
