@@ -24,14 +24,16 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
 
     private readonly ILogger _logger = Log.ForContext<LuaItemScriptRuntime>();
     private readonly Script _script;
-    private readonly string _itemsDirectory;
+    private readonly string _scriptsDirectory;
+    private readonly string _seedDirectory;
     private readonly Dictionary<string, Table?> _definitions = new(StringComparer.Ordinal);
     private bool _seeded;
 
     public LuaItemScriptRuntime(Script script, DirectoriesConfig directoriesConfig)
     {
         _script = script;
-        _itemsDirectory = Path.Combine(directoriesConfig.GetPath("scripts"), "items");
+        _scriptsDirectory = directoriesConfig.GetPath("scripts");
+        _seedDirectory = Path.Combine(_scriptsDirectory, "items");
     }
 
     public bool HasHook(string scriptId, ItemScriptHookType hook)
@@ -144,12 +146,16 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
     private static bool IsCallable(DynValue value)
         => value.Type is DataType.Function or DataType.ClrFunction;
 
-    [GeneratedRegex("^[a-z0-9_]+$")]
+    /// <summary>
+    /// Dot-separated lowercase segments: <c>items.light_source</c>, or a bare <c>magic_torch</c>. No
+    /// separator and no empty segment can match, so no id can name a parent directory.
+    /// </summary>
+    [GeneratedRegex(@"^[a-z0-9_]+(\.[a-z0-9_]+)*$")]
     private static partial Regex ValidScriptIdPattern();
 
     private Table? Load(string scriptId)
     {
-        // The pattern is what keeps a ScriptId from walking out of the items directory.
+        // The pattern is what keeps a ScriptId from walking out of the scripts directory.
         if (!ValidScriptIdPattern().IsMatch(scriptId))
         {
             _logger.Warning("Item script id '{ScriptId}' is not a valid name; ignored", scriptId);
@@ -157,7 +163,10 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
             return null;
         }
 
-        var path = Path.Combine(_itemsDirectory, scriptId + ".lua");
+        // The dot is a namespace separator, which is how the shipped templates read: the 129 that
+        // carry a script all say items.<something>, and that is the file scripts/items/<something>.lua.
+        var relativePath = Path.Combine(scriptId.Split('.')) + ".lua";
+        var path = Path.Combine(_scriptsDirectory, relativePath);
 
         if (!File.Exists(path))
         {
@@ -223,7 +232,7 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
         if (!_seeded)
         {
             _seeded = true;
-            ItemScriptAssetSeeder.SeedMissing(_itemsDirectory);
+            ItemScriptAssetSeeder.SeedMissing(_seedDirectory);
         }
 
         if (_definitions.TryGetValue(scriptId, out var cached))

@@ -93,12 +93,42 @@ public class LuaItemScriptRuntimeTests
     }
 
     [Fact]
-    public void Invoke_InvalidScriptId_IsRefused()
+    public void Invoke_DottedScriptId_ResolvesAsAPathUnderScripts()
     {
-        // Path traversal must not resolve outside the items directory.
+        // Every shipped template uses this shape: items.light_source, items.food, items.beverage.
+        using var fixture = new Fixture();
+        fixture.WriteScript(
+            "items/light_source",
+            """
+            local light = { id = "items.light_source" }
+
+            function light.on_double_click(ctx)
+                _G.lit = true
+            end
+
+            return light
+            """
+        );
+
+        var item = new ItemEntity { Id = (Serial)11, ScriptId = "items.light_source" };
+
+        Assert.True(fixture.Runtime.Invoke(ItemScriptHookType.DoubleClick, ItemScriptContext.For(item, null)));
+        Assert.True(fixture.Script.Globals.Get("lit").Boolean);
+    }
+
+    [Theory]
+    [InlineData("../brains/guard")]  // a separator is never allowed
+    [InlineData("..")]               // nor a bare parent
+    [InlineData("items..food")]      // nor an empty segment
+    [InlineData(".items")]           // nor a leading dot
+    [InlineData("items.")]           // nor a trailing one
+    [InlineData("Items.Food")]       // nor uppercase
+    public void Invoke_InvalidScriptId_IsRefused(string scriptId)
+    {
+        // Nothing may resolve outside the scripts directory.
         using var fixture = new Fixture();
 
-        var item = new ItemEntity { Id = (Serial)11, ScriptId = "../brains/guard" };
+        var item = new ItemEntity { Id = (Serial)11, ScriptId = scriptId };
 
         Assert.False(fixture.Runtime.Invoke(ItemScriptHookType.DoubleClick, ItemScriptContext.For(item, null)));
     }
@@ -140,7 +170,7 @@ public class LuaItemScriptRuntimeTests
         using var fixture = new Fixture();
 
         // Nothing was written by the test: the runtime seeds the shipped scripts on first use.
-        Assert.True(fixture.Runtime.HasHook("magic_torch", ItemScriptHookType.DoubleClick));
+        Assert.True(fixture.Runtime.HasHook("items.magic_torch", ItemScriptHookType.DoubleClick));
     }
 
     [Fact]
@@ -183,8 +213,13 @@ public class LuaItemScriptRuntimeTests
             Runtime = new LuaItemScriptRuntime(Script, new DirectoriesConfig(_root, ["scripts"]));
         }
 
-        public void WriteScript(string id, string body)
-            => File.WriteAllText(Path.Combine(_root, "scripts", "items", id + ".lua"), body);
+        /// <summary>Writes a script at a path relative to the scripts directory, without the extension.</summary>
+        public void WriteScript(string relativePath, string body)
+        {
+            var path = Path.Combine(_root, "scripts", relativePath.Replace('/', Path.DirectorySeparatorChar) + ".lua");
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            File.WriteAllText(path, body);
+        }
 
         public void Dispose()
             => Directory.Delete(_root, true);

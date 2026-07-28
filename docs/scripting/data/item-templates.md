@@ -63,7 +63,7 @@ of templates.
 | `Hue` | `int` | optional, default `0` | Default hue index, used unless the caller passes an explicit hue (e.g. `item.create`'s hue argument). |
 | `GoldValue` | `int` | optional, default `0` | Declared gold value. **Reserved** — not read by `ItemFactoryService` or copied onto the spawned item today. |
 | `Weight` | `double` | optional, default `0.0` | Item weight. Must be finite and non-negative. |
-| `ScriptId` | `string` | optional, default `""` | Names the Lua script that runs when players interact with the item — `magic_torch` means `scripts/items/magic_torch.lua`. Must match `^[a-z0-9_]+$`. `none` or empty means no script. See [Item scripts](../reference/item-scripts.md). |
+| `ScriptId` | `string` | optional, default `""` | Names the Lua script that runs when players interact with the item; the dot is a namespace, so `items.magic_torch` means `scripts/items/magic_torch.lua`. Must match `^[a-z0-9_]+(\.[a-z0-9_]+)*$`. `none` or empty means no script. See [Item scripts](../reference/item-scripts.md). |
 | `IsMovable` | `bool` | optional, default `false` | Whether the item can be picked up. `false` refuses the lift with `CannotLift` (0x27). Not read by `ItemFactoryService` — it is enforced at drag time by `DragDropService`. |
 | `Rarity` | `ItemRarityType` enum | optional, default `Common` | One of `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`, `Artifact`. Must be a defined member. Copied onto the spawned item's `Rarity`. |
 | `Tags` | `List<string>` | optional, default `[]` | Free-form labels. Drives `item.create_by_tag` / `CreateByTag`, and is the pool loot entries' `ItemTag` matches against. Cannot be an explicit YAML null. |
