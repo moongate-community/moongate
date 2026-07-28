@@ -1,11 +1,9 @@
-using System.Net.ServerSentEvents;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Moongate.Core.Types;
 using Moongate.Http.Plugin.Data.Api.Console;
-using Moongate.Http.Plugin.Data.Console;
 using Moongate.Http.Plugin.Interfaces.Console;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Services.Console;
@@ -34,35 +32,26 @@ public sealed class ConsoleEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/admin/console/stream", Stream)
-            .WithName("StreamConsole")
-            .WithTags("console")
+              .WithName("StreamConsole")
+              .WithTags("console")
 
-            // An event stream, not JSON: the frames have no schema a generated client could bind to,
-            // only a content type worth stating.
-            .Produces<string>(StatusCodes.Status200OK, "text/event-stream")
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+              // An event stream, not JSON: the frames have no schema a generated client could bind to,
+              // only a content type worth stating.
+              .Produces<string>(StatusCodes.Status200OK, "text/event-stream")
+              .RequireAuthorization(HttpServerService.AdminPolicy);
 
         routes.MapPost("/api/v1/admin/console", Send)
-            .WithName("SendConsoleCommand")
-            .WithTags("console")
-            .Produces(StatusCodes.Status202Accepted)
-            .RequireAuthorization(HttpServerService.AdminPolicy);
-    }
-
-    /// <summary>Opens a per-connection SSE feed; its first event carries the connection id to POST with.</summary>
-    /// <remarks>Emits <c>ready</c> (data = the connection id), then a <c>line</c> per command reply and a
-    /// <c>done</c> when a command finishes. The connection is closed when the client disconnects.</remarks>
-    private IResult Stream(HttpContext context)
-    {
-        var (connectionId, reader) = _registry.Open();
-        context.RequestAborted.Register(() => _registry.Close(connectionId));
-
-        return TypedResults.ServerSentEvents(ConsoleSseStream.From(connectionId, reader, context.RequestAborted));
+              .WithName("SendConsoleCommand")
+              .WithTags("console")
+              .Produces(StatusCodes.Status202Accepted)
+              .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
     /// <summary>Runs a console command; its reply lines stream to the given connection's SSE feed.</summary>
-    /// <remarks>Returns 202 immediately — the command is dispatched onto the game loop and its output
-    /// arrives asynchronously on <c>GET /api/v1/admin/console/stream</c>.</remarks>
+    /// <remarks>
+    /// Returns 202 immediately — the command is dispatched onto the game loop and its output
+    /// arrives asynchronously on <c>GET /api/v1/admin/console/stream</c>.
+    /// </remarks>
     private IResult Send(ConsoleCommandRequest request, ClaimsPrincipal user)
     {
         // Unknown or already-closed connection: nothing to stream to.
@@ -82,16 +71,30 @@ public sealed class ConsoleEndpoints : IApiEndpointRegistration
             level,
             null,
             request.Command,
-            line => writer.TryWrite(new ConsoleStreamEvent("line", line))
+            line => writer.TryWrite(new("line", line))
         );
 
-        _dispatcher.Post(() =>
+        _dispatcher.Post(
+            () =>
             {
                 _commands.Execute(invocation);
-                writer.TryWrite(new ConsoleStreamEvent("done", request.Command));
+                writer.TryWrite(new("done", request.Command));
             }
         );
 
         return TypedResults.Accepted((string?)null);
+    }
+
+    /// <summary>Opens a per-connection SSE feed; its first event carries the connection id to POST with.</summary>
+    /// <remarks>
+    /// Emits <c>ready</c> (data = the connection id), then a <c>line</c> per command reply and a
+    /// <c>done</c> when a command finishes. The connection is closed when the client disconnects.
+    /// </remarks>
+    private IResult Stream(HttpContext context)
+    {
+        var (connectionId, reader) = _registry.Open();
+        context.RequestAborted.Register(() => _registry.Close(connectionId));
+
+        return TypedResults.ServerSentEvents(ConsoleSseStream.From(connectionId, reader, context.RequestAborted));
     }
 }

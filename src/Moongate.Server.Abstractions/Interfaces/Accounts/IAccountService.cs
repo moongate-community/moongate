@@ -25,29 +25,6 @@ public interface IAccountService
     AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level);
 
     /// <summary>
-    /// Creates a pending Player account for web self-registration: inactive, carrying a single-use
-    /// verification token stored as a hash with a 24-hour expiry, with the required, validated email
-    /// stored. Publishes
-    /// <see cref="Moongate.Server.Abstractions.Data.Events.AccountRegistrationRequestedEvent" />. The
-    /// account cannot log in until verified.
-    /// </summary>
-    AccountRegisterResult RegisterPending(string username, string password, string email);
-
-    /// <summary>
-    /// Reissues a verification token for a pending account whose normalized username and email match.
-    /// Valid requests that do not match a pending account return <see cref="AccountResendResultType.Ignored" />
-    /// so callers do not disclose account state.
-    /// </summary>
-    AccountResendResultType ResendVerification(string username, string email)
-        => AccountResendResultType.Ignored;
-
-    /// <summary>
-    /// Activates the account holding an unexpired <paramref name="token" /> and clears its token state.
-    /// Consumed, expired, or unknown tokens cannot activate an account.
-    /// </summary>
-    AccountVerifyResultType VerifyEmail(string token);
-
-    /// <summary>
     /// Deletes the account along with every character it owns and everything those characters carry.
     /// Refused outright while any of them is being played.
     /// </summary>
@@ -76,6 +53,23 @@ public interface IAccountService
     IReadOnlyList<string> GetUsernames();
 
     /// <summary>
+    /// Creates a pending Player account for web self-registration: inactive, carrying a single-use
+    /// verification token stored as a hash with a 24-hour expiry, with the required, validated email
+    /// stored. Publishes
+    /// <see cref="Moongate.Server.Abstractions.Data.Events.AccountRegistrationRequestedEvent" />. The
+    /// account cannot log in until verified.
+    /// </summary>
+    AccountRegisterResult RegisterPending(string username, string password, string email);
+
+    /// <summary>
+    /// Reissues a verification token for a pending account whose normalized username and email match.
+    /// Valid requests that do not match a pending account return <see cref="AccountResendResultType.Ignored" />
+    /// so callers do not disclose account state.
+    /// </summary>
+    AccountResendResultType ResendVerification(string username, string email)
+        => AccountResendResultType.Ignored;
+
+    /// <summary>
     /// Activates or deactivates the account. A deactivated account is refused at login but keeps its
     /// characters. False on unknown username.
     /// </summary>
@@ -89,4 +83,10 @@ public interface IAccountService
     /// username or blank password.
     /// </summary>
     bool SetPassword(string username, string password);
+
+    /// <summary>
+    /// Activates the account holding an unexpired <paramref name="token" /> and clears its token state.
+    /// Consumed, expired, or unknown tokens cannot activate an account.
+    /// </summary>
+    AccountVerifyResultType VerifyEmail(string token);
 }

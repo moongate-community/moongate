@@ -53,27 +53,19 @@ public sealed class ItemModule
 
     [ScriptFunction("create", "Creates an item from a template; returns its serial or nil.")]
     public uint? Create(string templateId, int amount, uint hue)
-    {
-        return Persist(_factory.CreateFromTemplate(templateId, amount: amount, hue: ToHue(hue)));
-    }
+        => Persist(_factory.CreateFromTemplate(templateId, amount: amount, hue: ToHue(hue)));
 
     [ScriptFunction("create_by_category", "Creates a random item in the category; returns its serial or nil.")]
     public uint? CreateByCategory(string category, int amount, uint hue)
-    {
-        return Persist(_factory.CreateByCategory(category, amount: amount, hue: ToHue(hue)));
-    }
+        => Persist(_factory.CreateByCategory(category, amount: amount, hue: ToHue(hue)));
 
     [ScriptFunction("create_by_tag", "Creates a random item carrying the tag; returns its serial or nil.")]
     public uint? CreateByTag(string tag, int amount, uint hue)
-    {
-        return Persist(_factory.CreateByTag(tag, amount: amount, hue: ToHue(hue)));
-    }
+        => Persist(_factory.CreateByTag(tag, amount: amount, hue: ToHue(hue)));
 
     [ScriptFunction("delete", "Deletes the item; true when it existed.")]
     public bool Delete(uint serial)
-    {
-        return _items.Delete((Serial)serial);
-    }
+        => _items.Delete((Serial)serial);
 
     [ScriptFunction("equip", "Equips the item on a mobile at a layer; false on unknown mobile/item/layer.")]
     public bool Equip(uint mobile, uint serial, object layer)

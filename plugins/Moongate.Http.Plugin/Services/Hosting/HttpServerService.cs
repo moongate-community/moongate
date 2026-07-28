@@ -86,7 +86,8 @@ public sealed class HttpServerService : ISquidStdService
 
         builder.Services.AddProblemDetails();
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(options =>
+        builder.Services.AddSwaggerGen(
+            options =>
             {
                 // Every DTO here is a record of non-nullable properties, but by default Swashbuckle marks
                 // nothing required — so a generated client has to treat every field as possibly absent and
@@ -107,37 +108,39 @@ public sealed class HttpServerService : ISquidStdService
         // camelCase over the wire while the DTOs stay PascalCase in C#. ASP.NET already defaults to this,
         // but the wire format is a contract clients are written against: stated here it cannot be changed
         // by a default shifting under us.
-        builder.Services.ConfigureHttpJsonOptions(options =>
-            options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        builder.Services.ConfigureHttpJsonOptions(
+            options =>
+                options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         );
 
         builder.Services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new()
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = _config.Jwt.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = _config.Jwt.Issuer,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = signingKey,
-                        ValidateLifetime = true
-                    };
-                }
-            );
+               .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+               .AddJwtBearer(
+                   options =>
+                   {
+                       options.TokenValidationParameters = new()
+                       {
+                           ValidateIssuer = true,
+                           ValidIssuer = _config.Jwt.Issuer,
+                           ValidateAudience = true,
+                           ValidAudience = _config.Jwt.Issuer,
+                           ValidateIssuerSigningKey = true,
+                           IssuerSigningKey = signingKey,
+                           ValidateLifetime = true
+                       };
+                   }
+               );
 
         builder.Services
-            .AddAuthorizationBuilder()
-            .AddPolicy(
-                AdminPolicy,
-                policy => policy.RequireRole(
-                    nameof(AccountLevelType.Administrator),
-                    nameof(AccountLevelType.GrandMaster)
-                )
-            )
-            .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
+               .AddAuthorizationBuilder()
+               .AddPolicy(
+                   AdminPolicy,
+                   policy => policy.RequireRole(
+                       nameof(AccountLevelType.Administrator),
+                       nameof(AccountLevelType.GrandMaster)
+                   )
+               )
+               .AddPolicy(PlayerPolicy, policy => policy.RequireAuthenticatedUser());
 
         _app = builder.Build();
 
@@ -162,9 +165,12 @@ public sealed class HttpServerService : ISquidStdService
                     // carries the pointers to them and must not be, or a deploy would keep handing out the
                     // previous bundle's names.
                     OnPrepareResponse = context => context.Context.Response.Headers.CacheControl =
-                        context.File.Name.Equals("index.html", StringComparison.OrdinalIgnoreCase)
-                            ? "no-cache"
-                            : "public, max-age=31536000, immutable"
+                                                       context.File.Name.Equals(
+                                                           "index.html",
+                                                           StringComparison.OrdinalIgnoreCase
+                                                       )
+                                                           ? "no-cache"
+                                                           : "public, max-age=31536000, immutable"
                 }
             );
 
@@ -175,7 +181,8 @@ public sealed class HttpServerService : ISquidStdService
         _app.UseAuthorization();
 
         _app.UseSwagger();
-        _app.MapScalarApiReference(options =>
+        _app.MapScalarApiReference(
+            options =>
             {
                 options.WithOpenApiRoutePattern(SwaggerRoutePattern);
                 options.AddDocument(DocumentName);
@@ -203,10 +210,12 @@ public sealed class HttpServerService : ISquidStdService
         {
             var indexPath = Path.Combine(uiDist, "index.html");
 
-            _app.MapFallback(async context =>
+            _app.MapFallback(
+                async context =>
                 {
                     var path = context.Request.Path;
-                    var reserved = ReservedPrefixes.Any(prefix => path.StartsWithSegments(
+                    var reserved = ReservedPrefixes.Any(
+                        prefix => path.StartsWithSegments(
                             prefix,
                             StringComparison.OrdinalIgnoreCase
                         )
@@ -267,12 +276,12 @@ public sealed class HttpServerService : ISquidStdService
     /// </summary>
     private IEnumerable<string> EndpointXmlDocumentationPaths()
         => _container.GetServiceRegistrations()
-            .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
-            .Select(registration => registration.ImplementationType?.Assembly)
-            .Where(assembly => assembly is not null)
-            .Select(assembly => Path.Combine(AppContext.BaseDirectory, $"{assembly!.GetName().Name}.xml"))
-            .Distinct()
-            .Where(File.Exists);
+                     .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+                     .Select(registration => registration.ImplementationType?.Assembly)
+                     .Where(assembly => assembly is not null)
+                     .Select(assembly => Path.Combine(AppContext.BaseDirectory, $"{assembly!.GetName().Name}.xml"))
+                     .Distinct()
+                     .Where(File.Exists);
 
     /// <summary>
     /// Mints a signing key for a server that has not configured one, and writes it to moongate.yaml.
@@ -302,6 +311,18 @@ public sealed class HttpServerService : ISquidStdService
     }
 
     /// <summary>
+    /// Asks Kestrel what it actually bound. With a configured port of 0 the OS picks one, and this is the
+    /// only way to learn it.
+    /// </summary>
+    private static int ResolveBoundPort(WebApplication app)
+    {
+        var addresses = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>();
+        var address = addresses?.Addresses.FirstOrDefault();
+
+        return address is null ? 0 : new Uri(address).Port;
+    }
+
+    /// <summary>
     /// The first candidate that exists, or null. Configuration wins, then the environment variable — which is
     /// what lets a developer point a published server at a working tree without copying anything — then the
     /// conventional locations.
@@ -327,19 +348,7 @@ public sealed class HttpServerService : ISquidStdService
         // index.html rather than the directory: a directory that exists but holds no entry point would pass
         // the check and then serve nothing.
         return Candidates()
-            .Select(Path.GetFullPath)
-            .FirstOrDefault(candidate => File.Exists(Path.Combine(candidate, "index.html")));
-    }
-
-    /// <summary>
-    /// Asks Kestrel what it actually bound. With a configured port of 0 the OS picks one, and this is the
-    /// only way to learn it.
-    /// </summary>
-    private static int ResolveBoundPort(WebApplication app)
-    {
-        var addresses = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>();
-        var address = addresses?.Addresses.FirstOrDefault();
-
-        return address is null ? 0 : new Uri(address).Port;
+               .Select(Path.GetFullPath)
+               .FirstOrDefault(candidate => File.Exists(Path.Combine(candidate, "index.html")));
     }
 }

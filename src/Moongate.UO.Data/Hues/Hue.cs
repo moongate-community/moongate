@@ -27,6 +27,9 @@ public readonly struct Hue : IEquatable<Hue>
     public override int GetHashCode()
         => Value.GetHashCode();
 
+    public override string ToString()
+        => $"0x{Value:X4}";
+
     public static bool operator ==(Hue left, Hue right)
         => left.Value == right.Value;
 
@@ -38,7 +41,4 @@ public readonly struct Hue : IEquatable<Hue>
 
     public static bool operator !=(Hue left, Hue right)
         => left.Value != right.Value;
-
-    public override string ToString()
-        => $"0x{Value:X4}";
 }

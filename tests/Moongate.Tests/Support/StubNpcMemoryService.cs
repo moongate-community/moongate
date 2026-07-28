@@ -10,29 +10,25 @@ public sealed class StubNpcMemoryService : INpcMemoryService
 {
     private static readonly IReadOnlyDictionary<string, NpcMemoryValue> Empty = new Dictionary<string, NpcMemoryValue>();
 
-    public IDisposable Begin(BrainContext context)
-        => new NoopScope();
-
-    public bool Set(string key, NpcMemoryValue value)
-        => true;
-
-    public NpcMemoryValue? Get(string key)
-        => null;
-
-    public bool Delete(string key)
-        => false;
+    private sealed class NoopScope : IDisposable
+    {
+        public void Dispose() { }
+    }
 
     public IReadOnlyDictionary<string, NpcMemoryValue> All()
         => Empty;
 
-    public void Forget(Serial mobileId)
-    {
-    }
+    public IDisposable Begin(BrainContext context)
+        => new NoopScope();
 
-    private sealed class NoopScope : IDisposable
-    {
-        public void Dispose()
-        {
-        }
-    }
+    public bool Delete(string key)
+        => false;
+
+    public void Forget(Serial mobileId) { }
+
+    public NpcMemoryValue? Get(string key)
+        => null;
+
+    public bool Set(string key, NpcMemoryValue value)
+        => true;
 }

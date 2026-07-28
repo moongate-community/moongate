@@ -10,7 +10,6 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Tests.Support;
-using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 using SquidStd.Network.Client;
 
@@ -19,14 +18,6 @@ namespace Moongate.Tests.Http.Endpoints.Players;
 public class OnlinePlayerAdminEndpointsTests
 {
     private const string Route = "/api/v1/admin/players/online";
-
-    [Fact]
-    public async Task List_WithoutToken_IsUnauthorized()
-    {
-        await using var server = await StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
-    }
 
     [Fact]
     public async Task List_AsPlayer_IsForbidden()
@@ -51,6 +42,29 @@ public class OnlinePlayerAdminEndpointsTests
     }
 
     [Fact]
+    public async Task List_OrdersByCharacterNameThenSerial()
+    {
+        await using var server = await StartAsync();
+        server.Sessions.Connections.Add(
+            Session("one", new(1), new() { Id = new(3), Name = "Cedric" }, SessionStateType.InWorld)
+        );
+        server.Sessions.Connections.Add(
+            Session("two", new(2), new() { Id = new(2), Name = "aramis" }, SessionStateType.InWorld)
+        );
+        server.Sessions.Connections.Add(
+            Session("three", new(3), new() { Id = new(1), Name = "Aramis" }, SessionStateType.InWorld)
+        );
+        await server.AuthenticateAsync();
+
+        var players = await server.Client.GetFromJsonAsync<OnlinePlayerMapResponse[]>(Route);
+
+        Assert.Equal(
+            ["0x00000001", "0x00000002", "0x00000003"],
+            players!.Select(player => player.CharacterSerial)
+        );
+    }
+
+    [Fact]
     public async Task List_ReturnsOnlyInWorldPlayersWithMapFields()
     {
         await using var server = await StartAsync();
@@ -66,7 +80,7 @@ public class OnlinePlayerAdminEndpointsTests
                     Position = new(1420, 1698, 10),
                     Direction = DirectionType.SouthEast | DirectionType.Running,
                     Body = 401,
-                    SkinHue = new Hue(1002),
+                    SkinHue = new(1002),
                     Hits = 48,
                     HitsMax = 70,
                     Warmode = true
@@ -126,26 +140,11 @@ public class OnlinePlayerAdminEndpointsTests
     }
 
     [Fact]
-    public async Task List_OrdersByCharacterNameThenSerial()
+    public async Task List_WithoutToken_IsUnauthorized()
     {
         await using var server = await StartAsync();
-        server.Sessions.Connections.Add(
-            Session("one", new(1), new() { Id = new(3), Name = "Cedric" }, SessionStateType.InWorld)
-        );
-        server.Sessions.Connections.Add(
-            Session("two", new(2), new() { Id = new(2), Name = "aramis" }, SessionStateType.InWorld)
-        );
-        server.Sessions.Connections.Add(
-            Session("three", new(3), new() { Id = new(1), Name = "Aramis" }, SessionStateType.InWorld)
-        );
-        await server.AuthenticateAsync();
 
-        var players = await server.Client.GetFromJsonAsync<OnlinePlayerMapResponse[]>(Route);
-
-        Assert.Equal(
-            ["0x00000001", "0x00000002", "0x00000003"],
-            players!.Select(player => player.CharacterSerial)
-        );
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync(Route)).StatusCode);
     }
 
     private static PlayerSession Session(
@@ -172,9 +171,7 @@ public class OnlinePlayerAdminEndpointsTests
         return session;
     }
 
-    private static Task<TestApiServer> StartAsync(
-        AccountLevelType level = AccountLevelType.Administrator
-    )
+    private static Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
         => TestApiServer.StartAsync(
             level,
             configure: container => container.RegisterApiEndpoint<OnlinePlayerAdminEndpoints>()

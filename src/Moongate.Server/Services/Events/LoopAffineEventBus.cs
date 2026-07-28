@@ -51,6 +51,11 @@ public sealed class LoopAffineEventBus : IEventBus
         return _inner.PublishAsync(eventData, cancellationToken);
     }
 
+    // Passed straight through, unguarded: there are no IEventListener<> subscribers today, so this path
+    // carries no loop-affine enforcement. Guard it here the same way Subscribe is if that changes.
+    public IDisposable RegisterListener<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
+        => _inner.RegisterListener(listener);
+
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler) where TEvent : IEvent
     {
         if (!typeof(ILoopAffineEvent).IsAssignableFrom(typeof(TEvent)))
@@ -58,7 +63,8 @@ public sealed class LoopAffineEventBus : IEventBus
             return _inner.Subscribe(handler);
         }
 
-        return _inner.Subscribe<TEvent>((evt, ct) =>
+        return _inner.Subscribe<TEvent>(
+            (evt, ct) =>
             {
                 if (!_loopThread.IsOnLoopThread)
                 {
@@ -80,9 +86,4 @@ public sealed class LoopAffineEventBus : IEventBus
             }
         );
     }
-
-    // Passed straight through, unguarded: there are no IEventListener<> subscribers today, so this path
-    // carries no loop-affine enforcement. Guard it here the same way Subscribe is if that changes.
-    public IDisposable RegisterListener<TEvent>(IEventListener<TEvent> listener) where TEvent : IEvent
-        => _inner.RegisterListener(listener);
 }

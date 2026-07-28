@@ -50,12 +50,6 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
     public bool InRange(Point2D other, int range)
         => DistanceTo(other) <= range;
 
-    public static bool operator ==(Point2D left, Point2D right)
-        => left.Equals(right);
-
-    public static bool operator !=(Point2D left, Point2D right)
-        => !left.Equals(right);
-
     public static Point2D Parse(string s, IFormatProvider? provider)
         => Parse(s.AsSpan(), provider);
 
@@ -103,4 +97,10 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D>, ISpa
 
         return true;
     }
+
+    public static bool operator ==(Point2D left, Point2D right)
+        => left.Equals(right);
+
+    public static bool operator !=(Point2D left, Point2D right)
+        => !left.Equals(right);
 }

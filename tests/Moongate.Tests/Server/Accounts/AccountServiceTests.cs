@@ -72,6 +72,28 @@ public class AccountServiceTests
     }
 
     [Fact]
+    public void Delete_ACharacterIsBeingPlayed_IsRefusedAndNothingIsDeleted()
+    {
+        var persistence = new FakePersistenceService();
+        var sessions = new StubSessionManager();
+        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
+        var service = Service(persistence, characters, sessions);
+
+        service.Create("tom", "secret", null, AccountLevelType.Player);
+        var accountId = service.GetByUsername("tom")!.Id;
+        var played = characters.CreateCharacter(accountId, Packet());
+        var other = characters.CreateCharacter(accountId, Packet());
+        sessions.Played.Add(played.Id);
+
+        Assert.Equal(AccountDeleteResultType.CharacterBeingPlayed, service.Delete("tom"));
+
+        // Refused as a whole: the account keeps every character, not just the one in play.
+        Assert.NotNull(service.GetByUsername("tom"));
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(played.Id));
+        Assert.NotNull(persistence.Store<MobileEntity>().GetById(other.Id));
+    }
+
+    [Fact]
     public void Delete_AccountWithNoCharacters_StillGoes()
     {
         var service = Service(new());
@@ -97,28 +119,6 @@ public class AccountServiceTests
 
         Assert.Null(persistence.Store<MobileEntity>().GetById(first.Id));
         Assert.Null(persistence.Store<MobileEntity>().GetById(second.Id));
-    }
-
-    [Fact]
-    public void Delete_ACharacterIsBeingPlayed_IsRefusedAndNothingIsDeleted()
-    {
-        var persistence = new FakePersistenceService();
-        var sessions = new StubSessionManager();
-        var characters = CharacterServiceFixture.Create(persistence, new EventBusService(), sessions);
-        var service = Service(persistence, characters, sessions);
-
-        service.Create("tom", "secret", null, AccountLevelType.Player);
-        var accountId = service.GetByUsername("tom")!.Id;
-        var played = characters.CreateCharacter(accountId, Packet());
-        var other = characters.CreateCharacter(accountId, Packet());
-        sessions.Played.Add(played.Id);
-
-        Assert.Equal(AccountDeleteResultType.CharacterBeingPlayed, service.Delete("tom"));
-
-        // Refused as a whole: the account keeps every character, not just the one in play.
-        Assert.NotNull(service.GetByUsername("tom"));
-        Assert.NotNull(persistence.Store<MobileEntity>().GetById(played.Id));
-        Assert.NotNull(persistence.Store<MobileEntity>().GetById(other.Id));
     }
 
     [Fact]

@@ -18,11 +18,11 @@ public static class ConsoleSseStream
         [EnumeratorCancellation] CancellationToken cancellationToken
     )
     {
-        yield return new SseItem<string>(connectionId, "ready");
+        yield return new(connectionId, "ready");
 
         await foreach (var evt in reader.ReadAllAsync(cancellationToken))
         {
-            yield return new SseItem<string>(evt.Text, evt.Event);
+            yield return new(evt.Text, evt.Event);
         }
     }
 }

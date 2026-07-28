@@ -20,28 +20,12 @@ public class LoopAffineInvokeMarshallerTests
         public bool IsOnLoopThread { get; }
     }
 
-    [Fact]
-    public void OffLoopThread_PostsToDispatcher_AndReturnsNil()
+    private sealed class ListSink : ILogEventSink
     {
-        var dispatcher = new MainThreadDispatcherService();
-        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(false), dispatcher);
-        var ran = false;
+        public List<LogEvent> Events { get; } = [];
 
-        var result = marshaller.Invoke(() =>
-            {
-                ran = true;
-
-                return DynValue.NewNumber(42);
-            }
-        );
-
-        Assert.False(ran);
-        Assert.True(result.IsNil());
-        Assert.Equal(1, dispatcher.PendingCount);
-
-        dispatcher.DrainPending();
-
-        Assert.True(ran);
+        public void Emit(LogEvent logEvent)
+            => Events.Add(logEvent);
     }
 
     [Fact]
@@ -62,12 +46,29 @@ public class LoopAffineInvokeMarshallerTests
         Assert.Contains(sink.Events, e => e.Level == LogEventLevel.Warning);
     }
 
-    private sealed class ListSink : ILogEventSink
+    [Fact]
+    public void OffLoopThread_PostsToDispatcher_AndReturnsNil()
     {
-        public List<LogEvent> Events { get; } = [];
+        var dispatcher = new MainThreadDispatcherService();
+        var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(false), dispatcher);
+        var ran = false;
 
-        public void Emit(LogEvent logEvent)
-            => Events.Add(logEvent);
+        var result = marshaller.Invoke(
+            () =>
+            {
+                ran = true;
+
+                return DynValue.NewNumber(42);
+            }
+        );
+
+        Assert.False(ran);
+        Assert.True(result.IsNil());
+        Assert.Equal(1, dispatcher.PendingCount);
+
+        dispatcher.DrainPending();
+
+        Assert.True(ran);
     }
 
     [Fact]
@@ -77,7 +78,8 @@ public class LoopAffineInvokeMarshallerTests
         var marshaller = new LoopAffineInvokeMarshaller(new StubLoopThread(true), dispatcher);
         var ran = false;
 
-        var result = marshaller.Invoke(() =>
+        var result = marshaller.Invoke(
+            () =>
             {
                 ran = true;
 

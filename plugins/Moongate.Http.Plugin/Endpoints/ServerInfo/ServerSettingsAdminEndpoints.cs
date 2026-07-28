@@ -10,7 +10,6 @@ using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Abstractions.Data;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Abstractions.Types;
 
@@ -40,21 +39,21 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         var group = routes.MapGroup("/api/v1/admin/server-settings")
-            .WithTags("server-settings")
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+                          .WithTags("server-settings")
+                          .RequireAuthorization(HttpServerService.AdminPolicy);
 
         group.MapGet("/", Get).WithName("GetServerSettings").Produces<ServerSettingsResponse>();
         group.MapPut("/", Update)
-            .WithName("UpdateServerSettings")
-            .Produces<ServerSettingsResponse>()
-            .ProducesValidationProblem();
+             .WithName("UpdateServerSettings")
+             .Produces<ServerSettingsResponse>()
+             .ProducesValidationProblem();
         group.MapPost("/assets/{slot}", UploadAsset)
-            .WithName("UploadServerAsset")
-            .DisableAntiforgery()
-            .Produces<ServerSettingsResponse>();
+             .WithName("UploadServerAsset")
+             .DisableAntiforgery()
+             .Produces<ServerSettingsResponse>();
         group.MapDelete("/assets/{slot}", DeleteAsset)
-            .WithName("DeleteServerAsset")
-            .Produces(StatusCodes.Status204NoContent);
+             .WithName("DeleteServerAsset")
+             .Produces(StatusCodes.Status204NoContent);
     }
 
     internal static ServerSettingsResponse ToResponse(
@@ -79,6 +78,23 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
         );
     }
 
+    /// <summary>Removes the image for a slot.</summary>
+    private IResult DeleteAsset(string slot)
+    {
+        if (!Enum.TryParse<ServerAssetSlotType>(slot, true, out var parsed))
+        {
+            return Results.Problem($"'{slot}' is not an asset slot.", statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        if (_settings.Get().Assets.TryGetValue(parsed.ToString(), out var meta))
+        {
+            _assets.Delete(meta.FileName);
+            _settings.ClearAsset(parsed);
+        }
+
+        return Results.NoContent();
+    }
+
     /// <summary>Returns the full server settings.</summary>
     private IResult Get()
         => Results.Ok(ToResponse(_settings.Get(), _registrationReadiness));
@@ -101,19 +117,19 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
         }
 
         _settings.Update(
-            new ServerSettingsUpdate
+            new()
             {
                 Description = request.Description,
                 Tagline = request.Tagline,
                 RegistrationEnabled = request.RegistrationEnabled,
                 Contacts = request.Contacts is null
-                    ? null
-                    : new ServerContacts
-                    {
-                        Website = request.Contacts.Website,
-                        Email = request.Contacts.Email,
-                        Discord = request.Contacts.Discord
-                    }
+                               ? null
+                               : new ServerContacts
+                               {
+                                   Website = request.Contacts.Website,
+                                   Email = request.Contacts.Email,
+                                   Discord = request.Contacts.Discord
+                               }
             }
         );
 
@@ -124,7 +140,7 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
     /// <remarks>Answers 400 for an unknown slot, 415 for a non-image type, and 413 when the file is too large.</remarks>
     private async Task<IResult> UploadAsset(string slot, IFormFile file)
     {
-        if (!Enum.TryParse<ServerAssetSlotType>(slot, ignoreCase: true, out var parsed))
+        if (!Enum.TryParse<ServerAssetSlotType>(slot, true, out var parsed))
         {
             return Results.Problem($"'{slot}' is not an asset slot.", statusCode: StatusCodes.Status400BadRequest);
         }
@@ -134,8 +150,14 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
         if (!validation.Ok)
         {
             return validation.Error == AssetValidationError.TooLarge
-                ? Results.Problem("Asset exceeds the maximum upload size.", statusCode: StatusCodes.Status413PayloadTooLarge)
-                : Results.Problem("Unsupported asset content-type.", statusCode: StatusCodes.Status415UnsupportedMediaType);
+                       ? Results.Problem(
+                           "Asset exceeds the maximum upload size.",
+                           statusCode: StatusCodes.Status413PayloadTooLarge
+                       )
+                       : Results.Problem(
+                           "Unsupported asset content-type.",
+                           statusCode: StatusCodes.Status415UnsupportedMediaType
+                       );
         }
 
         await using (var stream = file.OpenReadStream())
@@ -145,26 +167,9 @@ public sealed class ServerSettingsAdminEndpoints : IApiEndpointRegistration
 
         _settings.SetAsset(
             parsed,
-            new ServerAssetMeta { FileName = $"{parsed}.{validation.Extension}", ContentType = file.ContentType }
+            new() { FileName = $"{parsed}.{validation.Extension}", ContentType = file.ContentType }
         );
 
         return Results.Ok(ToResponse(_settings.Get(), _registrationReadiness));
-    }
-
-    /// <summary>Removes the image for a slot.</summary>
-    private IResult DeleteAsset(string slot)
-    {
-        if (!Enum.TryParse<ServerAssetSlotType>(slot, ignoreCase: true, out var parsed))
-        {
-            return Results.Problem($"'{slot}' is not an asset slot.", statusCode: StatusCodes.Status400BadRequest);
-        }
-
-        if (_settings.Get().Assets.TryGetValue(parsed.ToString(), out var meta))
-        {
-            _assets.Delete(meta.FileName);
-            _settings.ClearAsset(parsed);
-        }
-
-        return Results.NoContent();
     }
 }

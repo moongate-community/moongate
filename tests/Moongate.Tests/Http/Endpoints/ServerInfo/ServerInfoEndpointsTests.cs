@@ -1,20 +1,48 @@
 using System.Net;
 using System.Net.Http.Json;
 using Moongate.Http.Plugin.Data.Api.ServerInfo;
-using Moongate.Server.Abstractions.Data;
 using Moongate.Tests.Support;
-using Xunit;
 
 namespace Moongate.Tests.Http.Endpoints.ServerInfo;
 
 public sealed class ServerInfoEndpointsTests
 {
     [Fact]
+    public async Task Asset_MissingSlot_Is404()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        var response = await server.Client.GetAsync("/api/v1/server-info/assets/logo");
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Asset_UnknownSlot_Is400()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        var response = await server.Client.GetAsync("/api/v1/server-info/assets/wallpaper");
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ServerInfo_EnabledWithoutWebsite_ReportsRegistrationClosed()
+    {
+        await using var server = await TestApiServer.StartAsync();
+        server.ServerSettings.Update(new() { RegistrationEnabled = true });
+
+        var response = await server.Client.GetAsync("/api/v1/server-info");
+        var info = await response.Content.ReadFromJsonAsync<ServerInfoResponse>();
+
+        Assert.False(info!.RegistrationEnabled);
+    }
+
+    [Fact]
     public async Task ServerInfo_IsPublic_AndReflectsSettings()
     {
         await using var server = await TestApiServer.StartAsync();
         server.ServerSettings.Update(
-            new ServerSettingsUpdate
+            new()
             {
                 Description = "A fun shard",
                 Tagline = "Sosaria never sleeps.",
@@ -33,23 +61,8 @@ public sealed class ServerInfoEndpointsTests
         Assert.True(info.RegistrationEnabled);
     }
 
-    [Fact]
-    public async Task ServerInfo_EnabledWithoutWebsite_ReportsRegistrationClosed()
-    {
-        await using var server = await TestApiServer.StartAsync();
-        server.ServerSettings.Update(new ServerSettingsUpdate { RegistrationEnabled = true });
-
-        var response = await server.Client.GetAsync("/api/v1/server-info");
-        var info = await response.Content.ReadFromJsonAsync<ServerInfoResponse>();
-
-        Assert.False(info!.RegistrationEnabled);
-    }
-
-    [Theory]
-    [InlineData(true, "email", true, true)]
-    [InlineData(false, "email", true, false)]
-    [InlineData(true, "log", true, false)]
-    [InlineData(true, "email", false, false)]
+    [Theory, InlineData(true, "email", true, true), InlineData(false, "email", true, false),
+     InlineData(true, "log", true, false), InlineData(true, "email", false, false)]
     public async Task ServerInfo_ReportsRegistrationOpenOnlyWhenToggleAndPrerequisitesAreReady(
         bool registrationEnabled,
         string accountVerificationChannel,
@@ -58,9 +71,9 @@ public sealed class ServerInfoEndpointsTests
     )
     {
         await using var server = await TestApiServer.StartAsync(
-            emailChannelReady: emailChannelReady,
-            accountVerificationChannel: accountVerificationChannel
-        );
+                                     emailChannelReady: emailChannelReady,
+                                     accountVerificationChannel: accountVerificationChannel
+                                 );
         server.ServerSettings.Update(
             new()
             {
@@ -73,23 +86,5 @@ public sealed class ServerInfoEndpointsTests
         var info = await response.Content.ReadFromJsonAsync<ServerInfoResponse>();
 
         Assert.Equal(expectedRegistrationEnabled, info!.RegistrationEnabled);
-    }
-
-    [Fact]
-    public async Task Asset_MissingSlot_Is404()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        var response = await server.Client.GetAsync("/api/v1/server-info/assets/logo");
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Asset_UnknownSlot_Is400()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        var response = await server.Client.GetAsync("/api/v1/server-info/assets/wallpaper");
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 }

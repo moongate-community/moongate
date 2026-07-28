@@ -18,18 +18,22 @@ public sealed class SeededAccountService : IAccountService
     private readonly Dictionary<string, (string Password, AccountLevelType Level, Serial Id)> _accounts =
         new(StringComparer.OrdinalIgnoreCase);
 
-    public void Seed(string username, string password, AccountLevelType level)
-        => _accounts[username] = (password, level, (Serial)(uint)(_accounts.Count + 1));
-
     public AccountAuthResult Authenticate(string username, string password)
         => _accounts.TryGetValue(username, out var account) && account.Password == password
-            ? AccountAuthResult.Ok(username)
-            : AccountAuthResult.Denied(LoginDeniedReasonType.IncorrectCredentials);
+               ? AccountAuthResult.Ok(username)
+               : AccountAuthResult.Denied(LoginDeniedReasonType.IncorrectCredentials);
 
-    public AccountEntity? GetByUsername(string username)
-        => _accounts.TryGetValue(username, out var account)
-            ? new AccountEntity { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true }
-            : null;
+    public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
+        => throw new NotSupportedException();
+
+    public AccountDeleteResultType Delete(string username)
+        => throw new NotSupportedException();
+
+    public Serial? GetAccountIdByUsername(string username)
+        => _accounts.TryGetValue(username, out var account) ? account.Id : null;
+
+    public IReadOnlyList<AccountEntity> GetAll()
+        => throw new NotSupportedException();
 
     public AccountEntity? GetById(Serial accountId)
     {
@@ -37,18 +41,19 @@ public sealed class SeededAccountService : IAccountService
         {
             if (account.Id == accountId)
             {
-                return new AccountEntity
-                    { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true };
+                return new() { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true };
             }
         }
 
         return null;
     }
 
-    public Serial? GetAccountIdByUsername(string username)
-        => _accounts.TryGetValue(username, out var account) ? account.Id : null;
+    public AccountEntity? GetByUsername(string username)
+        => _accounts.TryGetValue(username, out var account)
+               ? new AccountEntity { Id = account.Id, Username = username, AccountLevel = account.Level, IsActive = true }
+               : null;
 
-    public AccountCreateResultType Create(string username, string password, string? email, AccountLevelType level)
+    public IReadOnlyList<string> GetUsernames()
         => throw new NotSupportedException();
 
     public AccountRegisterResult RegisterPending(string username, string password, string email)
@@ -57,17 +62,8 @@ public sealed class SeededAccountService : IAccountService
     public AccountResendResultType ResendVerification(string username, string email)
         => throw new NotSupportedException();
 
-    public AccountVerifyResultType VerifyEmail(string token)
-        => throw new NotSupportedException();
-
-    public AccountDeleteResultType Delete(string username)
-        => throw new NotSupportedException();
-
-    public IReadOnlyList<AccountEntity> GetAll()
-        => throw new NotSupportedException();
-
-    public IReadOnlyList<string> GetUsernames()
-        => throw new NotSupportedException();
+    public void Seed(string username, string password, AccountLevelType level)
+        => _accounts[username] = (password, level, (Serial)(uint)(_accounts.Count + 1));
 
     public bool SetActive(string username, bool isActive)
         => throw new NotSupportedException();
@@ -76,5 +72,8 @@ public sealed class SeededAccountService : IAccountService
         => throw new NotSupportedException();
 
     public bool SetPassword(string username, string password)
+        => throw new NotSupportedException();
+
+    public AccountVerifyResultType VerifyEmail(string token)
         => throw new NotSupportedException();
 }

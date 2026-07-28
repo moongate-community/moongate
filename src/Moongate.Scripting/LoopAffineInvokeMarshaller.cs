@@ -34,7 +34,8 @@ public sealed class LoopAffineInvokeMarshaller : ILuaInvokeMarshaller
             return call();
         }
 
-        _dispatcher.Post(() =>
+        _dispatcher.Post(
+            () =>
             {
                 var result = call();
 

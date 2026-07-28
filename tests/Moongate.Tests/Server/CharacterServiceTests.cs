@@ -2,7 +2,6 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Services.Accounts;
@@ -81,8 +80,8 @@ public class CharacterServiceTests
     {
         var persistence = new FakePersistenceService();
         var loopAffinity = new LoopAffinity(
-            new StubLoopThread(onLoop: false),
-            new MoongateConfig { StrictLoopAffinity = true }
+            new StubLoopThread(false),
+            new() { StrictLoopAffinity = true }
         );
         var service = CharacterServiceFixture.Create(persistence, new EventBusService(), loopAffinity: loopAffinity);
 
@@ -99,7 +98,8 @@ public class CharacterServiceTests
 
         var eventBus = new EventBusService();
         CharacterCreatedEvent? published = null;
-        eventBus.Subscribe<CharacterCreatedEvent>((evt, _) =>
+        eventBus.Subscribe<CharacterCreatedEvent>(
+            (evt, _) =>
             {
                 published = evt;
 
@@ -138,7 +138,8 @@ public class CharacterServiceTests
         var eventBus = new EventBusService();
 
         CharacterReadyEvent? ready = null;
-        eventBus.Subscribe<CharacterReadyEvent>((evt, _) =>
+        eventBus.Subscribe<CharacterReadyEvent>(
+            (evt, _) =>
             {
                 ready = evt;
 
@@ -203,8 +204,8 @@ public class CharacterServiceTests
         var mobile = service.CreateCharacter(accountId, Packet());
 
         var loopAffinity = new LoopAffinity(
-            new StubLoopThread(onLoop: false),
-            new MoongateConfig { StrictLoopAffinity = true }
+            new StubLoopThread(false),
+            new() { StrictLoopAffinity = true }
         );
         var guardedService = CharacterServiceFixture.Create(
             persistence,
@@ -245,7 +246,8 @@ public class CharacterServiceTests
 
         var eventBus = new EventBusService();
         CharacterDeletedEvent? published = null;
-        eventBus.Subscribe<CharacterDeletedEvent>((evt, _) =>
+        eventBus.Subscribe<CharacterDeletedEvent>(
+            (evt, _) =>
             {
                 published = evt;
 
@@ -277,7 +279,8 @@ public class CharacterServiceTests
 
         var eventBus = new EventBusService();
         var published = 0;
-        eventBus.Subscribe<CharacterDeletedEvent>((_, _) =>
+        eventBus.Subscribe<CharacterDeletedEvent>(
+            (_, _) =>
             {
                 published++;
 

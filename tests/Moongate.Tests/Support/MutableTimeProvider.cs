@@ -17,19 +17,6 @@ public sealed class MutableTimeProvider : TimeProvider
         _now = now;
     }
 
-    /// <summary>
-    /// A clock starting at the real instant, which is what any test involving a JWT needs.
-    /// <para>
-    /// The API issues tokens from the injected provider but validates their lifetime against the system
-    /// clock, because <c>TokenValidationParameters</c> offers no way to supply one. In production both are
-    /// the system clock and the two agree; in a test they only agree if this clock starts near the real
-    /// instant. A hardcoded date makes the suite pass or fail depending on the hour it is run — which is
-    /// exactly what it did before this existed.
-    /// </para>
-    /// </summary>
-    public static MutableTimeProvider StartingNow()
-        => new(DateTimeOffset.UtcNow);
-
     public DateTimeOffset Now
     {
         get
@@ -52,14 +39,80 @@ public sealed class MutableTimeProvider : TimeProvider
 
     public override long TimestampFrequency => TimeSpan.TicksPerSecond;
 
-    public override DateTimeOffset GetUtcNow()
-        => Now;
-
-    public override long GetTimestamp()
+    private sealed class MutableTimer : ITimer
     {
-        lock (_sync)
+        private readonly TimerCallback _callback;
+        private readonly MutableTimeProvider _owner;
+        private readonly object? _state;
+
+        public bool IsDisposed { get; set; }
+
+        public DateTimeOffset? NextDue { get; set; }
+
+        public TimeSpan Period { get; set; }
+
+        public MutableTimer(MutableTimeProvider owner, TimerCallback callback, object? state)
         {
-            return _timestamp;
+            _callback = callback;
+            _owner = owner;
+            _state = state;
+        }
+
+        public bool Change(TimeSpan dueTime, TimeSpan period)
+            => _owner.ChangeTimer(this, dueTime, period);
+
+        public void Dispose()
+            => _owner.DisposeTimer(this);
+
+        public ValueTask DisposeAsync()
+        {
+            Dispose();
+
+            return ValueTask.CompletedTask;
+        }
+
+        public void InvokeCallback()
+            => _callback(_state);
+
+        public void PrepareCallback()
+        {
+            if (Period > TimeSpan.Zero)
+            {
+                NextDue += Period;
+
+                return;
+            }
+
+            NextDue = null;
+        }
+    }
+
+    public void Advance(TimeSpan delta)
+    {
+        var target = Now + delta;
+
+        while (true)
+        {
+            MutableTimer? timer;
+
+            lock (_sync)
+            {
+                timer = _timers
+                        .Where(candidate => candidate.NextDue is { } due && due <= target)
+                        .MinBy(candidate => candidate.NextDue);
+
+                if (timer is null)
+                {
+                    SetNow(target);
+
+                    return;
+                }
+
+                SetNow(timer.NextDue!.Value);
+                timer.PrepareCallback();
+            }
+
+            timer.InvokeCallback();
         }
     }
 
@@ -83,47 +136,29 @@ public sealed class MutableTimeProvider : TimeProvider
         return timer;
     }
 
-    public void Advance(TimeSpan delta)
+    public override long GetTimestamp()
     {
-        var target = Now + delta;
-
-        while (true)
+        lock (_sync)
         {
-            MutableTimer? timer;
-
-            lock (_sync)
-            {
-                timer = _timers
-                    .Where(candidate => candidate.NextDue is { } due && due <= target)
-                    .MinBy(candidate => candidate.NextDue);
-
-                if (timer is null)
-                {
-                    SetNow(target);
-                    return;
-                }
-
-                SetNow(timer.NextDue!.Value);
-                timer.PrepareCallback();
-            }
-
-            timer.InvokeCallback();
+            return _timestamp;
         }
     }
 
-    private void SetNow(DateTimeOffset value)
-    {
-        _timestamp += (value - _now).Ticks;
-        _now = value;
-    }
+    public override DateTimeOffset GetUtcNow()
+        => Now;
 
-    private static void ValidateTimerDuration(TimeSpan value, string parameterName)
-    {
-        if (value < Timeout.InfiniteTimeSpan || value.TotalMilliseconds > uint.MaxValue - 1)
-        {
-            throw new ArgumentOutOfRangeException(parameterName);
-        }
-    }
+    /// <summary>
+    /// A clock starting at the real instant, which is what any test involving a JWT needs.
+    /// <para>
+    /// The API issues tokens from the injected provider but validates their lifetime against the system
+    /// clock, because <c>TokenValidationParameters</c> offers no way to supply one. In production both are
+    /// the system clock and the two agree; in a test they only agree if this clock starts near the real
+    /// instant. A hardcoded date makes the suite pass or fail depending on the hour it is run — which is
+    /// exactly what it did before this existed.
+    /// </para>
+    /// </summary>
+    public static MutableTimeProvider StartingNow()
+        => new(DateTimeOffset.UtcNow);
 
     private bool ChangeTimer(MutableTimer timer, TimeSpan dueTime, TimeSpan period)
     {
@@ -154,52 +189,17 @@ public sealed class MutableTimeProvider : TimeProvider
         }
     }
 
-    private sealed class MutableTimer : ITimer
+    private void SetNow(DateTimeOffset value)
     {
-        private readonly TimerCallback _callback;
-        private readonly MutableTimeProvider _owner;
-        private readonly object? _state;
+        _timestamp += (value - _now).Ticks;
+        _now = value;
+    }
 
-        public bool IsDisposed { get; set; }
-
-        public DateTimeOffset? NextDue { get; set; }
-
-        public TimeSpan Period { get; set; }
-
-        public MutableTimer(MutableTimeProvider owner, TimerCallback callback, object? state)
+    private static void ValidateTimerDuration(TimeSpan value, string parameterName)
+    {
+        if (value < Timeout.InfiniteTimeSpan || value.TotalMilliseconds > uint.MaxValue - 1)
         {
-            _callback = callback;
-            _owner = owner;
-            _state = state;
-        }
-
-        public bool Change(TimeSpan dueTime, TimeSpan period)
-            => _owner.ChangeTimer(this, dueTime, period);
-
-        public void InvokeCallback()
-            => _callback(_state);
-
-        public void PrepareCallback()
-        {
-            if (Period > TimeSpan.Zero)
-            {
-                NextDue += Period;
-                return;
-            }
-
-            NextDue = null;
-        }
-
-        public ValueTask DisposeAsync()
-        {
-            Dispose();
-
-            return ValueTask.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _owner.DisposeTimer(this);
+            throw new ArgumentOutOfRangeException(parameterName);
         }
     }
 }

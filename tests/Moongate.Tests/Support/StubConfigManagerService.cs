@@ -23,6 +23,9 @@ public sealed class StubConfigManagerService : IConfigManagerService
     public string Compose()
         => throw new NotSupportedException();
 
+    public void EnsureFiles()
+        => throw new NotSupportedException();
+
     public TConfig GetConfig<TConfig>()
         where TConfig : class
         => throw new NotSupportedException();
@@ -32,7 +35,4 @@ public sealed class StubConfigManagerService : IConfigManagerService
 
     public void Save()
         => SaveCount++;
-
-    public void EnsureFiles()
-        => throw new NotSupportedException();
 }

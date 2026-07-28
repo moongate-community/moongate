@@ -7,14 +7,6 @@ namespace Moongate.Tests.Http.Endpoints.Admin;
 public class AdminEndpointsTests
 {
     [Fact]
-    public async Task AdminStatus_WithoutAToken_Is401()
-    {
-        await using var server = await TestApiServer.StartAsync();
-
-        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
-    }
-
-    [Fact]
     public async Task AdminStatus_WithPlayerToken_Is403()
     {
         // The test that proves the admin/player split exists rather than being asserted: a valid token
@@ -32,6 +24,14 @@ public class AdminEndpointsTests
         await server.AuthenticateAsync();
 
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
+    }
+
+    [Fact]
+    public async Task AdminStatus_WithoutAToken_Is401()
+    {
+        await using var server = await TestApiServer.StartAsync();
+
+        Assert.Equal(HttpStatusCode.Unauthorized, (await server.Client.GetAsync("/api/v1/admin/status")).StatusCode);
     }
 
     [Fact]

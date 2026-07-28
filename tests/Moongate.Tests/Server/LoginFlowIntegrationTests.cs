@@ -12,7 +12,6 @@ using Moongate.Network.Packets.Outgoing;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
-using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Commands;
@@ -76,12 +75,18 @@ public class LoginFlowIntegrationTests
 
         public LoopThreadDispatcher()
         {
-            _thread = new Thread(Run) { IsBackground = true, Name = "test-game-loop" };
+            _thread = new(Run) { IsBackground = true, Name = "test-game-loop" };
             _thread.Start();
             _ready.Wait();
         }
 
         public int PendingCount => _queue.Count;
+
+        public void Dispose()
+        {
+            _queue.CompleteAdding();
+            _thread.Join(TimeSpan.FromSeconds(2));
+        }
 
         public int DrainPending(double? budgetMs = null)
             => 0;
@@ -98,12 +103,6 @@ public class LoginFlowIntegrationTests
             {
                 action();
             }
-        }
-
-        public void Dispose()
-        {
-            _queue.CompleteAdding();
-            _thread.Join(TimeSpan.FromSeconds(2));
         }
     }
 
@@ -161,7 +160,8 @@ public class LoginFlowIntegrationTests
 
         using var aliceEntered = new ManualResetEventSlim();
         using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
             {
                 if (e.Mobile.Name == "Alice")
                 {
@@ -277,27 +277,27 @@ public class LoginFlowIntegrationTests
         var config = LoopbackConfig();
         var persistence = new FakePersistenceService();
         await persistence.Store<AccountEntity>()
-            .UpsertAsync(
-                new()
-                {
-                    Id = (Serial)1,
-                    Username = "gm",
-                    PasswordHash = HashUtils.HashPassword("secret"),
-                    IsActive = true,
-                    AccountLevel = AccountLevelType.GrandMaster
-                }
-            );
+                         .UpsertAsync(
+                             new()
+                             {
+                                 Id = (Serial)1,
+                                 Username = "gm",
+                                 PasswordHash = HashUtils.HashPassword("secret"),
+                                 IsActive = true,
+                                 AccountLevel = AccountLevelType.GrandMaster
+                             }
+                         );
         await persistence.Store<AccountEntity>()
-            .UpsertAsync(
-                new()
-                {
-                    Id = (Serial)2,
-                    Username = "player",
-                    PasswordHash = HashUtils.HashPassword("secret"),
-                    IsActive = true,
-                    AccountLevel = AccountLevelType.Player
-                }
-            );
+                         .UpsertAsync(
+                             new()
+                             {
+                                 Id = (Serial)2,
+                                 Username = "player",
+                                 PasswordHash = HashUtils.HashPassword("secret"),
+                                 IsActive = true,
+                                 AccountLevel = AccountLevelType.Player
+                             }
+                         );
 
         var eventBus = new EventBusService();
         var opl = new OplService(persistence, new ItemTemplateService());
@@ -329,12 +329,13 @@ public class LoginFlowIntegrationTests
         );
         var characters = CharacterServiceFixture.Create(persistence, eventBus, sessions, testCities);
         var accounts = new AccountService(persistence, characters, sessions, eventBus, TimeProvider.System);
+
         // Mirrors the runtime path: register the command declaratively (name/level/help) instead of
         // scanning an attribute. The resolver is a throwaway container — the registration below closes
         // over an already-built instance, so it never actually resolves through it.
         var commands = new CommandService(
             [
-                new CommandRegistration(
+                new(
                     "broadcast|bc",
                     AccountLevelType.GrandMaster,
                     "Sends a server-wide system message.",
@@ -348,7 +349,8 @@ public class LoginFlowIntegrationTests
 
         using var gmEntered = new ManualResetEventSlim();
         using var playerEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
             {
                 if (e.Mobile.Name == "GM")
                 {
@@ -364,16 +366,16 @@ public class LoginFlowIntegrationTests
         );
 
         var network = await StartServerWithCommandsAsync(
-            config,
-            eventBus,
-            characters,
-            world,
-            chat,
-            commands,
-            accounts,
-            opl,
-            sessions
-        );
+                          config,
+                          eventBus,
+                          characters,
+                          world,
+                          chat,
+                          commands,
+                          accounts,
+                          opl,
+                          sessions
+                      );
 
         try
         {
@@ -436,7 +438,8 @@ public class LoginFlowIntegrationTests
         var eventBus = new EventBusService();
 
         using var dispatched = new ManualResetEventSlim();
-        eventBus.Subscribe<PacketDispatchedEvent>((e, _) =>
+        eventBus.Subscribe<PacketDispatchedEvent>(
+            (e, _) =>
             {
                 if (e.OpCode == 0x80)
                 {
@@ -478,7 +481,8 @@ public class LoginFlowIntegrationTests
 
         var eventBus = new EventBusService();
         using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (_, _) =>
             {
                 enteredWorld.Set();
 
@@ -538,8 +542,8 @@ public class LoginFlowIntegrationTests
             // The response holds the 1050045 name line with "Freydis" in the UTF-16LE arguments.
             var nameArgs = Encoding.Unicode.GetBytes(" \tFreydis\t ");
             var megaClilocPattern = new byte[] { 0x00, 0x10, 0x05, 0xBD, 0x00, (byte)nameArgs.Length }
-                .Concat(nameArgs)
-                .ToArray();
+                                    .Concat(nameArgs)
+                                    .ToArray();
             Assert.True(
                 PollUntil(socket, compressed, megaClilocPattern),
                 "No MegaCliloc (0xD6) response carrying the name line arrived."
@@ -642,7 +646,8 @@ public class LoginFlowIntegrationTests
 
         var eventBus = new EventBusService();
         using var enteredWorld = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((_, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (_, _) =>
             {
                 enteredWorld.Set();
 
@@ -776,7 +781,8 @@ public class LoginFlowIntegrationTests
                 opl,
                 sessions
             );
-            var movement = new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System, eventBus);
+            var movement =
+                new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System, eventBus);
 
             // CharacterServiceFixture.Create wires its own MobileFactoryService, whose starting-city
             // lookup is independent of the city StartServerWithMovementAsync registers for the
@@ -799,7 +805,8 @@ public class LoginFlowIntegrationTests
 
             using var aliceEntered = new ManualResetEventSlim();
             using var bobEntered = new ManualResetEventSlim();
-            eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+            eventBus.Subscribe<PlayerEnteredWorldEvent>(
+                (e, _) =>
                 {
                     if (e.Mobile.Name == "Alice")
                     {
@@ -894,6 +901,48 @@ public class LoginFlowIntegrationTests
         }
     }
 
+    // A client disconnect is raised on the transport thread, but its SessionDestroyedEvent subscribers
+    // mutate world state (SpatialSubscriber removes the character from the spatial index), so they must
+    // run on the game loop — never on the transport thread. NetworkService now publishes directly and
+    // relies on LoopAffineEventBus to marshal the event onto the loop, exactly as production wires it
+    // (Program.cs registers the decorator around the raw bus), so this test wraps the bus the same way.
+    [Fact]
+    public async Task SessionDestroyed_IsPublishedOnTheGameLoopThread_NotTheTransportThread()
+    {
+        var config = LoopbackConfig();
+        var inner = new EventBusService();
+        using var loop = new LoopThreadDispatcher();
+        IEventBus eventBus = new LoopAffineEventBus(inner, loop, new LoopThreadDispatcherAdapter(loop.LoopThreadId));
+
+        using var destroyed = new ManualResetEventSlim();
+        var subscriberThreadId = 0;
+        eventBus.Subscribe<SessionDestroyedEvent>(
+            (_, _) =>
+            {
+                subscriberThreadId = Environment.CurrentManagedThreadId;
+                destroyed.Set();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var network = await StartServerAsync(config, eventBus, loop);
+
+        try
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Connect(IPAddress.Loopback, network.Port);
+            socket.Close();
+
+            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
+            Assert.Equal(loop.LoopThreadId, subscriberThreadId);
+        }
+        finally
+        {
+            await network.StopAsync(CancellationToken.None);
+        }
+    }
+
     [Fact]
     public async Task SessionLifecycle_ConnectAndDisconnect_PublishesEvents()
     {
@@ -902,14 +951,16 @@ public class LoginFlowIntegrationTests
 
         using var created = new ManualResetEventSlim();
         using var destroyed = new ManualResetEventSlim();
-        eventBus.Subscribe<SessionCreatedEvent>((_, _) =>
+        eventBus.Subscribe<SessionCreatedEvent>(
+            (_, _) =>
             {
                 created.Set();
 
                 return Task.CompletedTask;
             }
         );
-        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
+        eventBus.Subscribe<SessionDestroyedEvent>(
+            (_, _) =>
             {
                 destroyed.Set();
 
@@ -929,47 +980,6 @@ public class LoginFlowIntegrationTests
             socket.Close();
 
             Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
-        }
-        finally
-        {
-            await network.StopAsync(CancellationToken.None);
-        }
-    }
-
-    // A client disconnect is raised on the transport thread, but its SessionDestroyedEvent subscribers
-    // mutate world state (SpatialSubscriber removes the character from the spatial index), so they must
-    // run on the game loop — never on the transport thread. NetworkService now publishes directly and
-    // relies on LoopAffineEventBus to marshal the event onto the loop, exactly as production wires it
-    // (Program.cs registers the decorator around the raw bus), so this test wraps the bus the same way.
-    [Fact]
-    public async Task SessionDestroyed_IsPublishedOnTheGameLoopThread_NotTheTransportThread()
-    {
-        var config = LoopbackConfig();
-        var inner = new EventBusService();
-        using var loop = new LoopThreadDispatcher();
-        IEventBus eventBus = new LoopAffineEventBus(inner, loop, new LoopThreadDispatcherAdapter(loop.LoopThreadId));
-
-        using var destroyed = new ManualResetEventSlim();
-        var subscriberThreadId = 0;
-        eventBus.Subscribe<SessionDestroyedEvent>((_, _) =>
-            {
-                subscriberThreadId = Environment.CurrentManagedThreadId;
-                destroyed.Set();
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var network = await StartServerAsync(config, eventBus, loop);
-
-        try
-        {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            socket.Connect(IPAddress.Loopback, network.Port);
-            socket.Close();
-
-            Assert.True(destroyed.Wait(TimeSpan.FromSeconds(2)), "SessionDestroyedEvent was not published.");
-            Assert.Equal(loop.LoopThreadId, subscriberThreadId);
         }
         finally
         {
@@ -1015,7 +1025,8 @@ public class LoginFlowIntegrationTests
 
         using var aliceEntered = new ManualResetEventSlim();
         using var bobEntered = new ManualResetEventSlim();
-        eventBus.Subscribe<PlayerEnteredWorldEvent>((e, _) =>
+        eventBus.Subscribe<PlayerEnteredWorldEvent>(
+            (e, _) =>
             {
                 if (e.Mobile.Name == "Alice")
                 {

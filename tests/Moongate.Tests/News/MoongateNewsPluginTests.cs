@@ -3,7 +3,6 @@ using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.News.Plugin;
 using Moongate.News.Plugin.Endpoints;
 using Moongate.News.Plugin.Interfaces;
-using Xunit;
 
 namespace Moongate.Tests.News;
 
@@ -18,9 +17,9 @@ public class MoongateNewsPluginTests
 
         Assert.True(container.IsRegistered<INewsService>());
         var endpoints = container.GetServiceRegistrations()
-            .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
-            .Select(registration => registration.ImplementationType)
-            .ToArray();
+                                 .Where(registration => registration.ServiceType == typeof(IApiEndpointRegistration))
+                                 .Select(registration => registration.ImplementationType)
+                                 .ToArray();
         Assert.Contains(typeof(NewsAdminEndpoints), endpoints);
         Assert.Contains(typeof(NewsEndpoints), endpoints);
     }

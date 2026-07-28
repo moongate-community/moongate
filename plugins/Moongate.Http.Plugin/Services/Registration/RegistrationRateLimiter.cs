@@ -17,20 +17,20 @@ public sealed class RegistrationRateLimiter : IRegistrationRateLimiter
         _window = window;
     }
 
+    private sealed record Window(DateTimeOffset Start, int Count);
+
     public bool TryAcquire(string clientKey)
     {
         var now = _time.GetUtcNow();
 
         var updated = _windows.AddOrUpdate(
             clientKey,
-            _ => new Window(now, 1),
+            _ => new(now, 1),
             (_, current) => now - current.Start >= _window
-                ? new Window(now, 1)
-                : current with { Count = current.Count + 1 }
+                                ? new(now, 1)
+                                : current with { Count = current.Count + 1 }
         );
 
         return updated.Count <= _permitPerWindow;
     }
-
-    private sealed record Window(DateTimeOffset Start, int Count);
 }

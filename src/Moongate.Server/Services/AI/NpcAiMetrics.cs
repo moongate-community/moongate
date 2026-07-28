@@ -1,4 +1,3 @@
-using System.Threading;
 using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Abstractions.Types;
@@ -28,62 +27,55 @@ public sealed class NpcAiMetrics : INpcAiMetrics
     private long _reloadSuccesses;
     private long _reloadFallbacks;
 
-    public NpcAiMetricsSnapshot Current => new(
-        Interlocked.Read(ref _activeSectors),
-        Interlocked.Read(ref _graceSectors),
-        Interlocked.Read(ref _sleepingSectors),
-        Interlocked.Read(ref _activeBrains),
-        Interlocked.Read(ref _sleepingBrains),
-        Interlocked.Read(ref _faultBackoffBrains),
-        Interlocked.Read(ref _brainsExecuted),
-        Interlocked.Read(ref _brainsDeferred),
-        Interlocked.Read(ref _hookInvocations),
-        Interlocked.Read(ref _totalHookDurationTicks),
-        Interlocked.Read(ref _maxHookDurationTicks),
-        Interlocked.Read(ref _hookFailures),
-        Interlocked.Read(ref _instructionBudgetBreaches),
-        Interlocked.Read(ref _eventsDelivered),
-        Interlocked.Read(ref _eventsCoalesced),
-        Interlocked.Read(ref _eventsDropped),
-        Interlocked.Read(ref _intentsAccepted),
-        Interlocked.Read(ref _intentsRejected),
-        Interlocked.Read(ref _reloadSuccesses),
-        Interlocked.Read(ref _reloadFallbacks)
-    );
-
-    public void SetActiveSectorCounts(int active, int grace)
-    {
-        Interlocked.Exchange(ref _activeSectors, active);
-        Interlocked.Exchange(ref _graceSectors, grace);
-    }
-
-    public void SetSleepingSectorCount(int sleeping)
-    {
-        Interlocked.Exchange(ref _sleepingSectors, sleeping);
-    }
-
-    public void SetBrainCounts(int active, int sleeping, int faultBackoff)
-    {
-        Interlocked.Exchange(ref _activeBrains, active);
-        Interlocked.Exchange(ref _sleepingBrains, sleeping);
-        Interlocked.Exchange(ref _faultBackoffBrains, faultBackoff);
-    }
-
-    public void RecordBrainExecuted()
-    {
-        Interlocked.Increment(ref _brainsExecuted);
-    }
+    public NpcAiMetricsSnapshot Current
+        => new(
+            Interlocked.Read(ref _activeSectors),
+            Interlocked.Read(ref _graceSectors),
+            Interlocked.Read(ref _sleepingSectors),
+            Interlocked.Read(ref _activeBrains),
+            Interlocked.Read(ref _sleepingBrains),
+            Interlocked.Read(ref _faultBackoffBrains),
+            Interlocked.Read(ref _brainsExecuted),
+            Interlocked.Read(ref _brainsDeferred),
+            Interlocked.Read(ref _hookInvocations),
+            Interlocked.Read(ref _totalHookDurationTicks),
+            Interlocked.Read(ref _maxHookDurationTicks),
+            Interlocked.Read(ref _hookFailures),
+            Interlocked.Read(ref _instructionBudgetBreaches),
+            Interlocked.Read(ref _eventsDelivered),
+            Interlocked.Read(ref _eventsCoalesced),
+            Interlocked.Read(ref _eventsDropped),
+            Interlocked.Read(ref _intentsAccepted),
+            Interlocked.Read(ref _intentsRejected),
+            Interlocked.Read(ref _reloadSuccesses),
+            Interlocked.Read(ref _reloadFallbacks)
+        );
 
     public void RecordBrainDeferred()
-    {
-        Interlocked.Increment(ref _brainsDeferred);
-    }
+        => Interlocked.Increment(ref _brainsDeferred);
 
-    public void RecordHookInvocation(TimeSpan duration)
+    public void RecordBrainExecuted()
+        => Interlocked.Increment(ref _brainsExecuted);
+
+    public void RecordEvent(NpcBrainEventDispositionType disposition)
     {
-        Interlocked.Increment(ref _hookInvocations);
-        Interlocked.Add(ref _totalHookDurationTicks, duration.Ticks);
-        UpdateMaximumHookDuration(duration.Ticks);
+        switch (disposition)
+        {
+            case NpcBrainEventDispositionType.Delivered:
+                Interlocked.Increment(ref _eventsDelivered);
+
+                break;
+            case NpcBrainEventDispositionType.Coalesced:
+                Interlocked.Increment(ref _eventsCoalesced);
+
+                break;
+            case NpcBrainEventDispositionType.Dropped:
+                Interlocked.Increment(ref _eventsDropped);
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(disposition), disposition, null);
+        }
     }
 
     public void RecordHookFailure(bool instructionBudgetExceeded)
@@ -96,22 +88,11 @@ public sealed class NpcAiMetrics : INpcAiMetrics
         }
     }
 
-    public void RecordEvent(NpcBrainEventDispositionType disposition)
+    public void RecordHookInvocation(TimeSpan duration)
     {
-        switch (disposition)
-        {
-            case NpcBrainEventDispositionType.Delivered:
-                Interlocked.Increment(ref _eventsDelivered);
-                break;
-            case NpcBrainEventDispositionType.Coalesced:
-                Interlocked.Increment(ref _eventsCoalesced);
-                break;
-            case NpcBrainEventDispositionType.Dropped:
-                Interlocked.Increment(ref _eventsDropped);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(disposition), disposition, null);
-        }
+        Interlocked.Increment(ref _hookInvocations);
+        Interlocked.Add(ref _totalHookDurationTicks, duration.Ticks);
+        UpdateMaximumHookDuration(duration.Ticks);
     }
 
     public void RecordIntent(bool accepted)
@@ -119,6 +100,7 @@ public sealed class NpcAiMetrics : INpcAiMetrics
         if (accepted)
         {
             Interlocked.Increment(ref _intentsAccepted);
+
             return;
         }
 
@@ -130,11 +112,28 @@ public sealed class NpcAiMetrics : INpcAiMetrics
         if (succeeded)
         {
             Interlocked.Increment(ref _reloadSuccesses);
+
             return;
         }
 
         Interlocked.Increment(ref _reloadFallbacks);
     }
+
+    public void SetActiveSectorCounts(int active, int grace)
+    {
+        Interlocked.Exchange(ref _activeSectors, active);
+        Interlocked.Exchange(ref _graceSectors, grace);
+    }
+
+    public void SetBrainCounts(int active, int sleeping, int faultBackoff)
+    {
+        Interlocked.Exchange(ref _activeBrains, active);
+        Interlocked.Exchange(ref _sleepingBrains, sleeping);
+        Interlocked.Exchange(ref _faultBackoffBrains, faultBackoff);
+    }
+
+    public void SetSleepingSectorCount(int sleeping)
+        => Interlocked.Exchange(ref _sleepingSectors, sleeping);
 
     private void UpdateMaximumHookDuration(long durationTicks)
     {

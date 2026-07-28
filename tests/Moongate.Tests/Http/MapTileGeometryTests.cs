@@ -47,6 +47,15 @@ public class MapTileGeometryTests
     }
 
     [Fact]
+    public void TileSize_IsAWholeNumberOfBlocks()
+    {
+        // The reason 256 was chosen: a native tile is exactly 32 blocks, so GetImage never gets a
+        // fractional block and tiles never straddle one.
+        Assert.Equal(0, MapTileGeometry.TileSize % 8);
+        Assert.Equal(MapTileGeometry.TileSize / 8, MapTileGeometry.BlocksPerTile);
+    }
+
+    [Fact]
     public void TilesAcross_AtNative_IsTheMapRoundedUpToWholeTiles()
     {
         Assert.Equal(24, MapTileGeometry.TilesAcross(6144, 5, 5));
@@ -58,13 +67,4 @@ public class MapTileGeometryTests
 
         // 1448 is 5.65 tiles across at native. Rounding down would drop the right edge of Tokuno.
         => Assert.Equal(6, MapTileGeometry.TilesAcross(1448, 3, 3));
-
-    [Fact]
-    public void TileSize_IsAWholeNumberOfBlocks()
-    {
-        // The reason 256 was chosen: a native tile is exactly 32 blocks, so GetImage never gets a
-        // fractional block and tiles never straddle one.
-        Assert.Equal(0, MapTileGeometry.TileSize % 8);
-        Assert.Equal(MapTileGeometry.TileSize / 8, MapTileGeometry.BlocksPerTile);
-    }
 }

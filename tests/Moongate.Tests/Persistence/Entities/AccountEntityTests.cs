@@ -33,7 +33,7 @@ public sealed class AccountEntityTests
             Username = "pending-account",
             PasswordHash = "password-hash",
             ActivationToken = string.Empty,
-            ActivationTokenHash = new string('A', 64),
+            ActivationTokenHash = new('A', 64),
             ActivationTokenExpiresAtUtc = expiresAt,
             IsPublicRegistrationPending = true
         };

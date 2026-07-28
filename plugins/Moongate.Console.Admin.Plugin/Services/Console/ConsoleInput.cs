@@ -19,8 +19,8 @@ public static class ConsoleInput
             return ConsoleInputKind.Help;
         }
 
-        if (trimmed.Equals("quit", StringComparison.OrdinalIgnoreCase)
-            || trimmed.Equals("exit", StringComparison.OrdinalIgnoreCase))
+        if (trimmed.Equals("quit", StringComparison.OrdinalIgnoreCase) ||
+            trimmed.Equals("exit", StringComparison.OrdinalIgnoreCase))
         {
             return ConsoleInputKind.Quit;
         }

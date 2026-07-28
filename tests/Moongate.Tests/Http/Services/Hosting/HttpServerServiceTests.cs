@@ -66,8 +66,7 @@ public class HttpServerServiceTests
     public async Task StartAsync_MapsRegisteredEndpointGroups()
     {
         await using var server =
-            await TestHttpServer.StartAsync(container => container.RegisterApiEndpointInstance(new ProbeEndpoints())
-            );
+            await TestHttpServer.StartAsync(container => container.RegisterApiEndpointInstance(new ProbeEndpoints()));
 
         Assert.Equal(HttpStatusCode.OK, (await server.Client.GetAsync("/probe")).StatusCode);
     }
@@ -129,8 +128,9 @@ public class HttpServerServiceTests
         // still serves and Scalar still renders — just with every description blank. Nothing else here
         // would notice, which is why this asserts on the prose rather than on a 200.
         await using var server =
-            await TestHttpServer.StartAsync(container =>
-                container.RegisterApiEndpointInstance(new DocumentedProbeEndpoints())
+            await TestHttpServer.StartAsync(
+                container =>
+                    container.RegisterApiEndpointInstance(new DocumentedProbeEndpoints())
             );
 
         var document = await server.Client.GetStringAsync(HttpServerService.SwaggerDocumentRoute);
@@ -191,8 +191,7 @@ public class HttpServerServiceTests
         var configManager = new StubConfigManagerService();
 
         await using var server =
-            await TestHttpServer.StartAsync(container => container.RegisterInstance<IConfigManagerService>(configManager)
-            );
+            await TestHttpServer.StartAsync(container => container.RegisterInstance<IConfigManagerService>(configManager));
 
         Assert.Equal(TestHttpServer.SigningKey, server.Container.Resolve<MoongateHttpConfig>().Jwt.SigningKey);
         Assert.Equal(0, configManager.SaveCount);
@@ -204,9 +203,10 @@ public class HttpServerServiceTests
         // The web app runs on the game's container, so disposing the WebApplication disposes that
         // container's singletons — the game's, not the API's. They would go down while the game is still
         // running, and its own StopAsync would then fail on objects already disposed.
-        var server = await TestHttpServer.StartAsync(container =>
-            container.Register<DisposableGameSingleton>(Reuse.Singleton)
-        );
+        var server = await TestHttpServer.StartAsync(
+                         container =>
+                             container.Register<DisposableGameSingleton>(Reuse.Singleton)
+                     );
         var singleton = server.Container.Resolve<DisposableGameSingleton>();
 
         await server.DisposeAsync();

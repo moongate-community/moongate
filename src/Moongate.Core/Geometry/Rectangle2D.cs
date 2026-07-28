@@ -49,12 +49,12 @@ public readonly struct Rectangle2D : IEquatable<Rectangle2D>
     public override int GetHashCode()
         => HashCode.Combine(X, Y, Width, Height);
 
+    public override string ToString()
+        => $"({X}, {Y})+({Width}, {Height})";
+
     public static bool operator ==(Rectangle2D left, Rectangle2D right)
         => left.Equals(right);
 
     public static bool operator !=(Rectangle2D left, Rectangle2D right)
         => !left.Equals(right);
-
-    public override string ToString()
-        => $"({X}, {Y})+({Width}, {Height})";
 }

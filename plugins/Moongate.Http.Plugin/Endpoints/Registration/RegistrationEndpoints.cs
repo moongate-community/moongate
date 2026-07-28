@@ -36,32 +36,42 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapPost("/api/v1/register", RegisterAccount)
-            .WithName("RegisterAccount")
-            .Produces(StatusCodes.Status202Accepted)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status409Conflict)
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .ProducesProblem(StatusCodes.Status503ServiceUnavailable)
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .WithTags("registration")
-            .AllowAnonymous();
+              .WithName("RegisterAccount")
+              .Produces(StatusCodes.Status202Accepted)
+              .ProducesValidationProblem()
+              .ProducesProblem(StatusCodes.Status403Forbidden)
+              .ProducesProblem(StatusCodes.Status409Conflict)
+              .ProducesProblem(StatusCodes.Status429TooManyRequests)
+              .ProducesProblem(StatusCodes.Status503ServiceUnavailable)
+              .ProducesProblem(StatusCodes.Status500InternalServerError)
+              .WithTags("registration")
+              .AllowAnonymous();
         routes.MapPost("/api/v1/register/verify", Verify)
-            .WithName("VerifyRegistration")
-            .WithTags("registration")
-            .Produces(StatusCodes.Status200OK)
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status410Gone)
-            .AllowAnonymous();
+              .WithName("VerifyRegistration")
+              .WithTags("registration")
+              .Produces(StatusCodes.Status200OK)
+              .ProducesProblem(StatusCodes.Status400BadRequest)
+              .ProducesProblem(StatusCodes.Status410Gone)
+              .AllowAnonymous();
         routes.MapPost("/api/v1/register/resend", ResendVerification)
-            .WithName("ResendRegistrationVerification")
-            .WithTags("registration")
-            .Produces(StatusCodes.Status202Accepted)
-            .ProducesValidationProblem()
-            .ProducesProblem(StatusCodes.Status429TooManyRequests)
-            .ProducesProblem(StatusCodes.Status503ServiceUnavailable)
-            .ProducesProblem(StatusCodes.Status500InternalServerError)
-            .AllowAnonymous();
+              .WithName("ResendRegistrationVerification")
+              .WithTags("registration")
+              .Produces(StatusCodes.Status202Accepted)
+              .ProducesValidationProblem()
+              .ProducesProblem(StatusCodes.Status429TooManyRequests)
+              .ProducesProblem(StatusCodes.Status503ServiceUnavailable)
+              .ProducesProblem(StatusCodes.Status500InternalServerError)
+              .AllowAnonymous();
+    }
+
+    private static string BuildResendTargetKey(ResendVerificationRequest request)
+    {
+        var username = (request.Username ?? string.Empty).Trim();
+        var email = (request.Email ?? string.Empty).Trim().ToUpperInvariant();
+        var target = $"{username}\n{email}";
+        var digest = SHA256.HashData(Encoding.UTF8.GetBytes(target));
+
+        return $"resend:target:{Convert.ToHexString(digest)}";
     }
 
     /// <summary>Registers a new account when web registration is open.</summary>
@@ -116,22 +126,6 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
         };
     }
 
-    /// <summary>Verifies an account's email with its token, activating the account.</summary>
-    /// <remarks>Answers 410 for an expired token and 400 for an unknown or already-used token.</remarks>
-    private IResult Verify(VerifyEmailRequest request)
-        => _accounts.VerifyEmail(request.Token) switch
-        {
-            AccountVerifyResultType.Verified => Results.Ok(),
-            AccountVerifyResultType.ExpiredToken => Results.Problem(
-                "Verification token expired.",
-                statusCode: StatusCodes.Status410Gone
-            ),
-            _ => Results.Problem(
-                "Invalid or already-used verification token.",
-                statusCode: StatusCodes.Status400BadRequest
-            )
-        };
-
     /// <summary>Resends the verification message for a matching pending public registration.</summary>
     /// <remarks>
     /// Answers 202 whether or not the supplied identity matches a pending account, so callers cannot
@@ -180,16 +174,22 @@ public sealed class RegistrationEndpoints : IApiEndpointRegistration
         };
     }
 
-    private static string BuildResendTargetKey(ResendVerificationRequest request)
-    {
-        var username = (request.Username ?? string.Empty).Trim();
-        var email = (request.Email ?? string.Empty).Trim().ToUpperInvariant();
-        var target = $"{username}\n{email}";
-        var digest = SHA256.HashData(Encoding.UTF8.GetBytes(target));
-
-        return $"resend:target:{Convert.ToHexString(digest)}";
-    }
-
     private static IResult ValidationProblem(string field, string message)
         => Results.ValidationProblem(new Dictionary<string, string[]> { [field] = [message] });
+
+    /// <summary>Verifies an account's email with its token, activating the account.</summary>
+    /// <remarks>Answers 410 for an expired token and 400 for an unknown or already-used token.</remarks>
+    private IResult Verify(VerifyEmailRequest request)
+        => _accounts.VerifyEmail(request.Token) switch
+        {
+            AccountVerifyResultType.Verified => Results.Ok(),
+            AccountVerifyResultType.ExpiredToken => Results.Problem(
+                "Verification token expired.",
+                statusCode: StatusCodes.Status410Gone
+            ),
+            _ => Results.Problem(
+                "Invalid or already-used verification token.",
+                statusCode: StatusCodes.Status400BadRequest
+            )
+        };
 }

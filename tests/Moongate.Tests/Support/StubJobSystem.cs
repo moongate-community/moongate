@@ -19,6 +19,8 @@ public sealed class StubJobSystem : IJobSystem
 
     public long CompletedCount => Scheduled;
 
+    public void Dispose() { }
+
     public Task ScheduleAsync(Action work, CancellationToken cancellationToken = default)
     {
         Scheduled++;
@@ -32,9 +34,5 @@ public sealed class StubJobSystem : IJobSystem
         Scheduled++;
 
         return Task.FromResult(work());
-    }
-
-    public void Dispose()
-    {
     }
 }

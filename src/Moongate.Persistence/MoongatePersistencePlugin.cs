@@ -77,7 +77,8 @@ public class MoongatePersistencePlugin : ISquidStdPlugin
             (entity, id) => entity.Id = id,
             new DefaultSerialGenerator()
         );
-        container.RegisterPersistenceSeeder(async (service, token) =>
+        container.RegisterPersistenceSeeder(
+            async (service, token) =>
             {
                 var accountStore = service.GetStore<AccountEntity, Serial>();
 

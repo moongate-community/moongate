@@ -10,17 +10,6 @@ namespace Moongate.Tests.Server;
 public class MobileFactoryServiceTests
 {
     [Fact]
-    public void Create_BuildsBareMobileWithNameMapAndPosition()
-    {
-        var mobile = Factory().Create("Town Guard", 1, new(1420, 1690, 5));
-
-        Assert.Equal("Town Guard", mobile.Name);
-        Assert.Equal(1, mobile.MapId);
-        Assert.Equal(new(1420, 1690, 5), mobile.Position);
-        Assert.Equal(Serial.Zero, mobile.Id);
-    }
-
-    [Fact]
     public void CreateFromTemplate_AppliesBodyStatsHuesAndSkills()
     {
         var templates = new MobileTemplateService();
@@ -83,8 +72,8 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var genders = Enumerable.Range(0, 40)
-            .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
-            .ToHashSet();
+                                .Select(_ => factory.CreateFromTemplate("any", 1, new(0, 0, 0))!.Mobile.Gender)
+                                .ToHashSet();
 
         Assert.Contains(GenderType.Male, genders);
         Assert.Contains(GenderType.Female, genders);
@@ -180,8 +169,8 @@ public class MobileFactoryServiceTests
         var factory = Factory(templates);
 
         var loots = Enumerable.Range(0, 40)
-            .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
-            .ToHashSet();
+                              .Select(_ => factory.CreateFromTemplate("guard", 1, new(0, 0, 0))!.Mobile.LootTableId)
+                              .ToHashSet();
 
         Assert.Contains("guard.rich", loots); // variant override wins
         Assert.Contains("guard.base", loots); // variant without loot inherits the template
@@ -273,6 +262,17 @@ public class MobileFactoryServiceTests
         Assert.Equal(dexterity, character.Dexterity);
         Assert.Equal(intelligence, character.Intelligence);
         Assert.Equal(expectedHits, character.HitsMax);
+    }
+
+    [Fact]
+    public void Create_BuildsBareMobileWithNameMapAndPosition()
+    {
+        var mobile = Factory().Create("Town Guard", 1, new(1420, 1690, 5));
+
+        Assert.Equal("Town Guard", mobile.Name);
+        Assert.Equal(1, mobile.MapId);
+        Assert.Equal(new(1420, 1690, 5), mobile.Position);
+        Assert.Equal(Serial.Zero, mobile.Id);
     }
 
     private static StartingCityService Cities()

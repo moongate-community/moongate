@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.News.Plugin.Data.Api;
 using Moongate.News.Plugin.Interfaces;
@@ -21,22 +20,22 @@ public sealed class NewsEndpoints : IApiEndpointRegistration
     public void Register(IEndpointRouteBuilder routes)
     {
         routes.MapGet("/api/v1/news", List)
-            .WithName("ListNews")
-            .WithTags("news")
-            .Produces<IReadOnlyList<NewsResponse>>();
+              .WithName("ListNews")
+              .WithTags("news")
+              .Produces<IReadOnlyList<NewsResponse>>();
         routes.MapGet("/api/v1/news/{id}", GetOne)
-            .WithName("GetNews")
-            .WithTags("news")
-            .Produces<NewsResponse>();
+              .WithName("GetNews")
+              .WithTags("news")
+              .Produces<NewsResponse>();
     }
+
+    /// <summary>Returns one published news entry; 404 if it is missing or a draft.</summary>
+    private IResult GetOne(uint id)
+        => _news.Get(new(id)) is { IsPublished: true } news
+               ? TypedResults.Ok(NewsResponse.From(news))
+               : TypedResults.NotFound();
 
     /// <summary>Lists published news, newest first.</summary>
     private IResult List()
         => TypedResults.Ok(_news.GetPublished().Select(NewsResponse.From).ToList());
-
-    /// <summary>Returns one published news entry; 404 if it is missing or a draft.</summary>
-    private IResult GetOne(uint id)
-        => _news.Get(new Serial(id)) is { IsPublished: true } news
-            ? TypedResults.Ok(NewsResponse.From(news))
-            : TypedResults.NotFound();
 }

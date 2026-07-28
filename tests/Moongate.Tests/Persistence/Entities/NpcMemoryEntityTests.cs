@@ -1,6 +1,5 @@
 using MessagePack;
 using MessagePack.Resolvers;
-using Moongate.Core.Primitives;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
 
@@ -24,7 +23,7 @@ public class NpcMemoryEntityTests
 
         var loaded = RoundTrip(entity);
 
-        Assert.Equal(new Serial(0x2A), loaded.Id);
+        Assert.Equal(new(0x2A), loaded.Id);
         Assert.Equal(3, loaded.Memory.Count);
 
         Assert.Equal(MemoryValueType.String, loaded.Memory["name"].Type);
@@ -36,7 +35,7 @@ public class NpcMemoryEntityTests
     [Fact]
     public void RoundTrip_EmptyMemory_IsPreserved()
     {
-        var loaded = RoundTrip(new NpcMemoryEntity { Id = new(0x1) });
+        var loaded = RoundTrip(new() { Id = new(0x1) });
 
         Assert.Empty(loaded.Memory);
     }

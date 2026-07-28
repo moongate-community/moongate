@@ -32,14 +32,14 @@ public class MoongateConfigTests
     }
 
     [Fact]
-    public void Validate_NonPositiveLimit_ThrowsWithPropertyName()
+    public void Validate_MailboxSmallerThanWakeBudget_ThrowsWithPropertyName()
     {
         var config = new NpcAiConfig();
-        config.Advanced.MaxBrainsPerLoop = 0;
+        config.Advanced.MaxMailboxEvents = config.Advanced.MaxEventsPerBrainWake - 1;
 
         var exception = Assert.Throws<InvalidOperationException>(() => NpcAiConfigValidator.Validate(config));
 
-        Assert.Contains(nameof(NpcAiAdvancedConfig.MaxBrainsPerLoop), exception.Message);
+        Assert.Contains(nameof(NpcAiAdvancedConfig.MaxMailboxEvents), exception.Message);
     }
 
     [Fact]
@@ -54,13 +54,13 @@ public class MoongateConfigTests
     }
 
     [Fact]
-    public void Validate_MailboxSmallerThanWakeBudget_ThrowsWithPropertyName()
+    public void Validate_NonPositiveLimit_ThrowsWithPropertyName()
     {
         var config = new NpcAiConfig();
-        config.Advanced.MaxMailboxEvents = config.Advanced.MaxEventsPerBrainWake - 1;
+        config.Advanced.MaxBrainsPerLoop = 0;
 
         var exception = Assert.Throws<InvalidOperationException>(() => NpcAiConfigValidator.Validate(config));
 
-        Assert.Contains(nameof(NpcAiAdvancedConfig.MaxMailboxEvents), exception.Message);
+        Assert.Contains(nameof(NpcAiAdvancedConfig.MaxBrainsPerLoop), exception.Message);
     }
 }

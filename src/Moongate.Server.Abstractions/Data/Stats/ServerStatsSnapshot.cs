@@ -24,5 +24,17 @@ public sealed record ServerStatsSnapshot(
     /// distinguishable from a genuinely empty shard.
     /// </summary>
     public static ServerStatsSnapshot Empty { get; } =
-        new(DateTimeOffset.MinValue, TimeSpan.Zero, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        new(
+            DateTimeOffset.MinValue,
+            TimeSpan.Zero,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+        );
 }

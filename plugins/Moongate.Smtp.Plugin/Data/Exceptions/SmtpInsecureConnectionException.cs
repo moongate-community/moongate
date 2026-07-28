@@ -7,7 +7,5 @@ namespace Moongate.Smtp.Plugin.Data.Exceptions;
 /// </summary>
 public sealed class SmtpInsecureConnectionException : Exception
 {
-    public SmtpInsecureConnectionException(string message) : base(message)
-    {
-    }
+    public SmtpInsecureConnectionException(string message) : base(message) { }
 }

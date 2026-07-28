@@ -28,19 +28,19 @@ public class PageRequestTests
         Assert.Empty(response.Items);
     }
 
-    [Theory, InlineData("0"), InlineData("-1"), InlineData("abc")]
-    public void TryParse_BadPage_IsRejectedRatherThanClamped(string page)
-    {
-        // Serving page 1 to someone who asked for page 0 hides their bug instead of reporting it.
-        Assert.False(PageRequest.TryParse(page, null, null, out _, out var error));
-        Assert.NotNull(error);
-    }
-
     [Theory, InlineData("0"), InlineData("-5"), InlineData("101"), InlineData("5000"), InlineData("abc")]
     public void TryParse_BadPageSize_IsRejectedRatherThanClamped(string pageSize)
     {
         // Silently capping 5000 to 100 leaves the caller believing it read everything.
         Assert.False(PageRequest.TryParse(null, pageSize, null, out _, out var error));
+        Assert.NotNull(error);
+    }
+
+    [Theory, InlineData("0"), InlineData("-1"), InlineData("abc")]
+    public void TryParse_BadPage_IsRejectedRatherThanClamped(string page)
+    {
+        // Serving page 1 to someone who asked for page 0 hides their bug instead of reporting it.
+        Assert.False(PageRequest.TryParse(page, null, null, out _, out var error));
         Assert.NotNull(error);
     }
 

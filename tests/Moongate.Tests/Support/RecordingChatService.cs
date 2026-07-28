@@ -17,12 +17,8 @@ public sealed class RecordingChatService : IChatService
     public IReadOnlyList<(Serial Speaker, ChatMessageType Type, string Text, Hue Hue, int Range)> Messages => _messages;
 
     public void Broadcast(string text, Hue? hue = null)
-    {
-        _broadcasts.Add((text, hue));
-    }
+        => _broadcasts.Add((text, hue));
 
     public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
-    {
-        _messages.Add((speaker.Id, type, text, hue, range));
-    }
+        => _messages.Add((speaker.Id, type, text, hue, range));
 }

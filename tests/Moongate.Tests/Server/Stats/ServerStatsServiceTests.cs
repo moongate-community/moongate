@@ -1,8 +1,6 @@
 using Moongate.Core.Extensions;
 using Moongate.Core.Interfaces;
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Stats;
 using Moongate.Server.Services.Items;
@@ -29,8 +27,8 @@ public sealed class ServerStatsServiceTests
     public void Refresh_CountsAccountsCharactersAndTemplates()
     {
         var (service, persistence, _) = Build();
-        SeedAccount(persistence, "tom", isActive: true, characters: 2);
-        SeedAccount(persistence, "ann", isActive: false, characters: 1);
+        SeedAccount(persistence, "tom", true, 2);
+        SeedAccount(persistence, "ann", false, 1);
 
         service.Refresh();
 
@@ -45,7 +43,7 @@ public sealed class ServerStatsServiceTests
     public void Refresh_CountsNpcsAsMobilesThatNoAccountOwns()
     {
         var (service, persistence, _) = Build();
-        SeedAccount(persistence, "tom", isActive: true, characters: 2);
+        SeedAccount(persistence, "tom", true, 2);
 
         // Two more mobiles owned by nobody: what an NPC looks like in the store.
         persistence.Store<MobileEntity>().UpsertAsync(new() { Name = "orc" }).WaitSync();
@@ -54,6 +52,18 @@ public sealed class ServerStatsServiceTests
         service.Refresh();
 
         Assert.Equal(2, service.Current.Npcs);
+    }
+
+    [Fact]
+    public void Refresh_CountsWorldItems()
+    {
+        var (service, persistence, _) = Build();
+        persistence.Store<ItemEntity>().UpsertAsync(new() { Name = "sword" }).WaitSync();
+        persistence.Store<ItemEntity>().UpsertAsync(new() { Name = "shield" }).WaitSync();
+
+        service.Refresh();
+
+        Assert.Equal(2, service.Current.WorldItems);
     }
 
     [Fact]
@@ -79,22 +89,10 @@ public sealed class ServerStatsServiceTests
     }
 
     [Fact]
-    public void Refresh_CountsWorldItems()
-    {
-        var (service, persistence, _) = Build();
-        persistence.Store<ItemEntity>().UpsertAsync(new() { Name = "sword" }).WaitSync();
-        persistence.Store<ItemEntity>().UpsertAsync(new() { Name = "shield" }).WaitSync();
-
-        service.Refresh();
-
-        Assert.Equal(2, service.Current.WorldItems);
-    }
-
-    [Fact]
     public void Refresh_OnlinePlayers_CountsOnlyCharactersASessionIsPlaying()
     {
         var (service, persistence, sessions) = Build();
-        var account = SeedAccount(persistence, "tom", isActive: true, characters: 2);
+        var account = SeedAccount(persistence, "tom", true, 2);
         sessions.Played.Add(account.MobileIds[0]);
         sessions.Count = 5;
 
@@ -124,7 +122,7 @@ public sealed class ServerStatsServiceTests
     public async Task StartAsync_RegistersTheRepeatingRefreshTimer_AndStopAsyncCancelsIt()
     {
         var loop = new StubGameLoopContext();
-        var service = Started(loop, new EventBusService(), refreshSeconds: 45);
+        var service = Started(loop, new EventBusService(), 45);
 
         await service.StartAsync();
 
@@ -147,7 +145,7 @@ public sealed class ServerStatsServiceTests
     public async Task StartAsync_TakesTheFirstSnapshotOnWorldReady()
     {
         var bus = new EventBusService();
-        var service = Started(new StubGameLoopContext(), bus, refreshSeconds: 30);
+        var service = Started(new StubGameLoopContext(), bus, 30);
 
         await service.StartAsync();
         Assert.Same(ServerStatsSnapshot.Empty, service.Current);
@@ -171,10 +169,6 @@ public sealed class ServerStatsServiceTests
 
         return (service, persistence, sessions);
     }
-
-    /// <summary>The same service, when the test drives the loop or the bus rather than the stores.</summary>
-    private static ServerStatsService Started(IGameLoopContext loop, IEventBus eventBus, int refreshSeconds)
-        => Create(new FakePersistenceService(), new StubSessionManager(), loop, eventBus, refreshSeconds);
 
     private static ServerStatsService Create(
         FakePersistenceService persistence,
@@ -229,4 +223,8 @@ public sealed class ServerStatsServiceTests
 
         return account;
     }
+
+    /// <summary>The same service, when the test drives the loop or the bus rather than the stores.</summary>
+    private static ServerStatsService Started(IGameLoopContext loop, IEventBus eventBus, int refreshSeconds)
+        => Create(new(), new(), loop, eventBus, refreshSeconds);
 }

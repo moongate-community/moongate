@@ -12,10 +12,10 @@ public static class BrainAssetSeeder
 
         var assembly = typeof(BrainAssetSeeder).Assembly;
         var resources = assembly
-            .GetManifestResourceNames()
-            .Where(name => name.StartsWith(ResourcePrefix, StringComparison.Ordinal))
-            .Where(name => name.EndsWith(".lua", StringComparison.Ordinal))
-            .Order(StringComparer.Ordinal);
+                        .GetManifestResourceNames()
+                        .Where(name => name.StartsWith(ResourcePrefix, StringComparison.Ordinal))
+                        .Where(name => name.EndsWith(".lua", StringComparison.Ordinal))
+                        .Order(StringComparer.Ordinal);
 
         foreach (var resourceName in resources)
         {
@@ -37,20 +37,22 @@ public static class BrainAssetSeeder
 
         try
         {
-            using (var source = assembly.GetManifestResourceStream(resourceName)
-                ?? throw new InvalidOperationException($"Embedded brain resource was not found: {resourceName}"))
-            using (var temporary = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            using (var source = assembly.GetManifestResourceStream(resourceName) ??
+                                throw new InvalidOperationException(
+                                    $"Embedded brain resource was not found: {resourceName}"
+                                ))
             {
-                source.CopyTo(temporary);
+                using (var temporary = new FileStream(temporaryPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+                {
+                    source.CopyTo(temporary);
+                }
             }
 
             try
             {
                 File.Move(temporaryPath, destination);
             }
-            catch (IOException) when (File.Exists(destination))
-            {
-            }
+            catch (IOException) when (File.Exists(destination)) { }
         }
         finally
         {

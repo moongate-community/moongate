@@ -29,10 +29,10 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/admin/plugins", Get)
-            .WithName("GetAdminPlugins")
-            .WithTags("admin")
-            .Produces<IReadOnlyList<PluginInfoResponse>>()
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+                 .WithName("GetAdminPlugins")
+                 .WithTags("admin")
+                 .Produces<IReadOnlyList<PluginInfoResponse>>()
+                 .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Lists the plugins this shard activated, each with the HTTP routes it declares.</summary>
     /// <remarks>
@@ -57,38 +57,14 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
         var plugins = _catalog.Plugins.Select(plugin => ToResponse(plugin, byAssembly)).ToList();
 
         var unattributed = byAssembly.Where(entry => !catalogued.Contains(entry.Key))
-            .SelectMany(entry => entry.Value)
-            .Select(ToResponse)
-            .ToList();
+                                     .SelectMany(entry => entry.Value)
+                                     .Select(ToResponse)
+                                     .ToList();
 
         plugins.Add(Host(unattributed));
 
         return Results.Ok(plugins);
     }
-
-    private static PluginInfoResponse ToResponse(
-        PluginDescriptor plugin,
-        IReadOnlyDictionary<string, IReadOnlyList<PluginRouteInfo>> byAssembly
-    )
-    {
-        var routes = byAssembly.TryGetValue(plugin.AssemblyName, out var declared)
-            ? declared.Select(ToResponse).ToList()
-            : [];
-
-        return new(
-            plugin.Id,
-            plugin.Name,
-            plugin.Version,
-            plugin.Author,
-            plugin.Description,
-            plugin.AssemblyName,
-            plugin.IsExternal,
-            routes
-        );
-    }
-
-    private static PluginRouteResponse ToResponse(PluginRouteInfo route)
-        => new(route.Method, route.Path, route.Policy);
 
     /// <summary>
     /// The catch-all entry. Its version is this plugin's own: there is no host assembly to read here,
@@ -108,4 +84,28 @@ public sealed class PluginAdminEndpoints : IApiEndpointRegistration
             false,
             routes
         );
+
+    private static PluginInfoResponse ToResponse(
+        PluginDescriptor plugin,
+        IReadOnlyDictionary<string, IReadOnlyList<PluginRouteInfo>> byAssembly
+    )
+    {
+        var routes = byAssembly.TryGetValue(plugin.AssemblyName, out var declared)
+                         ? declared.Select(ToResponse).ToList()
+                         : [];
+
+        return new(
+            plugin.Id,
+            plugin.Name,
+            plugin.Version,
+            plugin.Author,
+            plugin.Description,
+            plugin.AssemblyName,
+            plugin.IsExternal,
+            routes
+        );
+    }
+
+    private static PluginRouteResponse ToResponse(PluginRouteInfo route)
+        => new(route.Method, route.Path, route.Policy);
 }

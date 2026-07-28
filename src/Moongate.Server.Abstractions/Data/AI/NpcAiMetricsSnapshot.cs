@@ -23,6 +23,6 @@ public sealed record NpcAiMetricsSnapshot(
     long ReloadFallbacks
 )
 {
-    public TimeSpan AverageHookDuration =>
-        HookInvocations == 0 ? TimeSpan.Zero : TimeSpan.FromTicks(TotalHookDurationTicks / HookInvocations);
+    public TimeSpan AverageHookDuration
+        => HookInvocations == 0 ? TimeSpan.Zero : TimeSpan.FromTicks(TotalHookDurationTicks / HookInvocations);
 }

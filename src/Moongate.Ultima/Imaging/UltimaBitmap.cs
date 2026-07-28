@@ -148,7 +148,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
         ArgumentNullException.ThrowIfNull(source);
 
         var result = new UltimaBitmap(source.Width, source.Height);
-        source.ProcessPixelRows(accessor =>
+        source.ProcessPixelRows(
+            accessor =>
             {
                 for (var y = 0; y < accessor.Height; y++)
                 {
@@ -186,7 +187,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
 
         var image = new Image<Bgra32>(Width, Height);
-        image.ProcessPixelRows(accessor =>
+        image.ProcessPixelRows(
+            accessor =>
             {
                 for (var y = 0; y < accessor.Height; y++)
                 {

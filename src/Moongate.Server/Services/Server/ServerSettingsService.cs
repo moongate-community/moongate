@@ -19,6 +19,16 @@ public sealed class ServerSettingsService : IServerSettingsService
         _store = persistenceService.GetStore<ServerSettingsEntity, Serial>();
     }
 
+    public void ClearAsset(ServerAssetSlotType slot)
+    {
+        var settings = Get();
+
+        if (settings.Assets.Remove(slot.ToString()))
+        {
+            _store.UpsertAsync(settings).WaitSync();
+        }
+    }
+
     public ServerSettingsEntity Get()
     {
         if (_store.Query().FirstOrDefault(entity => entity.Id == SettingsId) is { } existing)
@@ -30,6 +40,13 @@ public sealed class ServerSettingsService : IServerSettingsService
         _store.UpsertAsync(created).WaitSync();
 
         return created;
+    }
+
+    public void SetAsset(ServerAssetSlotType slot, ServerAssetMeta meta)
+    {
+        var settings = Get();
+        settings.Assets[slot.ToString()] = meta;
+        _store.UpsertAsync(settings).WaitSync();
     }
 
     public void Update(ServerSettingsUpdate update)
@@ -57,22 +74,5 @@ public sealed class ServerSettingsService : IServerSettingsService
         }
 
         _store.UpsertAsync(settings).WaitSync();
-    }
-
-    public void SetAsset(ServerAssetSlotType slot, ServerAssetMeta meta)
-    {
-        var settings = Get();
-        settings.Assets[slot.ToString()] = meta;
-        _store.UpsertAsync(settings).WaitSync();
-    }
-
-    public void ClearAsset(ServerAssetSlotType slot)
-    {
-        var settings = Get();
-
-        if (settings.Assets.Remove(slot.ToString()))
-        {
-            _store.UpsertAsync(settings).WaitSync();
-        }
     }
 }

@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
+using Moongate.Persistence.Entities;
 using Moongate.Scripting;
 using Moongate.Scripting.AI;
 using Moongate.Server.Abstractions.Data.Config;
@@ -21,39 +22,25 @@ using Moongate.UO.Data.Types;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Directories;
 using SquidStd.Core.Interfaces.Events;
-using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.Tests.Server;
 
 public sealed class MoongateNpcAiPluginTests
 {
-    [Fact]
-    public void Configure_RegistersAiServicesAndSubscribers()
+    private sealed class StubMovementService : IMovementService
     {
-        using var container = new Container();
+        public void TryMove(PlayerSession session, DirectionType direction, byte sequence) { }
 
-        new MoongateNpcAiPlugin().Configure(container, new PluginContext());
+        public bool TryMoveNpc(Serial mobileId, DirectionType direction)
+            => true;
+    }
 
-        Assert.IsType<NpcAiMetrics>(container.Resolve<INpcAiMetrics>());
-        Assert.True(container.IsRegistered<ISectorActivityService>());
-        Assert.True(container.IsRegistered<IAiActionService>());
-        Assert.True(container.IsRegistered<INpcMemoryService>());
-        Assert.True(container.IsRegistered<NpcBrainContextFactory>());
-        Assert.True(container.IsRegistered<INpcBrainScheduler>());
-        var subscribers = container.GetServiceRegistrations()
-            .Where(registration => registration.ServiceType == typeof(IEventSubscriberRegistration))
-            .Select(registration => registration.ImplementationType)
-            .ToArray();
-        Assert.Equal(
-            [
-                typeof(SectorActivitySubscriber),
-                typeof(NpcBrainLifecycleSubscriber),
-                typeof(NpcBrainEventRouter),
-                typeof(NpcMemoryLifecycleSubscriber)
-            ],
-            subscribers
-        );
+    private sealed class StubChatService : IChatService
+    {
+        public void Broadcast(string text, Hue? hue = null) { }
+
+        public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
     }
 
     [Fact]
@@ -68,9 +55,7 @@ public sealed class MoongateNpcAiPluginTests
             var persistence = new FakePersistenceService();
             var eventBus = new StubEventBus();
             var loopAffinity = new StubLoopAffinity();
-            container.RegisterInstance(
-                new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" }
-            );
+            container.RegisterInstance(new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" });
             container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
             container.RegisterInstance(new MoongateConfig());
             container.RegisterInstance<IPersistenceService>(persistence);
@@ -78,16 +63,14 @@ public sealed class MoongateNpcAiPluginTests
             container.RegisterInstance<IGameLoopContext>(new StubGameLoopContext());
             container.RegisterInstance<ILoopAffinity>(loopAffinity);
             container.RegisterInstance<ISessionManager>(new StubSessionManager());
-            container.RegisterInstance<ISpatialIndexService>(
-                new SpatialIndexService(persistence, loopAffinity, eventBus)
-            );
+            container.RegisterInstance<ISpatialIndexService>(new SpatialIndexService(persistence, loopAffinity, eventBus));
             container.RegisterInstance<IMovementService>(new StubMovementService());
             container.RegisterInstance<IChatService>(new StubChatService());
             container.RegisterInstance(Random.Shared);
-            container.RegisterInstance<TimeProvider>(TimeProvider.System);
+            container.RegisterInstance(TimeProvider.System);
 
-            new MoongateScriptingPlugin().Configure(container, new PluginContext());
-            new MoongateNpcAiPlugin().Configure(container, new PluginContext());
+            new MoongateScriptingPlugin().Configure(container, new());
+            new MoongateNpcAiPlugin().Configure(container, new());
 
             Assert.IsType<LuaNpcBrainRuntime>(container.Resolve<INpcBrainRuntime>());
             Assert.IsType<SectorActivityService>(container.Resolve<ISectorActivityService>());
@@ -101,24 +84,31 @@ public sealed class MoongateNpcAiPluginTests
         }
     }
 
-    private sealed class StubMovementService : IMovementService
+    [Fact]
+    public void Configure_RegistersAiServicesAndSubscribers()
     {
-        public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
-        {
-        }
+        using var container = new Container();
 
-        public bool TryMoveNpc(Serial mobileId, DirectionType direction)
-            => true;
-    }
+        new MoongateNpcAiPlugin().Configure(container, new());
 
-    private sealed class StubChatService : IChatService
-    {
-        public void Broadcast(string text, Hue? hue = null)
-        {
-        }
-
-        public void Say(Moongate.Persistence.Entities.MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
-        {
-        }
+        Assert.IsType<NpcAiMetrics>(container.Resolve<INpcAiMetrics>());
+        Assert.True(container.IsRegistered<ISectorActivityService>());
+        Assert.True(container.IsRegistered<IAiActionService>());
+        Assert.True(container.IsRegistered<INpcMemoryService>());
+        Assert.True(container.IsRegistered<NpcBrainContextFactory>());
+        Assert.True(container.IsRegistered<INpcBrainScheduler>());
+        var subscribers = container.GetServiceRegistrations()
+                                   .Where(registration => registration.ServiceType == typeof(IEventSubscriberRegistration))
+                                   .Select(registration => registration.ImplementationType)
+                                   .ToArray();
+        Assert.Equal(
+            [
+                typeof(SectorActivitySubscriber),
+                typeof(NpcBrainLifecycleSubscriber),
+                typeof(NpcBrainEventRouter),
+                typeof(NpcMemoryLifecycleSubscriber)
+            ],
+            subscribers
+        );
     }
 }

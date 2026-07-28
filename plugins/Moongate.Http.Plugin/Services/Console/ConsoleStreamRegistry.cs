@@ -14,6 +14,14 @@ public sealed class ConsoleStreamRegistry : IConsoleStreamRegistry
 {
     private readonly ConcurrentDictionary<string, Channel<ConsoleStreamEvent>> _channels = new();
 
+    public void Close(string connectionId)
+    {
+        if (_channels.TryRemove(connectionId, out var channel))
+        {
+            channel.Writer.TryComplete();
+        }
+    }
+
     public (string ConnectionId, ChannelReader<ConsoleStreamEvent> Reader) Open()
     {
         var connectionId = Guid.NewGuid().ToString("N");
@@ -35,13 +43,5 @@ public sealed class ConsoleStreamRegistry : IConsoleStreamRegistry
         writer = Channel.CreateUnbounded<ConsoleStreamEvent>().Writer;
 
         return false;
-    }
-
-    public void Close(string connectionId)
-    {
-        if (_channels.TryRemove(connectionId, out var channel))
-        {
-            channel.Writer.TryComplete();
-        }
     }
 }

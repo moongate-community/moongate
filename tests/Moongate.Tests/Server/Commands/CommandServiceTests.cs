@@ -19,17 +19,6 @@ public class CommandServiceTests
             => LastContext = context;
     }
 
-    private static CommandRegistration Registration(
-        string name,
-        CommandSourceType sources = CommandSourceType.InGame,
-        AccountLevelType minLevel = AccountLevelType.GrandMaster,
-        RecordingCommand? command = null
-    )
-        => new(name, minLevel, "A recording test command.", sources, _ => command ?? new RecordingCommand());
-
-    private static CommandService Service(params CommandRegistration[] registrations)
-        => new(registrations, new Container(), new StubAccountService());
-
     // ---- BuildRegistry (unchanged behavior) ----
 
     [Fact]
@@ -52,33 +41,84 @@ public class CommandServiceTests
         Assert.Same(registration, registry["t"]);
     }
 
-    // ---- Parse (now prefix-free) ----
+    // ---- Execute(CommandInvocation): gating ----
 
     [Fact]
-    public void Parse_ExtraWhitespaceBetweenTokens_IsIgnored()
+    public void Execute_KnownAllowedAuthorized_DispatchesWithArguments()
     {
-        var (name, arguments) = CommandService.Parse("broadcast   hello    world");
+        var command = new RecordingCommand();
+        var service = Service(Registration("test|t", CommandSourceType.Console, AccountLevelType.GrandMaster, command));
 
-        Assert.Equal("broadcast", name);
-        Assert.Equal(["hello", "world"], arguments);
+        service.Execute(
+            new(
+                CommandSourceType.Console,
+                AccountLevelType.GrandMaster,
+                null,
+                "test a b",
+                _ => { }
+            )
+        );
+
+        Assert.NotNull(command.LastContext);
+        Assert.Equal(["a", "b"], command.LastContext!.Value.Arguments);
+        Assert.Equal(CommandSourceType.Console, command.LastContext!.Value.Source);
     }
 
     [Fact]
-    public void Parse_EmptyLine_ReturnsEmptyNameAndNoArguments()
+    public void Execute_LevelBelowMinimum_RepliesUnknownCommand()
     {
-        var (name, arguments) = CommandService.Parse(string.Empty);
+        var replies = new List<string>();
+        var service = Service(Registration("test", CommandSourceType.Console));
 
-        Assert.Equal(string.Empty, name);
-        Assert.Empty(arguments);
+        service.Execute(
+            new(
+                CommandSourceType.Console,
+                AccountLevelType.Player,
+                null,
+                "test",
+                replies.Add
+            )
+        );
+
+        Assert.Equal("Unknown command.", Assert.Single(replies));
     }
 
     [Fact]
-    public void Parse_NameWithArguments_SplitsOnWhitespace()
+    public void Execute_SourceNotAllowed_RepliesUnknownCommand()
     {
-        var (name, arguments) = CommandService.Parse("broadcast Server restarting soon");
+        var replies = new List<string>();
+        var service = Service(Registration("test")); // in-game only
 
-        Assert.Equal("broadcast", name);
-        Assert.Equal(["Server", "restarting", "soon"], arguments);
+        service.Execute(
+            new(
+                CommandSourceType.Console,
+                AccountLevelType.Administrator,
+                null,
+                "test",
+                replies.Add
+            )
+        );
+
+        Assert.Equal("Unknown command.", Assert.Single(replies));
+    }
+
+    [Fact]
+    public void Execute_UnknownName_RepliesUnknownCommand()
+    {
+        var replies = new List<string>();
+        var service = Service(Registration("test", CommandSourceType.Console));
+
+        service.Execute(
+            new(
+                CommandSourceType.Console,
+                AccountLevelType.Administrator,
+                null,
+                "nope",
+                replies.Add
+            )
+        );
+
+        Assert.Equal("Unknown command.", Assert.Single(replies));
     }
 
     // ---- IsAuthorized ----
@@ -94,86 +134,6 @@ public class CommandServiceTests
     public void IsAuthorized_ActorBelowMinLevel_IsFalse()
         => Assert.False(CommandService.IsAuthorized(AccountLevelType.Player, AccountLevelType.GrandMaster));
 
-    // ---- Execute(CommandInvocation): gating ----
-
-    [Fact]
-    public void Execute_KnownAllowedAuthorized_DispatchesWithArguments()
-    {
-        var command = new RecordingCommand();
-        var service = Service(Registration("test|t", CommandSourceType.Console, AccountLevelType.GrandMaster, command));
-
-        service.Execute(
-            new CommandInvocation(
-                CommandSourceType.Console,
-                AccountLevelType.GrandMaster,
-                null,
-                "test a b",
-                _ => { }
-            )
-        );
-
-        Assert.NotNull(command.LastContext);
-        Assert.Equal(["a", "b"], command.LastContext!.Value.Arguments);
-        Assert.Equal(CommandSourceType.Console, command.LastContext!.Value.Source);
-    }
-
-    [Fact]
-    public void Execute_UnknownName_RepliesUnknownCommand()
-    {
-        var replies = new List<string>();
-        var service = Service(Registration("test", CommandSourceType.Console));
-
-        service.Execute(
-            new CommandInvocation(
-                CommandSourceType.Console,
-                AccountLevelType.Administrator,
-                null,
-                "nope",
-                replies.Add
-            )
-        );
-
-        Assert.Equal("Unknown command.", Assert.Single(replies));
-    }
-
-    [Fact]
-    public void Execute_SourceNotAllowed_RepliesUnknownCommand()
-    {
-        var replies = new List<string>();
-        var service = Service(Registration("test", CommandSourceType.InGame)); // in-game only
-
-        service.Execute(
-            new CommandInvocation(
-                CommandSourceType.Console,
-                AccountLevelType.Administrator,
-                null,
-                "test",
-                replies.Add
-            )
-        );
-
-        Assert.Equal("Unknown command.", Assert.Single(replies));
-    }
-
-    [Fact]
-    public void Execute_LevelBelowMinimum_RepliesUnknownCommand()
-    {
-        var replies = new List<string>();
-        var service = Service(Registration("test", CommandSourceType.Console, AccountLevelType.GrandMaster));
-
-        service.Execute(
-            new CommandInvocation(
-                CommandSourceType.Console,
-                AccountLevelType.Player,
-                null,
-                "test",
-                replies.Add
-            )
-        );
-
-        Assert.Equal("Unknown command.", Assert.Single(replies));
-    }
-
     // ---- ListCommands ----
 
     [Fact]
@@ -181,7 +141,7 @@ public class CommandServiceTests
     {
         var service = Service(
             Registration("broadcast|bc", CommandSourceType.InGame | CommandSourceType.Console),
-            Registration("ingameonly", CommandSourceType.InGame)
+            Registration("ingameonly")
         );
 
         var console = service.ListCommands(CommandSourceType.Console);
@@ -190,4 +150,44 @@ public class CommandServiceTests
         Assert.Equal("broadcast", descriptor.Name);
         Assert.Equal(AccountLevelType.GrandMaster, descriptor.MinLevel);
     }
+
+    [Fact]
+    public void Parse_EmptyLine_ReturnsEmptyNameAndNoArguments()
+    {
+        var (name, arguments) = CommandService.Parse(string.Empty);
+
+        Assert.Equal(string.Empty, name);
+        Assert.Empty(arguments);
+    }
+
+    // ---- Parse (now prefix-free) ----
+
+    [Fact]
+    public void Parse_ExtraWhitespaceBetweenTokens_IsIgnored()
+    {
+        var (name, arguments) = CommandService.Parse("broadcast   hello    world");
+
+        Assert.Equal("broadcast", name);
+        Assert.Equal(["hello", "world"], arguments);
+    }
+
+    [Fact]
+    public void Parse_NameWithArguments_SplitsOnWhitespace()
+    {
+        var (name, arguments) = CommandService.Parse("broadcast Server restarting soon");
+
+        Assert.Equal("broadcast", name);
+        Assert.Equal(["Server", "restarting", "soon"], arguments);
+    }
+
+    private static CommandRegistration Registration(
+        string name,
+        CommandSourceType sources = CommandSourceType.InGame,
+        AccountLevelType minLevel = AccountLevelType.GrandMaster,
+        RecordingCommand? command = null
+    )
+        => new(name, minLevel, "A recording test command.", sources, _ => command ?? new RecordingCommand());
+
+    private static CommandService Service(params CommandRegistration[] registrations)
+        => new(registrations, new Container(), new StubAccountService());
 }

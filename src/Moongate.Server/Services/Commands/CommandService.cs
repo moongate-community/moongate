@@ -1,4 +1,3 @@
-using System.Linq;
 using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
@@ -31,7 +30,9 @@ public sealed class CommandService : ICommandService
     private readonly IAccountService _accounts;
 
     public CommandService(
-        IReadOnlyList<CommandRegistration> registrations, IResolverContext resolver, IAccountService accounts
+        IReadOnlyList<CommandRegistration> registrations,
+        IResolverContext resolver,
+        IAccountService accounts
     )
     {
         _registry = BuildRegistry(registrations);
@@ -65,7 +66,7 @@ public sealed class CommandService : ICommandService
         var actorLevel = _accounts.GetById(session.AccountId)?.AccountLevel ?? AccountLevelType.Player;
 
         Execute(
-            new CommandInvocation(
+            new(
                 CommandSourceType.InGame,
                 actorLevel,
                 actor,
@@ -79,10 +80,10 @@ public sealed class CommandService : ICommandService
     {
         var (name, arguments) = Parse(invocation.CommandLine);
 
-        if (name.Length == 0
-            || !_registry.TryGetValue(name, out var registration)
-            || !registration.Sources.HasFlag(invocation.Source)
-            || !IsAuthorized(invocation.ActorLevel, registration.MinLevel))
+        if (name.Length == 0 ||
+            !_registry.TryGetValue(name, out var registration) ||
+            !registration.Sources.HasFlag(invocation.Source) ||
+            !IsAuthorized(invocation.ActorLevel, registration.MinLevel))
         {
             invocation.Reply(UnknownCommandMessage);
 
@@ -102,20 +103,21 @@ public sealed class CommandService : ICommandService
         }
     }
 
-    public IReadOnlyList<CommandDescriptor> ListCommands(CommandSourceType source)
-        => _registry.Values
-            .Where(registration => registration.Sources.HasFlag(source))
-            .Distinct()
-            .Select(registration => new CommandDescriptor(
-                    registration.Name.Split('|')[0],
-                    registration.MinLevel,
-                    registration.Description
-                )
-            )
-            .ToList();
-
     public static bool IsAuthorized(AccountLevelType actorLevel, AccountLevelType minLevel)
         => actorLevel >= minLevel;
+
+    public IReadOnlyList<CommandDescriptor> ListCommands(CommandSourceType source)
+        => _registry.Values
+                    .Where(registration => registration.Sources.HasFlag(source))
+                    .Distinct()
+                    .Select(
+                        registration => new CommandDescriptor(
+                            registration.Name.Split('|')[0],
+                            registration.MinLevel,
+                            registration.Description
+                        )
+                    )
+                    .ToList();
 
     public static (string Name, string[] Arguments) Parse(string commandLine)
     {

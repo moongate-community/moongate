@@ -41,6 +41,137 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
+    public Task OnBrainDefinitionReloaded(
+        BrainDefinitionReloadedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        if (!string.Equals(
+                message.BrainId,
+                message.Descriptor.BrainId,
+                StringComparison.Ordinal
+            ))
+        {
+            return Task.CompletedTask;
+        }
+
+        foreach (var observer in _mobiles
+                                 .GetAll()
+                                 .Where(
+                                     mobile =>
+                                         string.Equals(
+                                             mobile.BrainScriptId,
+                                             message.BrainId,
+                                             StringComparison.Ordinal
+                                         )
+                                 )
+                                 .OrderBy(mobile => mobile.Id))
+        {
+            if (_scheduler.IsActive(observer.Id))
+            {
+                ReconcileObserverSet(observer, message.Descriptor);
+
+                continue;
+            }
+
+            _perceivedByObserver.Remove(observer.Id);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileAttacked(
+        MobileAttackedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        RouteCombatEvent(
+            message.Defender,
+            message.Attacker,
+            NpcBrainHookType.Attacked,
+            NpcBrainEventType.Attacked
+        );
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileCreated(
+        MobileCreatedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        RouteSubjectArrival(message.Mobile);
+
+        if (!string.IsNullOrWhiteSpace(message.Mobile.BrainScriptId))
+        {
+            RefreshObserverSet(message.Mobile);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileDamaged(
+        MobileDamagedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        RouteCombatEvent(
+            message.Mobile,
+            message.Attacker,
+            NpcBrainHookType.Damage,
+            NpcBrainEventType.Damage,
+            message.Amount
+        );
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileDeleted(
+        MobileDeletedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        RemoveSubject(message.Mobile);
+        _perceivedByObserver.Remove(message.Mobile.Id);
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileDied(
+        MobileDiedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        RouteCombatEvent(
+            message.Mobile,
+            message.Killer,
+            NpcBrainHookType.Death,
+            NpcBrainEventType.Death
+        );
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnMobileMoved(
+        MobileMovedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        if (_mobiles.GetById(message.Mobile) is not { } subject)
+        {
+            return Task.CompletedTask;
+        }
+
+        RouteSubjectMovement(subject, message);
+
+        if (!string.IsNullOrWhiteSpace(subject.BrainScriptId))
+        {
+            RefreshObserverSet(subject);
+        }
+
+        return Task.CompletedTask;
+    }
+
     public Task OnMobileSpeech(
         MobileSpeechEvent message,
         CancellationToken cancellationToken
@@ -83,58 +214,44 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         return Task.CompletedTask;
     }
 
-    public Task OnMobileMoved(
-        MobileMovedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        if (_mobiles.GetById(message.Mobile) is not { } subject)
-        {
-            return Task.CompletedTask;
-        }
-
-        RouteSubjectMovement(subject, message);
-
-        if (!string.IsNullOrWhiteSpace(subject.BrainScriptId))
-        {
-            RefreshObserverSet(subject);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileCreated(
-        MobileCreatedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        RouteSubjectArrival(message.Mobile);
-
-        if (!string.IsNullOrWhiteSpace(message.Mobile.BrainScriptId))
-        {
-            RefreshObserverSet(message.Mobile);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileDeleted(
-        MobileDeletedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        RemoveSubject(message.Mobile);
-        _perceivedByObserver.Remove(message.Mobile.Id);
-
-        return Task.CompletedTask;
-    }
-
     public Task OnPlayerEnteredWorld(
         PlayerEnteredWorldEvent message,
         CancellationToken cancellationToken
     )
     {
         RouteSubjectArrival(message.Mobile, true);
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnSectorActivated(
+        SectorActivatedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var mobile in _spatial
+                               .GetMobilesInSector(message.MapId, message.SectorX, message.SectorY)
+                               .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
+                               .OrderBy(mobile => mobile.Id))
+        {
+            SeedObserver(mobile);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    public Task OnSectorDeactivated(
+        SectorDeactivatedEvent message,
+        CancellationToken cancellationToken
+    )
+    {
+        foreach (var mobile in _spatial
+                               .GetMobilesInSector(message.MapId, message.SectorX, message.SectorY)
+                               .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
+                               .OrderBy(mobile => mobile.Id))
+        {
+            _perceivedByObserver.Remove(mobile.Id);
+        }
 
         return Task.CompletedTask;
     }
@@ -149,121 +266,6 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
             RemoveSubject(character, true);
             _perceivedByObserver.Remove(character.Id);
         }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnSectorActivated(
-        SectorActivatedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var mobile in _spatial
-                     .GetMobilesInSector(message.MapId, message.SectorX, message.SectorY)
-                     .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
-                     .OrderBy(mobile => mobile.Id))
-        {
-            SeedObserver(mobile);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnSectorDeactivated(
-        SectorDeactivatedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        foreach (var mobile in _spatial
-                     .GetMobilesInSector(message.MapId, message.SectorX, message.SectorY)
-                     .Where(mobile => !string.IsNullOrWhiteSpace(mobile.BrainScriptId))
-                     .OrderBy(mobile => mobile.Id))
-        {
-            _perceivedByObserver.Remove(mobile.Id);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnBrainDefinitionReloaded(
-        BrainDefinitionReloadedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        if (!string.Equals(
-                message.BrainId,
-                message.Descriptor.BrainId,
-                StringComparison.Ordinal
-            ))
-        {
-            return Task.CompletedTask;
-        }
-
-        foreach (var observer in _mobiles
-                     .GetAll()
-                     .Where(mobile =>
-                         string.Equals(
-                             mobile.BrainScriptId,
-                             message.BrainId,
-                             StringComparison.Ordinal
-                         )
-                     )
-                     .OrderBy(mobile => mobile.Id))
-        {
-            if (_scheduler.IsActive(observer.Id))
-            {
-                ReconcileObserverSet(observer, message.Descriptor);
-                continue;
-            }
-
-            _perceivedByObserver.Remove(observer.Id);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileAttacked(
-        MobileAttackedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        RouteCombatEvent(
-            message.Defender,
-            message.Attacker,
-            NpcBrainHookType.Attacked,
-            NpcBrainEventType.Attacked
-        );
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileDamaged(
-        MobileDamagedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        RouteCombatEvent(
-            message.Mobile,
-            message.Attacker,
-            NpcBrainHookType.Damage,
-            NpcBrainEventType.Damage,
-            message.Amount
-        );
-
-        return Task.CompletedTask;
-    }
-
-    public Task OnMobileDied(
-        MobileDiedEvent message,
-        CancellationToken cancellationToken
-    )
-    {
-        RouteCombatEvent(
-            message.Mobile,
-            message.Killer,
-            NpcBrainHookType.Death,
-            NpcBrainEventType.Death
-        );
 
         return Task.CompletedTask;
     }
@@ -284,101 +286,161 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         eventBus.Subscribe<MobileDiedEvent>(OnMobileDied);
     }
 
+    private void EnqueuePerception(
+        Serial observerId,
+        NpcBrainHookType hook,
+        NpcBrainEventType eventType,
+        BrainMobileSnapshot snapshot,
+        MobileMovedEvent movement
+    )
+        => _scheduler.EnqueueEvent(
+            observerId,
+            hook,
+            new(
+                eventType,
+                snapshot,
+                FromPosition: movement.FromPosition,
+                ToPosition: movement.ToPosition
+            )
+        );
+
+    private HashSet<Serial> GetPerceived(Serial observerId)
+    {
+        if (!_perceivedByObserver.TryGetValue(observerId, out var perceived))
+        {
+            perceived = [];
+            _perceivedByObserver[observerId] = perceived;
+        }
+
+        return perceived;
+    }
+
     private IEnumerable<MobileEntity> NearbyObservers(
         int mapId,
         Point3D position,
         int range
     )
         => _spatial
-            .GetMobilesInRange(mapId, position, range)
-            .OrderBy(mobile => mobile.Id);
+           .GetMobilesInRange(mapId, position, range)
+           .OrderBy(mobile => mobile.Id);
 
-    private void RouteSubjectMovement(MobileEntity subject, MobileMovedEvent movement)
+    private void ReconcileObserverSet(
+        MobileEntity observer,
+        BrainDescriptor descriptor
+    )
     {
-        var candidateIds = _spatial
-            .GetMobilesInRange(
-                movement.FromMapId,
-                movement.FromPosition,
-                _scheduler.MaxPerceptionRange
-            )
-            .Concat(
-                _spatial.GetMobilesInRange(
-                    movement.ToMapId,
-                    movement.ToPosition,
-                    _scheduler.MaxPerceptionRange
-                )
-            )
-            .Select(mobile => mobile.Id)
-            .Concat(
-                _perceivedByObserver
-                    .Where(pair => pair.Value.Contains(subject.Id))
-                    .Select(pair => pair.Key)
-            )
-            .Where(observerId => observerId != subject.Id)
-            .Distinct()
-            .Order()
-            .ToArray();
-        var snapshot = ToSnapshot(subject);
+        var current = _spatial
+                      .GetMobilesInRange(
+                          observer.MapId,
+                          observer.Position,
+                          descriptor.PerceptionRange
+                      )
+                      .Where(subject => subject.Id != observer.Id)
+                      .OrderBy(subject => subject.Id)
+                      .ToArray();
+        var previous = _perceivedByObserver.TryGetValue(observer.Id, out var perceived)
+                           ? perceived
+                           : [];
+        var currentIds = current.Select(subject => subject.Id).ToHashSet();
 
-        foreach (var observerId in candidateIds)
+        foreach (var subjectId in previous.Except(currentIds).Order())
         {
-            if (_mobiles.GetById(observerId) is not { } observer ||
-                !TryGetActiveDescriptor(observerId, out var descriptor))
+            if (_mobiles.GetById(subjectId) is { } subject)
             {
-                _perceivedByObserver.Remove(observerId);
-                continue;
+                _scheduler.EnqueueEvent(
+                    observer.Id,
+                    NpcBrainHookType.MobileLeftRange,
+                    new(
+                        NpcBrainEventType.MobileLeftRange,
+                        ToSnapshot(subject),
+                        FromPosition: subject.Position,
+                        ToPosition: subject.Position
+                    )
+                );
             }
+        }
 
-            var wasPerceived = _perceivedByObserver.TryGetValue(
-                observerId,
-                out var perceived
-            ) && perceived.Contains(subject.Id);
-            var isInside = observer.MapId == movement.ToMapId &&
-                           observer.Position.InRange(
-                               movement.ToPosition,
-                               descriptor.PerceptionRange
-                           );
-
-            if (!wasPerceived && !isInside)
-            {
-                continue;
-            }
-
-            if (!wasPerceived)
-            {
-                perceived = GetPerceived(observerId);
-                perceived.Add(subject.Id);
-                EnqueuePerception(
-                    observerId,
-                    NpcBrainHookType.MobileEnteredRange,
+        foreach (var subject in current.Where(subject => !previous.Contains(subject.Id)))
+        {
+            _scheduler.EnqueueEvent(
+                observer.Id,
+                NpcBrainHookType.MobileEnteredRange,
+                new(
                     NpcBrainEventType.MobileEnteredRange,
-                    snapshot,
-                    movement
-                );
-                continue;
-            }
-
-            if (isInside)
-            {
-                EnqueuePerception(
-                    observerId,
-                    NpcBrainHookType.MobileMoved,
-                    NpcBrainEventType.MobileMoved,
-                    snapshot,
-                    movement
-                );
-                continue;
-            }
-
-            _perceivedByObserver[observerId].Remove(subject.Id);
-            EnqueuePerception(
-                observerId,
-                NpcBrainHookType.MobileLeftRange,
-                NpcBrainEventType.MobileLeftRange,
-                snapshot,
-                movement
+                    ToSnapshot(subject),
+                    FromPosition: subject.Position,
+                    ToPosition: subject.Position
+                )
             );
         }
+
+        _perceivedByObserver[observer.Id] = currentIds;
+    }
+
+    private void RefreshObserverSet(MobileEntity observer)
+    {
+        if (
+            _scheduler.IsActive(observer.Id) &&
+            _sectors.IsActive(
+                observer.MapId,
+                observer.Position.X >> SectorShift,
+                observer.Position.Y >> SectorShift
+            )
+        )
+        {
+            SeedObserver(observer);
+
+            return;
+        }
+
+        _perceivedByObserver.Remove(observer.Id);
+    }
+
+    private void RemoveSubject(MobileEntity subject, bool? isPlayer = null)
+    {
+        var snapshot = ToSnapshot(subject, isPlayer);
+
+        foreach (var (observerId, perceived) in _perceivedByObserver.OrderBy(pair => pair.Key))
+        {
+            if (!perceived.Remove(subject.Id) || !_scheduler.IsActive(observerId))
+            {
+                continue;
+            }
+
+            _scheduler.EnqueueEvent(
+                observerId,
+                NpcBrainHookType.MobileLeftRange,
+                new(
+                    NpcBrainEventType.MobileLeftRange,
+                    snapshot,
+                    FromPosition: subject.Position,
+                    ToPosition: subject.Position
+                )
+            );
+        }
+    }
+
+    private void RouteCombatEvent(
+        Serial affected,
+        Serial other,
+        NpcBrainHookType hook,
+        NpcBrainEventType eventType,
+        int amount = 0
+    )
+    {
+        if (!_scheduler.IsActive(affected))
+        {
+            return;
+        }
+
+        var otherSnapshot = _mobiles.GetById(other) is { } mobile
+                                ? ToSnapshot(mobile)
+                                : null;
+        _scheduler.EnqueueEvent(
+            affected,
+            hook,
+            new(eventType, otherSnapshot, Amount: amount)
+        );
     }
 
     private void RouteSubjectArrival(MobileEntity subject, bool? isPlayer = null)
@@ -418,46 +480,96 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         }
     }
 
-    private void RemoveSubject(MobileEntity subject, bool? isPlayer = null)
+    private void RouteSubjectMovement(MobileEntity subject, MobileMovedEvent movement)
     {
-        var snapshot = ToSnapshot(subject, isPlayer);
+        var candidateIds = _spatial
+                           .GetMobilesInRange(
+                               movement.FromMapId,
+                               movement.FromPosition,
+                               _scheduler.MaxPerceptionRange
+                           )
+                           .Concat(
+                               _spatial.GetMobilesInRange(
+                                   movement.ToMapId,
+                                   movement.ToPosition,
+                                   _scheduler.MaxPerceptionRange
+                               )
+                           )
+                           .Select(mobile => mobile.Id)
+                           .Concat(
+                               _perceivedByObserver
+                                   .Where(pair => pair.Value.Contains(subject.Id))
+                                   .Select(pair => pair.Key)
+                           )
+                           .Where(observerId => observerId != subject.Id)
+                           .Distinct()
+                           .Order()
+                           .ToArray();
+        var snapshot = ToSnapshot(subject);
 
-        foreach (var (observerId, perceived) in _perceivedByObserver.OrderBy(pair => pair.Key))
+        foreach (var observerId in candidateIds)
         {
-            if (!perceived.Remove(subject.Id) || !_scheduler.IsActive(observerId))
+            if (_mobiles.GetById(observerId) is not { } observer ||
+                !TryGetActiveDescriptor(observerId, out var descriptor))
+            {
+                _perceivedByObserver.Remove(observerId);
+
+                continue;
+            }
+
+            var wasPerceived = _perceivedByObserver.TryGetValue(
+                                   observerId,
+                                   out var perceived
+                               ) &&
+                               perceived.Contains(subject.Id);
+            var isInside = observer.MapId == movement.ToMapId &&
+                           observer.Position.InRange(
+                               movement.ToPosition,
+                               descriptor.PerceptionRange
+                           );
+
+            if (!wasPerceived && !isInside)
             {
                 continue;
             }
 
-            _scheduler.EnqueueEvent(
+            if (!wasPerceived)
+            {
+                perceived = GetPerceived(observerId);
+                perceived.Add(subject.Id);
+                EnqueuePerception(
+                    observerId,
+                    NpcBrainHookType.MobileEnteredRange,
+                    NpcBrainEventType.MobileEnteredRange,
+                    snapshot,
+                    movement
+                );
+
+                continue;
+            }
+
+            if (isInside)
+            {
+                EnqueuePerception(
+                    observerId,
+                    NpcBrainHookType.MobileMoved,
+                    NpcBrainEventType.MobileMoved,
+                    snapshot,
+                    movement
+                );
+
+                continue;
+            }
+
+            _perceivedByObserver[observerId].Remove(subject.Id);
+            EnqueuePerception(
                 observerId,
                 NpcBrainHookType.MobileLeftRange,
-                new(
-                    NpcBrainEventType.MobileLeftRange,
-                    snapshot,
-                    FromPosition: subject.Position,
-                    ToPosition: subject.Position
-                )
+                NpcBrainEventType.MobileLeftRange,
+                snapshot,
+                movement
             );
         }
-    }
-
-    private void RefreshObserverSet(MobileEntity observer)
-    {
-        if (
-            _scheduler.IsActive(observer.Id) &&
-            _sectors.IsActive(
-                observer.MapId,
-                observer.Position.X >> SectorShift,
-                observer.Position.Y >> SectorShift
-            )
-        )
-        {
-            SeedObserver(observer);
-            return;
-        }
-
-        _perceivedByObserver.Remove(observer.Id);
     }
 
     private void SeedObserver(MobileEntity observer)
@@ -465,136 +577,11 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
         if (!TryGetActiveDescriptor(observer.Id, out var descriptor))
         {
             _perceivedByObserver.Remove(observer.Id);
+
             return;
         }
 
         ReconcileObserverSet(observer, descriptor);
-    }
-
-    private void ReconcileObserverSet(
-        MobileEntity observer,
-        BrainDescriptor descriptor
-    )
-    {
-        var current = _spatial
-            .GetMobilesInRange(
-                observer.MapId,
-                observer.Position,
-                descriptor.PerceptionRange
-            )
-            .Where(subject => subject.Id != observer.Id)
-            .OrderBy(subject => subject.Id)
-            .ToArray();
-        var previous = _perceivedByObserver.TryGetValue(observer.Id, out var perceived)
-            ? perceived
-            : [];
-        var currentIds = current.Select(subject => subject.Id).ToHashSet();
-
-        foreach (var subjectId in previous.Except(currentIds).Order())
-        {
-            if (_mobiles.GetById(subjectId) is { } subject)
-            {
-                _scheduler.EnqueueEvent(
-                    observer.Id,
-                    NpcBrainHookType.MobileLeftRange,
-                    new(
-                        NpcBrainEventType.MobileLeftRange,
-                        ToSnapshot(subject),
-                        FromPosition: subject.Position,
-                        ToPosition: subject.Position
-                    )
-                );
-            }
-        }
-
-        foreach (var subject in current.Where(subject => !previous.Contains(subject.Id)))
-        {
-            _scheduler.EnqueueEvent(
-                observer.Id,
-                NpcBrainHookType.MobileEnteredRange,
-                new(
-                    NpcBrainEventType.MobileEnteredRange,
-                    ToSnapshot(subject),
-                    FromPosition: subject.Position,
-                    ToPosition: subject.Position
-                )
-            );
-        }
-
-        _perceivedByObserver[observer.Id] = currentIds;
-    }
-
-    private void RouteCombatEvent(
-        Serial affected,
-        Serial other,
-        NpcBrainHookType hook,
-        NpcBrainEventType eventType,
-        int amount = 0
-    )
-    {
-        if (!_scheduler.IsActive(affected))
-        {
-            return;
-        }
-
-        var otherSnapshot = _mobiles.GetById(other) is { } mobile
-            ? ToSnapshot(mobile)
-            : null;
-        _scheduler.EnqueueEvent(
-            affected,
-            hook,
-            new(eventType, otherSnapshot, Amount: amount)
-        );
-    }
-
-    private bool TryGetActiveDescriptor(
-        Serial observerId,
-        [NotNullWhen(true)] out BrainDescriptor? descriptor
-    )
-    {
-        if (
-            _scheduler.IsActive(observerId) &&
-            _scheduler.TryGetDescriptor(observerId, out var found) &&
-            found is not null
-        )
-        {
-            descriptor = found;
-            return true;
-        }
-
-        descriptor = null;
-        return false;
-    }
-
-    private HashSet<Serial> GetPerceived(Serial observerId)
-    {
-        if (!_perceivedByObserver.TryGetValue(observerId, out var perceived))
-        {
-            perceived = [];
-            _perceivedByObserver[observerId] = perceived;
-        }
-
-        return perceived;
-    }
-
-    private void EnqueuePerception(
-        Serial observerId,
-        NpcBrainHookType hook,
-        NpcBrainEventType eventType,
-        BrainMobileSnapshot snapshot,
-        MobileMovedEvent movement
-    )
-    {
-        _scheduler.EnqueueEvent(
-            observerId,
-            hook,
-            new(
-                eventType,
-                snapshot,
-                FromPosition: movement.FromPosition,
-                ToPosition: movement.ToPosition
-            )
-        );
     }
 
     private BrainMobileSnapshot ToSnapshot(
@@ -614,4 +601,25 @@ public sealed class NpcBrainEventRouter : IEventSubscriberRegistration
             mobile.Criminal,
             mobile.Kills
         );
+
+    private bool TryGetActiveDescriptor(
+        Serial observerId,
+        [NotNullWhen(true)] out BrainDescriptor? descriptor
+    )
+    {
+        if (
+            _scheduler.IsActive(observerId) &&
+            _scheduler.TryGetDescriptor(observerId, out var found) &&
+            found is not null
+        )
+        {
+            descriptor = found;
+
+            return true;
+        }
+
+        descriptor = null;
+
+        return false;
+    }
 }

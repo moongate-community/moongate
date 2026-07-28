@@ -21,6 +21,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private const int MaximumBrainFileBytes = 256 * 1024;
     private const int MaximumPerceptionRange = 64;
     private const int ReloadDebounceMilliseconds = 250;
+
     private static readonly string[] OptionalHookNames =
     [
         "on_activate",
@@ -33,16 +34,20 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         "on_damage",
         "on_death"
     ];
+
     private static readonly Regex ValidBrainIdPattern = new(
         "^[a-z0-9][a-z0-9_-]*$",
         RegexOptions.CultureInvariant
     );
+
     private readonly NpcAiAdvancedConfig _advanced;
     private readonly Dictionary<Serial, BrainBinding> _bindings = [];
     private readonly string _brainsDirectory;
+
     private readonly ConcurrentDictionary<string, CancellationTokenSource> _debounces = new(
         OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal
     );
+
     private readonly Dictionary<string, LuaBrainDefinition> _definitions = new(StringComparer.Ordinal);
     private readonly IEventBus _eventBus;
     private readonly IGameLoopContext _gameLoop;
@@ -85,6 +90,63 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         _watcherFactory = watcherFactory ?? CreateFileSystemWatcher;
     }
 
+    private sealed class BrainBinding
+    {
+        public string BrainId { get; }
+
+        public Table State { get; set; }
+
+        public BrainBinding(string brainId, Table state)
+        {
+            BrainId = brainId;
+            State = state;
+        }
+    }
+
+    private sealed class WatcherRegistration : IDisposable
+    {
+        private readonly FileSystemEventHandler _fileChanged;
+        private readonly RenamedEventHandler _fileRenamed;
+
+        public int Generation { get; }
+
+        public FileSystemWatcher Watcher { get; }
+
+        public WatcherRegistration(
+            FileSystemWatcher watcher,
+            int generation,
+            Action<FileSystemWatcher, int, object, string> queueReload
+        )
+        {
+            _fileChanged = (sender, eventArgs) =>
+                               queueReload(watcher, generation, sender, eventArgs.FullPath);
+            _fileRenamed = (sender, eventArgs) =>
+                               queueReload(watcher, generation, sender, eventArgs.FullPath);
+            Generation = generation;
+            Watcher = watcher;
+        }
+
+        public void Dispose()
+        {
+            Watcher.EnableRaisingEvents = false;
+            Watcher.Changed -= _fileChanged;
+            Watcher.Created -= _fileChanged;
+            Watcher.Renamed -= _fileRenamed;
+            Watcher.Dispose();
+        }
+
+        public void Start()
+        {
+            Watcher.Changed += _fileChanged;
+            Watcher.Created += _fileChanged;
+            Watcher.Renamed += _fileRenamed;
+            Watcher.EnableRaisingEvents = true;
+        }
+    }
+
+    public void Dispose()
+        => StopWatching();
+
     public NpcBrainInvocationResult Invoke(
         Serial mobileId,
         NpcBrainHookType hook,
@@ -102,9 +164,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
 
         if (!IsSupportedHook(hook))
         {
-            return FailInvocation(
-                $"Unsupported brain hook value: {(int)hook}."
-            );
+            return FailInvocation($"Unsupported brain hook value: {(int)hook}.");
         }
 
         var hookValue = definition.Strategy.Get(hookName);
@@ -161,6 +221,35 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         }
     }
 
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        BrainAssetSeeder.SeedMissing(_brainsDirectory);
+
+        if (_watcherRegistration is not null)
+        {
+            return ValueTask.CompletedTask;
+        }
+
+        var watcher = _watcherFactory(_brainsDirectory);
+        watcher.Filter = "*.lua";
+        watcher.IncludeSubdirectories = false;
+        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size;
+        var watcherGeneration = Interlocked.Increment(ref _watcherGeneration);
+        var registration = new WatcherRegistration(watcher, watcherGeneration, QueueReload);
+        _watcherRegistration = registration;
+        Volatile.Write(ref _watching, 1);
+        registration.Start();
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        StopWatching();
+
+        return ValueTask.CompletedTask;
+    }
+
     public bool TryBind(Serial mobileId, string brainId, out BrainDescriptor? descriptor, out string? error)
     {
         if (!_definitions.TryGetValue(brainId, out var definition))
@@ -168,6 +257,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             if (!TryLoadDefinition(brainId, out definition, out error))
             {
                 descriptor = null;
+
                 return false;
             }
 
@@ -207,6 +297,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         {
             descriptor = null;
             _metrics.RecordReload(false);
+
             return false;
         }
 
@@ -219,57 +310,8 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         return true;
     }
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        BrainAssetSeeder.SeedMissing(_brainsDirectory);
-
-        if (_watcherRegistration is not null)
-        {
-            return ValueTask.CompletedTask;
-        }
-
-        var watcher = _watcherFactory(_brainsDirectory);
-        watcher.Filter = "*.lua";
-        watcher.IncludeSubdirectories = false;
-        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.Size;
-        var watcherGeneration = Interlocked.Increment(ref _watcherGeneration);
-        var registration = new WatcherRegistration(watcher, watcherGeneration, QueueReload);
-        _watcherRegistration = registration;
-        Volatile.Write(ref _watching, 1);
-        registration.Start();
-
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        StopWatching();
-
-        return ValueTask.CompletedTask;
-    }
-
     public void Unbind(Serial mobileId)
         => _bindings.Remove(mobileId);
-
-    private void StopWatching()
-    {
-        Volatile.Write(ref _watching, 0);
-        Interlocked.Increment(ref _watcherGeneration);
-
-        var registration = _watcherRegistration;
-        _watcherRegistration = null;
-        registration?.Dispose();
-
-        foreach (var debounce in _debounces)
-        {
-            CancelDebounce(debounce.Value);
-        }
-
-        _debounces.Clear();
-    }
-
-    private static bool IsCallable(DynValue value)
-        => value.Type is DataType.Function or DataType.ClrFunction;
 
     private static void CancelDebounce(CancellationTokenSource cancellation)
     {
@@ -286,75 +328,6 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
     private static FileSystemWatcher CreateFileSystemWatcher(string path)
         => new(path);
 
-    private static string GetHookName(NpcBrainHookType hook)
-        => hook switch
-        {
-            NpcBrainHookType.Activate => "on_activate",
-            NpcBrainHookType.Deactivate => "on_deactivate",
-            NpcBrainHookType.SpeechHeard => "on_speech_heard",
-            NpcBrainHookType.MobileEnteredRange => "on_mobile_entered_range",
-            NpcBrainHookType.MobileLeftRange => "on_mobile_left_range",
-            NpcBrainHookType.MobileMoved => "on_mobile_moved",
-            NpcBrainHookType.Attacked => "on_attacked",
-            NpcBrainHookType.Damage => "on_damage",
-            NpcBrainHookType.Death => "on_death",
-            NpcBrainHookType.Think => "think",
-            _ => $"unknown({(int)hook})"
-        };
-
-    private static string GetInterpreterError(InterpreterException exception)
-        => string.IsNullOrWhiteSpace(exception.DecoratedMessage) ? exception.Message : exception.DecoratedMessage;
-
-    private static bool IsSupportedHook(NpcBrainHookType hook)
-        => hook is
-            NpcBrainHookType.Activate or
-            NpcBrainHookType.Deactivate or
-            NpcBrainHookType.SpeechHeard or
-            NpcBrainHookType.MobileEnteredRange or
-            NpcBrainHookType.MobileLeftRange or
-            NpcBrainHookType.MobileMoved or
-            NpcBrainHookType.Attacked or
-            NpcBrainHookType.Damage or
-            NpcBrainHookType.Death or
-            NpcBrainHookType.Think;
-
-    private static bool TryReadInteger(Table table, string name, out int value)
-    {
-        value = 0;
-        var field = table.Get(name);
-
-        if (field.Type != DataType.Number ||
-            !double.IsFinite(field.Number) ||
-            field.Number != Math.Truncate(field.Number) ||
-            field.Number is < int.MinValue or > int.MaxValue)
-        {
-            return false;
-        }
-
-        value = (int)field.Number;
-
-        return true;
-    }
-
-    private static int? ReadNextTick(DynValue value)
-    {
-        if (value.Type != DataType.Number ||
-            !double.IsFinite(value.Number) ||
-            value.Number is < int.MinValue or > int.MaxValue)
-        {
-            return null;
-        }
-
-        return (int)value.Number;
-    }
-
-    private NpcBrainInvocationResult FailInvocation(string error, bool budgetExceeded = false)
-    {
-        _metrics.RecordHookFailure(budgetExceeded);
-
-        return NpcBrainInvocationResult.Failed(error, budgetExceeded);
-    }
-
     private async Task DebounceReloadAsync(
         string path,
         CancellationTokenSource cancellation,
@@ -365,12 +338,12 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         try
         {
             await Task
-                .Delay(
-                    TimeSpan.FromMilliseconds(ReloadDebounceMilliseconds),
-                    _timeProvider,
-                    cancellation.Token
-                )
-                .ConfigureAwait(false);
+                  .Delay(
+                      TimeSpan.FromMilliseconds(ReloadDebounceMilliseconds),
+                      _timeProvider,
+                      cancellation.Token
+                  )
+                  .ConfigureAwait(false);
 
             if (!RemoveDebounce(path, cancellation) ||
                 !IsCurrentWatcher(watcher, watcherGeneration))
@@ -390,15 +363,42 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
                 }
             );
         }
-        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
-        {
-        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested) { }
         finally
         {
             RemoveDebounce(path, cancellation);
             cancellation.Dispose();
         }
     }
+
+    private NpcBrainInvocationResult FailInvocation(string error, bool budgetExceeded = false)
+    {
+        _metrics.RecordHookFailure(budgetExceeded);
+
+        return NpcBrainInvocationResult.Failed(error, budgetExceeded);
+    }
+
+    private static string GetHookName(NpcBrainHookType hook)
+        => hook switch
+        {
+            NpcBrainHookType.Activate           => "on_activate",
+            NpcBrainHookType.Deactivate         => "on_deactivate",
+            NpcBrainHookType.SpeechHeard        => "on_speech_heard",
+            NpcBrainHookType.MobileEnteredRange => "on_mobile_entered_range",
+            NpcBrainHookType.MobileLeftRange    => "on_mobile_left_range",
+            NpcBrainHookType.MobileMoved        => "on_mobile_moved",
+            NpcBrainHookType.Attacked           => "on_attacked",
+            NpcBrainHookType.Damage             => "on_damage",
+            NpcBrainHookType.Death              => "on_death",
+            NpcBrainHookType.Think              => "think",
+            _                                   => $"unknown({(int)hook})"
+        };
+
+    private static string GetInterpreterError(InterpreterException exception)
+        => string.IsNullOrWhiteSpace(exception.DecoratedMessage) ? exception.Message : exception.DecoratedMessage;
+
+    private static bool IsCallable(DynValue value)
+        => value.Type is DataType.Function or DataType.ClrFunction;
 
     private bool IsCurrentWatcher(FileSystemWatcher watcher, int watcherGeneration)
     {
@@ -410,6 +410,19 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
                current.Generation == watcherGeneration &&
                ReferenceEquals(current.Watcher, watcher);
     }
+
+    private static bool IsSupportedHook(NpcBrainHookType hook)
+        => hook is
+               NpcBrainHookType.Activate or
+               NpcBrainHookType.Deactivate or
+               NpcBrainHookType.SpeechHeard or
+               NpcBrainHookType.MobileEnteredRange or
+               NpcBrainHookType.MobileLeftRange or
+               NpcBrainHookType.MobileMoved or
+               NpcBrainHookType.Attacked or
+               NpcBrainHookType.Damage or
+               NpcBrainHookType.Death or
+               NpcBrainHookType.Think;
 
     private void QueueReload(
         FileSystemWatcher watcher,
@@ -432,6 +445,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             (_, previous) =>
             {
                 CancelDebounce(previous);
+
                 return cancellation;
             }
         );
@@ -441,16 +455,44 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             CancelDebounce(cancellation);
             RemoveDebounce(normalizedPath, cancellation);
             cancellation.Dispose();
+
             return;
         }
 
         _ = DebounceReloadAsync(normalizedPath, cancellation, watcher, watcherGeneration);
     }
 
+    private static int? ReadNextTick(DynValue value)
+    {
+        if (value.Type != DataType.Number ||
+            !double.IsFinite(value.Number) ||
+            value.Number is < int.MinValue or > int.MaxValue)
+        {
+            return null;
+        }
+
+        return (int)value.Number;
+    }
+
     private bool RemoveDebounce(string path, CancellationTokenSource cancellation)
-        => ((ICollection<KeyValuePair<string, CancellationTokenSource>>)_debounces).Remove(
-            new(path, cancellation)
-        );
+        => ((ICollection<KeyValuePair<string, CancellationTokenSource>>)_debounces).Remove(new(path, cancellation));
+
+    private void StopWatching()
+    {
+        Volatile.Write(ref _watching, 0);
+        Interlocked.Increment(ref _watcherGeneration);
+
+        var registration = _watcherRegistration;
+        _watcherRegistration = null;
+        registration?.Dispose();
+
+        foreach (var debounce in _debounces)
+        {
+            CancelDebounce(debounce.Value);
+        }
+
+        _debounces.Clear();
+    }
 
     private bool TryLoadDefinition(
         string brainId,
@@ -463,6 +505,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         if (string.IsNullOrWhiteSpace(brainId) || !ValidBrainIdPattern.IsMatch(brainId))
         {
             error = $"Brain ID '{brainId}' is invalid.";
+
             return false;
         }
 
@@ -471,6 +514,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         if (!File.Exists(path))
         {
             error = $"Brain file was not found: {path}";
+
             return false;
         }
 
@@ -483,12 +527,14 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
                 (fileInfo.Attributes & FileAttributes.ReparsePoint) != 0)
             {
                 error = "Brain directories and files may not be symbolic links or reparse points.";
+
                 return false;
             }
 
             if (fileInfo.Length > MaximumBrainFileBytes)
             {
                 error = "Brain files may not exceed 256 KiB.";
+
                 return false;
             }
 
@@ -501,12 +547,14 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             if (coroutine.State == CoroutineState.ForceSuspended)
             {
                 error = "Instruction budget exceeded while loading brain definition.";
+
                 return false;
             }
 
             if (coroutine.State != CoroutineState.Dead)
             {
                 error = "Brain definition chunks may not yield.";
+
                 return false;
             }
 
@@ -520,13 +568,33 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         catch (InterpreterException exception)
         {
             error = GetInterpreterError(exception);
+
             return false;
         }
         catch (Exception exception)
         {
             error = exception.Message;
+
             return false;
         }
+    }
+
+    private static bool TryReadInteger(Table table, string name, out int value)
+    {
+        value = 0;
+        var field = table.Get(name);
+
+        if (field.Type != DataType.Number ||
+            !double.IsFinite(field.Number) ||
+            field.Number != Math.Truncate(field.Number) ||
+            field.Number is < int.MinValue or > int.MaxValue)
+        {
+            return false;
+        }
+
+        value = (int)field.Number;
+
+        return true;
     }
 
     private bool TryValidateDefinition(
@@ -541,6 +609,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         if (value.Type != DataType.Table)
         {
             error = "Brain definition must return a table.";
+
             return false;
         }
 
@@ -550,6 +619,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         if (id.Type != DataType.String || !string.Equals(id.String, brainId, StringComparison.Ordinal))
         {
             error = $"Brain definition id must exactly match '{brainId}'.";
+
             return false;
         }
 
@@ -558,8 +628,9 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             defaultTickMilliseconds > _advanced.MaxTickMilliseconds)
         {
             error =
-                $"Brain default_tick_ms must be between {_advanced.MinTickMilliseconds} and "
-                + $"{_advanced.MaxTickMilliseconds}.";
+                $"Brain default_tick_ms must be between {_advanced.MinTickMilliseconds} and " +
+                $"{_advanced.MaxTickMilliseconds}.";
+
             return false;
         }
 
@@ -567,6 +638,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             perceptionRange is < 0 or > MaximumPerceptionRange)
         {
             error = $"Brain perception_range must be between 0 and {MaximumPerceptionRange}.";
+
             return false;
         }
 
@@ -574,12 +646,14 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             hearingRange is < 0 or > MaximumPerceptionRange)
         {
             error = $"Brain hearing_range must be between 0 and {MaximumPerceptionRange}.";
+
             return false;
         }
 
         if (!IsCallable(strategy.Get("think")))
         {
             error = "Brain think must be callable.";
+
             return false;
         }
 
@@ -590,6 +664,7 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
             if (hook.Type is not DataType.Nil and not DataType.Void && !IsCallable(hook))
             {
                 error = $"Brain {hookName} must be callable or nil.";
+
                 return false;
             }
         }
@@ -601,64 +676,5 @@ public sealed class LuaNpcBrainRuntime : INpcBrainRuntime, ISquidStdService, IDi
         error = null;
 
         return true;
-    }
-
-    private sealed class BrainBinding
-    {
-        public string BrainId { get; }
-
-        public Table State { get; set; }
-
-        public BrainBinding(string brainId, Table state)
-        {
-            BrainId = brainId;
-            State = state;
-        }
-    }
-
-    private sealed class WatcherRegistration : IDisposable
-    {
-        private readonly FileSystemEventHandler _fileChanged;
-        private readonly RenamedEventHandler _fileRenamed;
-
-        public int Generation { get; }
-
-        public FileSystemWatcher Watcher { get; }
-
-        public WatcherRegistration(
-            FileSystemWatcher watcher,
-            int generation,
-            Action<FileSystemWatcher, int, object, string> queueReload
-        )
-        {
-            _fileChanged = (sender, eventArgs) =>
-                queueReload(watcher, generation, sender, eventArgs.FullPath);
-            _fileRenamed = (sender, eventArgs) =>
-                queueReload(watcher, generation, sender, eventArgs.FullPath);
-            Generation = generation;
-            Watcher = watcher;
-        }
-
-        public void Start()
-        {
-            Watcher.Changed += _fileChanged;
-            Watcher.Created += _fileChanged;
-            Watcher.Renamed += _fileRenamed;
-            Watcher.EnableRaisingEvents = true;
-        }
-
-        public void Dispose()
-        {
-            Watcher.EnableRaisingEvents = false;
-            Watcher.Changed -= _fileChanged;
-            Watcher.Created -= _fileChanged;
-            Watcher.Renamed -= _fileRenamed;
-            Watcher.Dispose();
-        }
-    }
-
-    public void Dispose()
-    {
-        StopWatching();
     }
 }

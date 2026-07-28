@@ -4,15 +4,18 @@ using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Smtp.Plugin;
 using SquidStd.Core.Config;
 using SquidStd.Core.Directories;
-using SquidStd.Plugin.Abstractions.Data;
 
 namespace Moongate.Tests.Smtp;
 
 public sealed class MoongateSmtpPluginTests
 {
     [Fact]
-    public void Metadata_IdentifiesThePlugin()
-        => Assert.Equal("moongate.smtp.plugin", new MoongateSmtpPlugin().Metadata.Id);
+    public void Configure_WhenConfigured_RegistersTheEmailChannel()
+    {
+        var container = Configured("localhost", "shard@example.com");
+
+        Assert.Equal("email", Assert.Single(container.ResolveMany<INotificationChannel>()).Id);
+    }
 
     [Fact]
     public void Configure_WithoutHost_RegistersNoChannel()
@@ -24,12 +27,8 @@ public sealed class MoongateSmtpPluginTests
     }
 
     [Fact]
-    public void Configure_WhenConfigured_RegistersTheEmailChannel()
-    {
-        var container = Configured(host: "localhost", from: "shard@example.com");
-
-        Assert.Equal("email", Assert.Single(container.ResolveMany<INotificationChannel>()).Id);
-    }
+    public void Metadata_IdentifiesThePlugin()
+        => Assert.Equal("moongate.smtp.plugin", new MoongateSmtpPlugin().Metadata.Id);
 
     /// <summary>A container carrying what the real bootstrap supplies around the plugin.</summary>
     private static IContainer Configured(string host = "", string from = "")
@@ -52,7 +51,7 @@ public sealed class MoongateSmtpPluginTests
         container.RegisterInstance(directories);
         container.RegisterInstance(new MoongateConfig { ShardName = "Britannia", UltimaDirectory = "/tmp" });
 
-        new MoongateSmtpPlugin().Configure(container, new PluginContext());
+        new MoongateSmtpPlugin().Configure(container, new());
 
         return container;
     }

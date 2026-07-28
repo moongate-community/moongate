@@ -51,6 +51,15 @@ public class ClientVersionReaderTests
     }
 
     [Fact]
+    public void TryRead_WithVersionResource_ParsesVersion()
+    {
+        var ok = ClientVersionReader.TryRead(BuildClientExe(), out var version);
+
+        Assert.True(ok);
+        Assert.Equal(new(7, 0, 95, 3), version);
+    }
+
+    [Fact]
     public void TryRead_WithoutSignature_ReturnsFalse()
     {
         var buffer = new byte[128];
@@ -59,15 +68,6 @@ public class ClientVersionReaderTests
 
         Assert.False(ok);
         Assert.Equal(new(0, 0), version);
-    }
-
-    [Fact]
-    public void TryRead_WithVersionResource_ParsesVersion()
-    {
-        var ok = ClientVersionReader.TryRead(BuildClientExe(), out var version);
-
-        Assert.True(ok);
-        Assert.Equal(new(7, 0, 95, 3), version);
     }
 
     // A minimal client.exe: prefix + VS_VERSION_INFO signature(30) + filler(12) + version fields

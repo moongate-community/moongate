@@ -47,8 +47,8 @@ public class AccountService : IAccountService
     public AccountAuthResult Authenticate(string username, string password)
     {
         var account = _accountStore
-            .Query()
-            .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
+                      .Query()
+                      .FirstOrDefault(s => s.Username == username && HashUtils.VerifyPassword(password, s.PasswordHash));
 
         if (account == null)
         {
@@ -96,190 +96,6 @@ public class AccountService : IAccountService
             _logger.Information("Account created: {Username} at level {Level}", username, level);
 
             return AccountCreateResultType.Created;
-        }
-    }
-
-    public AccountRegisterResult RegisterPending(string username, string password, string email)
-    {
-        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
-        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
-
-        if (string.IsNullOrEmpty(normalizedUsername))
-        {
-            return new() { Result = AccountRegisterResultType.UsernameEmpty };
-        }
-
-        if (string.IsNullOrEmpty(password))
-        {
-            return new() { Result = AccountRegisterResultType.PasswordEmpty };
-        }
-
-        if (string.IsNullOrEmpty(normalizedEmail))
-        {
-            return new() { Result = AccountRegisterResultType.EmailEmpty };
-        }
-
-        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
-        {
-            return new() { Result = AccountRegisterResultType.UsernameInvalid };
-        }
-
-        if (!PublicRegistrationValidator.IsPasswordValid(password))
-        {
-            return new() { Result = AccountRegisterResultType.PasswordInvalid };
-        }
-
-        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
-        {
-            return new() { Result = AccountRegisterResultType.EmailInvalid };
-        }
-
-        lock (_registrationTransitionLock)
-        {
-            if (GetByUsername(normalizedUsername) is not null)
-            {
-                return new() { Result = AccountRegisterResultType.UsernameTaken };
-            }
-
-            if (_accountStore.Query().Any(account => string.Equals(
-                    account.Email,
-                    normalizedEmail,
-                    StringComparison.OrdinalIgnoreCase
-                )))
-            {
-                return new() { Result = AccountRegisterResultType.EmailTaken };
-            }
-
-            var token = RandomNumberGenerator.GetHexString(64);
-
-            var account = new AccountEntity
-            {
-                Username = normalizedUsername,
-                Email = normalizedEmail,
-                PasswordHash = HashUtils.HashPassword(password),
-                IsActive = false,
-                ActivationToken = string.Empty,
-                ActivationTokenHash = HashActivationToken(token),
-                ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime),
-                IsPublicRegistrationPending = true,
-                AccountLevel = AccountLevelType.Player
-            };
-
-            _accountStore.UpsertAsync(account).WaitSync();
-
-            _logger.Information(
-                "Web registration pending for {Username}; awaiting email verification",
-                normalizedUsername
-            );
-            _eventBus.Publish(
-                new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token)
-            );
-
-            return new() { Result = AccountRegisterResultType.Created, Token = token };
-        }
-    }
-
-    public AccountResendResultType ResendVerification(string username, string email)
-    {
-        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
-        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
-
-        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
-        {
-            return AccountResendResultType.UsernameInvalid;
-        }
-
-        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
-        {
-            return AccountResendResultType.EmailInvalid;
-        }
-
-        lock (_registrationTransitionLock)
-        {
-            var account = _accountStore.Query().FirstOrDefault(candidate =>
-                !candidate.IsActive
-                && candidate.AccountLevel == AccountLevelType.Player
-                && (candidate.IsPublicRegistrationPending || !string.IsNullOrEmpty(candidate.ActivationToken))
-                && candidate.Username == normalizedUsername
-                && string.Equals(candidate.Email, normalizedEmail, StringComparison.OrdinalIgnoreCase)
-            );
-
-            if (account is null)
-            {
-                return AccountResendResultType.Ignored;
-            }
-
-            var token = RandomNumberGenerator.GetHexString(64);
-            ClearActivationTokenState(account);
-            account.ActivationTokenHash = HashActivationToken(token);
-            account.ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime);
-            account.IsPublicRegistrationPending = true;
-            _accountStore.UpsertAsync(account).WaitSync();
-
-            _eventBus.Publish(
-                new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token)
-            );
-
-            return AccountResendResultType.Sent;
-        }
-    }
-
-    public AccountVerifyResultType VerifyEmail(string token)
-    {
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            return AccountVerifyResultType.InvalidToken;
-        }
-
-        var tokenHash = HashActivationToken(token);
-
-        lock (_registrationTransitionLock)
-        {
-            var account = _accountStore.Query().FirstOrDefault(candidate =>
-                !candidate.IsActive
-                && candidate.AccountLevel == AccountLevelType.Player
-                && candidate.IsPublicRegistrationPending
-                && candidate.ActivationTokenHash == tokenHash
-            );
-
-            if (account is not null)
-            {
-                if (account.ActivationTokenExpiresAtUtc is null
-                    || account.ActivationTokenExpiresAtUtc <= _timeProvider.GetUtcNow())
-                {
-                    ClearActivationTokenState(account);
-                    _accountStore.UpsertAsync(account).WaitSync();
-
-                    return AccountVerifyResultType.ExpiredToken;
-                }
-
-                account.IsActive = true;
-                ClearActivationTokenState(account);
-                account.IsPublicRegistrationPending = false;
-                _accountStore.UpsertAsync(account).WaitSync();
-
-                _logger.Information("Account {Username} verified and activated", account.Username);
-
-                return AccountVerifyResultType.Verified;
-            }
-
-            account = _accountStore.Query().FirstOrDefault(candidate =>
-                !candidate.IsActive
-                && candidate.AccountLevel == AccountLevelType.Player
-                && !string.IsNullOrEmpty(candidate.ActivationToken)
-                && candidate.ActivationToken == token
-            );
-
-            if (account is null)
-            {
-                return AccountVerifyResultType.InvalidToken;
-            }
-
-            ClearActivationTokenState(account);
-            account.IsPublicRegistrationPending = true;
-            _accountStore.UpsertAsync(account).WaitSync();
-
-            return AccountVerifyResultType.ExpiredToken;
         }
     }
 
@@ -334,6 +150,137 @@ public class AccountService : IAccountService
     public IReadOnlyList<string> GetUsernames()
         => _accountStore.Query().Select(account => account.Username).ToList();
 
+    public AccountRegisterResult RegisterPending(string username, string password, string email)
+    {
+        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
+        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
+
+        if (string.IsNullOrEmpty(normalizedUsername))
+        {
+            return new() { Result = AccountRegisterResultType.UsernameEmpty };
+        }
+
+        if (string.IsNullOrEmpty(password))
+        {
+            return new() { Result = AccountRegisterResultType.PasswordEmpty };
+        }
+
+        if (string.IsNullOrEmpty(normalizedEmail))
+        {
+            return new() { Result = AccountRegisterResultType.EmailEmpty };
+        }
+
+        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
+        {
+            return new() { Result = AccountRegisterResultType.UsernameInvalid };
+        }
+
+        if (!PublicRegistrationValidator.IsPasswordValid(password))
+        {
+            return new() { Result = AccountRegisterResultType.PasswordInvalid };
+        }
+
+        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
+        {
+            return new() { Result = AccountRegisterResultType.EmailInvalid };
+        }
+
+        lock (_registrationTransitionLock)
+        {
+            if (GetByUsername(normalizedUsername) is not null)
+            {
+                return new() { Result = AccountRegisterResultType.UsernameTaken };
+            }
+
+            if (_accountStore.Query()
+                             .Any(
+                                 account => string.Equals(
+                                     account.Email,
+                                     normalizedEmail,
+                                     StringComparison.OrdinalIgnoreCase
+                                 )
+                             ))
+            {
+                return new() { Result = AccountRegisterResultType.EmailTaken };
+            }
+
+            var token = RandomNumberGenerator.GetHexString(64);
+
+            var account = new AccountEntity
+            {
+                Username = normalizedUsername,
+                Email = normalizedEmail,
+                PasswordHash = HashUtils.HashPassword(password),
+                IsActive = false,
+                ActivationToken = string.Empty,
+                ActivationTokenHash = HashActivationToken(token),
+                ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime),
+                IsPublicRegistrationPending = true,
+                AccountLevel = AccountLevelType.Player
+            };
+
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _logger.Information(
+                "Web registration pending for {Username}; awaiting email verification",
+                normalizedUsername
+            );
+            _eventBus.Publish(new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token));
+
+            return new() { Result = AccountRegisterResultType.Created, Token = token };
+        }
+    }
+
+    public AccountResendResultType ResendVerification(string username, string email)
+    {
+        var normalizedUsername = PublicRegistrationValidator.NormalizeUsername(username);
+        var normalizedEmail = PublicRegistrationValidator.NormalizeEmail(email);
+
+        if (!PublicRegistrationValidator.IsUsernameValid(normalizedUsername))
+        {
+            return AccountResendResultType.UsernameInvalid;
+        }
+
+        if (!PublicRegistrationValidator.IsEmailValid(normalizedEmail))
+        {
+            return AccountResendResultType.EmailInvalid;
+        }
+
+        lock (_registrationTransitionLock)
+        {
+            var account = _accountStore.Query()
+                                       .FirstOrDefault(
+                                           candidate =>
+                                               !candidate.IsActive &&
+                                               candidate.AccountLevel == AccountLevelType.Player &&
+                                               (candidate.IsPublicRegistrationPending ||
+                                                !string.IsNullOrEmpty(candidate.ActivationToken)) &&
+                                               candidate.Username == normalizedUsername &&
+                                               string.Equals(
+                                                   candidate.Email,
+                                                   normalizedEmail,
+                                                   StringComparison.OrdinalIgnoreCase
+                                               )
+                                       );
+
+            if (account is null)
+            {
+                return AccountResendResultType.Ignored;
+            }
+
+            var token = RandomNumberGenerator.GetHexString(64);
+            ClearActivationTokenState(account);
+            account.ActivationTokenHash = HashActivationToken(token);
+            account.ActivationTokenExpiresAtUtc = _timeProvider.GetUtcNow().Add(VerificationLifetime);
+            account.IsPublicRegistrationPending = true;
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            _eventBus.Publish(new AccountRegistrationRequestedEvent(account.Id, normalizedUsername, normalizedEmail, token));
+
+            return AccountResendResultType.Sent;
+        }
+    }
+
     public bool SetActive(string username, bool isActive)
     {
         lock (_registrationTransitionLock)
@@ -363,6 +310,7 @@ public class AccountService : IAccountService
             }
 
             account.AccountLevel = level;
+
             if (level != AccountLevelType.Player)
             {
                 ClearPublicRegistrationState(account);
@@ -391,8 +339,68 @@ public class AccountService : IAccountService
         return true;
     }
 
-    private static string HashActivationToken(string token)
-        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
+    public AccountVerifyResultType VerifyEmail(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return AccountVerifyResultType.InvalidToken;
+        }
+
+        var tokenHash = HashActivationToken(token);
+
+        lock (_registrationTransitionLock)
+        {
+            var account = _accountStore.Query()
+                                       .FirstOrDefault(
+                                           candidate =>
+                                               !candidate.IsActive &&
+                                               candidate.AccountLevel == AccountLevelType.Player &&
+                                               candidate.IsPublicRegistrationPending &&
+                                               candidate.ActivationTokenHash == tokenHash
+                                       );
+
+            if (account is not null)
+            {
+                if (account.ActivationTokenExpiresAtUtc is null ||
+                    account.ActivationTokenExpiresAtUtc <= _timeProvider.GetUtcNow())
+                {
+                    ClearActivationTokenState(account);
+                    _accountStore.UpsertAsync(account).WaitSync();
+
+                    return AccountVerifyResultType.ExpiredToken;
+                }
+
+                account.IsActive = true;
+                ClearActivationTokenState(account);
+                account.IsPublicRegistrationPending = false;
+                _accountStore.UpsertAsync(account).WaitSync();
+
+                _logger.Information("Account {Username} verified and activated", account.Username);
+
+                return AccountVerifyResultType.Verified;
+            }
+
+            account = _accountStore.Query()
+                                   .FirstOrDefault(
+                                       candidate =>
+                                           !candidate.IsActive &&
+                                           candidate.AccountLevel == AccountLevelType.Player &&
+                                           !string.IsNullOrEmpty(candidate.ActivationToken) &&
+                                           candidate.ActivationToken == token
+                                   );
+
+            if (account is null)
+            {
+                return AccountVerifyResultType.InvalidToken;
+            }
+
+            ClearActivationTokenState(account);
+            account.IsPublicRegistrationPending = true;
+            _accountStore.UpsertAsync(account).WaitSync();
+
+            return AccountVerifyResultType.ExpiredToken;
+        }
+    }
 
     private static void ClearActivationTokenState(AccountEntity account)
     {
@@ -406,4 +414,7 @@ public class AccountService : IAccountService
         ClearActivationTokenState(account);
         account.IsPublicRegistrationPending = false;
     }
+
+    private static string HashActivationToken(string token)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
 }

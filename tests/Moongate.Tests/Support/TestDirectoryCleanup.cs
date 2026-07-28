@@ -8,11 +8,7 @@ internal static class TestDirectoryCleanup
         {
             Directory.Delete(path, true);
         }
-        catch (IOException)
-        {
-        }
-        catch (UnauthorizedAccessException)
-        {
-        }
+        catch (IOException) { }
+        catch (UnauthorizedAccessException) { }
     }
 }

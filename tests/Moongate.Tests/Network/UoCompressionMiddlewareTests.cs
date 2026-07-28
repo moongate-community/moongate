@@ -28,6 +28,16 @@ public class UoCompressionMiddlewareTests
     }
 
     [Fact]
+    public async Task ProcessSendAsync_EnabledButEmpty_ReturnsEmpty()
+    {
+        var middleware = new UoCompressionMiddleware { Enabled = true };
+
+        var result = await middleware.ProcessSendAsync(null, ReadOnlyMemory<byte>.Empty);
+
+        Assert.True(result.IsEmpty);
+    }
+
+    [Fact]
     public async Task ProcessSendAsync_Enabled_CompressesToHuffmanBytes()
     {
         var middleware = new UoCompressionMiddleware { Enabled = true };
@@ -39,15 +49,5 @@ public class UoCompressionMiddlewareTests
         var written = HuffmanEncoder.Compress(data, expected);
 
         Assert.Equal(expected.AsSpan(0, written).ToArray(), result.ToArray());
-    }
-
-    [Fact]
-    public async Task ProcessSendAsync_EnabledButEmpty_ReturnsEmpty()
-    {
-        var middleware = new UoCompressionMiddleware { Enabled = true };
-
-        var result = await middleware.ProcessSendAsync(null, ReadOnlyMemory<byte>.Empty);
-
-        Assert.True(result.IsEmpty);
     }
 }

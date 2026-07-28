@@ -1,4 +1,3 @@
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Services.Game;
 using Moongate.Tests.Support;
 using Serilog;
@@ -22,8 +21,8 @@ public class LoopAffinityTests
     {
         var sink = new ListSink();
         var affinity = new LoopAffinity(
-            new StubLoopThread(onLoop: false),
-            new MoongateConfig { StrictLoopAffinity = false },
+            new StubLoopThread(false),
+            new() { StrictLoopAffinity = false },
             LoggerFor(sink)
         );
 
@@ -36,8 +35,8 @@ public class LoopAffinityTests
     public void AssertOnLoop_OffLoopStrict_Throws()
     {
         var affinity = new LoopAffinity(
-            new StubLoopThread(onLoop: false),
-            new MoongateConfig { StrictLoopAffinity = true }
+            new StubLoopThread(false),
+            new() { StrictLoopAffinity = true }
         );
 
         Assert.Throws<InvalidOperationException>(() => affinity.AssertOnLoop("item.create"));
@@ -48,8 +47,8 @@ public class LoopAffinityTests
     {
         var sink = new ListSink();
         var affinity = new LoopAffinity(
-            new StubLoopThread(onLoop: true),
-            new MoongateConfig { StrictLoopAffinity = true },
+            new StubLoopThread(),
+            new() { StrictLoopAffinity = true },
             LoggerFor(sink)
         );
 

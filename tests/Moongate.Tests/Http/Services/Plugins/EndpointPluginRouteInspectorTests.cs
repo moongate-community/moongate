@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.Extensions.Primitives;
-using Moongate.Http.Plugin.Data.Plugins;
 using Moongate.Http.Plugin.Services.Plugins;
 
 namespace Moongate.Tests.Http.Services.Plugins;
@@ -17,42 +16,17 @@ public class EndpointPluginRouteInspectorTests
             BindingFlags.NonPublic | BindingFlags.Static
         )!;
 
-    [Fact]
-    public void RoutesByAssembly_GroupsUnderTheAssemblyDeclaringTheHandler()
+    private sealed class StubEndpointDataSource : EndpointDataSource
     {
-        var inspector = new EndpointPluginRouteInspector();
+        public StubEndpointDataSource(params Endpoint[] endpoints)
+        {
+            Endpoints = endpoints;
+        }
 
-        var result = inspector.RoutesByAssembly(new StubEndpointDataSource(Route("/api/v1/news", "GET")));
+        public override IReadOnlyList<Endpoint> Endpoints { get; }
 
-        var assembly = typeof(EndpointPluginRouteInspectorTests).Assembly.GetName().Name!;
-        var routes = Assert.Contains(assembly, result);
-
-        Assert.Equal(new PluginRouteInfo("GET", "/api/v1/news", null), Assert.Single(routes));
-    }
-
-    [Fact]
-    public void RoutesByAssembly_ReportsTheAuthorizationPolicy()
-    {
-        var inspector = new EndpointPluginRouteInspector();
-
-        var result = inspector.RoutesByAssembly(
-            new StubEndpointDataSource(Route("/api/v1/admin/news", "POST", policy: "admin"))
-        );
-
-        Assert.Equal("admin", Assert.Single(result.Values.Single()).Policy);
-    }
-
-    [Fact]
-    public void RoutesByAssembly_ReportsAllowAnonymousAsNoPolicy()
-    {
-        // AllowAnonymous wins at runtime over any policy also present, so it must win here too.
-        var inspector = new EndpointPluginRouteInspector();
-
-        var result = inspector.RoutesByAssembly(
-            new StubEndpointDataSource(Route("/api/v1/news", "GET", policy: "admin", allowAnonymous: true))
-        );
-
-        Assert.Null(Assert.Single(result.Values.Single()).Policy);
+        public override IChangeToken GetChangeToken()
+            => new CancellationChangeToken(CancellationToken.None);
     }
 
     [Fact]
@@ -63,16 +37,6 @@ public class EndpointPluginRouteInspectorTests
         var result = inspector.RoutesByAssembly(new StubEndpointDataSource(Route("/api/v1/news", "GET", "HEAD")));
 
         Assert.Equal(["GET", "HEAD"], result.Values.Single().Select(route => route.Method));
-    }
-
-    [Fact]
-    public void RoutesByAssembly_UsesAStarWhenNoVerbIsDeclared()
-    {
-        var inspector = new EndpointPluginRouteInspector();
-
-        var result = inspector.RoutesByAssembly(new StubEndpointDataSource(Route("/api/v1/news")));
-
-        Assert.Equal("*", Assert.Single(result.Values.Single()).Method);
     }
 
     [Fact]
@@ -95,8 +59,52 @@ public class EndpointPluginRouteInspectorTests
         Assert.Equal("/scalar/v1", Assert.Single(result[string.Empty]).Path);
     }
 
-    private static void SampleHandler()
+    [Fact]
+    public void RoutesByAssembly_GroupsUnderTheAssemblyDeclaringTheHandler()
     {
+        var inspector = new EndpointPluginRouteInspector();
+
+        var result = inspector.RoutesByAssembly(new StubEndpointDataSource(Route("/api/v1/news", "GET")));
+
+        var assembly = typeof(EndpointPluginRouteInspectorTests).Assembly.GetName().Name!;
+        var routes = Assert.Contains(assembly, result);
+
+        Assert.Equal(new("GET", "/api/v1/news", null), Assert.Single(routes));
+    }
+
+    [Fact]
+    public void RoutesByAssembly_ReportsAllowAnonymousAsNoPolicy()
+    {
+        // AllowAnonymous wins at runtime over any policy also present, so it must win here too.
+        var inspector = new EndpointPluginRouteInspector();
+
+        var result = inspector.RoutesByAssembly(
+            new StubEndpointDataSource(Route("/api/v1/news", "GET", policy: "admin", allowAnonymous: true))
+        );
+
+        Assert.Null(Assert.Single(result.Values.Single()).Policy);
+    }
+
+    [Fact]
+    public void RoutesByAssembly_ReportsTheAuthorizationPolicy()
+    {
+        var inspector = new EndpointPluginRouteInspector();
+
+        var result = inspector.RoutesByAssembly(
+            new StubEndpointDataSource(Route("/api/v1/admin/news", "POST", policy: "admin"))
+        );
+
+        Assert.Equal("admin", Assert.Single(result.Values.Single()).Policy);
+    }
+
+    [Fact]
+    public void RoutesByAssembly_UsesAStarWhenNoVerbIsDeclared()
+    {
+        var inspector = new EndpointPluginRouteInspector();
+
+        var result = inspector.RoutesByAssembly(new StubEndpointDataSource(Route("/api/v1/news")));
+
+        Assert.Equal("*", Assert.Single(result.Values.Single()).Method);
     }
 
     private static RouteEndpoint Route(
@@ -131,17 +139,5 @@ public class EndpointPluginRouteInspectorTests
         return new(_ => Task.CompletedTask, RoutePatternFactory.Parse(pattern), 0, new(metadata), pattern);
     }
 
-    private sealed class StubEndpointDataSource : EndpointDataSource
-    {
-        private readonly IReadOnlyList<Endpoint> _endpoints;
-
-        public StubEndpointDataSource(params Endpoint[] endpoints)
-        {
-            _endpoints = endpoints;
-        }
-
-        public override IReadOnlyList<Endpoint> Endpoints => _endpoints;
-
-        public override IChangeToken GetChangeToken() => new CancellationChangeToken(CancellationToken.None);
-    }
+    private static void SampleHandler() { }
 }

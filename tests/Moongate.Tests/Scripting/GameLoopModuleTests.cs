@@ -22,7 +22,8 @@ public class GameLoopModuleTests
 
         var bootstrap = SquidStdBootstrap.Create(new SquidStdOptions { ConfigName = "moongate", RootDirectory = root });
 
-        bootstrap.ConfigureServices(container =>
+        bootstrap.ConfigureServices(
+            container =>
             {
                 // RegisterCoreServices already provides IMainThreadDispatcher and ITimerService.
                 container.RegisterCoreServices();

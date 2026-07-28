@@ -1,7 +1,6 @@
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Tests.Support;
-using Xunit;
 
 namespace Moongate.Tests.Server.Accounts;
 

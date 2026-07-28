@@ -21,10 +21,10 @@ public sealed class OnlinePlayerAdminEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
         => routes.MapGet("/api/v1/admin/players/online", List)
-            .WithName("ListOnlinePlayers")
-            .WithTags("players")
-            .Produces<IReadOnlyList<OnlinePlayerMapResponse>>()
-            .RequireAuthorization(HttpServerService.AdminPolicy);
+                 .WithName("ListOnlinePlayers")
+                 .WithTags("players")
+                 .Produces<IReadOnlyList<OnlinePlayerMapResponse>>()
+                 .RequireAuthorization(HttpServerService.AdminPolicy);
 
     /// <summary>Lists players who have entered the world with map-ready positions.</summary>
     /// <remarks>

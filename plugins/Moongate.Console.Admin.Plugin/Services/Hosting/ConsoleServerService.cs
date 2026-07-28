@@ -46,6 +46,12 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
     /// <summary>The port actually bound — the OS-assigned one when the configured port is 0. Zero when disabled.</summary>
     public int BoundPort { get; private set; }
 
+    public void Dispose()
+    {
+        _cts?.Dispose();
+        _listener?.Dispose();
+    }
+
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         if (!_config.Enabled)
@@ -57,7 +63,7 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
 
         try
         {
-            _listener = new TcpListener(IPAddress.Parse(_config.Address), _config.Port);
+            _listener = new(IPAddress.Parse(_config.Address), _config.Port);
             _listener.Start();
         }
         catch (Exception ex) when (ex is SocketException or FormatException)
@@ -80,6 +86,36 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
         _logger.Information("Admin console listening on {Address}:{Port}", _config.Address, BoundPort);
 
         return ValueTask.CompletedTask;
+    }
+
+    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        if (_listener is null)
+        {
+            return;
+        }
+
+        _cts?.Cancel();
+        _listener.Stop();
+
+        foreach (var session in _sessions.Keys)
+        {
+            session.Close();
+        }
+
+        if (_acceptLoop is not null)
+        {
+            try
+            {
+                await _acceptLoop;
+            }
+            catch (Exception)
+            {
+                // accept loop unwinding on cancellation — nothing to report
+            }
+        }
+
+        _listener = null;
     }
 
     private async Task AcceptLoopAsync(CancellationToken ct)
@@ -116,12 +152,8 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
                 );
             }
         }
-        catch (OperationCanceledException)
-        {
-        }
-        catch (ObjectDisposedException)
-        {
-        }
+        catch (OperationCanceledException) { }
+        catch (ObjectDisposedException) { }
     }
 
     private static async Task RejectAsync(TcpClient client)
@@ -140,41 +172,5 @@ public sealed class ConsoleServerService : ISquidStdService, IDisposable
         {
             client.Close();
         }
-    }
-
-    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        if (_listener is null)
-        {
-            return;
-        }
-
-        _cts?.Cancel();
-        _listener.Stop();
-
-        foreach (var session in _sessions.Keys)
-        {
-            session.Close();
-        }
-
-        if (_acceptLoop is not null)
-        {
-            try
-            {
-                await _acceptLoop;
-            }
-            catch (Exception)
-            {
-                // accept loop unwinding on cancellation — nothing to report
-            }
-        }
-
-        _listener = null;
-    }
-
-    public void Dispose()
-    {
-        _cts?.Dispose();
-        _listener?.Dispose();
     }
 }

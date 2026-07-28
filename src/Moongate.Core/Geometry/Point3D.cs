@@ -68,15 +68,6 @@ public readonly struct Point3D : IEquatable<Point3D>, IComparable<Point3D>, ISpa
     public bool InRange(Point3D other, int range)
         => DistanceTo(other) <= range;
 
-    public static bool operator ==(Point3D left, Point3D right)
-        => left.Equals(right);
-
-    public static implicit operator Point2D(Point3D p)
-        => new(p.X, p.Y);
-
-    public static bool operator !=(Point3D left, Point3D right)
-        => !left.Equals(right);
-
     public static Point3D Parse(string s, IFormatProvider? provider)
         => Parse(s.AsSpan(), provider);
 
@@ -136,4 +127,13 @@ public readonly struct Point3D : IEquatable<Point3D>, IComparable<Point3D>, ISpa
 
         return true;
     }
+
+    public static bool operator ==(Point3D left, Point3D right)
+        => left.Equals(right);
+
+    public static implicit operator Point2D(Point3D p)
+        => new(p.X, p.Y);
+
+    public static bool operator !=(Point3D left, Point3D right)
+        => !left.Equals(right);
 }

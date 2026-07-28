@@ -19,26 +19,12 @@ public sealed class GlobalSerilogCapture : IDisposable
     {
         _previous = Log.Logger;
         _logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
-            .WriteTo.Sink(_sink)
-            .CreateLogger();
+                  .MinimumLevel
+                  .Verbose()
+                  .WriteTo
+                  .Sink(_sink)
+                  .CreateLogger();
         Log.Logger = _logger;
-    }
-
-    public void Dispose()
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        Log.Logger = _previous;
-        if (_logger is IDisposable disposable)
-        {
-            disposable.Dispose();
-        }
-
-        _disposed = true;
     }
 
     private sealed class CaptureSink : ILogEventSink
@@ -64,5 +50,22 @@ public sealed class GlobalSerilogCapture : IDisposable
                 _events.Add(logEvent);
             }
         }
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        Log.Logger = _previous;
+
+        if (_logger is IDisposable disposable)
+        {
+            disposable.Dispose();
+        }
+
+        _disposed = true;
     }
 }

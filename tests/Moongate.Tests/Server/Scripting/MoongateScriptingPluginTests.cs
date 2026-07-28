@@ -5,7 +5,6 @@ using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Tests.Support;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Directories;
-using SquidStd.Plugin.Abstractions.Data;
 
 namespace Moongate.Tests.Server.Scripting;
 
@@ -20,19 +19,17 @@ public sealed class MoongateScriptingPluginTests
         {
             Directory.CreateDirectory(Path.Combine(root, "scripts"));
             using var container = new Container();
-            container.RegisterInstance(
-                new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" }
-            );
+            container.RegisterInstance(new SquidStdOptions { AppName = "MoongateTests", AppVersion = "1.0.0" });
             container.RegisterInstance(new DirectoriesConfig(root, ["scripts"]));
 
-            new MoongateScriptingPlugin().Configure(container, new PluginContext());
+            new MoongateScriptingPlugin().Configure(container, new());
 
             Assert.True(container.IsRegistered<INpcBrainRuntime>());
             Assert.Equal(
                 typeof(LuaNpcBrainRuntime),
                 container.GetServiceRegistrations()
-                    .Single(registration => registration.ServiceType == typeof(INpcBrainRuntime))
-                    .ImplementationType
+                         .Single(registration => registration.ServiceType == typeof(INpcBrainRuntime))
+                         .ImplementationType
             );
         }
         finally
