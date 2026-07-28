@@ -29,6 +29,7 @@ public class MoongateEventSubscribersPlugin : ISquidStdPlugin
         container.RegisterEventSubscriber<ContainerSubscriber>();
         container.RegisterEventSubscriber<SpatialSubscriber>();
         container.RegisterEventSubscriber<AccountRegistrationSubscriber>();
+        container.RegisterEventSubscriber<HeldItemBounceSubscriber>();
 
         container.RegisterStdService<IEventSubscriberService, EventSubscriberService>();
     }

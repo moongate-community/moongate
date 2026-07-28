@@ -6,7 +6,6 @@ using Moongate.Http.Plugin;
 using Moongate.News.Plugin;
 using Moongate.Persistence;
 using Moongate.Scripting;
-using Moongate.Server;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Extensions;
@@ -15,6 +14,8 @@ using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Network;
+using Moongate.Server.Abstractions.Interfaces.Notifications;
+using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Server;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Autostart;
@@ -29,14 +30,12 @@ using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
-using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Services.Notifications;
-using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Services.Notifications.Channels;
 using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Server;
-using Moongate.Smtp.Plugin;
 using Moongate.Server.Services.World;
+using Moongate.Smtp.Plugin;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
 using SquidStd.Abstractions.Extensions.Services;
@@ -122,7 +121,8 @@ await ConsoleApp.RunAsync(
         // different bootstrap phases: activation here, container registration in ConfigureServices below.
         var pluginCatalog = new PluginCatalog();
 
-        stdBootstrap.UsePlugins(builder =>
+        stdBootstrap.UsePlugins(
+            builder =>
             {
                 builder.FromDirectory("plugins");
 
@@ -132,7 +132,7 @@ await ConsoleApp.RunAsync(
                 {
                     var plugin = new TPlugin();
 
-                    pluginCatalog.Record(plugin, isExternal: false);
+                    pluginCatalog.Record(plugin, false);
                     builder.Add(plugin);
                 }
 
@@ -160,7 +160,8 @@ await ConsoleApp.RunAsync(
             }
         );
 
-        stdBootstrap.ConfigureServices(container =>
+        stdBootstrap.ConfigureServices(
+            container =>
             {
                 // Binds the SAME cached instance mutated above; the file cannot clobber it.
                 container.RegisterConfigSection<MoongateConfig>("moongate");
@@ -177,7 +178,7 @@ await ConsoleApp.RunAsync(
                 {
                     if (Activator.CreateInstance(type) is ISquidStdPlugin external)
                     {
-                        pluginCatalog.Record(external, isExternal: true);
+                        pluginCatalog.Record(external, true);
                     }
                 }
 
@@ -193,6 +194,7 @@ await ConsoleApp.RunAsync(
                 container.RegisterInstance(TimeProvider.System);
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
                 container.Register<IItemService, ItemService>(Reuse.Singleton);
+                container.Register<IDragDropService, DragDropService>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
@@ -254,7 +256,8 @@ await ConsoleApp.RunAsync(
 
                 var eventBus = container.Resolve<IEventBus>();
 
-                eventBus.Subscribe<EngineStartedEvent>((_, _) =>
+                eventBus.Subscribe<EngineStartedEvent>(
+                    (_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
 

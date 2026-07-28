@@ -17,6 +17,13 @@ public interface IItemService
     /// <summary>Removes an item from the store; true when it existed.</summary>
     bool Delete(Serial itemId);
 
+    /// <summary>
+    /// Unhooks <paramref name="item" /> from wherever it is — a container, a worn layer, the ground —
+    /// leaving it attached to nothing and out of the spatial index. This is what a lift does: the item
+    /// belongs to no place until it is dropped.
+    /// </summary>
+    void Detach(ItemEntity item);
+
     /// <summary>Equips an item onto a mobile at a layer, detaching it from any previous location.</summary>
     void Equip(MobileEntity mobile, ItemEntity item, LayerType layer);
 
@@ -33,6 +40,12 @@ public interface IItemService
     IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile);
 
     /// <summary>Removes an item from a container, clearing both sides.</summary>
+    /// <summary>
+    /// Detaches <paramref name="item" /> from wherever it is and places it on the ground at
+    /// <paramref name="position" /> on <paramref name="mapId" />, persisting it and indexing it.
+    /// </summary>
+    void MoveToWorld(ItemEntity item, int mapId, Point3D position);
+
     void RemoveFromContainer(ItemEntity container, ItemEntity item);
 
     /// <summary>Persists changes to an existing item.</summary>

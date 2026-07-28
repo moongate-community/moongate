@@ -214,7 +214,7 @@ public class MovementServiceTests
         Assert.True(service.TryMoveNpc(mobile.Id, DirectionType.East));
 
         var stored = persistence.Store<MobileEntity>().GetById(mobile.Id)!;
-        Assert.Equal(new Point3D(2, 1, 0), stored.Position);
+        Assert.Equal(new(2, 1, 0), stored.Position);
         var moved = Assert.Single(bus.Published.OfType<MobileMovedEvent>());
         Assert.Equal(mobile.Id, moved.Mobile);
         Assert.Equal((0, new Point3D(1, 1, 0)), (moved.FromMapId, moved.FromPosition));
@@ -272,7 +272,7 @@ public class MovementServiceTests
         FakePersistenceService Persistence,
         SpatialIndexService Spatial,
         StubEventBus Bus
-    ) BuildMovementService()
+        ) BuildMovementService()
     {
         var (mapTiles, regions) = Build();
         var persistence = new FakePersistenceService();
@@ -280,28 +280,10 @@ public class MovementServiceTests
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), bus);
         var world = new StubWorldService();
 
-        return (new(mapTiles, regions, spatial, world, persistence, TimeProvider.System, bus, new StubLoopAffinity()), persistence, spatial, bus);
+        return (new(mapTiles, regions, spatial, world, persistence, TimeProvider.System, bus, new StubLoopAffinity()),
+                persistence, spatial, bus);
     }
 
     private static MobileEntity Mobile(int x = 1, int y = 1, int z = 0, DirectionType direction = DirectionType.East)
         => new() { Id = new(0x1), MapId = 0, Position = new(x, y, z), Direction = direction };
-
-    private sealed class StubWorldService : IWorldService
-    {
-        public int Broadcast<TPacket>(TPacket packet) where TPacket : IOutgoingPacket
-            => 0;
-
-        public void SendEnterWorld(PlayerSession session, MobileEntity mobile)
-        {
-        }
-
-        public int SendToPlayersInRange<TPacket>(
-            int mapId,
-            Point3D center,
-            int range,
-            TPacket packet,
-            Serial? exclude = null
-        ) where TPacket : IOutgoingPacket
-            => 0;
-    }
 }

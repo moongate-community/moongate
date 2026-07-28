@@ -21,7 +21,7 @@
   </a>
   <a class="mg-card" href="families/items-containers.md">
     <h3>Items &amp; containers</h3>
-    <div class="mg-card-ops">0x24 · 0x25 · 0x27 · 0x2E · 0x3C · 0xF3</div>
+    <div class="mg-card-ops">0x07 · 0x08 · 0x24 · 0x25 · 0x27 · 0x29 · 0x2E · 0x3C · 0xF3</div>
     <p>World items, worn items, container gumps, contents and lift rejects.</p>
   </a>
   <a class="mg-card" href="families/movement.md">

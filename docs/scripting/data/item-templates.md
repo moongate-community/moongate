@@ -64,10 +64,10 @@ of templates.
 | `GoldValue` | `int` | optional, default `0` | Declared gold value. **Reserved** — not read by `ItemFactoryService` or copied onto the spawned item today. |
 | `Weight` | `double` | optional, default `0.0` | Item weight. Must be finite and non-negative. |
 | `ScriptId` | `string` | optional, default `""` | Free-form script identifier, copied onto the spawned item's `ScriptId`. **Reserved** — no loader in this codebase currently dispatches on it. |
-| `IsMovable` | `bool` | optional, default `false` | Declared and shape-validated but **not yet read** by `ItemFactoryService`. |
+| `IsMovable` | `bool` | optional, default `false` | Whether the item can be picked up. `false` refuses the lift with `CannotLift` (0x27). Not read by `ItemFactoryService` — it is enforced at drag time by `DragDropService`. |
 | `Rarity` | `ItemRarityType` enum | optional, default `Common` | One of `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`, `Artifact`. Must be a defined member. Copied onto the spawned item's `Rarity`. |
 | `Tags` | `List<string>` | optional, default `[]` | Free-form labels. Drives `item.create_by_tag` / `CreateByTag`, and is the pool loot entries' `ItemTag` matches against. Cannot be an explicit YAML null. |
-| `Stackable` | `bool?` | optional, default `null` | Declared on the DTO. **Reserved** — no consumer in this codebase. |
+| `Stackable` | `bool?` | optional, default `null` | Whether two piles of this item merge when one is dropped onto the other, up to 60000. Both templates must say `true`; `null` counts as not stackable. Enforced by `DragDropService`. |
 | `Dyeable` | `bool?` | optional, default `null` | Declared on the DTO. **Reserved** — no consumer in this codebase. |
 | `Visibility` | `string?` | optional, default `null` | Free-form string (shipped value seen: `GameMaster`). **Reserved** — distinct from the spawned entity's own `Visibility` (an `AccountLevelType`), which this key is not wired to. |
 | `LootType` | `string?` | optional, default `null` | Free-form string (shipped value seen: `Blessed`). **Reserved** — no consumer in this codebase. |
@@ -182,7 +182,7 @@ equips):
     GoldValue: 0                # declared, not consumed
     Weight: 16.0
     ScriptId: none              # copied onto the item; nothing dispatches on it yet
-    IsMovable: true              # declared, not consumed
+    IsMovable: true              # false would refuse the lift
     Rarity: Common               # must be a defined ItemRarityType member
     Tags:
         - modernuo

@@ -26,6 +26,12 @@ public interface IWorldService
     void SendEnterWorld(PlayerSession session, MobileEntity mobile);
 
     /// <summary>
+    /// Sends <paramref name="packet" /> to the in-world session playing <paramref name="mobileId" />,
+    /// if any. Returns the number of recipients — 0 or 1.
+    /// </summary>
+    int SendToPlayer<TPacket>(Serial mobileId, TPacket packet) where TPacket : IOutgoingPacket;
+
+    /// <summary>
     /// Sends <paramref name="packet" /> to every in-world player session whose character is on
     /// <paramref name="mapId" /> within <paramref name="range" /> tiles of <paramref name="center" />,
     /// skipping the mobile identified by <paramref name="exclude" /> (typically the originator).
