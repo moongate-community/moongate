@@ -1,8 +1,13 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Internal;
+using Moongate.Server.Abstractions.Data.Session;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Items;
 
 namespace Moongate.Server.Services.Items;
@@ -17,6 +22,32 @@ public sealed class DragDropService
 {
     /// <summary>How close the player must be to lift something, in tiles. ModernUO uses the same 2.</summary>
     public const int LiftRange = 2;
+
+    private const int MaxStackAmount = 60000;
+
+    /// <summary>Where a bounced item lands in the backpack — the base slot CharacterService uses.</summary>
+    private static readonly Point2D BounceSlot = new(44, 65);
+
+    private readonly IItemService _items;
+    private readonly IItemFactoryService _itemFactory;
+    private readonly IItemTemplateService _templates;
+    private readonly IWorldService _world;
+    private readonly ILoopAffinity? _loopAffinity;
+
+    public DragDropService(
+        IItemService items,
+        IItemFactoryService itemFactory,
+        IItemTemplateService templates,
+        IWorldService world,
+        ILoopAffinity? loopAffinity = null
+    )
+    {
+        _items = items;
+        _itemFactory = itemFactory;
+        _templates = templates;
+        _world = world;
+        _loopAffinity = loopAffinity;
+    }
 
     /// <summary>
     /// Decides whether <paramref name="actor" /> may lift an item, in ModernUO's order: already
@@ -56,5 +87,154 @@ public sealed class DragDropService
         }
 
         return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    public LiftDecision Lift(
+        MobileEntity actor,
+        Serial itemId,
+        int amount,
+        Serial heldItemId,
+        out Serial heldId,
+        out HeldItemOrigin? origin
+    )
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.lift");
+
+        heldId = Serial.Zero;
+        origin = null;
+
+        if (_items.GetById(itemId) is not { } item)
+        {
+            return new(false, LiftRejectReasonType.Inspecific);
+        }
+
+        var (mapId, position) = WorldLocation(item, actor);
+        var decision = Evaluate(
+            actor,
+            mapId,
+            position,
+            _templates.GetById(item.TemplateId),
+            heldItemId,
+            Reachable(item, actor)
+        );
+
+        if (!decision.Accepted)
+        {
+            return decision;
+        }
+
+        SplitStack(item, amount);
+
+        // Snapshot before detaching: Detach clears the very fields the origin is made of.
+        origin = HeldItemOrigin.From(item);
+        heldId = item.Id;
+
+        _items.Detach(item);
+
+        // Everyone who could see it there stops seeing it. ModernUO reaches the same end state by
+        // internalizing the item, which triggers the removal through the map-change path.
+        _world.SendToPlayersInRange(
+            mapId,
+            position,
+            PlayerSession.MaxViewRange,
+            new DeleteObjectPacket(item.Id)
+        );
+
+        return decision;
+    }
+
+    /// <summary>
+    /// Walks up the container chain to the item that is actually somewhere — on the ground or on a
+    /// mobile. The guard stops a corrupted cycle from hanging the loop thread.
+    /// </summary>
+    private ItemEntity Root(ItemEntity item)
+    {
+        var current = item;
+
+        for (var depth = 0; current.ParentContainerId != Serial.Zero && depth < 32; depth++)
+        {
+            if (_items.GetById(current.ParentContainerId) is not { } parent)
+            {
+                break;
+            }
+
+            current = parent;
+        }
+
+        return current;
+    }
+
+    /// <summary>
+    /// Where an item is in the world, for the range check: its own position when it lies on the
+    /// ground, its root's otherwise. An item worn by the actor is wherever the actor is; one worn by
+    /// somebody else keeps the stale coordinates of an equipped entity, which fails the range check —
+    /// the outcome we want anyway, since Reachable refuses it too.
+    /// </summary>
+    private (int MapId, Point3D Position) WorldLocation(ItemEntity item, MobileEntity actor)
+    {
+        var root = Root(item);
+
+        return root.EquippedMobileId == actor.Id
+            ? (actor.MapId, actor.Position)
+            : (root.MapId, root.Position);
+    }
+
+    /// <summary>
+    /// Whether the actor may touch this item at all. Their own worn items and anything inside their
+    /// own containers, yes; anything on another mobile, never; anything on the ground, yes — how far
+    /// away it may be is the range check's job, not this one's.
+    /// </summary>
+    private bool Reachable(ItemEntity item, MobileEntity actor)
+    {
+        var root = Root(item);
+
+        if (root.EquippedMobileId == actor.Id)
+        {
+            return true;
+        }
+
+        return root.EquippedMobileId == Serial.Zero;
+    }
+
+    /// <summary>
+    /// ModernUO's inversion (Mobile.LiftItemDupe): the ORIGINAL entity keeps travelling on the cursor
+    /// with the lifted amount, and the NEW entity is the remainder left behind. The serial the client
+    /// is dragging therefore never changes mid-drag.
+    /// </summary>
+    private void SplitStack(ItemEntity item, int amount)
+    {
+        var lifted = Math.Clamp(amount, 1, item.Amount);
+
+        if (lifted >= item.Amount)
+        {
+            return;
+        }
+
+        var created = _itemFactory.CreateFromTemplate(
+            item.TemplateId,
+            amount: item.Amount - lifted,
+            hue: item.Hue
+        );
+
+        // No template to build the remainder from: leave the stack whole rather than lose the rest.
+        if (created.Count == 0)
+        {
+            return;
+        }
+
+        var remainder = created[0];
+        _items.Create(remainder);
+
+        if (item.ParentContainerId != Serial.Zero && _items.GetById(item.ParentContainerId) is { } container)
+        {
+            _items.AddToContainer(container, remainder, item.ContainerPosition);
+        }
+        else
+        {
+            _items.MoveToWorld(remainder, item.MapId, item.Position);
+        }
+
+        item.Amount = lifted;
+        _items.Save(item);
     }
 }
