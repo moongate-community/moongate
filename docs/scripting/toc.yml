@@ -20,6 +20,8 @@
       href: reference/ai.md
     - name: memory
       href: reference/memory.md
+    - name: item scripts
+      href: reference/item-scripts.md
     - name: game
       href: reference/game.md
     - name: events
