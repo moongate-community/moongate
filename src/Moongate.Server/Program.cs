@@ -198,6 +198,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IContainerOpenerRegistry, ContainerOpenerRegistry>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
                 container.Register<IVirtualSerialService, VirtualSerialService>(Reuse.Singleton);
+                container.Register<ILightService, LightService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
