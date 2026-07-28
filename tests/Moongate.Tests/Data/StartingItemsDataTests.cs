@@ -20,6 +20,27 @@ public class StartingItemsDataTests
         Assert.NotEmpty(data.BySkill);
     }
 
+    // The hues picked on the creation screen only reach the character if the body kit asks for them:
+    // an entry with no Hue falls back to the template's own hue, which is 0 for every garment.
+    [Theory]
+    [InlineData("Human/Male", "shirt", "shirt")]
+    [InlineData("Human/Male", "long_pants", "pants")]
+    [InlineData("Human/Female", "fancy_shirt", "shirt")]
+    [InlineData("Human/Female", "skirt", "pants")]
+    [InlineData("Elf/Male", "shirt", "shirt")]
+    [InlineData("Elf/Male", "long_pants", "pants")]
+    [InlineData("Elf/Female", "fancy_shirt", "shirt")]
+    [InlineData("Elf/Female", "skirt", "pants")]
+    [InlineData("Gargoyle/Male", "robe", "shirt")]
+    [InlineData("Gargoyle/Female", "robe", "shirt")]
+    public void BodyKitGarments_WearThePlayerPickedHue(string body, string item, string hue)
+    {
+        var kit = LoadData().ByBody[body];
+        var entry = Assert.Single(kit.Equip.Where(equip => equip.Item == item));
+
+        Assert.Equal(hue, entry.Hue);
+    }
+
     [Fact]
     public async Task EveryReferencedItem_ResolvesToATemplate()
     {
@@ -33,12 +54,12 @@ public class StartingItemsDataTests
 
             var data = LoadData();
             var referenced = data.All
-                .Equip
-                .Concat(data.All.Pack)
-                .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
-                .Select(entry => entry.Item)
-                .Distinct();
+                                 .Equip
+                                 .Concat(data.All.Pack)
+                                 .Concat(data.ByBody.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Concat(data.BySkill.Values.SelectMany(kit => kit.Equip.Concat(kit.Pack)))
+                                 .Select(entry => entry.Item)
+                                 .Distinct();
 
             foreach (var id in referenced)
             {
