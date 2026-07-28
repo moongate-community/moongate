@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Interfaces;
 using Moongate.Network.Middlewares;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Internal;
 using Moongate.Server.Abstractions.Interfaces.Network;
 using Moongate.Server.Abstractions.Types;
 using Moongate.UO.Data.Version;
@@ -56,6 +57,16 @@ public sealed class PlayerSession : ISeedTarget
     public int ViewRange { get; private set; } = MaxViewRange;
 
     /// <summary>
+    /// The item this client is dragging on its cursor, or <see cref="Serial.Zero" /> when its hands
+    /// are empty. Deliberately not persisted: a held item is attached to nothing, and session state
+    /// cannot outlive the process, so a crash mid-drag cannot strand it.
+    /// </summary>
+    public Serial HeldItemId { get; private set; }
+
+    /// <summary>Where <see cref="HeldItemId" /> came from, so a failed drop can bounce it back.</summary>
+    public HeldItemOrigin? HeldItemOrigin { get; private set; }
+
+    /// <summary>
     /// The last movement sequence number accepted from this client, or null before the first accepted move (or after a
     /// resync).
     /// </summary>
@@ -86,6 +97,16 @@ public sealed class PlayerSession : ISeedTarget
     public static int ClampViewRange(int requested)
         => Math.Clamp(requested, MinViewRange, MaxViewRange);
 
+    /// <summary>Empties the client's hands, after a successful drop or a bounce.</summary>
+    public void ClearHold()
+    {
+        lock (_stateSync)
+        {
+            HeldItemId = Serial.Zero;
+            HeldItemOrigin = null;
+        }
+    }
+
     /// <summary>Closes the underlying connection, dropping this session (fire-and-forget).</summary>
     public void Disconnect()
         => _ = _client.CloseAsync();
@@ -96,6 +117,16 @@ public sealed class PlayerSession : ISeedTarget
     /// </summary>
     public void EnableCompression()
         => Compression.Enabled = true;
+
+    /// <summary>Records the item now on the client's cursor and where it was lifted from.</summary>
+    public void Hold(Serial itemId, HeldItemOrigin origin)
+    {
+        lock (_stateSync)
+        {
+            HeldItemId = itemId;
+            HeldItemOrigin = origin;
+        }
+    }
 
     public void MarkAuthenticated(string username)
     {
