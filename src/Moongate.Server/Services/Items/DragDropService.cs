@@ -143,6 +143,156 @@ public sealed class DragDropService
         return decision;
     }
 
+    public LiftDecision Drop(
+        MobileEntity actor,
+        Serial heldItemId,
+        Serial containerId,
+        Point3D groundPosition,
+        Point2D containerPosition
+    )
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.drop");
+
+        // The held serial is the authority. A drop naming anything else is a desynced or hostile
+        // client, and honouring it would let one move items it never lifted.
+        if (heldItemId == Serial.Zero || _items.GetById(heldItemId) is not { } item)
+        {
+            return new(false, LiftRejectReasonType.Inspecific);
+        }
+
+        return containerId == Serial.Zero
+            ? DropOnGround(actor, item, groundPosition)
+            : DropInContainer(actor, item, containerId, containerPosition);
+    }
+
+    /// <summary>
+    /// Whether <paramref name="dropped" /> can merge into <paramref name="existing" />: the same thing,
+    /// the same colour, both declared stackable, and a total the client can represent.
+    /// </summary>
+    public static bool CanStack(
+        ItemEntity existing,
+        ItemEntity dropped,
+        ItemTemplate? existingTemplate,
+        ItemTemplate? droppedTemplate
+    )
+        => existing.Id != dropped.Id &&
+           existingTemplate?.Stackable == true &&
+           droppedTemplate?.Stackable == true &&
+           existing.TemplateId == dropped.TemplateId &&
+           existing.ItemId == dropped.ItemId &&
+           existing.Hue == dropped.Hue &&
+           existing.Amount + dropped.Amount <= MaxStackAmount;
+
+    private LiftDecision DropOnGround(MobileEntity actor, ItemEntity item, Point3D position)
+    {
+        if (!actor.Position.InRange(position, LiftRange))
+        {
+            return new(false, LiftRejectReasonType.OutOfRange);
+        }
+
+        PlaceOnGround(item, actor.MapId, position);
+
+        return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    private LiftDecision DropInContainer(
+        MobileEntity actor,
+        ItemEntity item,
+        Serial containerId,
+        Point2D position
+    )
+    {
+        // A container inside itself would take its whole contents out of reach for good.
+        if (containerId == item.Id || _items.GetById(containerId) is not { } container)
+        {
+            return new(false, LiftRejectReasonType.CannotLift);
+        }
+
+        if (IsDescendantOf(container, item.Id) || !Reachable(container, actor))
+        {
+            return new(false, LiftRejectReasonType.CannotLift);
+        }
+
+        var (containerMapId, containerWorldPosition) = WorldLocation(container, actor);
+
+        if (actor.MapId != containerMapId || !actor.Position.InRange(containerWorldPosition, LiftRange))
+        {
+            return new(false, LiftRejectReasonType.OutOfRange);
+        }
+
+        var stack = FindStack(container, item);
+
+        if (stack is not null)
+        {
+            stack.Amount += item.Amount;
+            _items.Save(stack);
+            _items.Delete(item.Id);
+
+            _world.SendToPlayer(actor.Id, ContainerPacket(stack, container.Id, stack.ContainerPosition));
+
+            return new(true, LiftRejectReasonType.Inspecific);
+        }
+
+        _items.AddToContainer(container, item, position);
+
+        _world.SendToPlayer(actor.Id, ContainerPacket(item, container.Id, position));
+
+        return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    private ItemEntity? FindStack(ItemEntity container, ItemEntity dropped)
+    {
+        var droppedTemplate = _templates.GetById(dropped.TemplateId);
+
+        foreach (var candidate in _items.GetContents(container.Id))
+        {
+            if (CanStack(candidate, dropped, _templates.GetById(candidate.TemplateId), droppedTemplate))
+            {
+                return candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>True when <paramref name="candidate" /> sits anywhere inside <paramref name="ancestorId" />.</summary>
+    private bool IsDescendantOf(ItemEntity candidate, Serial ancestorId)
+    {
+        var current = candidate;
+
+        for (var depth = 0; current.ParentContainerId != Serial.Zero && depth < 32; depth++)
+        {
+            if (current.ParentContainerId == ancestorId)
+            {
+                return true;
+            }
+
+            if (_items.GetById(current.ParentContainerId) is not { } parent)
+            {
+                return false;
+            }
+
+            current = parent;
+        }
+
+        return false;
+    }
+
+    private void PlaceOnGround(ItemEntity item, int mapId, Point3D position)
+    {
+        _items.MoveToWorld(item, mapId, position);
+
+        _world.SendToPlayersInRange(
+            mapId,
+            position,
+            PlayerSession.MaxViewRange,
+            new WorldItemPacket(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, item.Hue)
+        );
+    }
+
+    private static AddItemToContainerPacket ContainerPacket(ItemEntity item, Serial containerId, Point2D position)
+        => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
+
     /// <summary>
     /// Walks up the container chain to the item that is actually somewhere — on the ground or on a
     /// mobile. The guard stops a corrupted cycle from hanging the loop thread.
