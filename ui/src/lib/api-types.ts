@@ -183,7 +183,7 @@ export interface paths {
         /**
          * Opens a per-connection SSE feed; its first event carries the connection id to POST with.
          * @description Emits `ready` (data = the connection id), then a `line` per command reply and a
-         *                 `done` when a command finishes. The connection is closed when the client disconnects.
+         *     `done` when a command finishes. The connection is closed when the client disconnects.
          */
         get: operations["StreamConsole"];
         put?: never;
@@ -206,7 +206,7 @@ export interface paths {
         /**
          * Runs a console command; its reply lines stream to the given connection's SSE feed.
          * @description Returns 202 immediately — the command is dispatched onto the game loop and its output
-         *                 arrives asynchronously on `GET /api/v1/admin/console/stream`.
+         *     arrives asynchronously on `GET /api/v1/admin/console/stream`.
          */
         post: operations["SendConsoleCommand"];
         delete?: never;
@@ -1453,7 +1453,10 @@ export interface components {
             email?: string | null;
             discord?: string | null;
         };
-        /** @description The public server profile a website or launcher reads: identity, contacts, assets, and effective registration availability. */
+        /**
+         * @description The public server profile a website or launcher reads: identity, contacts, assets, and effective registration
+         *     availability.
+         */
         ServerInfoResponse: {
             shardName: string;
             description?: string | null;
