@@ -16,7 +16,12 @@ public sealed class MobileTemplate
     /// </summary>
     public string NamePool { get; set; } = string.Empty;
 
-    public MobileTemplateGenderType Gender { get; set; } = MobileTemplateGenderType.Male;
+    /// <summary>
+    /// Gender for this template; when null the base's is used, and a template with no base spawns
+    /// male. Nullable so that omitting the key and writing <c>Gender: Male</c> mean different things
+    /// — without it a template deriving from a female base could never state that it is male.
+    /// </summary>
+    public MobileTemplateGenderType? Gender { get; set; }
 
     public string Title { get; set; } = string.Empty;
 

@@ -244,7 +244,11 @@ public sealed class MobileFactoryService : IMobileFactoryService
         return resolved;
     }
 
-    private GenderType ResolveGender(MobileTemplateGenderType gender)
+    /// <summary>
+    /// A template that states no gender spawns male, which is what the default was before the key
+    /// became nullable. The discard arm already covered <c>Male</c> and now covers null too.
+    /// </summary>
+    private GenderType ResolveGender(MobileTemplateGenderType? gender)
         => gender switch
         {
             MobileTemplateGenderType.Female => GenderType.Female,
