@@ -56,7 +56,7 @@ public class WorldServiceTests
         var persistence = new FakePersistenceService();
         var mobile = Player();
         await persistence.Store<MobileEntity>().UpsertAsync(mobile);
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var service = new WorldService(
             new StubItemService([]),
             Skills(),
@@ -351,7 +351,7 @@ public class WorldServiceTests
             new VirtualSerialService(),
             new StubEventBus(),
             time ?? TimeProvider.System,
-            new OplService(new FakePersistenceService(), new ItemTemplateService()),
+            new OplService(new FakePersistenceService(), new ItemTemplateService(), new StubClilocService("gold coin")),
             new SessionManager(),
             new StubLightService(0)
         );

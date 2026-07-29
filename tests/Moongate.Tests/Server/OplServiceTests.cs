@@ -48,7 +48,7 @@ public class OplServiceTests
     public void ItemServiceDelete_DropsTheCachedList()
     {
         var persistence = new FakePersistenceService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var items = new ItemService(persistence, opl);
         var item = new ItemEntity { Name = "a dagger", ItemId = 3921 };
         items.Create(item);
@@ -63,7 +63,7 @@ public class OplServiceTests
     public void ItemServiceSave_InvalidatesTheCachedList()
     {
         var persistence = new FakePersistenceService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var items = new ItemService(persistence, opl);
         var item = new ItemEntity { Name = "a dagger", ItemId = 3921 };
         items.Create(item);
@@ -178,7 +178,7 @@ public class OplServiceTests
     {
         var persistence = new FakePersistenceService();
         var templates = new ItemTemplateService();
-        var opl = new OplService(persistence, templates);
+        var opl = new OplService(persistence, templates, new StubClilocService("gold coin"));
 
         return (opl, new(persistence), templates, persistence);
     }

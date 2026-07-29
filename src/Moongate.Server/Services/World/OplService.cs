@@ -3,7 +3,9 @@ using Moongate.Network.Data;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.World;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.UO.Data.Items;
 using Moongate.UO.Data.Types;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
@@ -28,13 +30,15 @@ public sealed class OplService : IOplService
     private readonly IEntityStore<ItemEntity, Serial> _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly IItemTemplateService _templates;
+    private readonly IClilocService _clilocs;
     private readonly Dictionary<Serial, OplSnapshot> _cache = [];
 
-    public OplService(IPersistenceService persistence, IItemTemplateService templates)
+    public OplService(IPersistenceService persistence, IItemTemplateService templates, IClilocService clilocs)
     {
         _items = persistence.GetStore<ItemEntity, Serial>();
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
         _templates = templates;
+        _clilocs = clilocs;
     }
 
     public OplSnapshot GetOrBuild(Serial serial)
@@ -74,15 +78,32 @@ public sealed class OplService : IOplService
         var entries = new List<OplEntry>();
         var rotation = 0;
         var template = _templates.GetById(item.TemplateId);
-        var name = FirstNonEmpty(item.Name, template?.Name, "item");
+        var name = FirstNonEmpty(item.Name, template?.Name, string.Empty);
+        var cliloc = ItemClilocs.ForItemId(item.ItemId);
 
-        if (item.Amount > 1)
+        if (name.Length == 0 && _clilocs.Text(cliloc) is not null)
         {
-            entries.Add(new(StackCliloc, $"{item.Amount}\t{name}"));
+            // Nobody named it and the client knows what it is: send the number, not a word. The
+            // client renders it in the player's language and builds the plural itself.
+            entries.Add(
+                item.Amount > 1
+                    ? new(StackCliloc, $"{item.Amount}\t#{cliloc}")
+                    : new(cliloc, string.Empty)
+            );
         }
         else
         {
-            entries.Add(RawText(name, ref rotation));
+            // Nothing named it and the client has no entry either: the template id beats "item".
+            var text = name.Length > 0 ? name : item.TemplateId;
+
+            if (item.Amount > 1)
+            {
+                entries.Add(new(StackCliloc, $"{item.Amount}\t{text}"));
+            }
+            else
+            {
+                entries.Add(RawText(text, ref rotation));
+            }
         }
 
         if (template is { Weight: > 0 })

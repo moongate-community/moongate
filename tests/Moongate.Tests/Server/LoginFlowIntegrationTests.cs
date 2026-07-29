@@ -129,7 +129,7 @@ public class LoginFlowIntegrationTests
         await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)2, Username = "bob" });
 
         var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var sessions = new SessionManager();
 
         var world = new WorldService(
@@ -301,7 +301,7 @@ public class LoginFlowIntegrationTests
                          );
 
         var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var sessions = new SessionManager();
 
         var world = new WorldService(
@@ -750,7 +750,7 @@ public class LoginFlowIntegrationTests
         await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
 
         var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var sessions = new SessionManager();
 
         // Synthetic 8x8-tile flat map at mapId 0 (Felucca). "testCities" below is registered as
@@ -1009,7 +1009,7 @@ public class LoginFlowIntegrationTests
         await persistence.Store<AccountEntity>().UpsertAsync(new() { Id = (Serial)1, Username = "alice" });
 
         var eventBus = new EventBusService();
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
         var sessions = new SessionManager();
 
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), eventBus);
@@ -1339,7 +1339,7 @@ public class LoginFlowIntegrationTests
         FakePersistenceService persistence
     )
     {
-        var opl = new OplService(persistence, new ItemTemplateService());
+        var opl = new OplService(persistence, new ItemTemplateService(), new StubClilocService("gold coin"));
 
         return StartServerAsync(
             config,
