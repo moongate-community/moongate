@@ -62,7 +62,7 @@ of templates.
 | `ItemId` | `int` | optional, default `0` | The UO art/tile id. Must be non-negative. |
 | `Hue` | `int` | optional, default `0` | Default hue index, used unless the caller passes an explicit hue (e.g. `item.create`'s hue argument). |
 | `GoldValue` | `int` | optional, default `0` | Declared gold value. **Reserved** — not read by `ItemFactoryService` or copied onto the spawned item today. |
-| `Weight` | `double` | optional, default `0.0` | Item weight. Must be finite and non-negative. |
+| `Weight` | `double` | optional, default `0.0` | **Override only.** An item's weight comes from the client's `tiledata.mul` — the weight byte on the tile named by `ItemId`, where both `0` and the `255` immovable sentinel resolve to `1`. This key overrides it; `0` means "not stated, ask the client files". Must be finite and non-negative. Resolved at load by `TileDataTemplateResolver`. Nothing reads it yet: there is no carry-weight system. |
 | `ScriptId` | `string` | optional, default `""` | Names the Lua script that runs when players interact with the item; the dot is a namespace, so `items.magic_torch` means `scripts/items/magic_torch.lua`. Must match `^[a-z0-9_]+(\.[a-z0-9_]+)*$`. `none` or empty means no script. See [Item scripts](../reference/item-scripts.md). |
 | `IsMovable` | `bool` | optional, default `false` | Whether the item can be picked up. `false` refuses the lift with `CannotLift` (0x27). Not read by `ItemFactoryService` — it is enforced at drag time by `DragDropService`. |
 | `Rarity` | `ItemRarityType` enum | optional, default `Common` | One of `Common`, `Uncommon`, `Rare`, `Epic`, `Legendary`, `Artifact`. Must be a defined member. Copied onto the spawned item's `Rarity`. |
@@ -74,7 +74,7 @@ of templates.
 | `FlippableItemIds` | `List<int>?` | optional, default `null` | Alternate `ItemId` graphics the item cycles through. Consumed by `item.flip` / `IItemService.Flip`. Each element must be non-negative and non-null. |
 | `LootTables` | `List<string>?` | optional, default `null` | Loot template ids associated with this item. Declared and shape-validated (elements non-null) but **not auto-rolled** by any loader — roll them explicitly with [`loot.roll`](../reference/loot.md#lootroll). |
 | `Params` | `Dictionary<string, ItemParam>?` | optional, default `null` | Typed script parameters keyed by name. Values must be non-null. **Reserved** — no script-parameter resolver currently reads this. |
-| `Equip` | `EquipSpec?` | optional, default `null` | Present ⇒ the item is wearable. See [EquipSpec](#equipspec). |
+| `Equip` | `EquipSpec?` | optional, default `null` | Overrides for a wearable item. Its absence does **not** mean the item is unwearable: the client's tiledata decides that, and a wearable tile gets an `EquipSpec` synthesised at load. See [EquipSpec](#equipspec). |
 | `Weapon` | `WeaponSpec?` | optional, default `null` | Present ⇒ the item is a weapon. See [WeaponSpec](#weaponspec). |
 | `Container` | `ContainerSpec?` | optional, default `null` | Present ⇒ the item is a container. See [ContainerSpec](#containerspec). |
 | `Book` | `BookSpec?` | optional, default `null` | Present ⇒ the item is a book. See [BookSpec](#bookspec). |
@@ -89,7 +89,7 @@ Nested under `Equip:`.
 
 | Key | Type | Required / default | Meaning |
 |---|---|---|---|
-| `Layer` | `LayerType` enum | optional, default `None` (0) | The [paperdoll layer](../reference/enums.md#layer_type) this item equips to. Must be a defined member. Consumed by `CharacterService` to auto-equip [starting items](starting-items.md). |
+| `Layer` | `LayerType` enum | optional, default `None` (0) | **Override only.** The [paperdoll layer](../reference/enums.md#layer_type) comes from the client's `tiledata.mul` — the layer byte on the tile named by `ItemId`, read only when that tile carries the `Wearable` flag. This key overrides it; `None` means "not stated, ask the client files". Must be a defined member. Declare it only where the game rule diverges from the client, as the shipped weapons do to force `TwoHanded` and take the shield slot. Resolved at load by `TileDataTemplateResolver`, then consumed by `CharacterService` to auto-equip [starting items](starting-items.md). |
 | `HitPoints` | `int?` | optional, default `null` | Durability. Must be non-negative when set. |
 | `StrengthReq` | `int?` | optional, default `null` | Strength required to equip. Must be non-negative. |
 | `DexterityReq` | `int?` | optional, default `null` | Dexterity required to equip. Must be non-negative. |
@@ -204,6 +204,9 @@ equips):
         MissSound: 568
         WeaponSkill: Swords       # free-form skill name, not enum-validated
 ```
+
+`Weight` and `Equip.Layer` appear here as overrides. Most shipped templates
+declare neither and let the client files decide — see the rows above.
 
 This entry has no `Container`, `Book`, `Params`, `LootTables`, `Stackable`,
 `Dyeable`, `Visibility` or `LootType` keys — all optional and omitted here.
