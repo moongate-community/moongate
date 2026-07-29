@@ -40,6 +40,7 @@
     Title: the guard
     Category: npc
     Gender: Female
+    NamePool: female
     Description: Town female warrior guard NPC inspired by ModernUO WarriorGuard.
     Tags:
         - npc
@@ -119,6 +120,7 @@
     Title: the guard
     Category: npc
     Gender: Female
+    NamePool: female
     Description: Town female archer guard NPC inspired by ModernUO ArcherGuard.
     Tags:
         - npc

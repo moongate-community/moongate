@@ -17,11 +17,17 @@ public class MobileTemplateRepositoryIntegrityTests
         var items = new ItemTemplateService();
         var mobiles = new MobileTemplateService();
         var loot = new LootTemplateService();
+        var names = new NameService();
 
         try
         {
             await new ItemTemplatesLoader(items, directories).LoadAsync();
-            await new MobileTemplatesLoader(mobiles, directories, new NameService()).LoadAsync();
+
+            // The mobile loader rejects a NamePool naming no registered pool, so the names have to
+            // be loaded first — exactly as at boot, where NamesLoader runs at priority 30 and the
+            // mobile templates at 150.
+            await new NamesLoader(names, directories).LoadAsync();
+            await new MobileTemplatesLoader(mobiles, directories, names).LoadAsync();
             await new LootTemplatesLoader(loot, items, directories).LoadAsync();
 
             Assert.NotEmpty(mobiles.All);

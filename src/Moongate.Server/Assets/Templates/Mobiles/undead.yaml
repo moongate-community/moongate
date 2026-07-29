@@ -1,5 +1,6 @@
 -   Id: zombie_npc
     Title: a zombie
+    Name: a zombie
     Category: monster
     Description: Static zombie template for spawn and combat testing.
     Tags:
@@ -16,6 +17,7 @@
     BrainScript: undead_melee
 -   Id: skeletal_knight_npc
     Title: a skeletal knight
+    Name: a skeletal knight
     Category: monster
     Description: Static skeletal knight template for corpse and loot testing.
     Tags:

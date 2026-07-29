@@ -1,5 +1,6 @@
 -   Id: base_human_npc
     Title: a human
+    NamePool: male
     Category: npc
     Description: Base human NPC template for derived vendor/citizen profiles.
     Tags:
