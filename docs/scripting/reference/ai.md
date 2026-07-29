@@ -17,9 +17,14 @@ the file format, hooks, context, and lifecycle.
 ai.say(text) -> boolean
 ```
 
-Speaks as the brain owner with regular speech, the default hue, and range 15.
-Returns `false` when `text` is blank or longer than 128 characters. It takes no
-serial, so a brain cannot choose an arbitrary speaker.
+Speaks as the brain owner. It takes no serial, so a brain cannot choose an
+arbitrary speaker.
+
+The rules are the same ones [`chat.say`](chat.md) applies, because both go
+through the same service: `false` when the text is blank, longer than 128
+characters, or a command rather than speech. The leading character decides how
+it is spoken and at what range — see [chat](chat.md) for the table. Ordinary
+text is regular speech in the default hue, heard 15 tiles away.
 
 ## ai.patrol
 
