@@ -309,7 +309,7 @@ public class MobileModuleTests
         var itemTemplates = new ItemTemplateService();
         itemTemplates.Register(new() { Id = "plate_chest", Name = "Plate Chest", Category = "Armor", ItemId = 5141 });
 
-        var factory = new MobileFactoryService(new StartingCityService(), mobileTemplates, random);
+        var factory = new MobileFactoryService(new StartingCityService(), mobileTemplates, random, new NameService());
         var itemFactory = new ItemFactoryService(itemTemplates, random);
         var items = new ItemService(persistence);
 

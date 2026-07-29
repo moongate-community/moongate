@@ -45,7 +45,7 @@ public static class CharacterServiceFixture
 
         return new(
             persistence,
-            new MobileFactoryService(cities ?? Cities(), new MobileTemplateService(), random),
+            new MobileFactoryService(cities ?? Cities(), new MobileTemplateService(), random, new NameService()),
             new ItemFactoryService(templates, random),
             new ItemService(persistence),
             templates,
