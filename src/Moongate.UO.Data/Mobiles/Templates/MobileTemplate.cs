@@ -9,6 +9,13 @@ public sealed class MobileTemplate
 
     public string Name { get; set; } = string.Empty;
 
+    /// <summary>
+    /// The <c>names.yaml</c> pool this template draws a name from when it has no <see cref="Name" />
+    /// of its own. A literal pool type — the shipped pools spell gender inconsistently
+    /// (<c>male</c>, <c>tokuno male</c>, <c>male elf brigand</c>), so nothing is appended for you.
+    /// </summary>
+    public string NamePool { get; set; } = string.Empty;
+
     public MobileTemplateGenderType Gender { get; set; } = MobileTemplateGenderType.Male;
 
     public string Title { get; set; } = string.Empty;
