@@ -18,6 +18,10 @@ public class BroadcastCommandTests
             => Broadcasts.Add(text);
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
+
+        // A fake: it enforces nothing, because the rules belong to ChatService.
+        public bool SayAs(MobileEntity speaker, string text)
+            => true;
     }
 
     [Fact]

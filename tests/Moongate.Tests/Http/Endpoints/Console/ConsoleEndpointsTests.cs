@@ -26,6 +26,10 @@ public class ConsoleEndpointsTests
         public void Broadcast(string text, Hue? hue = null) { }
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
+
+        // A fake: it enforces nothing, because the rules belong to ChatService.
+        public bool SayAs(MobileEntity speaker, string text)
+            => true;
     }
 
     [Fact]

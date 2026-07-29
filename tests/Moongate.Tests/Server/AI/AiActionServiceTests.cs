@@ -23,6 +23,23 @@ public class AiActionServiceTests
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
             => Messages.Add((speaker.Id, type, text, hue, range));
+
+        /// <summary>Set to make every SayAs refuse, standing in for a rule ChatService would enforce.</summary>
+        public bool Refuse { get; set; }
+
+        // Records rather than enforcing: the rules belong to ChatService, and the tests that pin them
+        // live in ChatServiceTests.
+        public bool SayAs(MobileEntity speaker, string text)
+        {
+            if (Refuse)
+            {
+                return false;
+            }
+
+            Say(speaker, ChatMessageType.Regular, text, Hue.Default, 15);
+
+            return true;
+        }
     }
 
     private sealed class RecordingMovementService : IMovementService
@@ -329,34 +346,23 @@ public class AiActionServiceTests
         Assert.Equal(1, metrics.Current.IntentsRejected);
     }
 
-    [Theory, InlineData(null), InlineData(""), InlineData("   ")]
-    public void Say_BlankText_Rejects(string? text)
+    // Blank and oversize text are refused by ChatService now, not here -- that is what unified the
+    // rules with chat.say. The refusals themselves are pinned in ChatServiceTests; what this asserts
+    // is that a refusal reaches the brain as a rejected intent rather than being swallowed.
+    [Fact]
+    public void Say_WhenTheChatServiceRefuses_CountsARejectedIntent()
     {
         var (service, persistence, chat, _, metrics) = Build();
         var owner = AddOwner(persistence);
+        chat.Refuse = true;
 
         using (service.Begin(Context(owner)))
         {
-            Assert.False(service.Say(text!));
+            Assert.False(service.Say("anything at all"));
         }
 
         Assert.Empty(chat.Messages);
         Assert.Equal(0, metrics.Current.IntentsAccepted);
-        Assert.Equal(1, metrics.Current.IntentsRejected);
-    }
-
-    [Fact]
-    public void Say_OversizeText_Rejects()
-    {
-        var (service, persistence, chat, _, metrics) = Build();
-        var owner = AddOwner(persistence);
-
-        using (service.Begin(Context(owner)))
-        {
-            Assert.False(service.Say(new('a', 129)));
-        }
-
-        Assert.Empty(chat.Messages);
         Assert.Equal(1, metrics.Current.IntentsRejected);
     }
 

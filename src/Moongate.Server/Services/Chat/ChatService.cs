@@ -21,6 +21,9 @@ public sealed class ChatService : IChatService
 {
     private static readonly TimeSpan MinInterval = TimeSpan.FromMilliseconds(25);
 
+    /// <summary>Longest a single utterance may be. Moved here from AiActionService, which enforced it alone.</summary>
+    private const int MaximumLength = 128;
+
     private const int DefaultRange = 15;
     private const int YellRange = 18;
     private const int WhisperRange = 1;
@@ -64,6 +67,26 @@ public sealed class ChatService : IChatService
 
     public static bool IsRateLimited(DateTimeOffset lastChatAt, DateTimeOffset now)
         => now - lastChatAt < MinInterval;
+
+    public bool SayAs(MobileEntity speaker, string text)
+    {
+        if (string.IsNullOrWhiteSpace(text) || text.Length > MaximumLength)
+        {
+            return false;
+        }
+
+        var decision = Classify(text);
+
+        // A command is not speech: it was typed to be executed, not heard.
+        if (decision.IsCommand || decision.Text.Length == 0)
+        {
+            return false;
+        }
+
+        Say(speaker, decision.Type, decision.Text, Hue.Default, decision.Range);
+
+        return true;
+    }
 
     public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
     {

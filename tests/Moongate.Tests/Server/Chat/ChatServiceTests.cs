@@ -146,4 +146,68 @@ public class ChatServiceTests
         Assert.Equal(ChatMessageType.Regular, evt.Type);
         Assert.Equal("hi", evt.Text);
     }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void SayAs_BlankText_SaysNothing(string text)
+    {
+        var (service, world) = Build();
+
+        Assert.False(service.SayAs(Speaker(), text));
+        Assert.Empty(world.InRange);
+    }
+
+    // The limit ai.say used to enforce alone, now applying to every caller.
+    [Fact]
+    public void SayAs_TextOverTheMaximum_SaysNothing()
+    {
+        var (service, world) = Build();
+
+        Assert.False(service.SayAs(Speaker(), new string('a', 129)));
+        Assert.Empty(world.InRange);
+    }
+
+    // The filter chat.say used to enforce alone. A leading dot is a command, not speech.
+    [Fact]
+    public void SayAs_ACommand_SaysNothing()
+    {
+        var (service, world) = Build();
+
+        Assert.False(service.SayAs(Speaker(), ".help"));
+        Assert.Empty(world.InRange);
+    }
+
+    // Coverage that moved here from ChatModuleTests when classification became the service's job.
+    [Theory]
+    [InlineData("*nods*", ChatMessageType.Emote)]
+    [InlineData("!Guards!", ChatMessageType.Yell)]
+    [InlineData(";psst", ChatMessageType.Whisper)]
+    public void SayAs_PrefixedText_SpeaksItAsThatKind(string text, ChatMessageType expected)
+    {
+        var (service, world) = Build();
+
+        Assert.True(service.SayAs(Speaker(), text));
+        Assert.Single(world.InRange);
+        Assert.Equal(expected, ChatService.Classify(text).Type);
+    }
+
+    [Fact]
+    public void SayAs_OrdinaryText_SaysItOnce()
+    {
+        var (service, world) = Build();
+
+        Assert.True(service.SayAs(Speaker(), "Welcome back."));
+        Assert.Single(world.InRange);
+    }
+
+    private static (ChatService Service, RecordingWorldService World) Build()
+    {
+        var world = new RecordingWorldService();
+
+        return (new(world, new StubEventBus()), world);
+    }
+
+    private static MobileEntity Speaker()
+        => new() { Name = "Squid", Body = 400, MapId = 1, Position = new(1, 1, 0) };
 }

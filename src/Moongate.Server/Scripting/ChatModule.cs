@@ -30,23 +30,12 @@ public sealed class ChatModule
     public void Broadcast(string text)
         => _chat.Broadcast(text);
 
-    [ScriptFunction("say", "Speaks as the mobile with the given serial; false on unknown serial.")]
+    [ScriptFunction("say", "Speaks as the mobile with the given serial; false on unknown serial, blank, overlong or command text.")]
     public bool Say(uint serial, string text)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
-        if (mobile is null)
-        {
-            return false;
-        }
-
-        var decision = ChatService.Classify(text);
-
-        if (!decision.IsCommand && decision.Text.Length > 0)
-        {
-            _chat.Say(mobile, decision.Type, decision.Text, Hue.Default, decision.Range);
-        }
-
-        return true;
+        return mobile is not null && _chat.SayAs(mobile, text);
     }
+
 }
