@@ -139,7 +139,7 @@ public class ItemTemplateEndpointsTests
                                   )
                               );
                               container.RegisterInstance<IItemTemplateService>(templates);
-                              container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates));
+                              container.RegisterApiEndpointInstance(new ItemTemplateEndpoints(templates, new StubClilocService("gold coin")));
                           }
            );
 

@@ -34,8 +34,8 @@ of templates.
 
 - **`Id` must be present and unique** (case-insensitive) across *all* files.
   A duplicate `Id` — even across two different files — is a hard load error.
-- `Id`, `Name` and `Category` must all be non-blank; a missing or
-  whitespace-only value is a load error.
+- **`Id` and `Category` must be non-blank**; a missing or whitespace-only value
+  is a load error. `Name` is optional — see its row below.
 - Numeric fields (`ItemId`, `Hue`, `GoldValue`, `Weight`, and every numeric
   field inside `Equip`/`Weapon`/`Container`) must be non-negative, and
   `Weight` must additionally be finite (no `NaN`/`Infinity`).
@@ -56,7 +56,7 @@ of templates.
 | Key | Type | Required / default | Meaning |
 |---|---|---|---|
 | `Id` | `string` | required, unique | Template identifier used everywhere else (`item.create`, loot entries' `ItemTemplateId`, mobile `Equipment[].Item`). |
-| `Name` | `string` | required | Display name, copied onto the spawned item's `Name`. |
+| `Name` | `string` | optional, default `""` | Display name, copied onto the spawned item's `Name`. **Omit it and the client names the item**: the shard sends cliloc `1020000 + ItemId` and the client resolves it in the player's language, pluralising it itself on a stack. Declare one only when the item's identity differs from its graphic's — `Ghost Ship Anchor` against a shared anchor tile. A template with neither a name nor a cliloc falls back to its `Id`. |
 | `Category` | `string` | required | Free-form grouping; matched (case-insensitive) by `item.create_by_category` and `IItemFactoryService.CreateByCategory`. |
 | `Description` | `string` | optional, default `""` | Flavor text, copied onto the spawned item's `Description`. |
 | `ItemId` | `int` | optional, default `0` | The UO art/tile id. Must be non-negative. |

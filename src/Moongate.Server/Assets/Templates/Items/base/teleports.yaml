@@ -13,7 +13,6 @@
         - teleport
         - worldgen
 -   Id: moongate
-    Name: Moongate
     Category: Structure
     Description: ''
     ItemId: 3948

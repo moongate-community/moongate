@@ -17,10 +17,10 @@ public sealed record ItemTemplateSummaryResponse(
 )
 {
     /// <summary>Projects a template into its listing row, art url included.</summary>
-    public static ItemTemplateSummaryResponse From(ItemTemplate template)
+    public static ItemTemplateSummaryResponse From(ItemTemplate template, string displayName)
         => new(
             template.Id,
-            template.Name,
+            displayName,
             template.Category,
             template.ItemId,
             template.Hue,

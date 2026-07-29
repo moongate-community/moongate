@@ -12,7 +12,8 @@ public class ItemTemplatesLoaderTests
         => new()
         {
             { Item("\" \""), "<unknown>", "Id" },
-            { Item(name: "\" \""), "item", "Name" },
+
+            // No Name case here: a blank name is legal now, and means the client names the item.
             { Item(category: "\" \""), "item", "Category" },
             { Item(itemId: -1), "item", "ItemId" },
             { Item(extra: "  Hue: -1\n"), "item", "Hue" },
@@ -92,6 +93,27 @@ public class ItemTemplatesLoaderTests
             Assert.Equal(49, Directory.GetFiles(itemsDirectory, "*.yaml", SearchOption.AllDirectories).Length);
             Assert.Equal(legacyYaml, File.ReadAllText(legacyFile));
             Assert.False(File.Exists(legacyFile + ".migrated.bak"));
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    // Name stopped being required when the client became able to name an item itself.
+    [Fact]
+    public async Task LoadAsync_TemplateWithNoName_Loads()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        WriteItem(root, "nameless.yaml", "-   Id: nameless\n    Category: Misc\n    ItemId: 3821\n");
+        var service = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(service, directories).LoadAsync();
+
+            Assert.NotNull(service.GetById("nameless"));
         }
         finally
         {

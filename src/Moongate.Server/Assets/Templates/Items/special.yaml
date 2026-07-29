@@ -134,7 +134,6 @@
         - modernuo
         - special
 -   Id: cards
-    Name: Cards
     Category: Special
     Description: ''
     ItemId: 3609
@@ -186,7 +185,6 @@
         - modernuo
         - special
 -   Id: checkers
-    Name: Checkers
     Category: Special
     Description: ''
     ItemId: 3610
@@ -212,7 +210,6 @@
         - modernuo
         - special
 -   Id: chessmen
-    Name: Chessmen
     Category: Special
     Description: ''
     ItemId: 3603
@@ -319,7 +316,6 @@
         MaxItems: 125
         GumpId: 67
 -   Id: crossbow_bolts
-    Name: Crossbow Bolts
     Category: Special
     Description: ''
     ItemId: 7164
@@ -1447,7 +1443,6 @@
         - modernuo
         - special
 -   Id: empty_jar
-    Name: Empty Jar
     Category: Special
     Description: ''
     ItemId: 4101
@@ -1460,7 +1455,6 @@
         - modernuo
         - special
 -   Id: empty_jars
-    Name: Empty Jars
     Category: Special
     Description: ''
     ItemId: 3652
@@ -1512,7 +1506,6 @@
         - modernuo
         - special
 -   Id: empty_tool_kit
-    Name: Empty Tool Kit
     Category: Special
     Description: ''
     ItemId: 7862
@@ -1538,7 +1531,6 @@
         - modernuo
         - special
 -   Id: tool_kit
-    Name: Tool Kit
     Category: Special
     Description: ''
     ItemId: 7866
@@ -1700,7 +1692,6 @@
         - modernuo
         - special
 -   Id: half_empty_jar
-    Name: Half Empty Jar
     Category: Special
     Description: ''
     ItemId: 4103
@@ -1742,7 +1733,6 @@
         - modernuo
         - special
 -   Id: heritage_token
-    Name: Heritage Token
     Category: Special
     Description: ''
     ItemId: 13946
@@ -1781,7 +1771,6 @@
         - modernuo
         - special
 -   Id: hooded_shroud_of_shadows
-    Name: Hooded Shroud Of Shadows
     Category: Special
     Description: ''
     ItemId: 9860
@@ -2028,7 +2017,6 @@
         - modernuo
         - special
 -   Id: playing_cards
-    Name: Playing Cards
     Category: Special
     Description: ''
     ItemId: 4003
@@ -2099,7 +2087,6 @@
         - modernuo
         - special
 -   Id: powder_of_translocation
-    Name: Powder Of Translocation
     Category: Special
     Description: ''
     ItemId: 9912
@@ -2271,7 +2258,6 @@
         - modernuo
         - special
 -   Id: rose_of_trinsic
-    Name: Rose Of Trinsic
     Category: Special
     Description: ''
     ItemId: 9037
@@ -2446,7 +2432,6 @@
         - modernuo
         - special
 -   Id: spam
-    Name: Spam
     Category: Special
     Description: ''
     ItemId: 4164
@@ -2507,7 +2492,6 @@
         - modernuo
         - special
 -   Id: unfinished_barrel
-    Name: Unfinished Barrel
     Category: Special
     Description: ''
     ItemId: 7861
@@ -2628,7 +2612,6 @@
         - modernuo
         - special
 -   Id: zoogi_fungus
-    Name: Zoogi Fungus
     Category: Special
     Description: ''
     ItemId: 9911

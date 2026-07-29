@@ -22,7 +22,7 @@ public class ChatServiceTests
             new VirtualSerialService(),
             new StubEventBus(),
             TimeProvider.System,
-            new OplService(new FakePersistenceService(), new ItemTemplateService()),
+            new OplService(new FakePersistenceService(), new ItemTemplateService(), new StubClilocService("gold coin")),
             new SessionManager(),
             new StubLightService(0)
         );
@@ -131,7 +131,7 @@ public class ChatServiceTests
             new VirtualSerialService(),
             new StubEventBus(),
             TimeProvider.System,
-            new OplService(new FakePersistenceService(), new ItemTemplateService()),
+            new OplService(new FakePersistenceService(), new ItemTemplateService(), new StubClilocService("gold coin")),
             new SessionManager(),
             new StubLightService(0)
         );

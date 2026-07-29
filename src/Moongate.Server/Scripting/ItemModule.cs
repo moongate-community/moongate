@@ -1,9 +1,11 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Scripting.Views;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Hues;
+using Moongate.UO.Data.Items;
 using MoonSharp.Interpreter;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
@@ -23,13 +25,29 @@ public sealed class ItemModule
     private readonly IItemFactoryService _factory;
     private readonly IItemService _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
+    private readonly IClilocService _clilocs;
 
-    public ItemModule(IItemFactoryService factory, IItemService items, IPersistenceService persistence)
+    public ItemModule(
+        IItemFactoryService factory,
+        IItemService items,
+        IPersistenceService persistence,
+        IClilocService clilocs
+    )
     {
         _factory = factory;
         _items = items;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
+        _clilocs = clilocs;
     }
+
+    /// <summary>
+    /// What to call an item in Lua: its own name, else the client's name for the graphic, else its
+    /// template id. The same chain the tooltip uses in OplService.
+    /// </summary>
+    private string DisplayName(ItemEntity item)
+        => item.Name.Length > 0
+               ? item.Name
+               : _clilocs.Text(ItemClilocs.ForItemId(item.ItemId)) ?? item.TemplateId;
 
     [ScriptFunction("add_to_container", "Places an item into a container at (x, y); false on unknown serials.")]
     public bool AddToContainer(uint container, uint serial, int x, int y)
@@ -106,7 +124,7 @@ public sealed class ItemModule
 
     [ScriptFunction("get", "Returns a field table for the item, or nil.")]
     public ItemLuaView? Get(uint serial)
-        => _items.GetById((Serial)serial) is { } item ? new ItemLuaView(item) : null;
+        => _items.GetById((Serial)serial) is { } item ? new ItemLuaView(item, DisplayName(item)) : null;
 
     [ScriptFunction("remove_from_container", "Removes an item from a container; false on unknown serials.")]
     public bool RemoveFromContainer(uint container, uint serial)

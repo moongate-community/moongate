@@ -14,7 +14,6 @@
         - modernuo
         - worldgen
 -   Id: barred_metal_door
-    Name: Barred Metal Door
     Category: Structure
     Description: ''
     ItemId: 1669
@@ -74,7 +73,6 @@
         - decoration
         - modernuo
 -   Id: iron_gate
-    Name: Iron Gate
     Category: Structure
     Description: ''
     ItemId: 2084
@@ -134,7 +132,6 @@
         - decoration
         - modernuo
 -   Id: metal_door
-    Name: Metal Door
     Category: Structure
     Description: ''
     ItemId: 1653
@@ -164,7 +161,6 @@
         - decoration
         - modernuo
 -   Id: rattan_door
-    Name: Rattan Door
     Category: Structure
     Description: ''
     ItemId: 1685

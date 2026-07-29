@@ -50,7 +50,7 @@ public class MegaClilocHandlerTests
     {
         var persistence = new FakePersistenceService();
 
-        return (new(persistence, new ItemTemplateService()), new(persistence));
+        return (new(persistence, new ItemTemplateService(), new StubClilocService("gold coin")), new(persistence));
     }
 
     private static ItemEntity NewItem(ItemService items, string name)

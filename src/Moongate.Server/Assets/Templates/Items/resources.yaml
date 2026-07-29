@@ -1,5 +1,4 @@
 -   Id: arrow
-    Name: Arrow
     Category: Resources
     Description: ''
     ItemId: 3903
@@ -13,7 +12,6 @@
         - modernuo
         - resources
 -   Id: bark_fragment
-    Name: Bark Fragment
     Category: Resources
     Description: ''
     ItemId: 12687
@@ -52,7 +50,6 @@
         - modernuo
         - resources
 -   Id: black_pearl
-    Name: Black Pearl
     Category: Resources
     Description: ''
     ItemId: 3962
@@ -66,7 +63,6 @@
         - resources
         - reagents
 -   Id: blight
-    Name: Blight
     Category: Resources
     Description: ''
     ItemId: 12675
@@ -93,7 +89,6 @@
         - resources
         - reagents
 -   Id: blue_diamond
-    Name: Blue Diamond
     Category: Resources
     Description: ''
     ItemId: 12696
@@ -120,7 +115,6 @@
         - modernuo
         - resources
 -   Id: bolt_of_cloth
-    Name: Bolt Of Cloth
     Category: Resources
     Description: ''
     ItemId: 3989
@@ -143,7 +137,6 @@
         - resources
         - flippable
 -   Id: bone
-    Name: Bone
     Category: Resources
     Description: ''
     ItemId: 3966
@@ -156,7 +149,6 @@
         - modernuo
         - resources
 -   Id: brilliant_amber
-    Name: Brilliant Amber
     Category: Resources
     Description: ''
     ItemId: 12697
@@ -169,7 +161,6 @@
         - modernuo
         - resources
 -   Id: captured_essence
-    Name: Captured Essence
     Category: Resources
     Description: ''
     ItemId: 12686
@@ -200,7 +191,6 @@
         - resources
         - flippable
 -   Id: corruption
-    Name: Corruption
     Category: Resources
     Description: ''
     ItemId: 12676
@@ -226,7 +216,6 @@
         - modernuo
         - resources
 -   Id: daemon_blood
-    Name: Daemon Blood
     Category: Resources
     Description: ''
     ItemId: 3965
@@ -239,7 +228,6 @@
         - modernuo
         - resources
 -   Id: daemon_bone
-    Name: Daemon Bone
     Category: Resources
     Description: ''
     ItemId: 3968
@@ -252,7 +240,6 @@
         - modernuo
         - resources
 -   Id: dark_sapphire
-    Name: Dark Sapphire
     Category: Resources
     Description: ''
     ItemId: 12690
@@ -278,7 +265,6 @@
         - modernuo
         - resources
 -   Id: dead_wood
-    Name: Dead Wood
     Category: Resources
     Description: ''
     ItemId: 3984
@@ -291,7 +277,6 @@
         - modernuo
         - resources
 -   Id: diseased_bark
-    Name: Diseased Bark
     Category: Resources
     Description: ''
     ItemId: 12683
@@ -304,7 +289,6 @@
         - modernuo
         - resources
 -   Id: dragons_blood
-    Name: Dragons Blood
     Category: Resources
     Description: ''
     ItemId: 16503
@@ -317,7 +301,6 @@
         - modernuo
         - resources
 -   Id: dread_horn_mane
-    Name: Dread Horn Mane
     Category: Resources
     Description: ''
     ItemId: 12682
@@ -330,7 +313,6 @@
         - modernuo
         - resources
 -   Id: ecru_citrine
-    Name: Ecru Citrine
     Category: Resources
     Description: ''
     ItemId: 12693
@@ -343,7 +325,6 @@
         - modernuo
         - resources
 -   Id: eye_of_the_travesty
-    Name: Eye Of The Travesty
     Category: Resources
     Description: ''
     ItemId: 12685
@@ -356,7 +337,6 @@
         - modernuo
         - resources
 -   Id: feather
-    Name: Feather
     Category: Resources
     Description: ''
     ItemId: 7121
@@ -370,7 +350,6 @@
         - modernuo
         - resources
 -   Id: fire_ruby
-    Name: Fire Ruby
     Category: Resources
     Description: ''
     ItemId: 12695
@@ -413,7 +392,6 @@
         - resources
         - flippable
 -   Id: garlic
-    Name: Garlic
     Category: Resources
     Description: ''
     ItemId: 3972
@@ -427,7 +405,6 @@
         - resources
         - reagents
 -   Id: ginseng
-    Name: Ginseng
     Category: Resources
     Description: ''
     ItemId: 3973
@@ -441,7 +418,6 @@
         - resources
         - reagents
 -   Id: grave_dust
-    Name: Grave Dust
     Category: Resources
     Description: ''
     ItemId: 3983
@@ -454,7 +430,6 @@
         - modernuo
         - resources
 -   Id: grizzled_bones
-    Name: Grizzled Bones
     Category: Resources
     Description: ''
     ItemId: 12684
@@ -467,7 +442,6 @@
         - modernuo
         - resources
 -   Id: lard_of_paroxysmus
-    Name: Lard Of Paroxysmus
     Category: Resources
     Description: ''
     ItemId: 12681
@@ -506,7 +480,6 @@
         - modernuo
         - resources
 -   Id: luminescent_fungi
-    Name: Luminescent Fungi
     Category: Resources
     Description: ''
     ItemId: 12689
@@ -519,7 +492,6 @@
         - modernuo
         - resources
 -   Id: mandrake_root
-    Name: Mandrake Root
     Category: Resources
     Description: ''
     ItemId: 3974
@@ -533,7 +505,6 @@
         - resources
         - reagents
 -   Id: muculent
-    Name: Muculent
     Category: Resources
     Description: ''
     ItemId: 12680
@@ -546,7 +517,6 @@
         - modernuo
         - resources
 -   Id: nightshade
-    Name: Nightshade
     Category: Resources
     Description: ''
     ItemId: 3976
@@ -560,7 +530,6 @@
         - resources
         - reagents
 -   Id: nox_crystal
-    Name: Nox Crystal
     Category: Resources
     Description: ''
     ItemId: 3982
@@ -573,7 +542,6 @@
         - modernuo
         - resources
 -   Id: parasitic_plant
-    Name: Parasitic Plant
     Category: Resources
     Description: ''
     ItemId: 12688
@@ -599,7 +567,6 @@
         - modernuo
         - resources
 -   Id: perfect_emerald
-    Name: Perfect Emerald
     Category: Resources
     Description: ''
     ItemId: 12692
@@ -612,7 +579,6 @@
         - modernuo
         - resources
 -   Id: pig_iron
-    Name: Pig Iron
     Category: Resources
     Description: ''
     ItemId: 3978
@@ -625,7 +591,6 @@
         - modernuo
         - resources
 -   Id: pristine_dread_horn
-    Name: Pristine Dread Horn
     Category: Resources
     Description: ''
     ItemId: 12634
@@ -668,7 +633,6 @@
         - modernuo
         - resources
 -   Id: scourge
-    Name: Scourge
     Category: Resources
     Description: ''
     ItemId: 12677
@@ -681,7 +645,6 @@
         - modernuo
         - resources
 -   Id: shaft
-    Name: Shaft
     Category: Resources
     Description: ''
     ItemId: 7124
@@ -695,7 +658,6 @@
         - modernuo
         - resources
 -   Id: spiders_silk
-    Name: Spiders Silk
     Category: Resources
     Description: ''
     ItemId: 3981
@@ -709,7 +671,6 @@
         - resources
         - reagents
 -   Id: spool_of_thread
-    Name: Spool Of Thread
     Category: Resources
     Description: ''
     ItemId: 4000
@@ -722,7 +683,6 @@
         - modernuo
         - resources
 -   Id: sulfurous_ash
-    Name: Sulfurous Ash
     Category: Resources
     Description: ''
     ItemId: 3980
@@ -750,7 +710,6 @@
         - resources
         - flippable
 -   Id: taint
-    Name: Taint
     Category: Resources
     Description: ''
     ItemId: 12679
@@ -789,7 +748,6 @@
         - modernuo
         - resources
 -   Id: turquoise
-    Name: Turquoise
     Category: Resources
     Description: ''
     ItemId: 12691
@@ -820,7 +778,6 @@
         - resources
         - flippable
 -   Id: white_pearl
-    Name: White Pearl
     Category: Resources
     Description: ''
     ItemId: 12694

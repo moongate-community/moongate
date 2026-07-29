@@ -91,7 +91,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: assassin_spike
-    Name: Assassin Spike
     Category: Weapons
     Description: ''
     ItemId: 11553
@@ -154,7 +153,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: axe
-    Name: Axe
     Category: Weapons
     Description: ''
     ItemId: 3913
@@ -217,7 +215,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: bardiche
-    Name: Bardiche
     Category: Weapons
     Description: ''
     ItemId: 3917
@@ -248,7 +245,6 @@
         MissSound: 568
         WeaponSkill: Swords
 -   Id: battle_axe
-    Name: Battle Axe
     Category: Weapons
     Description: ''
     ItemId: 3911
@@ -280,7 +276,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: black_staff
-    Name: Black Staff
     Category: Weapons
     Description: ''
     ItemId: 3568
@@ -311,7 +306,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: bladed_staff
-    Name: Bladed Staff
     Category: Weapons
     Description: ''
     ItemId: 9917
@@ -373,7 +367,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: bokuto
-    Name: Bokuto
     Category: Weapons
     Description: ''
     ItemId: 10152
@@ -404,7 +397,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: bone_harvester
-    Name: Bone Harvester
     Category: Weapons
     Description: ''
     ItemId: 9915
@@ -465,7 +457,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: boomerang
-    Name: Boomerang
     Category: Weapons
     Description: ''
     ItemId: 2303
@@ -492,7 +483,6 @@
         MissSound: 1492
         WeaponSkill: Throwing
 -   Id: bow
-    Name: Bow
     Category: Weapons
     Description: ''
     ItemId: 5042
@@ -526,7 +516,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: broadsword
-    Name: Broadsword
     Category: Weapons
     Description: ''
     ItemId: 3934
@@ -557,7 +546,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: butcher_knife
-    Name: Butcher Knife
     Category: Weapons
     Description: ''
     ItemId: 5110
@@ -648,7 +636,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: cleaver
-    Name: Cleaver
     Category: Weapons
     Description: ''
     ItemId: 3779
@@ -679,7 +666,6 @@
         MissSound: 568
         WeaponSkill: Swords
 -   Id: club
-    Name: Club
     Category: Weapons
     Description: ''
     ItemId: 5044
@@ -710,7 +696,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: composite_bow
-    Name: Composite Bow
     Category: Weapons
     Description: ''
     ItemId: 9922
@@ -773,7 +758,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: crescent_blade
-    Name: Crescent Blade
     Category: Weapons
     Description: ''
     ItemId: 9921
@@ -805,7 +789,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: crossbow
-    Name: Crossbow
     Category: Weapons
     Description: ''
     ItemId: 3920
@@ -839,7 +822,6 @@
         Ammo: 7163
         AmmoFx: 7163
 -   Id: cutlass
-    Name: Cutlass
     Category: Weapons
     Description: ''
     ItemId: 5185
@@ -870,7 +852,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: cyclone
-    Name: Cyclone
     Category: Weapons
     Description: ''
     ItemId: 2305
@@ -898,7 +879,6 @@
         MissSound: 1492
         WeaponSkill: Throwing
 -   Id: dagger
-    Name: Dagger
     Category: Weapons
     Description: ''
     ItemId: 3922
@@ -929,7 +909,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: daisho
-    Name: Daisho
     Category: Weapons
     Description: ''
     ItemId: 10153
@@ -990,7 +969,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: diamond_mace
-    Name: Diamond Mace
     Category: Weapons
     Description: ''
     ItemId: 11556
@@ -1021,7 +999,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: disc_mace
-    Name: Disc Mace
     Category: Weapons
     Description: ''
     ItemId: 2307
@@ -1082,7 +1059,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: double_axe
-    Name: Double Axe
     Category: Weapons
     Description: ''
     ItemId: 3915
@@ -1113,7 +1089,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: double_bladed_staff
-    Name: Double Bladed Staff
     Category: Weapons
     Description: ''
     ItemId: 9919
@@ -1144,7 +1119,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: dread_sword
-    Name: Dread Sword
     Category: Weapons
     Description: ''
     ItemId: 2315
@@ -1175,7 +1149,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: dual_pointed_spear
-    Name: Dual Pointed Spear
     Category: Weapons
     Description: ''
     ItemId: 2308
@@ -1206,7 +1179,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: dual_short_axes
-    Name: Dual Short Axes
     Category: Weapons
     Description: ''
     ItemId: 2301
@@ -1237,7 +1209,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: elven_composite_longbow
-    Name: Elven Composite Longbow
     Category: Weapons
     Description: ''
     ItemId: 11550
@@ -1270,7 +1241,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: elven_machete
-    Name: Elven Machete
     Category: Weapons
     Description: ''
     ItemId: 11573
@@ -1301,7 +1271,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: elven_spellblade
-    Name: Elven Spellblade
     Category: Weapons
     Description: ''
     ItemId: 11552
@@ -1362,7 +1331,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: executioners_axe
-    Name: Executioners Axe
     Category: Weapons
     Description: ''
     ItemId: 3909
@@ -1482,7 +1450,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: gargish_talwar
-    Name: Gargish Talwar
     Category: Weapons
     Description: ''
     ItemId: 2312
@@ -1544,7 +1511,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: glass_staff
-    Name: Glass Staff
     Category: Weapons
     Description: ''
     ItemId: 2309
@@ -1575,7 +1541,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: glass_sword
-    Name: Glass Sword
     Category: Weapons
     Description: ''
     ItemId: 2316
@@ -1606,7 +1571,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: gnarled_staff
-    Name: Gnarled Staff
     Category: Weapons
     Description: ''
     ItemId: 5112
@@ -1667,7 +1631,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: halberd
-    Name: Halberd
     Category: Weapons
     Description: ''
     ItemId: 5182
@@ -1698,7 +1661,6 @@
         MissSound: 568
         WeaponSkill: Swords
 -   Id: hammer_pick
-    Name: Hammer Pick
     Category: Weapons
     Description: ''
     ItemId: 5181
@@ -1760,7 +1722,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: hatchet
-    Name: Hatchet
     Category: Weapons
     Description: ''
     ItemId: 3907
@@ -1791,7 +1752,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: heavy_crossbow
-    Name: Heavy Crossbow
     Category: Weapons
     Description: ''
     ItemId: 5117
@@ -1949,7 +1909,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: kama
-    Name: Kama
     Category: Weapons
     Description: ''
     ItemId: 10157
@@ -1980,7 +1939,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: katana
-    Name: Katana
     Category: Weapons
     Description: ''
     ItemId: 5119
@@ -2041,7 +1999,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: kryss
-    Name: Kryss
     Category: Weapons
     Description: ''
     ItemId: 5121
@@ -2072,7 +2029,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: lajatang
-    Name: Lajatang
     Category: Weapons
     Description: ''
     ItemId: 10151
@@ -2103,7 +2059,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: lance
-    Name: Lance
     Category: Weapons
     Description: ''
     ItemId: 9920
@@ -2134,7 +2089,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: large_battle_axe
-    Name: Large Battle Axe
     Category: Weapons
     Description: ''
     ItemId: 5115
@@ -2165,7 +2119,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: leafblade
-    Name: Leafblade
     Category: Weapons
     Description: ''
     ItemId: 11554
@@ -2290,7 +2243,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: longsword
-    Name: Longsword
     Category: Weapons
     Description: ''
     ItemId: 3937
@@ -2351,7 +2303,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: mace
-    Name: Mace
     Category: Weapons
     Description: ''
     ItemId: 3932
@@ -2529,7 +2480,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: magical_shortbow
-    Name: Magical Shortbow
     Category: Weapons
     Description: ''
     ItemId: 11563
@@ -2562,7 +2512,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: maul
-    Name: Maul
     Category: Weapons
     Description: ''
     ItemId: 5179
@@ -2656,7 +2605,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: nunchaku
-    Name: Nunchaku
     Category: Weapons
     Description: ''
     ItemId: 10158
@@ -2718,7 +2666,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: ornate_axe
-    Name: Ornate Axe
     Category: Weapons
     Description: ''
     ItemId: 11560
@@ -2749,7 +2696,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: pickaxe
-    Name: Pickaxe
     Category: Weapons
     Description: ''
     ItemId: 3718
@@ -2780,7 +2726,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: pike
-    Name: Pike
     Category: Weapons
     Description: ''
     ItemId: 9918
@@ -2811,7 +2756,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: pitchfork
-    Name: Pitchfork
     Category: Weapons
     Description: ''
     ItemId: 3719
@@ -2842,7 +2786,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: quarter_staff
-    Name: Quarter Staff
     Category: Weapons
     Description: ''
     ItemId: 3721
@@ -2873,7 +2816,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: radiant_scimitar
-    Name: Radiant Scimitar
     Category: Weapons
     Description: ''
     ItemId: 11571
@@ -2936,7 +2878,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: repeating_crossbow
-    Name: Repeating Crossbow
     Category: Weapons
     Description: ''
     ItemId: 9923
@@ -2999,7 +2940,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: rune_blade
-    Name: Rune Blade
     Category: Weapons
     Description: ''
     ItemId: 11570
@@ -3090,7 +3030,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: sai
-    Name: Sai
     Category: Weapons
     Description: ''
     ItemId: 10159
@@ -3151,7 +3090,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: scepter
-    Name: Scepter
     Category: Weapons
     Description: ''
     ItemId: 9916
@@ -3182,7 +3120,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: scimitar
-    Name: Scimitar
     Category: Weapons
     Description: ''
     ItemId: 5046
@@ -3213,7 +3150,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: scythe
-    Name: Scythe
     Category: Weapons
     Description: ''
     ItemId: 9914
@@ -3244,7 +3180,6 @@
         MissSound: 568
         WeaponSkill: Swords
 -   Id: serpentstone_staff
-    Name: Serpentstone Staff
     Category: Weapons
     Description: ''
     ItemId: 2310
@@ -3305,7 +3240,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: shepherds_crook
-    Name: Shepherds Crook
     Category: Weapons
     Description: ''
     ItemId: 3713
@@ -3336,7 +3270,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: short_spear
-    Name: Short Spear
     Category: Weapons
     Description: ''
     ItemId: 5123
@@ -3428,7 +3361,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: skinning_knife
-    Name: Skinning Knife
     Category: Weapons
     Description: ''
     ItemId: 3780
@@ -3491,7 +3423,6 @@
         Ammo: 3903
         AmmoFx: 7166
 -   Id: soul_glaive
-    Name: Soul Glaive
     Category: Weapons
     Description: ''
     ItemId: 2314
@@ -3519,7 +3450,6 @@
         MissSound: 1492
         WeaponSkill: Throwing
 -   Id: spear
-    Name: Spear
     Category: Weapons
     Description: ''
     ItemId: 3938
@@ -3580,7 +3510,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: tekagi
-    Name: Tekagi
     Category: Weapons
     Description: ''
     ItemId: 10155
@@ -3611,7 +3540,6 @@
         MissSound: 562
         WeaponSkill: Fencing
 -   Id: tessen
-    Name: Tessen
     Category: Weapons
     Description: ''
     ItemId: 10147
@@ -3642,7 +3570,6 @@
         MissSound: 568
         WeaponSkill: Macing
 -   Id: tetsubo
-    Name: Tetsubo
     Category: Weapons
     Description: ''
     ItemId: 10150
@@ -4006,7 +3933,6 @@
         MissSound: 569
         WeaponSkill: Swords
 -   Id: two_handed_axe
-    Name: Two Handed Axe
     Category: Weapons
     Description: ''
     ItemId: 5187
@@ -4037,7 +3963,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: viking_sword
-    Name: Viking Sword
     Category: Weapons
     Description: ''
     ItemId: 5049
@@ -4068,7 +3993,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: wakizashi
-    Name: Wakizashi
     Category: Weapons
     Description: ''
     ItemId: 10148
@@ -4099,7 +4023,6 @@
         MissSound: 570
         WeaponSkill: Swords
 -   Id: war_axe
-    Name: War Axe
     Category: Weapons
     Description: ''
     ItemId: 5040
@@ -4130,7 +4053,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: war_cleaver
-    Name: War Cleaver
     Category: Weapons
     Description: ''
     ItemId: 11567
@@ -4161,7 +4083,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: war_fork
-    Name: War Fork
     Category: Weapons
     Description: ''
     ItemId: 5125
@@ -4192,7 +4113,6 @@
         MissSound: 568
         WeaponSkill: Fencing
 -   Id: war_hammer
-    Name: War Hammer
     Category: Weapons
     Description: ''
     ItemId: 5177
@@ -4224,7 +4144,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: war_mace
-    Name: War Mace
     Category: Weapons
     Description: ''
     ItemId: 5127
@@ -4255,7 +4174,6 @@
         MissSound: 569
         WeaponSkill: Macing
 -   Id: wild_staff
-    Name: Wild Staff
     Category: Weapons
     Description: ''
     ItemId: 11557
@@ -4317,7 +4235,6 @@
         MissSound: 569
         WeaponSkill: Fencing
 -   Id: yumi
-    Name: Yumi
     Category: Weapons
     Description: ''
     ItemId: 10149

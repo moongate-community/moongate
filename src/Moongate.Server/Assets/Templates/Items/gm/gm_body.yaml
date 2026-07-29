@@ -85,7 +85,6 @@
     Visibility: GameMaster
     LootType: Blessed
 -   Id: gm_fur_boots
-    Name: Fur Boots
     Category: GameMaster
     Description: Fur boots used by .gm_body command.
     ItemId: 8967
@@ -101,7 +100,6 @@
     Visibility: GameMaster
     LootType: Blessed
 -   Id: gm_skullcap
-    Name: Skullcap
     Category: GameMaster
     Description: Skullcap used by .gm_body command.
     ItemId: 5444
@@ -116,7 +114,6 @@
     Visibility: GameMaster
     LootType: Blessed
 -   Id: gm_robe
-    Name: GM Robe
     Category: GameMaster
     Description: GM robe imported from UOX3 staff items.
     ItemId: 8271

@@ -1,5 +1,4 @@
 -   Id: amber
-    Name: Amber
     Category: Gems
     Description: ''
     ItemId: 3877
@@ -13,7 +12,6 @@
         - modernuo
         - gems
 -   Id: amethyst
-    Name: Amethyst
     Category: Gems
     Description: ''
     ItemId: 3862
@@ -27,7 +25,6 @@
         - modernuo
         - gems
 -   Id: citrine
-    Name: Citrine
     Category: Gems
     Description: ''
     ItemId: 3861
@@ -41,7 +38,6 @@
         - modernuo
         - gems
 -   Id: diamond
-    Name: Diamond
     Category: Gems
     Description: ''
     ItemId: 3878
@@ -55,7 +51,6 @@
         - modernuo
         - gems
 -   Id: emerald
-    Name: Emerald
     Category: Gems
     Description: ''
     ItemId: 3856
@@ -69,7 +64,6 @@
         - modernuo
         - gems
 -   Id: ruby
-    Name: Ruby
     Category: Gems
     Description: ''
     ItemId: 3859
@@ -83,7 +77,6 @@
         - modernuo
         - gems
 -   Id: sapphire
-    Name: Sapphire
     Category: Gems
     Description: ''
     ItemId: 3865
@@ -97,7 +90,6 @@
         - modernuo
         - gems
 -   Id: star_sapphire
-    Name: Star Sapphire
     Category: Gems
     Description: ''
     ItemId: 3873
@@ -111,7 +103,6 @@
         - modernuo
         - gems
 -   Id: tourmaline
-    Name: Tourmaline
     Category: Gems
     Description: ''
     ItemId: 3885

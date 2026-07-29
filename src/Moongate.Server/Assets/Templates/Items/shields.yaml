@@ -1,5 +1,4 @@
 -   Id: bronze_shield
-    Name: Bronze Shield
     Category: Shields
     Description: ''
     ItemId: 7026
@@ -15,7 +14,6 @@
         HitPoints: 30
         StrengthReq: 35
 -   Id: buckler
-    Name: Buckler
     Category: Shields
     Description: ''
     ItemId: 7027
@@ -31,7 +29,6 @@
         HitPoints: 50
         StrengthReq: 20
 -   Id: chaos_shield
-    Name: Chaos Shield
     Category: Shields
     Description: ''
     ItemId: 7107
@@ -48,7 +45,6 @@
         HitPoints: 125
         StrengthReq: 95
 -   Id: gargish_wooden_shield
-    Name: Gargish Wooden Shield
     Category: Shields
     Description: ''
     ItemId: 16896
@@ -68,7 +64,6 @@
         HitPoints: 25
         StrengthReq: 20
 -   Id: heater_shield
-    Name: Heater Shield
     Category: Shields
     Description: ''
     ItemId: 7030
@@ -84,7 +79,6 @@
         HitPoints: 65
         StrengthReq: 90
 -   Id: metal_kite_shield
-    Name: Metal Kite Shield
     Category: Shields
     Description: ''
     ItemId: 7028
@@ -100,7 +94,6 @@
         HitPoints: 60
         StrengthReq: 45
 -   Id: metal_shield
-    Name: Metal Shield
     Category: Shields
     Description: ''
     ItemId: 7035
@@ -116,7 +109,6 @@
         HitPoints: 65
         StrengthReq: 45
 -   Id: order_shield
-    Name: Order Shield
     Category: Shields
     Description: ''
     ItemId: 7108
@@ -148,7 +140,6 @@
         HitPoints: 65
         StrengthReq: 20
 -   Id: wooden_shield
-    Name: Wooden Shield
     Category: Shields
     Description: ''
     ItemId: 7034

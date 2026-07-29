@@ -1,5 +1,4 @@
 -   Id: bandana
-    Name: Bandana
     Category: Clothing
     Description: ''
     ItemId: 5440
@@ -17,7 +16,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: bear_mask
-    Name: Bear Mask
     Category: Clothing
     Description: ''
     ItemId: 5445
@@ -35,7 +33,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: body_sash
-    Name: Body Sash
     Category: Clothing
     Description: ''
     ItemId: 5441
@@ -57,7 +54,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: bonnet
-    Name: Bonnet
     Category: Clothing
     Description: ''
     ItemId: 5913
@@ -75,7 +71,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: boots
-    Name: Boots
     Category: Clothing
     Description: ''
     ItemId: 5899
@@ -97,7 +92,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: cap
-    Name: Cap
     Category: Clothing
     Description: ''
     ItemId: 5909
@@ -115,7 +109,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: cloak
-    Name: Cloak
     Category: Clothing
     Description: ''
     ItemId: 5397
@@ -133,7 +126,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: cloth_ninja_hood
-    Name: Cloth Ninja Hood
     Category: Clothing
     Description: ''
     ItemId: 10127
@@ -155,7 +147,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: cloth_ninja_jacket
-    Name: Cloth Ninja Jacket
     Category: Clothing
     Description: ''
     ItemId: 10132
@@ -177,7 +168,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: deer_mask
-    Name: Deer Mask
     Category: Clothing
     Description: ''
     ItemId: 5447
@@ -195,7 +185,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: doublet
-    Name: Doublet
     Category: Clothing
     Description: ''
     ItemId: 8059
@@ -217,7 +206,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: elven_boots
-    Name: Elven Boots
     Category: Clothing
     Description: ''
     ItemId: 12228
@@ -257,7 +245,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: elven_pants
-    Name: Elven Pants
     Category: Clothing
     Description: ''
     ItemId: 12227
@@ -279,7 +266,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: elven_shirt
-    Name: Elven Shirt
     Category: Clothing
     Description: ''
     ItemId: 12661
@@ -298,7 +284,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: fancy_dress
-    Name: Fancy Dress
     Category: Clothing
     Description: ''
     ItemId: 7936
@@ -320,7 +305,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: fancy_shirt
-    Name: Fancy Shirt
     Category: Clothing
     Description: ''
     ItemId: 7933
@@ -342,7 +326,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: feathered_hat
-    Name: Feathered Hat
     Category: Clothing
     Description: ''
     ItemId: 5914
@@ -360,7 +343,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: female_elven_robe
-    Name: Female Elven Robe
     Category: Clothing
     Description: ''
     ItemId: 12218
@@ -382,7 +364,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: female_kimono
-    Name: Female Kimono
     Category: Clothing
     Description: ''
     ItemId: 10115
@@ -405,7 +386,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: floppy_hat
-    Name: Floppy Hat
     Category: Clothing
     Description: ''
     ItemId: 5907
@@ -423,7 +403,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: flower_garland
-    Name: Flower Garland
     Category: Clothing
     Description: ''
     ItemId: 8966
@@ -445,7 +424,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: formal_shirt
-    Name: Formal Shirt
     Category: Clothing
     Description: ''
     ItemId: 8976
@@ -467,7 +445,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: full_apron
-    Name: Full Apron
     Category: Clothing
     Description: ''
     ItemId: 5437
@@ -489,7 +466,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: fur_boots
-    Name: Fur Boots
     Category: Clothing
     Description: ''
     ItemId: 8967
@@ -511,7 +487,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: fur_cape
-    Name: Fur Cape
     Category: Clothing
     Description: ''
     ItemId: 8970
@@ -533,7 +508,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: fur_sarong
-    Name: Fur Sarong
     Category: Clothing
     Description: ''
     ItemId: 8972
@@ -555,7 +529,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: gilded_dress
-    Name: Gilded Dress
     Category: Clothing
     Description: ''
     ItemId: 8974
@@ -577,7 +550,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: hakama
-    Name: Hakama
     Category: Clothing
     Description: ''
     ItemId: 10138
@@ -621,7 +593,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: half_apron
-    Name: Half Apron
     Category: Clothing
     Description: ''
     ItemId: 5435
@@ -661,7 +632,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: jester_hat
-    Name: Jester Hat
     Category: Clothing
     Description: ''
     ItemId: 5916
@@ -679,7 +649,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: jester_suit
-    Name: Jester Suit
     Category: Clothing
     Description: ''
     ItemId: 8095
@@ -723,7 +692,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: kamishimo
-    Name: Kamishimo
     Category: Clothing
     Description: ''
     ItemId: 10137
@@ -745,7 +713,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: kasa
-    Name: Kasa
     Category: Clothing
     Description: ''
     ItemId: 10136
@@ -767,7 +734,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: kilt
-    Name: Kilt
     Category: Clothing
     Description: ''
     ItemId: 5431
@@ -789,7 +755,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: long_pants
-    Name: Long Pants
     Category: Clothing
     Description: ''
     ItemId: 5433
@@ -851,7 +816,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: male_kimono
-    Name: Male Kimono
     Category: Clothing
     Description: ''
     ItemId: 10114
@@ -892,7 +856,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: ninja_tabi
-    Name: Ninja Tabi
     Category: Clothing
     Description: ''
     ItemId: 10135
@@ -914,7 +877,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: obi
-    Name: Obi
     Category: Clothing
     Description: ''
     ItemId: 10144
@@ -955,7 +917,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: plain_dress
-    Name: Plain Dress
     Category: Clothing
     Description: ''
     ItemId: 7937
@@ -1037,7 +998,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: robe
-    Name: Robe
     Category: Clothing
     Description: ''
     ItemId: 7939
@@ -1080,7 +1040,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: sandals
-    Name: Sandals
     Category: Clothing
     Description: ''
     ItemId: 5901
@@ -1120,7 +1079,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: shirt
-    Name: Shirt
     Category: Clothing
     Description: ''
     ItemId: 5399
@@ -1142,7 +1100,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: shoes
-    Name: Shoes
     Category: Clothing
     Description: ''
     ItemId: 5903
@@ -1164,7 +1121,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: short_pants
-    Name: Short Pants
     Category: Clothing
     Description: ''
     ItemId: 5422
@@ -1186,7 +1142,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: skirt
-    Name: Skirt
     Category: Clothing
     Description: ''
     ItemId: 5398
@@ -1226,7 +1181,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: straw_hat
-    Name: Straw Hat
     Category: Clothing
     Description: ''
     ItemId: 5911
@@ -1244,7 +1198,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: surcoat
-    Name: Surcoat
     Category: Clothing
     Description: ''
     ItemId: 8189
@@ -1266,7 +1219,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: tall_straw_hat
-    Name: Tall Straw Hat
     Category: Clothing
     Description: ''
     ItemId: 5910
@@ -1306,7 +1258,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: thigh_boots
-    Name: Thigh Boots
     Category: Clothing
     Description: ''
     ItemId: 5905
@@ -1325,7 +1276,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: tribal_mask
-    Name: Tribal Mask
     Category: Clothing
     Description: ''
     ItemId: 5451
@@ -1343,7 +1293,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: tricorne_hat
-    Name: Tricorne Hat
     Category: Clothing
     Description: ''
     ItemId: 5915
@@ -1361,7 +1310,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: tunic
-    Name: Tunic
     Category: Clothing
     Description: ''
     ItemId: 8097
@@ -1423,7 +1371,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: wizards_hat
-    Name: Wizards Hat
     Category: Clothing
     Description: ''
     ItemId: 5912
@@ -1441,7 +1388,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: woodland_belt
-    Name: Woodland Belt
     Category: Clothing
     Description: ''
     ItemId: 11112

@@ -13,7 +13,6 @@
         - modernuo
         - plants_flowers
 -   Id: potted_cactus
-    Name: Potted Cactus
     Category: PlantsFlowers
     Description: ''
     ItemId: 7695
@@ -139,7 +138,6 @@
         - modernuo
         - plants_flowers
 -   Id: potted_tree
-    Name: Potted Tree
     Category: PlantsFlowers
     Description: ''
     ItemId: 4552

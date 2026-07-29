@@ -14,7 +14,9 @@ internal static class ItemTemplateValidator
             var template = source.Template;
 
             ValidateRequired(source, template.Id, nameof(ItemTemplate.Id));
-            ValidateRequired(source, template.Name, nameof(ItemTemplate.Name));
+
+            // Name is deliberately absent from this list: a template with none takes the client's
+            // own name for the graphic, which is the whole point of ItemClilocs.
             ValidateRequired(source, template.Category, nameof(ItemTemplate.Category));
 
             if (!observedIds.TryAdd(template.Id, source))

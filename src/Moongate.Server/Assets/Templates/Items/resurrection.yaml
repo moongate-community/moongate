@@ -1,5 +1,4 @@
 -   Id: AnkhNorth
-    Name: Ankh
     Category: Structure
     Description: A resurrection ankh.
     ItemId: 4
@@ -17,7 +16,6 @@
             Type: string
             Value: ankh
 -   Id: AnkhWest
-    Name: Ankh
     Category: Structure
     Description: A resurrection ankh.
     ItemId: 3

@@ -25,7 +25,6 @@
         - modernuo
         - champion artifacts
 -   Id: dirt_patch
-    Name: Dirt Patch
     Category: Champion Artifacts
     Description: ''
     ItemId: 2323
@@ -80,7 +79,6 @@
         - modernuo
         - champion artifacts
 -   Id: skull_pole
-    Name: Skull Pole
     Category: Champion Artifacts
     Description: ''
     ItemId: 8708

@@ -38,7 +38,6 @@
         - modernuo
         - aquarium
 -   Id: brine_shrimp
-    Name: Brine Shrimp
     Category: Aquarium
     Description: ''
     ItemId: 15121
@@ -64,7 +63,6 @@
         - modernuo
         - aquarium
 -   Id: coral
-    Name: Coral
     Category: Aquarium
     Description: ''
     ItemId: 15098
@@ -103,7 +101,6 @@
         - modernuo
         - aquarium
 -   Id: fish_bones
-    Name: Fish Bones
     Category: Aquarium
     Description: ''
     ItemId: 15116
@@ -169,7 +166,6 @@
         - modernuo
         - aquarium
 -   Id: jellyfish
-    Name: Jellyfish
     Category: Aquarium
     Description: ''
     ItemId: 15118
@@ -299,7 +295,6 @@
         - modernuo
         - aquarium
 -   Id: shrimp
-    Name: Shrimp
     Category: Aquarium
     Description: ''
     ItemId: 15124

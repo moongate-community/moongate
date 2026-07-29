@@ -6,6 +6,7 @@ using Moongate.Http.Plugin.Data.Api.Items;
 using Moongate.Http.Plugin.Interfaces.Endpoints;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.UO.Data.Items;
 
 namespace Moongate.Http.Plugin.Endpoints.Items;
@@ -14,10 +15,12 @@ namespace Moongate.Http.Plugin.Endpoints.Items;
 public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
 {
     private readonly IItemTemplateService _templates;
+    private readonly IClilocService _clilocs;
 
-    public ItemTemplateEndpoints(IItemTemplateService templates)
+    public ItemTemplateEndpoints(IItemTemplateService templates, IClilocService clilocs)
     {
         _templates = templates;
+        _clilocs = clilocs;
     }
 
     public void Register(IEndpointRouteBuilder routes)
@@ -35,7 +38,7 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
               .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
-    private static List<ItemTemplate> Filter(IReadOnlyList<ItemTemplate> all, string? search)
+    private List<ItemTemplate> Filter(IReadOnlyList<ItemTemplate> all, string? search)
     {
         if (string.IsNullOrWhiteSpace(search))
         {
@@ -48,6 +51,7 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
                 template =>
                     Matches(template.Id, search) ||
                     Matches(template.Name, search) ||
+                    Matches(DisplayName(template), search) ||
                     Matches(template.Category, search) ||
                     template.Tags.Any(tag => Matches(tag, search))
             )
@@ -62,14 +66,15 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
 
         return template is null
                    ? Results.Problem($"No item template with id '{id}'.", statusCode: StatusCodes.Status404NotFound)
-                   : Results.Ok(ItemTemplateResponse.From(template));
+                   : Results.Ok(ItemTemplateResponse.From(template, DisplayName(template)));
     }
 
     /// <summary>Every item template, paged.</summary>
     /// <remarks>
     /// Ordered by template id. Pass search to filter: free text, case-insensitive, matching the
-    /// template's id, name, category or any tag. Page is 1-based and defaults to 1; pageSize defaults
-    /// to 25 and cannot exceed 100. A search matching nothing is an empty page, not an error.
+    /// template's id, name, the client's name for its graphic, category or any tag. Page is 1-based
+    /// and defaults to 1; pageSize defaults to 25 and cannot exceed 100. A search matching nothing
+    /// is an empty page, not an error.
     /// </remarks>
     private IResult List(string? page, string? pageSize, string? search)
     {
@@ -85,11 +90,20 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
             .. matched.OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)
                       .Skip(request.Skip)
                       .Take(request.PageSize)
-                      .Select(ItemTemplateSummaryResponse.From)
+                      .Select(template => ItemTemplateSummaryResponse.From(template, DisplayName(template)))
         ];
 
         return Results.Ok(PagedResponse<ItemTemplateSummaryResponse>.From(items, matched.Count, request));
     }
+
+    /// <summary>
+    /// What to call a template: its own name when it has one, else what the client calls the
+    /// graphic, else the id. The same chain the tooltip uses in OplService.
+    /// </summary>
+    private string DisplayName(ItemTemplate template)
+        => template.Name.Length > 0
+               ? template.Name
+               : _clilocs.Text(ItemClilocs.ForItemId(template.ItemId)) ?? template.Id;
 
     private static bool Matches(string value, string search)
         => value.Contains(search, StringComparison.OrdinalIgnoreCase);

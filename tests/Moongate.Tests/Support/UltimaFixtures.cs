@@ -569,6 +569,30 @@ public static class UltimaFixtures
         return buffer;
     }
 
+    /// <summary>
+    /// Builds an uncompressed cliloc file: a 6-byte header (int32 then int16) followed by records of
+    /// int32 number, byte flag, int16 length, then that many bytes of UTF-8 text.
+    /// </summary>
+    public static byte[] BuildCliloc(params (int Number, string Text)[] entries)
+    {
+        var buffer = new List<byte>(new byte[6]);
+
+        foreach (var (number, text) in entries)
+        {
+            var bytes = Encoding.UTF8.GetBytes(text);
+            var header = new byte[7];
+
+            BinaryPrimitives.WriteInt32LittleEndian(header, number);
+            header[4] = 0;
+            BinaryPrimitives.WriteInt16LittleEndian(header.AsSpan(5), (short)bytes.Length);
+
+            buffer.AddRange(header);
+            buffer.AddRange(bytes);
+        }
+
+        return buffer.ToArray();
+    }
+
     /// <summary>Builds an old-format tiledata.mul with the full land table and one item group.</summary>
     public static byte[] BuildTileData()
         => new byte[512 * LandGroupSize + ItemGroupSize];

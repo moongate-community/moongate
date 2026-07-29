@@ -53,7 +53,6 @@
         - modernuo
         - skill items
 -   Id: anvil
-    Name: Anvil
     Category: Skill Items
     Description: ''
     ItemId: 4015
@@ -135,7 +134,6 @@
         - modernuo
         - skill items
 -   Id: axle
-    Name: Axle
     Category: Skill Items
     Description: ''
     ItemId: 4187
@@ -169,7 +167,6 @@
         - skill items
         - flippable
 -   Id: bamboo_flute
-    Name: Bamboo Flute
     Category: Skill Items
     Description: ''
     ItemId: 10245
@@ -197,7 +194,6 @@
         - skill items
     Stackable: true
 -   Id: bedroll
-    Name: Bedroll
     Category: Skill Items
     Description: ''
     ItemId: 2647
@@ -228,7 +224,6 @@
         - modernuo
         - skill items
 -   Id: blank_scroll
-    Name: Blank Scroll
     Category: Skill Items
     Description: ''
     ItemId: 3827
@@ -284,7 +279,6 @@
         - skill items
         - flippable
 -   Id: board
-    Name: Board
     Category: Skill Items
     Description: ''
     ItemId: 7127
@@ -301,7 +295,6 @@
         - skill items
         - flippable
 -   Id: clock
-    Name: Clock
     Category: Skill Items
     Description: ''
     ItemId: 4171
@@ -331,7 +324,6 @@
         - modernuo
         - skill items
 -   Id: book_of_bushido
-    Name: Book Of Bushido
     Category: Skill Items
     Description: ''
     ItemId: 9100
@@ -344,7 +336,6 @@
         - modernuo
         - skill items
 -   Id: book_of_chivalry
-    Name: Book Of Chivalry
     Category: Skill Items
     Description: ''
     ItemId: 8786
@@ -357,7 +348,6 @@
         - modernuo
         - skill items
 -   Id: book_of_ninjitsu
-    Name: Book Of Ninjitsu
     Category: Skill Items
     Description: ''
     ItemId: 9120
@@ -409,7 +399,6 @@
         - modernuo
         - skill items
 -   Id: clock_frame
-    Name: Clock Frame
     Category: Skill Items
     Description: ''
     ItemId: 4173
@@ -443,7 +432,6 @@
         - skill items
         - flippable
 -   Id: clock_parts
-    Name: Clock Parts
     Category: Skill Items
     Description: ''
     ItemId: 4175
@@ -590,7 +578,6 @@
         - modernuo
         - skill items
 -   Id: dovetail_saw
-    Name: Dovetail Saw
     Category: Skill Items
     Description: ''
     ItemId: 4136
@@ -607,7 +594,6 @@
         - skill items
         - flippable
 -   Id: draw_knife
-    Name: Draw Knife
     Category: Skill Items
     Description: ''
     ItemId: 4324
@@ -676,7 +662,6 @@
         - modernuo
         - skill items
 -   Id: dyes
-    Name: Dyes
     Category: Skill Items
     Description: ''
     ItemId: 4009
@@ -897,7 +882,6 @@
         - modernuo
         - skill items
 -   Id: fishing_pole
-    Name: Fishing Pole
     Category: Skill Items
     Description: ''
     ItemId: 3520
@@ -940,7 +924,6 @@
         - skill items
         - flippable
 -   Id: flour_sifter
-    Name: Flour Sifter
     Category: Skill Items
     Description: ''
     ItemId: 4158
@@ -953,7 +936,6 @@
         - modernuo
         - skill items
 -   Id: forge
-    Name: Forge
     Category: Skill Items
     Description: ''
     ItemId: 4017
@@ -967,7 +949,6 @@
         - skill items
         - flippable
 -   Id: fork
-    Name: Fork
     Category: Skill Items
     Description: ''
     ItemId: 2548
@@ -1024,7 +1005,6 @@
         - skill items
         - flippable
 -   Id: froe
-    Name: Froe
     Category: Skill Items
     Description: ''
     ItemId: 4325
@@ -1037,7 +1017,6 @@
         - modernuo
         - skill items
 -   Id: fukiya
-    Name: Fukiya
     Category: Skill Items
     Description: ''
     ItemId: 10154
@@ -1081,7 +1060,6 @@
         - modernuo
         - skill items
 -   Id: gears
-    Name: Gears
     Category: Skill Items
     Description: ''
     ItemId: 4179
@@ -1138,7 +1116,6 @@
         - modernuo
         - skill items
 -   Id: globe
-    Name: Globe
     Category: Skill Items
     Description: ''
     ItemId: 4167
@@ -1177,7 +1154,6 @@
         - modernuo
         - skill items
 -   Id: hammer
-    Name: Hammer
     Category: Skill Items
     Description: ''
     ItemId: 4138
@@ -1242,7 +1218,6 @@
         - modernuo
         - skill items
 -   Id: hinge
-    Name: Hinge
     Category: Skill Items
     Description: ''
     ItemId: 4181
@@ -1298,7 +1273,6 @@
         - modernuo
         - skill items
 -   Id: inshave
-    Name: Inshave
     Category: Skill Items
     Description: ''
     ItemId: 4326
@@ -1337,7 +1311,6 @@
         - modernuo
         - skill items
 -   Id: jointing_plane
-    Name: Jointing Plane
     Category: Skill Items
     Description: ''
     ItemId: 4144
@@ -1354,7 +1327,6 @@
         - skill items
         - flippable
 -   Id: kindling
-    Name: Kindling
     Category: Skill Items
     Description: ''
     ItemId: 3553
@@ -1367,7 +1339,6 @@
         - modernuo
         - skill items
 -   Id: knife
-    Name: Knife
     Category: Skill Items
     Description: ''
     ItemId: 2550
@@ -1424,7 +1395,6 @@
         - skill items
         - flippable
 -   Id: lap_harp
-    Name: Lap Harp
     Category: Skill Items
     Description: ''
     ItemId: 3762
@@ -1463,7 +1433,6 @@
         - modernuo
         - skill items
 -   Id: leather_ninja_belt
-    Name: Leather Ninja Belt
     Category: Skill Items
     Description: ''
     ItemId: 10128
@@ -1603,7 +1572,6 @@
         - modernuo
         - skill items
 -   Id: lockpick
-    Name: Lockpick
     Category: Skill Items
     Description: ''
     ItemId: 5372
@@ -1620,7 +1588,6 @@
         - skill items
         - flippable
 -   Id: log
-    Name: Log
     Category: Skill Items
     Description: ''
     ItemId: 7133
@@ -1637,7 +1604,6 @@
         - skill items
         - flippable
 -   Id: lute
-    Name: Lute
     Category: Skill Items
     Description: ''
     ItemId: 3763
@@ -1715,7 +1681,6 @@
         - modernuo
         - skill items
 -   Id: mallet_and_chisel
-    Name: Mallet And Chisel
     Category: Skill Items
     Description: ''
     ItemId: 4787
@@ -1889,7 +1854,6 @@
         - modernuo
         - skill items
 -   Id: moongate_modernuo
-    Name: Moongate
     Category: Skill Items
     Description: ''
     ItemId: 3948
@@ -1945,7 +1909,6 @@
         - modernuo
         - skill items
 -   Id: nails
-    Name: Nails
     Category: Skill Items
     Description: ''
     ItemId: 4142
@@ -1975,7 +1938,6 @@
         - modernuo
         - skill items
 -   Id: necromancer_spellbook
-    Name: Necromancer Spellbook
     Category: Skill Items
     Description: ''
     ItemId: 8787
@@ -1988,7 +1950,6 @@
         - modernuo
         - skill items
 -   Id: spellbook
-    Name: Spellbook
     Category: Skill Items
     Description: ''
     ItemId: 3834
@@ -2092,7 +2053,6 @@
         - modernuo
         - skill items
 -   Id: plate
-    Name: Plate
     Category: Skill Items
     Description: ''
     ItemId: 2519
@@ -2244,7 +2204,6 @@
         - modernuo
         - skill items
 -   Id: recall_rune
-    Name: Recall Rune
     Category: Skill Items
     Description: ''
     ItemId: 7956
@@ -2359,7 +2318,6 @@
         - modernuo
         - skill items
 -   Id: rolling_pin
-    Name: Rolling Pin
     Category: Skill Items
     Description: ''
     ItemId: 4163
@@ -2465,7 +2423,6 @@
         - modernuo
         - skill items
 -   Id: saw
-    Name: Saw
     Category: Skill Items
     Description: ''
     ItemId: 4148
@@ -2482,7 +2439,6 @@
         - skill items
         - flippable
 -   Id: scissors
-    Name: Scissors
     Category: Skill Items
     Description: ''
     ItemId: 3999
@@ -2499,7 +2455,6 @@
         - skill items
         - flippable
 -   Id: scorp
-    Name: Scorp
     Category: Skill Items
     Description: ''
     ItemId: 4327
@@ -2529,7 +2484,6 @@
         - skill items
         - flippable
 -   Id: sewing_kit
-    Name: Sewing Kit
     Category: Skill Items
     Description: ''
     ItemId: 3997
@@ -2542,7 +2496,6 @@
         - modernuo
         - skill items
 -   Id: sextant
-    Name: Sextant
     Category: Skill Items
     Description: ''
     ItemId: 4184
@@ -2555,7 +2508,6 @@
         - modernuo
         - skill items
 -   Id: sextant_parts
-    Name: Sextant Parts
     Category: Skill Items
     Description: ''
     ItemId: 4185
@@ -2572,7 +2524,6 @@
         - skill items
         - flippable
 -   Id: shovel
-    Name: Shovel
     Category: Skill Items
     Description: ''
     ItemId: 3897
@@ -2585,7 +2536,6 @@
         - modernuo
         - skill items
 -   Id: shuriken
-    Name: Shuriken
     Category: Skill Items
     Description: ''
     ItemId: 10156
@@ -2615,7 +2565,6 @@
         - modernuo
         - skill items
 -   Id: sledge_hammer
-    Name: Sledge Hammer
     Category: Skill Items
     Description: ''
     ItemId: 4021
@@ -2662,7 +2611,6 @@
         - skill items
         - flippable
 -   Id: smoke_bomb
-    Name: Smoke Bomb
     Category: Skill Items
     Description: ''
     ItemId: 10248
@@ -2675,7 +2623,6 @@
         - modernuo
         - skill items
 -   Id: smoothing_plane
-    Name: Smoothing Plane
     Category: Skill Items
     Description: ''
     ItemId: 4146
@@ -2761,7 +2708,6 @@
         - modernuo
         - skill items
 -   Id: spoon
-    Name: Spoon
     Category: Skill Items
     Description: ''
     ItemId: 2552
@@ -2818,7 +2764,6 @@
         - skill items
         - flippable
 -   Id: springs
-    Name: Springs
     Category: Skill Items
     Description: ''
     ItemId: 4189
@@ -2835,7 +2780,6 @@
         - skill items
         - flippable
 -   Id: spyglass
-    Name: Spyglass
     Category: Skill Items
     Description: ''
     ItemId: 5365
@@ -3070,7 +3014,6 @@
         - modernuo
         - skill items
 -   Id: tambourine
-    Name: Tambourine
     Category: Skill Items
     Description: ''
     ItemId: 3741
@@ -3083,7 +3026,6 @@
         - modernuo
         - skill items
 -   Id: tambourine_tassel
-    Name: Tambourine Tassel
     Category: Skill Items
     Description: ''
     ItemId: 3742
@@ -3169,7 +3111,6 @@
         - skill items
         - flippable
 -   Id: tinkers_tools
-    Name: Tinkers Tools
     Category: Skill Items
     Description: ''
     ItemId: 7868
@@ -3183,7 +3124,6 @@
         - skill items
         - flippable
 -   Id: tongs
-    Name: Tongs
     Category: Skill Items
     Description: ''
     ItemId: 4027
