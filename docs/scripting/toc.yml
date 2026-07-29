@@ -42,6 +42,8 @@
       href: data/item-templates.md
     - name: Mobile templates
       href: data/mobile-templates.md
+    - name: Name pools
+      href: data/names.md
     - name: Loot tables
       href: data/loot-tables.md
     - name: Starting items
