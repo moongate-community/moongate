@@ -1,4 +1,6 @@
+using Moongate.Ultima.Tiles;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Items;
 
 namespace Moongate.Server.Services.Items;
 
@@ -36,5 +38,45 @@ public static class TileDataTemplateResolver
         }
 
         return (LayerType)layerByte;
+    }
+
+    /// <summary>
+    /// Fills <paramref name="template" />'s layer and weight from the tile its <c>ItemId</c> names, and
+    /// reports whether anything changed. A template whose tile the client files do not describe — or a
+    /// shard with no client files at all — is left exactly as the YAML wrote it.
+    /// </summary>
+    public static bool Resolve(ItemTemplate template)
+    {
+        if (TileData.ItemTable is not { Length: > 0 } tiles ||
+            template.ItemId < 0 ||
+            template.ItemId >= tiles.Length)
+        {
+            return false;
+        }
+
+        var tile = tiles[template.ItemId];
+        var changed = false;
+
+        if (LayerFor(tile.Wearable, tile.Quality) is { } layer)
+        {
+            if (template.Equip is null)
+            {
+                template.Equip = new() { Layer = layer };
+                changed = true;
+            }
+            else if (template.Equip.Layer == LayerType.None)
+            {
+                template.Equip.Layer = layer;
+                changed = true;
+            }
+        }
+
+        if (template.Weight == 0)
+        {
+            template.Weight = WeightFor(tile.Weight);
+            changed = true;
+        }
+
+        return changed;
     }
 }
