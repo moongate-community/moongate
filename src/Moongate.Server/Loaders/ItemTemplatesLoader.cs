@@ -77,16 +77,27 @@ public sealed class ItemTemplatesLoader : IDataLoader
 
         ItemTemplateValidator.Validate(sources);
 
+        var resolved = 0;
+
         foreach (var source in sources)
         {
+            // The client files decide layer and weight wherever the template does not state them.
+            // Nothing downstream needs to know: they all keep reading the template.
+            if (TileDataTemplateResolver.Resolve(source.Template))
+            {
+                resolved++;
+            }
+
             _templates.Register(source.Template);
         }
 
         _logger.Information(
-            "Loaded {TemplateCount} item template(s) from {YamlFileCount} YAML file(s) in {Path}",
+            "Loaded {TemplateCount} item template(s) from {YamlFileCount} YAML file(s) in {Path}; " +
+            "{ResolvedCount} took a layer or weight from the client tiledata",
             sources.Count,
             files.Length,
-            itemsDirectory
+            itemsDirectory,
+            resolved
         );
 
         return ValueTask.CompletedTask;
