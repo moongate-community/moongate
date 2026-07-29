@@ -21,7 +21,7 @@ public class MobileTemplateRepositoryIntegrityTests
         try
         {
             await new ItemTemplatesLoader(items, directories).LoadAsync();
-            await new MobileTemplatesLoader(mobiles, directories).LoadAsync();
+            await new MobileTemplatesLoader(mobiles, directories, new NameService()).LoadAsync();
             await new LootTemplatesLoader(loot, items, directories).LoadAsync();
 
             Assert.NotEmpty(mobiles.All);

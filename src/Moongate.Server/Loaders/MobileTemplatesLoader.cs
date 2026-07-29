@@ -17,12 +17,18 @@ public sealed class MobileTemplatesLoader : IDataLoader
     private readonly ILogger _logger = Log.ForContext<MobileTemplatesLoader>();
     private readonly IMobileTemplateService _templates;
     private readonly DirectoriesConfig _directories;
+    private readonly INameService _names;
     private readonly MobileTemplateBaseResolver _resolver = new();
 
-    public MobileTemplatesLoader(IMobileTemplateService templates, DirectoriesConfig directories)
+    public MobileTemplatesLoader(
+        IMobileTemplateService templates,
+        DirectoriesConfig directories,
+        INameService names
+    )
     {
         _templates = templates;
         _directories = directories;
+        _names = names;
     }
 
     public ValueTask LoadAsync(CancellationToken ct = default)
@@ -68,6 +74,7 @@ public sealed class MobileTemplatesLoader : IDataLoader
 
         foreach (var template in resolved)
         {
+            ValidateNamePools(template);
             _templates.Register(template);
         }
 
@@ -79,5 +86,33 @@ public sealed class MobileTemplatesLoader : IDataLoader
         );
 
         return ValueTask.CompletedTask;
+    }
+
+    /// <summary>
+    /// A NamePool naming no registered pool is a content typo. Names load at priority 30 and mobile
+    /// templates at 150, so it is caught while the server is still starting instead of producing
+    /// nameless NPCs long after. Runs after base resolution, so an inherited pool is checked on each
+    /// derived template rather than only on the base.
+    /// </summary>
+    private void ValidateNamePools(MobileTemplate template)
+    {
+        RequirePool(template.Id, template.NamePool);
+
+        foreach (var variant in template.Variants)
+        {
+            RequirePool(template.Id, variant.NamePool);
+        }
+    }
+
+    private void RequirePool(string templateId, string? pool)
+    {
+        if (string.IsNullOrEmpty(pool) || _names.GetByType(pool) is not null)
+        {
+            return;
+        }
+
+        throw new InvalidDataException(
+            $"Mobile template '{templateId}' references unknown name pool '{pool}'."
+        );
     }
 }
