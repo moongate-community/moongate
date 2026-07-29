@@ -85,7 +85,11 @@ public sealed class PaperdollImageService : IPaperdollImageService
         return path;
     }
 
-    private static GenderType ResolveGender(MobileTemplateGenderType gender)
+    /// <summary>
+    /// A template that states no gender renders male, the same as <c>Random</c> does — the image has
+    /// to be identical on every request for the cache key to mean anything.
+    /// </summary>
+    private static GenderType ResolveGender(MobileTemplateGenderType? gender)
         => gender == MobileTemplateGenderType.Female ? GenderType.Female : GenderType.Male;
 
     private static string Sanitize(string id)

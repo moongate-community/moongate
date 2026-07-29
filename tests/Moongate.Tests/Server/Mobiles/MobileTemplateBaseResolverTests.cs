@@ -1,5 +1,6 @@
 using Moongate.Server.Services.Mobiles;
 using Moongate.UO.Data.Mobiles.Templates;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Server.Mobiles;
 
@@ -85,5 +86,32 @@ public class MobileTemplateBaseResolverTests
         var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
 
         Assert.Equal("female", resolved.Single(template => template.Id == "guard_female").NamePool);
+    }
+
+    // Omitting Gender and writing Gender: Male used to be indistinguishable, so a derived template
+    // could never state that it is male against a female base.
+    [Fact]
+    public void Resolve_DerivedForcingMale_BeatsAFemaleBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
+        var derived = new MobileTemplate
+        {
+            Id = "butler", BaseMobile = "base_maid", Gender = MobileTemplateGenderType.Male
+        };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal(MobileTemplateGenderType.Male, resolved.Single(template => template.Id == "butler").Gender);
+    }
+
+    [Fact]
+    public void Resolve_DerivedWithNoGender_StillInheritsTheBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
+        var derived = new MobileTemplate { Id = "maid", BaseMobile = "base_maid" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal(MobileTemplateGenderType.Female, resolved.Single(template => template.Id == "maid").Gender);
     }
 }

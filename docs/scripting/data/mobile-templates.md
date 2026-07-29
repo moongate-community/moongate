@@ -52,7 +52,7 @@ path order) into one flat list, then `MobileTemplateBaseResolver` resolves
 | `Id` | `string` | required (no format check) | Not merged — the derived `Id` is kept. |
 | `Name` | `string` | optional, default `""` | Derived value wins if non-empty, else the base's. |
 | `NamePool` | `string` | optional, default `""` | Derived value wins if non-empty, else the base's. |
-| `Gender` | `MobileTemplateGenderType` enum | optional, default `Male` | Derived value wins **only if it is not `Male`**; see [Gender](#gender) for the caveat this creates. |
+| `Gender` | `MobileTemplateGenderType?` enum | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). |
 | `Title` | `string` | optional, default `""` | Derived wins if non-empty, else base's. Displayed under the mobile's name (e.g. "the guard"). |
 | `Category` | `string` | optional, default `""` | Derived wins if non-empty, else base's. Matched by `GetByCategory`. |
 | `Description` | `string` | optional, default `""` | Derived wins if non-empty, else base's. |
@@ -98,12 +98,12 @@ to an actual gender:
 
 No shipped template currently sets `Gender: Random`; `Female` is used (e.g.
 `archer_guard_female_npc`, `warrior_guard_female_npc` in
-`Mobiles/guards.yaml`). `Male` doubles as both "explicitly male" and "not
-set", which has one consequence worth calling out: **because the merge rule
-only takes the derived value when it is not `Male`, a derived template
-cannot force a base's `Female`/`Random` gender back to `Male` — omitting
-`Gender` and writing `Gender: Male` are indistinguishable, and both mean
-"inherit the base's gender" whenever `BaseMobile` is set.**
+`Mobiles/guards.yaml`).
+
+Omitting the key and writing `Gender: Male` mean different things. An omitted
+`Gender` is null, which inherits the base's; `Gender: Male` states male and
+wins over a `Female` or `Random` base. A template with no base and no `Gender`
+spawns male, which is what the factory's default arm does with null.
 
 The same caveat applies to `Strength`/`Dexterity`/`Intelligence`: because
 `50` is both the DTO default and a legitimate explicit value, a derived
