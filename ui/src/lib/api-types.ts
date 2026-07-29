@@ -376,8 +376,9 @@ export interface paths {
         /**
          * Every item template, paged.
          * @description Ordered by template id. Pass search to filter: free text, case-insensitive, matching the
-         *     template's id, name, category or any tag. Page is 1-based and defaults to 1; pageSize defaults
-         *     to 25 and cannot exceed 100. A search matching nothing is an empty page, not an error.
+         *     template's id, name, the client's name for its graphic, category or any tag. Page is 1-based
+         *     and defaults to 1; pageSize defaults to 25 and cannot exceed 100. A search matching nothing
+         *     is an empty page, not an error.
          */
         get: operations["ListItemTemplates"];
         put?: never;

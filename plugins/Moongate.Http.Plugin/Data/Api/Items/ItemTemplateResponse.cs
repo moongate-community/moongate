@@ -34,10 +34,10 @@ public sealed record ItemTemplateResponse(
 )
 {
     /// <summary>Projects a template into its full response, art url included.</summary>
-    public static ItemTemplateResponse From(ItemTemplate template)
+    public static ItemTemplateResponse From(ItemTemplate template, string displayName)
         => new(
             template.Id,
-            template.Name,
+            displayName,
             template.Category,
             template.Description,
             template.ItemId,
