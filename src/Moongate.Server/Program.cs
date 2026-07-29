@@ -126,37 +126,27 @@ await ConsoleApp.RunAsync(
             {
                 builder.FromDirectory("plugins");
 
-                // Recorded at the point of activation rather than scanned for afterwards: MoongateHttpPlugin
-                // sits behind a flag, and its assembly stays loaded even when the flag switches it off.
-                void AddTracked<TPlugin>() where TPlugin : ISquidStdPlugin, new()
-                {
-                    var plugin = new TPlugin();
-
-                    pluginCatalog.Record(plugin, false);
-                    builder.Add(plugin);
-                }
-
-                AddTracked<MoongatePersistencePlugin>();
-                AddTracked<MoongateScriptingPlugin>();
-                AddTracked<MoongateScriptModulesPlugin>();
-                AddTracked<MoongateNpcAiPlugin>();
-                AddTracked<MoongateDataLoaderPlugin>();
-                AddTracked<MoongateCommandsPlugin>();
-                AddTracked<MoongatePacketHandlersPlugin>();
-                AddTracked<MoongateEventSubscribersPlugin>();
+                builder.AddTracked<MoongatePersistencePlugin>(pluginCatalog)
+                       .AddTracked<MoongateScriptingPlugin>(pluginCatalog)
+                       .AddTracked<MoongateScriptModulesPlugin>(pluginCatalog)
+                       .AddTracked<MoongateNpcAiPlugin>(pluginCatalog)
+                       .AddTracked<MoongateDataLoaderPlugin>(pluginCatalog)
+                       .AddTracked<MoongateCommandsPlugin>(pluginCatalog)
+                       .AddTracked<MoongatePacketHandlersPlugin>(pluginCatalog)
+                       .AddTracked<MoongateEventSubscribersPlugin>(pluginCatalog);
 
                 if (!disableWebPlugin)
                 {
-                    AddTracked<MoongateHttpPlugin>();
+                    builder.AddTracked<MoongateHttpPlugin>(pluginCatalog);
                 }
                 else
                 {
                     Log.Logger.Warning("HTTP is disabled");
                 }
 
-                AddTracked<MoongateConsolePlugin>();
-                AddTracked<MoongateNewsPlugin>();
-                AddTracked<MoongateSmtpPlugin>();
+                builder.AddTracked<MoongateConsolePlugin>(pluginCatalog)
+                       .AddTracked<MoongateNewsPlugin>(pluginCatalog)
+                       .AddTracked<MoongateSmtpPlugin>(pluginCatalog);
             }
         );
 
