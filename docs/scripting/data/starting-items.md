@@ -154,6 +154,8 @@ All:
     Pack:
         -   Item: dagger
         -   Item: my_story
+        -   Item: gold
+            Amount: 1000      # one stack, not 1000 entities
 
 # At most one of these matches, on "<Race>/<Gender>".
 ByBody:
@@ -181,4 +183,4 @@ BySkill:
 
 A human male smith created with this table enters the world wearing his
 chosen pants and shirt plus shoes, an apron, gloves and a hammer, carrying a
-dagger, a book, fifty ingots and a shovel.
+dagger, a book, a thousand gold, fifty ingots and a shovel.

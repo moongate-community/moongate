@@ -20,6 +20,15 @@ public class StartingItemsDataTests
         Assert.NotEmpty(data.BySkill);
     }
 
+    // A single stacked entry rather than 1000 entities: the factory puts the amount on one item.
+    [Fact]
+    public void EveryCharacter_StartsWithAThousandGold()
+    {
+        var entry = Assert.Single(LoadData().All.Pack.Where(item => item.Item == "gold"));
+
+        Assert.Equal(1000, entry.Amount);
+    }
+
     // The hues picked on the creation screen only reach the character if the body kit asks for them:
     // an entry with no Hue falls back to the template's own hue, which is 0 for every garment.
     [Theory]

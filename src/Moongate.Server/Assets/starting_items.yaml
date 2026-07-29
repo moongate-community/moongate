@@ -2,6 +2,9 @@ All:
     Pack:
         -   Item: dagger
         -   Item: my_story
+        # Gold is stackable, so the amount is one pile rather than 1000 entities.
+        -   Item: gold
+            Amount: 1000
 ByBody:
     # "shirt" and "pants" are resolved at creation time to the hues picked on the creation screen;
     # anything else (a literal, or nothing at all) keeps the item template's own hue.
