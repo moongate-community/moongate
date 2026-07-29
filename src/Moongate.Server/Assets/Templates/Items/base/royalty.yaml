@@ -5,7 +5,6 @@
     ItemId: 8974
     Hue: 1150
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -25,7 +24,6 @@
     ItemId: 5899
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common

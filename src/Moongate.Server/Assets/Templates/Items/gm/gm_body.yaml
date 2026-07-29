@@ -46,7 +46,6 @@
     ItemId: 6256
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.gm_hiding_stone
     IsMovable: true
     Rarity: Common
@@ -62,7 +61,6 @@
     ItemId: 8413
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.gm_ethereal
     IsMovable: true
     Rarity: Common
@@ -78,7 +76,6 @@
     ItemId: 3631
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.gm_staff_orb
     IsMovable: true
     Rarity: Common
@@ -94,7 +91,6 @@
     ItemId: 8967
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: items.gm_fur_boots
     IsMovable: true
     Rarity: Common
@@ -111,7 +107,6 @@
     ItemId: 5444
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.gm_skullcap
     IsMovable: true
     Rarity: Common

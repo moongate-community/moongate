@@ -5,7 +5,6 @@
     ItemId: 12124
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -19,7 +18,6 @@
     ItemId: 12125
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -33,7 +31,6 @@
     ItemId: 12126
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -47,7 +44,6 @@
     ItemId: 12119
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -61,7 +57,6 @@
     ItemId: 12129
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common

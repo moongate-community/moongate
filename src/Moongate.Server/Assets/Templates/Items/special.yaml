@@ -8,7 +8,6 @@
         - 5092
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -26,7 +25,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -40,7 +38,6 @@
     ItemId: 3702
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -54,7 +51,6 @@
     ItemId: 3630
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -71,7 +67,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -85,7 +80,6 @@
     ItemId: 9006
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -99,7 +93,6 @@
     ItemId: 10972
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -116,7 +109,6 @@
         - 8314
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -135,7 +127,6 @@
     ItemId: 4230
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -149,7 +140,6 @@
     ItemId: 3609
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -163,7 +153,6 @@
     ItemId: 3606
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -177,7 +166,6 @@
     ItemId: 3605
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -191,7 +179,6 @@
     ItemId: 3607
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -205,7 +192,6 @@
     ItemId: 3610
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -219,7 +205,6 @@
     ItemId: 3611
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -233,7 +218,6 @@
     ItemId: 3603
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -247,7 +231,6 @@
     ItemId: 3602
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -261,7 +244,6 @@
     ItemId: 3604
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -275,7 +257,6 @@
     ItemId: 4014
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -293,7 +274,6 @@
     ItemId: 6585
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -328,7 +308,6 @@
         - 3709
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -346,7 +325,6 @@
     ItemId: 7164
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -363,7 +341,6 @@
         - 11005
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -381,7 +358,6 @@
         - 4180
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -396,7 +372,6 @@
     ItemId: 3961
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -410,7 +385,6 @@
     ItemId: 3964
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -424,7 +398,6 @@
     ItemId: 4132
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -438,7 +411,6 @@
     ItemId: 2462
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -452,7 +424,6 @@
     ItemId: 4980
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -466,7 +437,6 @@
     ItemId: 4981
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -480,7 +450,6 @@
     ItemId: 3967
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -494,7 +463,6 @@
     ItemId: 3608
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -508,7 +476,6 @@
     ItemId: 3630
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -522,7 +489,6 @@
     ItemId: 4779
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -536,7 +502,6 @@
     ItemId: 4780
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -550,7 +515,6 @@
     ItemId: 16503
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -564,7 +528,6 @@
     ItemId: 3970
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -578,7 +541,6 @@
     ItemId: 3975
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -592,7 +554,6 @@
     ItemId: 6362
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -606,7 +567,6 @@
     ItemId: 6361
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -620,7 +580,6 @@
     ItemId: 4102
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -634,7 +593,6 @@
     ItemId: 3658
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -648,7 +606,6 @@
     ItemId: 3659
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -662,7 +619,6 @@
     ItemId: 6369
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -676,7 +632,6 @@
     ItemId: 6371
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -690,7 +645,6 @@
     ItemId: 6372
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -704,7 +658,6 @@
     ItemId: 6370
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -718,7 +671,6 @@
     ItemId: 6377
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -732,7 +684,6 @@
     ItemId: 6379
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -746,7 +697,6 @@
     ItemId: 6380
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -760,7 +710,6 @@
     ItemId: 6378
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -774,7 +723,6 @@
     ItemId: 7145
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -788,7 +736,6 @@
     ItemId: 7148
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -802,7 +749,6 @@
     ItemId: 7146
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -816,7 +762,6 @@
     ItemId: 7147
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -830,7 +775,6 @@
     ItemId: 7149
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -844,7 +788,6 @@
     ItemId: 7150
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -858,7 +801,6 @@
     ItemId: 3893
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -872,7 +814,6 @@
     ItemId: 3892
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -886,7 +827,6 @@
     ItemId: 3899
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -903,7 +843,6 @@
         - 7151
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -920,7 +859,6 @@
         - 7151
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -934,7 +872,6 @@
     ItemId: 7153
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -948,7 +885,6 @@
     ItemId: 7152
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -962,7 +898,6 @@
     ItemId: 7152
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -976,7 +911,6 @@
     ItemId: 7153
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -990,7 +924,6 @@
     ItemId: 7155
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1004,7 +937,6 @@
     ItemId: 7156
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1018,7 +950,6 @@
     ItemId: 7961
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1032,7 +963,6 @@
     ItemId: 6367
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1046,7 +976,6 @@
     ItemId: 6366
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1060,7 +989,6 @@
     ItemId: 6365
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1074,7 +1002,6 @@
     ItemId: 6368
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1088,7 +1015,6 @@
     ItemId: 6367
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1102,7 +1028,6 @@
     ItemId: 6375
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1116,7 +1041,6 @@
     ItemId: 6373
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1130,7 +1054,6 @@
     ItemId: 6374
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1144,7 +1067,6 @@
     ItemId: 3977
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1158,7 +1080,6 @@
     ItemId: 3979
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1172,7 +1093,6 @@
     ItemId: 6008
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1186,7 +1106,6 @@
     ItemId: 4963
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1200,7 +1119,6 @@
     ItemId: 4967
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1214,7 +1132,6 @@
     ItemId: 4973
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1231,7 +1148,6 @@
         - 9037
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1248,7 +1164,6 @@
         - 9037
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1262,7 +1177,6 @@
     ItemId: 9035
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1276,7 +1190,6 @@
     ItemId: 7157
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1290,7 +1203,6 @@
     ItemId: 7160
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1304,7 +1216,6 @@
     ItemId: 7162
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1318,7 +1229,6 @@
     ItemId: 7158
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1332,7 +1242,6 @@
     ItemId: 7159
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1346,7 +1255,6 @@
     ItemId: 7161
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1360,7 +1268,6 @@
     ItemId: 7162
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1374,7 +1281,6 @@
     ItemId: 4099
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1388,7 +1294,6 @@
     ItemId: 4773
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1402,7 +1307,6 @@
     ItemId: 4774
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1416,7 +1320,6 @@
     ItemId: 4775
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1430,7 +1333,6 @@
     ItemId: 4776
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1444,7 +1346,6 @@
     ItemId: 4777
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1458,7 +1359,6 @@
     ItemId: 4778
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1472,7 +1372,6 @@
     ItemId: 4773
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1486,7 +1385,6 @@
     ItemId: 2449
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1500,7 +1398,6 @@
     ItemId: 3985
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1517,7 +1414,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1531,7 +1427,6 @@
     ItemId: 11009
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1545,7 +1440,6 @@
     ItemId: 4231
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1559,7 +1453,6 @@
     ItemId: 4101
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1573,7 +1466,6 @@
     ItemId: 3652
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1587,7 +1479,6 @@
     ItemId: 3653
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1601,7 +1492,6 @@
     ItemId: 3654
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1615,7 +1505,6 @@
     ItemId: 3655
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1629,7 +1518,6 @@
     ItemId: 7862
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1643,7 +1531,6 @@
     ItemId: 7863
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1660,7 +1547,6 @@
         - 7867
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1677,7 +1563,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1694,7 +1579,6 @@
         - 10947
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1726,7 +1610,6 @@
     ItemId: 18087
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1744,7 +1627,6 @@
     ItemId: 18082
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1763,7 +1645,6 @@
     ItemId: 18083
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1781,7 +1662,6 @@
     ItemId: 18084
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1799,7 +1679,6 @@
     ItemId: 2
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1814,7 +1693,6 @@
     ItemId: 9751
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1828,7 +1706,6 @@
     ItemId: 4103
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1842,7 +1719,6 @@
     ItemId: 3660
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1859,7 +1735,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1873,7 +1748,6 @@
     ItemId: 13946
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1887,7 +1761,6 @@
     ItemId: 7186
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1901,7 +1774,6 @@
     ItemId: 4230
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1933,7 +1805,6 @@
     ItemId: 10288
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1950,7 +1821,6 @@
         - 3806
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1965,7 +1835,6 @@
     ItemId: 17781
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1979,7 +1848,6 @@
     ItemId: 17778
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1993,7 +1861,6 @@
     ItemId: 17782
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2007,7 +1874,6 @@
     ItemId: 17779
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2021,7 +1887,6 @@
     ItemId: 17783
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2035,7 +1900,6 @@
     ItemId: 17780
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2049,7 +1913,6 @@
     ItemId: 3661
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2063,7 +1926,6 @@
     ItemId: 3662
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2077,7 +1939,6 @@
     ItemId: 3663
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2091,7 +1952,6 @@
     ItemId: 5916
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2108,7 +1968,6 @@
         - 5070
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2123,7 +1982,6 @@
     ItemId: 4232
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2137,7 +1995,6 @@
     ItemId: 4
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2151,7 +2008,6 @@
     ItemId: 7407
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2165,7 +2021,6 @@
     ItemId: 7408
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2179,7 +2034,6 @@
     ItemId: 4003
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2193,7 +2047,6 @@
     ItemId: 4002
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2210,7 +2063,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2227,7 +2079,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2241,7 +2092,6 @@
     ItemId: 4102
     Hue: 2419
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2272,7 +2122,6 @@
         - 12657
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2291,7 +2140,6 @@
     ItemId: 11010
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2312,7 +2160,6 @@
     ItemId: 9008
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2326,7 +2173,6 @@
     ItemId: 13043
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2340,7 +2186,6 @@
     ItemId: 2
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2355,7 +2200,6 @@
     ItemId: 3706
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2376,7 +2220,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2390,7 +2233,6 @@
     ItemId: 2537
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2422,7 +2264,6 @@
     ItemId: 3760
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2439,7 +2280,6 @@
         - 9037
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2454,7 +2294,6 @@
     ItemId: 4129
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2468,7 +2307,6 @@
     ItemId: 10907
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2487,7 +2325,6 @@
         - 9069
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2505,7 +2342,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2523,7 +2359,6 @@
         - 17789
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2541,7 +2376,6 @@
         - 17787
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2559,7 +2393,6 @@
         - 17775
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2577,7 +2410,6 @@
         - 17785
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2607,7 +2439,6 @@
     ItemId: 9
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2621,7 +2452,6 @@
     ItemId: 4164
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2656,7 +2486,6 @@
         - 9039
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2671,7 +2500,6 @@
     ItemId: 2
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2685,7 +2513,6 @@
     ItemId: 7861
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2699,7 +2526,6 @@
     ItemId: 3774
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2713,7 +2539,6 @@
     ItemId: 3773
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2727,7 +2552,6 @@
     ItemId: 13048
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2741,7 +2565,6 @@
     ItemId: 9009
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2755,7 +2578,6 @@
     ItemId: 9007
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2769,7 +2591,6 @@
     ItemId: 9004
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2786,7 +2607,6 @@
         - 5359
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2801,7 +2621,6 @@
     ItemId: 4230
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2829,7 +2648,6 @@
     ItemId: 3760
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common

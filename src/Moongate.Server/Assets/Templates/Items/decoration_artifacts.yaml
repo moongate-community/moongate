@@ -5,7 +5,6 @@
     ItemId: 7717
     Hue: 2413
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -19,7 +18,6 @@
     ItemId: 2482
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -36,7 +34,6 @@
     ItemId: 9437
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -53,7 +50,6 @@
     ItemId: 9431
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -70,7 +66,6 @@
     ItemId: 9434
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -87,7 +82,6 @@
     ItemId: 9433
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -104,7 +98,6 @@
     ItemId: 9432
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -121,7 +114,6 @@
     ItemId: 9435
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -138,7 +130,6 @@
     ItemId: 9436
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -155,7 +146,6 @@
     ItemId: 9429
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -172,7 +162,6 @@
     ItemId: 3619
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -186,7 +175,6 @@
     ItemId: 7713
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -200,7 +188,6 @@
     ItemId: 7716
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -214,7 +201,6 @@
     ItemId: 7717
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -228,7 +214,6 @@
     ItemId: 3624
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -242,7 +227,6 @@
     ItemId: 9438
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -256,7 +240,6 @@
     ItemId: 9440
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -270,7 +253,6 @@
     ItemId: 9439
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -284,7 +266,6 @@
     ItemId: 3633
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -298,7 +279,6 @@
     ItemId: 4314
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -312,7 +292,6 @@
     ItemId: 9441
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -326,7 +305,6 @@
     ItemId: 3094
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -340,7 +318,6 @@
     ItemId: 10310
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -354,7 +331,6 @@
     ItemId: 10311
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -368,7 +344,6 @@
     ItemId: 4313
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -382,7 +357,6 @@
     ItemId: 9225
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -396,7 +370,6 @@
     ItemId: 9226
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -410,7 +383,6 @@
     ItemId: 10314
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -424,7 +396,6 @@
     ItemId: 1064
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -438,7 +409,6 @@
     ItemId: 2852
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -452,7 +422,6 @@
     ItemId: 5066
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -466,7 +435,6 @@
     ItemId: 10313
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -480,7 +448,6 @@
     ItemId: 10312
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -494,7 +461,6 @@
     ItemId: 9229
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -508,7 +474,6 @@
     ItemId: 9230
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -522,7 +487,6 @@
     ItemId: 9231
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -536,7 +500,6 @@
     ItemId: 9232
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -550,7 +513,6 @@
     ItemId: 9233
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -564,7 +526,6 @@
     ItemId: 9233
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -578,7 +539,6 @@
     ItemId: 9234
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -592,7 +552,6 @@
     ItemId: 9237
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -606,7 +565,6 @@
     ItemId: 9238
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -620,7 +578,6 @@
     ItemId: 9239
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -634,7 +591,6 @@
     ItemId: 9240
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -648,7 +604,6 @@
     ItemId: 4963
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -662,7 +617,6 @@
     ItemId: 3116
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -676,7 +630,6 @@
     ItemId: 3896
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -690,7 +643,6 @@
     ItemId: 9442
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -704,7 +656,6 @@
     ItemId: 9241
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -718,7 +669,6 @@
     ItemId: 9243
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -732,7 +682,6 @@
     ItemId: 7825
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -746,7 +695,6 @@
     ItemId: 7816
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -760,7 +708,6 @@
     ItemId: 6232
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -774,7 +721,6 @@
     ItemId: 4203
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -788,7 +734,6 @@
     ItemId: 5080
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -802,7 +747,6 @@
     ItemId: 5081
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -816,7 +760,6 @@
     ItemId: 10307
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -830,7 +773,6 @@
     ItemId: 10306
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -844,7 +786,6 @@
     ItemId: 10309
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -858,7 +799,6 @@
     ItemId: 10308
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -872,7 +812,6 @@
     ItemId: 10326
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -886,7 +825,6 @@
     ItemId: 10325
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -900,7 +838,6 @@
     ItemId: 10324
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -914,7 +851,6 @@
     ItemId: 10323
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -928,7 +864,6 @@
     ItemId: 10322
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -942,7 +877,6 @@
     ItemId: 10321
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -956,7 +890,6 @@
     ItemId: 4773
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -970,7 +903,6 @@
     ItemId: 9446
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -984,7 +916,6 @@
     ItemId: 9447
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -998,7 +929,6 @@
     ItemId: 9408
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1012,7 +942,6 @@
     ItemId: 9227
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1026,7 +955,6 @@
     ItemId: 9228
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1040,7 +968,6 @@
     ItemId: 9245
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1054,7 +981,6 @@
     ItemId: 9246
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1068,7 +994,6 @@
     ItemId: 9444
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1082,7 +1007,6 @@
     ItemId: 9443
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact
@@ -1096,7 +1020,6 @@
     ItemId: 9445
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Artifact

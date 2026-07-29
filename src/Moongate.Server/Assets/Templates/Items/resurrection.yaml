@@ -5,7 +5,6 @@
     ItemId: 4
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.resurrection_shrine
     IsMovable: false
     Rarity: Common
@@ -24,7 +23,6 @@
     ItemId: 3
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.resurrection_shrine
     IsMovable: false
     Rarity: Common
@@ -43,7 +41,6 @@
     ItemId: 4
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.resurrection_shrine
     IsMovable: false
     Rarity: Common
@@ -62,7 +59,6 @@
     ItemId: 3
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.resurrection_shrine
     IsMovable: false
     Rarity: Common

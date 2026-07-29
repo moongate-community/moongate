@@ -8,7 +8,6 @@
         - 4013
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -26,7 +25,6 @@
     ItemId: 4006
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -43,7 +41,6 @@
     ItemId: 4006
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -60,7 +57,6 @@
     ItemId: 4007
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -74,7 +70,6 @@
     ItemId: 4010
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common

@@ -5,7 +5,6 @@
     ItemId: 4212
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.training_dummy
     IsMovable: false
     Rarity: Common
@@ -24,7 +23,6 @@
     ItemId: 4212
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.training_dummy
     IsMovable: false
     Rarity: Common
@@ -43,7 +41,6 @@
     ItemId: 4208
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.training_dummy
     IsMovable: false
     Rarity: Common
@@ -62,7 +59,6 @@
     ItemId: 4106
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.archery_butte
     IsMovable: false
     Rarity: Common
@@ -77,7 +73,6 @@
     ItemId: 4107
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.archery_butte
     IsMovable: false
     Rarity: Common
@@ -95,7 +90,6 @@
         - 7875
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.pickpocket_dip
     IsMovable: false
     Rarity: Common
@@ -113,7 +107,6 @@
         - 7875
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.pickpocket_dip
     IsMovable: false
     Rarity: Common

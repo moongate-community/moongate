@@ -8,7 +8,6 @@
         - 7775
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.bulletin_board
     IsMovable: true
     Rarity: Common
@@ -26,7 +25,6 @@
         - 7775
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: items.bb
     IsMovable: true
     Rarity: Common
