@@ -5,7 +5,6 @@
     ItemId: 0
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -19,7 +18,6 @@
     ItemId: 3
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -40,8 +38,6 @@
     Tags:
         - modernuo
         - suits
-    Equip:
-        Layer: OuterTorso
 -   Id: dupre_suit
     Name: Dupre Suit
     Category: Suits
@@ -49,7 +45,6 @@
     ItemId: 0
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -63,7 +58,6 @@
     ItemId: 0
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -77,7 +71,6 @@
     ItemId: 0
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -91,7 +84,6 @@
     ItemId: 467
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -105,7 +97,6 @@
     ItemId: 38
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common

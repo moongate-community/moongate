@@ -8,7 +8,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -16,7 +15,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -40,7 +38,6 @@
         - 11569
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -72,7 +69,6 @@
         - 11569
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -104,7 +100,6 @@
         - 11565
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -113,7 +108,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -137,7 +131,6 @@
         - 11551
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -145,7 +138,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -171,7 +163,6 @@
         - 3914
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -180,7 +171,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -204,7 +194,6 @@
         - 11562
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -212,7 +201,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -238,7 +226,6 @@
         - 3918
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -247,7 +234,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 100
         StrengthReq: 45
         DexterityReq: 0
@@ -271,7 +257,6 @@
         - 3912
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -304,7 +289,6 @@
         - 3568
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -313,7 +297,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 35
         DexterityReq: 0
@@ -337,7 +320,6 @@
         - 9927
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -346,7 +328,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 40
         DexterityReq: 0
@@ -370,7 +351,6 @@
         - 16498
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -379,7 +359,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 10
         DexterityReq: 0
@@ -403,7 +382,6 @@
         - 10227
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -412,7 +390,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -436,7 +413,6 @@
         - 9925
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -445,7 +421,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 25
         DexterityReq: 0
@@ -469,7 +444,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -477,7 +451,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 5
         StrengthReq: 20
         DexterityReq: 0
@@ -498,7 +471,6 @@
     ItemId: 2303
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -506,7 +478,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 25
         DexterityReq: 0
@@ -530,7 +501,6 @@
         - 5041
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -565,7 +535,6 @@
         - 3935
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -574,7 +543,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 100
         StrengthReq: 30
         DexterityReq: 0
@@ -598,7 +566,6 @@
         - 5111
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -607,7 +574,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 5
         DexterityReq: 0
@@ -631,7 +597,6 @@
         - 11555
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -639,7 +604,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -663,7 +627,6 @@
         - 11565
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -671,7 +634,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -695,7 +657,6 @@
         - 3778
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -704,7 +665,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 10
         DexterityReq: 0
@@ -728,7 +688,6 @@
         - 5043
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -737,7 +696,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 40
         DexterityReq: 0
@@ -761,7 +719,6 @@
         - 9932
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -770,7 +727,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -796,7 +752,6 @@
         - 11558
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -804,7 +759,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -828,7 +782,6 @@
         - 9931
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -861,7 +814,6 @@
         - 3919
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -896,7 +848,6 @@
         - 5184
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -905,7 +856,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 25
         DexterityReq: 0
@@ -934,7 +884,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 40
         DexterityReq: 0
@@ -958,7 +907,6 @@
         - 3921
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -967,7 +915,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 10
         DexterityReq: 0
@@ -991,7 +938,6 @@
         - 10228
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1000,7 +946,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 40
         DexterityReq: 0
@@ -1024,7 +969,6 @@
         - 11559
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1032,7 +976,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1056,7 +999,6 @@
         - 11568
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1065,7 +1007,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1089,7 +1030,6 @@
         - 16494
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1098,7 +1038,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -1122,7 +1061,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1130,7 +1068,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1154,7 +1091,6 @@
         - 3916
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1163,7 +1099,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -1187,7 +1122,6 @@
         - 9929
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1196,7 +1130,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -1220,7 +1153,6 @@
         - 16500
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1229,7 +1161,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -1253,7 +1184,6 @@
         - 16493
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1262,7 +1192,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -1286,7 +1215,6 @@
         - 16488
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1295,7 +1223,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -1319,7 +1246,6 @@
         - 11562
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1328,7 +1254,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -1354,7 +1279,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1363,7 +1287,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1387,7 +1310,6 @@
         - 11564
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1396,7 +1318,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1420,7 +1341,6 @@
         - 11568
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1428,7 +1348,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1452,7 +1371,6 @@
         - 3910
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1461,7 +1379,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 40
         DexterityReq: 0
@@ -1485,7 +1402,6 @@
         - 11564
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1493,7 +1409,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1514,7 +1429,6 @@
     ItemId: 3570
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1522,7 +1436,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 5
         DexterityReq: 0
@@ -1546,7 +1459,6 @@
         - 11562
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1554,7 +1466,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -1580,7 +1491,6 @@
         - 16501
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1613,7 +1523,6 @@
         - 3568
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1621,7 +1530,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 35
         DexterityReq: 0
@@ -1645,7 +1553,6 @@
         - 16496
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1654,7 +1561,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 20
         DexterityReq: 0
@@ -1678,7 +1584,6 @@
         - 16499
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1687,7 +1592,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 20
         DexterityReq: 0
@@ -1711,7 +1615,6 @@
         - 5113
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1720,7 +1623,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -1744,7 +1646,6 @@
         - 11572
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1752,7 +1653,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -1776,7 +1676,6 @@
         - 5183
     Hue: 0
     GoldValue: 0
-    Weight: 16.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1785,7 +1684,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 95
         DexterityReq: 0
@@ -1809,7 +1707,6 @@
         - 5180
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1818,7 +1715,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -1842,7 +1738,6 @@
         - 11569
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1874,7 +1769,6 @@
         - 3908
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1883,7 +1777,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 20
         DexterityReq: 0
@@ -1907,7 +1800,6 @@
         - 5116
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1942,7 +1834,6 @@
         - 11572
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1950,7 +1841,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -1974,7 +1864,6 @@
         - 11559
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1982,7 +1871,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2006,7 +1894,6 @@
         - 11564
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2014,7 +1901,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -2038,7 +1924,6 @@
         - 5041
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2073,7 +1958,6 @@
         - 10232
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2082,7 +1966,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2106,7 +1989,6 @@
         - 5118
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2115,7 +1997,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 25
         DexterityReq: 0
@@ -2139,7 +2020,6 @@
         - 11555
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2147,7 +2027,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2171,7 +2050,6 @@
         - 5120
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2180,7 +2058,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 10
         DexterityReq: 0
@@ -2204,7 +2081,6 @@
         - 10226
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2213,7 +2089,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 95
         StrengthReq: 65
         DexterityReq: 0
@@ -2237,7 +2112,6 @@
         - 9930
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2246,7 +2120,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 95
         DexterityReq: 0
@@ -2270,7 +2143,6 @@
         - 5114
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2279,7 +2151,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 80
         DexterityReq: 0
@@ -2303,7 +2174,6 @@
         - 11566
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2312,7 +2182,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2336,7 +2205,6 @@
         - 11566
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2344,7 +2212,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2368,7 +2235,6 @@
         - 11551
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2376,7 +2242,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2402,7 +2267,6 @@
         - 11562
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2410,7 +2274,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2436,7 +2299,6 @@
         - 3936
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2445,7 +2307,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -2469,7 +2330,6 @@
         - 11566
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2477,7 +2337,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2501,7 +2360,6 @@
         - 3933
     Hue: 0
     GoldValue: 0
-    Weight: 14.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2510,7 +2368,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -2534,7 +2391,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2542,7 +2398,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2566,7 +2421,6 @@
         - 11565
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2574,7 +2428,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2598,7 +2451,6 @@
         - 11566
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2606,7 +2458,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2630,7 +2481,6 @@
         - 11558
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2638,7 +2488,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -2659,7 +2508,6 @@
     ItemId: 3570
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2667,7 +2515,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 5
         DexterityReq: 0
@@ -2691,7 +2538,6 @@
         - 11551
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2700,7 +2546,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2726,7 +2571,6 @@
         - 5178
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2735,7 +2579,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -2759,7 +2602,6 @@
         - 11551
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2767,7 +2609,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2793,7 +2634,6 @@
         - 10221
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2802,7 +2642,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 40
         DexterityReq: 0
@@ -2826,7 +2665,6 @@
         - 10233
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2859,7 +2697,6 @@
         - 11561
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2867,7 +2704,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2891,7 +2727,6 @@
         - 11572
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2900,7 +2735,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -2924,7 +2758,6 @@
         - 3717
     Hue: 0
     GoldValue: 0
-    Weight: 11.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2933,7 +2766,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 50
         DexterityReq: 0
@@ -2957,7 +2789,6 @@
         - 9928
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2966,7 +2797,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 50
         DexterityReq: 0
@@ -2990,7 +2820,6 @@
         - 3720
     Hue: 0
     GoldValue: 0
-    Weight: 11.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2999,7 +2828,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -3023,7 +2851,6 @@
         - 3721
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3032,7 +2859,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3056,7 +2882,6 @@
         - 11559
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3065,7 +2890,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -3089,7 +2913,6 @@
         - 11551
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3097,7 +2920,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -3123,7 +2945,6 @@
         - 9933
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3132,7 +2953,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 30
         DexterityReq: 0
@@ -3158,7 +2978,6 @@
         - 11568
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3166,7 +2985,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3190,7 +3008,6 @@
         - 11558
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3199,7 +3016,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3223,7 +3039,6 @@
         - 11558
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3231,7 +3046,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3255,7 +3069,6 @@
         - 11558
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3263,7 +3076,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3287,7 +3099,6 @@
         - 10234
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3296,7 +3107,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -3320,7 +3130,6 @@
         - 11568
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3328,7 +3137,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3352,7 +3160,6 @@
         - 9926
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3361,7 +3168,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 40
         DexterityReq: 0
@@ -3385,7 +3191,6 @@
         - 5045
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3394,7 +3199,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 25
         DexterityReq: 0
@@ -3418,7 +3222,6 @@
         - 9924
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3427,7 +3230,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 100
         StrengthReq: 45
         DexterityReq: 0
@@ -3451,7 +3253,6 @@
         - 16495
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3460,7 +3261,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 35
         DexterityReq: 0
@@ -3484,7 +3284,6 @@
         - 11555
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3492,7 +3291,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -3516,7 +3314,6 @@
         - 3714
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3525,7 +3322,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -3549,7 +3345,6 @@
         - 5122
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3582,7 +3377,6 @@
         - 11568
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3590,7 +3384,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3614,7 +3407,6 @@
         - 11572
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3622,7 +3414,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -3646,7 +3437,6 @@
         - 3781
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3655,7 +3445,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 5
         DexterityReq: 0
@@ -3679,7 +3468,6 @@
         - 11562
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3687,7 +3475,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -3718,7 +3505,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 65
         StrengthReq: 60
         DexterityReq: 0
@@ -3742,7 +3528,6 @@
         - 3939
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3751,7 +3536,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -3775,7 +3559,6 @@
         - 11564
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3783,7 +3566,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3807,7 +3589,6 @@
         - 10230
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3816,7 +3597,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 10
         DexterityReq: 0
@@ -3840,7 +3620,6 @@
         - 10222
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3849,7 +3628,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 10
         DexterityReq: 0
@@ -3873,7 +3651,6 @@
         - 10225
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3882,7 +3659,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 35
         DexterityReq: 0
@@ -3906,7 +3682,6 @@
         - 5047
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3915,7 +3690,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -3939,7 +3713,6 @@
         - 11569
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3971,7 +3744,6 @@
         - 3921
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3980,7 +3752,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 0
         StrengthReq: 0
         DexterityReq: 0
@@ -4003,7 +3774,6 @@
         - 11572
     Hue: 0
     GoldValue: 0
-    Weight: 12.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4011,7 +3781,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -4035,7 +3804,6 @@
         - 3939
     Hue: 837
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4044,7 +3812,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -4068,7 +3835,6 @@
         - 11565
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4076,7 +3842,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4100,7 +3865,6 @@
         - 11566
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4108,7 +3872,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4132,7 +3895,6 @@
         - 11559
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4140,7 +3902,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4164,7 +3925,6 @@
         - 11564
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4172,7 +3932,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -4196,7 +3955,6 @@
         - 11555
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4204,7 +3962,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4228,7 +3985,6 @@
         - 11559
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4236,7 +3992,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4260,7 +4015,6 @@
         - 5186
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4269,7 +4023,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 40
         DexterityReq: 0
@@ -4293,7 +4046,6 @@
         - 5050
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4302,7 +4054,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 100
         StrengthReq: 40
         DexterityReq: 0
@@ -4326,7 +4077,6 @@
         - 10223
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4335,7 +4085,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -4359,7 +4108,6 @@
         - 5039
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4368,7 +4116,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 80
         StrengthReq: 35
         DexterityReq: 0
@@ -4392,7 +4139,6 @@
         - 11555
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4401,7 +4147,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4425,7 +4170,6 @@
         - 5124
     Hue: 0
     GoldValue: 0
-    Weight: 9.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4434,7 +4178,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -4458,7 +4201,6 @@
         - 5176
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4491,7 +4233,6 @@
         - 5126
     Hue: 0
     GoldValue: 0
-    Weight: 17.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4500,7 +4241,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 80
         DexterityReq: 0
@@ -4524,7 +4264,6 @@
         - 11569
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4557,7 +4296,6 @@
         - 11565
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -4565,7 +4303,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4598,7 +4335,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0

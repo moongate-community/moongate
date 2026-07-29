@@ -5,7 +5,6 @@
     ItemId: 7026
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -13,7 +12,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 30
         StrengthReq: 35
 -   Id: buckler
@@ -23,7 +21,6 @@
     ItemId: 7027
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -31,7 +28,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 20
 -   Id: chaos_shield
@@ -49,7 +45,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 125
         StrengthReq: 95
 -   Id: gargish_wooden_shield
@@ -62,7 +57,6 @@
         - 16903
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -71,7 +65,6 @@
         - shields
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 25
         StrengthReq: 20
 -   Id: heater_shield
@@ -81,7 +74,6 @@
     ItemId: 7030
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -89,7 +81,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 90
 -   Id: metal_kite_shield
@@ -99,7 +90,6 @@
     ItemId: 7028
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -107,7 +97,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
 -   Id: metal_shield
@@ -117,7 +106,6 @@
     ItemId: 7035
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -125,7 +113,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 45
 -   Id: order_shield
@@ -135,7 +122,6 @@
     ItemId: 7108
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -143,7 +129,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 125
         StrengthReq: 95
 -   Id: wooden_kite_shield
@@ -153,7 +138,6 @@
     ItemId: 7033
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -161,7 +145,6 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 20
 -   Id: wooden_shield
@@ -171,7 +154,6 @@
     ItemId: 7034
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -179,6 +161,5 @@
         - modernuo
         - shields
     Equip:
-        Layer: TwoHanded
         HitPoints: 25
         StrengthReq: 20

@@ -33,7 +33,6 @@
     ItemId: 2599
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -93,7 +92,6 @@
     ItemId: 2600
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -116,8 +114,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x03BE'
-    Equip:
-        Layer: TwoHanded
 -   Id: candle_large
     Name: Candle Large
     Category: Lights
@@ -125,7 +121,6 @@
     ItemId: 2598
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -155,7 +150,6 @@
     ItemId: 5171
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -185,7 +179,6 @@
     ItemId: 5167
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -245,7 +238,6 @@
     ItemId: 5702
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -291,7 +283,6 @@
     ItemId: 6217
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -411,7 +402,6 @@
     ItemId: 2597
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -434,8 +424,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x03BE'
-    Equip:
-        Layer: TwoHanded
 -   Id: light_source
     Name: Light Source
     Category: Lights
@@ -443,15 +431,12 @@
     ItemId: 5703
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - lights
-    Equip:
-        Layer: TwoHanded
 -   Id: paper_lantern
     Name: Paper Lantern
     Category: Lights
@@ -579,7 +564,6 @@
     ItemId: 3947
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: items.light_source
     IsMovable: true
     Rarity: Common
@@ -602,8 +586,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x04BB'
-    Equip:
-        Layer: TwoHanded
 -   Id: wall_sconce
     Name: Wall Sconce
     Category: Lights

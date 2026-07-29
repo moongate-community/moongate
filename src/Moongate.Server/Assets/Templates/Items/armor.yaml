@@ -5,7 +5,6 @@
     ItemId: 5132
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -13,7 +12,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -28,7 +26,6 @@
         - 5203
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -37,7 +34,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 30
         StrengthReq: 55
         DexterityReq: 0
@@ -52,7 +48,6 @@
         - 5204
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -61,7 +56,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 30
         StrengthReq: 60
         DexterityReq: 0
@@ -85,7 +79,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 30
         StrengthReq: 55
         DexterityReq: 0
@@ -100,7 +93,6 @@
         - 5206
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -109,7 +101,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 30
         StrengthReq: 20
         DexterityReq: 0
@@ -124,7 +115,6 @@
         - 5207
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -133,7 +123,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 30
         StrengthReq: 55
         DexterityReq: 0
@@ -148,7 +137,6 @@
         - 5060
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -157,7 +145,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 60
         StrengthReq: 60
         DexterityReq: 0
@@ -181,7 +168,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 60
         DexterityReq: 0
@@ -193,7 +179,6 @@
     ItemId: 10100
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -201,7 +186,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 75
         StrengthReq: 50
         DexterityReq: 0
@@ -216,7 +200,6 @@
         - 5059
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -225,7 +208,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 60
         StrengthReq: 60
         DexterityReq: 0
@@ -240,7 +222,6 @@
         - 12645
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -249,7 +230,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 10
         DexterityReq: 0
@@ -261,7 +241,6 @@
     ItemId: 5128
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -269,7 +248,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -284,7 +262,6 @@
         - 5203
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -293,7 +270,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 255
         StrengthReq: 55
         DexterityReq: 0
@@ -308,7 +284,6 @@
         - 5204
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -317,7 +292,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 255
         StrengthReq: 60
         DexterityReq: 0
@@ -341,7 +315,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 255
         StrengthReq: 55
         DexterityReq: 0
@@ -356,7 +329,6 @@
         - 5206
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -365,7 +337,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 255
         StrengthReq: 20
         DexterityReq: 0
@@ -380,7 +351,6 @@
         - 5207
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -389,7 +359,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 255
         StrengthReq: 55
         DexterityReq: 0
@@ -401,7 +370,6 @@
     ItemId: 10104
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -409,7 +377,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 75
         StrengthReq: 70
         DexterityReq: 0
@@ -424,7 +391,6 @@
         - 9816
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -433,7 +399,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -448,7 +413,6 @@
         - 9794
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -457,7 +421,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -472,7 +435,6 @@
         - 9796
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -481,7 +443,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -496,7 +457,6 @@
         - 9798
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -505,7 +465,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -520,7 +479,6 @@
         - 9800
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -529,7 +487,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -541,7 +498,6 @@
     ItemId: 12216
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -549,7 +505,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 48
         StrengthReq: 45
         DexterityReq: 0
@@ -564,7 +519,6 @@
         - 12644
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -573,7 +527,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 65
         StrengthReq: 95
         DexterityReq: 0
@@ -588,7 +541,6 @@
         - 12673
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -597,7 +549,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -612,7 +563,6 @@
         - 7175
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -621,7 +571,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 40
         StrengthReq: 25
         DexterityReq: 0
@@ -636,7 +585,6 @@
         - 7173
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -645,7 +593,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 65
         StrengthReq: 95
         DexterityReq: 0
@@ -660,7 +607,6 @@
         - 7171
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -669,7 +615,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 35
         DexterityReq: 0
@@ -681,7 +626,6 @@
     ItemId: 1028
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -689,7 +633,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -701,7 +644,6 @@
     ItemId: 1027
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -709,7 +651,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -729,7 +670,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -749,7 +689,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -761,13 +700,14 @@
     ItemId: 1032
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -781,13 +721,14 @@
     ItemId: 1031
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -809,7 +750,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -829,7 +769,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -841,7 +780,6 @@
     ItemId: 769
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -849,7 +787,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -861,7 +798,6 @@
     ItemId: 770
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -869,7 +805,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -881,7 +816,6 @@
     ItemId: 772
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -889,7 +823,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -901,7 +834,6 @@
     ItemId: 771
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -909,7 +841,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -928,6 +859,8 @@
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -948,6 +881,8 @@
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -969,7 +904,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -989,7 +923,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -1004,7 +937,6 @@
         - 17791
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1013,7 +945,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 0
         StrengthReq: 10
         DexterityReq: 0
@@ -1025,7 +956,6 @@
     ItemId: 644
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1033,7 +963,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1045,7 +974,6 @@
     ItemId: 643
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1053,7 +981,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1065,7 +992,6 @@
     ItemId: 646
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1073,7 +999,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1085,7 +1010,6 @@
     ItemId: 645
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1093,7 +1017,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1105,13 +1028,14 @@
     ItemId: 648
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -1125,13 +1049,14 @@
     ItemId: 647
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -1145,7 +1070,6 @@
     ItemId: 650
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1153,7 +1077,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1165,7 +1088,6 @@
     ItemId: 649
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1173,7 +1095,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1185,7 +1106,6 @@
     ItemId: 644
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1193,7 +1113,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1205,7 +1124,6 @@
     ItemId: 643
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1213,7 +1131,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1225,7 +1142,6 @@
     ItemId: 646
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1233,7 +1149,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1245,7 +1160,6 @@
     ItemId: 645
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1253,7 +1167,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1265,13 +1178,14 @@
     ItemId: 648
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -1285,13 +1199,14 @@
     ItemId: 647
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
     Tags:
         - modernuo
         - armor
+    # The client reports layer 7 (Gloves) for this tile, which is wrong for a kilt: the ItemId is
+    # right, the tiledata byte is not. Declared here so the resolver leaves it alone.
     Equip:
         Layer: OuterLegs
         HitPoints: 50
@@ -1305,7 +1220,6 @@
     ItemId: 650
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1313,7 +1227,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1325,7 +1238,6 @@
     ItemId: 649
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1333,7 +1245,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -1348,7 +1259,6 @@
         - 12647
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1357,7 +1267,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 35
         StrengthReq: 10
         DexterityReq: 0
@@ -1369,7 +1278,6 @@
     ItemId: 10103
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1377,7 +1285,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 70
         StrengthReq: 55
         DexterityReq: 0
@@ -1389,7 +1296,6 @@
     ItemId: 5130
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1397,7 +1303,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -1412,7 +1317,6 @@
         - 12651
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1421,7 +1325,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -1445,7 +1348,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 35
         DexterityReq: 0
@@ -1460,7 +1362,6 @@
         - 12652
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1469,7 +1370,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 45
         StrengthReq: 15
         DexterityReq: 0
@@ -1484,7 +1384,6 @@
         - 12653
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1493,7 +1392,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Neck
         HitPoints: 45
         StrengthReq: 15
         DexterityReq: 0
@@ -1508,7 +1406,6 @@
         - 12655
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1517,7 +1414,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Pants
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -1532,7 +1428,6 @@
         - 12654
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1541,7 +1436,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 45
         StrengthReq: 20
         DexterityReq: 0
@@ -1556,7 +1450,6 @@
         - 12670
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1565,7 +1458,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 40
         StrengthReq: 15
         DexterityReq: 0
@@ -1580,7 +1472,6 @@
         - 12667
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1589,7 +1480,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1601,7 +1491,6 @@
     ItemId: 12230
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1609,7 +1498,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Gloves
         HitPoints: 40
         StrengthReq: 10
         DexterityReq: 0
@@ -1621,7 +1509,6 @@
     ItemId: 12231
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1629,7 +1516,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Neck
         HitPoints: 40
         StrengthReq: 10
         DexterityReq: 0
@@ -1644,7 +1530,6 @@
         - 12671
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1653,7 +1538,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1668,7 +1552,6 @@
         - 12672
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1677,7 +1560,6 @@
         - armor
         - flippable
     Equip:
-        Layer: OuterLegs
         HitPoints: 40
         StrengthReq: 10
         DexterityReq: 0
@@ -1692,7 +1574,6 @@
         - 5061
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1701,7 +1582,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1716,7 +1596,6 @@
         - 7179
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1725,7 +1604,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1740,7 +1618,6 @@
         - 7610
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1749,7 +1626,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1764,7 +1640,6 @@
         - 5075
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1773,7 +1648,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 40
         StrengthReq: 25
         DexterityReq: 0
@@ -1785,7 +1659,6 @@
     ItemId: 10182
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1793,7 +1666,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 40
         DexterityReq: 0
@@ -1808,7 +1680,6 @@
         - 5070
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1816,7 +1687,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Gloves
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1828,7 +1698,6 @@
     ItemId: 5063
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1836,7 +1705,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Neck
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1848,7 +1716,6 @@
     ItemId: 10122
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1856,7 +1723,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1868,7 +1734,6 @@
     ItemId: 10110
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1876,7 +1741,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 25
         DexterityReq: 0
@@ -1888,7 +1752,6 @@
     ItemId: 10102
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1896,7 +1759,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 30
         StrengthReq: 25
         DexterityReq: 0
@@ -1911,7 +1773,6 @@
         - 5074
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1920,7 +1781,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -1932,7 +1792,6 @@
     ItemId: 10106
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1940,7 +1799,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 40
         StrengthReq: 30
         DexterityReq: 0
@@ -1952,7 +1810,6 @@
     ItemId: 10126
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1960,7 +1817,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 45
         StrengthReq: 10
         DexterityReq: 0
@@ -1972,7 +1828,6 @@
     ItemId: 10131
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -1980,7 +1835,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 65
         StrengthReq: 10
         DexterityReq: 0
@@ -1992,7 +1846,6 @@
     ItemId: 10130
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2000,7 +1853,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Gloves
         HitPoints: 25
         StrengthReq: 10
         DexterityReq: 0
@@ -2012,7 +1864,6 @@
     ItemId: 10129
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2020,7 +1871,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Pants
         HitPoints: 50
         StrengthReq: 10
         DexterityReq: 0
@@ -2035,7 +1885,6 @@
         - 7169
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2044,7 +1893,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Pants
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -2059,7 +1907,6 @@
         - 7177
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2068,7 +1915,6 @@
         - armor
         - flippable
     Equip:
-        Layer: OuterLegs
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -2080,7 +1926,6 @@
     ItemId: 10118
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2088,7 +1933,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Shoes
         HitPoints: 40
         StrengthReq: 20
         DexterityReq: 0
@@ -2100,7 +1944,6 @@
     ItemId: 10113
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2108,7 +1951,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -2120,7 +1962,6 @@
     ItemId: 5134
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2128,7 +1969,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -2140,7 +1980,6 @@
     ItemId: 7947
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2148,7 +1987,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 50
         StrengthReq: 30
         DexterityReq: 0
@@ -2163,7 +2001,6 @@
         - 5143
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2172,7 +2009,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 65
         StrengthReq: 80
         DexterityReq: 0
@@ -2184,7 +2020,6 @@
     ItemId: 10117
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2192,7 +2027,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 70
         DexterityReq: 0
@@ -2207,7 +2041,6 @@
         - 5142
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2216,7 +2049,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 65
         StrengthReq: 95
         DexterityReq: 0
@@ -2228,7 +2060,6 @@
     ItemId: 10109
     Hue: 0
     GoldValue: 0
-    Weight: 10.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2236,7 +2067,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 70
         StrengthReq: 85
         DexterityReq: 0
@@ -2251,7 +2081,6 @@
         - 5144
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2260,7 +2089,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 65
         StrengthReq: 70
         DexterityReq: 0
@@ -2272,7 +2100,6 @@
     ItemId: 5139
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2280,7 +2107,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Neck
         HitPoints: 65
         StrengthReq: 45
         DexterityReq: 0
@@ -2292,7 +2118,6 @@
     ItemId: 10125
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2300,7 +2125,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 65
         StrengthReq: 80
         DexterityReq: 0
@@ -2312,7 +2136,6 @@
     ItemId: 10101
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2320,7 +2143,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 75
         StrengthReq: 65
         DexterityReq: 0
@@ -2332,7 +2154,6 @@
     ItemId: 5138
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2340,7 +2161,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 80
         DexterityReq: 0
@@ -2360,7 +2180,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 75
         StrengthReq: 75
         DexterityReq: 0
@@ -2375,7 +2194,6 @@
         - 5146
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2384,7 +2202,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 65
         StrengthReq: 90
         DexterityReq: 0
@@ -2396,7 +2213,6 @@
     ItemId: 10105
     Hue: 0
     GoldValue: 0
-    Weight: 3.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2404,7 +2220,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 70
         StrengthReq: 50
         DexterityReq: 0
@@ -2416,7 +2231,6 @@
     ItemId: 10120
     Hue: 0
     GoldValue: 0
-    Weight: 7.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2424,7 +2238,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Shoes
         HitPoints: 65
         StrengthReq: 80
         DexterityReq: 0
@@ -2439,7 +2252,6 @@
         - 5076
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2448,7 +2260,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2463,7 +2274,6 @@
         - 5090
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2472,7 +2282,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 35
         DexterityReq: 0
@@ -2487,7 +2296,6 @@
         - 5085
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2496,7 +2304,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2508,7 +2315,6 @@
     ItemId: 5078
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2516,7 +2322,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Neck
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2540,7 +2345,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 45
         StrengthReq: 30
         DexterityReq: 0
@@ -2555,7 +2359,6 @@
         - 12648
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2564,7 +2367,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 25
         DexterityReq: 0
@@ -2588,7 +2390,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -2603,7 +2404,6 @@
         - 5101
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2612,7 +2412,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -2627,7 +2426,6 @@
         - 5106
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2636,7 +2434,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -2651,7 +2448,6 @@
         - 5105
     Hue: 0
     GoldValue: 0
-    Weight: 15.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2660,7 +2456,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 50
         StrengthReq: 40
         DexterityReq: 0
@@ -2675,7 +2470,6 @@
         - 12646
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2684,7 +2478,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 35
         StrengthReq: 10
         DexterityReq: 0
@@ -2696,7 +2489,6 @@
     ItemId: 10116
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2704,7 +2496,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -2716,7 +2507,6 @@
     ItemId: 10121
     Hue: 0
     GoldValue: 0
-    Weight: 6.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2724,7 +2514,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 70
         DexterityReq: 0
@@ -2739,7 +2528,6 @@
         - 5076
     Hue: 0
     GoldValue: 0
-    Weight: 4.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2748,7 +2536,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2763,7 +2550,6 @@
         - 7181
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2772,7 +2558,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 45
         StrengthReq: 35
         DexterityReq: 0
@@ -2787,7 +2572,6 @@
         - 5090
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2796,7 +2580,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 45
         StrengthReq: 35
         DexterityReq: 0
@@ -2808,7 +2591,6 @@
     ItemId: 10183
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2816,7 +2598,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerTorso
         HitPoints: 50
         StrengthReq: 55
         DexterityReq: 0
@@ -2831,7 +2612,6 @@
         - 5085
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2840,7 +2620,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2852,7 +2631,6 @@
     ItemId: 5078
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2860,7 +2638,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Neck
         HitPoints: 45
         StrengthReq: 25
         DexterityReq: 0
@@ -2872,7 +2649,6 @@
     ItemId: 10123
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2880,7 +2656,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: InnerLegs
         HitPoints: 45
         StrengthReq: 30
         DexterityReq: 0
@@ -2892,7 +2667,6 @@
     ItemId: 10111
     Hue: 0
     GoldValue: 0
-    Weight: 1.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2900,7 +2674,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Arms
         HitPoints: 55
         StrengthReq: 30
         DexterityReq: 0
@@ -2915,7 +2688,6 @@
         - 5089
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2924,7 +2696,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 45
         StrengthReq: 30
         DexterityReq: 0
@@ -2936,7 +2707,6 @@
     ItemId: 10141
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2944,7 +2714,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Helm
         HitPoints: 40
         StrengthReq: 30
         DexterityReq: 0
@@ -2956,7 +2725,6 @@
     ItemId: 10194
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2964,7 +2732,6 @@
         - modernuo
         - armor
     Equip:
-        Layer: Shoes
         HitPoints: 50
         StrengthReq: 30
         DexterityReq: 0
@@ -2979,7 +2746,6 @@
         - 12649
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -2988,7 +2754,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 65
         StrengthReq: 25
         DexterityReq: 0
@@ -3003,7 +2768,6 @@
         - 12650
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3012,7 +2776,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Helm
         HitPoints: 55
         StrengthReq: 25
         DexterityReq: 0
@@ -3027,7 +2790,6 @@
         - 12643
     Hue: 0
     GoldValue: 0
-    Weight: 5.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3036,7 +2798,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Arms
         HitPoints: 65
         StrengthReq: 80
         DexterityReq: 0
@@ -3051,7 +2812,6 @@
         - 12638
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3060,7 +2820,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerTorso
         HitPoints: 65
         StrengthReq: 95
         DexterityReq: 0
@@ -3075,7 +2834,6 @@
         - 12641
     Hue: 0
     GoldValue: 0
-    Weight: 2.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3084,7 +2842,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Gloves
         HitPoints: 65
         StrengthReq: 70
         DexterityReq: 0
@@ -3099,7 +2856,6 @@
         - 12640
     Hue: 0
     GoldValue: 0
-    Weight: 0.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3108,7 +2864,6 @@
         - armor
         - flippable
     Equip:
-        Layer: Neck
         HitPoints: 65
         StrengthReq: 45
         DexterityReq: 0
@@ -3123,7 +2878,6 @@
         - 12642
     Hue: 0
     GoldValue: 0
-    Weight: 8.0
     ScriptId: none
     IsMovable: true
     Rarity: Common
@@ -3132,7 +2886,6 @@
         - armor
         - flippable
     Equip:
-        Layer: InnerLegs
         HitPoints: 65
         StrengthReq: 90
         DexterityReq: 0

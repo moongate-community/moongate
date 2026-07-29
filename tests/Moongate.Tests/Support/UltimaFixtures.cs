@@ -618,12 +618,26 @@ public static class UltimaFixtures
         return dir;
     }
 
-    /// <summary>Writes an old-format item record (flags, anim, height, name) for item <paramref name="id" /> (first group only).</summary>
-    public static void SetItem(byte[] tileData, int id, uint flags, byte height, string name, short anim = 0)
+    /// <summary>
+    /// Writes an old-format item record for item <paramref name="id" /> (first group only). Weight sits
+    /// at offset 4 and the layer byte — the one the MUL format calls quality — at 5.
+    /// </summary>
+    public static void SetItem(
+        byte[] tileData,
+        int id,
+        uint flags,
+        byte height,
+        string name,
+        short anim = 0,
+        byte weight = 0,
+        byte layer = 0
+    )
     {
         var offset = 512 * LandGroupSize + 4 + id * OldItemRecordSize;
 
         BinaryPrimitives.WriteUInt32LittleEndian(tileData.AsSpan(offset), flags);
+        tileData[offset + 4] = weight;
+        tileData[offset + 5] = layer;
         BinaryPrimitives.WriteInt16LittleEndian(tileData.AsSpan(offset + 10), anim);
         tileData[offset + 16] = height;
         WriteName(tileData, offset + 17, name);
