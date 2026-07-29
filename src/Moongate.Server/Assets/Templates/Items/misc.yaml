@@ -722,6 +722,7 @@
     Weight: 0.0
     ScriptId: none
     IsMovable: true
+    Stackable: true
     Rarity: Common
     Tags:
         - modernuo

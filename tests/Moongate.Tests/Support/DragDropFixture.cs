@@ -35,7 +35,10 @@ public sealed class DragDropFixture
     private DragDropFixture()
     {
         Persistence = new();
-        Items = new(Persistence);
+
+        // The bus is wired through the item service too, so a test can hang the real refresh
+        // subscriber off it and see what the client would have been told.
+        Items = new(Persistence, eventBus: EventBus);
 
         var templates = new ItemTemplateService();
         templates.Register(
@@ -57,6 +60,7 @@ public sealed class DragDropFixture
             new ItemFactoryService(templates, new Random(1)),
             templates,
             new StubWorldService(),
+            new StubStackableRule(),
             eventBus: EventBus
         );
 

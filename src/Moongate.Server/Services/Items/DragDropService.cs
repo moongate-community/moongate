@@ -34,6 +34,7 @@ public sealed class DragDropService : IDragDropService
     private readonly IItemFactoryService _itemFactory;
     private readonly IItemTemplateService _templates;
     private readonly IWorldService _world;
+    private readonly IStackableRule _stackable;
     private readonly ILoopAffinity? _loopAffinity;
     private readonly IEventBus? _eventBus;
 
@@ -42,6 +43,7 @@ public sealed class DragDropService : IDragDropService
         IItemFactoryService itemFactory,
         IItemTemplateService templates,
         IWorldService world,
+        IStackableRule stackable,
         ILoopAffinity? loopAffinity = null,
         IEventBus? eventBus = null
     )
@@ -50,6 +52,7 @@ public sealed class DragDropService : IDragDropService
         _itemFactory = itemFactory;
         _templates = templates;
         _world = world;
+        _stackable = stackable;
         _loopAffinity = loopAffinity;
         _eventBus = eventBus;
     }
@@ -198,17 +201,18 @@ public sealed class DragDropService : IDragDropService
 
     /// <summary>
     /// Whether <paramref name="dropped" /> can merge into <paramref name="existing" />: the same thing,
-    /// the same colour, both declared stackable, and a total the client can represent.
+    /// the same colour, both stackable, and a total the client can represent. Whether either one stacks
+    /// is decided by <see cref="IStackableRule" /> and passed in, so this stays a pure comparison.
     /// </summary>
     public static bool CanStack(
         ItemEntity existing,
         ItemEntity dropped,
-        ItemTemplate? existingTemplate,
-        ItemTemplate? droppedTemplate
+        bool existingStackable,
+        bool droppedStackable
     )
         => existing.Id != dropped.Id &&
-           existingTemplate?.Stackable == true &&
-           droppedTemplate?.Stackable == true &&
+           existingStackable &&
+           droppedStackable &&
            existing.TemplateId == dropped.TemplateId &&
            existing.ItemId == dropped.ItemId &&
            existing.Hue == dropped.Hue &&
@@ -319,11 +323,13 @@ public sealed class DragDropService : IDragDropService
 
     private ItemEntity? FindStack(ItemEntity container, ItemEntity dropped)
     {
-        var droppedTemplate = _templates.GetById(dropped.TemplateId);
+        var droppedStackable = _stackable.IsStackable(dropped, _templates.GetById(dropped.TemplateId));
 
         foreach (var candidate in _items.GetContents(container.Id))
         {
-            if (CanStack(candidate, dropped, _templates.GetById(candidate.TemplateId), droppedTemplate))
+            var candidateStackable = _stackable.IsStackable(candidate, _templates.GetById(candidate.TemplateId));
+
+            if (CanStack(candidate, dropped, candidateStackable, droppedStackable))
             {
                 return candidate;
             }
@@ -439,6 +445,12 @@ public sealed class DragDropService : IDragDropService
         {
             _items.MoveToWorld(remainder, item.MapId, item.Position);
         }
+
+        // The remainder is a serial nobody has ever been sent. Saving it after it has a home raises the
+        // change event the refresh subscriber turns into an add — in the container gump or on the
+        // ground, whichever it landed in. Skip this and the split half stays invisible until the
+        // container is reopened, which reads as the client eating it.
+        _items.Save(remainder);
 
         item.Amount = lifted;
         _items.Save(item);

@@ -50,6 +50,30 @@ public class StartingItemsDataTests
         Assert.Equal(hue, entry.Hue);
     }
 
+    // Whether gold stacks is decided by the client's tiledata in a running shard; this guards the
+    // fallback the template carries for when those files are not loaded, which is the path every test
+    // in this suite takes.
+    [Fact]
+    public async Task GoldGivenToEveryone_ReferencesAStackableTemplate()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "mg-startitems-stack-" + Guid.NewGuid().ToString("N"));
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        var templates = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(templates, directories).LoadAsync();
+
+            var gold = Assert.Single(LoadData().All.Pack.Where(entry => entry.Item == "gold"));
+
+            Assert.True(templates.GetById(gold.Item)?.Stackable, "The gold template is not stackable");
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
     [Fact]
     public async Task EveryReferencedItem_ResolvesToATemplate()
     {

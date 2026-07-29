@@ -1,5 +1,8 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
+using Moongate.Server.Services.Items;
+using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Server.Items;
@@ -62,6 +65,32 @@ public class DragDropServiceLiftTests
         var remainder = Assert.Single(fixture.BackpackContents());
         Assert.Equal(95, remainder.Amount);
         Assert.Equal("gold", remainder.TemplateId);
+    }
+
+    // The remainder is a serial the client has never heard of, so the lift has to announce it. Without
+    // that, half the stack stays invisible until the container is reopened and the player believes it
+    // was eaten.
+    [Fact]
+    public void Lift_PartialStack_TellsTheClientAboutTheRemainder()
+    {
+        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1000);
+        var world = new RecordingWorldService();
+
+        new ItemRefreshSubscriber(fixture.Items, fixture.Persistence, new ContainerOpenerRegistry(), world)
+            .Subscribe(fixture.EventBus);
+
+        fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, amount: 500, Serial.Zero, out _, out _);
+
+        var remainder = Assert.Single(fixture.BackpackContents());
+        var packet = Assert.Single(
+            world.ToPlayer
+                 .Select(sent => sent.Packet)
+                 .OfType<AddItemToContainerPacket>()
+                 .Where(sent => sent.Serial == remainder.Id)
+        );
+
+        Assert.Equal(500, packet.Amount);
+        Assert.Equal(fixture.Backpack.Id, packet.Container);
     }
 
     [Fact]
