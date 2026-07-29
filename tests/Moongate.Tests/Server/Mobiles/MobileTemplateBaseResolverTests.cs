@@ -62,4 +62,28 @@ public class MobileTemplateBaseResolverTests
         var ex = Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([derived]));
         Assert.Contains("missing", ex.Message);
     }
+
+    // The five-line data change hangs off this: base_human_npc declares the pool once and all
+    // thirteen human templates inherit it.
+    [Fact]
+    public void Resolve_DerivedWithNoNamePool_InheritsTheBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
+        var derived = new MobileTemplate { Id = "guard", BaseMobile = "base_human" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal("male", resolved.Single(template => template.Id == "guard").NamePool);
+    }
+
+    [Fact]
+    public void Resolve_DerivedWithItsOwnNamePool_KeepsIt()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
+        var derived = new MobileTemplate { Id = "guard_female", BaseMobile = "base_human", NamePool = "female" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal("female", resolved.Single(template => template.Id == "guard_female").NamePool);
+    }
 }

@@ -16,7 +16,7 @@ public class MobileTemplatesLoaderTests
 
         try
         {
-            await new MobileTemplatesLoader(service, directories).LoadAsync();
+            await new MobileTemplatesLoader(service, directories, new NameService()).LoadAsync();
             Assert.Equal(0, service.Count);
         }
         finally
@@ -59,7 +59,7 @@ public class MobileTemplatesLoaderTests
 
         try
         {
-            await new MobileTemplatesLoader(service, directories).LoadAsync();
+            await new MobileTemplatesLoader(service, directories, new NameService()).LoadAsync();
 
             Assert.Equal(2, service.Count);
             var guard = service.GetById("town_guard")!;
@@ -67,6 +67,43 @@ public class MobileTemplatesLoaderTests
             Assert.Equal(100, guard.Strength);
             Assert.Equal(400, guard.Appearance.Body); // inherited from base
             Assert.Equal(900, guard.Skills["Swordsmanship"]);
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    // A typo in a pool name would otherwise produce nameless NPCs weeks later.
+    [Fact]
+    public async Task LoadAsync_TemplateWithUnknownNamePool_Throws()
+    {
+        var root = NewRoot();
+        var directories = new DirectoriesConfig(root, []);
+        var mobilesDirectory = Path.Combine(directories.RegisterDirectory("templates"), "mobiles");
+        Directory.CreateDirectory(mobilesDirectory);
+
+        File.WriteAllText(
+            Path.Combine(mobilesDirectory, "typo.yaml"),
+            """
+            -   Id: guard
+                Category: npc
+                NamePool: mael
+            """
+        );
+
+        var names = new NameService();
+        names.Register(new() { Type = "male", Names = ["Aaron"] });
+
+        try
+        {
+            var exception = await Assert.ThrowsAsync<InvalidDataException>(
+                async () => await new MobileTemplatesLoader(new MobileTemplateService(), directories, names)
+                    .LoadAsync()
+            );
+
+            Assert.Contains("guard", exception.Message);
+            Assert.Contains("mael", exception.Message);
         }
         finally
         {

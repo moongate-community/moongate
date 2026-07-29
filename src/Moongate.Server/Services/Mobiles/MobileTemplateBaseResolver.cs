@@ -30,6 +30,7 @@ public sealed class MobileTemplateBaseResolver
         {
             Id = derived.Id,
             Name = NonEmpty(derived.Name, baseTemplate.Name),
+            NamePool = NonEmpty(derived.NamePool, baseTemplate.NamePool),
             Title = NonEmpty(derived.Title, baseTemplate.Title),
             Category = NonEmpty(derived.Category, baseTemplate.Category),
             Description = NonEmpty(derived.Description, baseTemplate.Description),

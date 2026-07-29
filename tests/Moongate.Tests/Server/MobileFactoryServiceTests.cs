@@ -298,8 +298,23 @@ public class MobileFactoryServiceTests
         return service;
     }
 
-    private static MobileFactoryService Factory(MobileTemplateService? templates = null)
-        => new(Cities(), templates ?? new MobileTemplateService(), new(1));
+    private static MobileFactoryService Factory(
+        MobileTemplateService? templates = null,
+        NameService? names = null
+    )
+        => new(Cities(), templates ?? new MobileTemplateService(), new(1), names ?? new NameService());
+
+    private static NameService Names(params (string Type, string[] Names)[] pools)
+    {
+        var service = new NameService();
+
+        foreach (var (type, names) in pools)
+        {
+            service.Register(new() { Type = type, Names = [.. names] });
+        }
+
+        return service;
+    }
 
     private static CharacterCreationPacket Packet(
         short startingCityIndex,
@@ -327,4 +342,71 @@ public class MobileFactoryServiceTests
             0x0765,
             0x0766
         );
+
+    [Fact]
+    public void CreateFromTemplate_WithANamePool_DrawsFromIt()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "guard", NamePool = "male" });
+
+        var spawn = Factory(templates, Names(("male", ["Aaron", "Abbott"]))).CreateFromTemplate("guard", 1, new(1, 1, 0))!;
+
+        Assert.Contains(spawn.Mobile.Name, new[] { "Aaron", "Abbott" });
+    }
+
+    // A named individual overrides the kind's naming. This is not an edge case: lilly inherits a
+    // pool from base_human_npc and carries its own Name.
+    [Fact]
+    public void CreateFromTemplate_WithBothANameAndAPool_KeepsTheName()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "lilly", Name = "Lilly", NamePool = "male" });
+
+        var spawn = Factory(templates, Names(("male", ["Aaron"]))).CreateFromTemplate("lilly", 1, new(1, 1, 0))!;
+
+        Assert.Equal("Lilly", spawn.Mobile.Name);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_VariantPool_OverridesTheTemplates()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(
+            new()
+            {
+                Id = "guard",
+                NamePool = "male",
+                Variants = [new() { Name = "female", NamePool = "female" }]
+            }
+        );
+
+        var names = Names(("male", ["Aaron"]), ("female", ["Adrianna"]));
+        var spawn = Factory(templates, names).CreateFromTemplate("guard", 1, new(1, 1, 0))!;
+
+        Assert.Equal("Adrianna", spawn.Mobile.Name);
+    }
+
+    [Fact]
+    public void CreateFromTemplate_WithNeitherNameNorPool_SpawnsNameless()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "zombie" });
+
+        var spawn = Factory(templates).CreateFromTemplate("zombie", 1, new(1, 1, 0))!;
+
+        Assert.Equal(string.Empty, spawn.Mobile.Name);
+    }
+
+    // A pool the service does not hold cannot happen through the loader, which rejects it -- but the
+    // factory is called directly from Lua and tests too, so it must not throw.
+    [Fact]
+    public void CreateFromTemplate_PoolTheServiceDoesNotHold_SpawnsNameless()
+    {
+        var templates = new MobileTemplateService();
+        templates.Register(new() { Id = "guard", NamePool = "nonexistent" });
+
+        var spawn = Factory(templates).CreateFromTemplate("guard", 1, new(1, 1, 0))!;
+
+        Assert.Equal(string.Empty, spawn.Mobile.Name);
+    }
 }

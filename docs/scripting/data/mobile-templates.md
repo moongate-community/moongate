@@ -51,6 +51,7 @@ path order) into one flat list, then `MobileTemplateBaseResolver` resolves
 |---|---|---|---|
 | `Id` | `string` | required (no format check) | Not merged — the derived `Id` is kept. |
 | `Name` | `string` | optional, default `""` | Derived value wins if non-empty, else the base's. |
+| `NamePool` | `string` | optional, default `""` | Derived value wins if non-empty, else the base's. |
 | `Gender` | `MobileTemplateGenderType` enum | optional, default `Male` | Derived value wins **only if it is not `Male`**; see [Gender](#gender) for the caveat this creates. |
 | `Title` | `string` | optional, default `""` | Derived wins if non-empty, else base's. Displayed under the mobile's name (e.g. "the guard"). |
 | `Category` | `string` | optional, default `""` | Derived wins if non-empty, else base's. Matched by `GetByCategory`. |
@@ -66,6 +67,22 @@ path order) into one flat list, then `MobileTemplateBaseResolver` resolves
 | `Variants` | `List<MobileVariant>` | optional, default `[]` | **Wholesale replace**, same rule as `Equipment`. See [Variants](#variants). |
 | `LootTableId` | `string?` | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). |
 | `BrainScript` | `string?` | optional, default `null` | Derived value wins if set, else the base's (`derived ?? base`). Binds the spawned NPC to `scripts/brains/<BrainScript>.lua`; the file's returned `id` must match. See [NPC brains](../guides/npc-brains.md). |
+
+### NamePool
+
+`NamePool` names a pool in [`names.yaml`](names.md) to draw a name from at
+spawn. It is only consulted when the template has no `Name` of its own: a named
+individual overrides its kind's naming, which is what lets `base_human_npc`
+declare `NamePool: male` for every human while `lilly` stays Lilly. A template
+with neither spawns nameless, which the client renders as a blank label.
+
+The pool is a **literal** type — nothing is appended for gender. The shipped
+pools spell gender in three different places (`male`, `tokuno male`,
+`male elf brigand`), so a template names the pool it wants in full.
+
+Naming a pool that does not exist **fails the load**: name pools are read at
+priority 30 and mobile templates at 150, so the reference is checked while the
+server is still starting.
 
 ### Gender
 
@@ -152,6 +169,7 @@ spawn — under `Variants:`:
 | `Name` | `string` | optional, default `""` | Descriptive label only; not referenced elsewhere. |
 | `Weight` | `int` | optional, default `1` | Share of the weighted pick among all variants (floored at `1` even if written lower). |
 | `Gender` | `MobileTemplateGenderType?` | optional, default `null` | Overrides the template's `Gender` for this variant when set. |
+| `NamePool` | `string?` | optional, default `null` | Overrides the template's `NamePool` for this variant when set. |
 | `LootTableId` | `string?` | optional, default `null` | Overrides the template's `LootTableId` for this variant when set. |
 | `Appearance` | `MobileAppearance` | optional, default `new()` | Per-field override of the template's `Appearance` (same zero/null-means-fallback rule as the base merge). |
 | `Equipment` | `List<MobileEquipmentEntry>` | optional, default `[]` | Wholesale replace of the template's `Equipment` when non-empty. |

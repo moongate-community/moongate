@@ -27,12 +27,19 @@ public sealed class MobileFactoryService : IMobileFactoryService
     private readonly IStartingCityService _startingCityService;
     private readonly IMobileTemplateService _templates;
     private readonly Random _random;
+    private readonly INameService _names;
 
-    public MobileFactoryService(IStartingCityService startingCityService, IMobileTemplateService templates, Random random)
+    public MobileFactoryService(
+        IStartingCityService startingCityService,
+        IMobileTemplateService templates,
+        Random random,
+        INameService names
+    )
     {
         _startingCityService = startingCityService;
         _templates = templates;
         _random = random;
+        _names = names;
     }
 
     public MobileEntity Create(string name, int mapId, Point3D position)
@@ -56,7 +63,7 @@ public sealed class MobileFactoryService : IMobileFactoryService
 
         var mobile = new MobileEntity
         {
-            Name = template.Name,
+            Name = ResolveName(template, variant),
             MapId = mapId,
             Position = position,
             Gender = ResolveGender(variant?.Gender ?? template.Gender),
@@ -161,6 +168,33 @@ public sealed class MobileFactoryService : IMobileFactoryService
                 _logger.Warning("Unknown skill '{Skill}' on mobile template; skipping", name);
             }
         }
+    }
+
+    /// <summary>
+    /// A template's own <c>Name</c> wins: it is a named individual, and it is usually paired with a
+    /// pool inherited from its base. Otherwise the pool names it, the variant's overriding the
+    /// template's. Neither leaves the spawn nameless, which the OPL already renders as a blank
+    /// label rather than an error.
+    /// </summary>
+    private string ResolveName(MobileTemplate template, MobileVariant? variant)
+    {
+        if (template.Name.Length > 0)
+        {
+            return template.Name;
+        }
+
+        var pool = variant?.NamePool ?? template.NamePool;
+
+        if (string.IsNullOrEmpty(pool))
+        {
+            return string.Empty;
+        }
+
+        // A pool the service does not hold is rejected by the loader, so reaching here means a
+        // caller built a template by hand. Nameless beats throwing.
+        return _names.GetByType(pool)?.Names is { Count: > 0 } names
+                   ? names[_random.Next(names.Count)]
+                   : string.Empty;
     }
 
     private MobileVariant? PickVariant(List<MobileVariant> variants)
