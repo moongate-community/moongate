@@ -116,8 +116,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x03BE'
-    Equip:
-        Layer: TwoHanded
 -   Id: candle_large
     Name: Candle Large
     Category: Lights
@@ -434,8 +432,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x03BE'
-    Equip:
-        Layer: TwoHanded
 -   Id: light_source
     Name: Light Source
     Category: Lights
@@ -450,8 +446,6 @@
     Tags:
         - modernuo
         - lights
-    Equip:
-        Layer: TwoHanded
 -   Id: paper_lantern
     Name: Paper Lantern
     Category: Lights
@@ -602,8 +596,6 @@
         light_toggle_sound_off:
             Type: String
             Value: '0x04BB'
-    Equip:
-        Layer: TwoHanded
 -   Id: wall_sconce
     Name: Wall Sconce
     Category: Lights

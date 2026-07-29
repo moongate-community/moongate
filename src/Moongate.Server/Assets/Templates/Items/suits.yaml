@@ -40,8 +40,6 @@
     Tags:
         - modernuo
         - suits
-    Equip:
-        Layer: OuterTorso
 -   Id: dupre_suit
     Name: Dupre Suit
     Category: Suits

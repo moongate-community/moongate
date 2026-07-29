@@ -2077,8 +2077,6 @@
     Tags:
         - modernuo
         - skill items
-    Equip:
-        Layer: OneHanded
 -   Id: nails
     Name: Nails
     Category: Skill Items
@@ -2125,8 +2123,6 @@
     Tags:
         - modernuo
         - skill items
-    Equip:
-        Layer: OneHanded
 -   Id: spellbook
     Name: Spellbook
     Category: Skill Items
@@ -2141,8 +2137,6 @@
     Tags:
         - modernuo
         - skill items
-    Equip:
-        Layer: OneHanded
 -   Id: nether_bolt_scroll
     Name: Nether Bolt Scroll
     Category: Skill Items

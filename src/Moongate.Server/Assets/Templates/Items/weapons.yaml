@@ -16,7 +16,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -113,7 +112,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -145,7 +143,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -180,7 +177,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -212,7 +208,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -247,7 +242,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 100
         StrengthReq: 45
         DexterityReq: 0
@@ -313,7 +307,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 35
         DexterityReq: 0
@@ -346,7 +339,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 40
         DexterityReq: 0
@@ -379,7 +371,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 10
         DexterityReq: 0
@@ -412,7 +403,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -445,7 +435,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 25
         DexterityReq: 0
@@ -477,7 +466,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 5
         StrengthReq: 20
         DexterityReq: 0
@@ -506,7 +494,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 25
         DexterityReq: 0
@@ -574,7 +561,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 100
         StrengthReq: 30
         DexterityReq: 0
@@ -607,7 +593,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 5
         DexterityReq: 0
@@ -639,7 +624,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -671,7 +655,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -704,7 +687,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 10
         DexterityReq: 0
@@ -737,7 +719,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 40
         DexterityReq: 0
@@ -770,7 +751,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -804,7 +784,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -905,7 +884,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 25
         DexterityReq: 0
@@ -934,7 +912,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 40
         DexterityReq: 0
@@ -967,7 +944,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 10
         DexterityReq: 0
@@ -1000,7 +976,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 40
         DexterityReq: 0
@@ -1032,7 +1007,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1065,7 +1039,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1098,7 +1071,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -1130,7 +1102,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1163,7 +1134,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -1196,7 +1166,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -1229,7 +1198,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -1262,7 +1230,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -1295,7 +1262,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -1328,7 +1294,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -1363,7 +1328,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -1396,7 +1360,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1428,7 +1391,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1461,7 +1423,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 40
         DexterityReq: 0
@@ -1493,7 +1454,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -1522,7 +1482,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 5
         DexterityReq: 0
@@ -1554,7 +1513,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -1621,7 +1579,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 35
         DexterityReq: 0
@@ -1654,7 +1611,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 20
         DexterityReq: 0
@@ -1687,7 +1643,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 20
         DexterityReq: 0
@@ -1720,7 +1675,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -1752,7 +1706,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -1785,7 +1738,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 95
         DexterityReq: 0
@@ -1818,7 +1770,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -1883,7 +1834,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 20
         DexterityReq: 0
@@ -1950,7 +1900,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -1982,7 +1931,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2014,7 +1962,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -2082,7 +2029,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2115,7 +2061,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 25
         DexterityReq: 0
@@ -2147,7 +2092,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2180,7 +2124,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 10
         DexterityReq: 0
@@ -2213,7 +2156,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 95
         StrengthReq: 65
         DexterityReq: 0
@@ -2246,7 +2188,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 95
         DexterityReq: 0
@@ -2279,7 +2220,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 70
         StrengthReq: 80
         DexterityReq: 0
@@ -2312,7 +2252,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2344,7 +2283,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2376,7 +2314,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2410,7 +2347,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2445,7 +2381,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -2477,7 +2412,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2510,7 +2444,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -2542,7 +2475,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2574,7 +2506,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -2606,7 +2537,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2638,7 +2568,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -2667,7 +2596,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 5
         DexterityReq: 0
@@ -2700,7 +2628,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2735,7 +2662,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 70
         StrengthReq: 45
         DexterityReq: 0
@@ -2767,7 +2693,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -2802,7 +2727,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 40
         DexterityReq: 0
@@ -2867,7 +2791,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -2900,7 +2823,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -2933,7 +2855,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 50
         DexterityReq: 0
@@ -2966,7 +2887,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 110
         StrengthReq: 50
         DexterityReq: 0
@@ -2999,7 +2919,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 55
         DexterityReq: 0
@@ -3032,7 +2951,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3065,7 +2983,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -3097,7 +3014,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -3132,7 +3048,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 30
         DexterityReq: 0
@@ -3166,7 +3081,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3199,7 +3113,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3231,7 +3144,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3263,7 +3175,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 30
         DexterityReq: 0
@@ -3296,7 +3207,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -3328,7 +3238,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3361,7 +3270,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 40
         DexterityReq: 0
@@ -3394,7 +3302,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 90
         StrengthReq: 25
         DexterityReq: 0
@@ -3427,7 +3334,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 100
         StrengthReq: 45
         DexterityReq: 0
@@ -3460,7 +3366,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 35
         DexterityReq: 0
@@ -3492,7 +3397,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -3525,7 +3429,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -3590,7 +3493,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3622,7 +3524,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -3655,7 +3556,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 40
         StrengthReq: 5
         DexterityReq: 0
@@ -3687,7 +3587,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 45
         DexterityReq: 0
@@ -3718,7 +3617,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 65
         StrengthReq: 60
         DexterityReq: 0
@@ -3751,7 +3649,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -3783,7 +3680,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -3816,7 +3712,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 10
         DexterityReq: 0
@@ -3849,7 +3744,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 10
         DexterityReq: 0
@@ -3882,7 +3776,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 65
         StrengthReq: 35
         DexterityReq: 0
@@ -3915,7 +3808,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 35
         DexterityReq: 0
@@ -3980,7 +3872,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 0
         StrengthReq: 0
         DexterityReq: 0
@@ -4011,7 +3902,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 45
         DexterityReq: 0
@@ -4044,7 +3934,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 80
         StrengthReq: 50
         DexterityReq: 0
@@ -4076,7 +3965,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4108,7 +3996,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4140,7 +4027,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4172,7 +4058,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0
@@ -4204,7 +4089,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4236,7 +4120,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 20
         DexterityReq: 0
@@ -4269,7 +4152,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 90
         StrengthReq: 40
         DexterityReq: 0
@@ -4302,7 +4184,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 100
         StrengthReq: 40
         DexterityReq: 0
@@ -4335,7 +4216,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 50
         StrengthReq: 20
         DexterityReq: 0
@@ -4368,7 +4248,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 80
         StrengthReq: 35
         DexterityReq: 0
@@ -4401,7 +4280,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4434,7 +4312,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 45
         DexterityReq: 0
@@ -4500,7 +4377,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: OneHanded
         HitPoints: 110
         StrengthReq: 80
         DexterityReq: 0
@@ -4565,7 +4441,6 @@
         - modernuo
         - weapons
     Equip:
-        Layer: OneHanded
         HitPoints: 60
         StrengthReq: 15
         DexterityReq: 0
@@ -4598,7 +4473,6 @@
         - weapons
         - flippable
     Equip:
-        Layer: TwoHanded
         HitPoints: 60
         StrengthReq: 35
         DexterityReq: 0

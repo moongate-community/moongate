@@ -27,7 +27,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Neck
         HitPoints: 0
 -   Id: gold_bracelet
     Name: Gold Bracelet
@@ -44,7 +43,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Bracelet
         HitPoints: 0
 -   Id: gold_earrings
     Name: Gold Earrings
@@ -61,7 +59,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Earrings
         HitPoints: 0
 -   Id: gold_necklace
     Name: Gold Necklace
@@ -78,7 +75,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Neck
         HitPoints: 0
 -   Id: gold_ring
     Name: Gold Ring
@@ -95,7 +91,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Ring
         HitPoints: 0
 -   Id: necklace
     Name: Necklace
@@ -112,7 +107,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Neck
         HitPoints: 0
 -   Id: silver_bead_necklace
     Name: Silver Bead Necklace
@@ -129,7 +123,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Neck
         HitPoints: 0
 -   Id: silver_bracelet
     Name: Silver Bracelet
@@ -146,7 +139,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Bracelet
         HitPoints: 0
 -   Id: silver_earrings
     Name: Silver Earrings
@@ -163,7 +155,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Earrings
         HitPoints: 0
 -   Id: silver_necklace
     Name: Silver Necklace
@@ -180,7 +171,6 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Neck
         HitPoints: 0
 -   Id: silver_ring
     Name: Silver Ring
@@ -197,5 +187,4 @@
         - modernuo
         - jewels
     Equip:
-        Layer: Ring
         HitPoints: 0

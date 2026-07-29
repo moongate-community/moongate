@@ -14,7 +14,6 @@
         - npc
         - clothing
     Equip:
-        Layer: OuterTorso
         HitPoints: 0
         StrengthReq: 0
         DexterityReq: 0
@@ -35,7 +34,6 @@
         - npc
         - clothing
     Equip:
-        Layer: Shoes
         HitPoints: 0
         StrengthReq: 0
         DexterityReq: 0
