@@ -1,5 +1,4 @@
 -   Id: beads
-    Name: Beads
     Category: Jewels
     Description: ''
     ItemId: 4235
@@ -92,7 +91,6 @@
     Equip:
         HitPoints: 0
 -   Id: necklace
-    Name: Necklace
     Category: Jewels
     Description: ''
     ItemId: 4229

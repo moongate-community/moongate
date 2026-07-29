@@ -64,7 +64,6 @@
         - modernuo
         - games
 -   Id: mahjong_game
-    Name: Mahjong Game
     Category: Games
     Description: ''
     ItemId: 4010

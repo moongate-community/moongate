@@ -1,5 +1,4 @@
 -   Id: enchanted_switch
-    Name: Enchanted Switch
     Category: Talismans
     Description: ''
     ItemId: 12124
@@ -12,7 +11,6 @@
         - modernuo
         - talismans
 -   Id: hollow_prism
-    Name: Hollow Prism
     Category: Talismans
     Description: ''
     ItemId: 12125
@@ -25,7 +23,6 @@
         - modernuo
         - talismans
 -   Id: jeweled_filigree
-    Name: Jeweled Filigree
     Category: Talismans
     Description: ''
     ItemId: 12126
@@ -38,7 +35,6 @@
         - modernuo
         - talismans
 -   Id: runed_prism
-    Name: Runed Prism
     Category: Talismans
     Description: ''
     ItemId: 12119
@@ -51,7 +47,6 @@
         - modernuo
         - talismans
 -   Id: runed_switch
-    Name: Runed Switch
     Category: Talismans
     Description: ''
     ItemId: 12129

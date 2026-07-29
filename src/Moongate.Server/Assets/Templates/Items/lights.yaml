@@ -1,5 +1,4 @@
 -   Id: brazier
-    Name: Brazier
     Category: Lights
     Description: ''
     ItemId: 3633
@@ -27,7 +26,6 @@
         - modernuo
         - lights
 -   Id: candelabra
-    Name: Candelabra
     Category: Lights
     Description: ''
     ItemId: 2599
@@ -86,7 +84,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: candle
-    Name: Candle
     Category: Lights
     Description: ''
     ItemId: 2600
@@ -232,7 +229,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: dark_source
-    Name: Dark Source
     Category: Lights
     Description: ''
     ItemId: 5702
@@ -247,7 +243,6 @@
     Equip:
         Layer: TwoHanded
 -   Id: hanging_lantern
-    Name: Hanging Lantern
     Category: Lights
     Description: ''
     ItemId: 2589
@@ -277,7 +272,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: heating_stand
-    Name: Heating Stand
     Category: Lights
     Description: ''
     ItemId: 6217
@@ -396,7 +390,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: lantern
-    Name: Lantern
     Category: Lights
     Description: ''
     ItemId: 2597
@@ -425,7 +418,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: light_source
-    Name: Light Source
     Category: Lights
     Description: ''
     ItemId: 5703
@@ -438,7 +430,6 @@
         - modernuo
         - lights
 -   Id: paper_lantern
-    Name: Paper Lantern
     Category: Lights
     Description: ''
     ItemId: 9406
@@ -468,7 +459,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: red_hanging_lantern
-    Name: Red Hanging Lantern
     Category: Lights
     Description: ''
     ItemId: 9410
@@ -498,7 +488,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: round_paper_lantern
-    Name: Round Paper Lantern
     Category: Lights
     Description: ''
     ItemId: 9418
@@ -528,7 +517,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: shoji_lantern
-    Name: Shoji Lantern
     Category: Lights
     Description: ''
     ItemId: 9404
@@ -558,7 +546,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: torch
-    Name: Torch
     Category: Lights
     Description: ''
     ItemId: 3947
@@ -587,7 +574,6 @@
             Type: String
             Value: '0x04BB'
 -   Id: wall_sconce
-    Name: Wall Sconce
     Category: Lights
     Description: ''
     ItemId: 2555
@@ -617,7 +603,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: wall_torch
-    Name: Wall Torch
     Category: Lights
     Description: ''
     ItemId: 2565
@@ -647,7 +632,6 @@
             Type: String
             Value: '0x03BE'
 -   Id: white_hanging_lantern
-    Name: White Hanging Lantern
     Category: Lights
     Description: ''
     ItemId: 9414

@@ -13,7 +13,6 @@
         - loot_support
         - seeds
 -   Id: metal_chest
-    Name: Metal Chest
     Category: Containers
     Description: Imported support item for ModernUO loot conversion.
     ItemId: 2475

@@ -1,5 +1,4 @@
 -   Id: apple
-    Name: Apple
     Category: Food
     Description: ''
     ItemId: 2512
@@ -25,7 +24,6 @@
         - modernuo
         - food
 -   Id: awase_miso_soup
-    Name: Awase Miso Soup
     Category: Food
     Description: ''
     ItemId: 10320
@@ -51,7 +49,6 @@
         - modernuo
         - food
 -   Id: banana
-    Name: Banana
     Category: Food
     Description: ''
     ItemId: 5919
@@ -68,7 +65,6 @@
         - food
         - flippable
 -   Id: bananas
-    Name: Bananas
     Category: Food
     Description: ''
     ItemId: 5921
@@ -86,7 +82,6 @@
         - food
         - flippable
 -   Id: bento_box
-    Name: Bento Box
     Category: Food
     Description: ''
     ItemId: 10294
@@ -99,7 +94,6 @@
         - modernuo
         - food
 -   Id: bottle_ale
-    Name: Bottle Of Ale
     Category: Food
     Description: ''
     ItemId: 2463
@@ -113,7 +107,6 @@
         - food
         - beverage
 -   Id: bottle_liquor
-    Name: Bottle Of Liquor
     Category: Food
     Description: ''
     ItemId: 2459
@@ -127,7 +120,6 @@
         - food
         - beverage
 -   Id: bottle_wine
-    Name: Bottle Of Wine
     Category: Food
     Description: ''
     ItemId: 2503
@@ -155,7 +147,6 @@
         - modernuo
         - food
 -   Id: bread_loaf
-    Name: Bread Loaf
     Category: Food
     Description: ''
     ItemId: 4155
@@ -199,7 +190,6 @@
         - food
         - flippable
 -   Id: cake
-    Name: Cake
     Category: Food
     Description: ''
     ItemId: 2537
@@ -242,7 +232,6 @@
         - food
         - flippable
 -   Id: carrot
-    Name: Carrot
     Category: Food
     Description: ''
     ItemId: 3192
@@ -314,7 +303,6 @@
         - modernuo
         - food
 -   Id: chicken_leg
-    Name: Chicken Leg
     Category: Food
     Description: ''
     ItemId: 5640
@@ -366,7 +354,6 @@
         - modernuo
         - food
 -   Id: coconut
-    Name: Coconut
     Category: Food
     Description: ''
     ItemId: 5926
@@ -379,7 +366,6 @@
         - modernuo
         - food
 -   Id: cooked_bird
-    Name: Cooked Bird
     Category: Food
     Description: ''
     ItemId: 2487
@@ -392,7 +378,6 @@
         - modernuo
         - food
 -   Id: cookie_mix
-    Name: Cookie Mix
     Category: Food
     Description: ''
     ItemId: 4159
@@ -444,7 +429,6 @@
         - modernuo
         - food
 -   Id: dough
-    Name: Dough
     Category: Food
     Description: ''
     ItemId: 4157
@@ -457,7 +441,6 @@
         - modernuo
         - food
 -   Id: ear_of_corn
-    Name: Ear Of Corn
     Category: Food
     Description: ''
     ItemId: 3201
@@ -488,7 +471,6 @@
         - modernuo
         - food
 -   Id: eggs
-    Name: Eggs
     Category: Food
     Description: ''
     ItemId: 2485
@@ -501,7 +483,6 @@
         - modernuo
         - food
 -   Id: eggshells
-    Name: Eggshells
     Category: Food
     Description: ''
     ItemId: 2484
@@ -580,7 +561,6 @@
         - modernuo
         - food
 -   Id: fish_steak
-    Name: Fish Steak
     Category: Food
     Description: ''
     ItemId: 2427
@@ -594,7 +574,6 @@
         - modernuo
         - food
 -   Id: french_bread
-    Name: French Bread
     Category: Food
     Description: ''
     ItemId: 2444
@@ -607,7 +586,6 @@
         - modernuo
         - food
 -   Id: fried_eggs
-    Name: Fried Eggs
     Category: Food
     Description: ''
     ItemId: 2486
@@ -620,7 +598,6 @@
         - modernuo
         - food
 -   Id: fruit_basket
-    Name: Fruit Basket
     Category: Food
     Description: ''
     ItemId: 2451
@@ -647,7 +624,6 @@
         - modernuo
         - food
 -   Id: glass
-    Name: Glass
     Category: Food
     Description: ''
     ItemId: 8065
@@ -682,7 +658,6 @@
         - food
         - flippable
 -   Id: glass_cider
-    Name: Glass Of Cider
     Category: Food
     Description: ''
     ItemId: 8061
@@ -696,7 +671,6 @@
         - food
         - beverage
 -   Id: glass_liquor
-    Name: Glass Of Liquor
     Category: Food
     Description: ''
     ItemId: 8069
@@ -710,7 +684,6 @@
         - food
         - beverage
 -   Id: glass_milk
-    Name: Glass Of Milk
     Category: Food
     Description: ''
     ItemId: 8073
@@ -724,7 +697,6 @@
         - food
         - beverage
 -   Id: glass_water
-    Name: Glass Of Water
     Category: Food
     Description: ''
     ItemId: 8081
@@ -738,7 +710,6 @@
         - food
         - beverage
 -   Id: glass_wine
-    Name: Glass Of Wine
     Category: Food
     Description: ''
     ItemId: 8077
@@ -782,7 +753,6 @@
         - food
         - flippable
 -   Id: green_tea
-    Name: Green Tea
     Category: Food
     Description: ''
     ItemId: 10316
@@ -809,7 +779,6 @@
         - modernuo
         - food
 -   Id: ham
-    Name: Ham
     Category: Food
     Description: ''
     ItemId: 2505
@@ -822,7 +791,6 @@
         - modernuo
         - food
 -   Id: honeydew_melon
-    Name: Honeydew Melon
     Category: Food
     Description: ''
     ItemId: 3188
@@ -866,7 +834,6 @@
         - modernuo
         - food
 -   Id: lemon
-    Name: Lemon
     Category: Food
     Description: ''
     ItemId: 5928
@@ -879,7 +846,6 @@
         - modernuo
         - food
 -   Id: lemons
-    Name: Lemons
     Category: Food
     Description: ''
     ItemId: 5929
@@ -909,7 +875,6 @@
         - food
         - flippable
 -   Id: lime
-    Name: Lime
     Category: Food
     Description: ''
     ItemId: 5930
@@ -922,7 +887,6 @@
         - modernuo
         - food
 -   Id: limes
-    Name: Limes
     Category: Food
     Description: ''
     ItemId: 5931
@@ -961,7 +925,6 @@
         - modernuo
         - food
 -   Id: miso_soup
-    Name: Miso Soup
     Category: Food
     Description: ''
     ItemId: 10317
@@ -974,7 +937,6 @@
         - modernuo
         - food
 -   Id: muffins
-    Name: Muffins
     Category: Food
     Description: ''
     ItemId: 2539
@@ -988,7 +950,6 @@
         - modernuo
         - food
 -   Id: mug_ale
-    Name: Mug Of Ale
     Category: Food
     Description: ''
     ItemId: 2542
@@ -1002,7 +963,6 @@
         - food
         - beverage
 -   Id: onion
-    Name: Onion
     Category: Food
     Description: ''
     ItemId: 3181
@@ -1032,7 +992,6 @@
         - modernuo
         - food
 -   Id: peach
-    Name: Peach
     Category: Food
     Description: ''
     ItemId: 2514
@@ -1058,7 +1017,6 @@
         - modernuo
         - food
 -   Id: pear
-    Name: Pear
     Category: Food
     Description: ''
     ItemId: 2452
@@ -1136,7 +1094,6 @@
         - modernuo
         - food
 -   Id: pitcher_ale
-    Name: Pitcher Of Ale
     Category: Food
     Description: ''
     ItemId: 8085
@@ -1150,7 +1107,6 @@
         - food
         - beverage
 -   Id: pitcher_cider
-    Name: Pitcher Of Cider
     Category: Food
     Description: ''
     ItemId: 8087
@@ -1164,7 +1120,6 @@
         - food
         - beverage
 -   Id: pitcher_liquor
-    Name: Pitcher Of Liquor
     Category: Food
     Description: ''
     ItemId: 8089
@@ -1193,7 +1148,6 @@
         - food
         - beverage
 -   Id: pitcher_water
-    Name: Pitcher Of Water
     Category: Food
     Description: ''
     ItemId: 8093
@@ -1207,7 +1161,6 @@
         - food
         - beverage
 -   Id: pitcher_wine
-    Name: Pitcher Of Wine
     Category: Food
     Description: ''
     ItemId: 8091
@@ -1221,7 +1174,6 @@
         - food
         - beverage
 -   Id: pumpkin
-    Name: Pumpkin
     Category: Food
     Description: ''
     ItemId: 3178
@@ -1264,7 +1216,6 @@
         - modernuo
         - food
 -   Id: raw_bird
-    Name: Raw Bird
     Category: Food
     Description: ''
     ItemId: 2489
@@ -1277,7 +1228,6 @@
         - modernuo
         - food
 -   Id: raw_chicken_leg
-    Name: Raw Chicken Leg
     Category: Food
     Description: ''
     ItemId: 5639
@@ -1290,7 +1240,6 @@
         - modernuo
         - food
 -   Id: raw_fish_steak
-    Name: Raw Fish Steak
     Category: Food
     Description: ''
     ItemId: 2426
@@ -1330,7 +1279,6 @@
         - modernuo
         - food
 -   Id: red_miso_soup
-    Name: Red Miso Soup
     Category: Food
     Description: ''
     ItemId: 10319
@@ -1356,7 +1304,6 @@
         - modernuo
         - food
 -   Id: roast_pig
-    Name: Roast Pig
     Category: Food
     Description: ''
     ItemId: 2491
@@ -1396,7 +1343,6 @@
         - modernuo
         - food
 -   Id: sausage
-    Name: Sausage
     Category: Food
     Description: ''
     ItemId: 2496
@@ -1422,7 +1368,6 @@
         - modernuo
         - food
 -   Id: sheaf_of_hay
-    Name: Sheaf Of Hay
     Category: Food
     Description: ''
     ItemId: 3894
@@ -1435,7 +1380,6 @@
         - modernuo
         - food
 -   Id: slab_of_bacon
-    Name: Slab Of Bacon
     Category: Food
     Description: ''
     ItemId: 2422
@@ -1489,7 +1433,6 @@
         - food
         - flippable
 -   Id: squash
-    Name: Squash
     Category: Food
     Description: ''
     ItemId: 3186
@@ -1506,7 +1449,6 @@
         - food
         - flippable
 -   Id: sushi_platter
-    Name: Sushi Platter
     Category: Food
     Description: ''
     ItemId: 10304
@@ -1519,7 +1461,6 @@
         - modernuo
         - food
 -   Id: sushi_rolls
-    Name: Sushi Rolls
     Category: Food
     Description: ''
     ItemId: 10302
@@ -1545,7 +1486,6 @@
         - modernuo
         - food
 -   Id: turnip
-    Name: Turnip
     Category: Food
     Description: ''
     ItemId: 3386
@@ -1676,7 +1616,6 @@
         - modernuo
         - food
 -   Id: wasabi
-    Name: Wasabi
     Category: Food
     Description: ''
     ItemId: 9448
@@ -1689,7 +1628,6 @@
         - modernuo
         - food
 -   Id: wasabi_clumps
-    Name: Wasabi Clumps
     Category: Food
     Description: ''
     ItemId: 9451
@@ -1702,7 +1640,6 @@
         - modernuo
         - food
 -   Id: watermelon
-    Name: Watermelon
     Category: Food
     Description: ''
     ItemId: 3164
@@ -1715,7 +1652,6 @@
         - modernuo
         - food
 -   Id: wheat_sheaf
-    Name: Wheat Sheaf
     Category: Food
     Description: ''
     ItemId: 7869
@@ -1741,7 +1677,6 @@
         - modernuo
         - food
 -   Id: white_miso_soup
-    Name: White Miso Soup
     Category: Food
     Description: ''
     ItemId: 10318
@@ -1754,7 +1689,6 @@
         - modernuo
         - food
 -   Id: wooden_bowl
-    Name: Wooden Bowl
     Category: Food
     Description: ''
     ItemId: 5624

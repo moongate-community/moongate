@@ -18,7 +18,6 @@
         - construction
         - flippable
 -   Id: bamboo_screen
-    Name: Bamboo Screen
     Category: Construction
     Description: ''
     ItemId: 9424
@@ -39,7 +38,6 @@
         - construction
         - flippable
 -   Id: barrel_hoops
-    Name: Barrel Hoops
     Category: Construction
     Description: ''
     ItemId: 7607
@@ -54,7 +52,6 @@
         - construction
         - flippable
 -   Id: barrel_lid
-    Name: Barrel Lid
     Category: Construction
     Description: ''
     ItemId: 7608
@@ -67,7 +64,6 @@
         - modernuo
         - construction
 -   Id: barrel_staves
-    Name: Barrel Staves
     Category: Construction
     Description: ''
     ItemId: 7857
@@ -86,7 +82,6 @@
         - construction
         - flippable
 -   Id: barrel_tap
-    Name: Barrel Tap
     Category: Construction
     Description: ''
     ItemId: 4100
@@ -263,7 +258,6 @@
         - modernuo
         - construction
 -   Id: covered_chair
-    Name: Covered Chair
     Category: Construction
     Description: ''
     ItemId: 3095
@@ -658,7 +652,6 @@
         - modernuo
         - construction
 -   Id: easel
-    Name: Easel
     Category: Construction
     Description: ''
     ItemId: 3941
@@ -677,7 +670,6 @@
         - construction
         - flippable
 -   Id: elegant_low_table
-    Name: Elegant Low Table
     Category: Construction
     Description: ''
     ItemId: 10265
@@ -690,7 +682,6 @@
         - modernuo
         - construction
 -   Id: elven_podium
-    Name: Elven Podium
     Category: Construction
     Description: ''
     ItemId: 11741
@@ -744,7 +735,6 @@
         - construction
         - flippable
 -   Id: foot_stool
-    Name: Foot Stool
     Category: Construction
     Description: ''
     ItemId: 2910
@@ -758,7 +748,6 @@
         - modernuo
         - construction
 -   Id: giant_replica_acorn
-    Name: Giant Replica Acorn
     Category: Construction
     Description: ''
     ItemId: 11594
@@ -887,7 +876,6 @@
         - construction
         - flippable
 -   Id: large_vase
-    Name: Large Vase
     Category: Construction
     Description: ''
     ItemId: 2885
@@ -934,7 +922,6 @@
         - construction
         - flippable
 -   Id: marble_floor
-    Name: Marble Floor
     Category: Construction
     Description: ''
     ItemId: 1293
@@ -973,7 +960,6 @@
         - modernuo
         - construction
 -   Id: mounted_dread_horn
-    Name: Mounted Dread Horn
     Category: Construction
     Description: ''
     ItemId: 12632
@@ -1039,7 +1025,6 @@
         - construction
         - flippable
 -   Id: plain_low_table
-    Name: Plain Low Table
     Category: Construction
     Description: ''
     ItemId: 10266
@@ -1095,7 +1080,6 @@
         - construction
         - flippable
 -   Id: ruined_bookcase
-    Name: Ruined Bookcase
     Category: Construction
     Description: ''
     ItemId: 3092
@@ -1210,7 +1194,6 @@
         - construction
         - flippable
 -   Id: ruined_painting
-    Name: Ruined Painting
     Category: Construction
     Description: ''
     ItemId: 3116
@@ -1263,7 +1246,6 @@
         - modernuo
         - construction
 -   Id: shoji_screen
-    Name: Shoji Screen
     Category: Construction
     Description: ''
     ItemId: 9419
@@ -1315,7 +1297,6 @@
         - modernuo
         - construction
 -   Id: small_urn
-    Name: Small Urn
     Category: Construction
     Description: ''
     ItemId: 9244
@@ -1461,7 +1442,6 @@
         - modernuo
         - construction
 -   Id: stone_chair
-    Name: Stone Chair
     Category: Construction
     Description: ''
     ItemId: 4632
@@ -1520,7 +1500,6 @@
         - modernuo
         - construction
 -   Id: stool
-    Name: Stool
     Category: Construction
     Description: ''
     ItemId: 2602
@@ -1710,7 +1689,6 @@
         - construction
         - flippable
 -   Id: vase
-    Name: Vase
     Category: Construction
     Description: ''
     ItemId: 2886
@@ -1790,7 +1768,6 @@
         - construction
         - flippable
 -   Id: wooden_bench
-    Name: Wooden Bench
     Category: Construction
     Description: ''
     ItemId: 2861
@@ -1865,7 +1842,6 @@
         - construction
         - flippable
 -   Id: writing_table
-    Name: Writing Table
     Category: Construction
     Description: ''
     ItemId: 2890

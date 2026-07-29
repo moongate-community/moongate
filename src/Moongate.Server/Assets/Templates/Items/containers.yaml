@@ -1,5 +1,4 @@
 -   Id: armoire
-    Name: Armoire
     Category: Containers
     Description: ''
     ItemId: 2639
@@ -20,7 +19,6 @@
         MaxItems: 125
         GumpId: 79
 -   Id: backpack
-    Name: Backpack
     Category: Containers
     Description: ''
     ItemId: 3701
@@ -60,7 +58,6 @@
         GumpId: 74
         ContainerLayoutId: bank_box
 -   Id: bag
-    Name: Bag
     Category: Containers
     Description: ''
     ItemId: 3702
@@ -78,7 +75,6 @@
         GumpId: 61
         ContainerLayoutId: bag
 -   Id: barrel
-    Name: Barrel
     Category: Containers
     Description: ''
     ItemId: 3703
@@ -95,7 +91,6 @@
         MaxItems: 125
         GumpId: 62
 -   Id: basket
-    Name: Basket
     Category: Containers
     Description: ''
     ItemId: 2448
@@ -112,7 +107,6 @@
         MaxItems: 125
         GumpId: 65
 -   Id: cherry_armoire
-    Name: Cherry Armoire
     Category: Containers
     Description: ''
     ItemId: 10333
@@ -155,7 +149,6 @@
         MaxItems: 125
         GumpId: 81
 -   Id: elegant_armoire
-    Name: Elegant Armoire
     Category: Containers
     Description: ''
     ItemId: 10329
@@ -240,7 +233,6 @@
         MaxItems: 125
         GumpId: 72
 -   Id: fancy_elven_armoire
-    Name: Fancy Elven Armoire
     Category: Containers
     Description: ''
     ItemId: 11527
@@ -285,7 +277,6 @@
         MaxItems: 125
         GumpId: 77
 -   Id: keg
-    Name: Keg
     Category: Containers
     Description: ''
     ItemId: 3711
@@ -320,7 +311,6 @@
         MaxItems: 125
         GumpId: 61
 -   Id: maple_armoire
-    Name: Maple Armoire
     Category: Containers
     Description: ''
     ItemId: 10331
@@ -342,7 +332,6 @@
         MaxItems: 125
         GumpId: 262
 -   Id: picnic_basket
-    Name: Picnic Basket
     Category: Containers
     Description: ''
     ItemId: 3706
@@ -359,7 +348,6 @@
         MaxItems: 125
         GumpId: 63
 -   Id: red_armoire
-    Name: Red Armoire
     Category: Containers
     Description: ''
     ItemId: 10327
@@ -381,7 +369,6 @@
         MaxItems: 125
         GumpId: 261
 -   Id: short_cabinet
-    Name: Short Cabinet
     Category: Containers
     Description: ''
     ItemId: 10263
@@ -402,7 +389,6 @@
         MaxItems: 125
         GumpId: 268
 -   Id: simple_elven_armoire
-    Name: Simple Elven Armoire
     Category: Containers
     Description: ''
     ItemId: 11525
@@ -439,7 +425,6 @@
         MaxItems: 125
         GumpId: 61
 -   Id: tall_cabinet
-    Name: Tall Cabinet
     Category: Containers
     Description: ''
     ItemId: 10261

@@ -1,5 +1,4 @@
 -   Id: bascinet
-    Name: Bascinet
     Category: Armor
     Description: ''
     ItemId: 5132
@@ -17,7 +16,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: bone_arms
-    Name: Bone Arms
     Category: Armor
     Description: ''
     ItemId: 5198
@@ -61,7 +59,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: bone_gloves
-    Name: Bone Gloves
     Category: Armor
     Description: ''
     ItemId: 5200
@@ -213,7 +210,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: circlet
-    Name: Circlet
     Category: Armor
     Description: ''
     ItemId: 11118
@@ -426,7 +422,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: dragon_gloves
-    Name: Dragon Gloves
     Category: Armor
     Description: ''
     ItemId: 9795
@@ -448,7 +443,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: dragon_helm
-    Name: Dragon Helm
     Category: Armor
     Description: ''
     ItemId: 9797
@@ -492,7 +486,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: elven_glasses
-    Name: Elven Glasses
     Category: Armor
     Description: ''
     ItemId: 12216
@@ -928,7 +921,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: gargish_leather_wing_armor
-    Name: Gargish Leather Wing Armor
     Category: Armor
     Description: ''
     ItemId: 17790
@@ -1250,7 +1242,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: gemmed_circlet
-    Name: Gemmed Circlet
     Category: Armor
     Description: ''
     ItemId: 11120
@@ -1290,7 +1281,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: helmet
-    Name: Helmet
     Category: Armor
     Description: ''
     ItemId: 5130
@@ -1353,7 +1343,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: hide_gloves
-    Name: Hide Gloves
     Category: Armor
     Description: ''
     ItemId: 11125
@@ -1375,7 +1364,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: hide_gorget
-    Name: Hide Gorget
     Category: Armor
     Description: ''
     ItemId: 11126
@@ -1397,7 +1385,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: hide_pants
-    Name: Hide Pants
     Category: Armor
     Description: ''
     ItemId: 11128
@@ -1419,7 +1406,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: hide_pauldrons
-    Name: Hide Pauldrons
     Category: Armor
     Description: ''
     ItemId: 11127
@@ -1441,7 +1427,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leaf_arms
-    Name: Leaf Arms
     Category: Armor
     Description: ''
     ItemId: 12232
@@ -1485,7 +1470,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leaf_gloves
-    Name: Leaf Gloves
     Category: Armor
     Description: ''
     ItemId: 12230
@@ -1503,7 +1487,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leaf_gorget
-    Name: Leaf Gorget
     Category: Armor
     Description: ''
     ItemId: 12231
@@ -1543,7 +1526,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leaf_tonlet
-    Name: Leaf Tonlet
     Category: Armor
     Description: ''
     ItemId: 12234
@@ -1609,7 +1591,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_cap
-    Name: Leather Cap
     Category: Armor
     Description: ''
     ItemId: 7609
@@ -1653,7 +1634,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_do
-    Name: Leather Do
     Category: Armor
     Description: ''
     ItemId: 10182
@@ -1671,7 +1651,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_gloves
-    Name: Leather Gloves
     Category: Armor
     Description: ''
     ItemId: 5062
@@ -1692,7 +1671,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_gorget
-    Name: Leather Gorget
     Category: Armor
     Description: ''
     ItemId: 5063
@@ -1710,7 +1688,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_haidate
-    Name: Leather Haidate
     Category: Armor
     Description: ''
     ItemId: 10122
@@ -1728,7 +1705,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_hiro_sode
-    Name: Leather Hiro Sode
     Category: Armor
     Description: ''
     ItemId: 10110
@@ -1746,7 +1722,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_jingasa
-    Name: Leather Jingasa
     Category: Armor
     Description: ''
     ItemId: 10102
@@ -1786,7 +1761,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_mempo
-    Name: Leather Mempo
     Category: Armor
     Description: ''
     ItemId: 10106
@@ -1804,7 +1778,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_ninja_hood
-    Name: Leather Ninja Hood
     Category: Armor
     Description: ''
     ItemId: 10126
@@ -1822,7 +1795,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_ninja_jacket
-    Name: Leather Ninja Jacket
     Category: Armor
     Description: ''
     ItemId: 10131
@@ -1840,7 +1812,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_ninja_mitts
-    Name: Leather Ninja Mitts
     Category: Armor
     Description: ''
     ItemId: 10130
@@ -1858,7 +1829,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_ninja_pants
-    Name: Leather Ninja Pants
     Category: Armor
     Description: ''
     ItemId: 10129
@@ -1876,7 +1846,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_shorts
-    Name: Leather Shorts
     Category: Armor
     Description: ''
     ItemId: 7168
@@ -1898,7 +1867,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_skirt
-    Name: Leather Skirt
     Category: Armor
     Description: ''
     ItemId: 7176
@@ -1920,7 +1888,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: leather_suneate
-    Name: Leather Suneate
     Category: Armor
     Description: ''
     ItemId: 10118
@@ -1956,7 +1923,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: norse_helm
-    Name: Norse Helm
     Category: Armor
     Description: ''
     ItemId: 5134
@@ -1974,7 +1940,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: orc_helm
-    Name: Orc Helm
     Category: Armor
     Description: ''
     ItemId: 7947
@@ -2148,7 +2113,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: plate_helm
-    Name: Plate Helm
     Category: Armor
     Description: ''
     ItemId: 5138
@@ -2350,7 +2314,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: raven_helm
-    Name: Raven Helm
     Category: Armor
     Description: ''
     ItemId: 11121
@@ -2417,7 +2380,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: ringmail_gloves
-    Name: Ringmail Gloves
     Category: Armor
     Description: ''
     ItemId: 5099
@@ -2461,7 +2423,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: royal_circlet
-    Name: Royal Circlet
     Category: Armor
     Description: ''
     ItemId: 11119
@@ -2585,7 +2546,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_do
-    Name: Studded Do
     Category: Armor
     Description: ''
     ItemId: 10183
@@ -2603,7 +2563,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_gloves
-    Name: Studded Gloves
     Category: Armor
     Description: ''
     ItemId: 5077
@@ -2625,7 +2584,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_gorget
-    Name: Studded Gorget
     Category: Armor
     Description: ''
     ItemId: 5078
@@ -2643,7 +2601,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_haidate
-    Name: Studded Haidate
     Category: Armor
     Description: ''
     ItemId: 10123
@@ -2661,7 +2618,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_hiro_sode
-    Name: Studded Hiro Sode
     Category: Armor
     Description: ''
     ItemId: 10111
@@ -2701,7 +2657,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_mempo
-    Name: Studded Mempo
     Category: Armor
     Description: ''
     ItemId: 10141
@@ -2719,7 +2674,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: studded_suneate
-    Name: Studded Suneate
     Category: Armor
     Description: ''
     ItemId: 10194
@@ -2737,7 +2691,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: vulture_helm
-    Name: Vulture Helm
     Category: Armor
     Description: ''
     ItemId: 11122
@@ -2759,7 +2712,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: winged_helm
-    Name: Winged Helm
     Category: Armor
     Description: ''
     ItemId: 11123
@@ -2781,7 +2733,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: woodland_arms
-    Name: Woodland Arms
     Category: Armor
     Description: ''
     ItemId: 11116
@@ -2803,7 +2754,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: woodland_chest
-    Name: Woodland Chest
     Category: Armor
     Description: ''
     ItemId: 11111
@@ -2847,7 +2797,6 @@
         DexterityReq: 0
         IntelligenceReq: 0
 -   Id: woodland_gorget
-    Name: Woodland Gorget
     Category: Armor
     Description: ''
     ItemId: 11113
