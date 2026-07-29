@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Interfaces.World;
@@ -8,6 +9,7 @@ using Moongate.Server.Extensions;
 using Moongate.Server.Loaders;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Loading;
+using Moongate.Server.Services.Localization;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Notifications;
 using Moongate.Server.Services.World;
@@ -35,6 +37,10 @@ public class MoongateDataLoaderPlugin : ISquidStdPlugin
         // Priority 100 so it starts after the event bus and the Lua forwarder are up,
         // ensuring subscribers actually receive the FilesLoadedEvent.
         container.RegisterStdService<FilesLoaderService, FilesLoaderService>(100);
+
+        // 105: after FilesLoaderService has pointed the reader at the client directory, and before
+        // the data loaders (110) that will want names resolved.
+        container.RegisterStdService<IClilocService, ClilocService>(105);
 
         container.Register<ISkillService, SkillService>(Reuse.Singleton);
         container.RegisterDataLoader<SkillLoader>();

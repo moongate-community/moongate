@@ -9,6 +9,13 @@ public sealed class MoongateConfig
 
     public string UltimaDirectory { get; set; }
 
+    /// <summary>
+    /// Which client cliloc table to load, as the file suffix. One of chs, cht, custom1, custom2,
+    /// deu, enu, esp, fra, jpn, kor — anything else finds no file, and items with no name of their
+    /// own fall back to their template id.
+    /// </summary>
+    public string Language { get; set; } = "enu";
+
     public MoongateNetworkConfig Network { get; set; } = new();
 
     public NpcAiConfig NpcAi { get; set; } = new();
