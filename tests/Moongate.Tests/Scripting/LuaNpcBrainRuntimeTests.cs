@@ -1072,11 +1072,33 @@ public class LuaNpcBrainRuntimeTests
         Assert.Equal(expected, Assert.Single(fixture.AiSays));
     }
 
+    /// <summary>
+    /// Without a condition, lets pending continuations run before asserting that nothing happened.
+    /// With one, waits for it against a wall-clock deadline.
+    /// </summary>
+    /// <remarks>
+    /// A fixed number of yields is a guess at how long a thread-pool continuation takes to be
+    /// scheduled, and under load the guess expires before the continuation runs at all — the test
+    /// then asserts on work that has not started. The deadline costs nothing when the condition is
+    /// already true and is slow only when it genuinely never becomes true, which is a real failure.
+    /// </remarks>
     private static async Task DrainContinuationsAsync(Func<bool>? condition = null)
     {
-        for (var iteration = 0; iteration < 100 && condition?.Invoke() != true; iteration++)
+        if (condition is null)
         {
-            await Task.Yield();
+            for (var iteration = 0; iteration < 100; iteration++)
+            {
+                await Task.Yield();
+            }
+
+            return;
+        }
+
+        var deadline = Environment.TickCount64 + 5_000;
+
+        while (!condition() && Environment.TickCount64 < deadline)
+        {
+            await Task.Delay(1);
         }
     }
 }
