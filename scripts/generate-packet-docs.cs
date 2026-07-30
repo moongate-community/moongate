@@ -72,6 +72,8 @@ var familyInfos = new FamilyInfo[]
         "Object property lists: the 0xD6 request/response pair and the 0xDC revision notification."),
     new("Chat", "chat", "Chat",
         "Player speech (say/emote/whisper/yell) and server-wide system broadcasts."),
+    new("Gumps", "gumps", "Gumps",
+        "Server-drawn dialogs: the compressed gump and the response naming the button pressed."),
 };
 
 var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);

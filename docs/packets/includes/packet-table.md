@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">57</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">19</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">38</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">59</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">20</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">39</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -49,6 +49,7 @@
 | [`0xA9`](../outgoing/0xa9-character-list.md) | Character List | S → C | Variable | The character slots followed by the starting cities, in the extended 7.0.13+ layout. |
 | [`0xAD`](../incoming/0xad-unicode-ascii-speech-request.md) | Unicode Ascii Speech Request | C → S | Variable | The only speech packet a modern client (ClassicUO 7.x) sends — ASCII TalkRequest (0x03) is intentionally not implemented. |
 | [`0xAE`](../outgoing/0xae-unicode-speech-message.md) | Unicode Speech Message | S → C | Variable | The only outgoing chat packet, sent to every recipient of a message including the speaker — never a reuse of the incoming packet, per real UO server behavior (confirmed across ModernUO, UOX3 and polserver). |
+| [`0xB1`](../incoming/0xb1-gump-menu-selection.md) | Gump Menu Selection | C → S | Variable | Which button the player pressed, which switches were ticked, and what was typed into each text field. |
 | [`0xB9`](../outgoing/0xb9-support-features.md) | Support Features | S → C | 5 bytes (fixed) | Unlocks the client feature set at login, sent right before the character list. |
 | [`0xBC`](../outgoing/0xbc-season-change.md) | Season Change | S → C | 3 bytes (fixed) | Sets the client's season and optionally plays the season-change sound. |
 | [`0xBD`](../incoming/0xbd-client-version.md) | Client Version | C → S | Variable | The client answers the server's version request with its build string (e.g. |
@@ -61,6 +62,7 @@
 | [`0xD6`](../incoming/0xd6-mega-cliloc-request.md) | Mega Cliloc Request | C → S | Variable | The client asks for the property lists of a batch of objects, identified by serial. |
 | [`0xD6`](../outgoing/0xd6-mega-cliloc.md) | Mega Cliloc | S → C | Variable | The property list ("tooltip") of one object — cliloc lines with UTF-16LE arguments, preceded by the content hash the client caches against. |
 | [`0xDC`](../outgoing/0xdc-opl-info.md) | Opl Info | S → C | 9 bytes (fixed) | Tells the client the current property-list revision of an object. |
+| [`0xDD`](../outgoing/0xdd-compressed-gump.md) | Compressed Gump | S → C | Variable | The layout command string and the block of strings it indexes into, each zlib-deflated. |
 | [`0xEF`](../incoming/0xef-login-seed.md) | Login Seed | C → S | 21 bytes (fixed) | Connection seed and client version, sent first by ClassicUO. |
 | [`0xF3`](../outgoing/0xf3-world-item.md) | World Item | S → C | 24 bytes (fixed) | Draws an item lying in the world. |
 | [`0xF8`](../incoming/0xf8-character-creation.md) | Character Creation | C → S | 106 bytes (fixed) | The new 106-byte creation packet sent by clients 7.0.16.0 and later. |

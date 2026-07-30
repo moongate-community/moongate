@@ -49,4 +49,9 @@
     <div class="mg-card-ops">0xAD · 0xAE</div>
     <p>Player speech (say/emote/whisper/yell) and server-wide system broadcasts.</p>
   </a>
+  <a class="mg-card" href="families/gumps.md">
+    <h3>Gumps</h3>
+    <div class="mg-card-ops">0xB1 · 0xDD</div>
+    <p>Server-drawn dialogs: the compressed gump and the response naming the button pressed.</p>
+  </a>
 </div>
