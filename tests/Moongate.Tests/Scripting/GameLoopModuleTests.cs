@@ -49,17 +49,25 @@ public class GameLoopModuleTests
             // dispatcher drains. Observed through a shared Lua global (same script state).
             engine.ExecuteScript("ran = false");
             engine.ExecuteScript("game.post(function() ran = true end)");
-            Assert.True(engine.ExecuteFunction("ran").Data is false);
+
+            // Every assertion below carries what it saw. A bare Assert.True reports only
+            // "Expected: True, Actual: False", which is what left an earlier intermittent failure
+            // here with nothing to diagnose and no way to tell a stale value from a null one.
+            var beforeDrain = engine.ExecuteFunction("ran").Data;
+            Assert.True(beforeDrain is false, $"`ran` must still be false before the drain, was {Describe(beforeDrain)}");
 
             dispatcher.DrainPending();
-            Assert.True(engine.ExecuteFunction("ran").Data is true);
+
+            var afterDrain = engine.ExecuteFunction("ran").Data;
+            Assert.True(afterDrain is true, $"`ran` must be true after the drain, was {Describe(afterDrain)}");
 
             // game.schedule returns a timer id that game.cancel can remove (long delay so it never fires here).
-            var timerId = engine.ExecuteFunction("game.schedule('probe', 60000, function() end)").Data as string;
-            Assert.False(string.IsNullOrEmpty(timerId));
+            var scheduled = engine.ExecuteFunction("game.schedule('probe', 60000, function() end)").Data;
+            var timerId = scheduled as string;
+            Assert.False(string.IsNullOrEmpty(timerId), $"game.schedule must return a timer id, returned {Describe(scheduled)}");
 
             var cancelled = engine.ExecuteFunction($"game.cancel('{timerId}')").Data;
-            Assert.True(cancelled is true);
+            Assert.True(cancelled is true, $"game.cancel('{timerId}') must return true, returned {Describe(cancelled)}");
         }
         finally
         {
@@ -67,4 +75,7 @@ public class GameLoopModuleTests
             Directory.Delete(root, true);
         }
     }
+
+    private static string Describe(object? value)
+        => value is null ? "nil" : $"{value} ({value.GetType().Name})";
 }
