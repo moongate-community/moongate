@@ -20,8 +20,6 @@ namespace Moongate.Server.Services.AI;
 /// <summary>Applies NPC brain actions against the mobile of the active tick, resolved from an ambient context.</summary>
 public sealed class AiActionService : IAiActionService
 {
-    private const int SpeechRange = 15;
-    private const int SpeechMaximumLength = 128;
     private const int HomeLeashRange = 8;
 
     private readonly ILogger _logger = Log.ForContext<AiActionService>();
@@ -336,23 +334,15 @@ public sealed class AiActionService : IAiActionService
 
     private bool TrySay(MobileEntity owner, string? text, out string reason)
     {
-        if (string.IsNullOrWhiteSpace(text))
+        if (_chat.SayAs(owner, text ?? string.Empty))
         {
-            reason = "speech text is blank";
+            reason = "";
 
-            return false;
+            return true;
         }
 
-        if (text.Length > SpeechMaximumLength)
-        {
-            reason = "speech text exceeds the maximum length";
+        reason = "chat service rejected the speech";
 
-            return false;
-        }
-
-        _chat.Say(owner, ChatMessageType.Regular, text, Hue.Default, SpeechRange);
-        reason = "";
-
-        return true;
+        return false;
     }
 }

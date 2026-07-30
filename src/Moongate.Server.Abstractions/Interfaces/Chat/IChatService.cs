@@ -15,4 +15,11 @@ public interface IChatService
     void Broadcast(string text, Hue? hue = null);
 
     void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range);
+
+    /// <summary>
+    /// Speaks as <paramref name="speaker" />, applying every rule that governs speech: blank and
+    /// overlong text are refused, and text the classifier reads as a command is refused rather than
+    /// spoken. True when something was said.
+    /// </summary>
+    bool SayAs(MobileEntity speaker, string text);
 }

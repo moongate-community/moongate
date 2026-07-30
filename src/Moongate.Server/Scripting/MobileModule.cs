@@ -34,6 +34,7 @@ public sealed class MobileModule
     private readonly IItemService _items;
     private readonly ISpatialIndexService _spatial;
     private readonly IEventBus _eventBus;
+    private readonly IMobileService _mobileService;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
 
     public MobileModule(
@@ -42,7 +43,8 @@ public sealed class MobileModule
         IItemService items,
         IPersistenceService persistence,
         ISpatialIndexService spatial,
-        IEventBus eventBus
+        IEventBus eventBus,
+        IMobileService mobileService
     )
     {
         _factory = factory;
@@ -50,6 +52,7 @@ public sealed class MobileModule
         _items = items;
         _spatial = spatial;
         _eventBus = eventBus;
+        _mobileService = mobileService;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
@@ -137,29 +140,13 @@ public sealed class MobileModule
         return mobile.Skills.TryGetValue(skillId, out var skillState) ? skillState.Value : 0;
     }
 
-    [ScriptFunction("move", "Moves the mobile to (x, y, z) on the same map; false on unknown serial.")]
+    [ScriptFunction("move", "Alias of teleport: places the mobile at (x, y, z) without validating terrain.")]
     public bool Move(uint serial, int x, int y, int z)
-    {
-        var mobile = _mobiles.GetById((Serial)serial);
+        => _mobileService.Teleport((Serial)serial, x, y, z);
 
-        if (mobile is null)
-        {
-            return false;
-        }
-
-        var fromMapId = mobile.MapId;
-        var fromPosition = mobile.Position;
-        mobile.Position = new(x, y, z);
-        _mobiles.UpsertAsync(mobile).WaitSync();
-        _spatial.AddOrUpdate(mobile);
-
-        if (mobile.MapId != fromMapId || mobile.Position != fromPosition)
-        {
-            _eventBus.Publish(new MobileMovedEvent(mobile.Id, fromMapId, fromPosition, mobile.MapId, mobile.Position));
-        }
-
-        return true;
-    }
+    [ScriptFunction("teleport", "Places the mobile at (x, y, z) on its map without validating terrain; false on unknown serial.")]
+    public bool Teleport(uint serial, int x, int y, int z)
+        => _mobileService.Teleport((Serial)serial, x, y, z);
 
     [ScriptFunction("set", "Mutates mobile fields from a table; returns true on success.")]
     public bool Set(uint serial, Table fields)

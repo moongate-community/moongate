@@ -313,7 +313,7 @@ public class MobileModuleTests
         var itemFactory = new ItemFactoryService(itemTemplates, random);
         var items = new ItemService(persistence);
 
-        return (new(factory, itemFactory, items, persistence, spatial, bus), persistence, spatial, bus);
+        return (new(factory, itemFactory, items, persistence, spatial, bus, new MobileService(persistence, spatial, bus)), persistence, spatial, bus);
     }
 
     private static (MobileModule Module, FakePersistenceService Persistence, SpatialIndexService Spatial, StubEventBus Bus)

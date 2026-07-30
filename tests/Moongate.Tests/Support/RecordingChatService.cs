@@ -21,4 +21,15 @@ public sealed class RecordingChatService : IChatService
 
     public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
         => _messages.Add((speaker.Id, type, text, hue, range));
+
+    /// <summary>
+    /// Records rather than enforcing: the rules live in ChatService, and a test that pins them builds
+    /// a real one instead of this double.
+    /// </summary>
+    public bool SayAs(MobileEntity speaker, string text)
+    {
+        Say(speaker, ChatMessageType.Regular, text, Hue.Default, 15);
+
+        return true;
+    }
 }

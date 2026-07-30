@@ -112,20 +112,35 @@ mobile.set(guard, {
 })
 ```
 
+## mobile.teleport
+
+```lua
+mobile.teleport(serial, x, y, z) -> boolean
+```
+
+Places the mobile at `(x, y, z)` on its current map **without validating the
+terrain** — it will land inside a wall or on top of a mountain if you ask it to.
+That is the point: this is a GM move or a spawner placement, not a walk. Returns
+`false` when the serial is unknown.
+
+For validated movement a brain uses [`ai.step`](ai.md), which refuses a step the
+terrain does not allow.
+
+**Example**
+
+```lua
+mobile.teleport(guard, 1425, 1695, 0)
+```
+
 ## mobile.move
 
 ```lua
 mobile.move(serial, x, y, z) -> boolean
 ```
 
-Moves the mobile to `(x, y, z)` on its current map. Returns `false` when the
-serial is unknown.
-
-**Example**
-
-```lua
-mobile.move(guard, 1425, 1695, 0)
-```
+An alias of [`mobile.teleport`](#mobileteleport), kept for scripts already
+written. Same behaviour, including the absence of terrain validation — the name
+predates the distinction.
 
 ## mobile.get_skill
 
