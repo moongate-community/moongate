@@ -1,6 +1,13 @@
 using DryIoc;
 using Moongate.Core.Types;
 using Moongate.Server.Scripting;
+using SquidStd.Scripting.Lua.Services;
+using SquidStd.Scripting.Lua.Interfaces.Scripts;
+using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
+using Moongate.Server.Scripting.Refs;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Utils;
@@ -25,6 +32,23 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
 
     public void Configure(IContainer container, PluginContext context)
     {
+        // Same unwrap as MoongateScriptingPlugin does for the item-script runtime: the MoonSharp
+        // Script belongs to the Lua engine, not the container.
+        container.RegisterDelegate(
+            resolver => new MobileRefFactory(
+                resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService lua
+                    ? lua.LuaScript
+                    : throw new InvalidOperationException(
+                        "MobileRefFactory requires the SquidStd Lua engine implementation."
+                    ),
+                resolver.Resolve<IPersistenceService>(),
+                resolver.Resolve<IChatService>(),
+                resolver.Resolve<IMobileService>(),
+                resolver.Resolve<IItemService>()
+            ),
+            Reuse.Singleton
+        );
+
         container.RegisterScriptModule<AccountModule>();
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();

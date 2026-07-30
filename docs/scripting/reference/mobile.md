@@ -74,6 +74,46 @@ if m then
 end
 ```
 
+## mobile.ref
+
+```lua
+mobile.ref(serial) -> table | nil
+```
+
+A **handle** for the mobile: a table of methods you act through, rather than the
+field snapshot [`mobile.get`](#mobileget) hands back. One is a copy, the other a
+reference.
+
+| method | does |
+|---|---|
+| `say(text)` | speaks as the mobile, with the rules [`chat.say`](chat.md) applies |
+| `teleport(x, y, z)` | places it without validating terrain |
+| `equip(item_serial, layer)` | equips an item at a layer |
+
+`nil` means the serial named nothing **at the moment `ref` was called**. It is an
+early signal, not a guarantee: the handle stores a serial and re-reads on every
+call, so a mobile that dies afterwards simply makes each method return `false`
+rather than acting on the wrong target.
+
+> [!NOTE]
+> The methods are closures taking no `self`, so **the dot is the form to use**.
+> A colon happens to work as well — MoonSharp absorbs the extra argument it
+> passes — but that is an accident of the host rather than something to lean on.
+
+**Example**
+
+```lua
+local m = mobile.ref(ctx.actor.serial)
+
+if m then
+    m.say("Welcome back.")
+    m.teleport(1425, 1695, 0)
+end
+```
+
+The flat forms still exist and are unchanged: [`chat.say`](chat.md),
+[`mobile.teleport`](#mobileteleport) and `item.equip`.
+
 ## mobile.set
 
 ```lua
