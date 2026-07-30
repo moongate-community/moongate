@@ -21,20 +21,20 @@ takes a template id, a map id and an `(x, y, z)` position. It creates the mobile
 template is unknown).
 
 ```lua
-local guard = mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+local guard = mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
 ```
 
-`warrior_guard_male_npc` is a real shipped template. It comes fully outfitted —
+`warrior_guard_npc` is a real shipped template. It comes fully outfitted —
 plate armour and a halberd — because its YAML declares an `Equipment:` list that
 the factory resolves and equips on spawn.
 
 ## How a template is built
 
-Templates are declarative YAML. The `warrior_guard_male_npc` entry looks like
+Templates are declarative YAML. The `warrior_guard_npc` entry looks like
 this (abridged):
 
 ```yaml
--   Id: warrior_guard_male_npc
+-   Id: warrior_guard_npc
     BaseMobile: base_human_npc
     Strength: 100
     Dexterity: 125
@@ -45,11 +45,27 @@ this (abridged):
         Swordsmanship: 1200
     Appearance:
         Body: 400
-    Equipment:
-      - Item: plate_chest
-        Layer: InnerTorso
-      - Item: halberd
-        Layer: TwoHanded
+    Variants:
+      - Name: male
+        Gender: Male
+        NamePool: male
+        Appearance:
+            Body: 400
+        Equipment:
+          - Item: plate_chest
+            Layer: InnerTorso
+          - Item: halberd
+            Layer: TwoHanded
+      - Name: female
+        Gender: Female
+        NamePool: female
+        Appearance:
+            Body: 401
+        Equipment:
+          - Item: female_plate_chest
+            Layer: InnerTorso
+          - Item: halberd
+            Layer: TwoHanded
     LootTableId: guard.warrior
 ```
 
@@ -77,17 +93,21 @@ Every template has a gender, chosen per spawn by the factory:
 | `Female` | always female |
 | `Random` | a coin-flip between male and female on each spawn |
 
-`warrior_guard_male_npc` uses the default, so it always spawns male; the shard
-also ships a separate `warrior_guard_female_npc` with `Gender: Female`. Setting
-`Gender: Random` on a template instead lets one id produce both.
+No shipped template sets `Gender` at this level any more. The guards and vendors
+state it **per [variant](#variants)** instead, so one id spawns a mixed
+population — `warrior_guard_npc` is male about half the time and female the
+other half, each with the body, name pool and kit that go with it.
+
+`Gender: Random` remains the way to get a coin flip without variants, for a
+template whose two genders differ in nothing else.
 
 ## Variants
 
 A template may also declare **variants** — weighted alternates picked once per
-spawn. Each variant has a `Weight` and may override the gender, loot table,
-appearance and equipment; anything it leaves out falls back to the template.
-The factory picks one variant by weight on every spawn, so a single id can yield
-a coherent mix of looks:
+spawn. Each variant has a `Weight` and may override the gender, name pool, loot
+table, appearance and equipment; anything it leaves out falls back to the
+template. The factory picks one variant by weight on every spawn, so a single id
+can yield a coherent mix of looks:
 
 ```yaml
     Variants:
@@ -100,8 +120,13 @@ a coherent mix of looks:
 ```
 
 With these weights a spawn is a veteran three times out of four and a recruit
-one time in four. (The shipped guard and undead templates keep things simple and
-do not use variants, but the mechanism is always available.)
+one time in four.
+
+This is how the shipped guards and vendors carry both genders: two equally
+weighted variants, each stating the gender, its name pool and its body. The
+guards go one step further and give each variant its own kit, because the
+female warrior's armour is not the male's with a substitution — she wears no
+Arms or Waist piece at all.
 
 ## Skills: read and write
 
@@ -134,7 +159,7 @@ end
 
 events.on("world_ready", function()
   -- Spawn a fully equipped town guard.
-  local guard = mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+  local guard = mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
   if not guard then
     log.warn("guard template not found")
     return

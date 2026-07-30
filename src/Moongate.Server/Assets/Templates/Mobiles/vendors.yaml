@@ -25,6 +25,19 @@
         -   Item: tongs
             Layer: OneHanded
     LootTableId: vendor.blacksmith
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
 -   Id: weaponsmith_vendor_npc
     Title: the weaponsmith
     Category: npc
@@ -55,6 +68,19 @@
         -   Item: hatchet
             Layer: OneHanded
     LootTableId: vendor.weaponsmith
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
 -   Id: armorer_vendor_npc
     Title: an armorer
     Category: npc
@@ -82,6 +108,19 @@
         -   Item: helmet
             Layer: Helm
     LootTableId: vendor.armorer
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
 -   Id: provisioner_vendor_npc
     Title: the provisioner
     Category: npc
@@ -107,6 +146,19 @@
         -   Item: backpack
             Layer: Backpack
     LootTableId: vendor.provisioner
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
 -   Id: mage_vendor_npc
     Title: a mage
     Category: npc
@@ -132,6 +184,19 @@
         -   Item: spellbook
             Layer: OneHanded
     LootTableId: vendor.mage
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
 -   Id: healer_vendor_npc
     Title: a healer
     Category: npc
@@ -153,3 +218,16 @@
         -   Item: sandals
             Layer: Shoes
     LootTableId: vendor.healer
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401

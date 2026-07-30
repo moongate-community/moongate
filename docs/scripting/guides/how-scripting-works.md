@@ -98,7 +98,7 @@ local heartbeat_id
 
 events.on("world_ready", function()
   -- Runs on the game-loop thread: safe to spawn directly.
-  local guard = mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+  local guard = mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
 
   if guard then
     log.info("spawned guard {0}", guard)
