@@ -16,5 +16,8 @@ public enum PacketFamilyType : byte
     ItemsContainers,
     InteractionKeepalive,
     Tooltips,
-    Chat
+    Chat,
+
+    /// <summary>Server-drawn dialogs: the compressed gump and its response.</summary>
+    Gumps
 }

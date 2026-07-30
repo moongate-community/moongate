@@ -1,5 +1,7 @@
 using DryIoc;
 using Moongate.Core.Types;
+using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Gumps;
 using Moongate.Server.Scripting;
 using SquidStd.Scripting.Lua.Services;
 using SquidStd.Scripting.Lua.Interfaces.Scripts;
@@ -49,6 +51,17 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
             Reuse.Singleton
         );
 
+        container.RegisterDelegate(
+            resolver => new GumpBuilderFactory(
+                resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService gumpLua
+                    ? gumpLua.LuaScript
+                    : throw new InvalidOperationException(
+                        "GumpBuilderFactory requires the SquidStd Lua engine implementation."
+                    )
+            ),
+            Reuse.Singleton
+        );
+
         container.RegisterScriptModule<AccountModule>();
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();
@@ -56,6 +69,7 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
         container.RegisterScriptModule<ChatModule>();
         container.RegisterScriptModule<AiModule>();
         container.RegisterScriptModule<MemoryModule>();
+        container.RegisterScriptModule<GumpModule>();
 
         container.RegisterScriptEnum<AccountLevelType>();
         container.RegisterScriptEnum<SkillName>();

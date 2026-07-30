@@ -20,6 +20,8 @@
       href: reference/ai.md
     - name: chat
       href: reference/chat.md
+    - name: gump
+      href: reference/gump.md
     - name: memory
       href: reference/memory.md
     - name: item scripts

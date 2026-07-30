@@ -11,6 +11,7 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Gumps;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.Network;
@@ -27,6 +28,7 @@ using Moongate.Server.Services.AI;
 using Moongate.Server.Services.Chat;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Game;
+using Moongate.Server.Services.Gumps;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.Network;
@@ -193,6 +195,7 @@ await ConsoleApp.RunAsync(
                 container.Register<ILightService, LightService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
+                container.Register<IGumpService, GumpService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
 
                 // RegisterStdService rather than Register: the type is both the domain service the stats
