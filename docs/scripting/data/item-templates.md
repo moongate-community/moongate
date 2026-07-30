@@ -166,7 +166,7 @@ Values of the `Params` dictionary (`Params: { <name>: { Type, Value } }`).
 
 `halberd`, from
 `src/Moongate.Server/Assets/Templates/Items/weapons.yaml` (this is the
-`TwoHanded` weapon the `warrior_guard_male_npc` [mobile template](mobile-templates.md)
+`TwoHanded` weapon the `warrior_guard_npc` [mobile template](mobile-templates.md)
 equips):
 
 ```yaml

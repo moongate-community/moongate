@@ -79,7 +79,7 @@ layer; you can pass the name `"OneHanded"` or the `layer_type.OneHanded`
 constant.
 
 ```lua
-local guard = mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+local guard = mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
 if guard and item.equip(guard, blade, layer_type.OneHanded) then
   log.info("armed guard {0} with {1}", guard, item.get(blade).name)
 end
@@ -115,7 +115,7 @@ events.on("world_ready", function()
   end
 
   -- 5. Equip the blade on a freshly spawned guard.
-  local guard = mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+  local guard = mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
   if guard and item.equip(guard, blade, layer_type.OneHanded) then
     log.info("armed guard {0}", guard)
   end

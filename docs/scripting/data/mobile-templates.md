@@ -96,9 +96,10 @@ to an actual gender:
 | `Female` | always female |
 | `Random` | coin-flip (50/50) per spawn |
 
-No shipped template currently sets `Gender: Random`; `Female` is used (e.g.
-`archer_guard_female_npc`, `warrior_guard_female_npc` in
-`Mobiles/guards.yaml`).
+No shipped template sets a `Gender` at this level at all. The guards and vendors
+declare it per [variant](#variants) instead, which is how one id spawns both
+genders with the body, name pool and kit that belong to each. `Gender: Random`
+stays available for a template whose genders differ in nothing else.
 
 Omitting the key and writing `Gender: Male` mean different things. An omitted
 `Gender` is null, which inherits the base's; `Gender: Male` states male and
@@ -176,13 +177,22 @@ spawn — under `Variants:`:
 
 At spawn time `MobileFactoryService` picks one variant by weight (each
 variant's share is `Math.Max(1, Weight)` out of the sum of all shares), then
-overlays its `Gender`/`LootTableId`/`Appearance`/`Equipment` onto the
-template's own. **No shipped template currently declares `Variants`** — the
-mechanism is fully wired but unused in the current data set.
+overlays its `Gender`/`NamePool`/`LootTableId`/`Appearance`/`Equipment` onto the
+template's own.
+
+The last two overlay differently, and the asymmetry is deliberate. **Appearance
+merges field by field**, so a variant stating only `Body` keeps the template's
+skin hue, hair style and hair hue. **Equipment replaces wholesale**, because a
+gendered kit is not always a substitution: the female warrior guard has no Arms
+or Waist piece at all, and a per-layer merge could not express a piece's
+*absence*.
+
+The shipped guards and vendors all use variants for the same purpose — one id,
+both genders — and the guards use the equipment override on top of it.
 
 ## Full annotated example
 
-`base_human_npc` (the base) and `archer_guard_female_npc` (a derived
+`base_human_npc` (the base) and `archer_guard_npc` (a derived
 template that uses it), both from
 `src/Moongate.Server/Assets/Templates/Mobiles/`:
 
@@ -215,17 +225,15 @@ template that uses it), both from
 
 ```yaml
 # src/Moongate.Server/Assets/Templates/Mobiles/guards.yaml
--   Id: archer_guard_female_npc
+-   Id: archer_guard_npc
     Title: the guard
     Category: npc
-    Gender: Female                          # base has no Gender -> Female wins
-    Description: Town female archer guard NPC inspired by ModernUO ArcherGuard.
+    Description: Town archer guard NPC inspired by ModernUO ArcherGuard.
     Tags:
         - npc
         - guard
         - archer
-        - town
-        - female                            # concatenated with base's [npc, human, base]
+        - town                               # concatenated with base's [npc, human, base]
     BaseMobile: base_human_npc
     Strength: 100                            # != 50 -> overrides the base's 50
     Dexterity: 125
@@ -237,7 +245,7 @@ template that uses it), both from
         ResistingSpells: 1200
         DetectingHidden: 1000
     Appearance:
-        Body: 401                            # != 0 -> overrides the base's 400
+        Body: 400                            # same as the base's, stated for a caller that skips variants
         SkinHue: 'hue(1002:1058)'
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
@@ -258,11 +266,24 @@ template that uses it), both from
         Layer: Helm
       - Item: bow
         Layer: TwoHanded
+    Variants:                                 # one id, both genders
+      - Name: male
+        Weight: 1
+        Gender: Male
+        NamePool: male
+        Appearance:
+            Body: 400
+      - Name: female
+        Weight: 1
+        Gender: Female                        # template states no Gender -> the variant's wins
+        NamePool: female
+        Appearance:
+            Body: 401                         # != 0 -> overrides the template's 400
     LootTableId: guard.archer                 # see the Loot tables page
     BrainScript: guard
 ```
 
-After resolution, `archer_guard_female_npc` keeps `base_human_npc`'s
+After resolution, `archer_guard_npc` keeps `base_human_npc`'s
 `Title`/`Category`/`Description` fallback shape but ends up with its own
 `Strength`/`Dexterity`/`Intelligence`, `Body`, full `Tags` union, and a
 completely replaced `Equipment` list — while `BaseMobile` itself is cleared

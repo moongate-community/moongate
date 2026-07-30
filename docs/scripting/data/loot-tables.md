@@ -96,8 +96,8 @@ the item factory, exactly the same way regardless of `Mode`.
 ## Full annotated example
 
 `guard.archer`, from `src/Moongate.Server/Assets/Templates/Loot/guards.yaml`
-— the table the `archer_guard_male_npc` / `archer_guard_female_npc`
-[mobile templates](mobile-templates.md#full-annotated-example) carry as
+— the table the `archer_guard_npc`
+[mobile template](mobile-templates.md#full-annotated-example) carries as
 `LootTableId`:
 
 ```yaml

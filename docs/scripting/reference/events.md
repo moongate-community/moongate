@@ -27,7 +27,7 @@ The same event may have multiple handlers.
 ```lua
 events.on("world_ready", function()
   -- Runs on the loop once the world is loaded — safe to spawn directly.
-  mobile.create_from_template("warrior_guard_male_npc", 1, 1420, 1690, 0)
+  mobile.create_from_template("warrior_guard_npc", 1, 1420, 1690, 0)
 end)
 ```
 
