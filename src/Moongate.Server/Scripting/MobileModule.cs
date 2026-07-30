@@ -7,6 +7,7 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Scripting.Refs;
 using Moongate.Server.Scripting.Views;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
@@ -35,6 +36,7 @@ public sealed class MobileModule
     private readonly ISpatialIndexService _spatial;
     private readonly IEventBus _eventBus;
     private readonly IMobileService _mobileService;
+    private readonly MobileRefFactory _refs;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
 
     public MobileModule(
@@ -44,7 +46,8 @@ public sealed class MobileModule
         IPersistenceService persistence,
         ISpatialIndexService spatial,
         IEventBus eventBus,
-        IMobileService mobileService
+        IMobileService mobileService,
+        MobileRefFactory refs
     )
     {
         _factory = factory;
@@ -53,6 +56,7 @@ public sealed class MobileModule
         _spatial = spatial;
         _eventBus = eventBus;
         _mobileService = mobileService;
+        _refs = refs;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
     }
 
@@ -147,6 +151,10 @@ public sealed class MobileModule
     [ScriptFunction("teleport", "Places the mobile at (x, y, z) on its map without validating terrain; false on unknown serial.")]
     public bool Teleport(uint serial, int x, int y, int z)
         => _mobileService.Teleport((Serial)serial, x, y, z);
+
+    [ScriptFunction("ref", "Returns a handle for the mobile with methods say/teleport/equip, or nil.")]
+    public DynValue Ref(uint serial)
+        => _refs.Create((Serial)serial);
 
     [ScriptFunction("set", "Mutates mobile fields from a table; returns true on success.")]
     public bool Set(uint serial, Table fields)
