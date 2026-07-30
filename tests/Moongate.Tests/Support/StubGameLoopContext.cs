@@ -51,12 +51,15 @@ public sealed class StubGameLoopContext : IGameLoopContext
 
     public void Post(Action action)
     {
-        PostCount++;
-
         if (_answers)
         {
             action();
         }
+
+        // Counted after the work, not before: the caller may be a thread-pool continuation, and a
+        // test waiting on PostCount would otherwise be released between the two and assert on
+        // effects the action had not produced yet.
+        PostCount++;
     }
 
     public string Schedule(string name, TimeSpan delay, Action callback)
