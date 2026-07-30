@@ -80,6 +80,20 @@ public class MobileTemplateRepositoryIntegrityTests
                             $"Unknown loot table '{variant.LootTableId}' in variant '{variant.Name}' of mobile template '{template.Id}'"
                         );
                     }
+
+                    // A variant's equipment replaces the template's outright, so it is the only
+                    // list a spawn will wear -- it needs the validation the template's list gets.
+                    foreach (var entry in variant.Equipment)
+                    {
+                        Assert.True(
+                            Enum.TryParse<LayerType>(entry.Layer, true, out _),
+                            $"Unknown layer '{entry.Layer}' in variant '{variant.Name}' of mobile template '{template.Id}'"
+                        );
+                        Assert.True(
+                            items.GetById(entry.Item) is not null,
+                            $"Unknown item template '{entry.Item}' in variant '{variant.Name}' of mobile template '{template.Id}'"
+                        );
+                    }
                 }
             }
         }
