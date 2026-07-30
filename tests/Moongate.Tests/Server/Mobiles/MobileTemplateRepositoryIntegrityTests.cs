@@ -38,6 +38,31 @@ public class MobileTemplateRepositoryIntegrityTests
             Assert.Equal(MobileTemplateGenderType.Female, mobiles.GetById("warrior_guard_female_npc")!.Gender);
             Assert.Null(mobiles.GetById("warrior_guard_male_npc")!.Gender);
 
+            // One id per vendor, a mixed population inside it -- what ModernUO gets out of
+            // BaseVendor.GetGender()'s coin flip. Neither variant states equipment, so both wear
+            // the template's single kit; only the body differs, and appearance merges field by
+            // field, so the skin and hair the template rolls survive into either gender.
+            string[] vendors =
+            [
+                "blacksmith_vendor_npc", "weaponsmith_vendor_npc", "armorer_vendor_npc",
+                "provisioner_vendor_npc", "mage_vendor_npc", "healer_vendor_npc"
+            ];
+
+            foreach (var id in vendors)
+            {
+                var vendor = mobiles.GetById(id)!;
+
+                var male = Assert.Single(vendor.Variants, variant => variant.Gender == MobileTemplateGenderType.Male);
+                Assert.Equal("male", male.NamePool);
+                Assert.Equal(400, male.Appearance.Body);
+                Assert.Empty(male.Equipment);
+
+                var female = Assert.Single(vendor.Variants, variant => variant.Gender == MobileTemplateGenderType.Female);
+                Assert.Equal("female", female.NamePool);
+                Assert.Equal(401, female.Appearance.Body);
+                Assert.Empty(female.Equipment);
+            }
+
             foreach (var template in mobiles.All)
             {
                 Assert.Null(template.BaseMobile); // every base_mobile is resolved at load
