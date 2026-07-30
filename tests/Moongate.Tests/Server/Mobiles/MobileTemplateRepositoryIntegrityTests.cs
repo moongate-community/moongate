@@ -32,11 +32,22 @@ public class MobileTemplateRepositoryIntegrityTests
 
             Assert.NotEmpty(mobiles.All);
 
-            // Gender parses from YAML into the enum where it is declared, and stays null where it is
-            // not: the shipped female guard says Female, the male one says nothing at all and takes
-            // male from the factory's default rather than from the template.
-            Assert.Equal(MobileTemplateGenderType.Female, mobiles.GetById("warrior_guard_female_npc")!.Gender);
-            Assert.Null(mobiles.GetById("warrior_guard_male_npc")!.Gender);
+            // One id per guard kind, both genders inside it. The female warrior's kit is not the
+            // male's with a substitution -- it has no Arms or Waist piece at all, which is why a
+            // variant's equipment replaces the template's outright instead of merging by layer.
+            var warrior = mobiles.GetById("warrior_guard_npc")!;
+            Assert.Null(warrior.Gender);
+
+            var warriorFemale = Assert.Single(warrior.Variants, variant => variant.Gender == MobileTemplateGenderType.Female);
+            Assert.Equal(401, warriorFemale.Appearance.Body);
+            Assert.Equal("female", warriorFemale.NamePool);
+            Assert.DoesNotContain(warriorFemale.Equipment, entry => entry.Layer is "Arms" or "Waist");
+
+            // The archers' two kits were byte-identical, so neither variant states equipment and
+            // both genders wear the template's.
+            var archer = mobiles.GetById("archer_guard_npc")!;
+            Assert.All(archer.Variants, variant => Assert.Empty(variant.Equipment));
+            Assert.NotEmpty(archer.Equipment);
 
             // One id per vendor, a mixed population inside it -- what ModernUO gets out of
             // BaseVendor.GetGender()'s coin flip. Neither variant states equipment, so both wear

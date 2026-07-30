@@ -1,4 +1,4 @@
--   Id: warrior_guard_male_npc
+-   Id: warrior_guard_npc
     Title: the guard
     Category: npc
     Description: Town warrior guard NPC inspired by ModernUO WarriorGuard.
@@ -7,7 +7,6 @@
         - guard
         - warrior
         - town
-        - male
     BaseMobile: base_human_npc
     Strength: 100
     Dexterity: 125
@@ -23,65 +22,48 @@
         SkinHue: 'hue(1002:1058)'
         HairStyle: 8251
         HairHue: 'hue(1102:1149)'
-    Equipment:
-        -   Item: plate_chest
-            Layer: InnerTorso
-        -   Item: plate_arms
-            Layer: Arms
-        -   Item: long_pants
-            Layer: Pants
-        -   Item: body_sash
-            Layer: Waist
-        -   Item: halberd
-            Layer: TwoHanded
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+            Equipment:
+                -   Item: plate_chest
+                    Layer: InnerTorso
+                -   Item: plate_arms
+                    Layer: Arms
+                -   Item: long_pants
+                    Layer: Pants
+                -   Item: body_sash
+                    Layer: Waist
+                -   Item: halberd
+                    Layer: TwoHanded
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
+            Equipment:
+                -   Item: leather_skirt
+                    Layer: Pants
+                -   Item: female_plate_chest
+                    Layer: InnerTorso
+                -   Item: halberd
+                    Layer: TwoHanded
     LootTableId: guard.warrior
     BrainScript: guard
--   Id: warrior_guard_female_npc
+-   Id: archer_guard_npc
     Title: the guard
     Category: npc
-    Gender: Female
-    NamePool: female
-    Description: Town female warrior guard NPC inspired by ModernUO WarriorGuard.
-    Tags:
-        - npc
-        - guard
-        - warrior
-        - town
-        - female
-    BaseMobile: base_human_npc
-    Strength: 100
-    Dexterity: 125
-    Intelligence: 25
-    Skills:
-        Anatomy: 1200
-        Tactics: 1200
-        Swordsmanship: 1200
-        ResistingSpells: 1200
-        DetectingHidden: 1000
-    Appearance:
-        Body: 401
-        SkinHue: 'hue(1002:1058)'
-        HairStyle: 8251
-        HairHue: 'hue(1102:1149)'
-    Equipment:
-        -   Item: leather_skirt
-            Layer: Pants
-        -   Item: female_plate_chest
-            Layer: InnerTorso
-        -   Item: halberd
-            Layer: TwoHanded
-    LootTableId: guard.warrior
-    BrainScript: guard
--   Id: archer_guard_male_npc
-    Title: the guard
-    Category: npc
-    Description: Town male archer guard NPC inspired by ModernUO ArcherGuard.
+    Description: Town archer guard NPC inspired by ModernUO ArcherGuard.
     Tags:
         - npc
         - guard
         - archer
         - town
-        - male
     BaseMobile: base_human_npc
     Strength: 100
     Dexterity: 125
@@ -114,51 +96,18 @@
             Layer: Helm
         -   Item: bow
             Layer: TwoHanded
-    LootTableId: guard.archer
-    BrainScript: guard
--   Id: archer_guard_female_npc
-    Title: the guard
-    Category: npc
-    Gender: Female
-    NamePool: female
-    Description: Town female archer guard NPC inspired by ModernUO ArcherGuard.
-    Tags:
-        - npc
-        - guard
-        - archer
-        - town
-        - female
-    BaseMobile: base_human_npc
-    Strength: 100
-    Dexterity: 125
-    Intelligence: 25
-    Skills:
-        Anatomy: 1200
-        Tactics: 1200
-        Archery: 1200
-        ResistingSpells: 1200
-        DetectingHidden: 1000
-    Appearance:
-        Body: 401
-        SkinHue: 'hue(1002:1058)'
-        HairStyle: 8251
-        HairHue: 'hue(1102:1149)'
-    Equipment:
-        -   Item: studded_chest
-            Layer: InnerTorso
-        -   Item: studded_arms
-            Layer: Arms
-        -   Item: studded_gloves
-            Layer: Gloves
-        -   Item: studded_gorget
-            Layer: Neck
-        -   Item: studded_legs
-            Layer: Pants
-        -   Item: boots
-            Layer: Shoes
-        -   Item: skull_cap
-            Layer: Helm
-        -   Item: bow
-            Layer: TwoHanded
+    Variants:
+        -   Name: male
+            Weight: 1
+            Gender: Male
+            NamePool: male
+            Appearance:
+                Body: 400
+        -   Name: female
+            Weight: 1
+            Gender: Female
+            NamePool: female
+            Appearance:
+                Body: 401
     LootTableId: guard.archer
     BrainScript: guard
