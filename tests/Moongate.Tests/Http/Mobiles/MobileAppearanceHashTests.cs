@@ -48,14 +48,14 @@ public class MobileAppearanceHashTests
     public void AWornItem_ChangesTheHash()
         => Assert.NotEqual(
             MobileAppearanceHash.Of(Mobile(), []),
-            MobileAppearanceHash.Of(Mobile(), [Worn(0x1410, LayerType.Helm, 0)])
+            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 0)])
         );
 
     [Fact]
     public void ADifferentItemHue_ChangesTheHash()
         => Assert.NotEqual(
-            MobileAppearanceHash.Of(Mobile(), [Worn(0x1410, LayerType.Helm, 0)]),
-            MobileAppearanceHash.Of(Mobile(), [Worn(0x1410, LayerType.Helm, 33)])
+            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 0)]),
+            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 33)])
         );
 
     // Ordered by layer before hashing, so the store handing them back in a different order does
@@ -63,8 +63,8 @@ public class MobileAppearanceHashTests
     [Fact]
     public void TheOrderItemsComeBackIn_DoesNotMatter()
     {
-        ItemEntity[] helmFirst = [Worn(0x1410, LayerType.Helm, 0), Worn(0x1411, LayerType.Gloves, 0)];
-        ItemEntity[] glovesFirst = [Worn(0x1411, LayerType.Gloves, 0), Worn(0x1410, LayerType.Helm, 0)];
+        ItemEntity[] helmFirst = [Worn("plate_helm", LayerType.Helm, 0), Worn("plate_gloves", LayerType.Gloves, 0)];
+        ItemEntity[] glovesFirst = [Worn("plate_gloves", LayerType.Gloves, 0), Worn("plate_helm", LayerType.Helm, 0)];
 
         Assert.Equal(MobileAppearanceHash.Of(Mobile(), helmFirst), MobileAppearanceHash.Of(Mobile(), glovesFirst));
     }
@@ -79,8 +79,8 @@ public class MobileAppearanceHashTests
         two.Name = "Someone Else";
 
         Assert.Equal(
-            MobileAppearanceHash.Of(one, [Worn(0x1410, LayerType.Helm, 0)]),
-            MobileAppearanceHash.Of(two, [Worn(0x1410, LayerType.Helm, 0)])
+            MobileAppearanceHash.Of(one, [Worn("plate_helm", LayerType.Helm, 0)]),
+            MobileAppearanceHash.Of(two, [Worn("plate_helm", LayerType.Helm, 0)])
         );
     }
 
@@ -89,7 +89,7 @@ public class MobileAppearanceHashTests
     public void AnItemOnNoLayer_IsIgnored()
         => Assert.Equal(
             MobileAppearanceHash.Of(Mobile(), []),
-            MobileAppearanceHash.Of(Mobile(), [new() { ItemId = 0x1410 }])
+            MobileAppearanceHash.Of(Mobile(), [new() { TemplateId = "plate_helm" }])
         );
 
     private static MobileEntity Mobile()
@@ -102,6 +102,7 @@ public class MobileAppearanceHashTests
             HairHue = new(1102)
         };
 
-    private static ItemEntity Worn(int itemId, LayerType layer, ushort hue)
-        => new() { ItemId = itemId, EquippedLayer = layer, Hue = new(hue) };
+    // Fingerprinted by template id, which is what the renderer is handed -- not by art id.
+    private static ItemEntity Worn(string templateId, LayerType layer, ushort hue)
+        => new() { TemplateId = templateId, EquippedLayer = layer, Hue = new(hue) };
 }

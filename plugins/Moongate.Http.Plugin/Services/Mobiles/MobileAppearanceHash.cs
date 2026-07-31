@@ -14,6 +14,11 @@ public static class MobileAppearanceHash
     /// <summary>
     /// FNV-1a over the appearance, with worn items ordered by layer so an outfit hashes the same
     /// however the store hands it back.
+    /// <para>
+    /// Items are fingerprinted by <c>TemplateId</c> and not <c>ItemId</c>, because the template id is
+    /// what the renderer is given: hashing the art id would sign something the picture does not
+    /// depend on while leaving out something it does.
+    /// </para>
     /// </summary>
     /// <remarks>
     /// Deliberately not <c>string.GetHashCode</c>, which is randomised per process: a cache key that
@@ -34,7 +39,7 @@ public static class MobileAppearanceHash
         {
             builder.Append(
                 CultureInfo.InvariantCulture,
-                $"|{(int)item.EquippedLayer!.Value}:{item.ItemId}:{item.Hue.Value}"
+                $"|{(int)item.EquippedLayer!.Value}:{item.TemplateId}:{item.Hue.Value}"
             );
         }
 
