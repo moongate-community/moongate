@@ -389,6 +389,22 @@ order. Pass `background=false` to drop the backdrop. A template with
 `Gender: Random` renders as male, the same "pick one and stick to it"
 determinism hue ranges get from `LowestHue`.
 
+The same two pictures exist for a **real character** rather than a template:
+`GET /api/v1/images/mobiles/{serial}.png` and
+`GET /api/v1/images/mobiles/{serial}/paperdoll.png` show what that character is
+actually wearing. There are no hue specs to resolve here — a real mobile carries
+hues that are already resolved.
+
+Their cache is **content-addressed**: the file is named with a fingerprint of the
+appearance, so changing clothes writes a new picture instead of invalidating an
+old one, and two characters dressed alike share a file. That fingerprint is also
+the **ETag**, which is why the URL never changes: a client that already has the
+current look revalidates and gets `304` with no body, at the cost of a string
+comparison rather than a render.
+
+Pictures nobody has asked for in seven days are swept, and re-rendered if asked
+for again.
+
 Three staff routes support the pickers and the cache:
 `GET /api/v1/admin/bodies` pages the classified bodies (mobtypes.txt,
 Equipment excluded, decimal or hex search); `GET /api/v1/admin/hair-styles`
