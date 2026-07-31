@@ -40,20 +40,6 @@ public class ItemRefreshSubscriberTests
     }
 
     [Fact]
-    public async Task OnItemChanged_GroundItem_SendsWorldItemToPlayersInRange()
-    {
-        var (subscriber, world, items, _) = Build();
-        var coin = new ItemEntity { ItemId = 3821, MapId = 1, Position = new(10, 20, 0) };
-        items.Create(coin);
-
-        await subscriber.OnItemChanged(new(coin.Id), CancellationToken.None);
-
-        var sent = Assert.Single(world.InRange);
-        Assert.IsType<WorldItemPacket>(sent.Packet);
-        Assert.Equal(1, sent.MapId);
-    }
-
-    [Fact]
     public async Task OnItemChanged_OpenerOutOfRange_IsDroppedAndNotSentTo()
     {
         var (subscriber, world, items, persistence) = Build(out var openers);

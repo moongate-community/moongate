@@ -43,14 +43,11 @@ The flow the server implements today:
    and the season of the facet you stand on.
 
 > [!IMPORTANT]
-> World entry is self-only: the server sends you your own character, but
-> nearby mobiles and items already in range are not sent to you when you
-> first log in (that needs SendEverything, still pending). You can walk and
-> turn — moves are validated against the map and broadcast to players
-> already in range of you — but no new objects appear as you walk into view
-> of them yet. Your backpack cannot be opened yet either, so the starting
-> kit stays out of reach. Nearby mobiles and items staying invisible until
-> SendEverything lands is the current frontier of the project.
+> You log in with the mobiles and items already around you, and the world
+> keeps up as you move: things are drawn as they come into view and undrawn
+> as they leave, in both directions — someone walking toward you appears on
+> your screen just as you appear on theirs. Your backpack cannot be opened
+> yet, so the starting kit stays out of reach.
 
 ## Troubleshooting
 

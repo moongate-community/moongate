@@ -195,6 +195,7 @@ await ConsoleApp.RunAsync(
                 container.Register<ILightService, LightService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
+                container.Register<IVisibilityService, VisibilityService>(Reuse.Singleton);
                 container.Register<IGumpService, GumpService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
 
@@ -203,6 +204,7 @@ await ConsoleApp.RunAsync(
                 // same singleton in both roles.
                 container.RegisterStdService<IServerStatsService, ServerStatsService>();
                 container.RegisterStdService<LightCycleService, LightCycleService>();
+                container.RegisterStdService<VisibilityReconciler, VisibilityReconciler>();
 
                 // INotificationTemplateService is registered by the data-loader plugin, alongside the
                 // loader that fills it, the same way the template services are.
