@@ -24,6 +24,8 @@
       href: families/chat.md
     - name: "Gumps"
       href: families/gumps.md
+    - name: "Targeting"
+      href: families/targeting.md
 - name: Incoming (client → server)
   items:
     - name: "0x02 — Move Request"
@@ -40,6 +42,8 @@
       href: incoming/0x3a-skill-lock-change.md
     - name: "0x5D — Character Select"
       href: incoming/0x5d-character-select.md
+    - name: "0x6C — Target Cursor Response"
+      href: incoming/0x6c-target-cursor-response.md
     - name: "0x73 — Ping"
       href: incoming/0x73-ping.md
     - name: "0x80 — Account Login Request"
@@ -102,6 +106,8 @@
       href: outgoing/0x55-login-complete.md
     - name: "0x5B — Game Time"
       href: outgoing/0x5b-game-time.md
+    - name: "0x6C — Target Cursor"
+      href: outgoing/0x6c-target-cursor.md
     - name: "0x72 — War Mode"
       href: outgoing/0x72-war-mode.md
     - name: "0x73 — Ping Ack"

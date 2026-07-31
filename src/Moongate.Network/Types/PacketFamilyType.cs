@@ -19,5 +19,8 @@ public enum PacketFamilyType : byte
     Chat,
 
     /// <summary>Server-drawn dialogs: the compressed gump and its response.</summary>
-    Gumps
+    Gumps,
+
+    /// <summary>The target cursor: asking the player to click something, and their answer.</summary>
+    Targeting
 }
