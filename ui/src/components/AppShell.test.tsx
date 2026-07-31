@@ -59,6 +59,12 @@ describe('AppShell', () => {
     expect(screen.getByRole('button', { name: /light/i })).toBeInTheDocument()
   })
 
+  // Characters is a player's own page, so unlike Admin right beside it, it is not gated on level.
+  it('shows the Characters tab to a player', async () => {
+    renderWithLevel('Player')
+    expect(await screen.findByRole('link', { name: /characters/i })).toBeInTheDocument()
+  })
+
   it('shows the Admin tab for an admin session', async () => {
     renderWithLevel('Administrator')
     expect(await screen.findByRole('link', { name: /admin/i })).toBeInTheDocument()

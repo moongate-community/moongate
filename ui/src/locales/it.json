@@ -10,7 +10,8 @@
   "nav": {
     "dashboard": "Dashboard",
     "map": "Mappa",
-    "admin": "Admin"
+    "admin": "Admin",
+    "characters": "Personaggi"
   },
   "login": {
     "title": "MOONGATE",
@@ -245,5 +246,24 @@
       "hint": "↑ / ↓ per la cronologia",
       "snippets": "Comandi rapidi"
     }
+  },
+  "characters": {
+    "title": "I miei personaggi",
+    "empty": "Nessun personaggio",
+    "emptyHint": "Creane uno dal client di gioco e comparirà qui.",
+    "loadFailed": "Non è stato possibile caricare i tuoi personaggi.",
+    "noImage": "Nessuna immagine per questo personaggio",
+    "figureAlt": "{{name}} nel mondo",
+    "paperdollAlt": "Paperdoll di {{name}}",
+    "identity": "{{race}} · {{gender}}",
+    "strength": "Forza",
+    "dexterity": "Destrezza",
+    "intelligence": "Intelligenza",
+    "hits": "Vita",
+    "stamina": "Stamina",
+    "mana": "Mana",
+    "kills": "Uccisioni",
+    "location": "Posizione",
+    "pool": "{{current}} / {{max}}"
   }
 }

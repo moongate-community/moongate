@@ -11,6 +11,7 @@ import { VerifyRegistrationScreen } from './routes/VerifyRegistrationScreen'
 import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
 import { MapScreen } from './routes/MapScreen'
+import { CharactersScreen } from './routes/CharactersScreen'
 import { AdminLayout } from './routes/AdminLayout'
 import { AccountsScreen } from './routes/AccountsScreen'
 import { PluginsScreen } from './routes/PluginsScreen'
@@ -37,6 +38,16 @@ export function App() {
                 <RequireAuth>
                   <AppShell>
                     <DashboardScreen />
+                  </AppShell>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/characters"
+              element={
+                <RequireAuth>
+                  <AppShell>
+                    <CharactersScreen />
                   </AppShell>
                 </RequireAuth>
               }
