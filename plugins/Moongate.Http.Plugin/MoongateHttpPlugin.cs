@@ -103,6 +103,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.Register<IPaperdollRenderer, PaperdollRenderer>(Reuse.Singleton);
         container.Register<IPaperdollImageService, PaperdollImageService>(Reuse.Singleton);
         container.Register<IMobileCharacterImageService, MobileCharacterImageService>(Reuse.Singleton);
+        container.RegisterStdService<CharacterImageCacheSweeper, CharacterImageCacheSweeper>();
         container.RegisterApiEndpoint<PaperdollEndpoints>();
         container.RegisterApiEndpoint<MobileCharacterImageEndpoints>();
 

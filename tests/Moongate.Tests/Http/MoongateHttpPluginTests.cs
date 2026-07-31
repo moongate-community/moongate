@@ -55,6 +55,7 @@ public class MoongateHttpPluginTests
                 typeof(ItemTemplateEndpoints),
                 typeof(MapImageAdminEndpoints),
                 typeof(MapImageEndpoints),
+                typeof(MobileCharacterImageEndpoints),
                 typeof(MobileImageAdminEndpoints),
                 typeof(MobileTemplateImageEndpoints),
                 typeof(OnlinePlayerAdminEndpoints),
