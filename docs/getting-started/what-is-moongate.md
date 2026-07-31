@@ -20,12 +20,11 @@ Moongate is young and moves fast. What works today:
 - TCP login pipeline: seed, account login, server list, game-server handoff,
   character list, **character creation and deletion** (the created player
   mobile is persisted) and **world entry** — creating or selecting a character
-  loads you into the map with its stats, skills and gear. World entry is
-  self-only: nearby mobiles and items already in range are not sent to you
-  on login (SendEverything, still pending). Movement is handled — validated
-  against the map, rate-limited, and broadcast to players already in range —
-  but objects entering view as you walk are not yet, which is the next
-  milestone.
+  loads you into the map with its stats, skills and gear, and with the mobiles
+  and items already around you. Movement is handled: validated against the map,
+  rate-limited, and **the world appears and disappears as you walk** — things
+  are drawn when they come into view, undrawn when they leave, and the same
+  happens to you on everyone else's screen when they move.
 - Item, mobile and loot systems driven by YAML templates, with a Lua API
   (`item`, `mobile`, `loot`, `game`, `events`, `log`) for shard logic.
 - Binary snapshot persistence for accounts, mobiles and items.
