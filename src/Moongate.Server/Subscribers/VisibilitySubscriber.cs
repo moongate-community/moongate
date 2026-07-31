@@ -4,6 +4,7 @@ using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Events;
+using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Core.Primitives;
 using SquidStd.Core.Interfaces.Events;
@@ -20,16 +21,19 @@ public sealed class VisibilitySubscriber : IEventSubscriberRegistration
     private readonly IVisibilityService _visibility;
     private readonly ISessionManager _sessions;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
+    private readonly IItemService _items;
 
     public VisibilitySubscriber(
         IVisibilityService visibility,
         ISessionManager sessions,
-        IPersistenceService persistenceService
+        IPersistenceService persistenceService,
+        IItemService items
     )
     {
         _visibility = visibility;
         _sessions = sessions;
         _mobiles = persistenceService.GetStore<MobileEntity, Serial>();
+        _items = items;
     }
 
     public void Subscribe(IEventBus eventBus)
@@ -38,6 +42,7 @@ public sealed class VisibilitySubscriber : IEventSubscriberRegistration
         eventBus.Subscribe<MobileMovedEvent>(OnMobileMoved);
         eventBus.Subscribe<MobileCreatedEvent>(OnMobileCreated);
         eventBus.Subscribe<MobileDeletedEvent>(OnMobileDeleted);
+        eventBus.Subscribe<ItemChangedEvent>(OnItemChanged);
         eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
     }
 
@@ -111,6 +116,37 @@ public sealed class VisibilitySubscriber : IEventSubscriberRegistration
     public Task OnMobileDeleted(MobileDeletedEvent @event, CancellationToken cancellationToken)
     {
         _visibility.Undraw(_sessions.All, @event.Mobile.Id);
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// An item on the ground is drawn or undrawn by range like anything else. One that is no longer
+    /// on the ground has left the world — picked up, or worn — and range says nothing about it, so
+    /// everyone who had it drawn is told directly. Without that it would linger on their screen
+    /// until the reconciliation sweep.
+    /// </summary>
+    public Task OnItemChanged(ItemChangedEvent @event, CancellationToken cancellationToken)
+    {
+        if (_items.GetById(@event.Item) is not { } item)
+        {
+            return Task.CompletedTask;
+        }
+
+        if (item.ParentContainerId != Serial.Zero || item.EquippedMobileId != Serial.Zero)
+        {
+            _visibility.Undraw(_sessions.All, item.Id);
+
+            return Task.CompletedTask;
+        }
+
+        foreach (var session in _sessions.All)
+        {
+            if (session.Character is not null)
+            {
+                _visibility.UpdateFor(session, item);
+            }
+        }
 
         return Task.CompletedTask;
     }

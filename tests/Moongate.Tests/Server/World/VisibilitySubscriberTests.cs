@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
@@ -83,6 +84,41 @@ public class VisibilitySubscriberTests
         Assert.DoesNotContain(doomed.Id, world.Visibility.KnownTo(session));
     }
 
+    // An item dropped beside someone must reach them without waiting for the ten-second sweep.
+    [Fact]
+    public async Task ItemChanged_OnTheGroundInRange_IsDrawnAndRemembered()
+    {
+        var world = new Fixture();
+        var session = world.Session(new(100, 100, 0));
+
+        world.Visibility.Refresh(session);
+
+        var item = world.Item(new(103, 100, 0));
+
+        await world.Subscriber.OnItemChanged(new(item.Id), CancellationToken.None);
+
+        Assert.Contains(item.Id, world.Visibility.KnownTo(session));
+    }
+
+    // Picked up is not "moved": the item leaves the world entirely, so range says nothing about it
+    // and everyone who had it drawn has to be told directly.
+    [Fact]
+    public async Task ItemChanged_PickedUp_IsUndrawnForEveryoneWhoKnewIt()
+    {
+        var world = new Fixture();
+        var session = world.Session(new(100, 100, 0));
+        var item = world.Item(new(103, 100, 0));
+
+        world.Visibility.Refresh(session);
+        Assert.Contains(item.Id, world.Visibility.KnownTo(session));
+
+        world.PickUp(item);
+
+        await world.Subscriber.OnItemChanged(new(item.Id), CancellationToken.None);
+
+        Assert.DoesNotContain(item.Id, world.Visibility.KnownTo(session));
+    }
+
     private sealed class Fixture
     {
         private readonly FakePersistenceService _persistence = new();
@@ -92,9 +128,12 @@ public class VisibilitySubscriberTests
         public Fixture()
         {
             _spatial = new(_persistence, new StubLoopAffinity(), new EventBusService());
-            Visibility = new VisibilityService(_spatial, new ItemService(_persistence), new VirtualSerialService());
-            Subscriber = new(Visibility, _sessions, _persistence);
+            Items = new(_persistence);
+            Visibility = new VisibilityService(_spatial, Items, new VirtualSerialService());
+            Subscriber = new(Visibility, _sessions, _persistence, Items);
         }
+
+        public ItemService Items { get; }
 
         public VisibilityService Visibility { get; }
 
@@ -120,6 +159,24 @@ public class VisibilitySubscriberTests
             _spatial.AddOrUpdate(mobile);
 
             return mobile;
+        }
+
+        public ItemEntity Item(Point3D position)
+        {
+            var item = new ItemEntity { ItemId = 0x0EED, MapId = 1, Position = position };
+
+            Items.Save(item);
+            _spatial.AddOrUpdate(item);
+
+            return item;
+        }
+
+        /// <summary>Off the ground and into a backpack: no longer in the world.</summary>
+        public void PickUp(ItemEntity item)
+        {
+            item.ParentContainerId = (Serial)0xFFFF;
+            Items.Save(item);
+            _spatial.AddOrUpdate(item);
         }
 
         public void Move(MobileEntity mobile, Point3D position)

@@ -54,10 +54,11 @@ public sealed class ItemRefreshSubscriber : IEventSubscriberRegistration
         {
             RefreshOnMobile(item);
         }
-        else
-        {
-            RefreshOnGround(item);
-        }
+
+
+        // Nothing for a ground item: VisibilitySubscriber owns those now, because drawing one is
+        // inseparable from remembering that the client has it -- and from telling the client when it
+        // stops being there.
 
         return Task.CompletedTask;
     }
@@ -110,19 +111,6 @@ public sealed class ItemRefreshSubscriber : IEventSubscriberRegistration
         }
     }
 
-    private void RefreshOnGround(ItemEntity item)
-        => _world.SendToPlayersInRange(
-            item.MapId,
-            item.Position,
-            PlayerSession.MaxViewRange,
-            new WorldItemPacket(
-                item.Id,
-                (ushort)item.ItemId,
-                (ushort)item.Amount,
-                item.Position,
-                item.Hue
-            )
-        );
 
     /// <summary>The item is worn: its layer redraws on the paperdoll for everyone watching the wearer.</summary>
     private void RefreshOnMobile(ItemEntity item)

@@ -789,8 +789,9 @@ public class LoginFlowIntegrationTests
 
             // Drawing and undrawing is the visibility service's job now, so it has to be here for Bob
             // to learn Alice exists at all.
-            var visibility = new VisibilityService(spatial, new ItemService(persistence, opl), new VirtualSerialService());
-            new VisibilitySubscriber(visibility, sessions, persistence).Subscribe(eventBus);
+            var visibilityItems = new ItemService(persistence, opl);
+            var visibility = new VisibilityService(spatial, visibilityItems, new VirtualSerialService());
+            new VisibilitySubscriber(visibility, sessions, persistence, visibilityItems).Subscribe(eventBus);
 
             // CharacterServiceFixture.Create wires its own MobileFactoryService, whose starting-city
             // lookup is independent of the city StartServerWithMovementAsync registers for the
