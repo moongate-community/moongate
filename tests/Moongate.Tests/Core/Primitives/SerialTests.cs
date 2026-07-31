@@ -80,6 +80,58 @@ public class SerialTests
         Assert.Equal("0x00000001", new Serial(1).ToString());
     }
 
+    // The pair that matters: whatever ToString wrote, TryParse must read back. Everything the API
+    // hands out is in that form, so this round trip is what lets a caller feed a serial back to us.
+    [Theory]
+    [InlineData(0x4000000Au)]
+    [InlineData(1u)]
+    [InlineData(0u)]
+    [InlineData(uint.MaxValue)]
+    public void TryParse_ReadsBackWhatToStringWrote(uint value)
+    {
+        var serial = new Serial(value);
+
+        Assert.True(Serial.TryParse(serial.ToString(), out var parsed));
+        Assert.Equal(serial, parsed);
+    }
+
+    [Theory]
+    [InlineData("0x40000001", 0x40000001u)]
+    [InlineData("0X40000001", 0x40000001u)]
+    [InlineData("40000001", 40000001u)]
+    [InlineData("57005", 57005u)]
+    public void TryParse_TakesHexWithThePrefixAndPlainDecimalWithout(string text, uint expected)
+    {
+        Assert.True(Serial.TryParse(text, out var parsed));
+        Assert.Equal(new Serial(expected), parsed);
+    }
+
+    // Without the prefix a bare "40000001" is decimal, so the prefix is what picks the base -- not a
+    // guess at whether the digits look hexadecimal.
+    [Fact]
+    public void TryParse_WithoutThePrefix_DoesNotGuessHex()
+    {
+        Assert.False(Serial.TryParse("4000000A", out _));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData("banana")]
+    [InlineData("0x")]
+    [InlineData("-1")]
+    [InlineData("0x100000000")]
+    [InlineData("4294967296")]
+    public void TryParse_RejectsWhatIsNotASerial(string text)
+    {
+        Assert.False(Serial.TryParse(text, out var parsed));
+        Assert.Equal(Serial.Zero, parsed);
+    }
+
+    [Fact]
+    public void TryParse_RejectsNull()
+        => Assert.False(Serial.TryParse(null, out _));
+
     [Fact]
     public void VirtualBand_StartsRightAfterTheLastItem()
         => Assert.Equal(Serial.MaxItem + 1, Serial.MinVirtual);

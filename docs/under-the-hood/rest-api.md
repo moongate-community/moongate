@@ -393,7 +393,9 @@ The same two pictures exist for a **real character** rather than a template:
 `GET /api/v1/images/mobiles/{serial}.png` and
 `GET /api/v1/images/mobiles/{serial}/paperdoll.png` show what that character is
 actually wearing. There are no hue specs to resolve here — a real mobile carries
-hues that are already resolved.
+hues that are already resolved. The serial takes the form the rest of the API
+reports it in, `0x40000001`, so a character's own `serial` field can be fed
+straight back; plain decimal works too.
 
 Their cache is **content-addressed**: the file is named with a fingerprint of the
 appearance, so changing clothes writes a new picture instead of invalidating an

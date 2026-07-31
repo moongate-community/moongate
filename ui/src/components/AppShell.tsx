@@ -45,6 +45,17 @@ export function AppShell({ children }: { children: ReactNode }) {
         </NavLink>
 
         <NavLink
+          to="/characters"
+          className={({ isActive }) =>
+            isActive
+              ? 'flex items-center border-b-2 border-gold text-sm font-bold text-gold'
+              : 'flex items-center border-b-2 border-transparent text-sm text-muted hover:text-ink'
+          }
+        >
+          {t('nav.characters')}
+        </NavLink>
+
+        <NavLink
           to="/map"
           className={({ isActive }) =>
             isActive

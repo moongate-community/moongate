@@ -10,7 +10,8 @@
   "nav": {
     "dashboard": "Dashboard",
     "map": "Map",
-    "admin": "Admin"
+    "admin": "Admin",
+    "characters": "Characters"
   },
   "login": {
     "title": "MOONGATE",
@@ -244,6 +245,34 @@
       "empty": "No output yet. Type a command to begin.",
       "hint": "↑ / ↓ for history",
       "snippets": "Quick commands"
+    }
+  },
+  "characters": {
+    "title": "My Characters",
+    "empty": "No characters yet",
+    "emptyHint": "Create one in the game client, and it will show up here.",
+    "loadFailed": "Your characters could not be loaded.",
+    "noImage": "No picture for this character",
+    "figureAlt": "{{name}} in the world",
+    "paperdollAlt": "{{name}} paperdoll",
+    "identity": "{{race}} · {{gender}}",
+    "strength": "Strength",
+    "dexterity": "Dexterity",
+    "intelligence": "Intelligence",
+    "hits": "Hits",
+    "stamina": "Stamina",
+    "mana": "Mana",
+    "kills": "Kills",
+    "location": "Location",
+    "pool": "{{current}} / {{max}}",
+    "race": {
+      "Human": "Human",
+      "Elf": "Elf",
+      "Gargoyle": "Gargoyle"
+    },
+    "gender": {
+      "Male": "Male",
+      "Female": "Female"
     }
   }
 }

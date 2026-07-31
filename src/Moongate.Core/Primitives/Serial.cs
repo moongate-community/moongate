@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace Moongate.Core.Primitives;
 
 /// <summary>
@@ -61,6 +63,38 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
 
     public override string ToString()
         => $"0x{Value:X8}";
+
+    /// <summary>
+    /// Reads a serial written the way <see cref="ToString" /> writes it — <c>0x40000001</c> — or as
+    /// plain decimal. The <c>0x</c> prefix is what picks the base: without it the text is decimal,
+    /// so <c>40000001</c> is forty million and not the first item serial.
+    /// </summary>
+    /// <returns>False, with <paramref name="serial" /> set to <see cref="Zero" />, when the text is
+    /// not a serial.</returns>
+    public static bool TryParse(string? text, out Serial serial)
+    {
+        serial = Zero;
+
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return false;
+        }
+
+        var span = text.AsSpan().Trim();
+
+        var parsed = span.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
+            ? uint.TryParse(span[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value)
+            : uint.TryParse(span, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+
+        if (!parsed)
+        {
+            return false;
+        }
+
+        serial = new(value);
+
+        return true;
+    }
 
     public static bool operator ==(Serial left, Serial right)
         => left.Value == right.Value;

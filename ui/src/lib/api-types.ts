@@ -546,7 +546,8 @@ export interface paths {
         };
         /**
          * Serves a character's dressed figure as PNG: body, hair and the items they are wearing.
-         * @description The ETag is a fingerprint of the appearance, so a client that already has the current look gets
+         * @description The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal.
+         *     The ETag is a fingerprint of the appearance, so a client that already has the current look gets
          *     304 without a body. 404 when the serial names no mobile, or when its body has no animation.
          */
         get: operations["GetMobileCharacterImage"];
@@ -567,7 +568,8 @@ export interface paths {
         };
         /**
          * Serves a character's paperdoll as PNG, with the equipment they are wearing.
-         * @description Pass `background=false` for the doll without its backdrop. The ETag is a fingerprint of
+         * @description The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal.
+         *     Pass `background=false` for the doll without its backdrop. The ETag is a fingerprint of
          *     the appearance, so an unchanged character gets 304 without a body.
          */
         get: operations["GetMobileCharacterPaperdoll"];
@@ -2257,7 +2259,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                serial: number;
+                serial: string;
             };
             cookie?: never;
         };
@@ -2281,7 +2283,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                serial: number;
+                serial: string;
             };
             cookie?: never;
         };
