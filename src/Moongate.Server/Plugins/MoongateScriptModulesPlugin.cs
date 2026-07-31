@@ -62,6 +62,17 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
             Reuse.Singleton
         );
 
+        container.RegisterDelegate(
+            resolver => new TargetResultFactory(
+                resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService targetLua
+                    ? targetLua.LuaScript
+                    : throw new InvalidOperationException(
+                        "TargetResultFactory requires the SquidStd Lua engine implementation."
+                    )
+            ),
+            Reuse.Singleton
+        );
+
         container.RegisterScriptModule<AccountModule>();
         container.RegisterScriptModule<ItemModule>();
         container.RegisterScriptModule<MobileModule>();
@@ -70,8 +81,10 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
         container.RegisterScriptModule<AiModule>();
         container.RegisterScriptModule<MemoryModule>();
         container.RegisterScriptModule<GumpModule>();
+        container.RegisterScriptModule<TargetModule>();
 
         container.RegisterScriptEnum<AccountLevelType>();
+        container.RegisterScriptEnum<TargetSelectionType>();
         container.RegisterScriptEnum<SkillName>();
         container.RegisterScriptEnum<GenderType>();
         container.RegisterScriptEnum<RaceType>();

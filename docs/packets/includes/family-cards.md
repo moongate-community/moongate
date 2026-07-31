@@ -54,4 +54,9 @@
     <div class="mg-card-ops">0xB1 · 0xDD</div>
     <p>Server-drawn dialogs: the compressed gump and the response naming the button pressed.</p>
   </a>
+  <a class="mg-card" href="families/targeting.md">
+    <h3>Targeting</h3>
+    <div class="mg-card-ops">0x6C</div>
+    <p>The target cursor: the server asking the player to click something, and the answer.</p>
+  </a>
 </div>

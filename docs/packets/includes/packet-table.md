@@ -1,7 +1,7 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">59</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">20</div><div class="mg-stat-label">incoming (client → server)</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-violet">39</div><div class="mg-stat-label">outgoing (server → client)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">61</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">21</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-violet">40</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
 
@@ -31,6 +31,8 @@
 | [`0x55`](../outgoing/0x55-login-complete.md) | Login Complete | S → C | 1 bytes (fixed) | The "you are now in the world" marker that unblocks the client. |
 | [`0x5B`](../outgoing/0x5b-game-time.md) | Game Time | S → C | 4 bytes (fixed) | The in-world clock shown to the client. |
 | [`0x5D`](../incoming/0x5d-character-select.md) | Character Select | C → S | 73 bytes (fixed) | The client picks an existing character slot to enter the world with. |
+| [`0x6C`](../incoming/0x6c-target-cursor-response.md) | Target Cursor Response | C → S | 19 bytes (fixed) | What the player clicked. |
+| [`0x6C`](../outgoing/0x6c-target-cursor.md) | Target Cursor | S → C | 19 bytes (fixed) | Raises the client's targeting cursor, or takes it down when <paramref name="CursorType" /> is `Cancel`. |
 | [`0x72`](../outgoing/0x72-war-mode.md) | War Mode | S → C | 5 bytes (fixed) | Toggles the client's combat stance. |
 | [`0x73`](../incoming/0x73-ping.md) | Ping | C → S | 2 bytes (fixed) | The client sends this periodically with a rolling sequence byte and expects the server to echo it straight back, or it eventually drops the connection. |
 | [`0x73`](../outgoing/0x73-ping-ack.md) | Ping Ack | S → C | 2 bytes (fixed) | Echoes the client's keep-alive sequence byte straight back. |

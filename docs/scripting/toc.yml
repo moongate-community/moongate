@@ -22,6 +22,8 @@
       href: reference/chat.md
     - name: gump
       href: reference/gump.md
+    - name: target
+      href: reference/target.md
     - name: memory
       href: reference/memory.md
     - name: item scripts

@@ -74,6 +74,8 @@ var familyInfos = new FamilyInfo[]
         "Player speech (say/emote/whisper/yell) and server-wide system broadcasts."),
     new("Gumps", "gumps", "Gumps",
         "Server-drawn dialogs: the compressed gump and the response naming the button pressed."),
+    new("Targeting", "targeting", "Targeting",
+        "The target cursor: the server asking the player to click something, and the answer."),
 };
 
 var knownFamilies = familyInfos.Select(f => f.Member).ToHashSet(StringComparer.Ordinal);
