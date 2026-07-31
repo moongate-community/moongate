@@ -129,6 +129,26 @@ gump.show(player, "help", function(g)
 end)
 ```
 
+## A complete example
+
+The fragments above are fragments. `example_signpost.lua` ships with the server as a whole
+working script: double-clicking the item opens a menu of destinations with
+a checkbox, and the response teleports the player and optionally makes them announce
+themselves. It shows the whole loop — draw, wait, answer, act — including the two things that
+are easy to get wrong the first time:
+
+- `ctx.actor` can be **nil**, and there is then nobody to show a gump to;
+- the mobile can be **gone by the time the player answers**, which is why the callback goes
+  through [`mobile.ref`](mobile.md#mobileref) rather than assuming the target is still there.
+
+Point an item template at it with `ScriptId: items.example_signpost` — see
+[item scripts](item-scripts.md).
+
+> [!NOTE]
+> Item scripts are seeded **lazily**, the first time the server resolves a `ScriptId`. On a
+> bare first boot `scripts/items/` does not exist yet, so do not go looking for the file
+> before an item that uses one has been loaded.
+
 ## Drawing gumps with an editor
 
 Positions are pixels, and pixels are easier dragged than typed. The Ultima Online community
