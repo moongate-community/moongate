@@ -102,7 +102,9 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.Register<IGumpCatalog, GumpCatalog>(Reuse.Singleton);
         container.Register<IPaperdollRenderer, PaperdollRenderer>(Reuse.Singleton);
         container.Register<IPaperdollImageService, PaperdollImageService>(Reuse.Singleton);
+        container.Register<IMobileCharacterImageService, MobileCharacterImageService>(Reuse.Singleton);
         container.RegisterApiEndpoint<PaperdollEndpoints>();
+        container.RegisterApiEndpoint<MobileCharacterImageEndpoints>();
 
         // The game-facing groups consume the contracts in Moongate.Server.Abstractions, which the
         // server implements — the plugin never sees Moongate.Server itself.

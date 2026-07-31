@@ -947,6 +947,82 @@
         }
       }
     },
+    "/api/v1/images/mobiles/{serial}.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves a character's dressed figure as PNG: body, hair and the items they are wearing.",
+        "description": "The ETag is a fingerprint of the appearance, so a client that already has the current look gets\n304 without a body. 404 when the serial names no mobile, or when its body has no animation.",
+        "operationId": "GetMobileCharacterImage",
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/images/mobiles/{serial}/paperdoll.png": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Serves a character's paperdoll as PNG, with the equipment they are wearing.",
+        "description": "Pass `background=false` for the doll without its backdrop. The ETag is a fingerprint of\nthe appearance, so an unchanged character gets 304 without a body.",
+        "operationId": "GetMobileCharacterPaperdoll",
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "background",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/images/bodies": {
       "post": {
         "tags": [
