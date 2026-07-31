@@ -953,7 +953,7 @@
           "mobiles"
         ],
         "summary": "Serves a character's dressed figure as PNG: body, hair and the items they are wearing.",
-        "description": "The ETag is a fingerprint of the appearance, so a client that already has the current look gets\n304 without a body. 404 when the serial names no mobile, or when its body has no animation.",
+        "description": "The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal.\nThe ETag is a fingerprint of the appearance, so a client that already has the current look gets\n304 without a body. 404 when the serial names no mobile, or when its body has no animation.",
         "operationId": "GetMobileCharacterImage",
         "parameters": [
           {
@@ -961,8 +961,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
@@ -987,7 +986,7 @@
           "mobiles"
         ],
         "summary": "Serves a character's paperdoll as PNG, with the equipment they are wearing.",
-        "description": "Pass `background=false` for the doll without its backdrop. The ETag is a fingerprint of\nthe appearance, so an unchanged character gets 304 without a body.",
+        "description": "The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal.\nPass `background=false` for the doll without its backdrop. The ETag is a fingerprint of\nthe appearance, so an unchanged character gets 304 without a body.",
         "operationId": "GetMobileCharacterPaperdoll",
         "parameters": [
           {
@@ -995,8 +994,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           },
           {

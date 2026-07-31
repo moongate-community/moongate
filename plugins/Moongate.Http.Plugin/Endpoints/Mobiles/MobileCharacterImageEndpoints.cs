@@ -21,12 +21,12 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
 
     public void Register(IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/api/v1/images/mobiles/{serial:long}.png", GetFigure)
+        routes.MapGet("/api/v1/images/mobiles/{serial}.png", GetFigure)
               .WithName("GetMobileCharacterImage")
               .WithTags("mobiles")
               .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
 
-        routes.MapGet("/api/v1/images/mobiles/{serial:long}/paperdoll.png", GetPaperdoll)
+        routes.MapGet("/api/v1/images/mobiles/{serial}/paperdoll.png", GetPaperdoll)
               .WithName("GetMobileCharacterPaperdoll")
               .WithTags("mobiles")
               .Produces<byte[]>(StatusCodes.Status200OK, "image/png");
@@ -34,24 +34,40 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
 
     /// <summary>Serves a character's dressed figure as PNG: body, hair and the items they are wearing.</summary>
     /// <remarks>
+    /// The serial takes the form the rest of the API reports, <c>0x40000001</c>, or plain decimal.
     /// The ETag is a fingerprint of the appearance, so a client that already has the current look gets
     /// 304 without a body. 404 when the serial names no mobile, or when its body has no animation.
     /// </remarks>
-    private async Task<IResult> GetFigure(long serial, HttpRequest request, CancellationToken cancellationToken)
-        => Respond(await _images.GetFigureAsync((Serial)(uint)serial, cancellationToken), request);
+    private async Task<IResult> GetFigure(string serial, HttpRequest request, CancellationToken cancellationToken)
+    {
+        if (!Serial.TryParse(serial, out var parsed))
+        {
+            return NotFound();
+        }
+
+        return Respond(await _images.GetFigureAsync(parsed, cancellationToken), request);
+    }
 
     /// <summary>Serves a character's paperdoll as PNG, with the equipment they are wearing.</summary>
     /// <remarks>
+    /// The serial takes the form the rest of the API reports, <c>0x40000001</c>, or plain decimal.
     /// Pass <c>background=false</c> for the doll without its backdrop. The ETag is a fingerprint of
     /// the appearance, so an unchanged character gets 304 without a body.
     /// </remarks>
     private async Task<IResult> GetPaperdoll(
-        long serial,
+        string serial,
         HttpRequest request,
         CancellationToken cancellationToken,
         bool background = true
     )
-        => Respond(await _images.GetPaperdollAsync((Serial)(uint)serial, background, cancellationToken), request);
+    {
+        if (!Serial.TryParse(serial, out var parsed))
+        {
+            return NotFound();
+        }
+
+        return Respond(await _images.GetPaperdollAsync(parsed, background, cancellationToken), request);
+    }
 
     /// <summary>
     /// The one HTTP decision this endpoint makes: hand back the file, or say the caller already has
@@ -61,7 +77,7 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
     {
         if (image is null)
         {
-            return Results.Problem("No renderable image for that mobile.", statusCode: StatusCodes.Status404NotFound);
+            return NotFound();
         }
 
         var tag = new EntityTagHeaderValue($"\"{image.Hash}\"");
@@ -73,4 +89,11 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
 
         return Results.File(image.Path, "image/png", entityTag: tag);
     }
+
+    /// <summary>
+    /// One answer for "that is not a character" and "that is not even a serial": from outside, both
+    /// mean the picture asked for does not exist.
+    /// </summary>
+    private static IResult NotFound()
+        => Results.Problem("No renderable image for that mobile.", statusCode: StatusCodes.Status404NotFound);
 }

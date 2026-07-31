@@ -88,6 +88,56 @@ public class MobileCharacterImageEndpointsTests
         Assert.Equal("\"dollhash\"", response.Headers.ETag?.ToString());
     }
 
+    // The API reports every serial as 0x40000001, so that is the string a caller has in hand when it
+    // wants the picture. A route that only accepted decimal would answer 404 for the API's own value
+    // -- and 404 reads as "no such character", not "wrong number base".
+    [Fact]
+    public async Task Get_WithTheHexSerialTheApiReports_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("hexhash1"));
+        await using var server = await StartAsync(images);
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((Serial)0x40000001u, images.LastSerial);
+    }
+
+    [Fact]
+    public async Task GetPaperdoll_WithTheHexSerialTheApiReports_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("hexhash2"));
+        await using var server = await StartAsync(images);
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001/paperdoll.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((Serial)0x40000001u, images.LastSerial);
+    }
+
+    // Decimal stays valid: it is what the route has always accepted, and dropping it would break
+    // any caller already using it.
+    [Fact]
+    public async Task Get_WithADecimalSerial_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("dechash1"));
+        await using var server = await StartAsync(images);
+
+        await server.Client.GetAsync("/api/v1/images/mobiles/57005.png");
+
+        Assert.Equal((Serial)57005u, images.LastSerial);
+    }
+
+    [Fact]
+    public async Task Get_WithASerialThatIsNotANumber_Is404()
+    {
+        await using var server = await StartAsync(new StubImageService(Png("nothash1")));
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/banana.png");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
     private static MobileImage Png(string hash)
     {
         var path = Path.Combine(TemporaryDirectory.Create("mg-character-route-"), $"{hash}.png");
@@ -115,14 +165,25 @@ public class MobileCharacterImageEndpointsTests
             _image = image;
         }
 
+        /// <summary>The serial the route asked for, which is how the tests check the parse.</summary>
+        public Serial LastSerial { get; private set; }
+
         public Task<MobileImage?> GetFigureAsync(Serial serial, CancellationToken cancellationToken = default)
-            => Task.FromResult(_image);
+        {
+            LastSerial = serial;
+
+            return Task.FromResult(_image);
+        }
 
         public Task<MobileImage?> GetPaperdollAsync(
             Serial serial,
             bool includeBackground,
             CancellationToken cancellationToken = default
         )
-            => Task.FromResult(_image);
+        {
+            LastSerial = serial;
+
+            return Task.FromResult(_image);
+        }
     }
 }
