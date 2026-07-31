@@ -2,6 +2,7 @@ using Moongate.Network.Data;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Services.World;
@@ -12,6 +13,8 @@ namespace Moongate.Server.Services.World;
 /// </summary>
 public static class MobileDrawing
 {
+    private const byte FemaleFlag = 0x02;
+
     /// <summary>
     /// Builds the worn items the client draws on a mobile: its equipment, then hair and facial hair as
     /// pseudo-items. One item per layer wins, as in ModernUO — the client cannot render two things on the
@@ -62,4 +65,8 @@ public static class MobileDrawing
 
         return drawn;
     }
+
+    /// <summary>The body flags a mobile is drawn with. Only the female bit today.</summary>
+    public static byte BuildFlags(MobileEntity mobile)
+        => mobile.Gender == GenderType.Female ? FemaleFlag : (byte)0;
 }

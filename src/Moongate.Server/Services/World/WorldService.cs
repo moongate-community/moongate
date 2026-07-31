@@ -95,7 +95,7 @@ public sealed class WorldService : IWorldService
         var map = MapDefinitions.Get(mobile.MapId);
         var position = mobile.Position;
         var body = (ushort)mobile.Body;
-        var flags = GetBodyFlags(mobile);
+        var flags = MobileDrawing.BuildFlags(mobile);
         var now = _timeProvider.GetLocalNow();
 
         List<IOutgoingPacket> packets =
@@ -283,15 +283,4 @@ public sealed class WorldService : IWorldService
             (byte)mobile.FollowersMax
         );
 
-    private static byte GetBodyFlags(MobileEntity mobile)
-    {
-        byte flags = 0;
-
-        if (mobile.Gender == GenderType.Female)
-        {
-            flags |= FemaleFlag;
-        }
-
-        return flags;
-    }
 }
