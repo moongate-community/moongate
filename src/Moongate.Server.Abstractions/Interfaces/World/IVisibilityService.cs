@@ -33,8 +33,11 @@ public interface IVisibilityService
     /// <summary>Applies one item's change to one session.</summary>
     VisibilityChangeType UpdateFor(PlayerSession session, ItemEntity item);
 
-    /// <summary>Tells every session that knows this serial to forget it, and returns how many did.</summary>
-    int Undraw(Serial serial);
+    /// <summary>
+    /// Tells every session that knew this serial to forget it, and returns how many did. For things
+    /// that left the world rather than the view: range says nothing about something that is gone.
+    /// </summary>
+    int Undraw(IEnumerable<PlayerSession> sessions, Serial serial);
 
     /// <summary>Drops everything this session was told, on logout.</summary>
     void Forget(PlayerSession session);

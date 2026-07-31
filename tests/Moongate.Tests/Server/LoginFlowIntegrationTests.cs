@@ -787,6 +787,11 @@ public class LoginFlowIntegrationTests
             var movement =
                 new MovementService(mapTiles, regions, spatial, world, persistence, TimeProvider.System, eventBus);
 
+            // Drawing and undrawing is the visibility service's job now, so it has to be here for Bob
+            // to learn Alice exists at all.
+            var visibility = new VisibilityService(spatial, new ItemService(persistence, opl), new VirtualSerialService());
+            new VisibilitySubscriber(visibility, sessions, persistence).Subscribe(eventBus);
+
             // CharacterServiceFixture.Create wires its own MobileFactoryService, whose starting-city
             // lookup is independent of the city StartServerWithMovementAsync registers for the
             // client-facing character list — the fixture's default (Britain, off this tiny map) has to
@@ -876,10 +881,14 @@ public class LoginFlowIntegrationTests
                 Assert.True(PollUntil(aliceSocket, aliceCompressed, stepAck), "Alice never received an ack for the step.");
 
                 var bobCompressed = new List<byte>();
+                // Still 0x77, but now for a reason. Bob was shown Alice (0x78) when he entered the
+                // world and she was already in range, so her step is a position update for a mobile
+                // he knows. The broadcast this replaces sent 0x77 to everyone in range whether or not
+                // they had ever been told the mobile exists.
                 var broadcastPattern = new byte[] { 0x77 }.Concat(SerialBytes(aliceMobile.Id)).ToArray();
                 Assert.True(
                     PollUntil(bobSocket, bobCompressed, broadcastPattern),
-                    "Bob never received Alice's movement broadcast (0x77)."
+                    "Bob never received Alice's movement update (0x77)."
                 );
 
                 var moved = persistence.Store<MobileEntity>().GetById(aliceMobile.Id)!;

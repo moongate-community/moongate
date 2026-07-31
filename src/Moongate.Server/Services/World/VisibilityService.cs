@@ -123,16 +123,19 @@ public sealed class VisibilityService : IVisibilityService
         );
     }
 
-    public int Undraw(Serial serial)
+    public int Undraw(IEnumerable<PlayerSession> sessions, Serial serial)
     {
         var count = 0;
 
-        foreach (var known in _known.Values)
+        foreach (var session in sessions)
         {
-            if (known.Remove(serial))
+            if (!_known.TryGetValue(session.SessionId, out var known) || !known.Remove(serial))
             {
-                count++;
+                continue;
             }
+
+            session.Send(new DeleteObjectPacket(serial));
+            count++;
         }
 
         return count;
