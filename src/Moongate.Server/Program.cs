@@ -204,6 +204,7 @@ await ConsoleApp.RunAsync(
                 // same singleton in both roles.
                 container.RegisterStdService<IServerStatsService, ServerStatsService>();
                 container.RegisterStdService<LightCycleService, LightCycleService>();
+                container.RegisterStdService<VisibilityReconciler, VisibilityReconciler>();
 
                 // INotificationTemplateService is registered by the data-loader plugin, alongside the
                 // loader that fills it, the same way the template services are.
