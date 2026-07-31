@@ -136,7 +136,7 @@ public sealed class WorldService : IWorldService
                 mobile.SkinHue,
                 flags,
                 Notoriety.Resolve(mobile.Kills, mobile.Criminal),
-                BuildEquipment(mobile)
+                MobileDrawing.BuildEquipment(mobile, _items, _virtualSerials)
             ),
             BuildStatus(mobile),
 
@@ -241,52 +241,6 @@ public sealed class WorldService : IWorldService
         }
     }
 
-    /// <summary>
-    /// Builds the worn items the client draws on a mobile: its equipment, then hair and facial hair as
-    /// pseudo-items. One item per layer wins, as in ModernUO — the client cannot render two things on the
-    /// same slot, and hair only goes out if nothing real already claimed its layer (a helm, say).
-    /// </summary>
-    private List<MobileIncomingItem> BuildEquipment(MobileEntity mobile)
-    {
-        var items = new List<MobileIncomingItem>();
-        var takenLayers = new HashSet<LayerType>();
-
-        foreach (var item in _items.GetEquipped(mobile))
-        {
-            if (item.EquippedLayer is not { } layer || !takenLayers.Add(layer))
-            {
-                continue;
-            }
-
-            items.Add(new(item.Id, (ushort)item.ItemId, layer, item.Hue));
-        }
-
-        if (mobile.HairStyle != 0 && takenLayers.Add(LayerType.Hair))
-        {
-            items.Add(
-                new(
-                    _virtualSerials.GetOrCreate(mobile.Id, LayerType.Hair),
-                    mobile.HairStyle,
-                    LayerType.Hair,
-                    mobile.HairHue
-                )
-            );
-        }
-
-        if (mobile.FacialHairStyle != 0 && takenLayers.Add(LayerType.FacialHair))
-        {
-            items.Add(
-                new(
-                    _virtualSerials.GetOrCreate(mobile.Id, LayerType.FacialHair),
-                    mobile.FacialHairStyle,
-                    LayerType.FacialHair,
-                    mobile.FacialHairHue
-                )
-            );
-        }
-
-        return items;
-    }
 
     /// <summary>
     /// Builds the full skill list: every registered skill, including the ones this mobile never
