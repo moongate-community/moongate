@@ -23,10 +23,20 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
         };
 
     public void Configure(IContainer container, PluginContext context)
-        => container.RegisterCommand<BroadcastCommand>(
+    {
+        container.RegisterCommand<BroadcastCommand>(
             "broadcast|bc",
             AccountLevelType.GrandMaster,
             "Sends a server-wide system message.",
             CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest
         );
+
+        // In-game only: a console has no target cursor to raise.
+        container.RegisterCommand<WhereCommand>(
+            "where",
+            AccountLevelType.GrandMaster,
+            "Raises a target cursor and reports what was clicked.",
+            CommandSourceType.InGame
+        );
+    }
 }
