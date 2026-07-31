@@ -19,6 +19,44 @@ inside the server process:
 - a **data loader** that reads your own files at startup;
 - a **REST endpoint**.
 
+## Using the server's own services
+
+Contributing is only half of it: a plugin can also **resolve the server's services** from the
+container and use them. Every service interface lives in `Moongate.Server.Abstractions`, which
+plugins reference — that is what the contract assembly is for.
+
+The one most likely to matter is `IGumpService`, because it is how a plugin puts a window in
+front of a player:
+
+```csharp
+var gumps = container.Resolve<IGumpService>();
+
+gumps.Show(
+    session,
+    "my_plugin_menu",
+    builder =>
+    {
+        builder.AddBackground(0, 0, 300, 200, 5054);
+        builder.AddLabel(20, 20, 1153, "Hello from a plugin");
+        builder.AddButton(20, 60, 4005, 4007, 1, 1, 0);
+    },
+    response =>
+    {
+        if (response.Button == 1)
+        {
+            // ...
+        }
+    }
+);
+```
+
+The element names are RunUO's, so gump code published for ServUO or ModernUO — and the output
+of the visual gump editors that target them — translates across argument for argument. The
+[`gump` scripting reference](../../scripting/reference/gump.md) documents every element and its
+fields; the Lua surface is the same builder with named tables instead of positional arguments.
+
+`IChatService`, `IItemService`, `IMobileService` and the rest resolve the same way.
+
 Reach for [Lua scripting](../../scripting/index.md) instead when you are writing game-content
 logic — item and mobile behaviour, loot, world events — and want to iterate live with no
 compile step. Scripting needs no C# at all.

@@ -26,7 +26,11 @@ Moongate is young and moves fast. What works today:
   are drawn when they come into view, undrawn when they leave, and the same
   happens to you on everyone else's screen when they move.
 - Item, mobile and loot systems driven by YAML templates, with a Lua API
-  (`item`, `mobile`, `loot`, `game`, `events`, `log`) for shard logic.
+  (`item`, `mobile`, `loot`, `chat`, `gump`, `ai`, `memory`, `account`, `game`,
+  `events`, `log`) for shard logic.
+- **Gumps**: server-drawn dialogs a player can act on — buttons, checkboxes,
+  text fields — described in Lua and answered through a callback. Open to
+  plugins as well as scripts.
 - Binary snapshot persistence for accounts, mobiles and items.
 - UO client file loading (art, maps, and friends) from a ClassicUO-compatible
   installation.
