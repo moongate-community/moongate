@@ -537,6 +537,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/images/mobiles/{serial}.png": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Serves a character's dressed figure as PNG: body, hair and the items they are wearing.
+         * @description The ETag is a fingerprint of the appearance, so a client that already has the current look gets
+         *     304 without a body. 404 when the serial names no mobile, or when its body has no animation.
+         */
+        get: operations["GetMobileCharacterImage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/images/mobiles/{serial}/paperdoll.png": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Serves a character's paperdoll as PNG, with the equipment they are wearing.
+         * @description Pass `background=false` for the doll without its backdrop. The ETag is a fingerprint of
+         *     the appearance, so an unchanged character gets 304 without a body.
+         */
+        get: operations["GetMobileCharacterPaperdoll"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/images/bodies": {
         parameters: {
             query?: never;
@@ -2194,6 +2236,52 @@ export interface operations {
             header?: never;
             path: {
                 id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
+                };
+            };
+        };
+    };
+    GetMobileCharacterImage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                serial: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "image/png": string;
+                };
+            };
+        };
+    };
+    GetMobileCharacterPaperdoll: {
+        parameters: {
+            query?: {
+                background?: boolean;
+            };
+            header?: never;
+            path: {
+                serial: number;
             };
             cookie?: never;
         };
