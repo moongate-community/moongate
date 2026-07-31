@@ -45,8 +45,12 @@ public sealed class TestApiServer : IAsyncDisposable
 {
     private readonly HttpServerService _service;
 
+    /// <summary>Where the asset store wrote, so disposing can take it away again.</summary>
+    private readonly string _assetRoot;
+
     private TestApiServer(
         HttpServerService service,
+        string assetRoot,
         HttpClient client,
         IAccountService accounts,
         CharacterService characters,
@@ -57,6 +61,7 @@ public sealed class TestApiServer : IAsyncDisposable
     )
     {
         _service = service;
+        _assetRoot = assetRoot;
         Client = client;
         Accounts = accounts;
         Characters = characters;
@@ -108,6 +113,20 @@ public sealed class TestApiServer : IAsyncDisposable
     {
         Client.Dispose();
         await _service.StopAsync();
+
+        // Every instance created a directory for the asset store and nothing removed it: a full
+        // suite run left roughly 250 behind, and a day's work several thousand.
+        try
+        {
+            if (Directory.Exists(_assetRoot))
+            {
+                Directory.Delete(_assetRoot, true);
+            }
+        }
+        catch (IOException)
+        {
+            // A leftover directory is untidy, not a test failure.
+        }
     }
 
     public static async Task<TestApiServer> StartAsync(
@@ -180,9 +199,8 @@ public sealed class TestApiServer : IAsyncDisposable
         container.RegisterApiEndpointInstance(new CharacterEndpoints(accounts, characters));
 
         var serverSettings = new ServerSettingsService(persistence);
-        var assetStore = new ServerAssetFileStore(
-            Path.Combine(Path.GetTempPath(), "mg-test-assets-" + Guid.NewGuid().ToString("N"))
-        );
+        var assetRoot = Path.Combine(Path.GetTempPath(), "mg-test-assets-" + Guid.NewGuid().ToString("N"));
+        var assetStore = new ServerAssetFileStore(assetRoot);
         container.RegisterInstance<IServerSettingsService>(serverSettings);
         container.RegisterInstance<IServerAssetFileStore>(assetStore);
         INotificationChannel[] channels = emailChannelReady ? [new RecordingNotificationChannel("email")] : [];
@@ -230,6 +248,7 @@ public sealed class TestApiServer : IAsyncDisposable
 
         return new(
             service,
+            assetRoot,
             new() { BaseAddress = new($"http://127.0.0.1:{service.BoundPort}") },
             accounts,
             characters,

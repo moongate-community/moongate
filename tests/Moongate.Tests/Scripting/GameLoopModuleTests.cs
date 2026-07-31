@@ -9,6 +9,8 @@ using SquidStd.Scripting.Lua.Interfaces.Scripts;
 using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
 
+using Moongate.Tests.Support;
+
 namespace Moongate.Tests.Scripting;
 
 public class GameLoopModuleTests
@@ -72,7 +74,7 @@ public class GameLoopModuleTests
         finally
         {
             await bootstrap.StopAsync();
-            Directory.Delete(root, true);
+            TemporaryDirectory.Remove(root);
         }
     }
 

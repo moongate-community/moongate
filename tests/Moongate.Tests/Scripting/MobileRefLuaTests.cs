@@ -103,7 +103,7 @@ public class MobileRefLuaTests
         finally
         {
             await bootstrap.StopAsync();
-            Directory.Delete(root, true);
+            TemporaryDirectory.Remove(root);
         }
     }
 
