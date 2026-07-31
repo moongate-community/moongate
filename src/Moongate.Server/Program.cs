@@ -196,6 +196,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
                 container.Register<IVisibilityService, VisibilityService>(Reuse.Singleton);
+                container.Register<IPlayerTargetService, PlayerTargetService>(Reuse.Singleton);
                 container.Register<IGumpService, GumpService>(Reuse.Singleton);
                 container.Register<IServerSettingsService, ServerSettingsService>(Reuse.Singleton);
 
