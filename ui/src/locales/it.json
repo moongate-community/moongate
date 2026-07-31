@@ -264,6 +264,15 @@
     "mana": "Mana",
     "kills": "Uccisioni",
     "location": "Posizione",
-    "pool": "{{current}} / {{max}}"
+    "pool": "{{current}} / {{max}}",
+    "race": {
+      "Human": "Umano",
+      "Elf": "Elfo",
+      "Gargoyle": "Gargoyle"
+    },
+    "gender": {
+      "Male": "Maschio",
+      "Female": "Femmina"
+    }
   }
 }

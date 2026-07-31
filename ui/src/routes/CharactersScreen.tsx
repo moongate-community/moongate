@@ -66,7 +66,9 @@ export function CharactersScreen() {
               />
               <span className="min-w-0">
                 <span className="block truncate font-bold">{one.name}</span>
-                <span className="block truncate text-xs text-muted">{one.race}</span>
+                <span className="block truncate text-xs text-muted">
+                  {t(`characters.race.${one.race}`, { defaultValue: one.race })}
+                </span>
               </span>
             </button>
           ))}
@@ -86,7 +88,12 @@ function CharacterPanel({ character }: { character: Character }) {
       <header className="text-center">
         <h2 className="text-xl font-bold text-ink">{character.name}</h2>
         <p className="text-sm text-muted">
-          {t('characters.identity', { race: character.race, gender: character.gender })}
+          {t('characters.identity', {
+            // The server reports these as its own enum names. Falling back to that name means a
+            // race the portal has no word for still reads as something, rather than as a raw key.
+            race: t(`characters.race.${character.race}`, { defaultValue: character.race }),
+            gender: t(`characters.gender.${character.gender}`, { defaultValue: character.gender }),
+          })}
         </p>
       </header>
 

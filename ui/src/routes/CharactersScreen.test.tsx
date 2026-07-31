@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { fireEvent } from '@testing-library/dom'
-import '../lib/i18n'
+import i18n from '../lib/i18n'
 import { CharactersScreen } from './CharactersScreen'
 import type { Character } from '../lib/characters'
 
@@ -83,6 +83,32 @@ describe('CharactersScreen', () => {
     renderWith([character('0x1', 'Squid')])
 
     expect(screen.getByText('55 / 60')).toBeInTheDocument()
+  })
+
+  // Asserted in Italian on purpose: the API reports race and gender in English, so in English the
+  // translated and untranslated renderings are identical and the test could not fail.
+  it('translates the race and gender', async () => {
+    await i18n.changeLanguage('it')
+    try {
+      renderWith([{ ...character('0x1', 'Squid'), race: 'Gargoyle', gender: 'Female' }])
+
+      expect(screen.getByText('Gargoyle · Femmina')).toBeInTheDocument()
+    } finally {
+      await i18n.changeLanguage('en')
+    }
+  })
+
+  // The races and genders are closed enums today, but a page must not break on a value it has no
+  // word for -- showing the server's own is better than showing a raw translation key.
+  it('shows a race it has no translation for rather than a key', async () => {
+    await i18n.changeLanguage('it')
+    try {
+      renderWith([{ ...character('0x1', 'Squid'), race: 'Daemon' }])
+
+      expect(screen.getByText('Daemon · Maschio')).toBeInTheDocument()
+    } finally {
+      await i18n.changeLanguage('en')
+    }
   })
 
   // A body with no animation legitimately 404s from the image route, and a broken-image icon is

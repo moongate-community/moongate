@@ -264,6 +264,15 @@
     "mana": "Mana",
     "kills": "Kills",
     "location": "Location",
-    "pool": "{{current}} / {{max}}"
+    "pool": "{{current}} / {{max}}",
+    "race": {
+      "Human": "Human",
+      "Elf": "Elf",
+      "Gargoyle": "Gargoyle"
+    },
+    "gender": {
+      "Male": "Male",
+      "Female": "Female"
+    }
   }
 }
