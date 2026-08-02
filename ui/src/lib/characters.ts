@@ -26,3 +26,41 @@ export const paperdollUrl = (serial: string, background = true) =>
   background
     ? `/api/v1/images/mobiles/${serial}/paperdoll.png`
     : `/api/v1/images/mobiles/${serial}/paperdoll.png?background=false`
+
+export type CharacterPage = components['schemas']['CharacterResponsePagedResponse']
+
+/** The server's own default. Named here so the pager and the request cannot disagree. */
+export const CHARACTERS_PAGE_SIZE = 25
+
+/**
+ * The staff listing URL. A blank search is omitted rather than sent empty: the server reads a blank
+ * `search` as "no filter" anyway, and leaving it out keeps the query key stable so paging with an
+ * empty box does not miss the cache.
+ */
+export function charactersQuery({ page, search }: { page: number; search: string }): string {
+  const params = new URLSearchParams({
+    page: String(Math.max(page, 1)),
+    pageSize: String(CHARACTERS_PAGE_SIZE),
+  })
+
+  const trimmed = search.trim()
+
+  if (trimmed !== '') {
+    params.set('search', trimmed)
+  }
+
+  return `/api/v1/admin/characters?${params}`
+}
+
+/**
+ * Every character on the shard, paged and searched by the server. Staff only.
+ *
+ * The previous page is held while the next loads: without it the table blanks to its loading state
+ * on every keystroke and every page turn, which reads as a slideshow rather than a table.
+ */
+export const useAllCharacters = (params: { page: number; search: string }) =>
+  useQuery({
+    queryKey: ['admin', 'characters', params.page, params.search.trim()],
+    queryFn: () => apiFetch<CharacterPage>(charactersQuery(params)),
+    placeholderData: (previous: CharacterPage | undefined) => previous,
+  })
