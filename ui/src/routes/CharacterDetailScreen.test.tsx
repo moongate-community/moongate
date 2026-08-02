@@ -65,6 +65,7 @@ function detail(over: Partial<CharacterDetail> = {}): CharacterDetail {
     },
     equipment: [],
     backpack: [],
+    skills: [],
     ...over,
   } as CharacterDetail
 }
@@ -102,6 +103,16 @@ describe('CharacterDetailScreen', () => {
 
     expect(screen.getByText('Robe')).toBeInTheDocument()
     expect(screen.getByText('Dagger')).toBeInTheDocument()
+  })
+
+  it('shows the skills the character trained', () => {
+    renderAt(
+      '0x40000001',
+      detail({ skills: [{ id: 1, name: 'Alchemy', value: 62.5, cap: 100, lock: 'Up' }] } as Partial<CharacterDetail>),
+    )
+
+    expect(screen.getByText('Alchemy')).toBeInTheDocument()
+    expect(screen.getByText('62.5')).toBeInTheDocument()
   })
 
   it('shows the stats', () => {

@@ -8,7 +8,10 @@ using Moongate.Http.Plugin.Services.Characters;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Mobiles;
+using Moongate.UO.Data.Skills;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
@@ -33,6 +36,25 @@ public class CharacterDetailEndpointsTests
         Assert.Equal("Freydis", detail!.Character.Name);
         Assert.NotNull(detail.Equipment);
         Assert.NotNull(detail.Backpack);
+    }
+
+    // The entity stores 500 tenths; the API reports 50 points. A consumer that forgot the division
+    // would publish a character with 500.0 alchemy, so the route is asserted in the reported unit.
+    [Fact]
+    public async Task Get_ReportsTheCharactersSkillsInPoints()
+    {
+        await using var server = await StartAsync(AccountLevelType.Player);
+        var character = Create(server, "tom", "Freydis");
+
+        await server.AuthenticateAsync();
+
+        var detail = await server.Client.GetFromJsonAsync<CharacterDetailResponse>($"/api/v1/characters/{character}");
+
+        var skill = Assert.Single(detail!.Skills);
+
+        Assert.Equal("Alchemy", skill.Name);
+        Assert.Equal(50.0, skill.Value);
+        Assert.Equal("Up", skill.Lock);
     }
 
     // The account comes from the token. A player who could read another account's character by
@@ -132,6 +154,16 @@ public class CharacterDetailEndpointsTests
         return server.Accounts.GetByUsername(username)!.MobileIds[^1].ToString();
     }
 
+    /// <summary>The two skills the creation packet below hands out, so the route can name them.</summary>
+    private static ISkillService SkillRegistry()
+    {
+        var skills = new SkillService();
+
+        skills.Register(new() { Id = 1, Name = "Alchemy" });
+
+        return skills;
+    }
+
     private static CharacterCreationPacket Packet(string name)
         => new(
             0,
@@ -164,11 +196,14 @@ public class CharacterDetailEndpointsTests
                               container.RegisterInstance<IItemService>(new StubItemService([]));
                               container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
                               container.Register<CharacterInventoryReader>(Reuse.Singleton);
+                              container.RegisterInstance<ISkillService>(SkillRegistry());
+                              container.Register<CharacterSkillReader>(Reuse.Singleton);
                               container.RegisterApiEndpointInstance(
                                   new CharacterDetailEndpoints(
                                       container.Resolve<IAccountService>(),
                                       container.Resolve<ICharacterQueryService>(),
-                                      container.Resolve<CharacterInventoryReader>()
+                                      container.Resolve<CharacterInventoryReader>(),
+                                      container.Resolve<CharacterSkillReader>()
                                   )
                               );
                           }

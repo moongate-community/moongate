@@ -67,6 +67,7 @@ export const useAllCharacters = (params: { page: number; search: string }) =>
 
 export type CharacterDetail = components['schemas']['CharacterDetailResponse']
 export type CharacterItem = components['schemas']['CharacterItemResponse']
+export type CharacterSkill = components['schemas']['CharacterSkillResponse']
 
 /** One character in full — your own, or anyone's for staff. The server decides which. */
 export const useCharacter = (serial: string) =>
