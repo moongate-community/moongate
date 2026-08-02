@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Abstractions.Data.Internal;
 using SquidStd.Persistence.Abstractions.Data;
 
@@ -14,4 +15,10 @@ public interface ICharacterQueryService
     /// <param name="skip">Characters to skip. Past the end yields an empty page and the true total.</param>
     /// <param name="take">Page size.</param>
     PagedResult<OwnedCharacter> Search(string? search, int skip, int take);
+
+    /// <summary>
+    /// One character by serial, with its owner's username. Null when no account owns that mobile —
+    /// which is what tells a player character from the NPCs sharing the mobile store.
+    /// </summary>
+    OwnedCharacter? Find(Serial characterId);
 }

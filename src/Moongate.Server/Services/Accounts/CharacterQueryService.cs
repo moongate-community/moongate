@@ -23,6 +23,28 @@ public sealed class CharacterQueryService : ICharacterQueryService
         _mobileStore = persistenceService.GetStore<MobileEntity, Serial>();
     }
 
+    public OwnedCharacter? Find(Serial characterId)
+    {
+        var mobile = _mobileStore.GetById(characterId);
+
+        if (mobile is null)
+        {
+            return null;
+        }
+
+        // Same rule as Search: an account's MobileIds is the only thing marking a mobile as a player
+        // character, so a mobile nobody owns is an NPC and not addressable here.
+        foreach (var account in _accounts.GetAll())
+        {
+            if (account.MobileIds.Contains(characterId))
+            {
+                return new(mobile, account.Username);
+            }
+        }
+
+        return null;
+    }
+
     public PagedResult<OwnedCharacter> Search(string? search, int skip, int take)
     {
         // One pass over the accounts, needed either way: it is what tells a character from an NPC, and the
