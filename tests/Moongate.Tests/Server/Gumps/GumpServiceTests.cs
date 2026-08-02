@@ -14,6 +14,33 @@ namespace Moongate.Tests.Server.Gumps;
 public class GumpServiceTests
 {
     [Fact]
+    public void CloseAll_ForgetsEverythingTheSessionHadOpen()
+    {
+        var service = new GumpService();
+        var session = Session();
+
+        service.Show(session, "a", _ => { });
+        service.Show(session, "b", _ => { });
+
+        Assert.Equal(2, service.CloseAll(session));
+        Assert.Empty(service.OpenFor(session));
+    }
+
+    [Fact]
+    public void Close_ForgetsOnlyTheNamedGump()
+    {
+        var service = new GumpService();
+        var session = Session();
+
+        service.Show(session, "a", _ => { });
+        service.Show(session, "b", _ => { });
+
+        Assert.True(service.Close(session, "a"));
+        Assert.False(service.Close(session, "a"));
+        Assert.Equal("b", Assert.Single(service.OpenFor(session)).GumpId);
+    }
+
+    [Fact]
     public void HandleResponse_ForAGumpThatWasNeverOpened_IsNotOpen()
     {
         var service = new GumpService();
@@ -22,6 +49,30 @@ public class GumpServiceTests
         var rejection = service.HandleResponse(session, 999u, 1, 0, [], new Dictionary<int, string>());
 
         Assert.Equal(GumpRejectionType.NotOpen, rejection);
+    }
+
+    // The gump is forgotten before its callback runs, so a replayed answer finds nothing open. That
+    // is the same path a fabricated serial takes, which is what makes replay uninteresting.
+    [Fact]
+    public void HandleResponse_Twice_IsNotOpenTheSecondTime()
+    {
+        var service = new GumpService();
+        var session = Session();
+        var calls = 0;
+
+        service.Show(session, "test", builder => builder.AddButton(0, 0, 1, 2, 7, 1, 0), _ => calls++);
+
+        var open = Assert.Single(service.OpenFor(session));
+
+        Assert.Equal(
+            GumpRejectionType.None,
+            service.HandleResponse(session, open.Serial, open.TypeId, 7, [], new Dictionary<int, string>())
+        );
+        Assert.Equal(
+            GumpRejectionType.NotOpen,
+            service.HandleResponse(session, open.Serial, open.TypeId, 7, [], new Dictionary<int, string>())
+        );
+        Assert.Equal(1, calls);
     }
 
     [Fact]
@@ -48,24 +99,6 @@ public class GumpServiceTests
         Assert.Equal(GumpRejectionType.None, rejection);
         Assert.Equal(7, seen!.Value.Button);
         Assert.Equal([3], seen.Value.Switches);
-    }
-
-    // The gump is forgotten before its callback runs, so a replayed answer finds nothing open. That
-    // is the same path a fabricated serial takes, which is what makes replay uninteresting.
-    [Fact]
-    public void HandleResponse_Twice_IsNotOpenTheSecondTime()
-    {
-        var service = new GumpService();
-        var session = Session();
-        var calls = 0;
-
-        service.Show(session, "test", builder => builder.AddButton(0, 0, 1, 2, 7, 1, 0), _ => calls++);
-
-        var open = Assert.Single(service.OpenFor(session));
-
-        Assert.Equal(GumpRejectionType.None, service.HandleResponse(session, open.Serial, open.TypeId, 7, [], new Dictionary<int, string>()));
-        Assert.Equal(GumpRejectionType.NotOpen, service.HandleResponse(session, open.Serial, open.TypeId, 7, [], new Dictionary<int, string>()));
-        Assert.Equal(1, calls);
     }
 
     [Fact]
@@ -99,33 +132,6 @@ public class GumpServiceTests
         Assert.Equal(2, open.Count);
         Assert.Equal(open[0].TypeId, open[1].TypeId);
         Assert.NotEqual(open[0].Serial, open[1].Serial);
-    }
-
-    [Fact]
-    public void Close_ForgetsOnlyTheNamedGump()
-    {
-        var service = new GumpService();
-        var session = Session();
-
-        service.Show(session, "a", _ => { });
-        service.Show(session, "b", _ => { });
-
-        Assert.True(service.Close(session, "a"));
-        Assert.False(service.Close(session, "a"));
-        Assert.Equal("b", Assert.Single(service.OpenFor(session)).GumpId);
-    }
-
-    [Fact]
-    public void CloseAll_ForgetsEverythingTheSessionHadOpen()
-    {
-        var service = new GumpService();
-        var session = Session();
-
-        service.Show(session, "a", _ => { });
-        service.Show(session, "b", _ => { });
-
-        Assert.Equal(2, service.CloseAll(session));
-        Assert.Empty(service.OpenFor(session));
     }
 
     private static PlayerSession Session()

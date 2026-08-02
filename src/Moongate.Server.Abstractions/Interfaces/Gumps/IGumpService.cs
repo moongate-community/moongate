@@ -14,11 +14,11 @@ namespace Moongate.Server.Abstractions.Interfaces.Gumps;
 /// </summary>
 public interface IGumpService
 {
-    /// <summary>
-    /// Draws a gump and sends it. <paramref name="gumpId" /> is the author's name for it: it decides
-    /// the type the client uses to replace an earlier copy, and is what <see cref="Close" /> takes.
-    /// </summary>
-    void Show(PlayerSession session, string gumpId, Action<IGumpBuilder> build, Action<GumpResponse>? onResponse = null);
+    /// <summary>Forgets a named gump for this session. Returns false when none was open.</summary>
+    bool Close(PlayerSession session, string gumpId);
+
+    /// <summary>Forgets every gump open for this session, and returns how many there were.</summary>
+    int CloseAll(PlayerSession session);
 
     /// <summary>
     /// Handles an answer: checks it against what was drawn, forgets the gump, and runs its callback.
@@ -33,9 +33,9 @@ public interface IGumpService
         IReadOnlyDictionary<int, string> textEntries
     );
 
-    /// <summary>Forgets a named gump for this session. Returns false when none was open.</summary>
-    bool Close(PlayerSession session, string gumpId);
-
-    /// <summary>Forgets every gump open for this session, and returns how many there were.</summary>
-    int CloseAll(PlayerSession session);
+    /// <summary>
+    /// Draws a gump and sends it. <paramref name="gumpId" /> is the author's name for it: it decides
+    /// the type the client uses to replace an earlier copy, and is what <see cref="Close" /> takes.
+    /// </summary>
+    void Show(PlayerSession session, string gumpId, Action<IGumpBuilder> build, Action<GumpResponse>? onResponse = null);
 }

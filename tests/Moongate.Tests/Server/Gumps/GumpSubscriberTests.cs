@@ -1,9 +1,7 @@
 using System.Net.Sockets;
-using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Services.Gumps;
 using Moongate.Server.Subscribers;
-using SquidStd.Network.Client;
 
 namespace Moongate.Tests.Server.Gumps;
 
@@ -41,6 +39,6 @@ public class GumpSubscriberTests
     {
         var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        return new(new SquidStdTcpClient(socket, Stream.Null));
+        return new(new(socket, Stream.Null));
     }
 }

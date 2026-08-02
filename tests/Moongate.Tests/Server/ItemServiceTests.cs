@@ -97,6 +97,26 @@ public class ItemServiceTests
     }
 
     [Fact]
+    public void Detach_FromAContainer_LeavesTheItemBelongingNowhere()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var backpack = new ItemEntity { ItemId = 3701 };
+        var item = new ItemEntity { ItemId = 3921, MapId = 1, Position = new(10, 20, 0) };
+        service.Create(backpack);
+        service.Create(item);
+        service.AddToContainer(backpack, item, new(50, 70));
+
+        service.Detach(item);
+
+        Assert.Equal(Serial.Zero, item.ParentContainerId);
+        Assert.Equal(0, item.MapId);
+        Assert.Equal(Point3D.Zero, item.Position);
+        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
+    }
+
+    [Fact]
     public void Equip_Backpack_SetsBackpackId()
     {
         var (service, _) = Build();
@@ -231,6 +251,26 @@ public class ItemServiceTests
     }
 
     [Fact]
+    public void MoveToWorld_FromAContainer_DetachesAndPlacesOnTheGround()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var backpack = new ItemEntity { ItemId = 3701 };
+        var item = new ItemEntity { ItemId = 3921 };
+        service.Create(backpack);
+        service.Create(item);
+        service.AddToContainer(backpack, item, new(50, 70));
+
+        service.MoveToWorld(item, 1, new(100, 200, 5));
+
+        Assert.Equal(Serial.Zero, item.ParentContainerId);
+        Assert.Equal(1, item.MapId);
+        Assert.Equal(new(100, 200, 5), item.Position);
+        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
+    }
+
+    [Fact]
     public void RemoveFromContainer_ClearsBothSides()
     {
         var (service, _) = Build();
@@ -259,6 +299,61 @@ public class ItemServiceTests
         service.RemoveFromContainer(container, item);
 
         Assert.Single(spatial.GetItemsInRange(0, new(100, 100, 0), 5));
+    }
+
+    [Fact]
+    public void RootOf_LooseItem_ReturnsItself()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var coin = new ItemEntity { ItemId = 3821, MapId = 1, Position = new(10, 20, 0) };
+        service.Create(coin);
+
+        Assert.Equal(coin.Id, service.RootOf(coin).Id);
+    }
+
+    [Fact]
+    public void RootOf_NestedItem_ReturnsTheOutermostContainer()
+    {
+        var persistence = new FakePersistenceService();
+        var service = new ItemService(persistence);
+
+        var backpack = new ItemEntity { ItemId = 3701 };
+        var bag = new ItemEntity { ItemId = 3702 };
+        var coin = new ItemEntity { ItemId = 3821 };
+        service.Create(backpack);
+        service.Create(bag);
+        service.Create(coin);
+        service.AddToContainer(backpack, bag, new(10, 10));
+        service.AddToContainer(bag, coin, new(20, 20));
+
+        Assert.Equal(backpack.Id, service.RootOf(coin).Id);
+    }
+
+    [Fact]
+    public void Save_PublishesItemChanged()
+    {
+        var persistence = new FakePersistenceService();
+        var bus = new EventBusService();
+        ItemChangedEvent? published = null;
+        bus.Subscribe<ItemChangedEvent>(
+            (evt, _) =>
+            {
+                published = evt;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = new ItemService(persistence, eventBus: bus);
+        var coin = new ItemEntity { ItemId = 3821 };
+        service.Create(coin);
+
+        service.Save(coin);
+
+        Assert.NotNull(published);
+        Assert.Equal(coin.Id, published!.Item);
     }
 
     [Fact]
@@ -331,101 +426,6 @@ public class ItemServiceTests
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
 
         return (new(persistence, null, spatial), spatial, persistence);
-    }
-
-    [Fact]
-    public void Detach_FromAContainer_LeavesTheItemBelongingNowhere()
-    {
-        var persistence = new FakePersistenceService();
-        var service = new ItemService(persistence);
-
-        var backpack = new ItemEntity { ItemId = 3701 };
-        var item = new ItemEntity { ItemId = 3921, MapId = 1, Position = new(10, 20, 0) };
-        service.Create(backpack);
-        service.Create(item);
-        service.AddToContainer(backpack, item, new(50, 70));
-
-        service.Detach(item);
-
-        Assert.Equal(Serial.Zero, item.ParentContainerId);
-        Assert.Equal(0, item.MapId);
-        Assert.Equal(Point3D.Zero, item.Position);
-        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
-    }
-
-    [Fact]
-    public void MoveToWorld_FromAContainer_DetachesAndPlacesOnTheGround()
-    {
-        var persistence = new FakePersistenceService();
-        var service = new ItemService(persistence);
-
-        var backpack = new ItemEntity { ItemId = 3701 };
-        var item = new ItemEntity { ItemId = 3921 };
-        service.Create(backpack);
-        service.Create(item);
-        service.AddToContainer(backpack, item, new(50, 70));
-
-        service.MoveToWorld(item, 1, new(100, 200, 5));
-
-        Assert.Equal(Serial.Zero, item.ParentContainerId);
-        Assert.Equal(1, item.MapId);
-        Assert.Equal(new Point3D(100, 200, 5), item.Position);
-        Assert.DoesNotContain(item.Id, persistence.Store<ItemEntity>().GetById(backpack.Id)!.ContainedItemIds);
-    }
-
-    [Fact]
-    public void RootOf_LooseItem_ReturnsItself()
-    {
-        var persistence = new FakePersistenceService();
-        var service = new ItemService(persistence);
-
-        var coin = new ItemEntity { ItemId = 3821, MapId = 1, Position = new(10, 20, 0) };
-        service.Create(coin);
-
-        Assert.Equal(coin.Id, service.RootOf(coin).Id);
-    }
-
-    [Fact]
-    public void RootOf_NestedItem_ReturnsTheOutermostContainer()
-    {
-        var persistence = new FakePersistenceService();
-        var service = new ItemService(persistence);
-
-        var backpack = new ItemEntity { ItemId = 3701 };
-        var bag = new ItemEntity { ItemId = 3702 };
-        var coin = new ItemEntity { ItemId = 3821 };
-        service.Create(backpack);
-        service.Create(bag);
-        service.Create(coin);
-        service.AddToContainer(backpack, bag, new(10, 10));
-        service.AddToContainer(bag, coin, new(20, 20));
-
-        Assert.Equal(backpack.Id, service.RootOf(coin).Id);
-    }
-
-    [Fact]
-    public void Save_PublishesItemChanged()
-    {
-        var persistence = new FakePersistenceService();
-        var bus = new EventBusService();
-        ItemChangedEvent? published = null;
-        bus.Subscribe<ItemChangedEvent>(
-            (evt, _) =>
-            {
-                published = evt;
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var service = new ItemService(persistence, eventBus: bus);
-        var coin = new ItemEntity { ItemId = 3821 };
-        service.Create(coin);
-
-        service.Save(coin);
-
-        Assert.NotNull(published);
-        Assert.Equal(coin.Id, published!.Item);
     }
 
     private static ItemEntity Item(string name = "Dagger", int itemId = 3921)

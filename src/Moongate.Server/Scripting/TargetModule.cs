@@ -31,6 +31,11 @@ public sealed class TargetModule
         _results = results;
     }
 
+    /// <summary>Takes the cursor down. Returns false when nothing was pending.</summary>
+    [ScriptFunction("cancel", "Cancels a pending target cursor: target.cancel(serial).")]
+    public bool Cancel(uint serial)
+        => SessionFor(serial) is { } session && _targets.Cancel(session);
+
     /// <summary>
     /// Raises a cursor for the mobile's player. <paramref name="selection" /> is <c>"object"</c> or
     /// <c>"location"</c>. Returns false when the serial names nobody online, or when the selection
@@ -54,11 +59,6 @@ public sealed class TargetModule
 
         return true;
     }
-
-    /// <summary>Takes the cursor down. Returns false when nothing was pending.</summary>
-    [ScriptFunction("cancel", "Cancels a pending target cursor: target.cancel(serial).")]
-    public bool Cancel(uint serial)
-        => SessionFor(serial) is { } session && _targets.Cancel(session);
 
     private PlayerSession? SessionFor(uint serial)
     {

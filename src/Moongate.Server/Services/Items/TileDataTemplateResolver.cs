@@ -19,14 +19,6 @@ public static class TileDataTemplateResolver
     private const double NoWeightData = 1.0;
 
     /// <summary>
-    /// The weight a tile implies. Both 0 and 255 mean "no usable data" — 255 is the sentinel UO uses
-    /// for things that cannot be carried — and ModernUO's <c>Item.DefaultWeight</c> substitutes 1 for
-    /// each rather than reporting a 255-stone item.
-    /// </summary>
-    public static double WeightFor(int tileWeight)
-        => tileWeight is 0 or 255 ? NoWeightData : tileWeight;
-
-    /// <summary>
     /// The layer a tile implies, or null when it implies none. The byte is only meaningful on a tile
     /// the client marks wearable, and a value outside <see cref="LayerType" /> is not a layer.
     /// </summary>
@@ -79,4 +71,12 @@ public static class TileDataTemplateResolver
 
         return changed;
     }
+
+    /// <summary>
+    /// The weight a tile implies. Both 0 and 255 mean "no usable data" — 255 is the sentinel UO uses
+    /// for things that cannot be carried — and ModernUO's <c>Item.DefaultWeight</c> substitutes 1 for
+    /// each rather than reporting a 255-stone item.
+    /// </summary>
+    public static double WeightFor(int tileWeight)
+        => tileWeight is 0 or 255 ? NoWeightData : tileWeight;
 }

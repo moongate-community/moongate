@@ -5,7 +5,6 @@ using Moongate.Ultima.Io;
 using Moongate.Ultima.Tiles;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Items;
-using SquidStd.Core.Directories;
 using SquidStd.Core.Yaml;
 
 namespace Moongate.Tests.Data.Items;
@@ -67,11 +66,6 @@ public class TileDataInvariantDataTests
         );
     }
 
-    private static ItemData? Tile(int itemId)
-        => TileData.ItemTable is { Length: > 0 } tiles && itemId >= 0 && itemId < tiles.Length
-               ? tiles[itemId]
-               : null;
-
     /// <summary>
     /// The templates as the YAML declares them. The loader resolves what it registers, which would
     /// hide exactly what these tests look for, so this reads the seeded files instead of asking the
@@ -84,7 +78,7 @@ public class TileDataInvariantDataTests
 
         var root = Path.Combine(Path.GetTempPath(), "mg-tiledata-inv-" + Guid.NewGuid().ToString("N"));
 
-        await new ItemTemplatesLoader(new ItemTemplateService(), new DirectoriesConfig(root, [])).LoadAsync();
+        await new ItemTemplatesLoader(new ItemTemplateService(), new(root, [])).LoadAsync();
 
         try
         {
@@ -97,4 +91,9 @@ public class TileDataInvariantDataTests
             Directory.Delete(root, true);
         }
     }
+
+    private static ItemData? Tile(int itemId)
+        => TileData.ItemTable is { Length: > 0 } tiles && itemId >= 0 && itemId < tiles.Length
+               ? tiles[itemId]
+               : null;
 }

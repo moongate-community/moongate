@@ -8,6 +8,9 @@ namespace Moongate.Tests.Server.World;
 
 public class LightServiceTests
 {
+    /// <summary>UO noon: 12 UO hours is 720 UO minutes, and each is 5 real seconds.</summary>
+    private static DateTimeOffset UoNoon => GameClock.Epoch.AddHours(1);
+
     [Fact]
     public void LevelFor_InATown_FollowsTheClock()
     {
@@ -60,9 +63,6 @@ public class LightServiceTests
 
         Assert.Equal(3, service.LevelFor(0, new(100, 100, 0)));
     }
-
-    /// <summary>UO noon: 12 UO hours is 720 UO minutes, and each is 5 real seconds.</summary>
-    private static DateTimeOffset UoNoon => GameClock.Epoch.AddHours(1);
 
     private static RegionDefinition Region(string type, int x, int y)
         => new()

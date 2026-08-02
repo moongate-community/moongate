@@ -68,6 +68,13 @@ public sealed class ChatService : IChatService
     public static bool IsRateLimited(DateTimeOffset lastChatAt, DateTimeOffset now)
         => now - lastChatAt < MinInterval;
 
+    public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
+    {
+        var packet = ChatMessageFactory.CreateFromMobile(speaker.Id, speaker.Name, speaker.Body, type, hue, text);
+        _world.SendToPlayersInRange(speaker.MapId, speaker.Position, range, packet);
+        _events.Publish(new MobileSpeechEvent(speaker.Id, type, text));
+    }
+
     public bool SayAs(MobileEntity speaker, string text)
     {
         if (string.IsNullOrWhiteSpace(text) || text.Length > MaximumLength)
@@ -86,12 +93,5 @@ public sealed class ChatService : IChatService
         Say(speaker, decision.Type, decision.Text, Hue.Default, decision.Range);
 
         return true;
-    }
-
-    public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
-    {
-        var packet = ChatMessageFactory.CreateFromMobile(speaker.Id, speaker.Name, speaker.Body, type, hue, text);
-        _world.SendToPlayersInRange(speaker.MapId, speaker.Position, range, packet);
-        _events.Publish(new MobileSpeechEvent(speaker.Id, type, text));
     }
 }

@@ -98,9 +98,9 @@ public class MobileTemplatesLoaderTests
         try
         {
             var exception = await Assert.ThrowsAsync<InvalidDataException>(
-                async () => await new MobileTemplatesLoader(new MobileTemplateService(), directories, names)
-                    .LoadAsync()
-            );
+                                async () => await new MobileTemplatesLoader(new MobileTemplateService(), directories, names)
+                                                .LoadAsync()
+                            );
 
             Assert.Contains("guard", exception.Message);
             Assert.Contains("mael", exception.Message);

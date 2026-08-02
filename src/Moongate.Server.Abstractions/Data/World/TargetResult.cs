@@ -20,10 +20,8 @@ public readonly record struct TargetResult(
 )
 {
     /// <summary>The player did not pick anything.</summary>
-    public bool IsCancelled
-        => Type == TargetResultType.Cancelled;
+    public bool IsCancelled => Type == TargetResultType.Cancelled;
 
     /// <summary>A cancelled answer, carrying nothing else worth reading.</summary>
-    public static TargetResult Cancelled
-        => new(TargetResultType.Cancelled, Serial.Zero, default, 0);
+    public static TargetResult Cancelled => new(TargetResultType.Cancelled, Serial.Zero, default, 0);
 }

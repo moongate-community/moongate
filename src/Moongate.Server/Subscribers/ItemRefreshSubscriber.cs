@@ -55,7 +55,6 @@ public sealed class ItemRefreshSubscriber : IEventSubscriberRegistration
             RefreshOnMobile(item);
         }
 
-
         // Nothing for a ground item: VisibilitySubscriber owns those now, because drawing one is
         // inseparable from remembering that the client has it -- and from telling the client when it
         // stops being there.
@@ -110,7 +109,6 @@ public sealed class ItemRefreshSubscriber : IEventSubscriberRegistration
             _world.SendToPlayer(opener, packet);
         }
     }
-
 
     /// <summary>The item is worn: its layer redraws on the paperdoll for everyone watching the wearer.</summary>
     private void RefreshOnMobile(ItemEntity item)

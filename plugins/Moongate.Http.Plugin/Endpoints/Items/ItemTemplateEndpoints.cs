@@ -38,6 +38,15 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
               .RequireAuthorization(HttpServerService.AdminPolicy);
     }
 
+    /// <summary>
+    /// What to call a template: its own name when it has one, else what the client calls the
+    /// graphic, else the id. The same chain the tooltip uses in OplService.
+    /// </summary>
+    private string DisplayName(ItemTemplate template)
+        => template.Name.Length > 0
+               ? template.Name
+               : _clilocs.Text(ItemClilocs.ForItemId(template.ItemId)) ?? template.Id;
+
     private List<ItemTemplate> Filter(IReadOnlyList<ItemTemplate> all, string? search)
     {
         if (string.IsNullOrWhiteSpace(search))
@@ -95,15 +104,6 @@ public sealed class ItemTemplateEndpoints : IApiEndpointRegistration
 
         return Results.Ok(PagedResponse<ItemTemplateSummaryResponse>.From(items, matched.Count, request));
     }
-
-    /// <summary>
-    /// What to call a template: its own name when it has one, else what the client calls the
-    /// graphic, else the id. The same chain the tooltip uses in OplService.
-    /// </summary>
-    private string DisplayName(ItemTemplate template)
-        => template.Name.Length > 0
-               ? template.Name
-               : _clilocs.Text(ItemClilocs.ForItemId(template.ItemId)) ?? template.Id;
 
     private static bool Matches(string value, string search)
         => value.Contains(search, StringComparison.OrdinalIgnoreCase);

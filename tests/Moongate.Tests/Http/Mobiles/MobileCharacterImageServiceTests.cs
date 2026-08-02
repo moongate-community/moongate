@@ -9,7 +9,6 @@ using Moongate.Server.Services.Items;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Imaging;
 using Moongate.Ultima.Types;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Mobiles;
 
@@ -20,90 +19,6 @@ namespace Moongate.Tests.Http.Mobiles;
 /// </summary>
 public class MobileCharacterImageServiceTests
 {
-    // Null rather than an exception: the route turns it into a 404, as the template routes do.
-    [Fact]
-    public async Task GetFigure_ForAnUnknownSerial_IsNull()
-    {
-        var world = new Fixture();
-
-        Assert.Null(await world.Service.GetFigureAsync((Serial)0xDEAD));
-    }
-
-    [Fact]
-    public async Task GetFigure_RendersOnceAndReusesTheFile()
-    {
-        var world = new Fixture();
-        var mobile = world.Mobile();
-
-        var first = await world.Service.GetFigureAsync(mobile.Id);
-        var second = await world.Service.GetFigureAsync(mobile.Id);
-
-        Assert.Equal(first!.Path, second!.Path);
-        Assert.Equal(1, world.Renderer.Renders);
-    }
-
-    // The point of the whole design: dressing differently is a different file, and the old one is
-    // left alone rather than invalidated.
-    [Fact]
-    public async Task GetFigure_AfterTheCharacterChangesClothes_IsADifferentFile()
-    {
-        var world = new Fixture();
-        var mobile = world.Mobile();
-
-        var before = await world.Service.GetFigureAsync(mobile.Id);
-
-        world.Equip(mobile, 0x1410, LayerType.Helm);
-
-        var after = await world.Service.GetFigureAsync(mobile.Id);
-
-        Assert.NotEqual(before!.Hash, after!.Hash);
-        Assert.NotEqual(before.Path, after.Path);
-        Assert.True(File.Exists(before.Path), "the old file is left alone, not invalidated");
-    }
-
-    // The sweep reads last-write time, so a cache hit has to move it or a picture in daily use
-    // would look untouched and be swept.
-    [Fact]
-    public async Task GetFigure_OnACacheHit_TouchesTheFile()
-    {
-        var world = new Fixture();
-        var mobile = world.Mobile();
-
-        var image = await world.Service.GetFigureAsync(mobile.Id);
-        var backdated = DateTime.UtcNow.AddDays(-30);
-
-        File.SetLastWriteTimeUtc(image!.Path, backdated);
-
-        await world.Service.GetFigureAsync(mobile.Id);
-
-        Assert.True(File.GetLastWriteTimeUtc(image.Path) > backdated);
-    }
-
-    [Fact]
-    public async Task GetPaperdoll_ForAKnownCharacter_RendersAndCaches()
-    {
-        var world = new Fixture();
-        var mobile = world.Mobile();
-
-        var image = await world.Service.GetPaperdollAsync(mobile.Id, true);
-
-        Assert.NotNull(image);
-        Assert.True(File.Exists(image.Path));
-    }
-
-    // With and without the background are different pictures and must not share a file.
-    [Fact]
-    public async Task GetPaperdoll_WithAndWithoutBackground_AreDifferentFiles()
-    {
-        var world = new Fixture();
-        var mobile = world.Mobile();
-
-        var withBackground = await world.Service.GetPaperdollAsync(mobile.Id, true);
-        var without = await world.Service.GetPaperdollAsync(mobile.Id, false);
-
-        Assert.NotEqual(withBackground!.Path, without!.Path);
-    }
-
     private sealed class Fixture
     {
         private readonly FakePersistenceService _persistence = new();
@@ -116,12 +31,12 @@ public class MobileCharacterImageServiceTests
 
             var root = TemporaryDirectory.Create("mg-character-images-");
 
-            Service = new MobileCharacterImageService(
+            Service = new(
                 Renderer,
                 Renderer,
                 _persistence,
                 _items,
-                new DirectoriesConfig(root, []),
+                new(root, []),
                 new ImmediateReadGate()
             );
         }
@@ -129,6 +44,14 @@ public class MobileCharacterImageServiceTests
         public RecordingRenderer Renderer { get; }
 
         public MobileCharacterImageService Service { get; }
+
+        public void Equip(MobileEntity mobile, int itemId, LayerType layer)
+        {
+            var item = new ItemEntity { ItemId = itemId };
+
+            _items.Save(item);
+            _items.Equip(mobile, item, layer);
+        }
 
         public MobileEntity Mobile()
         {
@@ -146,14 +69,6 @@ public class MobileCharacterImageServiceTests
             _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
 
             return mobile;
-        }
-
-        public void Equip(MobileEntity mobile, int itemId, LayerType layer)
-        {
-            var item = new ItemEntity { ItemId = itemId };
-
-            _items.Save(item);
-            _items.Equip(mobile, item, layer);
         }
     }
 
@@ -181,5 +96,89 @@ public class MobileCharacterImageServiceTests
     {
         public Task<T> ReadAsync<T>(Func<T> read, CancellationToken cancellationToken = default)
             => Task.FromResult(read());
+    }
+
+    // The point of the whole design: dressing differently is a different file, and the old one is
+    // left alone rather than invalidated.
+    [Fact]
+    public async Task GetFigure_AfterTheCharacterChangesClothes_IsADifferentFile()
+    {
+        var world = new Fixture();
+        var mobile = world.Mobile();
+
+        var before = await world.Service.GetFigureAsync(mobile.Id);
+
+        world.Equip(mobile, 0x1410, LayerType.Helm);
+
+        var after = await world.Service.GetFigureAsync(mobile.Id);
+
+        Assert.NotEqual(before!.Hash, after!.Hash);
+        Assert.NotEqual(before.Path, after.Path);
+        Assert.True(File.Exists(before.Path), "the old file is left alone, not invalidated");
+    }
+
+    // Null rather than an exception: the route turns it into a 404, as the template routes do.
+    [Fact]
+    public async Task GetFigure_ForAnUnknownSerial_IsNull()
+    {
+        var world = new Fixture();
+
+        Assert.Null(await world.Service.GetFigureAsync((Serial)0xDEAD));
+    }
+
+    // The sweep reads last-write time, so a cache hit has to move it or a picture in daily use
+    // would look untouched and be swept.
+    [Fact]
+    public async Task GetFigure_OnACacheHit_TouchesTheFile()
+    {
+        var world = new Fixture();
+        var mobile = world.Mobile();
+
+        var image = await world.Service.GetFigureAsync(mobile.Id);
+        var backdated = DateTime.UtcNow.AddDays(-30);
+
+        File.SetLastWriteTimeUtc(image!.Path, backdated);
+
+        await world.Service.GetFigureAsync(mobile.Id);
+
+        Assert.True(File.GetLastWriteTimeUtc(image.Path) > backdated);
+    }
+
+    [Fact]
+    public async Task GetFigure_RendersOnceAndReusesTheFile()
+    {
+        var world = new Fixture();
+        var mobile = world.Mobile();
+
+        var first = await world.Service.GetFigureAsync(mobile.Id);
+        var second = await world.Service.GetFigureAsync(mobile.Id);
+
+        Assert.Equal(first!.Path, second!.Path);
+        Assert.Equal(1, world.Renderer.Renders);
+    }
+
+    [Fact]
+    public async Task GetPaperdoll_ForAKnownCharacter_RendersAndCaches()
+    {
+        var world = new Fixture();
+        var mobile = world.Mobile();
+
+        var image = await world.Service.GetPaperdollAsync(mobile.Id, true);
+
+        Assert.NotNull(image);
+        Assert.True(File.Exists(image.Path));
+    }
+
+    // With and without the background are different pictures and must not share a file.
+    [Fact]
+    public async Task GetPaperdoll_WithAndWithoutBackground_AreDifferentFiles()
+    {
+        var world = new Fixture();
+        var mobile = world.Mobile();
+
+        var withBackground = await world.Service.GetPaperdollAsync(mobile.Id, true);
+        var without = await world.Service.GetPaperdollAsync(mobile.Id, false);
+
+        Assert.NotEqual(withBackground!.Path, without!.Path);
     }
 }

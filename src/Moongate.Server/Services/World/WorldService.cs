@@ -12,7 +12,6 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Abstractions.Types;
-using Moongate.Ultima.Types;
 using Moongate.UO.Data.Maps;
 using Moongate.UO.Data.Mobiles;
 using Moongate.UO.Data.Types;
@@ -241,7 +240,6 @@ public sealed class WorldService : IWorldService
         }
     }
 
-
     /// <summary>
     /// Builds the full skill list: every registered skill, including the ones this mobile never
     /// trained, because the client renders exactly the rows it is sent.
@@ -282,5 +280,4 @@ public sealed class WorldService : IWorldService
             (byte)mobile.Followers,
             (byte)mobile.FollowersMax
         );
-
 }

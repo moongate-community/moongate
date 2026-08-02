@@ -1,6 +1,5 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Types;
-using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
@@ -16,52 +15,6 @@ namespace Moongate.Tests.Server.Accounts;
 /// </summary>
 public class CharacterQueryServiceTests
 {
-    [Fact]
-    public void Find_ReturnsTheCharacterAndItsOwner()
-    {
-        var persistence = new FakePersistenceService();
-        var character = Mobile(1, "Squid");
-
-        persistence.Store<MobileEntity>().UpsertAsync(character);
-
-        var service = new CharacterQueryService(Owning("tom", character.Id), persistence);
-
-        var found = service.Find(character.Id);
-
-        Assert.NotNull(found);
-        Assert.Equal("tom", found.AccountUsername);
-        Assert.Equal(character.Id, found.Mobile.Id);
-    }
-
-    // An NPC addressable by serial would turn a route meant for characters into a window onto every
-    // mobile on the shard.
-    [Fact]
-    public void Find_IgnoresAMobileNoAccountOwns()
-    {
-        var persistence = new FakePersistenceService();
-        var npc = Mobile(2, "a wandering healer");
-
-        persistence.Store<MobileEntity>().UpsertAsync(npc);
-
-        var service = new CharacterQueryService(Owning("tom"), persistence);
-
-        Assert.Null(service.Find(npc.Id));
-    }
-
-    [Fact]
-    public void Find_ReturnsNullForAnUnknownSerial()
-    {
-        var service = new CharacterQueryService(Owning("tom"), new FakePersistenceService());
-
-        Assert.Null(service.Find(new(0xDEAD)));
-    }
-
-    private static MobileEntity Mobile(uint serial, string name)
-        => new() { Id = new(serial), Name = name };
-
-    private static IAccountService Owning(string username, params Serial[] characters)
-        => new AccountsStub(username, characters);
-
     /// <summary>
     /// One account owning the given characters. Only <see cref="GetAll" /> is real — it is the single
     /// thing the service under test asks for, and everything else throwing is what makes a test that
@@ -79,12 +32,9 @@ public class CharacterQueryServiceTests
                 Username = username,
                 AccountLevel = AccountLevelType.Player,
                 IsActive = true,
-                MobileIds = [.. characters],
+                MobileIds = [.. characters]
             };
         }
-
-        public IReadOnlyList<AccountEntity> GetAll()
-            => [_account];
 
         public AccountAuthResult Authenticate(string username, string password)
             => throw new NotSupportedException();
@@ -97,6 +47,9 @@ public class CharacterQueryServiceTests
 
         public Serial? GetAccountIdByUsername(string username)
             => throw new NotSupportedException();
+
+        public IReadOnlyList<AccountEntity> GetAll()
+            => [_account];
 
         public AccountEntity? GetById(Serial accountId)
             => throw new NotSupportedException();
@@ -125,4 +78,50 @@ public class CharacterQueryServiceTests
         public AccountVerifyResultType VerifyEmail(string token)
             => throw new NotSupportedException();
     }
+
+    // An NPC addressable by serial would turn a route meant for characters into a window onto every
+    // mobile on the shard.
+    [Fact]
+    public void Find_IgnoresAMobileNoAccountOwns()
+    {
+        var persistence = new FakePersistenceService();
+        var npc = Mobile(2, "a wandering healer");
+
+        persistence.Store<MobileEntity>().UpsertAsync(npc);
+
+        var service = new CharacterQueryService(Owning("tom"), persistence);
+
+        Assert.Null(service.Find(npc.Id));
+    }
+
+    [Fact]
+    public void Find_ReturnsNullForAnUnknownSerial()
+    {
+        var service = new CharacterQueryService(Owning("tom"), new FakePersistenceService());
+
+        Assert.Null(service.Find(new(0xDEAD)));
+    }
+
+    [Fact]
+    public void Find_ReturnsTheCharacterAndItsOwner()
+    {
+        var persistence = new FakePersistenceService();
+        var character = Mobile(1, "Squid");
+
+        persistence.Store<MobileEntity>().UpsertAsync(character);
+
+        var service = new CharacterQueryService(Owning("tom", character.Id), persistence);
+
+        var found = service.Find(character.Id);
+
+        Assert.NotNull(found);
+        Assert.Equal("tom", found.AccountUsername);
+        Assert.Equal(character.Id, found.Mobile.Id);
+    }
+
+    private static MobileEntity Mobile(uint serial, string name)
+        => new() { Id = new(serial), Name = name };
+
+    private static IAccountService Owning(string username, params Serial[] characters)
+        => new AccountsStub(username, characters);
 }

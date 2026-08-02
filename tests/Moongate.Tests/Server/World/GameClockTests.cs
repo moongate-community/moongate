@@ -7,7 +7,7 @@ public class GameClockTests
     [Fact]
     public void LocalTime_AtTheEpoch_IsMidnight()
     {
-        var (hours, minutes) = GameClock.LocalTime(GameClock.Epoch, mapId: 0, x: 0);
+        var (hours, minutes) = GameClock.LocalTime(GameClock.Epoch, 0, 0);
 
         Assert.Equal(0, hours);
         Assert.Equal(0, minutes);
@@ -16,8 +16,8 @@ public class GameClockTests
     [Fact]
     public void LocalTime_DiffersBetweenFacets()
     {
-        var first = GameClock.LocalTime(GameClock.Epoch, mapId: 0, x: 0);
-        var second = GameClock.LocalTime(GameClock.Epoch, mapId: 1, x: 0);
+        var first = GameClock.LocalTime(GameClock.Epoch, 0, 0);
+        var second = GameClock.LocalTime(GameClock.Epoch, 1, 0);
 
         Assert.NotEqual(first, second);
     }
@@ -34,8 +34,8 @@ public class GameClockTests
     [Fact]
     public void LocalTime_SixteenTilesEast_IsOneUoMinuteLater()
     {
-        var west = GameClock.LocalTime(GameClock.Epoch, 0, x: 0);
-        var east = GameClock.LocalTime(GameClock.Epoch, 0, x: 16);
+        var west = GameClock.LocalTime(GameClock.Epoch, 0, 0);
+        var east = GameClock.LocalTime(GameClock.Epoch, 0, 16);
 
         Assert.Equal(west.Minutes + 1, east.Minutes);
     }

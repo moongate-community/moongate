@@ -24,13 +24,13 @@ public sealed class GumpSubscriber : IEventSubscriberRegistration
         _gumps = gumps;
     }
 
-    public void Subscribe(IEventBus eventBus)
-        => eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
-
     public Task OnSessionDestroyed(SessionDestroyedEvent @event, CancellationToken cancellationToken)
     {
         _gumps.CloseAll(@event.Session);
 
         return Task.CompletedTask;
     }
+
+    public void Subscribe(IEventBus eventBus)
+        => eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
 }

@@ -1,6 +1,5 @@
 using Moongate.Http.Plugin.Services.Mobiles;
 using Moongate.Tests.Support;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Http.Mobiles;
 
@@ -11,15 +10,29 @@ namespace Moongate.Tests.Http.Mobiles;
 /// </summary>
 public class CharacterImageCacheSweeperTests
 {
-    [Fact]
-    public void Sweep_RemovesAFileOlderThanTheWindow()
+    private sealed class Fixture
     {
-        var world = new Fixture();
-        var stale = world.Image("stale", DateTime.UtcNow.AddDays(-30));
+        private readonly string _cachePath;
 
-        world.Sweeper.Sweep();
+        public Fixture()
+        {
+            var root = TemporaryDirectory.Create("mg-character-sweep-");
 
-        Assert.False(File.Exists(stale));
+            Sweeper = new(new(root, []));
+            _cachePath = Path.Combine(root, "cache", "images", "characters");
+        }
+
+        public CharacterImageCacheSweeper Sweeper { get; }
+
+        public string Image(string name, DateTime writtenUtc)
+        {
+            var path = Path.Combine(_cachePath, $"{name}.png");
+
+            File.WriteAllBytes(path, [0x89, (byte)'P', (byte)'N', (byte)'G']);
+            File.SetLastWriteTimeUtc(path, writtenUtc);
+
+            return path;
+        }
     }
 
     // A sweep that deletes everything also passes a test that only checks deletion.
@@ -35,6 +48,21 @@ public class CharacterImageCacheSweeperTests
     }
 
     [Fact]
+    public void Sweep_OnAnEmptyDirectory_DoesNothing()
+        => Assert.Equal(0, new Fixture().Sweeper.Sweep());
+
+    [Fact]
+    public void Sweep_RemovesAFileOlderThanTheWindow()
+    {
+        var world = new Fixture();
+        var stale = world.Image("stale", DateTime.UtcNow.AddDays(-30));
+
+        world.Sweeper.Sweep();
+
+        Assert.False(File.Exists(stale));
+    }
+
+    [Fact]
     public void Sweep_ReportsHowManyItRemoved()
     {
         var world = new Fixture();
@@ -44,34 +72,5 @@ public class CharacterImageCacheSweeperTests
         world.Image("kept", DateTime.UtcNow);
 
         Assert.Equal(2, world.Sweeper.Sweep());
-    }
-
-    [Fact]
-    public void Sweep_OnAnEmptyDirectory_DoesNothing()
-        => Assert.Equal(0, new Fixture().Sweeper.Sweep());
-
-    private sealed class Fixture
-    {
-        private readonly string _cachePath;
-
-        public Fixture()
-        {
-            var root = TemporaryDirectory.Create("mg-character-sweep-");
-
-            Sweeper = new(new DirectoriesConfig(root, []));
-            _cachePath = Path.Combine(root, "cache", "images", "characters");
-        }
-
-        public CharacterImageCacheSweeper Sweeper { get; }
-
-        public string Image(string name, DateTime writtenUtc)
-        {
-            var path = Path.Combine(_cachePath, $"{name}.png");
-
-            File.WriteAllBytes(path, [0x89, (byte)'P', (byte)'N', (byte)'G']);
-            File.SetLastWriteTimeUtc(path, writtenUtc);
-
-            return path;
-        }
     }
 }

@@ -14,36 +14,9 @@ namespace Moongate.Tests.Network.Packets;
 public class TargetPacketTests
 {
     [Fact]
-    public void TargetCursor_WritesNineteenBytesCarryingTheCursorId()
-    {
-        var buffer = new byte[64];
-        var writer = new SpanWriter(buffer);
-
-        new TargetCursorPacket(0x1234u, TargetSelectionType.Location, TargetCursorType.Neutral).Write(ref writer);
-
-        Assert.Equal(19, writer.Position);
-        Assert.Equal(0x6C, buffer[0]);
-        Assert.Equal((byte)TargetSelectionType.Location, buffer[1]);
-        Assert.Equal(0x1234u, BinaryPrimitives.ReadUInt32BigEndian(buffer.AsSpan(2)));
-        Assert.Equal((byte)TargetCursorType.Neutral, buffer[6]);
-    }
-
-    // Withdrawing a cursor is the same packet with the cancel type, not a different one.
-    [Fact]
-    public void TargetCursor_Cancel_UsesTheCancelCursorType()
-    {
-        var buffer = new byte[64];
-        var writer = new SpanWriter(buffer);
-
-        new TargetCursorPacket(0x1234u, TargetSelectionType.Object, TargetCursorType.Cancel).Write(ref writer);
-
-        Assert.Equal((byte)TargetCursorType.Cancel, buffer[6]);
-    }
-
-    [Fact]
     public void TargetCursorResponse_ReadsTheClickedSerialAndLocation()
     {
-        var reader = new SpanReader(Response(0x1234u, clicked: 0x4000_0001u, x: 100, y: 200, z: 5, graphic: 0x0EED));
+        var reader = new SpanReader(Response(0x1234u, 0x4000_0001u, 100, 200, 5, 0x0EED));
 
         var packet = TargetCursorResponsePacket.Read(ref reader);
 
@@ -60,12 +33,39 @@ public class TargetPacketTests
     [Fact]
     public void TargetCursorResponse_WithNothingPicked_IsStillReadable()
     {
-        var reader = new SpanReader(Response(0x1234u, clicked: 0u, x: 0xFFFF, y: 0xFFFF, z: 0, graphic: 0));
+        var reader = new SpanReader(Response(0x1234u, 0u, 0xFFFF, 0xFFFF, 0, 0));
 
         var packet = TargetCursorResponsePacket.Read(ref reader);
 
         Assert.Equal(0x1234u, packet.CursorId);
         Assert.Equal(Serial.Zero, packet.Clicked);
+    }
+
+    // Withdrawing a cursor is the same packet with the cancel type, not a different one.
+    [Fact]
+    public void TargetCursor_Cancel_UsesTheCancelCursorType()
+    {
+        var buffer = new byte[64];
+        var writer = new SpanWriter(buffer);
+
+        new TargetCursorPacket(0x1234u, TargetSelectionType.Object, TargetCursorType.Cancel).Write(ref writer);
+
+        Assert.Equal((byte)TargetCursorType.Cancel, buffer[6]);
+    }
+
+    [Fact]
+    public void TargetCursor_WritesNineteenBytesCarryingTheCursorId()
+    {
+        var buffer = new byte[64];
+        var writer = new SpanWriter(buffer);
+
+        new TargetCursorPacket(0x1234u, TargetSelectionType.Location, TargetCursorType.Neutral).Write(ref writer);
+
+        Assert.Equal(19, writer.Position);
+        Assert.Equal(0x6C, buffer[0]);
+        Assert.Equal((byte)TargetSelectionType.Location, buffer[1]);
+        Assert.Equal(0x1234u, BinaryPrimitives.ReadUInt32BigEndian(buffer.AsSpan(2)));
+        Assert.Equal((byte)TargetCursorType.Neutral, buffer[6]);
     }
 
     private static byte[] Response(uint cursorId, uint clicked, ushort x, ushort y, sbyte z, ushort graphic)

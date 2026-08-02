@@ -13,6 +13,50 @@ namespace Moongate.Tests.Network.Packets;
 /// </summary>
 public class GumpPacketTests
 {
+    // Each string is framed big-endian, opposite to most of this protocol.
+    [Fact]
+    public void CompressedGump_FramesEachStringBigEndian()
+    {
+        var packet = new CompressedGumpPacket(1u, 2, 0, 0, "{ page 0 }", ["ciao"]);
+        var buffer = new byte[1024];
+        var writer = new SpanWriter(buffer);
+
+        packet.Write(ref writer);
+
+        var span = buffer.AsSpan(0, writer.Position);
+        var layoutBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[19..]);
+        var countAt = 19 + 4 + layoutBlockLength;
+
+        Assert.Equal(1, BinaryPrimitives.ReadInt32BigEndian(span[countAt..]));
+
+        var stringsBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[(countAt + 4)..]);
+        var uncompressed = BinaryPrimitives.ReadInt32BigEndian(span[(countAt + 8)..]);
+        var inflated = InflateRaw(span.Slice(countAt + 12, stringsBlockLength - 4), uncompressed);
+
+        Assert.Equal(4, BinaryPrimitives.ReadUInt16BigEndian(inflated));
+        Assert.Equal("ciao", Encoding.BigEndianUnicode.GetString(inflated.AsSpan(2)));
+    }
+
+    // An empty payload is not an empty block: it collapses to a single zero int, and getting that
+    // wrong is what makes a gump with no text fail while one with text works.
+    [Fact]
+    public void CompressedGump_WithNoStrings_CollapsesTheBlockToZero()
+    {
+        var packet = new CompressedGumpPacket(1u, 2, 0, 0, "{ page 0 }", []);
+        var buffer = new byte[1024];
+        var writer = new SpanWriter(buffer);
+
+        packet.Write(ref writer);
+
+        var span = buffer.AsSpan(0, writer.Position);
+        var layoutBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[19..]);
+        var stringsCountAt = 19 + 4 + layoutBlockLength;
+
+        Assert.Equal(0, BinaryPrimitives.ReadInt32BigEndian(span[stringsCountAt..]));
+        Assert.Equal(0, BinaryPrimitives.ReadInt32BigEndian(span[(stringsCountAt + 4)..]));
+        Assert.Equal(stringsCountAt + 8, writer.Position);
+    }
+
     [Fact]
     public void CompressedGump_WritesTheHeaderAndRoundTripsTheLayout()
     {
@@ -38,50 +82,6 @@ public class GumpPacketTests
 
         var compressed = span.Slice(27, blockLength - 4);
         Assert.Equal(layout, Inflate(compressed, layout.Length, Encoding.ASCII));
-    }
-
-    // An empty payload is not an empty block: it collapses to a single zero int, and getting that
-    // wrong is what makes a gump with no text fail while one with text works.
-    [Fact]
-    public void CompressedGump_WithNoStrings_CollapsesTheBlockToZero()
-    {
-        var packet = new CompressedGumpPacket(1u, 2, 0, 0, "{ page 0 }", []);
-        var buffer = new byte[1024];
-        var writer = new SpanWriter(buffer);
-
-        packet.Write(ref writer);
-
-        var span = buffer.AsSpan(0, writer.Position);
-        var layoutBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[19..]);
-        var stringsCountAt = 19 + 4 + layoutBlockLength;
-
-        Assert.Equal(0, BinaryPrimitives.ReadInt32BigEndian(span[stringsCountAt..]));
-        Assert.Equal(0, BinaryPrimitives.ReadInt32BigEndian(span[(stringsCountAt + 4)..]));
-        Assert.Equal(stringsCountAt + 8, writer.Position);
-    }
-
-    // Each string is framed big-endian, opposite to most of this protocol.
-    [Fact]
-    public void CompressedGump_FramesEachStringBigEndian()
-    {
-        var packet = new CompressedGumpPacket(1u, 2, 0, 0, "{ page 0 }", ["ciao"]);
-        var buffer = new byte[1024];
-        var writer = new SpanWriter(buffer);
-
-        packet.Write(ref writer);
-
-        var span = buffer.AsSpan(0, writer.Position);
-        var layoutBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[19..]);
-        var countAt = 19 + 4 + layoutBlockLength;
-
-        Assert.Equal(1, BinaryPrimitives.ReadInt32BigEndian(span[countAt..]));
-
-        var stringsBlockLength = BinaryPrimitives.ReadInt32BigEndian(span[(countAt + 4)..]);
-        var uncompressed = BinaryPrimitives.ReadInt32BigEndian(span[(countAt + 8)..]);
-        var inflated = InflateRaw(span.Slice(countAt + 12, stringsBlockLength - 4), uncompressed);
-
-        Assert.Equal(4, BinaryPrimitives.ReadUInt16BigEndian(inflated));
-        Assert.Equal("ciao", Encoding.BigEndianUnicode.GetString(inflated.AsSpan(2)));
     }
 
     [Fact]

@@ -34,7 +34,7 @@ public readonly record struct TargetCursorPacket(
         writer.Write((byte)Selection);
         writer.Write(CursorId);
         writer.Write((byte)CursorType);
-        writer.Write(0u);       // clicked serial, filled by the client
+        writer.Write(0u);        // clicked serial, filled by the client
         writer.Write((ushort)0); // x
         writer.Write((ushort)0); // y
         writer.Write((byte)0);   // unused

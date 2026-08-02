@@ -10,6 +10,5 @@ namespace Moongate.Server.Abstractions.Data.World;
 public readonly record struct VisibilityDelta(IReadOnlyList<Serial> Entered, IReadOnlyList<Serial> Left)
 {
     /// <summary>Nothing moved in or out — the common case, and the one that must send no packets.</summary>
-    public bool IsEmpty
-        => Entered.Count == 0 && Left.Count == 0;
+    public bool IsEmpty => Entered.Count == 0 && Left.Count == 0;
 }

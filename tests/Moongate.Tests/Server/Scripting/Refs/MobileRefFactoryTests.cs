@@ -18,14 +18,6 @@ namespace Moongate.Tests.Server.Scripting.Refs;
 public class MobileRefFactoryTests
 {
     [Fact]
-    public void Create_UnknownSerial_IsNil()
-    {
-        var (factory, _, _) = Build(out _);
-
-        Assert.Equal(DataType.Nil, factory.Create((Serial)0xDEAD).Type);
-    }
-
-    [Fact]
     public void Create_CarriesExactlyTheThreeMethods()
     {
         var (factory, _, _) = Build(out var mobile);
@@ -41,45 +33,11 @@ public class MobileRefFactoryTests
     }
 
     [Fact]
-    public void Say_ReachesTheChatService()
+    public void Create_UnknownSerial_IsNil()
     {
-        var (factory, script, chat) = Build(out var mobile);
+        var (factory, _, _) = Build(out _);
 
-        var said = Call(script, factory.Create(mobile.Id), "say", DynValue.NewString("Welcome back."));
-
-        Assert.True(said.Boolean);
-        Assert.Single(chat.Messages);
-    }
-
-    // The reason the handle holds a serial: the mobile can die between ref and the call.
-    [Fact]
-    public void Say_AfterTheMobileIsGone_IsFalseAndSaysNothing()
-    {
-        var (factory, script, chat) = Build(out var mobile, out var persistence);
-
-        var handle = factory.Create(mobile.Id);
-        persistence.Store<MobileEntity>().RemoveAsync(mobile.Id).WaitSync();
-
-        Assert.False(Call(script, handle, "say", DynValue.NewString("anyone there?")).Boolean);
-        Assert.Empty(chat.Messages);
-    }
-
-    [Fact]
-    public void Teleport_MovesTheMobile()
-    {
-        var (factory, script, _) = Build(out var mobile, out var persistence);
-
-        var moved = Call(
-            script,
-            factory.Create(mobile.Id),
-            "teleport",
-            DynValue.NewNumber(10),
-            DynValue.NewNumber(20),
-            DynValue.NewNumber(5)
-        );
-
-        Assert.True(moved.Boolean);
-        Assert.Equal(new(10, 20, 5), persistence.Store<MobileEntity>().GetById(mobile.Id)!.Position);
+        Assert.Equal(DataType.Nil, factory.Create((Serial)0xDEAD).Type);
     }
 
     // The layer arrives from Lua as a string or a number; anything else is not a layer.
@@ -99,8 +57,47 @@ public class MobileRefFactoryTests
         Assert.False(equipped.Boolean);
     }
 
-    private static DynValue Call(Script script, DynValue handle, string method, params DynValue[] arguments)
-        => script.Call(handle.Table.Get(method), arguments);
+    // The reason the handle holds a serial: the mobile can die between ref and the call.
+    [Fact]
+    public void Say_AfterTheMobileIsGone_IsFalseAndSaysNothing()
+    {
+        var (factory, script, chat) = Build(out var mobile, out var persistence);
+
+        var handle = factory.Create(mobile.Id);
+        persistence.Store<MobileEntity>().RemoveAsync(mobile.Id).WaitSync();
+
+        Assert.False(Call(script, handle, "say", DynValue.NewString("anyone there?")).Boolean);
+        Assert.Empty(chat.Messages);
+    }
+
+    [Fact]
+    public void Say_ReachesTheChatService()
+    {
+        var (factory, script, chat) = Build(out var mobile);
+
+        var said = Call(script, factory.Create(mobile.Id), "say", DynValue.NewString("Welcome back."));
+
+        Assert.True(said.Boolean);
+        Assert.Single(chat.Messages);
+    }
+
+    [Fact]
+    public void Teleport_MovesTheMobile()
+    {
+        var (factory, script, _) = Build(out var mobile, out var persistence);
+
+        var moved = Call(
+            script,
+            factory.Create(mobile.Id),
+            "teleport",
+            DynValue.NewNumber(10),
+            DynValue.NewNumber(20),
+            DynValue.NewNumber(5)
+        );
+
+        Assert.True(moved.Boolean);
+        Assert.Equal(new(10, 20, 5), persistence.Store<MobileEntity>().GetById(mobile.Id)!.Position);
+    }
 
     private static (MobileRefFactory Factory, Script Script, RecordingChatService Chat) Build(out MobileEntity mobile)
         => Build(out mobile, out _);
@@ -122,9 +119,12 @@ public class MobileRefFactoryTests
         persistence = store;
 
         return (
-            new(script, store, chat, new MobileService(store, spatial, events), new ItemService(store)),
-            script,
-            chat
-        );
+                   new(script, store, chat, new MobileService(store, spatial, events), new ItemService(store)),
+                   script,
+                   chat
+               );
     }
+
+    private static DynValue Call(Script script, DynValue handle, string method, params DynValue[] arguments)
+        => script.Call(handle.Table.Get(method), arguments);
 }

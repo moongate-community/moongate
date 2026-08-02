@@ -1,5 +1,4 @@
 using Moongate.Core.Primitives;
-using Moongate.Server.Abstractions.Data.Gumps;
 using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Gumps;
@@ -32,6 +31,11 @@ public sealed class GumpModule
         _builders = builders;
     }
 
+    /// <summary>Forgets a named gump for the mobile's player. Returns false when none was open.</summary>
+    [ScriptFunction("close", "Closes a named gump for a player: gump.close(serial, id).")]
+    public bool Close(uint serial, string gumpId)
+        => SessionFor(serial) is { } session && _gumps.Close(session, gumpId);
+
     /// <summary>
     /// Draws a gump for the mobile's player and sends it. Returns false when the serial names nobody
     /// online. The response callback receives a table with <c>button</c>, <c>switches</c> and
@@ -54,11 +58,6 @@ public sealed class GumpModule
 
         return true;
     }
-
-    /// <summary>Forgets a named gump for the mobile's player. Returns false when none was open.</summary>
-    [ScriptFunction("close", "Closes a named gump for a player: gump.close(serial, id).")]
-    public bool Close(uint serial, string gumpId)
-        => SessionFor(serial) is { } session && _gumps.Close(session, gumpId);
 
     private PlayerSession? SessionFor(uint serial)
     {

@@ -40,6 +40,30 @@ public class ItemLifecycleEventsTests
     }
 
     [Fact]
+    public void Unequip_OfAnEmptyLayer_PublishesNothing()
+    {
+        var persistence = new FakePersistenceService();
+        var bus = new EventBusService();
+        var published = 0;
+        bus.Subscribe<ItemUnequippedEvent>(
+            (_, _) =>
+            {
+                published++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var service = new ItemService(persistence, eventBus: bus);
+        var mobile = new MobileEntity { MapId = 1, Position = new(100, 100, 0) };
+        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+
+        service.Unequip(mobile, LayerType.Shirt);
+
+        Assert.Equal(0, published);
+    }
+
+    [Fact]
     public void Unequip_PublishesItemUnequipped()
     {
         var persistence = new FakePersistenceService();
@@ -66,29 +90,5 @@ public class ItemLifecycleEventsTests
         Assert.NotNull(published);
         Assert.Equal(shirt.Id, published!.Item);
         Assert.Equal(LayerType.Shirt, published.Layer);
-    }
-
-    [Fact]
-    public void Unequip_OfAnEmptyLayer_PublishesNothing()
-    {
-        var persistence = new FakePersistenceService();
-        var bus = new EventBusService();
-        var published = 0;
-        bus.Subscribe<ItemUnequippedEvent>(
-            (_, _) =>
-            {
-                published++;
-
-                return Task.CompletedTask;
-            }
-        );
-
-        var service = new ItemService(persistence, eventBus: bus);
-        var mobile = new MobileEntity { MapId = 1, Position = new(100, 100, 0) };
-        persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-
-        service.Unequip(mobile, LayerType.Shirt);
-
-        Assert.Equal(0, published);
     }
 }

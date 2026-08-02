@@ -19,9 +19,9 @@ public sealed class GumpMenuSelectionHandler : IPacketHandler<GumpMenuSelectionP
     }
 
     public void Handle(GumpMenuSelectionPacket packet, in PacketContext context)
-    {
+
         // The verdict is the service's business -- it logs and disconnects on its own.
-        _gumps.HandleResponse(
+        => _gumps.HandleResponse(
             context.Session,
             packet.Serial,
             packet.TypeId,
@@ -29,7 +29,6 @@ public sealed class GumpMenuSelectionHandler : IPacketHandler<GumpMenuSelectionP
             packet.Switches,
             packet.TextEntries
         );
-    }
 
     public void Register(INetworkService network)
         => network.RegisterHandler(this);

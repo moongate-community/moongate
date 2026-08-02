@@ -88,6 +88,16 @@ public sealed class MobileTemplatesLoader : IDataLoader
         return ValueTask.CompletedTask;
     }
 
+    private void RequirePool(string templateId, string? pool)
+    {
+        if (string.IsNullOrEmpty(pool) || _names.GetByType(pool) is not null)
+        {
+            return;
+        }
+
+        throw new InvalidDataException($"Mobile template '{templateId}' references unknown name pool '{pool}'.");
+    }
+
     /// <summary>
     /// A NamePool naming no registered pool is a content typo. Names load at priority 30 and mobile
     /// templates at 150, so it is caught while the server is still starting instead of producing
@@ -102,17 +112,5 @@ public sealed class MobileTemplatesLoader : IDataLoader
         {
             RequirePool(template.Id, variant.NamePool);
         }
-    }
-
-    private void RequirePool(string templateId, string? pool)
-    {
-        if (string.IsNullOrEmpty(pool) || _names.GetByType(pool) is not null)
-        {
-            return;
-        }
-
-        throw new InvalidDataException(
-            $"Mobile template '{templateId}' references unknown name pool '{pool}'."
-        );
     }
 }

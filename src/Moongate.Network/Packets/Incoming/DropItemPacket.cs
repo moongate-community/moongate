@@ -31,12 +31,12 @@ public readonly record struct DropItemPacket(
         reader.ReadByte(); // packet id
 
         return new(
-            new Serial(reader.ReadUInt32()),
+            new(reader.ReadUInt32()),
             reader.ReadUInt16(),
             reader.ReadUInt16(),
             reader.ReadSByte(),
             reader.ReadByte(), // grid index: a slot hint we do not use
-            new Serial(reader.ReadUInt32())
+            new(reader.ReadUInt32())
         );
     }
 }

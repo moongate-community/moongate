@@ -30,6 +30,12 @@ public sealed class VisibilityService : IVisibilityService
         _virtualSerials = virtualSerials;
     }
 
+    public void Forget(PlayerSession session)
+        => _known.Remove(session.SessionId);
+
+    public IReadOnlySet<Serial> KnownTo(PlayerSession session)
+        => _known.TryGetValue(session.SessionId, out var known) ? known : new();
+
     public VisibilityDelta Refresh(PlayerSession session)
     {
         if (session.Character is not { } character)
@@ -80,6 +86,24 @@ public sealed class VisibilityService : IVisibilityService
         return new(entered, left);
     }
 
+    public int Undraw(IEnumerable<PlayerSession> sessions, Serial serial)
+    {
+        var count = 0;
+
+        foreach (var session in sessions)
+        {
+            if (!_known.TryGetValue(session.SessionId, out var known) || !known.Remove(serial))
+            {
+                continue;
+            }
+
+            session.Send(new DeleteObjectPacket(serial));
+            count++;
+        }
+
+        return count;
+    }
+
     public VisibilityChangeType UpdateFor(PlayerSession session, MobileEntity mobile)
     {
         if (session.Character is not { } character || mobile.Id == character.Id)
@@ -122,30 +146,6 @@ public sealed class VisibilityService : IVisibilityService
             () => Incoming(item)
         );
     }
-
-    public int Undraw(IEnumerable<PlayerSession> sessions, Serial serial)
-    {
-        var count = 0;
-
-        foreach (var session in sessions)
-        {
-            if (!_known.TryGetValue(session.SessionId, out var known) || !known.Remove(serial))
-            {
-                continue;
-            }
-
-            session.Send(new DeleteObjectPacket(serial));
-            count++;
-        }
-
-        return count;
-    }
-
-    public void Forget(PlayerSession session)
-        => _known.Remove(session.SessionId);
-
-    public IReadOnlySet<Serial> KnownTo(PlayerSession session)
-        => _known.TryGetValue(session.SessionId, out var known) ? known : new HashSet<Serial>();
 
     /// <summary>
     /// The three-row table: in range and unknown means draw, out of range and known means undraw,

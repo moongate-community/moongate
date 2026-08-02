@@ -9,8 +9,8 @@ local signpost = {
 }
 
 function signpost.on_double_click(ctx)
-    -- Always check the actor: a hook can fire with nobody behind it, and there is no one to
-    -- show a gump to.
+-- Always check the actor: a hook can fire with nobody behind it, and there is no one to
+-- show a gump to.
     if ctx.actor == nil then
         return
     end
@@ -31,37 +31,37 @@ function signpost.on_double_click(ctx)
         g.check { x = 24, y = 130, art = 210, pressed = 211, id = 10 }
         g.label { x = 60, y = 130, hue = 0, text = "Announce my arrival" }
     end,
-    function(r)
+        function(r)
         -- Button 0 is the client's own close button: the player changed their mind.
-        if r.button == 0 then
-            return
-        end
-
-        local destination = r.button == 1 and { name = "Britain", x = 1495, y = 1629 }
-                                          or  { name = "Trinsic", x = 1828, y = 2745 }
-
-        local announce = false
-
-        for _, id in ipairs(r.switches) do
-            if id == 10 then
-                announce = true
+            if r.button == 0 then
+                return
             end
-        end
 
-        local traveller = mobile.ref(ctx.actor.serial)
+            local destination = r.button == 1 and { name = "Britain", x = 1495, y = 1629 }
+            or  { name = "Trinsic", x = 1828, y = 2745 }
 
-        -- The mobile may be gone by the time the player answers: ref returns nil rather than
-        -- letting you act on a stale target.
-        if traveller == nil then
-            return
-        end
+            local announce = false
 
-        traveller.teleport(destination.x, destination.y, 0)
+            for _, id in ipairs(r.switches) do
+                if id == 10 then
+                    announce = true
+                end
+            end
 
-        if announce then
-            traveller.say("I have arrived in " .. destination.name .. "!")
-        end
-    end)
+            local traveller = mobile.ref(ctx.actor.serial)
+
+            -- The mobile may be gone by the time the player answers: ref returns nil rather than
+            -- letting you act on a stale target.
+            if traveller == nil then
+                return
+            end
+
+            traveller.teleport(destination.x, destination.y, 0)
+
+            if announce then
+                traveller.say("I have arrived in " .. destination.name .. "!")
+            end
+        end)
 end
 
 return signpost

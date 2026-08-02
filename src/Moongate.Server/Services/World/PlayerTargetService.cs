@@ -26,20 +26,11 @@ public sealed class PlayerTargetService : IPlayerTargetService
 
     private uint _nextCursorId = 1;
 
-    public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
-    {
-        // Superseding rather than accumulating: the client only has one cursor, so the previous
-        // request can no longer be answered and saying otherwise would be a lie.
-        Supersede(session);
-
-        var cursorId = _nextCursorId++;
-
-        _pending[session.SessionId] = new(cursorId, selection, onTarget);
-
-        session.Send(new TargetCursorPacket(cursorId, selection, TargetCursorType.Neutral));
-
-        return cursorId;
-    }
+    private readonly record struct PendingTarget(
+        uint CursorId,
+        TargetSelectionType Selection,
+        Action<TargetResult> OnTarget
+    );
 
     public bool Cancel(PlayerSession session)
     {
@@ -55,6 +46,9 @@ public sealed class PlayerTargetService : IPlayerTargetService
 
         return true;
     }
+
+    public void Forget(PlayerSession session)
+        => _pending.Remove(session.SessionId);
 
     public TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet)
     {
@@ -78,8 +72,20 @@ public sealed class PlayerTargetService : IPlayerTargetService
         return result.Type;
     }
 
-    public void Forget(PlayerSession session)
-        => _pending.Remove(session.SessionId);
+    public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
+    {
+        // Superseding rather than accumulating: the client only has one cursor, so the previous
+        // request can no longer be answered and saying otherwise would be a lie.
+        Supersede(session);
+
+        var cursorId = _nextCursorId++;
+
+        _pending[session.SessionId] = new(cursorId, selection, onTarget);
+
+        session.Send(new TargetCursorPacket(cursorId, selection, TargetCursorType.Neutral));
+
+        return cursorId;
+    }
 
     /// <summary>
     /// Nothing picked means the player dismissed the cursor. Everything else is an object when an
@@ -109,10 +115,4 @@ public sealed class PlayerTargetService : IPlayerTargetService
 
         pending.OnTarget(TargetResult.Cancelled);
     }
-
-    private readonly record struct PendingTarget(
-        uint CursorId,
-        TargetSelectionType Selection,
-        Action<TargetResult> OnTarget
-    );
 }

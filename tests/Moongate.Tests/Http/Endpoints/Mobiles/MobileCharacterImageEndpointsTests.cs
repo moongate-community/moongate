@@ -1,10 +1,8 @@
 using System.Net;
-using System.Net.Http.Headers;
 using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Data.Mobiles;
 using Moongate.Http.Plugin.Endpoints.Mobiles;
-using Moongate.Http.Plugin.Extensions;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
 using Moongate.Tests.Support;
 
@@ -17,145 +15,6 @@ namespace Moongate.Tests.Http.Endpoints.Mobiles;
 /// </summary>
 public class MobileCharacterImageEndpointsTests
 {
-    [Fact]
-    public async Task Get_AnUnknownSerial_Is404()
-    {
-        await using var server = await StartAsync(new StubImageService(null));
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/57005.png");
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Get_AKnownCharacter_ReturnsPngWithTheFingerprintAsETag()
-    {
-        var image = Png("abc12345");
-        await using var server = await StartAsync(new StubImageService(image));
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/1.png");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("image/png", response.Content.Headers.ContentType?.MediaType);
-        Assert.Equal("\"abc12345\"", response.Headers.ETag?.ToString());
-    }
-
-    // The whole reason the URL does not carry the hash: an unchanged character costs a string
-    // comparison rather than a render or a download.
-    [Fact]
-    public async Task Get_WithAMatchingIfNoneMatch_Is304WithNoBody()
-    {
-        var image = Png("abc12345");
-        await using var server = await StartAsync(new StubImageService(image));
-
-        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/images/mobiles/1.png");
-
-        request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue("\"abc12345\""));
-
-        var response = await server.Client.SendAsync(request);
-
-        Assert.Equal(HttpStatusCode.NotModified, response.StatusCode);
-        Assert.Empty(await response.Content.ReadAsByteArrayAsync());
-    }
-
-    // A stale fingerprint is exactly the case the design exists for: the character changed, so the
-    // caller must be given the new picture rather than a 304.
-    [Fact]
-    public async Task Get_WithAStaleIfNoneMatch_ReturnsTheNewImage()
-    {
-        var image = Png("newhash1");
-        await using var server = await StartAsync(new StubImageService(image));
-
-        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/images/mobiles/1.png");
-
-        request.Headers.IfNoneMatch.Add(new EntityTagHeaderValue("\"oldhash0\""));
-
-        var response = await server.Client.SendAsync(request);
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotEmpty(await response.Content.ReadAsByteArrayAsync());
-    }
-
-    [Fact]
-    public async Task GetPaperdoll_ForAKnownCharacter_ReturnsPng()
-    {
-        var image = Png("dollhash");
-        await using var server = await StartAsync(new StubImageService(image));
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/1/paperdoll.png");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("\"dollhash\"", response.Headers.ETag?.ToString());
-    }
-
-    // The API reports every serial as 0x40000001, so that is the string a caller has in hand when it
-    // wants the picture. A route that only accepted decimal would answer 404 for the API's own value
-    // -- and 404 reads as "no such character", not "wrong number base".
-    [Fact]
-    public async Task Get_WithTheHexSerialTheApiReports_ReachesThatCharacter()
-    {
-        var images = new StubImageService(Png("hexhash1"));
-        await using var server = await StartAsync(images);
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001.png");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal((Serial)0x40000001u, images.LastSerial);
-    }
-
-    [Fact]
-    public async Task GetPaperdoll_WithTheHexSerialTheApiReports_ReachesThatCharacter()
-    {
-        var images = new StubImageService(Png("hexhash2"));
-        await using var server = await StartAsync(images);
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001/paperdoll.png");
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal((Serial)0x40000001u, images.LastSerial);
-    }
-
-    // Decimal stays valid: it is what the route has always accepted, and dropping it would break
-    // any caller already using it.
-    [Fact]
-    public async Task Get_WithADecimalSerial_ReachesThatCharacter()
-    {
-        var images = new StubImageService(Png("dechash1"));
-        await using var server = await StartAsync(images);
-
-        await server.Client.GetAsync("/api/v1/images/mobiles/57005.png");
-
-        Assert.Equal((Serial)57005u, images.LastSerial);
-    }
-
-    [Fact]
-    public async Task Get_WithASerialThatIsNotANumber_Is404()
-    {
-        await using var server = await StartAsync(new StubImageService(Png("nothash1")));
-
-        var response = await server.Client.GetAsync("/api/v1/images/mobiles/banana.png");
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-    }
-
-    private static MobileImage Png(string hash)
-    {
-        var path = Path.Combine(TemporaryDirectory.Create("mg-character-route-"), $"{hash}.png");
-
-        File.WriteAllBytes(path, [0x89, (byte)'P', (byte)'N', (byte)'G']);
-
-        return new(path, hash);
-    }
-
-    private static async Task<TestApiServer> StartAsync(StubImageService images)
-        => await TestApiServer.StartAsync(
-               configure: container =>
-                          {
-                              container.RegisterInstance<IMobileCharacterImageService>(images);
-                              container.RegisterApiEndpointInstance(new MobileCharacterImageEndpoints(images));
-                          }
-           );
-
     private sealed class StubImageService : IMobileCharacterImageService
     {
         private readonly MobileImage? _image;
@@ -186,4 +45,143 @@ public class MobileCharacterImageEndpointsTests
             return Task.FromResult(_image);
         }
     }
+
+    [Fact]
+    public async Task GetPaperdoll_ForAKnownCharacter_ReturnsPng()
+    {
+        var image = Png("dollhash");
+        await using var server = await StartAsync(new(image));
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/1/paperdoll.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("\"dollhash\"", response.Headers.ETag?.ToString());
+    }
+
+    [Fact]
+    public async Task GetPaperdoll_WithTheHexSerialTheApiReports_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("hexhash2"));
+        await using var server = await StartAsync(images);
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001/paperdoll.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((Serial)0x40000001u, images.LastSerial);
+    }
+
+    [Fact]
+    public async Task Get_AKnownCharacter_ReturnsPngWithTheFingerprintAsETag()
+    {
+        var image = Png("abc12345");
+        await using var server = await StartAsync(new(image));
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/1.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("image/png", response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal("\"abc12345\"", response.Headers.ETag?.ToString());
+    }
+
+    [Fact]
+    public async Task Get_AnUnknownSerial_Is404()
+    {
+        await using var server = await StartAsync(new(null));
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/57005.png");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    // Decimal stays valid: it is what the route has always accepted, and dropping it would break
+    // any caller already using it.
+    [Fact]
+    public async Task Get_WithADecimalSerial_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("dechash1"));
+        await using var server = await StartAsync(images);
+
+        await server.Client.GetAsync("/api/v1/images/mobiles/57005.png");
+
+        Assert.Equal((Serial)57005u, images.LastSerial);
+    }
+
+    // The whole reason the URL does not carry the hash: an unchanged character costs a string
+    // comparison rather than a render or a download.
+    [Fact]
+    public async Task Get_WithAMatchingIfNoneMatch_Is304WithNoBody()
+    {
+        var image = Png("abc12345");
+        await using var server = await StartAsync(new(image));
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/images/mobiles/1.png");
+
+        request.Headers.IfNoneMatch.Add(new("\"abc12345\""));
+
+        var response = await server.Client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NotModified, response.StatusCode);
+        Assert.Empty(await response.Content.ReadAsByteArrayAsync());
+    }
+
+    [Fact]
+    public async Task Get_WithASerialThatIsNotANumber_Is404()
+    {
+        await using var server = await StartAsync(new(Png("nothash1")));
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/banana.png");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    // A stale fingerprint is exactly the case the design exists for: the character changed, so the
+    // caller must be given the new picture rather than a 304.
+    [Fact]
+    public async Task Get_WithAStaleIfNoneMatch_ReturnsTheNewImage()
+    {
+        var image = Png("newhash1");
+        await using var server = await StartAsync(new(image));
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/images/mobiles/1.png");
+
+        request.Headers.IfNoneMatch.Add(new("\"oldhash0\""));
+
+        var response = await server.Client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotEmpty(await response.Content.ReadAsByteArrayAsync());
+    }
+
+    // The API reports every serial as 0x40000001, so that is the string a caller has in hand when it
+    // wants the picture. A route that only accepted decimal would answer 404 for the API's own value
+    // -- and 404 reads as "no such character", not "wrong number base".
+    [Fact]
+    public async Task Get_WithTheHexSerialTheApiReports_ReachesThatCharacter()
+    {
+        var images = new StubImageService(Png("hexhash1"));
+        await using var server = await StartAsync(images);
+
+        var response = await server.Client.GetAsync("/api/v1/images/mobiles/0x40000001.png");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal((Serial)0x40000001u, images.LastSerial);
+    }
+
+    private static MobileImage Png(string hash)
+    {
+        var path = Path.Combine(TemporaryDirectory.Create("mg-character-route-"), $"{hash}.png");
+
+        File.WriteAllBytes(path, [0x89, (byte)'P', (byte)'N', (byte)'G']);
+
+        return new(path, hash);
+    }
+
+    private static async Task<TestApiServer> StartAsync(StubImageService images)
+        => await TestApiServer.StartAsync(
+               configure: container =>
+                          {
+                              container.RegisterInstance<IMobileCharacterImageService>(images);
+                              container.RegisterApiEndpointInstance(new MobileCharacterImageEndpoints(images));
+                          }
+           );
 }

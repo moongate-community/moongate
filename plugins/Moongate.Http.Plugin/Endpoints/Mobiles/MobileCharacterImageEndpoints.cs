@@ -70,6 +70,13 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
     }
 
     /// <summary>
+    /// One answer for "that is not a character" and "that is not even a serial": from outside, both
+    /// mean the picture asked for does not exist.
+    /// </summary>
+    private static IResult NotFound()
+        => Results.Problem("No renderable image for that mobile.", statusCode: StatusCodes.Status404NotFound);
+
+    /// <summary>
     /// The one HTTP decision this endpoint makes: hand back the file, or say the caller already has
     /// it. Comparing the fingerprint costs a string comparison where the alternative is a download.
     /// </summary>
@@ -89,11 +96,4 @@ public sealed class MobileCharacterImageEndpoints : IApiEndpointRegistration
 
         return Results.File(image.Path, "image/png", entityTag: tag);
     }
-
-    /// <summary>
-    /// One answer for "that is not a character" and "that is not even a serial": from outside, both
-    /// mean the picture asked for does not exist.
-    /// </summary>
-    private static IResult NotFound()
-        => Results.Problem("No renderable image for that mobile.", statusCode: StatusCodes.Status404NotFound);
 }

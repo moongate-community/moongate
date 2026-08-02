@@ -19,13 +19,13 @@ public class AiActionServiceTests
     {
         public List<(Serial Speaker, ChatMessageType Type, string Text, Hue Hue, int Range)> Messages { get; } = [];
 
+        /// <summary>Set to make every SayAs refuse, standing in for a rule ChatService would enforce.</summary>
+        public bool Refuse { get; set; }
+
         public void Broadcast(string text, Hue? hue = null) { }
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
             => Messages.Add((speaker.Id, type, text, hue, range));
-
-        /// <summary>Set to make every SayAs refuse, standing in for a rule ChatService would enforce.</summary>
-        public bool Refuse { get; set; }
 
         // Records rather than enforcing: the rules belong to ChatService, and the tests that pin them
         // live in ChatServiceTests.
@@ -82,7 +82,7 @@ public class AiActionServiceTests
     public void Begin_RestoresPreviousContextOnDispose()
     {
         var (service, persistence, _, _, _) = Build();
-        var outer = AddOwner(persistence, 0x1, x: 12, y: 8);
+        var outer = AddOwner(persistence, x: 12, y: 8);
         var inner = AddMobile(persistence, 0x2, 0, 12, 8);
 
         using (service.Begin(Context(outer)))
@@ -346,26 +346,6 @@ public class AiActionServiceTests
         Assert.Equal(1, metrics.Current.IntentsRejected);
     }
 
-    // Blank and oversize text are refused by ChatService now, not here -- that is what unified the
-    // rules with chat.say. The refusals themselves are pinned in ChatServiceTests; what this asserts
-    // is that a refusal reaches the brain as a rejected intent rather than being swallowed.
-    [Fact]
-    public void Say_WhenTheChatServiceRefuses_CountsARejectedIntent()
-    {
-        var (service, persistence, chat, _, metrics) = Build();
-        var owner = AddOwner(persistence);
-        chat.Refuse = true;
-
-        using (service.Begin(Context(owner)))
-        {
-            Assert.False(service.Say("anything at all"));
-        }
-
-        Assert.Empty(chat.Messages);
-        Assert.Equal(0, metrics.Current.IntentsAccepted);
-        Assert.Equal(1, metrics.Current.IntentsRejected);
-    }
-
     [Fact]
     public void Say_ValidText_UsesRegularSpeechDefaultHueAndRange15()
     {
@@ -384,6 +364,26 @@ public class AiActionServiceTests
         Assert.Equal(Hue.Default, message.Hue);
         Assert.Equal(15, message.Range);
         Assert.Equal(1, metrics.Current.IntentsAccepted);
+    }
+
+    // Blank and oversize text are refused by ChatService now, not here -- that is what unified the
+    // rules with chat.say. The refusals themselves are pinned in ChatServiceTests; what this asserts
+    // is that a refusal reaches the brain as a rejected intent rather than being swallowed.
+    [Fact]
+    public void Say_WhenTheChatServiceRefuses_CountsARejectedIntent()
+    {
+        var (service, persistence, chat, _, metrics) = Build();
+        var owner = AddOwner(persistence);
+        chat.Refuse = true;
+
+        using (service.Begin(Context(owner)))
+        {
+            Assert.False(service.Say("anything at all"));
+        }
+
+        Assert.Empty(chat.Messages);
+        Assert.Equal(0, metrics.Current.IntentsAccepted);
+        Assert.Equal(1, metrics.Current.IntentsRejected);
     }
 
     [Fact]

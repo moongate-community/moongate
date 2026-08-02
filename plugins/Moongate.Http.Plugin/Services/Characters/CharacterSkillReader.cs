@@ -24,9 +24,12 @@ public sealed class CharacterSkillReader
     /// zero is never written — so this reports what is there rather than padding out the catalogue.
     /// </summary>
     public IReadOnlyList<CharacterSkillResponse> Read(MobileEntity mobile)
-        => [.. mobile.Skills
+        =>
+        [
+            .. mobile.Skills
                      .Select(entry => Describe(entry.Key, entry.Value))
-                     .OrderBy(skill => skill.Name, StringComparer.OrdinalIgnoreCase)];
+                     .OrderBy(skill => skill.Name, StringComparer.OrdinalIgnoreCase)
+        ];
 
     private CharacterSkillResponse Describe(int id, MobileSkill skill)
     {

@@ -1,9 +1,7 @@
 using Moongate.Core.Extensions;
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Ultima.Types;
-using Moongate.UO.Data.Hues;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Support;
@@ -51,13 +49,11 @@ public sealed class DragDropFixture
                 IsMovable = true, Stackable = true
             }
         );
-        templates.Register(
-            new() { Id = "bag", Name = "Bag", Category = "Container", ItemId = 3702, IsMovable = true }
-        );
+        templates.Register(new() { Id = "bag", Name = "Bag", Category = "Container", ItemId = 3702, IsMovable = true });
 
         Service = new(
             Items,
-            new ItemFactoryService(templates, new Random(1)),
+            new ItemFactoryService(templates, new(1)),
             templates,
             new StubWorldService(),
             new StubStackableRule(),
@@ -72,17 +68,26 @@ public sealed class DragDropFixture
         Items.Equip(Actor, Backpack, LayerType.Backpack);
     }
 
-    /// <summary>An actor carrying a single stack of <paramref name="amount" /> gold in the backpack.</summary>
-    public static DragDropFixture WithGoldInBackpack(int amount)
+    public IReadOnlyList<ItemEntity> BackpackContents()
+        => Items.GetContents(Backpack.Id);
+
+    /// <summary>Drops the bag out of the world, to exercise the bounce falling past a dead origin.</summary>
+    public void DeleteTheBag()
+        => Items.Delete(Bag.Id);
+
+    /// <summary>Puts a stack of gold inside the bag, for the nested-origin bounce case.</summary>
+    public ItemEntity PutGoldInTheBag(int amount)
     {
-        var fixture = new DragDropFixture();
+        var gold = new ItemEntity { TemplateId = "gold", ItemId = 3821, Amount = amount, Hue = new(0) };
+        Items.Create(gold);
+        Items.AddToContainer(Bag, gold, new(20, 30));
 
-        fixture.Gold = new() { TemplateId = "gold", ItemId = 3821, Amount = amount, Hue = new Hue(0) };
-        fixture.Items.Create(fixture.Gold);
-        fixture.Items.AddToContainer(fixture.Backpack, fixture.Gold, new(50, 70));
-
-        return fixture;
+        return gold;
     }
+
+    /// <summary>Takes the backpack off the actor, to exercise the bounce falling all the way to the feet.</summary>
+    public void RemoveTheBackpack()
+        => Items.Unequip(Actor, LayerType.Backpack);
 
     /// <summary>An actor carrying an empty bag inside the backpack, for the nesting cases.</summary>
     public static DragDropFixture WithBagInBackpack()
@@ -96,24 +101,15 @@ public sealed class DragDropFixture
         return fixture;
     }
 
-    public IReadOnlyList<ItemEntity> BackpackContents()
-        => Items.GetContents(Backpack.Id);
-
-    /// <summary>Drops the bag out of the world, to exercise the bounce falling past a dead origin.</summary>
-    public void DeleteTheBag()
-        => Items.Delete(Bag.Id);
-
-    /// <summary>Takes the backpack off the actor, to exercise the bounce falling all the way to the feet.</summary>
-    public void RemoveTheBackpack()
-        => Items.Unequip(Actor, LayerType.Backpack);
-
-    /// <summary>Puts a stack of gold inside the bag, for the nested-origin bounce case.</summary>
-    public ItemEntity PutGoldInTheBag(int amount)
+    /// <summary>An actor carrying a single stack of <paramref name="amount" /> gold in the backpack.</summary>
+    public static DragDropFixture WithGoldInBackpack(int amount)
     {
-        var gold = new ItemEntity { TemplateId = "gold", ItemId = 3821, Amount = amount, Hue = new Hue(0) };
-        Items.Create(gold);
-        Items.AddToContainer(Bag, gold, new(20, 30));
+        var fixture = new DragDropFixture();
 
-        return gold;
+        fixture.Gold = new() { TemplateId = "gold", ItemId = 3821, Amount = amount, Hue = new(0) };
+        fixture.Items.Create(fixture.Gold);
+        fixture.Items.AddToContainer(fixture.Backpack, fixture.Gold, new(50, 70));
+
+        return fixture;
     }
 }

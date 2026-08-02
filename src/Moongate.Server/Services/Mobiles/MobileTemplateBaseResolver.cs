@@ -1,5 +1,4 @@
 using Moongate.UO.Data.Mobiles.Templates;
-using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.Mobiles;
 

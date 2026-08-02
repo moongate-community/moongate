@@ -1,6 +1,5 @@
 using System.Net.Sockets;
 using Moongate.Core.Extensions;
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Persistence.Entities;
@@ -13,7 +12,6 @@ using Moongate.Server.Abstractions.Types.World;
 using Moongate.Server.Commands;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
-using SquidStd.Network.Client;
 
 namespace Moongate.Tests.Server.Commands;
 
@@ -24,15 +22,67 @@ namespace Moongate.Tests.Server.Commands;
 /// </summary>
 public class WhereCommandTests
 {
-    [Fact]
-    public void Execute_RaisesAnObjectCursorForTheCaller()
+    private sealed class Fixture
     {
-        var world = new Fixture();
-        var session = world.Session();
+        private readonly FakePersistenceService _persistence = new();
+        private readonly StubSessionManager _sessions = new();
 
-        world.Command.Execute(Context(session.Character));
+        public Fixture()
+        {
+            Targets = new();
+            Command = new(Targets, _sessions, _persistence);
+        }
 
-        Assert.Equal(TargetSelectionType.Object, world.Targets.LastSelection);
+        public RecordingTargetService Targets { get; }
+
+        public WhereCommand Command { get; }
+
+        public MobileEntity Mobile(string name)
+        {
+            var mobile = new MobileEntity { Name = name, MapId = 1, Position = new(1, 1, 0) };
+
+            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+
+            return mobile;
+        }
+
+        public PlayerSession Session()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var session = new PlayerSession(new(socket, Stream.Null));
+
+            session.SetCharacter(Mobile("Squid"));
+            _sessions.Connections.Add(session);
+
+            return session;
+        }
+    }
+
+    /// <summary>Captures the request so a test can answer it, without correlating cursor ids.</summary>
+    private sealed class RecordingTargetService : IPlayerTargetService
+    {
+        private Action<TargetResult>? _onTarget;
+
+        public TargetSelectionType? LastSelection { get; private set; }
+
+        public void Answer(TargetResult result)
+            => _onTarget?.Invoke(result);
+
+        public bool Cancel(PlayerSession session)
+            => false;
+
+        public void Forget(PlayerSession session) { }
+
+        public TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet)
+            => TargetResultType.Cancelled;
+
+        public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
+        {
+            LastSelection = selection;
+            _onTarget = onTarget;
+
+            return 1;
+        }
     }
 
     [Fact]
@@ -58,6 +108,17 @@ public class WhereCommandTests
         world.Targets.Answer(new(TargetResultType.Location, Serial.Zero, new(40, 50, 0), 0));
 
         Assert.Contains(replies, r => r.Contains("40") && r.Contains("50"));
+    }
+
+    [Fact]
+    public void Execute_RaisesAnObjectCursorForTheCaller()
+    {
+        var world = new Fixture();
+        var session = world.Session();
+
+        world.Command.Execute(Context(session.Character));
+
+        Assert.Equal(TargetSelectionType.Object, world.Targets.LastSelection);
     }
 
     // Escape is the common answer, and saying nothing would leave the player wondering whether the
@@ -89,67 +150,4 @@ public class WhereCommandTests
 
     private static CommandContext Context(MobileEntity? actor, Action<string>? reply = null)
         => new(CommandSourceType.InGame, actor, [], reply ?? (_ => { }));
-
-    private sealed class Fixture
-    {
-        private readonly FakePersistenceService _persistence = new();
-        private readonly StubSessionManager _sessions = new();
-
-        public Fixture()
-        {
-            Targets = new();
-            Command = new(Targets, _sessions, _persistence);
-        }
-
-        public RecordingTargetService Targets { get; }
-
-        public WhereCommand Command { get; }
-
-        public PlayerSession Session()
-        {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var session = new PlayerSession(new SquidStdTcpClient(socket, Stream.Null));
-
-            session.SetCharacter(Mobile("Squid"));
-            _sessions.Connections.Add(session);
-
-            return session;
-        }
-
-        public MobileEntity Mobile(string name)
-        {
-            var mobile = new MobileEntity { Name = name, MapId = 1, Position = new(1, 1, 0) };
-
-            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-
-            return mobile;
-        }
-    }
-
-    /// <summary>Captures the request so a test can answer it, without correlating cursor ids.</summary>
-    private sealed class RecordingTargetService : IPlayerTargetService
-    {
-        private Action<TargetResult>? _onTarget;
-
-        public TargetSelectionType? LastSelection { get; private set; }
-
-        public void Answer(TargetResult result)
-            => _onTarget?.Invoke(result);
-
-        public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
-        {
-            LastSelection = selection;
-            _onTarget = onTarget;
-
-            return 1;
-        }
-
-        public bool Cancel(PlayerSession session)
-            => false;
-
-        public TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet)
-            => TargetResultType.Cancelled;
-
-        public void Forget(PlayerSession session) { }
-    }
 }

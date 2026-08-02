@@ -3,9 +3,8 @@ using Moongate.Http.Plugin.Data.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Mobiles;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Persistence.Entities;
-using Moongate.Ultima.Imaging;
-using Moongate.UO.Data.Types;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Ultima.Imaging;
 using SquidStd.Core.Directories;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
@@ -74,8 +73,10 @@ public sealed class MobileCharacterImageService : IMobileCharacterImageService
             mobile.HairHue.Value,
             mobile.FacialHairStyle,
             mobile.FacialHairHue.Value,
-            [.. equipped.Where(worn => worn.EquippedLayer is not null)
-                        .Select(worn => new MobileFigureEquipment(worn.TemplateId, worn.Hue.Value))]
+            [
+                .. equipped.Where(worn => worn.EquippedLayer is not null)
+                           .Select(worn => new MobileFigureEquipment(worn.TemplateId, worn.Hue.Value))
+            ]
         );
 
         return await RenderAsync(() => _figures.Render(request), path, hash, cancellationToken);
@@ -111,8 +112,10 @@ public sealed class MobileCharacterImageService : IMobileCharacterImageService
             mobile.HairHue.Value,
             mobile.FacialHairStyle,
             mobile.FacialHairHue.Value,
-            [.. equipped.Where(worn => worn.EquippedLayer is not null)
-                        .Select(worn => new MobileFigureEquipment(worn.TemplateId, worn.Hue.Value))]
+            [
+                .. equipped.Where(worn => worn.EquippedLayer is not null)
+                           .Select(worn => new MobileFigureEquipment(worn.TemplateId, worn.Hue.Value))
+            ]
         );
 
         return await RenderAsync(() => _paperdolls.Render(request), path, hash, cancellationToken);

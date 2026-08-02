@@ -54,6 +54,27 @@ public readonly record struct CompressedGumpPacket(
         WriteBlock(ref writer, stringsBlock, strings.Length);
     }
 
+    // An empty payload is a single zero int, not an empty block with two lengths.
+    private static int BlockLength(byte[] compressed)
+        => compressed.Length == 0 ? 4 : 8 + compressed.Length;
+
+    private static byte[] Deflate(byte[] payload)
+    {
+        if (payload.Length == 0)
+        {
+            return [];
+        }
+
+        using var output = new MemoryStream();
+
+        using (var zlib = new ZLibStream(output, CompressionLevel.Optimal, true))
+        {
+            zlib.Write(payload);
+        }
+
+        return output.ToArray();
+    }
+
     /// <summary>
     /// Lays the strings end to end, each as a big-endian character count then big-endian UTF-16.
     /// </summary>
@@ -75,27 +96,6 @@ public readonly record struct CompressedGumpPacket(
 
         return buffer.ToArray();
     }
-
-    private static byte[] Deflate(byte[] payload)
-    {
-        if (payload.Length == 0)
-        {
-            return [];
-        }
-
-        using var output = new MemoryStream();
-
-        using (var zlib = new ZLibStream(output, CompressionLevel.Optimal, true))
-        {
-            zlib.Write(payload);
-        }
-
-        return output.ToArray();
-    }
-
-    // An empty payload is a single zero int, not an empty block with two lengths.
-    private static int BlockLength(byte[] compressed)
-        => compressed.Length == 0 ? 4 : 8 + compressed.Length;
 
     private static void WriteBlock(ref SpanWriter writer, byte[] compressed, int uncompressedLength)
     {

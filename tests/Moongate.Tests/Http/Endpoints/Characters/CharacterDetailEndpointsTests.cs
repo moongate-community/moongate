@@ -11,7 +11,6 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Mobiles;
-using Moongate.UO.Data.Skills;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
@@ -23,38 +22,36 @@ namespace Moongate.Tests.Http.Endpoints.Characters;
 /// </summary>
 public class CharacterDetailEndpointsTests
 {
+    // The API reports serials as 0x40000001, so its own value must address its own route -- the exact
+    // defect fixed on the image routes in PR #167.
     [Fact]
-    public async Task Get_TheCallersOwnCharacter_ReturnsItWithEquipmentAndBackpack()
+    public async Task Get_AcceptsTheHexSerialTheApiReports()
     {
         await using var server = await StartAsync(AccountLevelType.Player);
         var character = Create(server, "tom", "Freydis");
 
         await server.AuthenticateAsync();
 
-        var detail = await server.Client.GetFromJsonAsync<CharacterDetailResponse>($"/api/v1/characters/{character}");
+        // Create returns the serial already in the API's own form; asserting that keeps this test
+        // honest if that form ever changes.
+        Assert.StartsWith("0x", character);
 
-        Assert.Equal("Freydis", detail!.Character.Name);
-        Assert.NotNull(detail.Equipment);
-        Assert.NotNull(detail.Backpack);
+        var response = await server.Client.GetAsync($"/api/v1/characters/{character}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
-    // The entity stores 500 tenths; the API reports 50 points. A consumer that forgot the division
-    // would publish a character with 500.0 alchemy, so the route is asserted in the reported unit.
     [Fact]
-    public async Task Get_ReportsTheCharactersSkillsInPoints()
+    public async Task Get_AnUnknownSerial_IsNotFound()
     {
-        await using var server = await StartAsync(AccountLevelType.Player);
-        var character = Create(server, "tom", "Freydis");
+        await using var server = await StartAsync();
 
         await server.AuthenticateAsync();
 
-        var detail = await server.Client.GetFromJsonAsync<CharacterDetailResponse>($"/api/v1/characters/{character}");
-
-        var skill = Assert.Single(detail!.Skills);
-
-        Assert.Equal("Alchemy", skill.Name);
-        Assert.Equal(50.0, skill.Value);
-        Assert.Equal("Up", skill.Lock);
+        Assert.Equal(
+            HttpStatusCode.NotFound,
+            (await server.Client.GetAsync("/api/v1/characters/0x0000DEAD")).StatusCode
+        );
     }
 
     // The account comes from the token. A player who could read another account's character by
@@ -78,7 +75,7 @@ public class CharacterDetailEndpointsTests
     [Fact]
     public async Task Get_AnotherAccountsCharacter_AsStaff_ReturnsIt()
     {
-        await using var server = await StartAsync(AccountLevelType.Administrator);
+        await using var server = await StartAsync();
 
         server.Accounts.Create("alice", "secret", null, AccountLevelType.Player);
 
@@ -92,36 +89,38 @@ public class CharacterDetailEndpointsTests
         Assert.Equal("alice", detail.Character.AccountUsername);
     }
 
+    // The entity stores 500 tenths; the API reports 50 points. A consumer that forgot the division
+    // would publish a character with 500.0 alchemy, so the route is asserted in the reported unit.
     [Fact]
-    public async Task Get_AnUnknownSerial_IsNotFound()
-    {
-        await using var server = await StartAsync();
-
-        await server.AuthenticateAsync();
-
-        Assert.Equal(
-            HttpStatusCode.NotFound,
-            (await server.Client.GetAsync("/api/v1/characters/0x0000DEAD")).StatusCode
-        );
-    }
-
-    // The API reports serials as 0x40000001, so its own value must address its own route -- the exact
-    // defect fixed on the image routes in PR #167.
-    [Fact]
-    public async Task Get_AcceptsTheHexSerialTheApiReports()
+    public async Task Get_ReportsTheCharactersSkillsInPoints()
     {
         await using var server = await StartAsync(AccountLevelType.Player);
         var character = Create(server, "tom", "Freydis");
 
         await server.AuthenticateAsync();
 
-        // Create returns the serial already in the API's own form; asserting that keeps this test
-        // honest if that form ever changes.
-        Assert.StartsWith("0x", character);
+        var detail = await server.Client.GetFromJsonAsync<CharacterDetailResponse>($"/api/v1/characters/{character}");
 
-        var response = await server.Client.GetAsync($"/api/v1/characters/{character}");
+        var skill = Assert.Single(detail!.Skills);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Alchemy", skill.Name);
+        Assert.Equal(50.0, skill.Value);
+        Assert.Equal("Up", skill.Lock);
+    }
+
+    [Fact]
+    public async Task Get_TheCallersOwnCharacter_ReturnsItWithEquipmentAndBackpack()
+    {
+        await using var server = await StartAsync(AccountLevelType.Player);
+        var character = Create(server, "tom", "Freydis");
+
+        await server.AuthenticateAsync();
+
+        var detail = await server.Client.GetFromJsonAsync<CharacterDetailResponse>($"/api/v1/characters/{character}");
+
+        Assert.Equal("Freydis", detail!.Character.Name);
+        Assert.NotNull(detail.Equipment);
+        Assert.NotNull(detail.Backpack);
     }
 
     [Fact]
@@ -154,16 +153,6 @@ public class CharacterDetailEndpointsTests
         return server.Accounts.GetByUsername(username)!.MobileIds[^1].ToString();
     }
 
-    /// <summary>The two skills the creation packet below hands out, so the route can name them.</summary>
-    private static ISkillService SkillRegistry()
-    {
-        var skills = new SkillService();
-
-        skills.Register(new() { Id = 1, Name = "Alchemy" });
-
-        return skills;
-    }
-
     private static CharacterCreationPacket Packet(string name)
         => new(
             0,
@@ -186,6 +175,16 @@ public class CharacterDetailEndpointsTests
             0x0766
         );
 
+    /// <summary>The two skills the creation packet below hands out, so the route can name them.</summary>
+    private static ISkillService SkillRegistry()
+    {
+        var skills = new SkillService();
+
+        skills.Register(new() { Id = 1, Name = "Alchemy" });
+
+        return skills;
+    }
+
     private static async Task<TestApiServer> StartAsync(AccountLevelType level = AccountLevelType.Administrator)
         => await TestApiServer.StartAsync(
                level,
@@ -197,7 +196,7 @@ public class CharacterDetailEndpointsTests
                               container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
                               container.Register<CharacterAccessService>(Reuse.Singleton);
                               container.Register<CharacterInventoryReader>(Reuse.Singleton);
-                              container.RegisterInstance<ISkillService>(SkillRegistry());
+                              container.RegisterInstance(SkillRegistry());
                               container.Register<CharacterSkillReader>(Reuse.Singleton);
                               container.RegisterApiEndpointInstance(
                                   new CharacterDetailEndpoints(

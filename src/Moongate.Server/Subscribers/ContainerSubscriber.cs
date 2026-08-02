@@ -66,40 +66,6 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         return contents;
     }
 
-    /// <summary>
-    /// The gump to open the item with, or null when it is not a container. The template's own
-    /// <c>GumpId</c> wins; failing that the gump table is asked for one matching the graphic; failing
-    /// that it is the plain bag. This is ModernUO's chain — an overridden <c>DefaultGumpID</c>, then
-    /// <c>ContainerData.GetData(itemID)</c>, then that table's default entry — and it is why the
-    /// backpack is listed in neither: it lands on the default.
-    /// </summary>
-    public int? ResolveGumpId(ItemEntity item)
-    {
-        if (_templates.GetById(item.TemplateId)?.Container is not { } container)
-        {
-            return null;
-        }
-
-        return container.GumpId ?? _gumps.GetByItemId(item.ItemId)?.GumpId ?? ContainerGumpLayout.DefaultGumpId;
-    }
-
-    /// <summary>A departing player has nothing open any more; their entries would otherwise linger.</summary>
-    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
-    {
-        if (message.Session.Character is { } character)
-        {
-            _openers.ForgetMobile(character.Id);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public void Subscribe(IEventBus eventBus)
-    {
-        eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
-        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
-    }
-
     public Task OnDoubleClick(ItemDoubleClickEvent message, CancellationToken cancellationToken)
     {
         if (!_sessions.TryGet(message.SessionId, out var session) || _items.GetById(message.Serial) is not { } item)
@@ -135,5 +101,39 @@ public sealed class ContainerSubscriber : IEventSubscriberRegistration
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>A departing player has nothing open any more; their entries would otherwise linger.</summary>
+    public Task OnSessionDestroyed(SessionDestroyedEvent message, CancellationToken cancellationToken)
+    {
+        if (message.Session.Character is { } character)
+        {
+            _openers.ForgetMobile(character.Id);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// The gump to open the item with, or null when it is not a container. The template's own
+    /// <c>GumpId</c> wins; failing that the gump table is asked for one matching the graphic; failing
+    /// that it is the plain bag. This is ModernUO's chain — an overridden <c>DefaultGumpID</c>, then
+    /// <c>ContainerData.GetData(itemID)</c>, then that table's default entry — and it is why the
+    /// backpack is listed in neither: it lands on the default.
+    /// </summary>
+    public int? ResolveGumpId(ItemEntity item)
+    {
+        if (_templates.GetById(item.TemplateId)?.Container is not { } container)
+        {
+            return null;
+        }
+
+        return container.GumpId ?? _gumps.GetByItemId(item.ItemId)?.GumpId ?? ContainerGumpLayout.DefaultGumpId;
+    }
+
+    public void Subscribe(IEventBus eventBus)
+    {
+        eventBus.Subscribe<ItemDoubleClickEvent>(OnDoubleClick);
+        eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
     }
 }

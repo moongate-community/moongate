@@ -4,7 +4,6 @@ using Moongate.Tests.Support;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Localization;
 using Moongate.UO.Data.Items;
-using SquidStd.Core.Directories;
 
 namespace Moongate.Tests.Data.Items;
 
@@ -51,14 +50,6 @@ public class ItemNameClilocDataTests
         );
     }
 
-    private static string Normalize(string value)
-        => new(
-            value.Replace('_', ' ')
-                 .ToLowerInvariant()
-                 .Where(character => char.IsLetterOrDigit(character) || character == ' ')
-                 .ToArray()
-        );
-
     private static async Task<(ItemTemplateService Templates, Dictionary<int, string> Cliloc)> Load()
     {
         Files.SetDirectory(ClientFiles.Directory);
@@ -75,10 +66,18 @@ public class ItemNameClilocDataTests
         var root = Path.Combine(Path.GetTempPath(), "mg-names-" + Guid.NewGuid().ToString("N"));
         var templates = new ItemTemplateService();
 
-        await new ItemTemplatesLoader(templates, new DirectoriesConfig(root, [])).LoadAsync();
+        await new ItemTemplatesLoader(templates, new(root, [])).LoadAsync();
 
         Directory.Delete(root, true);
 
         return (templates, cliloc);
     }
+
+    private static string Normalize(string value)
+        => new(
+            value.Replace('_', ' ')
+                 .ToLowerInvariant()
+                 .Where(character => char.IsLetterOrDigit(character) || character == ' ')
+                 .ToArray()
+        );
 }

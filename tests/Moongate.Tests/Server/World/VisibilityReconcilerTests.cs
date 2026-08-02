@@ -6,7 +6,6 @@ using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
-using SquidStd.Network.Client;
 using SquidStd.Services.Core.Services;
 
 namespace Moongate.Tests.Server.World;
@@ -17,6 +16,60 @@ namespace Moongate.Tests.Server.World;
 /// </summary>
 public class VisibilityReconcilerTests
 {
+    private sealed class Fixture
+    {
+        private readonly FakePersistenceService _persistence = new();
+        private readonly SpatialIndexService _spatial;
+        private readonly StubSessionManager _sessions = new();
+
+        public Fixture()
+        {
+            _spatial = new(_persistence, new StubLoopAffinity(), new EventBusService());
+            Visibility = new(_spatial, new ItemService(_persistence), new VirtualSerialService());
+            Reconciler = new(_sessions, Visibility, new StubGameLoopContext());
+        }
+
+        public VisibilityService Visibility { get; }
+
+        public VisibilityReconciler Reconciler { get; }
+
+        public MobileEntity Mobile(Point3D position)
+        {
+            var mobile = new MobileEntity { Name = "Someone", MapId = 1, Position = position };
+
+            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+            _spatial.AddOrUpdate(mobile);
+
+            return mobile;
+        }
+
+        public void Move(MobileEntity mobile, Point3D position)
+        {
+            mobile.Position = position;
+            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+            _spatial.AddOrUpdate(mobile);
+        }
+
+        public PlayerSession Session(Point3D position)
+        {
+            var session = SessionWithoutCharacter();
+
+            session.SetCharacter(Mobile(position));
+
+            return session;
+        }
+
+        public PlayerSession SessionWithoutCharacter()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var session = new PlayerSession(new(socket, Stream.Null));
+
+            _sessions.Connections.Add(session);
+
+            return session;
+        }
+    }
+
     [Fact]
     public void Tick_HealsASessionTheReactivePathLeftWrong()
     {
@@ -63,59 +116,5 @@ public class VisibilityReconcilerTests
         world.SessionWithoutCharacter();
 
         world.Reconciler.Tick();
-    }
-
-    private sealed class Fixture
-    {
-        private readonly FakePersistenceService _persistence = new();
-        private readonly SpatialIndexService _spatial;
-        private readonly StubSessionManager _sessions = new();
-
-        public Fixture()
-        {
-            _spatial = new(_persistence, new StubLoopAffinity(), new EventBusService());
-            Visibility = new VisibilityService(_spatial, new ItemService(_persistence), new VirtualSerialService());
-            Reconciler = new(_sessions, Visibility, new StubGameLoopContext());
-        }
-
-        public VisibilityService Visibility { get; }
-
-        public VisibilityReconciler Reconciler { get; }
-
-        public PlayerSession Session(Point3D position)
-        {
-            var session = SessionWithoutCharacter();
-
-            session.SetCharacter(Mobile(position));
-
-            return session;
-        }
-
-        public PlayerSession SessionWithoutCharacter()
-        {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var session = new PlayerSession(new SquidStdTcpClient(socket, Stream.Null));
-
-            _sessions.Connections.Add(session);
-
-            return session;
-        }
-
-        public MobileEntity Mobile(Point3D position)
-        {
-            var mobile = new MobileEntity { Name = "Someone", MapId = 1, Position = position };
-
-            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-            _spatial.AddOrUpdate(mobile);
-
-            return mobile;
-        }
-
-        public void Move(MobileEntity mobile, Point3D position)
-        {
-            mobile.Position = position;
-            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-            _spatial.AddOrUpdate(mobile);
-        }
     }
 }

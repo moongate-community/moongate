@@ -1,4 +1,3 @@
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming;
 using Moongate.Network.Packets.Outgoing;
@@ -36,15 +35,15 @@ public sealed class DropItemHandler : IPacketHandler<DropItemPacket>, IPacketHan
 
         // The wire uses all-ones for "on the ground"; the service uses Serial.Zero.
         var container = packet.Container.Value == DropItemPacket.GroundContainer
-            ? Serial.Zero
-            : packet.Container;
+                            ? Serial.Zero
+                            : packet.Container;
 
         var decision = _dragDrop.Drop(
             character,
             session.HeldItemId,
             container,
-            new Point3D(packet.X, packet.Y, packet.Z),
-            new Point2D(packet.X, packet.Y)
+            new(packet.X, packet.Y, packet.Z),
+            new(packet.X, packet.Y)
         );
 
         if (!decision.Accepted)

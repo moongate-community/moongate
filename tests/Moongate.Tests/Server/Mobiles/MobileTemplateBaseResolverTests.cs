@@ -15,6 +15,57 @@ public class MobileTemplateBaseResolverTests
         Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([a, b]));
     }
 
+    // Omitting Gender and writing Gender: Male used to be indistinguishable, so a derived template
+    // could never state that it is male against a female base.
+    [Fact]
+    public void Resolve_DerivedForcingMale_BeatsAFemaleBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
+        var derived = new MobileTemplate
+        {
+            Id = "butler", BaseMobile = "base_maid", Gender = MobileTemplateGenderType.Male
+        };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal(MobileTemplateGenderType.Male, resolved.Single(template => template.Id == "butler").Gender);
+    }
+
+    [Fact]
+    public void Resolve_DerivedWithItsOwnNamePool_KeepsIt()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
+        var derived = new MobileTemplate { Id = "guard_female", BaseMobile = "base_human", NamePool = "female" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal("female", resolved.Single(template => template.Id == "guard_female").NamePool);
+    }
+
+    [Fact]
+    public void Resolve_DerivedWithNoGender_StillInheritsTheBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
+        var derived = new MobileTemplate { Id = "maid", BaseMobile = "base_maid" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal(MobileTemplateGenderType.Female, resolved.Single(template => template.Id == "maid").Gender);
+    }
+
+    // The five-line data change hangs off this: base_human_npc declares the pool once and all
+    // thirteen human templates inherit it.
+    [Fact]
+    public void Resolve_DerivedWithNoNamePool_InheritsTheBase()
+    {
+        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
+        var derived = new MobileTemplate { Id = "guard", BaseMobile = "base_human" };
+
+        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
+
+        Assert.Equal("male", resolved.Single(template => template.Id == "guard").NamePool);
+    }
+
     [Fact]
     public void Resolve_MergesScalarsSkillsTagsAndAppearance()
     {
@@ -62,56 +113,5 @@ public class MobileTemplateBaseResolverTests
 
         var ex = Assert.Throws<InvalidDataException>(() => new MobileTemplateBaseResolver().Resolve([derived]));
         Assert.Contains("missing", ex.Message);
-    }
-
-    // The five-line data change hangs off this: base_human_npc declares the pool once and all
-    // thirteen human templates inherit it.
-    [Fact]
-    public void Resolve_DerivedWithNoNamePool_InheritsTheBase()
-    {
-        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
-        var derived = new MobileTemplate { Id = "guard", BaseMobile = "base_human" };
-
-        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
-
-        Assert.Equal("male", resolved.Single(template => template.Id == "guard").NamePool);
-    }
-
-    [Fact]
-    public void Resolve_DerivedWithItsOwnNamePool_KeepsIt()
-    {
-        var baseTemplate = new MobileTemplate { Id = "base_human", NamePool = "male" };
-        var derived = new MobileTemplate { Id = "guard_female", BaseMobile = "base_human", NamePool = "female" };
-
-        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
-
-        Assert.Equal("female", resolved.Single(template => template.Id == "guard_female").NamePool);
-    }
-
-    // Omitting Gender and writing Gender: Male used to be indistinguishable, so a derived template
-    // could never state that it is male against a female base.
-    [Fact]
-    public void Resolve_DerivedForcingMale_BeatsAFemaleBase()
-    {
-        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
-        var derived = new MobileTemplate
-        {
-            Id = "butler", BaseMobile = "base_maid", Gender = MobileTemplateGenderType.Male
-        };
-
-        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
-
-        Assert.Equal(MobileTemplateGenderType.Male, resolved.Single(template => template.Id == "butler").Gender);
-    }
-
-    [Fact]
-    public void Resolve_DerivedWithNoGender_StillInheritsTheBase()
-    {
-        var baseTemplate = new MobileTemplate { Id = "base_maid", Gender = MobileTemplateGenderType.Female };
-        var derived = new MobileTemplate { Id = "maid", BaseMobile = "base_maid" };
-
-        var resolved = new MobileTemplateBaseResolver().Resolve([baseTemplate, derived]);
-
-        Assert.Equal(MobileTemplateGenderType.Female, resolved.Single(template => template.Id == "maid").Gender);
     }
 }

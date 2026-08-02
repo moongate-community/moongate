@@ -38,7 +38,8 @@ public class MobileTemplateRepositoryIntegrityTests
             var warrior = mobiles.GetById("warrior_guard_npc")!;
             Assert.Null(warrior.Gender);
 
-            var warriorFemale = Assert.Single(warrior.Variants, variant => variant.Gender == MobileTemplateGenderType.Female);
+            var warriorFemale =
+                Assert.Single(warrior.Variants, variant => variant.Gender == MobileTemplateGenderType.Female);
             Assert.Equal(401, warriorFemale.Appearance.Body);
             Assert.Equal("female", warriorFemale.NamePool);
             Assert.DoesNotContain(warriorFemale.Equipment, entry => entry.Layer is "Arms" or "Waist");

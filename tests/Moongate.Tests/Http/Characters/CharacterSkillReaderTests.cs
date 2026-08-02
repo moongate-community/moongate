@@ -12,6 +12,46 @@ namespace Moongate.Tests.Http.Characters;
 /// </summary>
 public class CharacterSkillReaderTests
 {
+    private sealed class SkillRegistryStub : ISkillService
+    {
+        private readonly Dictionary<int, SkillDefinition> _definitions;
+
+        public SkillRegistryStub(IEnumerable<(int Id, string Name)> definitions)
+        {
+            _definitions = definitions.ToDictionary(
+                definition => definition.Id,
+                definition => new SkillDefinition { Id = definition.Id, Name = definition.Name }
+            );
+        }
+
+        public IReadOnlyList<SkillDefinition> All => [.. _definitions.Values];
+
+        public int Count => _definitions.Count;
+
+        public SkillDefinition? GetById(int id)
+            => _definitions.GetValueOrDefault(id);
+
+        public SkillDefinition? GetByName(string name)
+            => throw new NotSupportedException();
+
+        public void Register(SkillDefinition definition)
+            => throw new NotSupportedException();
+    }
+
+    // The skill catalogue is data, so it can lag the world: a character can hold a skill nothing
+    // defines. Its id is worse than a name and far better than a blank row.
+    [Fact]
+    public void Read_FallsBackToTheIdWhenNoDefinitionIsRegistered()
+    {
+        var mobile = With((42, 300, 1000, SkillLockType.Up));
+
+        Assert.Equal("42", Assert.Single(new CharacterSkillReader(Registry()).Read(mobile)).Name);
+    }
+
+    [Fact]
+    public void Read_IsEmptyForACharacterWithNoSkills()
+        => Assert.Empty(new CharacterSkillReader(Registry()).Read(new() { Id = new(1) }));
+
     [Fact]
     public void Read_NamesEachSkillFromTheRegistry()
     {
@@ -20,6 +60,18 @@ public class CharacterSkillReaderTests
         var skills = new CharacterSkillReader(Registry((1, "Swordsmanship"))).Read(mobile);
 
         Assert.Equal("Swordsmanship", Assert.Single(skills).Name);
+    }
+
+    // The dictionary is keyed by id and iterates in insertion order, which is whatever order the
+    // creation packet happened to use. A list a human reads should be alphabetical.
+    [Fact]
+    public void Read_OrdersByName()
+    {
+        var mobile = With((1, 500, 1000, SkillLockType.Up), (2, 400, 1000, SkillLockType.Up));
+
+        var skills = new CharacterSkillReader(Registry((1, "Swordsmanship"), (2, "Alchemy"))).Read(mobile);
+
+        Assert.Equal(["Alchemy", "Swordsmanship"], skills.Select(skill => skill.Name));
     }
 
     // 500 tenths is 50.0 points. Reporting the tenths would leave every consumer to remember the
@@ -43,31 +95,8 @@ public class CharacterSkillReaderTests
         Assert.Equal("Locked", Assert.Single(new CharacterSkillReader(Registry((1, "Swordsmanship"))).Read(mobile)).Lock);
     }
 
-    // The skill catalogue is data, so it can lag the world: a character can hold a skill nothing
-    // defines. Its id is worse than a name and far better than a blank row.
-    [Fact]
-    public void Read_FallsBackToTheIdWhenNoDefinitionIsRegistered()
-    {
-        var mobile = With((42, 300, 1000, SkillLockType.Up));
-
-        Assert.Equal("42", Assert.Single(new CharacterSkillReader(Registry()).Read(mobile)).Name);
-    }
-
-    // The dictionary is keyed by id and iterates in insertion order, which is whatever order the
-    // creation packet happened to use. A list a human reads should be alphabetical.
-    [Fact]
-    public void Read_OrdersByName()
-    {
-        var mobile = With((1, 500, 1000, SkillLockType.Up), (2, 400, 1000, SkillLockType.Up));
-
-        var skills = new CharacterSkillReader(Registry((1, "Swordsmanship"), (2, "Alchemy"))).Read(mobile);
-
-        Assert.Equal(["Alchemy", "Swordsmanship"], skills.Select(skill => skill.Name));
-    }
-
-    [Fact]
-    public void Read_IsEmptyForACharacterWithNoSkills()
-        => Assert.Empty(new CharacterSkillReader(Registry()).Read(new MobileEntity { Id = new(1) }));
+    private static ISkillService Registry(params (int Id, string Name)[] definitions)
+        => new SkillRegistryStub(definitions);
 
     private static MobileEntity With(params (int Id, int Value, int Cap, SkillLockType Lock)[] skills)
     {
@@ -79,36 +108,5 @@ public class CharacterSkillReaderTests
         }
 
         return mobile;
-    }
-
-    private static ISkillService Registry(params (int Id, string Name)[] definitions)
-        => new SkillRegistryStub(definitions);
-
-    private sealed class SkillRegistryStub : ISkillService
-    {
-        private readonly Dictionary<int, SkillDefinition> _definitions;
-
-        public SkillRegistryStub(IEnumerable<(int Id, string Name)> definitions)
-        {
-            _definitions = definitions.ToDictionary(
-                definition => definition.Id,
-                definition => new SkillDefinition { Id = definition.Id, Name = definition.Name }
-            );
-        }
-
-        public IReadOnlyList<SkillDefinition> All
-            => [.. _definitions.Values];
-
-        public int Count
-            => _definitions.Count;
-
-        public SkillDefinition? GetById(int id)
-            => _definitions.GetValueOrDefault(id);
-
-        public SkillDefinition? GetByName(string name)
-            => throw new NotSupportedException();
-
-        public void Register(SkillDefinition definition)
-            => throw new NotSupportedException();
     }
 }

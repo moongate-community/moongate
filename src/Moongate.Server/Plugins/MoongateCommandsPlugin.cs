@@ -35,8 +35,7 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
         container.RegisterCommand<WhereCommand>(
             "where",
             AccountLevelType.GrandMaster,
-            "Raises a target cursor and reports what was clicked.",
-            CommandSourceType.InGame
+            "Raises a target cursor and reports what was clicked."
         );
     }
 }

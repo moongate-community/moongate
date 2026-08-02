@@ -12,7 +12,7 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_Accepted_DetachesTheItemAndRecordsWhereItCameFrom()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1);
+        var fixture = DragDropFixture.WithGoldInBackpack(1);
 
         fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, 1, Serial.Zero, out var heldId, out var origin);
 
@@ -25,13 +25,13 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_AlreadyHolding_RefusesAndLeavesTheItemAlone()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1);
+        var fixture = DragDropFixture.WithGoldInBackpack(1);
 
         var decision = fixture.Service.Lift(
             fixture.Actor,
             fixture.Gold.Id,
             1,
-            heldItemId: (Serial)999,
+            (Serial)999,
             out var heldId,
             out _
         );
@@ -45,13 +45,13 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_PartialStack_KeepsTheOriginalOnTheCursorAndLeavesTheRemainder()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 100);
+        var fixture = DragDropFixture.WithGoldInBackpack(100);
 
         var decision = fixture.Service.Lift(
             fixture.Actor,
             fixture.Gold.Id,
-            amount: 5,
-            heldItemId: Serial.Zero,
+            5,
+            Serial.Zero,
             out var heldId,
             out _
         );
@@ -73,13 +73,13 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_PartialStack_TellsTheClientAboutTheRemainder()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1000);
+        var fixture = DragDropFixture.WithGoldInBackpack(1000);
         var world = new RecordingWorldService();
 
         new ItemRefreshSubscriber(fixture.Items, fixture.Persistence, new ContainerOpenerRegistry(), world)
             .Subscribe(fixture.EventBus);
 
-        fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, amount: 500, Serial.Zero, out _, out _);
+        fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, 500, Serial.Zero, out _, out _);
 
         var remainder = Assert.Single(fixture.BackpackContents());
         var packet = Assert.Single(
@@ -96,7 +96,7 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_UnknownSerial_RefusesAsInspecific()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 1);
+        var fixture = DragDropFixture.WithGoldInBackpack(1);
 
         var decision = fixture.Service.Lift(fixture.Actor, (Serial)0xDEAD, 1, Serial.Zero, out _, out _);
 
@@ -107,7 +107,7 @@ public class DragDropServiceLiftTests
     [Fact]
     public void Lift_WholeStack_CreatesNoRemainder()
     {
-        var fixture = DragDropFixture.WithGoldInBackpack(amount: 100);
+        var fixture = DragDropFixture.WithGoldInBackpack(100);
 
         fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, 100, Serial.Zero, out _, out _);
 

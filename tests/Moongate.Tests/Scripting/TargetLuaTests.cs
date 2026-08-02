@@ -12,20 +12,16 @@ namespace Moongate.Tests.Scripting;
 /// </summary>
 public class TargetLuaTests
 {
+    // Readable as `r.cancelled` rather than by comparing a serial to zero, which is what a script
+    // writer would otherwise have to guess.
     [Fact]
-    public void ObjectResult_CarriesSerialAndPosition()
+    public void CancelledResult_SaysSoDirectly()
     {
         var script = new Script();
 
-        script.Globals["r"] = new TargetResultFactory(script)
-            .ToTable(new(TargetResultType.Object, (Serial)0x4000_0001u, new(10, 20, 5), 0x0EED));
+        script.Globals["r"] = new TargetResultFactory(script).ToTable(TargetResult.Cancelled);
 
-        Assert.False(script.DoString("return r.cancelled").Boolean);
-        Assert.Equal((double)0x4000_0001u, script.DoString("return r.serial").Number);
-        Assert.Equal(10d, script.DoString("return r.x").Number);
-        Assert.Equal(20d, script.DoString("return r.y").Number);
-        Assert.Equal(5d, script.DoString("return r.z").Number);
-        Assert.Equal((double)0x0EED, script.DoString("return r.graphic").Number);
+        Assert.True(script.DoString("return r.cancelled").Boolean);
     }
 
     [Fact]
@@ -40,16 +36,20 @@ public class TargetLuaTests
         Assert.Equal(40d, script.DoString("return r.x").Number);
     }
 
-    // Readable as `r.cancelled` rather than by comparing a serial to zero, which is what a script
-    // writer would otherwise have to guess.
     [Fact]
-    public void CancelledResult_SaysSoDirectly()
+    public void ObjectResult_CarriesSerialAndPosition()
     {
         var script = new Script();
 
-        script.Globals["r"] = new TargetResultFactory(script).ToTable(TargetResult.Cancelled);
+        script.Globals["r"] = new TargetResultFactory(script)
+            .ToTable(new(TargetResultType.Object, (Serial)0x4000_0001u, new(10, 20, 5), 0x0EED));
 
-        Assert.True(script.DoString("return r.cancelled").Boolean);
+        Assert.False(script.DoString("return r.cancelled").Boolean);
+        Assert.Equal(0x4000_0001u, script.DoString("return r.serial").Number);
+        Assert.Equal(10d, script.DoString("return r.x").Number);
+        Assert.Equal(20d, script.DoString("return r.y").Number);
+        Assert.Equal(5d, script.DoString("return r.z").Number);
+        Assert.Equal(0x0EED, script.DoString("return r.graphic").Number);
     }
 
     // Also readable as a string, for a script that wants to branch three ways.

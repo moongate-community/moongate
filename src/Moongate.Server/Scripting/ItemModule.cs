@@ -40,15 +40,6 @@ public sealed class ItemModule
         _clilocs = clilocs;
     }
 
-    /// <summary>
-    /// What to call an item in Lua: its own name, else the client's name for the graphic, else its
-    /// template id. The same chain the tooltip uses in OplService.
-    /// </summary>
-    private string DisplayName(ItemEntity item)
-        => item.Name.Length > 0
-               ? item.Name
-               : _clilocs.Text(ItemClilocs.ForItemId(item.ItemId)) ?? item.TemplateId;
-
     [ScriptFunction("add_to_container", "Places an item into a container at (x, y); false on unknown serials.")]
     public bool AddToContainer(uint container, uint serial, int x, int y)
     {
@@ -197,6 +188,15 @@ public sealed class ItemModule
 
         return owner is null ? null : _items.Unequip(owner, parsed)?.Id.Value;
     }
+
+    /// <summary>
+    /// What to call an item in Lua: its own name, else the client's name for the graphic, else its
+    /// template id. The same chain the tooltip uses in OplService.
+    /// </summary>
+    private string DisplayName(ItemEntity item)
+        => item.Name.Length > 0
+               ? item.Name
+               : _clilocs.Text(ItemClilocs.ForItemId(item.ItemId)) ?? item.TemplateId;
 
     private uint? Persist(IReadOnlyList<ItemEntity> created)
     {

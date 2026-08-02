@@ -19,6 +19,6 @@ public readonly record struct PickUpItemPacket(Serial Serial, ushort Amount) : I
     {
         reader.ReadByte(); // packet id
 
-        return new(new Serial(reader.ReadUInt32()), reader.ReadUInt16());
+        return new(new(reader.ReadUInt32()), reader.ReadUInt16());
     }
 }

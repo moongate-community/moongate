@@ -12,14 +12,11 @@ namespace Moongate.Server.Abstractions.Interfaces.Gumps;
 /// </summary>
 public interface IGumpBuilder
 {
-    /// <summary>Starts a page. Buttons with a page target switch between pages client-side.</summary>
-    void AddPage(int page);
+    /// <summary>A translucent panel — the <c>checkertrans</c> command.</summary>
+    void AddAlphaRegion(int x, int y, int width, int height);
 
     /// <summary>A resizable background frame — the <c>resizepic</c> command.</summary>
     void AddBackground(int x, int y, int width, int height, int gumpId);
-
-    /// <summary>A line of text — the <c>text</c> command. The text itself goes to the strings block.</summary>
-    void AddLabel(int x, int y, int hue, string text);
 
     /// <summary>
     /// A button — the <c>button</c> command. <paramref name="type" /> is 0 for a page switch and 1
@@ -31,29 +28,14 @@ public interface IGumpBuilder
     /// <summary>A checkbox — the <c>checkbox</c> command. Its switch id appears in the response when ticked.</summary>
     void AddCheck(int x, int y, int inactiveId, int activeId, bool initialState, int switchId);
 
-    /// <summary>A text field — the <c>textentry</c> command. Its contents come back keyed by <paramref name="entryId" />.</summary>
-    void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText);
-
     /// <summary>Opens a radio group, so that only one radio inside it can be selected.</summary>
     void AddGroup(int group);
 
-    /// <summary>A translucent panel — the <c>checkertrans</c> command.</summary>
-    void AddAlphaRegion(int x, int y, int width, int height);
-
-    /// <summary>A radio button — the <c>radio</c> command. Its switch id appears in the response when selected.</summary>
-    void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId);
-
-    /// <summary>Text clipped to a box — the <c>croppedtext</c> command.</summary>
-    void AddLabelCropped(int x, int y, int width, int height, int hue, string text);
+    /// <summary>Overrides the gump art the client frames this gump with — the <c>mastergump</c> command.</summary>
+    void AddGumpIdOverride(int gumpId);
 
     /// <summary>An HTML region — the <c>htmlgump</c> command.</summary>
     void AddHtml(int x, int y, int width, int height, string text, bool background, bool scrollbar);
-
-    /// <summary>
-    /// A label drawn through the HTML renderer. Colour, size and centring are markup wrapped around
-    /// the text rather than parameters, because the underlying command is <c>htmlgump</c>.
-    /// </summary>
-    void AddLabelHtml(int x, int y, int width, int height, string text, string hue, int size, bool center);
 
     /// <summary>
     /// A localized HTML region. The command chosen depends on what is supplied: <c>xmfhtmlgump</c>
@@ -95,15 +77,33 @@ public interface IGumpBuilder
     /// <summary>An item's art — <c>tilepic</c>, or <c>tilepichue</c> when hued.</summary>
     void AddItem(int x, int y, int itemId, int hue);
 
-    /// <summary>A cropped region of a gump image — the <c>picinpic</c> command.</summary>
-    void AddSpriteImage(int x, int y, int gumpId, int width, int height, int sx, int sy);
-
-    /// <summary>A cliloc tooltip — the <c>tooltip</c> command, with arguments only when supplied.</summary>
-    void AddTooltip(int number, string? args);
-
     /// <summary>Binds the client's item tooltip to a serial — the <c>itemproperty</c> command.</summary>
     void AddItemProperty(uint serial);
 
-    /// <summary>Overrides the gump art the client frames this gump with — the <c>mastergump</c> command.</summary>
-    void AddGumpIdOverride(int gumpId);
+    /// <summary>A line of text — the <c>text</c> command. The text itself goes to the strings block.</summary>
+    void AddLabel(int x, int y, int hue, string text);
+
+    /// <summary>Text clipped to a box — the <c>croppedtext</c> command.</summary>
+    void AddLabelCropped(int x, int y, int width, int height, int hue, string text);
+
+    /// <summary>
+    /// A label drawn through the HTML renderer. Colour, size and centring are markup wrapped around
+    /// the text rather than parameters, because the underlying command is <c>htmlgump</c>.
+    /// </summary>
+    void AddLabelHtml(int x, int y, int width, int height, string text, string hue, int size, bool center);
+
+    /// <summary>Starts a page. Buttons with a page target switch between pages client-side.</summary>
+    void AddPage(int page);
+
+    /// <summary>A radio button — the <c>radio</c> command. Its switch id appears in the response when selected.</summary>
+    void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId);
+
+    /// <summary>A cropped region of a gump image — the <c>picinpic</c> command.</summary>
+    void AddSpriteImage(int x, int y, int gumpId, int width, int height, int sx, int sy);
+
+    /// <summary>A text field — the <c>textentry</c> command. Its contents come back keyed by <paramref name="entryId" />.</summary>
+    void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText);
+
+    /// <summary>A cliloc tooltip — the <c>tooltip</c> command, with arguments only when supplied.</summary>
+    void AddTooltip(int number, string? args);
 }

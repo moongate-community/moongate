@@ -1,4 +1,3 @@
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Internal;
@@ -21,7 +20,7 @@ public class HeldItemOriginTests
         var origin = HeldItemOrigin.From(item);
 
         Assert.Equal((Serial)99, origin.ContainerId);
-        Assert.Equal(new Point2D(44, 65), origin.ContainerPosition);
+        Assert.Equal(new(44, 65), origin.ContainerPosition);
         Assert.Equal(Serial.Zero, origin.EquippedMobileId);
     }
 
@@ -35,7 +34,7 @@ public class HeldItemOriginTests
         Assert.Equal(Serial.Zero, origin.ContainerId);
         Assert.Equal(Serial.Zero, origin.EquippedMobileId);
         Assert.Equal(1, origin.MapId);
-        Assert.Equal(new Point3D(100, 200, 5), origin.WorldPosition);
+        Assert.Equal(new(100, 200, 5), origin.WorldPosition);
     }
 
     [Fact]

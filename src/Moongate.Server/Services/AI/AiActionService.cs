@@ -9,8 +9,6 @@ using Moongate.Server.Abstractions.Data.AI;
 using Moongate.Server.Abstractions.Interfaces.AI;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.World;
-using Moongate.UO.Data.Hues;
-using Moongate.UO.Data.Types;
 using Serilog;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using ILogger = Serilog.ILogger;

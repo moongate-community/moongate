@@ -1,5 +1,4 @@
 using Moongate.Http.Plugin.Services.Characters;
-using Moongate.Network.Data;
 using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Http.Characters;
@@ -18,31 +17,13 @@ public class OplTextRendererTests
         Assert.Equal("a dagger", renderer.Render(new(500000, "")));
     }
 
+    // How OplService emits free text: a string cliloc whose whole body is one slot.
     [Fact]
-    public void Render_SubstitutesASingleArgument()
+    public void Render_AStringClilocIsItsArgument()
     {
-        var renderer = new OplTextRenderer(Clilocs((1072788, "Weight: ~1_WEIGHT~ stone")));
+        var renderer = new OplTextRenderer(Clilocs((1042971, "~1_val~")));
 
-        Assert.Equal("Weight: 3 stone", renderer.Render(new(1072788, "3")));
-    }
-
-    // Multi-slot arguments arrive TAB-separated, in slot order.
-    [Fact]
-    public void Render_SubstitutesEachSlotInTurn()
-    {
-        var renderer = new OplTextRenderer(Clilocs((1050039, "~1_NUMBER~ ~2_ITEMNAME~")));
-
-        Assert.Equal("500 gold coins", renderer.Render(new(1050039, "500\tgold coins")));
-    }
-
-    // An argument starting with # is itself a cliloc: the stack line names its item that way, and the
-    // prefix is load-bearing rather than decoration.
-    [Fact]
-    public void Render_ResolvesAnArgumentThatIsItselfACliloc()
-    {
-        var renderer = new OplTextRenderer(Clilocs((1050039, "~1_NUMBER~ ~2_ITEMNAME~"), (1020001, "gold coins")));
-
-        Assert.Equal("500 gold coins", renderer.Render(new(1050039, "500\t#1020001")));
+        Assert.Equal("Tommy's spellbook", renderer.Render(new(1042971, "Tommy's spellbook")));
     }
 
     // The string table is client data and may be absent or incomplete. A line nothing describes is
@@ -63,6 +44,33 @@ public class OplTextRendererTests
         Assert.DoesNotContain("~", line);
     }
 
+    // An argument starting with # is itself a cliloc: the stack line names its item that way, and the
+    // prefix is load-bearing rather than decoration.
+    [Fact]
+    public void Render_ResolvesAnArgumentThatIsItselfACliloc()
+    {
+        var renderer = new OplTextRenderer(Clilocs((1050039, "~1_NUMBER~ ~2_ITEMNAME~"), (1020001, "gold coins")));
+
+        Assert.Equal("500 gold coins", renderer.Render(new(1050039, "500\t#1020001")));
+    }
+
+    [Fact]
+    public void Render_SubstitutesASingleArgument()
+    {
+        var renderer = new OplTextRenderer(Clilocs((1072788, "Weight: ~1_WEIGHT~ stone")));
+
+        Assert.Equal("Weight: 3 stone", renderer.Render(new(1072788, "3")));
+    }
+
+    // Multi-slot arguments arrive TAB-separated, in slot order.
+    [Fact]
+    public void Render_SubstitutesEachSlotInTurn()
+    {
+        var renderer = new OplTextRenderer(Clilocs((1050039, "~1_NUMBER~ ~2_ITEMNAME~")));
+
+        Assert.Equal("500 gold coins", renderer.Render(new(1050039, "500\tgold coins")));
+    }
+
     // Fewer arguments than slots is malformed data, not a crash.
     [Fact]
     public void Render_ToleratesMissingArguments()
@@ -73,15 +81,6 @@ public class OplTextRendererTests
 
         Assert.NotNull(line);
         Assert.DoesNotContain("~", line);
-    }
-
-    // How OplService emits free text: a string cliloc whose whole body is one slot.
-    [Fact]
-    public void Render_AStringClilocIsItsArgument()
-    {
-        var renderer = new OplTextRenderer(Clilocs((1042971, "~1_val~")));
-
-        Assert.Equal("Tommy's spellbook", renderer.Render(new(1042971, "Tommy's spellbook")));
     }
 
     private static StubClilocService Clilocs(params (int Cliloc, string Text)[] entries)

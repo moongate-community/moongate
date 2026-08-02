@@ -2,14 +2,13 @@ using DryIoc;
 using Moongate.Core.Interfaces;
 using Moongate.Scripting.Modules;
 using Moongate.Server.Services.Game;
+using Moongate.Tests.Support;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Interfaces.Threading;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
 using SquidStd.Scripting.Lua.Interfaces.Scripts;
 using SquidStd.Services.Core.Extensions;
 using SquidStd.Services.Core.Services.Bootstrap;
-
-using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Scripting;
 
@@ -66,7 +65,10 @@ public class GameLoopModuleTests
             // game.schedule returns a timer id that game.cancel can remove (long delay so it never fires here).
             var scheduled = engine.ExecuteFunction("game.schedule('probe', 60000, function() end)").Data;
             var timerId = scheduled as string;
-            Assert.False(string.IsNullOrEmpty(timerId), $"game.schedule must return a timer id, returned {Describe(scheduled)}");
+            Assert.False(
+                string.IsNullOrEmpty(timerId),
+                $"game.schedule must return a timer id, returned {Describe(scheduled)}"
+            );
 
             var cancelled = engine.ExecuteFunction($"game.cancel('{timerId}')").Data;
             Assert.True(cancelled is true, $"game.cancel('{timerId}') must return true, returned {Describe(cancelled)}");

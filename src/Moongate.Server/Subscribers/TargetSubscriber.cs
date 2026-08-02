@@ -22,13 +22,13 @@ public sealed class TargetSubscriber : IEventSubscriberRegistration
         _targets = targets;
     }
 
-    public void Subscribe(IEventBus eventBus)
-        => eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
-
     public Task OnSessionDestroyed(SessionDestroyedEvent @event, CancellationToken cancellationToken)
     {
         _targets.Forget(@event.Session);
 
         return Task.CompletedTask;
     }
+
+    public void Subscribe(IEventBus eventBus)
+        => eventBus.Subscribe<SessionDestroyedEvent>(OnSessionDestroyed);
 }

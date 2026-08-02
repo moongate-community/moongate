@@ -24,9 +24,6 @@ public sealed class ClilocService : IClilocService, ISquidStdService
         _config = config;
     }
 
-    public string? Text(int cliloc)
-        => _text.GetValueOrDefault(cliloc);
-
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         try
@@ -68,4 +65,7 @@ public sealed class ClilocService : IClilocService, ISquidStdService
 
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
         => ValueTask.CompletedTask;
+
+    public string? Text(int cliloc)
+        => _text.GetValueOrDefault(cliloc);
 }

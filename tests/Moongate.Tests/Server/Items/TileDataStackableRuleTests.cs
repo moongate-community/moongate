@@ -21,8 +21,7 @@ public class TileDataStackableRuleTests
 
     [Fact]
     public void Generic_OverridesATemplateThatSaysNo()
-    {
-        WithClientFiles(
+        => WithClientFiles(
             () =>
             {
                 var rule = new TileDataStackableRule();
@@ -31,30 +30,11 @@ public class TileDataStackableRuleTests
                 Assert.True(rule.IsStackable(item, new() { Stackable = false }));
             }
         );
-    }
-
-    [Fact]
-    public void NoGeneric_OverridesATemplateThatSaysYes()
-    {
-        WithClientFiles(
-            () =>
-            {
-                var rule = new TileDataStackableRule();
-                var item = new ItemEntity { ItemId = PlainId };
-
-                Assert.False(rule.IsStackable(item, new() { Stackable = true }));
-            }
-        );
-    }
 
     // Past the end of the shipped tables there is nothing to defer to, so the template has the say.
-    [Theory]
-    [InlineData(true, true)]
-    [InlineData(false, false)]
-    [InlineData(null, false)]
+    [Theory, InlineData(true, true), InlineData(false, false), InlineData(null, false)]
     public void IdTheClientFilesDoNotDescribe_FallsBackToTheTemplate(bool? stackable, bool expected)
-    {
-        WithClientFiles(
+        => WithClientFiles(
             () =>
             {
                 var rule = new TileDataStackableRule();
@@ -63,7 +43,18 @@ public class TileDataStackableRuleTests
                 Assert.Equal(expected, rule.IsStackable(item, new() { Stackable = stackable }));
             }
         );
-    }
+
+    [Fact]
+    public void NoGeneric_OverridesATemplateThatSaysYes()
+        => WithClientFiles(
+            () =>
+            {
+                var rule = new TileDataStackableRule();
+                var item = new ItemEntity { ItemId = PlainId };
+
+                Assert.False(rule.IsStackable(item, new() { Stackable = true }));
+            }
+        );
 
     /// <summary>
     /// Loads a tiledata.mul holding one stackable tile and one plain one. TileData is a process-wide

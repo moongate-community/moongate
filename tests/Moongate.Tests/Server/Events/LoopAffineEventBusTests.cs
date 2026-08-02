@@ -68,7 +68,7 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(true));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread());
 
         bus.Publish(new LoopEvent());
 
@@ -94,7 +94,7 @@ public class LoopAffineEventBusTests
     {
         var inner = new CapturingEventBus();
         var dispatcher = new MainThreadDispatcherService();
-        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread(true));
+        var bus = new LoopAffineEventBus(inner, dispatcher, new StubLoopThread());
 
         // A never-completed task models a handler that did not finish synchronously (it went async),
         // deterministically — unlike Task.Yield(), whose thread-pool continuation can complete before

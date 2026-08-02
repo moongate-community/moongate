@@ -1,21 +1,19 @@
 using DryIoc;
 using Moongate.Core.Types;
-using Moongate.Server.Abstractions.Interfaces.Accounts;
-using Moongate.Server.Abstractions.Interfaces.Gumps;
-using Moongate.Server.Scripting;
-using SquidStd.Scripting.Lua.Services;
-using SquidStd.Scripting.Lua.Interfaces.Scripts;
-using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
-using Moongate.Server.Scripting.Refs;
-using Moongate.Server.Abstractions.Interfaces.Mobiles;
-using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Scripting;
+using Moongate.Server.Scripting.Refs;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Utils;
+using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Plugin.Abstractions.Data;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
+using SquidStd.Scripting.Lua.Interfaces.Scripts;
+using SquidStd.Scripting.Lua.Services;
 
 namespace Moongate.Server.Plugins;
 
@@ -41,8 +39,8 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
                 resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService lua
                     ? lua.LuaScript
                     : throw new InvalidOperationException(
-                        "MobileRefFactory requires the SquidStd Lua engine implementation."
-                    ),
+                          "MobileRefFactory requires the SquidStd Lua engine implementation."
+                      ),
                 resolver.Resolve<IPersistenceService>(),
                 resolver.Resolve<IChatService>(),
                 resolver.Resolve<IMobileService>(),
@@ -56,8 +54,8 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
                 resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService gumpLua
                     ? gumpLua.LuaScript
                     : throw new InvalidOperationException(
-                        "GumpBuilderFactory requires the SquidStd Lua engine implementation."
-                    )
+                          "GumpBuilderFactory requires the SquidStd Lua engine implementation."
+                      )
             ),
             Reuse.Singleton
         );
@@ -67,8 +65,8 @@ public class MoongateScriptModulesPlugin : ISquidStdPlugin
                 resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService targetLua
                     ? targetLua.LuaScript
                     : throw new InvalidOperationException(
-                        "TargetResultFactory requires the SquidStd Lua engine implementation."
-                    )
+                          "TargetResultFactory requires the SquidStd Lua engine implementation."
+                      )
             ),
             Reuse.Singleton
         );

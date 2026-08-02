@@ -57,6 +57,73 @@ public sealed class DragDropService : IDragDropService
         _eventBus = eventBus;
     }
 
+    public void Bounce(MobileEntity actor, Serial itemId, HeldItemOrigin? origin)
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.bounce");
+
+        // Already gone — deleted, or merged into a stack by a drop that then failed elsewhere.
+        if (_items.GetById(itemId) is not { } item)
+        {
+            return;
+        }
+
+        if (origin is not null && BounceToOrigin(actor, item, origin))
+        {
+            return;
+        }
+
+        if (actor.BackpackId != Serial.Zero && _items.GetById(actor.BackpackId) is { } backpack)
+        {
+            _items.AddToContainer(backpack, item, BounceSlot);
+
+            return;
+        }
+
+        // No origin left and nowhere to carry it: it lands where the player stands.
+        PlaceOnGround(item, actor.MapId, actor.Position);
+    }
+
+    /// <summary>
+    /// Whether <paramref name="dropped" /> can merge into <paramref name="existing" />: the same thing,
+    /// the same colour, both stackable, and a total the client can represent. Whether either one stacks
+    /// is decided by <see cref="IStackableRule" /> and passed in, so this stays a pure comparison.
+    /// </summary>
+    public static bool CanStack(
+        ItemEntity existing,
+        ItemEntity dropped,
+        bool existingStackable,
+        bool droppedStackable
+    )
+        => existing.Id != dropped.Id &&
+           existingStackable &&
+           droppedStackable &&
+           existing.TemplateId == dropped.TemplateId &&
+           existing.ItemId == dropped.ItemId &&
+           existing.Hue == dropped.Hue &&
+           existing.Amount + dropped.Amount <= MaxStackAmount;
+
+    public LiftDecision Drop(
+        MobileEntity actor,
+        Serial heldItemId,
+        Serial containerId,
+        Point3D groundPosition,
+        Point2D containerPosition
+    )
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.drop");
+
+        // The held serial is the authority. A drop naming anything else is a desynced or hostile
+        // client, and honouring it would let one move items it never lifted.
+        if (heldItemId == Serial.Zero || _items.GetById(heldItemId) is not { } item)
+        {
+            return new(false, LiftRejectReasonType.Inspecific);
+        }
+
+        return containerId == Serial.Zero
+                   ? DropOnGround(actor, item, groundPosition)
+                   : DropInContainer(actor, item, containerId, containerPosition);
+    }
+
     /// <summary>
     /// Decides whether <paramref name="actor" /> may lift an item, in ModernUO's order: already
     /// holding, then range, then whether the item can be moved at all, then whether the actor can
@@ -151,73 +218,6 @@ public sealed class DragDropService : IDragDropService
         return decision;
     }
 
-    public void Bounce(MobileEntity actor, Serial itemId, HeldItemOrigin? origin)
-    {
-        _loopAffinity?.AssertOnLoop("drag_drop.bounce");
-
-        // Already gone — deleted, or merged into a stack by a drop that then failed elsewhere.
-        if (_items.GetById(itemId) is not { } item)
-        {
-            return;
-        }
-
-        if (origin is not null && BounceToOrigin(actor, item, origin))
-        {
-            return;
-        }
-
-        if (actor.BackpackId != Serial.Zero && _items.GetById(actor.BackpackId) is { } backpack)
-        {
-            _items.AddToContainer(backpack, item, BounceSlot);
-
-            return;
-        }
-
-        // No origin left and nowhere to carry it: it lands where the player stands.
-        PlaceOnGround(item, actor.MapId, actor.Position);
-    }
-
-    public LiftDecision Drop(
-        MobileEntity actor,
-        Serial heldItemId,
-        Serial containerId,
-        Point3D groundPosition,
-        Point2D containerPosition
-    )
-    {
-        _loopAffinity?.AssertOnLoop("drag_drop.drop");
-
-        // The held serial is the authority. A drop naming anything else is a desynced or hostile
-        // client, and honouring it would let one move items it never lifted.
-        if (heldItemId == Serial.Zero || _items.GetById(heldItemId) is not { } item)
-        {
-            return new(false, LiftRejectReasonType.Inspecific);
-        }
-
-        return containerId == Serial.Zero
-            ? DropOnGround(actor, item, groundPosition)
-            : DropInContainer(actor, item, containerId, containerPosition);
-    }
-
-    /// <summary>
-    /// Whether <paramref name="dropped" /> can merge into <paramref name="existing" />: the same thing,
-    /// the same colour, both stackable, and a total the client can represent. Whether either one stacks
-    /// is decided by <see cref="IStackableRule" /> and passed in, so this stays a pure comparison.
-    /// </summary>
-    public static bool CanStack(
-        ItemEntity existing,
-        ItemEntity dropped,
-        bool existingStackable,
-        bool droppedStackable
-    )
-        => existing.Id != dropped.Id &&
-           existingStackable &&
-           droppedStackable &&
-           existing.TemplateId == dropped.TemplateId &&
-           existing.ItemId == dropped.ItemId &&
-           existing.Hue == dropped.Hue &&
-           existing.Amount + dropped.Amount <= MaxStackAmount;
-
     /// <summary>
     /// Puts the item back exactly where it was lifted from, or reports false so the caller can fall
     /// back. ModernUO's Item.Bounce does the same, dropping to the player's feet when the recorded
@@ -258,19 +258,8 @@ public sealed class DragDropService : IDragDropService
         return true;
     }
 
-    private LiftDecision DropOnGround(MobileEntity actor, ItemEntity item, Point3D position)
-    {
-        if (!actor.Position.InRange(position, LiftRange))
-        {
-            return new(false, LiftRejectReasonType.OutOfRange);
-        }
-
-        PlaceOnGround(item, actor.MapId, position);
-
-        _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, Serial.Zero));
-
-        return new(true, LiftRejectReasonType.Inspecific);
-    }
+    private static AddItemToContainerPacket ContainerPacket(ItemEntity item, Serial containerId, Point2D position)
+        => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
 
     private LiftDecision DropInContainer(
         MobileEntity actor,
@@ -317,6 +306,20 @@ public sealed class DragDropService : IDragDropService
         _world.SendToPlayer(actor.Id, ContainerPacket(item, container.Id, position));
 
         _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, container.Id));
+
+        return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    private LiftDecision DropOnGround(MobileEntity actor, ItemEntity item, Point3D position)
+    {
+        if (!actor.Position.InRange(position, LiftRange))
+        {
+            return new(false, LiftRejectReasonType.OutOfRange);
+        }
+
+        PlaceOnGround(item, actor.MapId, position);
+
+        _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, Serial.Zero));
 
         return new(true, LiftRejectReasonType.Inspecific);
     }
@@ -371,24 +374,6 @@ public sealed class DragDropService : IDragDropService
             PlayerSession.MaxViewRange,
             new WorldItemPacket(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, item.Hue)
         );
-    }
-
-    private static AddItemToContainerPacket ContainerPacket(ItemEntity item, Serial containerId, Point2D position)
-        => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
-
-    /// <summary>
-    /// Where an item is in the world, for the range check: its own position when it lies on the
-    /// ground, its root's otherwise. An item worn by the actor is wherever the actor is; one worn by
-    /// somebody else keeps the stale coordinates of an equipped entity, which fails the range check —
-    /// the outcome we want anyway, since Reachable refuses it too.
-    /// </summary>
-    private (int MapId, Point3D Position) WorldLocation(ItemEntity item, MobileEntity actor)
-    {
-        var root = _items.RootOf(item);
-
-        return root.EquippedMobileId == actor.Id
-            ? (actor.MapId, actor.Position)
-            : (root.MapId, root.Position);
     }
 
     /// <summary>
@@ -454,5 +439,20 @@ public sealed class DragDropService : IDragDropService
 
         item.Amount = lifted;
         _items.Save(item);
+    }
+
+    /// <summary>
+    /// Where an item is in the world, for the range check: its own position when it lies on the
+    /// ground, its root's otherwise. An item worn by the actor is wherever the actor is; one worn by
+    /// somebody else keeps the stale coordinates of an equipped entity, which fails the range check —
+    /// the outcome we want anyway, since Reachable refuses it too.
+    /// </summary>
+    private (int MapId, Point3D Position) WorldLocation(ItemEntity item, MobileEntity actor)
+    {
+        var root = _items.RootOf(item);
+
+        return root.EquippedMobileId == actor.Id
+                   ? (actor.MapId, actor.Position)
+                   : (root.MapId, root.Position);
     }
 }

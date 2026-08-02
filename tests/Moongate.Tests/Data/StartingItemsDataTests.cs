@@ -10,6 +10,21 @@ namespace Moongate.Tests.Data;
 [Collection("ItemTemplateSeeding")]
 public class StartingItemsDataTests
 {
+    // The hues picked on the creation screen only reach the character if the body kit asks for them:
+    // an entry with no Hue falls back to the template's own hue, which is 0 for every garment.
+    [Theory, InlineData("Human/Male", "shirt", "shirt"), InlineData("Human/Male", "long_pants", "pants"),
+     InlineData("Human/Female", "fancy_shirt", "shirt"), InlineData("Human/Female", "skirt", "pants"),
+     InlineData("Elf/Male", "shirt", "shirt"), InlineData("Elf/Male", "long_pants", "pants"),
+     InlineData("Elf/Female", "fancy_shirt", "shirt"), InlineData("Elf/Female", "skirt", "pants"),
+     InlineData("Gargoyle/Male", "robe", "shirt"), InlineData("Gargoyle/Female", "robe", "shirt")]
+    public void BodyKitGarments_WearThePlayerPickedHue(string body, string item, string hue)
+    {
+        var kit = LoadData().ByBody[body];
+        var entry = Assert.Single(kit.Equip.Where(equip => equip.Item == item));
+
+        Assert.Equal(hue, entry.Hue);
+    }
+
     [Fact]
     public void EmbeddedStartingItems_DeserializesWithContent()
     {
@@ -27,51 +42,6 @@ public class StartingItemsDataTests
         var entry = Assert.Single(LoadData().All.Pack.Where(item => item.Item == "gold"));
 
         Assert.Equal(1000, entry.Amount);
-    }
-
-    // The hues picked on the creation screen only reach the character if the body kit asks for them:
-    // an entry with no Hue falls back to the template's own hue, which is 0 for every garment.
-    [Theory]
-    [InlineData("Human/Male", "shirt", "shirt")]
-    [InlineData("Human/Male", "long_pants", "pants")]
-    [InlineData("Human/Female", "fancy_shirt", "shirt")]
-    [InlineData("Human/Female", "skirt", "pants")]
-    [InlineData("Elf/Male", "shirt", "shirt")]
-    [InlineData("Elf/Male", "long_pants", "pants")]
-    [InlineData("Elf/Female", "fancy_shirt", "shirt")]
-    [InlineData("Elf/Female", "skirt", "pants")]
-    [InlineData("Gargoyle/Male", "robe", "shirt")]
-    [InlineData("Gargoyle/Female", "robe", "shirt")]
-    public void BodyKitGarments_WearThePlayerPickedHue(string body, string item, string hue)
-    {
-        var kit = LoadData().ByBody[body];
-        var entry = Assert.Single(kit.Equip.Where(equip => equip.Item == item));
-
-        Assert.Equal(hue, entry.Hue);
-    }
-
-    // Whether gold stacks is decided by the client's tiledata in a running shard; this guards the
-    // fallback the template carries for when those files are not loaded, which is the path every test
-    // in this suite takes.
-    [Fact]
-    public async Task GoldGivenToEveryone_ReferencesAStackableTemplate()
-    {
-        var root = Path.Combine(Path.GetTempPath(), "mg-startitems-stack-" + Guid.NewGuid().ToString("N"));
-        var directories = new DirectoriesConfig(root, Array.Empty<string>());
-        var templates = new ItemTemplateService();
-
-        try
-        {
-            await new ItemTemplatesLoader(templates, directories).LoadAsync();
-
-            var gold = Assert.Single(LoadData().All.Pack.Where(entry => entry.Item == "gold"));
-
-            Assert.True(templates.GetById(gold.Item)?.Stackable, "The gold template is not stackable");
-        }
-        finally
-        {
-            Directory.Delete(root, true);
-        }
     }
 
     [Fact]
@@ -98,6 +68,30 @@ public class StartingItemsDataTests
             {
                 Assert.True(templates.GetById(id) is not null, $"Unknown template id: {id}");
             }
+        }
+        finally
+        {
+            Directory.Delete(root, true);
+        }
+    }
+
+    // Whether gold stacks is decided by the client's tiledata in a running shard; this guards the
+    // fallback the template carries for when those files are not loaded, which is the path every test
+    // in this suite takes.
+    [Fact]
+    public async Task GoldGivenToEveryone_ReferencesAStackableTemplate()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "mg-startitems-stack-" + Guid.NewGuid().ToString("N"));
+        var directories = new DirectoriesConfig(root, Array.Empty<string>());
+        var templates = new ItemTemplateService();
+
+        try
+        {
+            await new ItemTemplatesLoader(templates, directories).LoadAsync();
+
+            var gold = Assert.Single(LoadData().All.Pack.Where(entry => entry.Item == "gold"));
+
+            Assert.True(templates.GetById(gold.Item)?.Stackable, "The gold template is not stackable");
         }
         finally
         {

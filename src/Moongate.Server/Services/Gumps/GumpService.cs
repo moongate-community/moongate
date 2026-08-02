@@ -20,6 +20,88 @@ public sealed class GumpService : IGumpService
 
     private uint _nextSerial = 1;
 
+    public bool Close(PlayerSession session, string gumpId)
+    {
+        lock (_sync)
+        {
+            if (!_open.TryGetValue(session.SessionId, out var gumps))
+            {
+                return false;
+            }
+
+            var gump = gumps.FirstOrDefault(open => string.Equals(open.GumpId, gumpId, StringComparison.Ordinal));
+
+            return gump is not null && gumps.Remove(gump);
+        }
+    }
+
+    public int CloseAll(PlayerSession session)
+    {
+        lock (_sync)
+        {
+            if (!_open.Remove(session.SessionId, out var gumps))
+            {
+                return 0;
+            }
+
+            return gumps.Count;
+        }
+    }
+
+    public GumpRejectionType HandleResponse(
+        PlayerSession session,
+        uint serial,
+        int typeId,
+        int button,
+        IReadOnlyList<int> switches,
+        IReadOnlyDictionary<int, string> textEntries
+    )
+    {
+        OpenGump? gump;
+
+        lock (_sync)
+        {
+            gump = _open.TryGetValue(session.SessionId, out var gumps)
+                       ? gumps.FirstOrDefault(open => open.Serial == serial && open.TypeId == typeId)
+                       : null;
+        }
+
+        if (gump is null)
+        {
+            return Reject(session, GumpRejectionType.NotOpen, "unknown");
+        }
+
+        var rejection = gump.Validate(button, switches, textEntries);
+
+        if (rejection != GumpRejectionType.None)
+        {
+            return Reject(session, rejection, gump.GumpId);
+        }
+
+        // Forgotten before the callback runs: a gump answers once, and a replay then takes the same
+        // path as a fabricated serial.
+        lock (_sync)
+        {
+            if (_open.TryGetValue(session.SessionId, out var gumps))
+            {
+                gumps.Remove(gump);
+            }
+        }
+
+        gump.OnResponse?.Invoke(new(button, switches, textEntries));
+
+        return GumpRejectionType.None;
+    }
+
+    /// <summary>Everything this session has open, for tests and for the admin surface.</summary>
+    public IReadOnlyList<OpenGump> OpenFor(PlayerSession session)
+    {
+        lock (_sync)
+        {
+            return _open.TryGetValue(session.SessionId, out var gumps) ? [.. gumps] : [];
+        }
+    }
+
     public void Show(
         PlayerSession session,
         string gumpId,
@@ -60,86 +142,18 @@ public sealed class GumpService : IGumpService
         session.Send(new CompressedGumpPacket(serial, typeId, 0, 0, builder.Layout, builder.Strings));
     }
 
-    public GumpRejectionType HandleResponse(
-        PlayerSession session,
-        uint serial,
-        int typeId,
-        int button,
-        IReadOnlyList<int> switches,
-        IReadOnlyDictionary<int, string> textEntries
-    )
+    private GumpRejectionType Reject(PlayerSession session, GumpRejectionType rejection, string gumpId)
     {
-        OpenGump? gump;
+        _logger.Warning(
+            "Refused gump response from session {SessionId} for '{GumpId}': {Rejection}. Disconnecting",
+            session.SessionId,
+            gumpId,
+            rejection
+        );
 
-        lock (_sync)
-        {
-            gump = _open.TryGetValue(session.SessionId, out var gumps)
-                ? gumps.FirstOrDefault(open => open.Serial == serial && open.TypeId == typeId)
-                : null;
-        }
+        session.Disconnect();
 
-        if (gump is null)
-        {
-            return Reject(session, GumpRejectionType.NotOpen, "unknown");
-        }
-
-        var rejection = gump.Validate(button, switches, textEntries);
-
-        if (rejection != GumpRejectionType.None)
-        {
-            return Reject(session, rejection, gump.GumpId);
-        }
-
-        // Forgotten before the callback runs: a gump answers once, and a replay then takes the same
-        // path as a fabricated serial.
-        lock (_sync)
-        {
-            if (_open.TryGetValue(session.SessionId, out var gumps))
-            {
-                gumps.Remove(gump);
-            }
-        }
-
-        gump.OnResponse?.Invoke(new(button, switches, textEntries));
-
-        return GumpRejectionType.None;
-    }
-
-    public bool Close(PlayerSession session, string gumpId)
-    {
-        lock (_sync)
-        {
-            if (!_open.TryGetValue(session.SessionId, out var gumps))
-            {
-                return false;
-            }
-
-            var gump = gumps.FirstOrDefault(open => string.Equals(open.GumpId, gumpId, StringComparison.Ordinal));
-
-            return gump is not null && gumps.Remove(gump);
-        }
-    }
-
-    public int CloseAll(PlayerSession session)
-    {
-        lock (_sync)
-        {
-            if (!_open.Remove(session.SessionId, out var gumps))
-            {
-                return 0;
-            }
-
-            return gumps.Count;
-        }
-    }
-
-    /// <summary>Everything this session has open, for tests and for the admin surface.</summary>
-    public IReadOnlyList<OpenGump> OpenFor(PlayerSession session)
-    {
-        lock (_sync)
-        {
-            return _open.TryGetValue(session.SessionId, out var gumps) ? [.. gumps] : [];
-        }
+        return rejection;
     }
 
     /// <summary>
@@ -160,19 +174,5 @@ public sealed class GumpService : IGumpService
         }
 
         return (int)(hash & 0x7FFFFFFF);
-    }
-
-    private GumpRejectionType Reject(PlayerSession session, GumpRejectionType rejection, string gumpId)
-    {
-        _logger.Warning(
-            "Refused gump response from session {SessionId} for '{GumpId}': {Rejection}. Disconnecting",
-            session.SessionId,
-            gumpId,
-            rejection
-        );
-
-        session.Disconnect();
-
-        return rejection;
     }
 }

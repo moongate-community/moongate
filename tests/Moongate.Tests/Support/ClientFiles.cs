@@ -5,6 +5,6 @@ public static class ClientFiles
 {
     /// <summary>MOONGATE_UO_DIRECTORY when set, otherwise ~/uo.</summary>
     public static string Directory
-        => Environment.GetEnvironmentVariable("MOONGATE_UO_DIRECTORY")
-           ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "uo");
+        => Environment.GetEnvironmentVariable("MOONGATE_UO_DIRECTORY") ??
+           Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "uo");
 }

@@ -7,11 +7,9 @@ using Moongate.Server.Abstractions.Data.World;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Abstractions.Types.World;
 using Moongate.Server.Scripting;
-using Moongate.Server.Scripting.Refs;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 using MoonSharp.Interpreter;
-using SquidStd.Network.Client;
 
 namespace Moongate.Tests.Scripting;
 
@@ -21,6 +19,77 @@ namespace Moongate.Tests.Scripting;
 /// </summary>
 public class TargetModuleTests
 {
+    private sealed class Fixture
+    {
+        private readonly FakePersistenceService _persistence = new();
+        private readonly StubSessionManager _sessions = new();
+
+        public Fixture()
+        {
+            Script = new();
+            Targets = new();
+            Module = new(Targets, _sessions, new(Script));
+        }
+
+        public Script Script { get; }
+
+        public RecordingTargetService Targets { get; }
+
+        public TargetModule Module { get; }
+
+        /// <summary>A Lua closure running <paramref name="body" /> with the result bound to `r`.</summary>
+        public Closure Handler(string body = "")
+            => Script.DoString($"return function(r) {body} end").Function;
+
+        public PlayerSession Session()
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            var session = new PlayerSession(new(socket, Stream.Null));
+            var mobile = new MobileEntity { Name = "Squid", MapId = 1, Position = new(1, 1, 0) };
+
+            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
+            session.SetCharacter(mobile);
+            _sessions.Connections.Add(session);
+
+            return session;
+        }
+    }
+
+    private sealed class RecordingTargetService : IPlayerTargetService
+    {
+        private Action<TargetResult>? _onTarget;
+
+        public TargetSelectionType? LastSelection { get; private set; }
+
+        public void Answer(TargetResult result)
+            => _onTarget?.Invoke(result);
+
+        public bool Cancel(PlayerSession session)
+            => true;
+
+        public void Forget(PlayerSession session) { }
+
+        public TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet)
+            => TargetResultType.Cancelled;
+
+        public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
+        {
+            LastSelection = selection;
+            _onTarget = onTarget;
+
+            return 1;
+        }
+    }
+
+    [Fact]
+    public void Cancel_ForAnOnlineMobile_DelegatesToTheService()
+    {
+        var world = new Fixture();
+        var session = world.Session();
+
+        Assert.True(world.Module.Cancel(session.Character!.Id.Value));
+    }
+
     [Fact]
     public void Request_ForAnOnlineMobile_RaisesTheCursor()
     {
@@ -63,76 +132,5 @@ public class TargetModuleTests
         world.Targets.Answer(new(TargetResultType.Location, default, new(42, 7, 0), 0));
 
         Assert.Equal(42d, world.Script.Globals.Get("seen").Number);
-    }
-
-    [Fact]
-    public void Cancel_ForAnOnlineMobile_DelegatesToTheService()
-    {
-        var world = new Fixture();
-        var session = world.Session();
-
-        Assert.True(world.Module.Cancel(session.Character!.Id.Value));
-    }
-
-    private sealed class Fixture
-    {
-        private readonly FakePersistenceService _persistence = new();
-        private readonly StubSessionManager _sessions = new();
-
-        public Fixture()
-        {
-            Script = new();
-            Targets = new();
-            Module = new(Targets, _sessions, new TargetResultFactory(Script));
-        }
-
-        public Script Script { get; }
-
-        public RecordingTargetService Targets { get; }
-
-        public TargetModule Module { get; }
-
-        /// <summary>A Lua closure running <paramref name="body" /> with the result bound to `r`.</summary>
-        public Closure Handler(string body = "")
-            => Script.DoString($"return function(r) {body} end").Function;
-
-        public PlayerSession Session()
-        {
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            var session = new PlayerSession(new SquidStdTcpClient(socket, Stream.Null));
-            var mobile = new MobileEntity { Name = "Squid", MapId = 1, Position = new(1, 1, 0) };
-
-            _persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
-            session.SetCharacter(mobile);
-            _sessions.Connections.Add(session);
-
-            return session;
-        }
-    }
-
-    private sealed class RecordingTargetService : IPlayerTargetService
-    {
-        private Action<TargetResult>? _onTarget;
-
-        public TargetSelectionType? LastSelection { get; private set; }
-
-        public void Answer(TargetResult result)
-            => _onTarget?.Invoke(result);
-
-        public uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget)
-        {
-            LastSelection = selection;
-            _onTarget = onTarget;
-
-            return 1;
-        }
-
-        public bool Cancel(PlayerSession session)
-            => true;
-
-        public TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet)
-            => TargetResultType.Cancelled;
-
-        public void Forget(PlayerSession session) { }
     }
 }

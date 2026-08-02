@@ -1,12 +1,8 @@
 using Moongate.Core.Extensions;
 using Moongate.Core.Geometry;
-using Moongate.Core.Primitives;
 using Moongate.Core.Types;
-using Moongate.Network.Interfaces;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
-using Moongate.Server.Abstractions.Data.Session;
-using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Io;

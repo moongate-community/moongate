@@ -2,6 +2,7 @@ using Moongate.Core.Extensions;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Types.Items;
+using Moongate.Server.Services.Items;
 using Moongate.Server.Subscribers;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
@@ -15,7 +16,7 @@ public class ItemScriptSubscriberTests
     {
         var (subscriber, runtime, item, _) = Build();
 
-        await subscriber.OnItemDoubleClick(new(SessionId: 1, item.Id), CancellationToken.None);
+        await subscriber.OnItemDoubleClick(new(1, item.Id), CancellationToken.None);
 
         var call = Assert.Single(runtime.Calls);
         Assert.Equal(ItemScriptHookType.DoubleClick, call.Hook);
@@ -27,7 +28,7 @@ public class ItemScriptSubscriberTests
     {
         var (subscriber, runtime, _, _) = Build();
 
-        await subscriber.OnItemDoubleClick(new(SessionId: 1, (Serial)0xDEAD), CancellationToken.None);
+        await subscriber.OnItemDoubleClick(new(1, (Serial)0xDEAD), CancellationToken.None);
 
         Assert.Empty(runtime.Calls);
     }
@@ -61,7 +62,7 @@ public class ItemScriptSubscriberTests
         MobileEntity Mobile) Build()
     {
         var persistence = new FakePersistenceService();
-        var items = new Moongate.Server.Services.Items.ItemService(persistence);
+        var items = new ItemService(persistence);
 
         var item = new ItemEntity { TemplateId = "torch", ScriptId = "magic_torch", Name = "Torch" };
         items.Create(item);

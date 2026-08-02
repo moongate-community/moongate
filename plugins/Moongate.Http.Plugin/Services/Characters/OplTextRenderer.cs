@@ -52,6 +52,9 @@ public sealed partial class OplTextRenderer
                .Trim();
     }
 
+    [GeneratedRegex(@"~(\d+)_[^~]*~")]
+    private static partial Regex Placeholder();
+
     /// <summary>An argument prefixed with # is a cliloc of its own; anything else is already text.</summary>
     private string Resolve(string argument)
     {
@@ -64,7 +67,4 @@ public sealed partial class OplTextRenderer
                    ? _clilocs.Text(cliloc) ?? string.Empty
                    : string.Empty;
     }
-
-    [GeneratedRegex(@"~(\d+)_[^~]*~")]
-    private static partial Regex Placeholder();
 }

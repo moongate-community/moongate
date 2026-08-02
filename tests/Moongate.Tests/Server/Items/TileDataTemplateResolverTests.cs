@@ -19,81 +19,26 @@ public class TileDataTemplateResolverTests
     private const int PlainId = 5;
     private const int UndescribedId = 900;
 
-    // ModernUO's Item.DefaultWeight reads both 0 and the 255 immovable sentinel as "no usable
-    // weight" and substitutes 1, rather than claiming a 255-stone item.
-    [Theory]
-    [InlineData(0, 1.0)]
-    [InlineData(255, 1.0)]
-    [InlineData(1, 1.0)]
-    [InlineData(6, 6.0)]
-    [InlineData(200, 200.0)]
-    public void WeightFor_ZeroAndTheImmovableSentinel_BecomeOne(int tileWeight, double expected)
-    {
-        Assert.Equal(expected, TileDataTemplateResolver.WeightFor(tileWeight));
-    }
-
-    [Fact]
-    public void LayerFor_WearableTile_ReadsTheByteAsALayer()
-    {
-        Assert.Equal(LayerType.Shirt, TileDataTemplateResolver.LayerFor(wearable: true, layerByte: 5));
-    }
-
-    [Fact]
-    public void LayerFor_TileTheClientDoesNotCallWearable_HasNoLayer()
-    {
-        Assert.Null(TileDataTemplateResolver.LayerFor(wearable: false, layerByte: 5));
-    }
-
-    [Fact]
-    public void LayerFor_WearableTileWithNoLayerByte_HasNoLayer()
-    {
-        Assert.Null(TileDataTemplateResolver.LayerFor(wearable: true, layerByte: 0));
-    }
-
     // Nothing guarantees the byte lands inside LayerType; a value we cannot name is not a layer.
     [Fact]
     public void LayerFor_ByteOutsideTheEnum_HasNoLayer()
-    {
-        Assert.Null(TileDataTemplateResolver.LayerFor(wearable: true, layerByte: 200));
-    }
+        => Assert.Null(TileDataTemplateResolver.LayerFor(true, 200));
 
     [Fact]
-    public void Resolve_WearableTileAndNoEquipBlock_SynthesisesOne()
-    {
-        WithClientFiles(
-            () =>
-            {
-                var template = new ItemTemplate { Id = "book_of_bushido", ItemId = WearableId };
+    public void LayerFor_TileTheClientDoesNotCallWearable_HasNoLayer()
+        => Assert.Null(TileDataTemplateResolver.LayerFor(false, 5));
 
-                Assert.True(TileDataTemplateResolver.Resolve(template));
-                Assert.Equal(LayerType.Shirt, template.Equip?.Layer);
-            }
-        );
-    }
-
-    // An Equip block that carries only stat requirements still has a layer to learn.
     [Fact]
-    public void Resolve_EquipBlockWithNoLayer_TakesTheTileLayer()
-    {
-        WithClientFiles(
-            () =>
-            {
-                var template = new ItemTemplate
-                {
-                    Id = "hat", ItemId = WearableId, Equip = new() { StrengthReq = 10 }
-                };
+    public void LayerFor_WearableTileWithNoLayerByte_HasNoLayer()
+        => Assert.Null(TileDataTemplateResolver.LayerFor(true, 0));
 
-                Assert.True(TileDataTemplateResolver.Resolve(template));
-                Assert.Equal(LayerType.Shirt, template.Equip!.Layer);
-                Assert.Equal(10, template.Equip.StrengthReq);
-            }
-        );
-    }
+    [Fact]
+    public void LayerFor_WearableTile_ReadsTheByteAsALayer()
+        => Assert.Equal(LayerType.Shirt, TileDataTemplateResolver.LayerFor(true, 5));
 
     [Fact]
     public void Resolve_DeclaredLayer_IsLeftAlone()
-    {
-        WithClientFiles(
+        => WithClientFiles(
             () =>
             {
                 var template = new ItemTemplate
@@ -106,41 +51,10 @@ public class TileDataTemplateResolverTests
                 Assert.Equal(LayerType.TwoHanded, template.Equip!.Layer);
             }
         );
-    }
-
-    [Fact]
-    public void Resolve_TileTheClientDoesNotCallWearable_GainsNoEquipBlock()
-    {
-        WithClientFiles(
-            () =>
-            {
-                var template = new ItemTemplate { Id = "table", ItemId = PlainId };
-
-                TileDataTemplateResolver.Resolve(template);
-
-                Assert.Null(template.Equip);
-            }
-        );
-    }
-
-    [Fact]
-    public void Resolve_WeightLeftAtZero_TakesTheTileWeight()
-    {
-        WithClientFiles(
-            () =>
-            {
-                var template = new ItemTemplate { Id = "shirt", ItemId = WearableId };
-
-                Assert.True(TileDataTemplateResolver.Resolve(template));
-                Assert.Equal(6.0, template.Weight);
-            }
-        );
-    }
 
     [Fact]
     public void Resolve_DeclaredWeight_IsLeftAlone()
-    {
-        WithClientFiles(
+        => WithClientFiles(
             () =>
             {
                 var template = new ItemTemplate { Id = "bandage", ItemId = WearableId, Weight = 0.1 };
@@ -150,13 +64,28 @@ public class TileDataTemplateResolverTests
                 Assert.Equal(0.1, template.Weight);
             }
         );
-    }
+
+    // An Equip block that carries only stat requirements still has a layer to learn.
+    [Fact]
+    public void Resolve_EquipBlockWithNoLayer_TakesTheTileLayer()
+        => WithClientFiles(
+            () =>
+            {
+                var template = new ItemTemplate
+                {
+                    Id = "hat", ItemId = WearableId, Equip = new() { StrengthReq = 10 }
+                };
+
+                Assert.True(TileDataTemplateResolver.Resolve(template));
+                Assert.Equal(LayerType.Shirt, template.Equip!.Layer);
+                Assert.Equal(10, template.Equip.StrengthReq);
+            }
+        );
 
     // Past the end of the shipped tables there is nothing to defer to.
     [Fact]
     public void Resolve_IdTheClientFilesDoNotDescribe_ChangesNothing()
-    {
-        WithClientFiles(
+        => WithClientFiles(
             () =>
             {
                 var template = new ItemTemplate { Id = "custom", ItemId = UndescribedId };
@@ -166,7 +95,49 @@ public class TileDataTemplateResolverTests
                 Assert.Equal(0.0, template.Weight);
             }
         );
-    }
+
+    [Fact]
+    public void Resolve_TileTheClientDoesNotCallWearable_GainsNoEquipBlock()
+        => WithClientFiles(
+            () =>
+            {
+                var template = new ItemTemplate { Id = "table", ItemId = PlainId };
+
+                TileDataTemplateResolver.Resolve(template);
+
+                Assert.Null(template.Equip);
+            }
+        );
+
+    [Fact]
+    public void Resolve_WearableTileAndNoEquipBlock_SynthesisesOne()
+        => WithClientFiles(
+            () =>
+            {
+                var template = new ItemTemplate { Id = "book_of_bushido", ItemId = WearableId };
+
+                Assert.True(TileDataTemplateResolver.Resolve(template));
+                Assert.Equal(LayerType.Shirt, template.Equip?.Layer);
+            }
+        );
+
+    [Fact]
+    public void Resolve_WeightLeftAtZero_TakesTheTileWeight()
+        => WithClientFiles(
+            () =>
+            {
+                var template = new ItemTemplate { Id = "shirt", ItemId = WearableId };
+
+                Assert.True(TileDataTemplateResolver.Resolve(template));
+                Assert.Equal(6.0, template.Weight);
+            }
+        );
+
+    // ModernUO's Item.DefaultWeight reads both 0 and the 255 immovable sentinel as "no usable
+    // weight" and substitutes 1, rather than claiming a 255-stone item.
+    [Theory, InlineData(0, 1.0), InlineData(255, 1.0), InlineData(1, 1.0), InlineData(6, 6.0), InlineData(200, 200.0)]
+    public void WeightFor_ZeroAndTheImmovableSentinel_BecomeOne(int tileWeight, double expected)
+        => Assert.Equal(expected, TileDataTemplateResolver.WeightFor(tileWeight));
 
     /// <summary>
     /// Loads a tiledata.mul holding one wearable tile on the Shirt layer weighing 6, and one plain

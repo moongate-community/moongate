@@ -4,6 +4,7 @@ using Moongate.Core.Types;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Attributes;
 using Moongate.Server.Abstractions.Data.Commands;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Data.World;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
 using Moongate.Server.Abstractions.Interfaces.Commands;
@@ -88,10 +89,10 @@ public sealed class WhereCommand : ICommand
         var name = _mobiles.GetById(result.Serial)?.Name;
 
         return name is null
-            ? string.Create(CultureInfo.InvariantCulture, $"Object 0x{result.Serial.Value:X} at {where}.")
-            : string.Create(CultureInfo.InvariantCulture, $"{name} (0x{result.Serial.Value:X}) at {where}.");
+                   ? string.Create(CultureInfo.InvariantCulture, $"Object 0x{result.Serial.Value:X} at {where}.")
+                   : string.Create(CultureInfo.InvariantCulture, $"{name} (0x{result.Serial.Value:X}) at {where}.");
     }
 
-    private Abstractions.Data.Session.PlayerSession? SessionFor(Serial mobile)
+    private PlayerSession? SessionFor(Serial mobile)
         => _sessions.All.FirstOrDefault(session => session.Character?.Id == mobile);
 }

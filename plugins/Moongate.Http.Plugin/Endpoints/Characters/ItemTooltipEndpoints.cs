@@ -54,16 +54,30 @@ public sealed class ItemTooltipEndpoints : IApiEndpointRegistration
                  .Produces<ItemTooltipResponse>()
                  .RequireAuthorization(HttpServerService.PlayerPolicy);
 
+    /// <summary>
+    /// Whether the item is worn by the character or sits somewhere in its backpack. Reuses the reader
+    /// that already walks containers with a cycle guard, rather than walking them again here.
+    /// </summary>
+    private bool Carries(MobileEntity mobile, Serial itemId)
+    {
+        var worn = _inventory.ReadEquipment(mobile);
+        var carried = _inventory.ReadBackpack(mobile);
+        var wanted = itemId.ToString();
+
+        return Contains(worn, wanted) || Contains(carried, wanted);
+    }
+
+    private static bool Contains(IReadOnlyList<CharacterItemResponse> items, string serial)
+        => items.Any(item => item.Serial == serial || Contains(item.Contents, serial));
+
     /// <summary>What the game says about one item the character is carrying or wearing.</summary>
     /// <remarks>
     /// The lines are the object property list the game client renders, resolved to text — the item's
     /// name, its weight, and whatever else the shard describes. A shard whose string table is not
     /// loaded gets an **empty** list rather than an error: the technical fields are still worth having.
-    ///
     /// The route is nested under the character because an item knows its container, not whose it is.
     /// Authorization is the character's — an account reads its own, staff read anyone's — and the item
     /// must actually be in that character's equipment or backpack, so a serial cannot be probed here.
-    ///
     /// Answers 503 when the game loop does not respond: the property list is built on the loop, whose
     /// cache is deliberately unsynchronized.
     /// </remarks>
@@ -117,32 +131,16 @@ public sealed class ItemTooltipEndpoints : IApiEndpointRegistration
     }
 
     /// <summary>
-    /// The property list as text. Entries the string table cannot describe are dropped rather than
-    /// rendered as their raw cliloc, so a partially loaded table shows fewer lines instead of noise.
-    /// </summary>
-    private IReadOnlyList<string> Render(Serial itemId)
-        => [.. _opl.GetOrBuild(itemId).Entries.Select(_renderer.Render).OfType<string>()];
-
-    /// <summary>
-    /// Whether the item is worn by the character or sits somewhere in its backpack. Reuses the reader
-    /// that already walks containers with a cycle guard, rather than walking them again here.
-    /// </summary>
-    private bool Carries(MobileEntity mobile, Serial itemId)
-    {
-        var worn = _inventory.ReadEquipment(mobile);
-        var carried = _inventory.ReadBackpack(mobile);
-        var wanted = itemId.ToString();
-
-        return Contains(worn, wanted) || Contains(carried, wanted);
-    }
-
-    private static bool Contains(IReadOnlyList<CharacterItemResponse> items, string serial)
-        => items.Any(item => item.Serial == serial || Contains(item.Contents, serial));
-
-    /// <summary>
     /// One answer for an item that is not the character's, one that does not exist, and one whose
     /// serial is not a number: from outside, all three mean there is nothing to describe.
     /// </summary>
     private static IResult NotFound()
         => Results.Problem("No such item on that character.", statusCode: StatusCodes.Status404NotFound);
+
+    /// <summary>
+    /// The property list as text. Entries the string table cannot describe are dropped rather than
+    /// rendered as their raw cliloc, so a partially loaded table shows fewer lines instead of noise.
+    /// </summary>
+    private IReadOnlyList<string> Render(Serial itemId)
+        => [.. _opl.GetOrBuild(itemId).Entries.Select(_renderer.Render).OfType<string>()];
 }

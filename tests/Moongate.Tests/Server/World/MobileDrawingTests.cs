@@ -1,5 +1,4 @@
 using Moongate.Core.Extensions;
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
@@ -14,6 +13,19 @@ namespace Moongate.Tests.Server.World;
 /// </summary>
 public class MobileDrawingTests
 {
+    [Fact]
+    public void Equipment_AddsHairAsAPseudoItem()
+    {
+        var (items, mobile) = World();
+
+        mobile.HairStyle = 0x203B;
+
+        var drawn = MobileDrawing.BuildEquipment(mobile, items, new VirtualSerialService());
+
+        Assert.Equal(LayerType.Hair, Assert.Single(drawn).Layer);
+        Assert.Equal(0x203B, Assert.Single(drawn).ItemId);
+    }
+
     // One item per layer reaches the client, because it cannot render two things on one slot.
     // Which one survives is settled earlier, by IItemService.Equip replacing what was there —
     // the guard here is the second line of defence, for a store that somehow holds both.
@@ -30,19 +42,6 @@ public class MobileDrawingTests
         Assert.Equal(LayerType.Helm, Assert.Single(drawn).Layer);
     }
 
-    [Fact]
-    public void Equipment_AddsHairAsAPseudoItem()
-    {
-        var (items, mobile) = World();
-
-        mobile.HairStyle = 0x203B;
-
-        var drawn = MobileDrawing.BuildEquipment(mobile, items, new VirtualSerialService());
-
-        Assert.Equal(LayerType.Hair, Assert.Single(drawn).Layer);
-        Assert.Equal(0x203B, Assert.Single(drawn).ItemId);
-    }
-
     // Hair is drawn only if nothing real claimed its layer: a helm hides it.
     [Fact]
     public void Equipment_SkipsHairWhenSomethingRealAlreadyHoldsItsLayer()
@@ -57,6 +56,14 @@ public class MobileDrawingTests
         Assert.Equal(0x1410, Assert.Single(drawn).ItemId);
     }
 
+    private static void Equip(ItemService items, MobileEntity mobile, int itemId, LayerType layer)
+    {
+        var item = new ItemEntity { ItemId = itemId };
+
+        items.Save(item);
+        items.Equip(mobile, item, layer);
+    }
+
     private static (ItemService Items, MobileEntity Mobile) World()
     {
         var persistence = new FakePersistenceService();
@@ -65,13 +72,5 @@ public class MobileDrawingTests
         persistence.Store<MobileEntity>().UpsertAsync(mobile).WaitSync();
 
         return (new(persistence), mobile);
-    }
-
-    private static void Equip(ItemService items, MobileEntity mobile, int itemId, LayerType layer)
-    {
-        var item = new ItemEntity { ItemId = itemId };
-
-        items.Save(item);
-        items.Equip(mobile, item, layer);
     }
 }

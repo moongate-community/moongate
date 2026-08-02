@@ -11,25 +11,11 @@ namespace Moongate.Tests.Http.Mobiles;
 public class MobileAppearanceHashTests
 {
     [Fact]
-    public void TheSameAppearance_HashesTheSame()
-        => Assert.Equal(MobileAppearanceHash.Of(Mobile(), []), MobileAppearanceHash.Of(Mobile(), []));
-
-    [Fact]
     public void ADifferentBody_HashesDifferently()
     {
         var other = Mobile();
 
         other.Body = 401;
-
-        Assert.NotEqual(MobileAppearanceHash.Of(Mobile(), []), MobileAppearanceHash.Of(other, []));
-    }
-
-    [Fact]
-    public void ADifferentSkinHue_HashesDifferently()
-    {
-        var other = Mobile();
-
-        other.SkinHue = new(1002);
 
         Assert.NotEqual(MobileAppearanceHash.Of(Mobile(), []), MobileAppearanceHash.Of(other, []));
     }
@@ -45,17 +31,35 @@ public class MobileAppearanceHashTests
     }
 
     [Fact]
+    public void ADifferentItemHue_ChangesTheHash()
+        => Assert.NotEqual(
+            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 0)]),
+            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 33)])
+        );
+
+    [Fact]
+    public void ADifferentSkinHue_HashesDifferently()
+    {
+        var other = Mobile();
+
+        other.SkinHue = new(1002);
+
+        Assert.NotEqual(MobileAppearanceHash.Of(Mobile(), []), MobileAppearanceHash.Of(other, []));
+    }
+
+    [Fact]
     public void AWornItem_ChangesTheHash()
         => Assert.NotEqual(
             MobileAppearanceHash.Of(Mobile(), []),
             MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 0)])
         );
 
+    // An item held or carried is not worn, and must not move the fingerprint.
     [Fact]
-    public void ADifferentItemHue_ChangesTheHash()
-        => Assert.NotEqual(
-            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 0)]),
-            MobileAppearanceHash.Of(Mobile(), [Worn("plate_helm", LayerType.Helm, 33)])
+    public void AnItemOnNoLayer_IsIgnored()
+        => Assert.Equal(
+            MobileAppearanceHash.Of(Mobile(), []),
+            MobileAppearanceHash.Of(Mobile(), [new() { TemplateId = "plate_helm" }])
         );
 
     // Ordered by layer before hashing, so the store handing them back in a different order does
@@ -68,6 +72,10 @@ public class MobileAppearanceHashTests
 
         Assert.Equal(MobileAppearanceHash.Of(Mobile(), helmFirst), MobileAppearanceHash.Of(Mobile(), glovesFirst));
     }
+
+    [Fact]
+    public void TheSameAppearance_HashesTheSame()
+        => Assert.Equal(MobileAppearanceHash.Of(Mobile(), []), MobileAppearanceHash.Of(Mobile(), []));
 
     // The whole point of content addressing: two characters dressed alike share one file.
     [Fact]
@@ -83,14 +91,6 @@ public class MobileAppearanceHashTests
             MobileAppearanceHash.Of(two, [Worn("plate_helm", LayerType.Helm, 0)])
         );
     }
-
-    // An item held or carried is not worn, and must not move the fingerprint.
-    [Fact]
-    public void AnItemOnNoLayer_IsIgnored()
-        => Assert.Equal(
-            MobileAppearanceHash.Of(Mobile(), []),
-            MobileAppearanceHash.Of(Mobile(), [new() { TemplateId = "plate_helm" }])
-        );
 
     private static MobileEntity Mobile()
         => new()

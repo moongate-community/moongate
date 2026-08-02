@@ -2,8 +2,8 @@ using Moongate.Network.Data;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Server.Services.World;
 

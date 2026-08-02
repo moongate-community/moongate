@@ -1,5 +1,4 @@
 using Moongate.Core.Primitives;
-using Moongate.Network.Data;
 using Moongate.Server.Abstractions.Data.World;
 using Moongate.Server.Abstractions.Interfaces.World;
 
@@ -21,9 +20,7 @@ public sealed class StubOplService : IOplService
     }
 
     public OplSnapshot GetOrBuild(Serial serial)
-        => new(1, [new OplEntry(_cliloc, _arguments)]);
+        => new(1, [new(_cliloc, _arguments)]);
 
-    public void Invalidate(Serial serial)
-    {
-    }
+    public void Invalidate(Serial serial) { }
 }

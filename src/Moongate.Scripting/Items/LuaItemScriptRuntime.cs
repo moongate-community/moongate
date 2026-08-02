@@ -146,13 +146,6 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
     private static bool IsCallable(DynValue value)
         => value.Type is DataType.Function or DataType.ClrFunction;
 
-    /// <summary>
-    /// Dot-separated lowercase segments: <c>items.light_source</c>, or a bare <c>magic_torch</c>. No
-    /// separator and no empty segment can match, so no id can name a parent directory.
-    /// </summary>
-    [GeneratedRegex(@"^[a-z0-9_]+(\.[a-z0-9_]+)*$")]
-    private static partial Regex ValidScriptIdPattern();
-
     private Table? Load(string scriptId)
     {
         // The pattern is what keeps a ScriptId from walking out of the scripts directory.
@@ -245,4 +238,11 @@ public sealed partial class LuaItemScriptRuntime : IItemScriptRuntime
 
         return definition;
     }
+
+    /// <summary>
+    /// Dot-separated lowercase segments: <c>items.light_source</c>, or a bare <c>magic_torch</c>. No
+    /// separator and no empty segment can match, so no id can name a parent directory.
+    /// </summary>
+    [GeneratedRegex(@"^[a-z0-9_]+(\.[a-z0-9_]+)*$")]
+    private static partial Regex ValidScriptIdPattern();
 }

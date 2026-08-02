@@ -18,15 +18,15 @@ public sealed class StubClilocService : IClilocService
         _entries = [];
     }
 
-    /// <summary>A table of its own: only the seeded clilocs answer, every other one is null.</summary>
-    public static StubClilocService Entries(params (int Cliloc, string Text)[] entries)
-        => new(entries);
-
     private StubClilocService((int Cliloc, string Text)[] entries)
     {
         _text = null;
         _entries = entries.ToDictionary(entry => entry.Cliloc, entry => entry.Text);
     }
+
+    /// <summary>A table of its own: only the seeded clilocs answer, every other one is null.</summary>
+    public static StubClilocService Entries(params (int Cliloc, string Text)[] entries)
+        => new(entries);
 
     public string? Text(int cliloc)
         => _entries.TryGetValue(cliloc, out var text) ? text : _text;

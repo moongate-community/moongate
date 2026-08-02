@@ -14,13 +14,45 @@ namespace Moongate.Tests.Server.World;
 public class OplServiceNameTests
 {
     private const int GoldItemId = 3821;
-    private const int GoldCliloc = 1023821;   // ItemClilocs.ForItemId(3821)
-    private const int StackCliloc = 1050039;  // ~1_NUMBER~ ~2_ITEMNAME~
+    private const int GoldCliloc = 1023821;  // ItemClilocs.ForItemId(3821)
+    private const int StackCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
+
+    [Fact]
+    public void NamedStack_KeepsItsTextArgument()
+    {
+        var (service, item) = Build("Ghost Ship Anchor", "", 5);
+
+        var entry = service.GetOrBuild(item.Id).Entries[0];
+
+        Assert.Equal(StackCliloc, entry.Cliloc);
+        Assert.Equal("5\tGhost Ship Anchor", entry.Arguments);
+    }
+
+    [Fact]
+    public void NamedTemplate_KeepsItsText()
+    {
+        var (service, item) = Build("Ghost Ship Anchor", "", 1);
+
+        var entry = service.GetOrBuild(item.Id).Entries[0];
+
+        Assert.Contains("Ghost Ship Anchor", entry.Arguments);
+    }
+
+    // A rename on the entity beats everything, which is already true and must stay true.
+    [Fact]
+    public void RenamedItem_BeatsTheTemplateAndTheCliloc()
+    {
+        var (service, item) = Build("Ghost Ship Anchor", "Squid's Anchor", 1);
+
+        var entry = service.GetOrBuild(item.Id).Entries[0];
+
+        Assert.Contains("Squid's Anchor", entry.Arguments);
+    }
 
     [Fact]
     public void UnnamedSingle_IsTheItemsOwnCliloc()
     {
-        var (service, item) = Build(templateName: "", itemName: "", amount: 1);
+        var (service, item) = Build("", "", 1);
 
         var entry = service.GetOrBuild(item.Id).Entries[0];
 
@@ -32,7 +64,7 @@ public class OplServiceNameTests
     [Fact]
     public void UnnamedStack_ReferencesTheClilocInsideTheStackLine()
     {
-        var (service, item) = Build(templateName: "", itemName: "", amount: 1000);
+        var (service, item) = Build("", "", 1000);
 
         var entry = service.GetOrBuild(item.Id).Entries[0];
 
@@ -40,43 +72,11 @@ public class OplServiceNameTests
         Assert.Equal($"1000\t#{GoldCliloc}", entry.Arguments);
     }
 
-    [Fact]
-    public void NamedTemplate_KeepsItsText()
-    {
-        var (service, item) = Build(templateName: "Ghost Ship Anchor", itemName: "", amount: 1);
-
-        var entry = service.GetOrBuild(item.Id).Entries[0];
-
-        Assert.Contains("Ghost Ship Anchor", entry.Arguments);
-    }
-
-    [Fact]
-    public void NamedStack_KeepsItsTextArgument()
-    {
-        var (service, item) = Build(templateName: "Ghost Ship Anchor", itemName: "", amount: 5);
-
-        var entry = service.GetOrBuild(item.Id).Entries[0];
-
-        Assert.Equal(StackCliloc, entry.Cliloc);
-        Assert.Equal("5\tGhost Ship Anchor", entry.Arguments);
-    }
-
-    // A rename on the entity beats everything, which is already true and must stay true.
-    [Fact]
-    public void RenamedItem_BeatsTheTemplateAndTheCliloc()
-    {
-        var (service, item) = Build(templateName: "Ghost Ship Anchor", itemName: "Squid's Anchor", amount: 1);
-
-        var entry = service.GetOrBuild(item.Id).Entries[0];
-
-        Assert.Contains("Squid's Anchor", entry.Arguments);
-    }
-
     // No name and no cliloc: the template id is more use than the word "item".
     [Fact]
     public void UnnamedWithNoCliloc_FallsBackToTheTemplateId()
     {
-        var (service, item) = Build(templateName: "", itemName: "", amount: 1, clilocs: new StubClilocService());
+        var (service, item) = Build("", "", 1, new StubClilocService());
 
         var entry = service.GetOrBuild(item.Id).Entries[0];
 
@@ -93,9 +93,7 @@ public class OplServiceNameTests
         var persistence = new FakePersistenceService();
         var templates = new ItemTemplateService();
 
-        templates.Register(
-            new() { Id = "gold", Name = templateName, Category = "Misc", ItemId = GoldItemId }
-        );
+        templates.Register(new() { Id = "gold", Name = templateName, Category = "Misc", ItemId = GoldItemId });
 
         var item = new ItemEntity
         {

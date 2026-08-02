@@ -3,7 +3,6 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
 using Moongate.Server.Scripting;
-using Moongate.Server.Scripting.Refs;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
@@ -316,8 +315,16 @@ public class MobileModuleTests
 
         var mobileService = new MobileService(persistence, spatial, bus);
 
-        return (new(factory, itemFactory, items, persistence, spatial, bus, mobileService,
-                    new MobileRefFactory(new Script(), persistence, new RecordingChatService(), mobileService, items)), persistence, spatial, bus);
+        return (new(
+                    factory,
+                    itemFactory,
+                    items,
+                    persistence,
+                    spatial,
+                    bus,
+                    mobileService,
+                    new(new(), persistence, new RecordingChatService(), mobileService, items)
+                ), persistence, spatial, bus);
     }
 
     private static (MobileModule Module, FakePersistenceService Persistence, SpatialIndexService Spatial, StubEventBus Bus)

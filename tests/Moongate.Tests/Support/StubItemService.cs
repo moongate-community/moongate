@@ -32,14 +32,6 @@ public sealed class StubItemService : IItemService
     /// <summary>How many items are findable, which a test can use to mint distinct serials.</summary>
     public int TrackedCount => _items.Count;
 
-    /// <summary>Makes an item findable by serial, so a container listing it can resolve it.</summary>
-    public ItemEntity Track(ItemEntity item)
-    {
-        _items[item.Id] = item;
-
-        return item;
-    }
-
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
         => throw new NotSupportedException();
 
@@ -80,6 +72,14 @@ public sealed class StubItemService : IItemService
 
     public void Save(ItemEntity item)
         => throw new NotSupportedException();
+
+    /// <summary>Makes an item findable by serial, so a container listing it can resolve it.</summary>
+    public ItemEntity Track(ItemEntity item)
+    {
+        _items[item.Id] = item;
+
+        return item;
+    }
 
     public ItemEntity? Unequip(MobileEntity mobile, LayerType layer)
         => throw new NotSupportedException();

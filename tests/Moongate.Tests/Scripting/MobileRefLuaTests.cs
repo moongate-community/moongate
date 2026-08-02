@@ -1,20 +1,19 @@
 using DryIoc;
 using Moongate.Core.Extensions;
 using Moongate.Persistence.Entities;
-using Moongate.Server.Scripting;
-using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
-using SquidStd.Core.Interfaces.Events;
-using Moongate.Server.Services.Accounts;
-using Moongate.Server.Abstractions.Interfaces.World;
-using Moongate.Server.Abstractions.Interfaces.Mobiles;
-using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Mobiles;
+using Moongate.Server.Abstractions.Interfaces.World;
+using Moongate.Server.Scripting;
 using Moongate.Server.Scripting.Refs;
 using Moongate.Server.Services.Items;
 using Moongate.Server.Services.Mobiles;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using SquidStd.Core.Data.Bootstrap;
+using SquidStd.Core.Interfaces.Events;
+using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Extensions.Scripts;
 using SquidStd.Scripting.Lua.Interfaces.Scripts;
 using SquidStd.Scripting.Lua.Services;
@@ -62,9 +61,14 @@ public class MobileRefLuaTests
                 container.RegisterInstance<IItemService>(items);
                 container.RegisterInstance<IMobileService>(mobiles);
                 container.RegisterInstance<IChatService>(chat);
-                container.RegisterInstance<IItemFactoryService>(new ItemFactoryService(new ItemTemplateService(), new Random(1)));
+                container.RegisterInstance<IItemFactoryService>(new ItemFactoryService(new ItemTemplateService(), new(1)));
                 container.RegisterInstance<IMobileFactoryService>(
-                    new MobileFactoryService(new StartingCityService(), new MobileTemplateService(), new Random(1), new NameService())
+                    new MobileFactoryService(
+                        new StartingCityService(),
+                        new MobileTemplateService(),
+                        new(1),
+                        new NameService()
+                    )
                 );
 
                 // Registered the way production does, so the test exercises the real wiring.
@@ -115,8 +119,8 @@ public class MobileRefLuaTests
     {
         // The same unwrap the plugin performs: the MoonSharp Script belongs to the Lua engine.
         var script = engine is LuaScriptEngineService lua
-            ? lua.LuaScript
-            : throw new InvalidOperationException("This test requires the SquidStd Lua engine implementation.");
+                         ? lua.LuaScript
+                         : throw new InvalidOperationException("This test requires the SquidStd Lua engine implementation.");
 
         var events = new EventBusService();
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), events);

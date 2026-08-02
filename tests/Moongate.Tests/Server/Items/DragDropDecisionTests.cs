@@ -1,4 +1,3 @@
-using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
@@ -15,11 +14,11 @@ public class DragDropDecisionTests
         // Out of range and unmovable too: already-holding still wins, as in ModernUO's Mobile.Lift.
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(500, 500, 0),
-            template: Template(movable: false),
-            heldItemId: (Serial)42,
-            reachable: false
+            1,
+            new(500, 500, 0),
+            Template(false),
+            (Serial)42,
+            false
         );
 
         Assert.False(decision.Accepted);
@@ -31,11 +30,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(101, 100, 0),
-            template: Template(),
-            heldItemId: Serial.Zero,
-            reachable: true
+            1,
+            new(101, 100, 0),
+            Template(),
+            Serial.Zero,
+            true
         );
 
         Assert.True(decision.Accepted);
@@ -46,11 +45,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(100, 100, 0),
-            template: null,
-            heldItemId: Serial.Zero,
-            reachable: true
+            1,
+            new(100, 100, 0),
+            null,
+            Serial.Zero,
+            true
         );
 
         Assert.False(decision.Accepted);
@@ -62,11 +61,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 2,
-            itemWorldPosition: new(100, 100, 0),
-            template: Template(),
-            heldItemId: Serial.Zero,
-            reachable: true
+            2,
+            new(100, 100, 0),
+            Template(),
+            Serial.Zero,
+            true
         );
 
         Assert.False(decision.Accepted);
@@ -78,11 +77,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(103, 100, 0),
-            template: Template(),
-            heldItemId: Serial.Zero,
-            reachable: true
+            1,
+            new(103, 100, 0),
+            Template(),
+            Serial.Zero,
+            true
         );
 
         Assert.False(decision.Accepted);
@@ -94,11 +93,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(102, 100, 0),
-            template: Template(),
-            heldItemId: Serial.Zero,
-            reachable: true
+            1,
+            new(102, 100, 0),
+            Template(),
+            Serial.Zero,
+            true
         );
 
         Assert.True(decision.Accepted);
@@ -109,11 +108,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(100, 100, 0),
-            template: Template(movable: false),
-            heldItemId: Serial.Zero,
-            reachable: true
+            1,
+            new(100, 100, 0),
+            Template(false),
+            Serial.Zero,
+            true
         );
 
         Assert.False(decision.Accepted);
@@ -125,11 +124,11 @@ public class DragDropDecisionTests
     {
         var decision = DragDropService.Evaluate(
             Actor(),
-            itemMapId: 1,
-            itemWorldPosition: new(100, 100, 0),
-            template: Template(),
-            heldItemId: Serial.Zero,
-            reachable: false
+            1,
+            new(100, 100, 0),
+            Template(),
+            Serial.Zero,
+            false
         );
 
         Assert.False(decision.Accepted);

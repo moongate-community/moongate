@@ -148,10 +148,6 @@ public sealed class MobileModule
     public bool Move(uint serial, int x, int y, int z)
         => _mobileService.Teleport((Serial)serial, x, y, z);
 
-    [ScriptFunction("teleport", "Places the mobile at (x, y, z) on its map without validating terrain; false on unknown serial.")]
-    public bool Teleport(uint serial, int x, int y, int z)
-        => _mobileService.Teleport((Serial)serial, x, y, z);
-
     [ScriptFunction("ref", "Returns a handle for the mobile with methods say/teleport/equip, or nil.")]
     public DynValue Ref(uint serial)
         => _refs.Create((Serial)serial);
@@ -256,6 +252,13 @@ public sealed class MobileModule
 
         return skills;
     }
+
+    [ScriptFunction(
+        "teleport",
+        "Places the mobile at (x, y, z) on its map without validating terrain; false on unknown serial."
+    )]
+    public bool Teleport(uint serial, int x, int y, int z)
+        => _mobileService.Teleport((Serial)serial, x, y, z);
 
     private static void ApplyHue(Table fields, string key, Action<Hue> apply)
     {

@@ -10,7 +10,6 @@ namespace Moongate.Http.Plugin.Services.Characters;
 
 /// <summary>
 /// Answers one question for every route about a named character: may this caller read it?
-///
 /// It lives in one place because two copies of an authorization rule are two rules, and the second
 /// one drifts. Every route that addresses a character by serial resolves it through here.
 /// </summary>
@@ -24,6 +23,13 @@ public sealed class CharacterAccessService
         _accounts = accounts;
         _characters = characters;
     }
+
+    /// <summary>
+    /// One answer for "no such character" and "that is not even a serial": from outside, both mean
+    /// there is nothing at that address.
+    /// </summary>
+    public static IResult NotFound()
+        => Results.Problem("No character with that serial.", statusCode: StatusCodes.Status404NotFound);
 
     /// <summary>
     /// The character the caller may read, or the response saying why they may not. Exactly one of the
@@ -76,13 +82,6 @@ public sealed class CharacterAccessService
 
         return (found, null);
     }
-
-    /// <summary>
-    /// One answer for "no such character" and "that is not even a serial": from outside, both mean
-    /// there is nothing at that address.
-    /// </summary>
-    public static IResult NotFound()
-        => Results.Problem("No character with that serial.", statusCode: StatusCodes.Status404NotFound);
 
     /// <summary>The same two levels the admin policy admits, so the two cannot drift apart.</summary>
     private static bool IsStaff(AccountLevelType level)

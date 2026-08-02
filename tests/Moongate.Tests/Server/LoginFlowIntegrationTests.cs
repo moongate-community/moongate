@@ -882,6 +882,7 @@ public class LoginFlowIntegrationTests
                 Assert.True(PollUntil(aliceSocket, aliceCompressed, stepAck), "Alice never received an ack for the step.");
 
                 var bobCompressed = new List<byte>();
+
                 // Still 0x77, but now for a reason. Bob was shown Alice (0x78) when he entered the
                 // world and she was already in range, so her step is a position update for a mobile
                 // he knows. The broadcast this replaces sent 0x77 to everyone in range whether or not

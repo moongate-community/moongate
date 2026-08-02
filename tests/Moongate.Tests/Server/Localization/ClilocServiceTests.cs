@@ -1,4 +1,3 @@
-using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Services.Localization;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Io;
@@ -12,33 +11,6 @@ namespace Moongate.Tests.Server.Localization;
 [Collection("UltimaClientData")]
 public class ClilocServiceTests
 {
-    [Fact]
-    public async Task Text_AfterStart_ReturnsTheEntry()
-    {
-        await WithClientFiles(
-            async service =>
-            {
-                await service.StartAsync();
-
-                Assert.Equal("gold coin", service.Text(1023821));
-                Assert.Equal("platemail legs", service.Text(1025137));
-            }
-        );
-    }
-
-    [Fact]
-    public async Task Text_ClilocTheTableDoesNotHold_IsNull()
-    {
-        await WithClientFiles(
-            async service =>
-            {
-                await service.StartAsync();
-
-                Assert.Null(service.Text(1099999));
-            }
-        );
-    }
-
     // A shard whose client directory has no cliloc for the configured language still boots; every
     // lookup simply answers null and callers fall back.
     [Fact]
@@ -50,7 +22,7 @@ public class ClilocServiceTests
         {
             Files.SetDirectory(dir);
 
-            var service = new ClilocService(new MoongateConfig { Language = "enu" });
+            var service = new ClilocService(new() { Language = "enu" });
 
             await service.StartAsync();
 
@@ -63,12 +35,35 @@ public class ClilocServiceTests
     }
 
     [Fact]
+    public async Task Text_AfterStart_ReturnsTheEntry()
+        => await WithClientFiles(
+               async service =>
+               {
+                   await service.StartAsync();
+
+                   Assert.Equal("gold coin", service.Text(1023821));
+                   Assert.Equal("platemail legs", service.Text(1025137));
+               }
+           );
+
+    [Fact]
     public void Text_BeforeStart_IsNull()
     {
-        var service = new ClilocService(new MoongateConfig { Language = "enu" });
+        var service = new ClilocService(new() { Language = "enu" });
 
         Assert.Null(service.Text(1023821));
     }
+
+    [Fact]
+    public async Task Text_ClilocTheTableDoesNotHold_IsNull()
+        => await WithClientFiles(
+               async service =>
+               {
+                   await service.StartAsync();
+
+                   Assert.Null(service.Text(1099999));
+               }
+           );
 
     private static async Task WithClientFiles(Func<ClilocService, Task> assert)
     {
@@ -79,7 +74,7 @@ public class ClilocServiceTests
         {
             Files.SetDirectory(dir);
 
-            await assert(new ClilocService(new MoongateConfig { Language = "enu" }));
+            await assert(new(new() { Language = "enu" }));
         }
         finally
         {

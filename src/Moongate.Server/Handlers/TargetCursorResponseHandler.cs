@@ -20,10 +20,9 @@ public sealed class TargetCursorResponseHandler
     }
 
     public void Handle(TargetCursorResponsePacket packet, in PacketContext context)
-    {
+
         // The verdict is the service's business: it logs a mismatch and drops it.
-        _targets.Handle(context.Session, packet);
-    }
+        => _targets.Handle(context.Session, packet);
 
     public void Register(INetworkService network)
         => network.RegisterHandler(this);

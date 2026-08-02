@@ -1,8 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Chat;
-using Moongate.Server.Services.Chat;
-using Moongate.UO.Data.Hues;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 using SquidStd.Scripting.Lua.Attributes.Scripts;
 
@@ -30,12 +28,14 @@ public sealed class ChatModule
     public void Broadcast(string text)
         => _chat.Broadcast(text);
 
-    [ScriptFunction("say", "Speaks as the mobile with the given serial; false on unknown serial, blank, overlong or command text.")]
+    [ScriptFunction(
+        "say",
+        "Speaks as the mobile with the given serial; false on unknown serial, blank, overlong or command text."
+    )]
     public bool Say(uint serial, string text)
     {
         var mobile = _mobiles.GetById((Serial)serial);
 
         return mobile is not null && _chat.SayAs(mobile, text);
     }
-
 }

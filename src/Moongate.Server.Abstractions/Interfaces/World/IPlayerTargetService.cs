@@ -19,16 +19,13 @@ namespace Moongate.Server.Abstractions.Interfaces.World;
 public interface IPlayerTargetService
 {
     /// <summary>
-    /// Raises a cursor for this session and returns the id correlating its answer. Any request
-    /// already pending is cancelled first.
-    /// </summary>
-    uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget);
-
-    /// <summary>
     /// Takes the cursor down and reports the pending request as cancelled. Returns false when
     /// nothing was pending.
     /// </summary>
     bool Cancel(PlayerSession session);
+
+    /// <summary>Drops a session's pending request without invoking it, on logout.</summary>
+    void Forget(PlayerSession session);
 
     /// <summary>
     /// Handles an answer from the client, returning what it was taken to mean. An answer that does
@@ -37,6 +34,9 @@ public interface IPlayerTargetService
     /// </summary>
     TargetResultType Handle(PlayerSession session, TargetCursorResponsePacket packet);
 
-    /// <summary>Drops a session's pending request without invoking it, on logout.</summary>
-    void Forget(PlayerSession session);
+    /// <summary>
+    /// Raises a cursor for this session and returns the id correlating its answer. Any request
+    /// already pending is cancelled first.
+    /// </summary>
+    uint Request(PlayerSession session, TargetSelectionType selection, Action<TargetResult> onTarget);
 }

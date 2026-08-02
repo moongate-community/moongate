@@ -28,20 +28,11 @@ public sealed class GumpBuilder : IGumpBuilder
 
     public IReadOnlySet<int> TextEntryIds => _textEntryIds;
 
-    public void AddPage(int page)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ page {page} }}");
-    }
+    public void AddAlphaRegion(int x, int y, int width, int height)
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ checkertrans {x} {y} {width} {height} }}");
 
     public void AddBackground(int x, int y, int width, int height, int gumpId)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
-    }
-
-    public void AddLabel(int x, int y, int hue, string text)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ text {x} {y} {hue} {Intern(text)} }}");
-    }
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ resizepic {x} {y} {gumpId} {width} {height} }}");
 
     public void AddButton(int x, int y, int normalId, int pressedId, int buttonId, int type, int param)
     {
@@ -64,63 +55,17 @@ public sealed class GumpBuilder : IGumpBuilder
         );
     }
 
-    public void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText)
-    {
-        _textEntryIds.Add(entryId);
-
-        _layout.Append(
-            CultureInfo.InvariantCulture,
-            $"{{ textentry {x} {y} {width} {height} {hue} {entryId} {Intern(initialText)} }}"
-        );
-    }
-
     public void AddGroup(int group)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ group {group} }}");
-    }
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ group {group} }}");
 
-    public void AddAlphaRegion(int x, int y, int width, int height)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ checkertrans {x} {y} {width} {height} }}");
-    }
-
-    public void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId)
-    {
-        _switchIds.Add(switchId);
-
-        _layout.Append(
-            CultureInfo.InvariantCulture,
-            $"{{ radio {x} {y} {inactiveId} {activeId} {(initialState ? 1 : 0)} {switchId} }}"
-        );
-    }
-
-    public void AddLabelCropped(int x, int y, int width, int height, int hue, string text)
-    {
-        _layout.Append(
-            CultureInfo.InvariantCulture,
-            $"{{ croppedtext {x} {y} {width} {height} {hue} {Intern(text)} }}"
-        );
-    }
+    public void AddGumpIdOverride(int gumpId)
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ mastergump {gumpId} }}");
 
     public void AddHtml(int x, int y, int width, int height, string text, bool background, bool scrollbar)
-    {
-        _layout.Append(
+        => _layout.Append(
             CultureInfo.InvariantCulture,
             $"{{ htmlgump {x} {y} {width} {height} {Intern(text)} {Flag(background)} {Flag(scrollbar)} }}"
         );
-    }
-
-    public void AddLabelHtml(int x, int y, int width, int height, string text, string hue, int size, bool center)
-    {
-        // The command carries no styling, so colour, size and centring travel as markup on the text.
-        var styled = $"<basefont color={hue} size={size}>{text}</basefont>";
-        var markup = center ? $"<center>{styled}</center>" : styled;
-
-        _layout.Append(
-            CultureInfo.InvariantCulture,
-            $"{{ htmlgump {x} {y} {width} {height} {Intern(markup)} 0 0 }}"
-        );
-    }
 
     public void AddHtmlLocalized(
         int x,
@@ -175,9 +120,7 @@ public sealed class GumpBuilder : IGumpBuilder
     }
 
     public void AddImageTiled(int x, int y, int width, int height, int gumpId)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ gumppictiled {x} {y} {width} {height} {gumpId} }}");
-    }
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ gumppictiled {x} {y} {width} {height} {gumpId} }}");
 
     public void AddImageTiledButton(
         int x,
@@ -214,11 +157,56 @@ public sealed class GumpBuilder : IGumpBuilder
         _layout.Append(CultureInfo.InvariantCulture, $"{{ tilepichue {x} {y} {itemId} {hue} }}");
     }
 
-    public void AddSpriteImage(int x, int y, int gumpId, int width, int height, int sx, int sy)
+    public void AddItemProperty(uint serial)
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ itemproperty {serial} }}");
+
+    public void AddLabel(int x, int y, int hue, string text)
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ text {x} {y} {hue} {Intern(text)} }}");
+
+    public void AddLabelCropped(int x, int y, int width, int height, int hue, string text)
+        => _layout.Append(
+            CultureInfo.InvariantCulture,
+            $"{{ croppedtext {x} {y} {width} {height} {hue} {Intern(text)} }}"
+        );
+
+    public void AddLabelHtml(int x, int y, int width, int height, string text, string hue, int size, bool center)
     {
+        // The command carries no styling, so colour, size and centring travel as markup on the text.
+        var styled = $"<basefont color={hue} size={size}>{text}</basefont>";
+        var markup = center ? $"<center>{styled}</center>" : styled;
+
         _layout.Append(
             CultureInfo.InvariantCulture,
+            $"{{ htmlgump {x} {y} {width} {height} {Intern(markup)} 0 0 }}"
+        );
+    }
+
+    public void AddPage(int page)
+        => _layout.Append(CultureInfo.InvariantCulture, $"{{ page {page} }}");
+
+    public void AddRadio(int x, int y, int inactiveId, int activeId, bool initialState, int switchId)
+    {
+        _switchIds.Add(switchId);
+
+        _layout.Append(
+            CultureInfo.InvariantCulture,
+            $"{{ radio {x} {y} {inactiveId} {activeId} {(initialState ? 1 : 0)} {switchId} }}"
+        );
+    }
+
+    public void AddSpriteImage(int x, int y, int gumpId, int width, int height, int sx, int sy)
+        => _layout.Append(
+            CultureInfo.InvariantCulture,
             $"{{ picinpic {x} {y} {gumpId} {width} {height} {sx} {sy} }}"
+        );
+
+    public void AddTextEntry(int x, int y, int width, int height, int hue, int entryId, string initialText)
+    {
+        _textEntryIds.Add(entryId);
+
+        _layout.Append(
+            CultureInfo.InvariantCulture,
+            $"{{ textentry {x} {y} {width} {height} {hue} {entryId} {Intern(initialText)} }}"
         );
     }
 
@@ -232,16 +220,6 @@ public sealed class GumpBuilder : IGumpBuilder
         }
 
         _layout.Append(CultureInfo.InvariantCulture, $"{{ tooltip {number} @{args}@ }}");
-    }
-
-    public void AddItemProperty(uint serial)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ itemproperty {serial} }}");
-    }
-
-    public void AddGumpIdOverride(int gumpId)
-    {
-        _layout.Append(CultureInfo.InvariantCulture, $"{{ mastergump {gumpId} }}");
     }
 
     private static int Flag(bool value)

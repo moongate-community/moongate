@@ -4,13 +4,6 @@ namespace Moongate.Tests.Server.World;
 
 public class LightLevelsTests
 {
-    [Theory]
-    [InlineData(6, 0)]     // the first minute of full day
-    [InlineData(12, 0)]
-    [InlineData(21, 59)]   // the last
-    public void ForTime_Daytime_IsFullDay(int hours, int minutes)
-        => Assert.Equal(LightLevels.Day, LightLevels.ForTime(hours, minutes));
-
     [Fact]
     public void ForTime_Dawn_RampsFromNightToDay()
     {
@@ -23,6 +16,13 @@ public class LightLevelsTests
         Assert.True(end < middle, "and lighter still by 05:59");
     }
 
+    [Theory, InlineData(6, 0), InlineData(12, 0), InlineData(21, 59)]
+
+    // the first minute of full day
+     // the last
+    public void ForTime_Daytime_IsFullDay(int hours, int minutes)
+        => Assert.Equal(LightLevels.Day, LightLevels.ForTime(hours, minutes));
+
     [Fact]
     public void ForTime_Dusk_RampsFromDayToNight()
     {
@@ -33,9 +33,10 @@ public class LightLevelsTests
         Assert.True(middle > start, "an hour into dusk it must be darker than at 22:00");
     }
 
-    [Theory]
-    [InlineData(0, 0)]     // midnight
-    [InlineData(3, 59)]    // the last minute of full night
+    [Theory, InlineData(0, 0), InlineData(3, 59)]
+
+    // midnight
+     // the last minute of full night
     public void ForTime_SmallHours_AreFullNight(int hours, int minutes)
         => Assert.Equal(LightLevels.Night, LightLevels.ForTime(hours, minutes));
 

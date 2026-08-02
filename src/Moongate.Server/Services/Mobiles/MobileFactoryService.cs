@@ -170,33 +170,6 @@ public sealed class MobileFactoryService : IMobileFactoryService
         }
     }
 
-    /// <summary>
-    /// A template's own <c>Name</c> wins: it is a named individual, and it is usually paired with a
-    /// pool inherited from its base. Otherwise the pool names it, the variant's overriding the
-    /// template's. Neither leaves the spawn nameless, which the OPL already renders as a blank
-    /// label rather than an error.
-    /// </summary>
-    private string ResolveName(MobileTemplate template, MobileVariant? variant)
-    {
-        if (template.Name.Length > 0)
-        {
-            return template.Name;
-        }
-
-        var pool = variant?.NamePool ?? template.NamePool;
-
-        if (string.IsNullOrEmpty(pool))
-        {
-            return string.Empty;
-        }
-
-        // A pool the service does not hold is rejected by the loader, so reaching here means a
-        // caller built a template by hand. Nameless beats throwing.
-        return _names.GetByType(pool)?.Names is { Count: > 0 } names
-                   ? names[_random.Next(names.Count)]
-                   : string.Empty;
-    }
-
     private MobileVariant? PickVariant(List<MobileVariant> variants)
     {
         if (variants.Count == 0)
@@ -255,6 +228,33 @@ public sealed class MobileFactoryService : IMobileFactoryService
             MobileTemplateGenderType.Random => _random.Next(2) == 0 ? GenderType.Male : GenderType.Female,
             _                               => GenderType.Male
         };
+
+    /// <summary>
+    /// A template's own <c>Name</c> wins: it is a named individual, and it is usually paired with a
+    /// pool inherited from its base. Otherwise the pool names it, the variant's overriding the
+    /// template's. Neither leaves the spawn nameless, which the OPL already renders as a blank
+    /// label rather than an error.
+    /// </summary>
+    private string ResolveName(MobileTemplate template, MobileVariant? variant)
+    {
+        if (template.Name.Length > 0)
+        {
+            return template.Name;
+        }
+
+        var pool = variant?.NamePool ?? template.NamePool;
+
+        if (string.IsNullOrEmpty(pool))
+        {
+            return string.Empty;
+        }
+
+        // A pool the service does not hold is rejected by the loader, so reaching here means a
+        // caller built a template by hand. Nameless beats throwing.
+        return _names.GetByType(pool)?.Names is { Count: > 0 } names
+                   ? names[_random.Next(names.Count)]
+                   : string.Empty;
+    }
 
     /// <summary>Maps a playable race and gender to the human/elf/gargoyle body graphic id.</summary>
     private static int ResolvePlayerBody(RaceType race, GenderType gender)

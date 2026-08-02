@@ -15,8 +15,8 @@ using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
 using Moongate.Tests.Support;
-using Moongate.UO.Data.Types;
 using Moongate.Ultima.Types;
+using Moongate.UO.Data.Types;
 
 namespace Moongate.Tests.Http.Endpoints.Characters;
 
@@ -28,22 +28,6 @@ namespace Moongate.Tests.Http.Endpoints.Characters;
 public class ItemTooltipEndpointsTests
 {
     private const int WeightCliloc = 1072788;
-
-    [Fact]
-    public async Task Get_AnItemInTheBackpack_ReturnsItsRenderedLines()
-    {
-        var world = new StubItemService([]);
-        await using var server = await StartAsync(world, AccountLevelType.Player);
-        var character = Create(server, "tom", "Freydis");
-        var dagger = Backpack(server, world, character, "a dagger");
-
-        await server.AuthenticateAsync();
-
-        var tooltip = await server.Client.GetFromJsonAsync<ItemTooltipResponse>(Route(character, dagger));
-
-        Assert.Equal("Weight: 3 stone", Assert.Single(tooltip!.Lines));
-        Assert.Equal("dagger", tooltip.TemplateId);
-    }
 
     // Equipment is as much the character's as the backpack is, and a worn item is exactly what someone
     // hovers a paperdoll layer to ask about.
@@ -60,6 +44,22 @@ public class ItemTooltipEndpointsTests
         var tooltip = await server.Client.GetFromJsonAsync<ItemTooltipResponse>(Route(character, robe));
 
         Assert.Single(tooltip!.Lines);
+    }
+
+    [Fact]
+    public async Task Get_AnItemInTheBackpack_ReturnsItsRenderedLines()
+    {
+        var world = new StubItemService([]);
+        await using var server = await StartAsync(world, AccountLevelType.Player);
+        var character = Create(server, "tom", "Freydis");
+        var dagger = Backpack(server, world, character, "a dagger");
+
+        await server.AuthenticateAsync();
+
+        var tooltip = await server.Client.GetFromJsonAsync<ItemTooltipResponse>(Route(character, dagger));
+
+        Assert.Equal("Weight: 3 stone", Assert.Single(tooltip!.Lines));
+        Assert.Equal("dagger", tooltip.TemplateId);
     }
 
     // The check that makes nesting worth doing: an item that exists, but not on this character.
@@ -83,6 +83,19 @@ public class ItemTooltipEndpointsTests
     }
 
     [Fact]
+    public async Task Get_AnUnknownCharacter_IsNotFound()
+    {
+        await using var server = await StartAsync(new([]));
+
+        await server.AuthenticateAsync();
+
+        Assert.Equal(
+            HttpStatusCode.NotFound,
+            (await server.Client.GetAsync(Route("0x0000DEAD", "0x40000001"))).StatusCode
+        );
+    }
+
+    [Fact]
     public async Task Get_AnotherAccountsCharacter_AsAPlayer_IsForbidden()
     {
         var world = new StubItemService([]);
@@ -102,7 +115,7 @@ public class ItemTooltipEndpointsTests
     public async Task Get_AnotherAccountsCharacter_AsStaff_ReturnsIt()
     {
         var world = new StubItemService([]);
-        await using var server = await StartAsync(world, AccountLevelType.Administrator);
+        await using var server = await StartAsync(world);
 
         server.Accounts.Create("alice", "secret", null, AccountLevelType.Player);
 
@@ -116,37 +129,13 @@ public class ItemTooltipEndpointsTests
         Assert.Equal(dagger, tooltip!.Serial);
     }
 
-    [Fact]
-    public async Task Get_AnUnknownCharacter_IsNotFound()
-    {
-        await using var server = await StartAsync(new StubItemService([]));
-
-        await server.AuthenticateAsync();
-
-        Assert.Equal(
-            HttpStatusCode.NotFound,
-            (await server.Client.GetAsync(Route("0x0000DEAD", "0x40000001"))).StatusCode
-        );
-    }
-
-    [Fact]
-    public async Task Get_WithoutAToken_IsUnauthorized()
-    {
-        await using var server = await StartAsync(new StubItemService([]));
-
-        Assert.Equal(
-            HttpStatusCode.Unauthorized,
-            (await server.Client.GetAsync(Route("0x00000001", "0x40000001"))).StatusCode
-        );
-    }
-
     // A shard with no client files describes no cliloc. The technical fields are still worth showing,
     // so an empty list beats a 500.
     [Fact]
     public async Task Get_WithNoStringTable_ReturnsNoLinesRatherThanFailing()
     {
         var world = new StubItemService([]);
-        await using var server = await StartAsync(world, AccountLevelType.Player, clilocs: new StubClilocService());
+        await using var server = await StartAsync(world, AccountLevelType.Player, new StubClilocService());
         var character = Create(server, "tom", "Freydis");
         var dagger = Backpack(server, world, character, "a dagger");
 
@@ -158,8 +147,16 @@ public class ItemTooltipEndpointsTests
         Assert.Equal("dagger", tooltip.TemplateId);
     }
 
-    private static string Route(string character, string item)
-        => $"/api/v1/characters/{character}/items/{item}/tooltip";
+    [Fact]
+    public async Task Get_WithoutAToken_IsUnauthorized()
+    {
+        await using var server = await StartAsync(new([]));
+
+        Assert.Equal(
+            HttpStatusCode.Unauthorized,
+            (await server.Client.GetAsync(Route("0x00000001", "0x40000001"))).StatusCode
+        );
+    }
 
     /// <summary>Puts an item in the character's backpack, creating the backpack if it has none.</summary>
     private static string Backpack(TestApiServer server, StubItemService world, string character, string name)
@@ -183,23 +180,13 @@ public class ItemTooltipEndpointsTests
         return item.Id.ToString();
     }
 
-    private static string Worn(TestApiServer server, StubItemService world, string character, string name)
+    private static string Create(TestApiServer server, string username, string name)
     {
-        var mobile = Mobile(server, character);
-        var item = world.Track(Item((uint)(0x40000300 + world.TrackedCount), name));
+        var accountId = server.Accounts.GetByUsername(username)!.Id;
 
-        item.EquippedLayer = LayerType.OuterTorso;
-        mobile.EquippedItemIds[LayerType.OuterTorso] = item.Id;
-        world.Equipped.Add(item);
+        server.Characters.CreateCharacter(accountId, Packet(name));
 
-        return item.Id.ToString();
-    }
-
-    private static MobileEntity Mobile(TestApiServer server, string character)
-    {
-        Serial.TryParse(character, out var serial);
-
-        return server.Persistence.Store<MobileEntity>().GetById(serial)!;
+        return server.Accounts.GetByUsername(username)!.MobileIds[^1].ToString();
     }
 
     private static ItemEntity Item(uint serial, string name)
@@ -209,16 +196,14 @@ public class ItemTooltipEndpointsTests
             Name = name,
             TemplateId = "dagger",
             ItemId = 0x13B9,
-            Amount = 1,
+            Amount = 1
         };
 
-    private static string Create(TestApiServer server, string username, string name)
+    private static MobileEntity Mobile(TestApiServer server, string character)
     {
-        var accountId = server.Accounts.GetByUsername(username)!.Id;
+        Serial.TryParse(character, out var serial);
 
-        server.Characters.CreateCharacter(accountId, Packet(name));
-
-        return server.Accounts.GetByUsername(username)!.MobileIds[^1].ToString();
+        return server.Persistence.Store<MobileEntity>().GetById(serial)!;
     }
 
     private static CharacterCreationPacket Packet(string name)
@@ -242,6 +227,9 @@ public class ItemTooltipEndpointsTests
             0x0765,
             0x0766
         );
+
+    private static string Route(string character, string item)
+        => $"/api/v1/characters/{character}/items/{item}/tooltip";
 
     private static async Task<TestApiServer> StartAsync(
         StubItemService world,
@@ -273,4 +261,16 @@ public class ItemTooltipEndpointsTests
                               );
                           }
            );
+
+    private static string Worn(TestApiServer server, StubItemService world, string character, string name)
+    {
+        var mobile = Mobile(server, character);
+        var item = world.Track(Item((uint)(0x40000300 + world.TrackedCount), name));
+
+        item.EquippedLayer = LayerType.OuterTorso;
+        mobile.EquippedItemIds[LayerType.OuterTorso] = item.Id;
+        world.Equipped.Add(item);
+
+        return item.Id.ToString();
+    }
 }

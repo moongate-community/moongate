@@ -7,7 +7,6 @@ namespace Moongate.Http.Plugin.Services.Characters;
 
 /// <summary>
 /// Turns a character's worn items and backpack into the API's item tree.
-///
 /// The walk is recursive over a containment graph nothing validates, and it runs on a request thread —
 /// so it carries two guards. A visited set stops a container holding an ancestor from looping forever,
 /// and a depth limit stops anything the visited set somehow misses. Neither is defensive padding:
@@ -25,14 +24,6 @@ public sealed class CharacterInventoryReader
         _items = items;
     }
 
-    /// <summary>The items worn on each layer, the backpack and the bank box among them.</summary>
-    public IReadOnlyList<CharacterItemResponse> ReadEquipment(MobileEntity mobile)
-    {
-        var visited = new HashSet<Serial>();
-
-        return [.. _items.GetEquipped(mobile).Select(item => Read(item, visited, 1))];
-    }
-
     /// <summary>The backpack's contents as a tree. Empty when the character has no backpack.</summary>
     public IReadOnlyList<CharacterItemResponse> ReadBackpack(MobileEntity mobile)
     {
@@ -46,6 +37,14 @@ public sealed class CharacterInventoryReader
         var visited = new HashSet<Serial> { mobile.BackpackId };
 
         return [.. _items.GetContents(mobile.BackpackId).Select(item => Read(item, visited, 1))];
+    }
+
+    /// <summary>The items worn on each layer, the backpack and the bank box among them.</summary>
+    public IReadOnlyList<CharacterItemResponse> ReadEquipment(MobileEntity mobile)
+    {
+        var visited = new HashSet<Serial>();
+
+        return [.. _items.GetEquipped(mobile).Select(item => Read(item, visited, 1))];
     }
 
     private CharacterItemResponse Read(ItemEntity item, HashSet<Serial> visited, int depth)

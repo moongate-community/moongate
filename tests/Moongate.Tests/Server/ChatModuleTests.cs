@@ -15,13 +15,13 @@ public class ChatModuleTests
         public List<(string Text, Hue? Hue)> Broadcasts { get; } = [];
         public List<(Serial Speaker, ChatMessageType Type, string Text)> Said { get; } = [];
 
+        public List<(Serial Speaker, string Text)> SaidAs { get; } = [];
+
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add((text, hue));
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
             => Said.Add((speaker.Id, type, text));
-
-        public List<(Serial Speaker, string Text)> SaidAs { get; } = [];
 
         // Records the delegation. The rules it would apply belong to ChatService and are pinned there.
         public bool SayAs(MobileEntity speaker, string text)

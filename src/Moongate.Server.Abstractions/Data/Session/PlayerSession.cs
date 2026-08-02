@@ -225,20 +225,20 @@ public sealed class PlayerSession : ISeedTarget
         }
     }
 
+    public void SetVersion(ClientVersion version)
+    {
+        lock (_stateSync)
+        {
+            Version = version;
+        }
+    }
+
     /// <summary>Records the view range reported via 0xC8, clamped to the range the server allows.</summary>
     public void SetViewRange(int range)
     {
         lock (_stateSync)
         {
             ViewRange = ClampViewRange(range);
-        }
-    }
-
-    public void SetVersion(ClientVersion version)
-    {
-        lock (_stateSync)
-        {
-            Version = version;
         }
     }
 

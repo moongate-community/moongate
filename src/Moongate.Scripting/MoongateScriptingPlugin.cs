@@ -52,8 +52,8 @@ public class MoongateScriptingPlugin : ISquidStdPlugin
                 resolver.Resolve<IScriptEngineService>() is LuaScriptEngineService lua
                     ? lua.LuaScript
                     : throw new InvalidOperationException(
-                        "LuaItemScriptRuntime requires the SquidStd Lua engine implementation."
-                    ),
+                          "LuaItemScriptRuntime requires the SquidStd Lua engine implementation."
+                      ),
                 resolver.Resolve<DirectoriesConfig>()
             ),
             Reuse.Singleton
