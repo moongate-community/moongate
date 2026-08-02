@@ -321,6 +321,14 @@
       "lockUp": "Rising",
       "lockDown": "Falling",
       "lockLocked": "Locked"
+    },
+    "tooltip": {
+      "loading": "Loading…",
+      "unavailable": "No description available",
+      "template": "Template",
+      "hue": "Hue",
+      "amount": "Amount",
+      "serial": "Serial"
     }
   }
 }

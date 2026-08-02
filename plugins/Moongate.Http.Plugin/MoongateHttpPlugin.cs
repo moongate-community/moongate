@@ -121,9 +121,14 @@ public class MoongateHttpPlugin : ISquidStdPlugin
 
         // The detail route's reader walks containers; it takes IItemService and nothing else, so it
         // is a plain singleton beside the endpoint group that uses it.
+        container.Register<CharacterAccessService>(Reuse.Singleton);
         container.Register<CharacterInventoryReader>(Reuse.Singleton);
         container.Register<CharacterSkillReader>(Reuse.Singleton);
         container.RegisterApiEndpoint<CharacterDetailEndpoints>();
+
+        // Tooltips render the game's own property list, so they need the cliloc grammar resolved.
+        container.Register<OplTextRenderer>(Reuse.Singleton);
+        container.RegisterApiEndpoint<ItemTooltipEndpoints>();
         container.RegisterApiEndpoint<ItemTemplateEndpoints>();
 
         // A REST web-terminal onto the admin command set: the registry holds the open SSE feeds,

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 
 import { CharacterImage } from './CharacterImage'
+import { ItemTooltip } from './ItemTooltip'
 import { itemImageUrl, type CharacterItem } from '../../lib/characters'
 
 /**
@@ -8,7 +9,15 @@ import { itemImageUrl, type CharacterItem } from '../../lib/characters'
  * cannot say what is inside what. Each row carries the item's art, so an item named only by cliloc —
  * which is most of them — is still recognisable.
  */
-export function InventoryTree({ items, emptyLabel }: { items: CharacterItem[]; emptyLabel: string }) {
+export function InventoryTree({
+  items,
+  emptyLabel,
+  characterSerial,
+}: {
+  items: CharacterItem[]
+  emptyLabel: string
+  characterSerial: string
+}) {
   const { t } = useTranslation()
 
   if (items.length === 0) {
@@ -20,16 +29,24 @@ export function InventoryTree({ items, emptyLabel }: { items: CharacterItem[]; e
       {items.map((item) => (
         <li key={item.serial}>
           <div className="flex items-center gap-3 rounded-lg px-2 py-1">
-            <CharacterImage
-              src={itemImageUrl(item.itemId, item.hue)}
-              alt={item.name === '' ? t('characters.inventory.unnamed') : item.name}
-              className="h-16 w-16 shrink-0 object-contain"
-              fallback={
-                <span className="flex h-16 w-16 shrink-0 items-center justify-center text-muted">
-                  {t('characters.inventory.noImage')}
-                </span>
-              }
-            />
+            {/*
+              The trigger is the picture, not the row: anchoring to a full-width row would put the
+              tooltip somewhere in the middle of it rather than beside what you are pointing at.
+            */}
+            <ItemTooltip characterSerial={characterSerial} itemSerial={item.serial}>
+              <span tabIndex={0} className="shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-gold">
+                <CharacterImage
+                  src={itemImageUrl(item.itemId, item.hue)}
+                  alt={item.name === '' ? t('characters.inventory.unnamed') : item.name}
+                  className="h-16 w-16 object-contain"
+                  fallback={
+                    <span className="flex h-16 w-16 items-center justify-center text-muted">
+                      {t('characters.inventory.noImage')}
+                    </span>
+                  }
+                />
+              </span>
+            </ItemTooltip>
 
             <span className="min-w-0">
               <span className="block truncate text-ink">
@@ -44,7 +61,7 @@ export function InventoryTree({ items, emptyLabel }: { items: CharacterItem[]; e
 
           {item.contents.length > 0 && (
             <div className="ml-8 border-l border-ink/10 pl-2">
-              <InventoryTree items={item.contents} emptyLabel={emptyLabel} />
+              <InventoryTree items={item.contents} emptyLabel={emptyLabel} characterSerial={characterSerial} />
             </div>
           )}
         </li>
