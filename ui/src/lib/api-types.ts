@@ -173,6 +173,34 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/characters/{serial}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One character in full: stats, appearance, what they wear and what they carry.
+         * @description The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal. An
+         *     account may read its own characters; staff may read anyone's, and everyone else gets 403. A
+         *     serial naming no character is 404, and so is one that is not a number.
+         *
+         *     The backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the
+         *     worn items by layer, the backpack and the bank box among them, without expanding them.
+         *
+         *     Read off the game loop, so an item the loop moves mid-read may appear in neither place or in
+         *     both. The next request settles it: this is a view, not a ledger.
+         */
+        get: operations["GetCharacter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/console/stream": {
         parameters: {
             query?: never;
@@ -1015,6 +1043,45 @@ export interface components {
         BookSpec: {
             bookId: string;
         };
+        /** @description Everything one character is: who they are, what they wear, what they carry. */
+        CharacterDetailResponse: {
+            character: components["schemas"]["CharacterResponse"];
+            /** @description Worn items by layer, the backpack and the bank box among them. */
+            equipment: components["schemas"]["CharacterItemResponse"][];
+            /** @description The backpack's contents, nested containers expanded. */
+            backpack: components["schemas"]["CharacterItemResponse"][];
+        };
+        /**
+         * @description One item as the API reports it, with whatever it contains. Deliberately not `ItemEntity`, which
+         *     carries script and loot ids: a field added to the entity later would publish itself.
+         */
+        CharacterItemResponse: {
+            /** @description The item's serial, as `0x40000001`. */
+            serial: string;
+            /** @description The item's name. Blank when the item is named by cliloc rather than stored text. */
+            name: string;
+            /** @description The template it was built from. */
+            templateId: string;
+            /**
+             * Format: int32
+             * @description The art id, which addresses `/api/v1/images/items/{id}.png`.
+             */
+            itemId: number;
+            /**
+             * Format: int32
+             * @description 0 for the raw art.
+             */
+            hue: number;
+            /**
+             * Format: int32
+             * @description How many, for a stack.
+             */
+            amount: number;
+            /** @description The layer it is worn on, or null when it sits inside a container. */
+            layer?: string | null;
+            /** @description What it contains. Empty for anything that is not a container. */
+            contents: components["schemas"]["CharacterItemResponse"][];
+        };
         /**
          * @description A character as the API reports it. Deliberately not `MobileEntity`, which carries BrainScriptId,
          *     LootTableId and BackpackId: returning the entity would publish the shard's internals to every caller,
@@ -1842,6 +1909,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CharacterResponsePagedResponse"];
+                };
+            };
+        };
+    };
+    GetCharacter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                serial: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CharacterDetailResponse"];
                 };
             };
         };

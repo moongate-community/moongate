@@ -301,6 +301,38 @@
         }
       }
     },
+    "/api/v1/characters/{serial}": {
+      "get": {
+        "tags": [
+          "characters"
+        ],
+        "summary": "One character in full: stats, appearance, what they wear and what they carry.",
+        "description": "The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal. An\naccount may read its own characters; staff may read anyone's, and everyone else gets 403. A\nserial naming no character is 404, and so is one that is not a number.\n            \nThe backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the\nworn items by layer, the backpack and the bank box among them, without expanding them.\n            \nRead off the game loop, so an item the loop moves mid-read may appear in neither place or in\nboth. The next request settles it: this is a view, not a ledger.",
+        "operationId": "GetCharacter",
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CharacterDetailResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/console/stream": {
       "get": {
         "tags": [
@@ -1958,6 +1990,90 @@
           }
         },
         "additionalProperties": false
+      },
+      "CharacterDetailResponse": {
+        "required": [
+          "backpack",
+          "character",
+          "equipment"
+        ],
+        "type": "object",
+        "properties": {
+          "character": {
+            "$ref": "#/components/schemas/CharacterResponse"
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterItemResponse"
+            },
+            "description": "Worn items by layer, the backpack and the bank box among them."
+          },
+          "backpack": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterItemResponse"
+            },
+            "description": "The backpack's contents, nested containers expanded."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Everything one character is: who they are, what they wear, what they carry."
+      },
+      "CharacterItemResponse": {
+        "required": [
+          "amount",
+          "contents",
+          "hue",
+          "itemId",
+          "name",
+          "serial",
+          "templateId"
+        ],
+        "type": "object",
+        "properties": {
+          "serial": {
+            "type": "string",
+            "description": "The item's serial, as `0x40000001`."
+          },
+          "name": {
+            "type": "string",
+            "description": "The item's name. Blank when the item is named by cliloc rather than stored text."
+          },
+          "templateId": {
+            "type": "string",
+            "description": "The template it was built from."
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "The art id, which addresses `/api/v1/images/items/{id}.png`.",
+            "format": "int32"
+          },
+          "hue": {
+            "type": "integer",
+            "description": "0 for the raw art.",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "How many, for a stack.",
+            "format": "int32"
+          },
+          "layer": {
+            "type": "string",
+            "description": "The layer it is worn on, or null when it sits inside a container.",
+            "nullable": true
+          },
+          "contents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterItemResponse"
+            },
+            "description": "What it contains. Empty for anything that is not a container."
+          }
+        },
+        "additionalProperties": false,
+        "description": "One item as the API reports it, with whatever it contains. Deliberately not `ItemEntity`, which\ncarries script and loot ids: a field added to the entity later would publish itself."
       },
       "CharacterResponse": {
         "required": [

@@ -110,6 +110,7 @@ good token that is simply not staff.
 | `DELETE` | `/api/v1/admin/accounts/{username}`  | `admin`  | 204, or 404 / 409 / 503            |
 | `GET`    | `/api/v1/player/me/characters`       | `player` | the caller's own characters        |
 | `GET`    | `/api/v1/admin/characters`           | `admin`  | every character, paged             |
+| `GET`    | `/api/v1/characters/{serial}`        | `player` | one character in full, or 403 / 404 |
 | `GET`    | `/api/v1/admin/players/online`       | `admin`  | players currently in the world     |
 | `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
 | `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
@@ -201,7 +202,30 @@ account's `MobileIds`. The admin route therefore reads the accounts first, which
 it must do anyway to name each character's owner, and uses that to tell characters
 from the NPCs sharing the mobile store.
 
-Neither route returns `MobileEntity`. It carries `BrainScriptId`, `LootTableId`
+`GET /api/v1/characters/{serial}` is one character in full, and the one route
+both audiences use: an account reads its own characters, staff read anyone's, and
+anything else is a 403. Ownership is checked against the account the **token**
+names — an id the caller could supply would let anyone read anyone's character by
+changing a number. The serial takes the form the rest of the API reports it in,
+`0x40000001`, or plain decimal; a serial naming no character and one that is not
+a number are the same 404.
+
+It returns the character in the shape the lists already use, the worn items by
+layer — the backpack and the bank box among them — and the backpack's contents as
+a **tree**, nested containers expanded to a depth of 10.
+
+That depth is a guard, not a preference. Containment is a plain list of serials
+with nothing preventing a bag from containing an ancestor, and the walk is
+recursive on a request thread: a cycle there is a hung request rather than a
+wrong answer. A visited set stops one, and the depth limit stops anything the
+visited set misses.
+
+Like the online-player route, this reads world state off the game loop. An item
+the loop moves mid-read may appear in neither place or in both; the next request
+settles it. That trade-off is local to read-only views — world mutations still
+belong on the loop.
+
+Neither list route returns `MobileEntity`. It carries `BrainScriptId`, `LootTableId`
 and `BackpackId`, and a field added to it later would publish itself; the DTO
 names its fields for the same reason `AccountResponse` does.
 

@@ -12,6 +12,7 @@ import { DashboardScreen } from './routes/DashboardScreen'
 import { AdminScreen } from './routes/AdminScreen'
 import { MapScreen } from './routes/MapScreen'
 import { CharactersScreen } from './routes/CharactersScreen'
+import { CharacterDetailScreen } from './routes/CharacterDetailScreen'
 import { AdminLayout } from './routes/AdminLayout'
 import { AccountsScreen } from './routes/AccountsScreen'
 import { CharactersAdminScreen } from './routes/admin/CharactersAdminScreen'
@@ -49,6 +50,16 @@ export function App() {
                 <RequireAuth>
                   <AppShell>
                     <CharactersScreen />
+                  </AppShell>
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/characters/:serial"
+              element={
+                <RequireAuth>
+                  <AppShell>
+                    <CharacterDetailScreen />
                   </AppShell>
                 </RequireAuth>
               }

@@ -293,6 +293,22 @@
     "gender": {
       "Male": "Maschio",
       "Female": "Femmina"
+    },
+    "inventory": {
+      "empty": "Niente qui",
+      "unnamed": "Oggetto senza nome",
+      "amount": "×{{count}}",
+      "noImage": "—"
+    },
+    "detail": {
+      "equipment": "Equipaggiamento",
+      "backpack": "Zaino",
+      "equipmentEmpty": "Non indossa nulla",
+      "backpackEmpty": "Lo zaino è vuoto",
+      "back": "Torna ai personaggi",
+      "notFound": "Personaggio non trovato.",
+      "forbidden": "Quel personaggio appartiene a un altro account.",
+      "loadFailed": "Non è stato possibile caricare il personaggio."
     }
   }
 }

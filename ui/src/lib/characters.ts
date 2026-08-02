@@ -64,3 +64,24 @@ export const useAllCharacters = (params: { page: number; search: string }) =>
     queryFn: () => apiFetch<CharacterPage>(charactersQuery(params)),
     placeholderData: (previous: CharacterPage | undefined) => previous,
   })
+
+export type CharacterDetail = components['schemas']['CharacterDetailResponse']
+export type CharacterItem = components['schemas']['CharacterItemResponse']
+
+/** One character in full — your own, or anyone's for staff. The server decides which. */
+export const useCharacter = (serial: string) =>
+  useQuery({
+    queryKey: ['characters', serial],
+    queryFn: () => apiFetch<CharacterDetail>(`/api/v1/characters/${serial}`),
+  })
+
+/**
+ * An item's art. The id is the ART id in hex — not the item's serial — and hue 0 is the raw art, so
+ * it is omitted rather than sent: two spellings of one picture would sit in the cache as two.
+ * No cache-busting parameter, for the same reason as {@link figureUrl}.
+ */
+export function itemImageUrl(itemId: number, hue = 0): string {
+  const id = `0x${itemId.toString(16)}`
+
+  return hue === 0 ? `/api/v1/images/items/${id}.png` : `/api/v1/images/items/${id}.png?hue=0x${hue.toString(16)}`
+}
