@@ -86,3 +86,22 @@ export function itemImageUrl(itemId: number, hue = 0): string {
 
   return hue === 0 ? `/api/v1/images/items/${id}.png` : `/api/v1/images/items/${id}.png?hue=0x${hue.toString(16)}`
 }
+
+export type ItemTooltip = components['schemas']['ItemTooltipResponse']
+
+/**
+ * What the game says about one item the character carries.
+ *
+ * `enabled` is the whole design: the tooltip is fetched when it opens, not when the row renders. Left
+ * enabled on mount this would quietly become one request per row at page load, which is exactly what
+ * fetching on hover exists to avoid.
+ */
+export const useItemTooltip = (characterSerial: string, itemSerial: string, enabled: boolean) =>
+  useQuery({
+    queryKey: ['characters', characterSerial, 'items', itemSerial, 'tooltip'],
+    queryFn: () => apiFetch<ItemTooltip>(`/api/v1/characters/${characterSerial}/items/${itemSerial}/tooltip`),
+    enabled,
+    // An item's properties do not change while someone reads them, and re-hovering the same row
+    // should not go back to the server.
+    staleTime: 60_000,
+  })

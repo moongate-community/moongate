@@ -100,7 +100,11 @@ function Detail({ detail }: { detail: CharacterDetail }) {
         <div className="flex flex-col gap-6">
           <Card className="gap-3 p-4">
             <h2 className="font-bold text-ink">{t('characters.detail.equipment')}</h2>
-            <InventoryTree items={detail.equipment} emptyLabel={t('characters.detail.equipmentEmpty')} />
+            <InventoryTree
+              items={detail.equipment}
+              emptyLabel={t('characters.detail.equipmentEmpty')}
+              characterSerial={character.serial}
+            />
           </Card>
 
           <Card className="gap-3 p-4">
@@ -110,7 +114,11 @@ function Detail({ detail }: { detail: CharacterDetail }) {
 
           <Card className="gap-3 p-4">
             <h2 className="font-bold text-ink">{t('characters.detail.backpack')}</h2>
-            <InventoryTree items={detail.backpack} emptyLabel={t('characters.detail.backpackEmpty')} />
+            <InventoryTree
+              items={detail.backpack}
+              emptyLabel={t('characters.detail.backpackEmpty')}
+              characterSerial={character.serial}
+            />
           </Card>
         </div>
       </div>

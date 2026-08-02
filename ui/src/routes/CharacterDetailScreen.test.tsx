@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 import '../lib/i18n'
 import { ApiError } from '../lib/api'
+import { TooltipProvider } from '../components/ui/tooltip'
 import { CharacterDetailScreen } from './CharacterDetailScreen'
 import type { CharacterDetail, CharacterItem } from '../lib/characters'
 
@@ -73,12 +75,17 @@ function detail(over: Partial<CharacterDetail> = {}): CharacterDetail {
 function renderAt(serial: string, data: CharacterDetail | undefined, state: Partial<typeof query> = {}) {
   Object.assign(query, { data, isPending: false, isError: false, error: null }, state)
 
+  // The inventory rows hold a tooltip with a query of its own, so the page needs both providers.
   return render(
-    <MemoryRouter initialEntries={[`/characters/${serial}`]}>
-      <Routes>
-        <Route path="/characters/:serial" element={<CharacterDetailScreen />} />
-      </Routes>
-    </MemoryRouter>,
+    <QueryClientProvider client={new QueryClient()}>
+      <TooltipProvider>
+        <MemoryRouter initialEntries={[`/characters/${serial}`]}>
+          <Routes>
+            <Route path="/characters/:serial" element={<CharacterDetailScreen />} />
+          </Routes>
+        </MemoryRouter>
+      </TooltipProvider>
+    </QueryClientProvider>,
   )
 }
 

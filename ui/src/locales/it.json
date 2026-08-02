@@ -321,6 +321,14 @@
       "lockUp": "In crescita",
       "lockDown": "In calo",
       "lockLocked": "Bloccata"
+    },
+    "tooltip": {
+      "loading": "Caricamento…",
+      "unavailable": "Nessuna descrizione disponibile",
+      "template": "Template",
+      "hue": "Hue",
+      "amount": "Quantità",
+      "serial": "Serial"
     }
   }
 }

@@ -20,82 +20,85 @@ import { PluginsScreen } from './routes/PluginsScreen'
 import { SettingsScreen } from './routes/SettingsScreen'
 import { ConsoleScreen } from './routes/ConsoleScreen'
 import { Toaster } from './components/ui/sonner'
+import { TooltipProvider } from './components/ui/tooltip'
 
 const queryClient = new QueryClient()
 
 export function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Toaster />
-      <BrowserRouter>
-        <AuthProvider>
-          <Routes>
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/register" element={<RegisterScreen />} />
-            <Route path="/register/pending" element={<RegistrationPendingScreen />} />
-            <Route path="/verify" element={<VerifyRegistrationScreen />} />
-            <Route
-              path="/"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <DashboardScreen />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/characters"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <CharactersScreen />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/characters/:serial"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <CharacterDetailScreen />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/map"
-              element={
-                <RequireAuth>
-                  <AppShell>
-                    <MapScreen />
-                  </AppShell>
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/admin"
-              element={
-                <RequireAuth>
-                  <RequireAdmin>
+      <TooltipProvider>
+        <Toaster />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegisterScreen />} />
+              <Route path="/register/pending" element={<RegistrationPendingScreen />} />
+              <Route path="/verify" element={<VerifyRegistrationScreen />} />
+              <Route
+                path="/"
+                element={
+                  <RequireAuth>
                     <AppShell>
-                      <AdminLayout />
+                      <DashboardScreen />
                     </AppShell>
-                  </RequireAdmin>
-                </RequireAuth>
-              }
-            >
-              <Route index element={<AdminScreen />} />
-              <Route path="accounts" element={<AccountsScreen />} />
-              <Route path="characters" element={<CharactersAdminScreen />} />
-              <Route path="plugins" element={<PluginsScreen />} />
-              <Route path="settings" element={<SettingsScreen />} />
-              <Route path="console" element={<ConsoleScreen />} />
-            </Route>
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/characters"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <CharactersScreen />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/characters/:serial"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <CharacterDetailScreen />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/map"
+                element={
+                  <RequireAuth>
+                    <AppShell>
+                      <MapScreen />
+                    </AppShell>
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/admin"
+                element={
+                  <RequireAuth>
+                    <RequireAdmin>
+                      <AppShell>
+                        <AdminLayout />
+                      </AppShell>
+                    </RequireAdmin>
+                  </RequireAuth>
+                }
+              >
+                <Route index element={<AdminScreen />} />
+                <Route path="accounts" element={<AccountsScreen />} />
+                <Route path="characters" element={<CharactersAdminScreen />} />
+                <Route path="plugins" element={<PluginsScreen />} />
+                <Route path="settings" element={<SettingsScreen />} />
+                <Route path="console" element={<ConsoleScreen />} />
+              </Route>
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
     </QueryClientProvider>
   )
 }
