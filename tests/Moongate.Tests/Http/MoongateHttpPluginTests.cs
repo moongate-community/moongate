@@ -47,6 +47,7 @@ public class MoongateHttpPluginTests
                 typeof(AuthEndpoints),
                 typeof(BodyImageEndpoints),
                 typeof(CharacterAdminEndpoints),
+                typeof(CharacterDetailEndpoints),
                 typeof(CharacterEndpoints),
                 typeof(ConsoleEndpoints),
                 typeof(HairImageEndpoints),

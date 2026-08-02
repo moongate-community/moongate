@@ -27,6 +27,7 @@ using Moongate.Http.Plugin.Interfaces.Registration;
 using Moongate.Http.Plugin.Interfaces.Ultima;
 using Moongate.Http.Plugin.Services.Assets;
 using Moongate.Http.Plugin.Services.Auth;
+using Moongate.Http.Plugin.Services.Characters;
 using Moongate.Http.Plugin.Services.Console;
 using Moongate.Http.Plugin.Services.Hosting;
 using Moongate.Http.Plugin.Services.Images;
@@ -117,6 +118,11 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<OnlinePlayerAdminEndpoints>();
         container.RegisterApiEndpoint<CharacterEndpoints>();
         container.RegisterApiEndpoint<CharacterAdminEndpoints>();
+
+        // The detail route's reader walks containers; it takes IItemService and nothing else, so it
+        // is a plain singleton beside the endpoint group that uses it.
+        container.Register<CharacterInventoryReader>(Reuse.Singleton);
+        container.RegisterApiEndpoint<CharacterDetailEndpoints>();
         container.RegisterApiEndpoint<ItemTemplateEndpoints>();
 
         // A REST web-terminal onto the admin command set: the registry holds the open SSE feeds,
