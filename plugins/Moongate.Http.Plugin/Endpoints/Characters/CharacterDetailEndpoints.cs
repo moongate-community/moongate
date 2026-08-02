@@ -18,16 +18,19 @@ public sealed class CharacterDetailEndpoints : IApiEndpointRegistration
     private readonly IAccountService _accounts;
     private readonly ICharacterQueryService _characters;
     private readonly CharacterInventoryReader _inventory;
+    private readonly CharacterSkillReader _skills;
 
     public CharacterDetailEndpoints(
         IAccountService accounts,
         ICharacterQueryService characters,
-        CharacterInventoryReader inventory
+        CharacterInventoryReader inventory,
+        CharacterSkillReader skills
     )
     {
         _accounts = accounts;
         _characters = characters;
         _inventory = inventory;
+        _skills = skills;
     }
 
     public void Register(IEndpointRouteBuilder routes)
@@ -44,7 +47,8 @@ public sealed class CharacterDetailEndpoints : IApiEndpointRegistration
     /// serial naming no character is 404, and so is one that is not a number.
     ///
     /// The backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the
-    /// worn items by layer, the backpack and the bank box among them, without expanding them.
+    /// worn items by layer, the backpack and the bank box among them, without expanding them. Skills
+    /// are the ones the character has, by name, in points rather than the tenths the entity stores.
     ///
     /// Read off the game loop, so an item the loop moves mid-read may appear in neither place or in
     /// both. The next request settles it: this is a view, not a ledger.
@@ -92,7 +96,8 @@ public sealed class CharacterDetailEndpoints : IApiEndpointRegistration
             new CharacterDetailResponse(
                 CharacterResponse.From(found.Mobile, found.AccountUsername),
                 _inventory.ReadEquipment(found.Mobile),
-                _inventory.ReadBackpack(found.Mobile)
+                _inventory.ReadBackpack(found.Mobile),
+                _skills.Read(found.Mobile)
             )
         );
     }

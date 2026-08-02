@@ -309,6 +309,18 @@
       "notFound": "Personaggio non trovato.",
       "forbidden": "Quel personaggio appartiene a un altro account.",
       "loadFailed": "Non è stato possibile caricare il personaggio."
+    },
+    "skills": {
+      "title": "Abilità",
+      "empty": "Nessuna abilità allenata",
+      "skill": "Abilità",
+      "value": "Valore",
+      "cap": "Limite",
+      "lock": "Blocco",
+      "total": "{{total}} in totale",
+      "lockUp": "In crescita",
+      "lockDown": "In calo",
+      "lockLocked": "Bloccata"
     }
   }
 }

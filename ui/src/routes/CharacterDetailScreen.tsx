@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router'
 import { Card } from '../components/ui/card'
 import { CharacterImage } from '../components/characters/CharacterImage'
 import { InventoryTree } from '../components/characters/InventoryTree'
+import { SkillList } from '../components/characters/SkillList'
 import { ApiError } from '../lib/api'
 import { paperdollUrl, useCharacter, type CharacterDetail } from '../lib/characters'
 
@@ -100,6 +101,11 @@ function Detail({ detail }: { detail: CharacterDetail }) {
           <Card className="gap-3 p-4">
             <h2 className="font-bold text-ink">{t('characters.detail.equipment')}</h2>
             <InventoryTree items={detail.equipment} emptyLabel={t('characters.detail.equipmentEmpty')} />
+          </Card>
+
+          <Card className="gap-3 p-4">
+            <h2 className="font-bold text-ink">{t('characters.skills.title')}</h2>
+            <SkillList skills={detail.skills} />
           </Card>
 
           <Card className="gap-3 p-4">

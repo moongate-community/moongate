@@ -307,7 +307,7 @@
           "characters"
         ],
         "summary": "One character in full: stats, appearance, what they wear and what they carry.",
-        "description": "The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal. An\naccount may read its own characters; staff may read anyone's, and everyone else gets 403. A\nserial naming no character is 404, and so is one that is not a number.\n            \nThe backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the\nworn items by layer, the backpack and the bank box among them, without expanding them.\n            \nRead off the game loop, so an item the loop moves mid-read may appear in neither place or in\nboth. The next request settles it: this is a view, not a ledger.",
+        "description": "The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal. An\naccount may read its own characters; staff may read anyone's, and everyone else gets 403. A\nserial naming no character is 404, and so is one that is not a number.\n            \nThe backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the\nworn items by layer, the backpack and the bank box among them, without expanding them. Skills\nare the ones the character has, by name, in points rather than the tenths the entity stores.\n            \nRead off the game loop, so an item the loop moves mid-read may appear in neither place or in\nboth. The next request settles it: this is a view, not a ledger.",
         "operationId": "GetCharacter",
         "parameters": [
           {
@@ -1995,7 +1995,8 @@
         "required": [
           "backpack",
           "character",
-          "equipment"
+          "equipment",
+          "skills"
         ],
         "type": "object",
         "properties": {
@@ -2015,6 +2016,13 @@
               "$ref": "#/components/schemas/CharacterItemResponse"
             },
             "description": "The backpack's contents, nested containers expanded."
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CharacterSkillResponse"
+            },
+            "description": "The skills the character has, by name. Sparse on purpose: a mobile never stores a skill left at\nzero, so this is what the character actually trained rather than the whole catalogue."
           }
         },
         "additionalProperties": false,
@@ -2236,6 +2244,43 @@
         },
         "additionalProperties": false,
         "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "CharacterSkillResponse": {
+        "required": [
+          "cap",
+          "id",
+          "lock",
+          "name",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The skill id, which is what the mobile stores it under.",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "The skill's name, or its id when no definition is registered for it."
+          },
+          "value": {
+            "type": "number",
+            "description": "The skill's value in points — 50.0, not the 500 tenths the entity stores. The tenths are a storage\ndetail, and reporting them would leave every consumer to remember to divide.",
+            "format": "double"
+          },
+          "cap": {
+            "type": "number",
+            "description": "That skill's personal ceiling, in points. 100.0 unless something raised it.",
+            "format": "double"
+          },
+          "lock": {
+            "type": "string",
+            "description": "Whether the skill may drift as it is used: `Up`, `Down` or `Locked` — the arrow the\nclient shows beside each entry."
+          }
+        },
+        "additionalProperties": false,
+        "description": "One skill a character has, as the API reports it."
       },
       "ConsoleCommandRequest": {
         "required": [

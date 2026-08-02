@@ -187,7 +187,8 @@ export interface paths {
          *     serial naming no character is 404, and so is one that is not a number.
          *
          *     The backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the
-         *     worn items by layer, the backpack and the bank box among them, without expanding them.
+         *     worn items by layer, the backpack and the bank box among them, without expanding them. Skills
+         *     are the ones the character has, by name, in points rather than the tenths the entity stores.
          *
          *     Read off the game loop, so an item the loop moves mid-read may appear in neither place or in
          *     both. The next request settles it: this is a view, not a ledger.
@@ -1050,6 +1051,11 @@ export interface components {
             equipment: components["schemas"]["CharacterItemResponse"][];
             /** @description The backpack's contents, nested containers expanded. */
             backpack: components["schemas"]["CharacterItemResponse"][];
+            /**
+             * @description The skills the character has, by name. Sparse on purpose: a mobile never stores a skill left at
+             *     zero, so this is what the character actually trained rather than the whole catalogue.
+             */
+            skills: components["schemas"]["CharacterSkillResponse"][];
         };
         /**
          * @description One item as the API reports it, with whatever it contains. Deliberately not `ItemEntity`, which
@@ -1158,6 +1164,32 @@ export interface components {
              * @description How many pages exist at this page size. 0 when nothing matched.
              */
             totalPages: number;
+        };
+        /** @description One skill a character has, as the API reports it. */
+        CharacterSkillResponse: {
+            /**
+             * Format: int32
+             * @description The skill id, which is what the mobile stores it under.
+             */
+            id: number;
+            /** @description The skill's name, or its id when no definition is registered for it. */
+            name: string;
+            /**
+             * Format: double
+             * @description The skill's value in points — 50.0, not the 500 tenths the entity stores. The tenths are a storage
+             *     detail, and reporting them would leave every consumer to remember to divide.
+             */
+            value: number;
+            /**
+             * Format: double
+             * @description That skill's personal ceiling, in points. 100.0 unless something raised it.
+             */
+            cap: number;
+            /**
+             * @description Whether the skill may drift as it is used: `Up`, `Down` or `Locked` — the arrow the
+             *     client shows beside each entry.
+             */
+            lock: string;
         };
         /** @description A console command to run and the SSE connection its output should stream to. */
         ConsoleCommandRequest: {

@@ -309,6 +309,18 @@
       "notFound": "That character could not be found.",
       "forbidden": "That character belongs to another account.",
       "loadFailed": "That character could not be loaded."
+    },
+    "skills": {
+      "title": "Skills",
+      "empty": "No skills trained",
+      "skill": "Skill",
+      "value": "Value",
+      "cap": "Cap",
+      "lock": "Lock",
+      "total": "{{total}} total",
+      "lockUp": "Rising",
+      "lockDown": "Falling",
+      "lockLocked": "Locked"
     }
   }
 }

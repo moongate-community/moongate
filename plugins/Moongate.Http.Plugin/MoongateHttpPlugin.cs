@@ -122,6 +122,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         // The detail route's reader walks containers; it takes IItemService and nothing else, so it
         // is a plain singleton beside the endpoint group that uses it.
         container.Register<CharacterInventoryReader>(Reuse.Singleton);
+        container.Register<CharacterSkillReader>(Reuse.Singleton);
         container.RegisterApiEndpoint<CharacterDetailEndpoints>();
         container.RegisterApiEndpoint<ItemTemplateEndpoints>();
 

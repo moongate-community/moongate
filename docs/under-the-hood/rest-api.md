@@ -211,8 +211,17 @@ changing a number. The serial takes the form the rest of the API reports it in,
 a number are the same 404.
 
 It returns the character in the shape the lists already use, the worn items by
-layer — the backpack and the bank box among them — and the backpack's contents as
-a **tree**, nested containers expanded to a depth of 10.
+layer — the backpack and the bank box among them — the backpack's contents as a
+**tree**, nested containers expanded to a depth of 10, and the character's
+skills.
+
+Skills are reported in **points**, not the tenths the entity stores: 500 becomes
+50.0, so no consumer has to remember the division. Each carries its name from the
+skill registry — its id when nothing defines it, since the catalogue is data and
+can lag the world — its personal cap, and its lock, the up/down/locked arrow the
+client shows beside each entry. The list is sparse and alphabetical: a mobile
+never stores a skill left at zero, so it reports what the character trained
+rather than the whole catalogue padded with noughts.
 
 That depth is a guard, not a preference. Containment is a plain list of serials
 with nothing preventing a bag from containing an ancestor, and the walk is
