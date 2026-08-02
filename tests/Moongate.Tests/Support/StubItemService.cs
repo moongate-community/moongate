@@ -7,16 +7,32 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Support;
 
 /// <summary>
-/// Minimal <see cref="IItemService" /> test double that only answers <see cref="GetEquipped" /> with a
-/// fixed list; every other member is unused by the systems under test and throws if called.
+/// Minimal <see cref="IItemService" /> test double for the read side. <see cref="GetEquipped" /> answers
+/// with a fixed list; <see cref="GetById" /> and <see cref="GetContents" /> answer from items handed to
+/// <see cref="Track" />, resolving containment through each entity's own <c>ContainedItemIds</c> exactly
+/// as the real service does. Every mutating member throws, so a test that reaches one says so.
 /// </summary>
 public sealed class StubItemService : IItemService
 {
     private readonly IReadOnlyList<ItemEntity> _equipped;
+    private readonly Dictionary<Serial, ItemEntity> _items = new();
 
     public StubItemService(IReadOnlyList<ItemEntity> equipped)
     {
         _equipped = equipped;
+
+        foreach (var item in equipped)
+        {
+            _items[item.Id] = item;
+        }
+    }
+
+    /// <summary>Makes an item findable by serial, so a container listing it can resolve it.</summary>
+    public ItemEntity Track(ItemEntity item)
+    {
+        _items[item.Id] = item;
+
+        return item;
     }
 
     public void AddToContainer(ItemEntity container, ItemEntity item, Point2D position)
@@ -38,10 +54,12 @@ public sealed class StubItemService : IItemService
         => throw new NotSupportedException();
 
     public ItemEntity? GetById(Serial itemId)
-        => throw new NotSupportedException();
+        => _items.GetValueOrDefault(itemId);
 
     public IReadOnlyList<ItemEntity> GetContents(Serial containerId)
-        => throw new NotSupportedException();
+        => GetById(containerId) is { } container
+               ? [.. container.ContainedItemIds.Select(GetById).OfType<ItemEntity>()]
+               : [];
 
     public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
         => _equipped;
