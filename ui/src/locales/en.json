@@ -158,7 +158,8 @@
       "accounts": "Accounts",
       "plugins": "Plugins",
       "settings": "Settings",
-      "console": "Console"
+      "console": "Console",
+      "characters": "Characters"
     },
     "accounts": {
       "title": "Accounts",
@@ -248,6 +249,22 @@
       "empty": "No output yet. Type a command to begin.",
       "hint": "↑ / ↓ for history",
       "snippets": "Quick commands"
+    },
+    "characters": {
+      "title": "Characters",
+      "search": "Search by character or account…",
+      "preview": "Preview",
+      "name": "Name",
+      "account": "Account",
+      "race": "Race",
+      "stats": "Str / Dex / Int",
+      "hits": "Hits",
+      "location": "Location",
+      "total": "{{count}} characters",
+      "empty": "No character matches that search.",
+      "loadFailed": "The characters could not be loaded.",
+      "noImage": "—",
+      "unknownAccount": "Unknown"
     }
   },
   "characters": {
