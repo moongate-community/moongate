@@ -293,6 +293,12 @@
     "gender": {
       "Male": "Male",
       "Female": "Female"
+    },
+    "inventory": {
+      "empty": "Nothing here",
+      "unnamed": "Unnamed item",
+      "amount": "×{{count}}",
+      "noImage": "—"
     }
   }
 }
