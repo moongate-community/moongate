@@ -299,6 +299,16 @@
       "unnamed": "Unnamed item",
       "amount": "×{{count}}",
       "noImage": "—"
+    },
+    "detail": {
+      "equipment": "Equipment",
+      "backpack": "Backpack",
+      "equipmentEmpty": "Wearing nothing",
+      "backpackEmpty": "The backpack is empty",
+      "back": "Back to characters",
+      "notFound": "That character could not be found.",
+      "forbidden": "That character belongs to another account.",
+      "loadFailed": "That character could not be loaded."
     }
   }
 }

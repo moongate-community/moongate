@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router'
 
 import '../../lib/i18n'
 import { CharactersAdminScreen } from './CharactersAdminScreen'
@@ -56,7 +57,11 @@ function page(items: Character[], over: Partial<CharacterPage> = {}): CharacterP
 
 function renderWith(data: CharacterPage | undefined, state: Partial<typeof query> = {}) {
   Object.assign(query, { data, isPending: false, isError: false }, state)
-  return render(<CharactersAdminScreen />)
+  return render(
+    <MemoryRouter>
+      <CharactersAdminScreen />
+    </MemoryRouter>,
+  )
 }
 
 describe('CharactersAdminScreen', () => {

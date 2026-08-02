@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { ColumnDef } from '@tanstack/react-table'
+import { Link } from 'react-router'
 
 import { DataTable } from '../../components/ui/data-table'
 import { CharacterImage } from '../../components/characters/CharacterImage'
@@ -26,7 +27,15 @@ export function CharactersAdminScreen() {
           />
         ),
       },
-      { accessorKey: 'name', header: t('admin.characters.name') },
+      {
+        accessorKey: 'name',
+        header: t('admin.characters.name'),
+        cell: ({ row }) => (
+          <Link to={`/characters/${row.original.serial}`} className="font-bold text-gold hover:underline">
+            {row.original.name}
+          </Link>
+        ),
+      },
       {
         accessorKey: 'accountUsername',
         header: t('admin.characters.account'),

@@ -1,19 +1,13 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router'
 
 import { Card } from '../components/ui/card'
 import { CharacterImage } from '../components/characters/CharacterImage'
-import { cn } from '../lib/utils'
-import { figureUrl, paperdollUrl, useMyCharacters, type Character } from '../lib/characters'
+import { figureUrl, useMyCharacters } from '../lib/characters'
 
 export function CharactersScreen() {
   const { t } = useTranslation()
   const characters = useMyCharacters()
-
-  // The chosen serial rather than the character: resolving it against the current list means a
-  // character that disappears cannot leave a selection pointing at nothing, and arriving needs no
-  // effect to pick the first one.
-  const [chosen, setChosen] = useState<string | null>(null)
 
   if (characters.isPending) {
     return <p className="text-sm text-muted">{t('common.loading')}</p>
@@ -41,104 +35,32 @@ export function CharactersScreen() {
     )
   }
 
-  const selected = all.find((one) => one.serial === chosen) ?? all[0]
-
   return (
     <section className="space-y-4">
       <h1 className="text-2xl font-bold text-ink">{t('characters.title')}</h1>
 
-      <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
-        <Card className="gap-0 p-2">
-          {all.map((one) => (
-            <button
-              key={one.serial}
-              type="button"
-              onClick={() => setChosen(one.serial)}
-              className={cn(
-                'flex items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
-                one.serial === selected.serial ? 'bg-gold/10 text-gold' : 'text-ink hover:bg-ink/5',
-              )}
-            >
-              <CharacterImage
-                src={figureUrl(one.serial)}
-                alt={t('characters.figureAlt', { name: one.name })}
-                className="h-12 w-10 object-contain"
-                fallback={<span className="h-12 w-10" aria-hidden="true" />}
-              />
-              <span className="min-w-0">
-                <span className="block truncate font-bold">{one.name}</span>
-                <span className="block truncate text-xs text-muted">
-                  {t(`characters.race.${one.race}`, { defaultValue: one.race })}
-                </span>
+      <Card className="gap-0 p-2">
+        {all.map((one) => (
+          <Link
+            key={one.serial}
+            to={`/characters/${one.serial}`}
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-ink transition-colors hover:bg-ink/5"
+          >
+            <CharacterImage
+              src={figureUrl(one.serial)}
+              alt={t('characters.figureAlt', { name: one.name })}
+              className="h-12 w-10 object-contain"
+              fallback={<span className="h-12 w-10" aria-hidden="true" />}
+            />
+            <span className="min-w-0">
+              <span className="block truncate font-bold">{one.name}</span>
+              <span className="block truncate text-xs text-muted">
+                {t(`characters.race.${one.race}`, { defaultValue: one.race })}
               </span>
-            </button>
-          ))}
-        </Card>
-
-        <CharacterPanel character={selected} />
-      </div>
+            </span>
+          </Link>
+        ))}
+      </Card>
     </section>
-  )
-}
-
-function CharacterPanel({ character }: { character: Character }) {
-  const { t } = useTranslation()
-
-  return (
-    <Card className="items-center gap-4 py-8">
-      <header className="text-center">
-        <h2 className="text-xl font-bold text-ink">{character.name}</h2>
-        <p className="text-sm text-muted">
-          {t('characters.identity', {
-            // The server reports these as its own enum names. Falling back to that name means a
-            // race the portal has no word for still reads as something, rather than as a raw key.
-            race: t(`characters.race.${character.race}`, { defaultValue: character.race }),
-            gender: t(`characters.gender.${character.gender}`, { defaultValue: character.gender }),
-          })}
-        </p>
-      </header>
-
-      {/* A fixed box so the panel does not jump while the picture loads. */}
-      <div className="flex h-[260px] w-[210px] items-center justify-center">
-        <CharacterImage
-          // Keyed by serial so switching characters remounts the image: without it a picture that
-          // failed once would keep its placeholder for the next character too.
-          key={character.serial}
-          src={paperdollUrl(character.serial)}
-          alt={t('characters.paperdollAlt', { name: character.name })}
-          className="max-h-full max-w-full object-contain"
-          fallback={<p className="text-center text-sm text-muted">{t('characters.noImage')}</p>}
-        />
-      </div>
-
-      <dl className="grid w-full max-w-sm grid-cols-2 gap-x-6 gap-y-2 px-6 text-sm">
-        <Stat label={t('characters.strength')} value={character.strength} />
-        <Stat label={t('characters.dexterity')} value={character.dexterity} />
-        <Stat label={t('characters.intelligence')} value={character.intelligence} />
-        <Stat label={t('characters.kills')} value={character.kills} />
-        <Stat
-          label={t('characters.hits')}
-          value={t('characters.pool', { current: character.hits, max: character.hitsMax })}
-        />
-        <Stat
-          label={t('characters.stamina')}
-          value={t('characters.pool', { current: character.stamina, max: character.staminaMax })}
-        />
-        <Stat
-          label={t('characters.mana')}
-          value={t('characters.pool', { current: character.mana, max: character.manaMax })}
-        />
-        <Stat label={t('characters.location')} value={`${character.x}, ${character.y}`} />
-      </dl>
-    </Card>
-  )
-}
-
-function Stat({ label, value }: { label: string; value: string | number }) {
-  return (
-    <div className="flex justify-between gap-2">
-      <dt className="text-muted">{label}</dt>
-      <dd className="font-bold text-ink">{value}</dd>
-    </div>
   )
 }
