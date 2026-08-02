@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { charactersQuery, figureUrl, paperdollUrl } from './characters'
+import { charactersQuery, figureUrl, itemImageUrl, paperdollUrl } from './characters'
 
 // The serial is used verbatim, in the `0x40000001` form the API reports it in. The routes accept
 // that form, so nothing here converts bases -- a conversion is the kind of thing that silently
@@ -47,5 +47,25 @@ describe('staff characters query', () => {
   // a failed request.
   it('never asks for a page below 1', () => {
     expect(charactersQuery({ page: 0, search: '' })).toBe('/api/v1/admin/characters?page=1&pageSize=25')
+  })
+})
+
+describe('item art urls', () => {
+  // The route takes the ART id in hex, with or without the prefix -- not the item's serial.
+  it('addresses the art by its hex id', () => {
+    expect(itemImageUrl(0x1234)).toBe('/api/v1/images/items/0x1234.png')
+  })
+
+  it('asks for the hue when the item is dyed', () => {
+    expect(itemImageUrl(0x1234, 0x21)).toBe('/api/v1/images/items/0x1234.png?hue=0x21')
+  })
+
+  // Hue 0 IS the raw art, so sending it is noise that keeps two spellings of one picture in the cache.
+  it('omits hue 0', () => {
+    expect(itemImageUrl(0x1234, 0)).toBe('/api/v1/images/items/0x1234.png')
+  })
+
+  it('never adds a cache-busting parameter', () => {
+    expect(itemImageUrl(0x1234, 0x21)).not.toMatch(/[?&](t|v|_)=/)
   })
 })
