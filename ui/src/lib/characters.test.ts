@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { figureUrl, paperdollUrl } from './characters'
+import { charactersQuery, figureUrl, paperdollUrl } from './characters'
 
 // The serial is used verbatim, in the `0x40000001` form the API reports it in. The routes accept
 // that form, so nothing here converts bases -- a conversion is the kind of thing that silently
@@ -24,5 +24,28 @@ describe('character image urls', () => {
   it('never adds a cache-busting parameter', () => {
     expect(figureUrl('0x1')).not.toMatch(/[?&](t|v|_)=/)
     expect(paperdollUrl('0x1')).not.toMatch(/[?&](t|v|_)=/)
+  })
+})
+
+describe('staff characters query', () => {
+  it('asks for the page it was given', () => {
+    expect(charactersQuery({ page: 3, search: '' })).toBe('/api/v1/admin/characters?page=3&pageSize=25')
+  })
+
+  // Blank means no filter; sending `search=` would be a filter on the empty string.
+  it('omits an empty search', () => {
+    expect(charactersQuery({ page: 1, search: '   ' })).toBe('/api/v1/admin/characters?page=1&pageSize=25')
+  })
+
+  it('encodes the search', () => {
+    expect(charactersQuery({ page: 1, search: 'lord blackthorn' })).toBe(
+      '/api/v1/admin/characters?page=1&pageSize=25&search=lord+blackthorn',
+    )
+  })
+
+  // page 0 is a 400 from the server, so a bug that reaches it should be visible here rather than as
+  // a failed request.
+  it('never asks for a page below 1', () => {
+    expect(charactersQuery({ page: 0, search: '' })).toBe('/api/v1/admin/characters?page=1&pageSize=25')
   })
 })

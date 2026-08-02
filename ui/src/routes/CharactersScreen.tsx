@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { Card } from '../components/ui/card'
+import { CharacterImage } from '../components/characters/CharacterImage'
 import { cn } from '../lib/utils'
 import { figureUrl, paperdollUrl, useMyCharacters, type Character } from '../lib/characters'
 
@@ -140,29 +141,4 @@ function Stat({ label, value }: { label: string; value: string | number }) {
       <dd className="font-bold text-ink">{value}</dd>
     </div>
   )
-}
-
-/**
- * An image that gives way to something readable when it fails. A character whose body has no
- * animation legitimately 404s from the image route, and the browser's broken-image icon is not an
- * answer for a page whose whole point is the picture.
- */
-function CharacterImage({
-  src,
-  alt,
-  className,
-  fallback,
-}: {
-  src: string
-  alt: string
-  className?: string
-  fallback: React.ReactNode
-}) {
-  const [failed, setFailed] = useState(false)
-
-  if (failed) {
-    return <>{fallback}</>
-  }
-
-  return <img src={src} alt={alt} className={className} onError={() => setFailed(true)} />
 }

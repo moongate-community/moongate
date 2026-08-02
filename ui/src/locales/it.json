@@ -119,7 +119,10 @@
   "common": {
     "signOut": "Esci",
     "loading": "Caricamento…",
-    "backToLogin": "Torna all’accesso"
+    "backToLogin": "Torna all’accesso",
+    "previous": "Precedente",
+    "next": "Successiva",
+    "pageOf": "Pagina {{page}} di {{total}}"
   },
   "error": {
     "generic": "Qualcosa è andato storto. Riprova."
@@ -155,7 +158,8 @@
       "accounts": "Account",
       "plugins": "Plugin",
       "settings": "Impostazioni",
-      "console": "Console"
+      "console": "Console",
+      "characters": "Personaggi"
     },
     "accounts": {
       "title": "Account",
@@ -245,6 +249,22 @@
       "empty": "Nessun output. Scrivi un comando per iniziare.",
       "hint": "↑ / ↓ per la cronologia",
       "snippets": "Comandi rapidi"
+    },
+    "characters": {
+      "title": "Personaggi",
+      "search": "Cerca per personaggio o account…",
+      "preview": "Anteprima",
+      "name": "Nome",
+      "account": "Account",
+      "race": "Razza",
+      "stats": "For / Des / Int",
+      "hits": "Vita",
+      "location": "Posizione",
+      "total": "{{count}} personaggi",
+      "empty": "Nessun personaggio corrisponde alla ricerca.",
+      "loadFailed": "Non è stato possibile caricare i personaggi.",
+      "noImage": "—",
+      "unknownAccount": "Sconosciuto"
     }
   },
   "characters": {
