@@ -91,6 +91,17 @@ describe('InventoryTree', () => {
     expect(screen.getByText('OuterTorso')).toBeInTheDocument()
   })
 
+  // The trigger is the picture, not the row. Anchored to a full-width row, the tooltip lands
+  // somewhere in the middle of it instead of beside the thing being pointed at.
+  it('hangs the tooltip off the picture rather than the whole row', () => {
+    renderTree(<InventoryTree characterSerial="0x1" items={[item('Sword')]} emptyLabel="empty" />)
+
+    const trigger = screen.getByAltText('Sword').closest('[data-slot="tooltip-trigger"]')
+
+    expect(trigger).not.toBeNull()
+    expect(trigger).not.toHaveTextContent('Sword')
+  })
+
   it('says so when there is nothing', () => {
     renderTree(<InventoryTree characterSerial="0x1" items={[]} emptyLabel="Nothing here" />)
 
