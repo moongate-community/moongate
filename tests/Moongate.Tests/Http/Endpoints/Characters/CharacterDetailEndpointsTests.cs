@@ -195,13 +195,13 @@ public class CharacterDetailEndpointsTests
                               // containers has its own tests, so an empty item world is enough here.
                               container.RegisterInstance<IItemService>(new StubItemService([]));
                               container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
+                              container.Register<CharacterAccessService>(Reuse.Singleton);
                               container.Register<CharacterInventoryReader>(Reuse.Singleton);
                               container.RegisterInstance<ISkillService>(SkillRegistry());
                               container.Register<CharacterSkillReader>(Reuse.Singleton);
                               container.RegisterApiEndpointInstance(
                                   new CharacterDetailEndpoints(
-                                      container.Resolve<IAccountService>(),
-                                      container.Resolve<ICharacterQueryService>(),
+                                      container.Resolve<CharacterAccessService>(),
                                       container.Resolve<CharacterInventoryReader>(),
                                       container.Resolve<CharacterSkillReader>()
                                   )

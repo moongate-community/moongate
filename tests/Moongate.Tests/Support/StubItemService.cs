@@ -14,18 +14,23 @@ namespace Moongate.Tests.Support;
 /// </summary>
 public sealed class StubItemService : IItemService
 {
-    private readonly IReadOnlyList<ItemEntity> _equipped;
     private readonly Dictionary<Serial, ItemEntity> _items = new();
 
     public StubItemService(IReadOnlyList<ItemEntity> equipped)
     {
-        _equipped = equipped;
+        Equipped = [.. equipped];
 
         foreach (var item in equipped)
         {
             _items[item.Id] = item;
         }
     }
+
+    /// <summary>What <see cref="GetEquipped" /> answers with. Mutable, so a test can dress a mobile.</summary>
+    public List<ItemEntity> Equipped { get; }
+
+    /// <summary>How many items are findable, which a test can use to mint distinct serials.</summary>
+    public int TrackedCount => _items.Count;
 
     /// <summary>Makes an item findable by serial, so a container listing it can resolve it.</summary>
     public ItemEntity Track(ItemEntity item)
@@ -62,7 +67,7 @@ public sealed class StubItemService : IItemService
                : [];
 
     public IReadOnlyList<ItemEntity> GetEquipped(MobileEntity mobile)
-        => _equipped;
+        => Equipped;
 
     public void MoveToWorld(ItemEntity item, int mapId, Point3D position)
         => throw new NotSupportedException();

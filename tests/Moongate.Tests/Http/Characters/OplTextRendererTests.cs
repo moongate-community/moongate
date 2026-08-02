@@ -1,6 +1,6 @@
 using Moongate.Http.Plugin.Services.Characters;
 using Moongate.Network.Data;
-using Moongate.Server.Abstractions.Interfaces.Localization;
+using Moongate.Tests.Support;
 
 namespace Moongate.Tests.Http.Characters;
 
@@ -84,20 +84,6 @@ public class OplTextRendererTests
         Assert.Equal("Tommy's spellbook", renderer.Render(new(1042971, "Tommy's spellbook")));
     }
 
-    private static IClilocService Clilocs(params (int Cliloc, string Text)[] entries)
-        => new ClilocStub(entries.ToDictionary(entry => entry.Cliloc, entry => entry.Text));
-
-    /// <summary>The client's string table, reduced to the entries a test cares about.</summary>
-    private sealed class ClilocStub : IClilocService
-    {
-        private readonly Dictionary<int, string> _text;
-
-        public ClilocStub(Dictionary<int, string> text)
-        {
-            _text = text;
-        }
-
-        public string? Text(int cliloc)
-            => _text.GetValueOrDefault(cliloc);
-    }
+    private static StubClilocService Clilocs(params (int Cliloc, string Text)[] entries)
+        => StubClilocService.Entries(entries);
 }

@@ -15,20 +15,17 @@ namespace Moongate.Http.Plugin.Endpoints.Characters;
 /// <summary>One character in full, for its owner or for staff.</summary>
 public sealed class CharacterDetailEndpoints : IApiEndpointRegistration
 {
-    private readonly IAccountService _accounts;
-    private readonly ICharacterQueryService _characters;
+    private readonly CharacterAccessService _access;
     private readonly CharacterInventoryReader _inventory;
     private readonly CharacterSkillReader _skills;
 
     public CharacterDetailEndpoints(
-        IAccountService accounts,
-        ICharacterQueryService characters,
+        CharacterAccessService access,
         CharacterInventoryReader inventory,
         CharacterSkillReader skills
     )
     {
-        _accounts = accounts;
-        _characters = characters;
+        _access = access;
         _inventory = inventory;
         _skills = skills;
     }
@@ -55,61 +52,22 @@ public sealed class CharacterDetailEndpoints : IApiEndpointRegistration
     /// </remarks>
     private IResult GetOne(string serial, ClaimsPrincipal user)
     {
-        if (!Serial.TryParse(serial, out var characterId))
+        // Who may read which character is one rule, and it lives in one place: two copies of an
+        // authorization check are two rules, and the second one drifts.
+        var (found, denial) = _access.Resolve(serial, user);
+
+        if (denial is not null)
         {
-            return NotFound();
-        }
-
-        var found = _characters.Find(characterId);
-
-        if (found is null)
-        {
-            return NotFound();
-        }
-
-        // The account comes from the token, never from the request: an id a caller could supply would
-        // let anyone read anyone's character by changing a number.
-        if (!CharacterEndpoints.TryReadAccountId(user, out var accountId))
-        {
-            return Results.Problem("The token carries no account id.", statusCode: StatusCodes.Status401Unauthorized);
-        }
-
-        var caller = _accounts.GetById(accountId);
-
-        if (caller is null)
-        {
-            return Results.Problem(
-                "The account this token belongs to no longer exists.",
-                statusCode: StatusCodes.Status401Unauthorized
-            );
-        }
-
-        if (!IsStaff(caller.AccountLevel) && !caller.MobileIds.Contains(characterId))
-        {
-            return Results.Problem(
-                "That character belongs to another account.",
-                statusCode: StatusCodes.Status403Forbidden
-            );
+            return denial;
         }
 
         return Results.Ok(
             new CharacterDetailResponse(
-                CharacterResponse.From(found.Mobile, found.AccountUsername),
+                CharacterResponse.From(found!.Mobile, found.AccountUsername),
                 _inventory.ReadEquipment(found.Mobile),
                 _inventory.ReadBackpack(found.Mobile),
                 _skills.Read(found.Mobile)
             )
         );
     }
-
-    /// <summary>The same two levels the admin policy admits, so the two cannot drift apart.</summary>
-    private static bool IsStaff(AccountLevelType level)
-        => level is AccountLevelType.Administrator or AccountLevelType.GrandMaster;
-
-    /// <summary>
-    /// One answer for "no such character" and "that is not even a serial": from outside, both mean
-    /// there is nothing at that address.
-    /// </summary>
-    private static IResult NotFound()
-        => Results.Problem("No character with that serial.", statusCode: StatusCodes.Status404NotFound);
 }
