@@ -119,7 +119,10 @@
   "common": {
     "signOut": "Esci",
     "loading": "Caricamento…",
-    "backToLogin": "Torna all’accesso"
+    "backToLogin": "Torna all’accesso",
+    "previous": "Precedente",
+    "next": "Successiva",
+    "pageOf": "Pagina {{page}} di {{total}}"
   },
   "error": {
     "generic": "Qualcosa è andato storto. Riprova."

@@ -119,7 +119,10 @@
   "common": {
     "signOut": "Sign out",
     "loading": "Loading…",
-    "backToLogin": "Back to sign in"
+    "backToLogin": "Back to sign in",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{page}} of {{total}}"
   },
   "error": {
     "generic": "Something went wrong. Please try again."
