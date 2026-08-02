@@ -202,6 +202,35 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/characters/{serial}/items/{itemSerial}/tooltip": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * What the game says about one item the character is carrying or wearing.
+         * @description The lines are the object property list the game client renders, resolved to text — the item's
+         *     name, its weight, and whatever else the shard describes. A shard whose string table is not
+         *     loaded gets an **empty** list rather than an error: the technical fields are still worth having.
+         *
+         *     The route is nested under the character because an item knows its container, not whose it is.
+         *     Authorization is the character's — an account reads its own, staff read anyone's — and the item
+         *     must actually be in that character's equipment or backpack, so a serial cannot be probed here.
+         *
+         *     Answers 503 when the game loop does not respond: the property list is built on the loop, whose
+         *     cache is deliberately unsynchronized.
+         */
+        get: operations["GetItemTooltip"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/console/stream": {
         parameters: {
             query?: never;
@@ -1396,6 +1425,33 @@ export interface components {
              */
             totalPages: number;
         };
+        /** @description What the game itself says about one item, plus what the portal knows about it. */
+        ItemTooltipResponse: {
+            /** @description The item's serial, as `0x40000001`. */
+            serial: string;
+            /**
+             * @description The object property list as the game client renders it, resolved to text. Empty when the shard's
+             *     string table is not loaded — the technical fields are still worth showing, so that is not an error.
+             */
+            lines: string[];
+            /** @description The template it was built from. */
+            templateId: string;
+            /**
+             * Format: int32
+             * @description The art id.
+             */
+            itemId: number;
+            /**
+             * Format: int32
+             * @description 0 for the raw art.
+             */
+            hue: number;
+            /**
+             * Format: int32
+             * @description How many, for a stack.
+             */
+            amount: number;
+        };
         /**
          * Format: int32
          * @enum {integer}
@@ -1963,6 +2019,29 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CharacterDetailResponse"];
+                };
+            };
+        };
+    };
+    GetItemTooltip: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                serial: string;
+                itemSerial: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ItemTooltipResponse"];
                 };
             };
         };

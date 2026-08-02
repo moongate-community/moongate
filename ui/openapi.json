@@ -333,6 +333,46 @@
         }
       }
     },
+    "/api/v1/characters/{serial}/items/{itemSerial}/tooltip": {
+      "get": {
+        "tags": [
+          "characters"
+        ],
+        "summary": "What the game says about one item the character is carrying or wearing.",
+        "description": "The lines are the object property list the game client renders, resolved to text — the item's\nname, its weight, and whatever else the shard describes. A shard whose string table is not\nloaded gets an **empty** list rather than an error: the technical fields are still worth having.\n            \nThe route is nested under the character because an item knows its container, not whose it is.\nAuthorization is the character's — an account reads its own, staff read anyone's — and the item\nmust actually be in that character's equipment or backpack, so a serial cannot be probed here.\n            \nAnswers 503 when the game loop does not respond: the property list is built on the loop, whose\ncache is deliberately unsynchronized.",
+        "operationId": "GetItemTooltip",
+        "parameters": [
+          {
+            "name": "serial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemSerial",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItemTooltipResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/console/stream": {
       "get": {
         "tags": [
@@ -2811,6 +2851,51 @@
         },
         "additionalProperties": false,
         "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "ItemTooltipResponse": {
+        "required": [
+          "amount",
+          "hue",
+          "itemId",
+          "lines",
+          "serial",
+          "templateId"
+        ],
+        "type": "object",
+        "properties": {
+          "serial": {
+            "type": "string",
+            "description": "The item's serial, as `0x40000001`."
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The object property list as the game client renders it, resolved to text. Empty when the shard's\nstring table is not loaded — the technical fields are still worth showing, so that is not an error."
+          },
+          "templateId": {
+            "type": "string",
+            "description": "The template it was built from."
+          },
+          "itemId": {
+            "type": "integer",
+            "description": "The art id.",
+            "format": "int32"
+          },
+          "hue": {
+            "type": "integer",
+            "description": "0 for the raw art.",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "How many, for a stack.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What the game itself says about one item, plus what the portal knows about it."
       },
       "LayerType": {
         "enum": [

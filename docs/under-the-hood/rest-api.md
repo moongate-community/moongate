@@ -111,6 +111,7 @@ good token that is simply not staff.
 | `GET`    | `/api/v1/player/me/characters`       | `player` | the caller's own characters        |
 | `GET`    | `/api/v1/admin/characters`           | `admin`  | every character, paged             |
 | `GET`    | `/api/v1/characters/{serial}`        | `player` | one character in full, or 403 / 404 |
+| `GET`    | `/api/v1/characters/{serial}/items/{itemSerial}/tooltip` | `player` | what the game says about one of its items |
 | `GET`    | `/api/v1/admin/players/online`       | `admin`  | players currently in the world     |
 | `GET`    | `/api/v1/images/items/{id}.png`      | none     | item art as PNG, or 400 / 404 / 503 |
 | `POST`   | `/api/v1/admin/images/items`         | `admin`  | 202, or 409 / 503                  |
@@ -229,7 +230,27 @@ recursive on a request thread: a cycle there is a hung request rather than a
 wrong answer. A visited set stops one, and the depth limit stops anything the
 visited set misses.
 
-Like the online-player route, this reads world state off the game loop. An item
+`GET /api/v1/characters/{serial}/items/{itemSerial}/tooltip` is what the game
+itself says about one item — the object property list the client renders,
+resolved to text. Resolving it means following UO's own grammar: a cliloc
+number, TAB-separated arguments, `~1_NUMBER~` placeholders, and an argument that
+may itself be a `#cliloc`. That happens here so a caller receives finished
+sentences rather than a numbering scheme to decode. An entry the string table
+cannot describe is dropped, so a shard with no client files answers with fewer
+lines — or none — rather than with raw clilocs or an error.
+
+The route is nested under the character deliberately. An item knows its parent
+container, not whose it is, so there is no ownership chain from an item up to an
+account: authorization is the character's, and the item must actually be in that
+character's equipment or backpack. A serial cannot be probed here.
+
+Unlike the reads above, this one **goes through the game loop**. `IOplService`
+caches its snapshots without synchronization by design, so building one from a
+request thread would race the loop that owns it. A loop that does not answer
+within two seconds is a 503: nobody hovering an item wants to watch a spinner,
+and a loop that busy has a worse problem than a missing tooltip.
+
+Like the online-player route, the rest of this reads world state off the game loop. An item
 the loop moves mid-read may appear in neither place or in both; the next request
 settles it. That trade-off is local to read-only views — world mutations still
 belong on the loop.
