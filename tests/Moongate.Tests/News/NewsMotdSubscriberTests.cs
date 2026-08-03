@@ -97,7 +97,7 @@ public class NewsMotdSubscriberTests
         public static async Task<Fixture> WithAsync(params (string Title, bool Published)[] entries)
         {
             var persistence = new FakePersistenceService();
-            var news = new NewsService(persistence);
+            var news = new NewsService(persistence, new RecordingChatService(), new StubGameLoopContext());
 
             foreach (var (title, published) in entries)
             {

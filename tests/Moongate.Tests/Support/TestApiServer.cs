@@ -25,6 +25,7 @@ using Moongate.Http.Plugin.Services.Plugins;
 using Moongate.Http.Plugin.Services.Registration;
 using Moongate.Server.Abstractions.Data.Config;
 using Moongate.Server.Abstractions.Interfaces.Accounts;
+using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.Notifications;
 using Moongate.Server.Abstractions.Interfaces.Plugins;
 using Moongate.Server.Abstractions.Interfaces.Server;
@@ -183,6 +184,10 @@ public sealed class TestApiServer : IAsyncDisposable
         // the work inline satisfies it with nothing to flake on.
         var gameLoop = loop ?? new StubGameLoopContext();
         container.RegisterInstance(gameLoop);
+
+        // Anything that speaks to players needs this: the news service announces a publication
+        // through it, and an endpoint test should not have to know that.
+        container.RegisterInstance<IChatService>(new RecordingChatService());
 
         container.RegisterApiEndpointInstance(
             new AccountEndpoints(accounts, gameLoop)

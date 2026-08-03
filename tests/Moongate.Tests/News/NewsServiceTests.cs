@@ -56,5 +56,5 @@ public class NewsServiceTests
     }
 
     private static NewsService Build()
-        => new(new FakePersistenceService());
+        => new(new FakePersistenceService(), new RecordingChatService(), new StubGameLoopContext());
 }

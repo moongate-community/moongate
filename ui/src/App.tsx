@@ -20,6 +20,7 @@ import { ItemTemplatesScreen } from './routes/admin/ItemTemplatesScreen'
 import { ItemTemplateDetailScreen } from './routes/admin/ItemTemplateDetailScreen'
 import { MobileTemplatesScreen } from './routes/admin/MobileTemplatesScreen'
 import { MobileTemplateDetailScreen } from './routes/admin/MobileTemplateDetailScreen'
+import { NewsScreen } from './routes/admin/NewsScreen'
 import { PluginsScreen } from './routes/PluginsScreen'
 import { SettingsScreen } from './routes/SettingsScreen'
 import { ConsoleScreen } from './routes/ConsoleScreen'
@@ -99,6 +100,7 @@ export function App() {
                 <Route path="items/:id" element={<ItemTemplateDetailScreen />} />
                 <Route path="mobiles" element={<MobileTemplatesScreen />} />
                 <Route path="mobiles/:id" element={<MobileTemplateDetailScreen />} />
+                <Route path="news" element={<NewsScreen />} />
                 <Route path="plugins" element={<PluginsScreen />} />
                 <Route path="settings" element={<SettingsScreen />} />
                 <Route path="console" element={<ConsoleScreen />} />

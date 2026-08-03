@@ -1,6 +1,8 @@
+using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
 using Moongate.News.Plugin.Entities;
 using Moongate.News.Plugin.Interfaces;
+using Moongate.Server.Abstractions.Interfaces.Chat;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
 
 namespace Moongate.News.Plugin.Services;
@@ -10,9 +12,14 @@ public sealed class NewsService : INewsService
 {
     private readonly IEntityStore<NewsEntity, Serial> _store;
 
-    public NewsService(IPersistenceService persistence)
+    private readonly IChatService _chat;
+    private readonly IGameLoopContext _loop;
+
+    public NewsService(IPersistenceService persistence, IChatService chat, IGameLoopContext loop)
     {
         _store = persistence.GetStore<NewsEntity, Serial>();
+        _chat = chat;
+        _loop = loop;
     }
 
     public async ValueTask<NewsEntity> CreateAsync(
@@ -34,6 +41,8 @@ public sealed class NewsService : INewsService
             UpdatedAt = now
         };
         await _store.UpsertAsync(news, ct);
+
+        Announce(news, wasPublished: false);
 
         return news;
     }
@@ -63,12 +72,35 @@ public sealed class NewsService : INewsService
             return null;
         }
 
+        // Read before the mutation: whether this save PUBLISHES the entry is the difference between
+        // the old state and the new one, and after the assignment the old one is gone.
+        var wasPublished = news.IsPublished;
+
         news.Title = title;
         news.Body = body;
         news.IsPublished = isPublished;
         news.UpdatedAt = DateTime.UtcNow;
         await _store.UpsertAsync(news, ct);
 
+        Announce(news, wasPublished);
+
         return news;
+    }
+
+    /// <summary>
+    /// Tells everyone in the world, but only when the entry has just become public. Editing something
+    /// already published is not news: a typo corrected three times would be three announcements.
+    ///
+    /// Posted to the game loop rather than broadcast from here — this reaches every live session, and
+    /// the calls that touch sessions belong on the loop. It is what the REST console already does.
+    /// </summary>
+    private void Announce(NewsEntity news, bool wasPublished)
+    {
+        if (!news.IsPublished || wasPublished)
+        {
+            return;
+        }
+
+        _loop.Post(() => _chat.Broadcast(news.Title));
     }
 }

@@ -161,7 +161,8 @@
       "console": "Console",
       "characters": "Characters",
       "items": "Items",
-      "mobiles": "Mobiles"
+      "mobiles": "Mobiles",
+      "news": "News"
     },
     "accounts": {
       "title": "Accounts",
@@ -319,6 +320,27 @@
       "layer": "Layer",
       "item": "Item",
       "anyGender": "Any"
+    },
+    "news": {
+      "title": "News",
+      "search": "Search news…",
+      "newsTitle": "Title",
+      "author": "Author",
+      "status": "Status",
+      "published": "Published",
+      "draft": "Draft",
+      "updated": "Updated",
+      "new": "New entry",
+      "edit": "Edit",
+      "delete": "Delete",
+      "body": "Body",
+      "publish": "Published",
+      "save": "Save",
+      "cancel": "Cancel",
+      "empty": "No news yet",
+      "loadFailed": "The news could not be loaded.",
+      "deleteConfirm": "Delete “{{title}}”? This cannot be undone.",
+      "announceHint": "Publishing announces the title to everyone in the world."
     }
   },
   "characters": {

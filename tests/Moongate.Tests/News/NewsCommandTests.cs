@@ -52,7 +52,7 @@ public class NewsCommandTests
     private static async Task<List<string>> RunAsync(params (string Title, bool Published)[] entries)
     {
         var persistence = new FakePersistenceService();
-        var news = new NewsService(persistence);
+        var news = new NewsService(persistence, new RecordingChatService(), new StubGameLoopContext());
 
         foreach (var (title, published) in entries)
         {

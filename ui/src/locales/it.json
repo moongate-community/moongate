@@ -161,7 +161,8 @@
       "console": "Console",
       "characters": "Personaggi",
       "items": "Oggetti",
-      "mobiles": "Mobili"
+      "mobiles": "Mobili",
+      "news": "News"
     },
     "accounts": {
       "title": "Account",
@@ -319,6 +320,27 @@
       "layer": "Layer",
       "item": "Oggetto",
       "anyGender": "Qualsiasi"
+    },
+    "news": {
+      "title": "News",
+      "search": "Cerca news…",
+      "newsTitle": "Titolo",
+      "author": "Autore",
+      "status": "Stato",
+      "published": "Pubblicata",
+      "draft": "Bozza",
+      "updated": "Aggiornata",
+      "new": "Nuova",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "body": "Testo",
+      "publish": "Pubblicata",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "empty": "Nessuna news",
+      "loadFailed": "Non è stato possibile caricare le news.",
+      "deleteConfirm": "Eliminare «{{title}}»? L’operazione non è reversibile.",
+      "announceHint": "Pubblicandola, il titolo viene annunciato a tutti nel mondo."
     }
   },
   "characters": {
