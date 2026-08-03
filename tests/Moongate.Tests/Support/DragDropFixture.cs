@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions;
+using Moongate.Core.Geometry;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Services.Items;
 using Moongate.Ultima.Types;
@@ -50,6 +51,7 @@ public sealed class DragDropFixture
             }
         );
         templates.Register(new() { Id = "bag", Name = "Bag", Category = "Container", ItemId = 3702, IsMovable = true });
+        templates.Register(new() { Id = "sword", Name = "Sword", Category = "Weapon", ItemId = 5046, IsMovable = true });
 
         Service = new(
             Items,
@@ -57,6 +59,7 @@ public sealed class DragDropFixture
             templates,
             new StubWorldService(),
             new StubStackableRule(),
+            new StubContainerRule(),
             eventBus: EventBus
         );
 
@@ -83,6 +86,26 @@ public sealed class DragDropFixture
         Items.AddToContainer(Bag, gold, new(20, 30));
 
         return gold;
+    }
+
+    /// <summary>A second stack of gold in the backpack, for the merge cases.</summary>
+    public ItemEntity AddGoldToBackpack(int amount, Point2D position)
+    {
+        var gold = new ItemEntity { TemplateId = "gold", ItemId = 3821, Amount = amount, Hue = new(0) };
+        Items.Create(gold);
+        Items.AddToContainer(Backpack, gold, position);
+
+        return gold;
+    }
+
+    /// <summary>Something that neither stacks nor holds anything, to drop other things onto.</summary>
+    public ItemEntity AddSwordToBackpack(Point2D position)
+    {
+        var sword = new ItemEntity { TemplateId = "sword", ItemId = 5046, Amount = 1 };
+        Items.Create(sword);
+        Items.AddToContainer(Backpack, sword, position);
+
+        return sword;
     }
 
     /// <summary>Takes the backpack off the actor, to exercise the bounce falling all the way to the feet.</summary>
