@@ -56,7 +56,9 @@ export function EntityPicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[80vh] w-[min(46rem,92vw)] max-w-none flex-col gap-4">
+      {/* Three fifths of the viewport on a desktop, near-full on a phone where three fifths is a
+          column too narrow to put a tile and two lines of text beside each other. */}
+      <DialogContent className="flex max-h-[80vh] w-[92vw] max-w-none flex-col gap-4 md:w-[60vw]">
         <DialogHeader>
           <DialogTitle>{t('picker.title')}</DialogTitle>
         </DialogHeader>
