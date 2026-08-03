@@ -75,11 +75,11 @@ public sealed class ItemTooltipEndpoints : IApiEndpointRegistration
     /// The lines are the object property list the game client renders, resolved to text — the item's
     /// name, its weight, and whatever else the shard describes. A shard whose string table is not
     /// loaded gets an **empty** list rather than an error: the technical fields are still worth having.
-    /// The route is nested under the character because an item knows its container, not whose it is.
-    /// Authorization is the character's — an account reads its own, staff read anyone's — and the item
-    /// must actually be in that character's equipment or backpack, so a serial cannot be probed here.
-    /// Answers 503 when the game loop does not respond: the property list is built on the loop, whose
-    /// cache is deliberately unsynchronized.
+    /// - The route is nested under the character because an item knows its container, not whose it
+    /// is. Authorization is the character's — an account reads its own, staff read anyone's — and the
+    /// item must actually be in that character's equipment or backpack, so a serial cannot be probed.
+    /// - Answers 503 when the game loop does not respond: the property list is built on the loop,
+    /// whose cache is deliberately unsynchronized.
     /// </remarks>
     private async Task<IResult> GetTooltip(string serial, string itemSerial, ClaimsPrincipal user)
     {

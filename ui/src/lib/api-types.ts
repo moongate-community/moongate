@@ -185,11 +185,12 @@ export interface paths {
          * @description The serial takes the form the rest of the API reports, `0x40000001`, or plain decimal. An
          *     account may read its own characters; staff may read anyone's, and everyone else gets 403. A
          *     serial naming no character is 404, and so is one that is not a number.
-         *     The backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists the
-         *     worn items by layer, the backpack and the bank box among them, without expanding them. Skills
-         *     are the ones the character has, by name, in points rather than the tenths the entity stores.
-         *     Read off the game loop, so an item the loop moves mid-read may appear in neither place or in
-         *     both. The next request settles it: this is a view, not a ledger.
+         *     - The backpack is a tree: nested containers are expanded, to a depth of 10. Equipment lists
+         *     the worn items by layer, the backpack and the bank box among them, without expanding them.
+         *     - Skills are the ones the character has, by name, in points rather than the tenths the entity
+         *     stores.
+         *     - Read off the game loop, so an item the loop moves mid-read may appear in neither place or
+         *     in both. The next request settles it: this is a view, not a ledger.
          */
         get: operations["GetCharacter"];
         put?: never;
@@ -212,11 +213,11 @@ export interface paths {
          * @description The lines are the object property list the game client renders, resolved to text — the item's
          *     name, its weight, and whatever else the shard describes. A shard whose string table is not
          *     loaded gets an **empty** list rather than an error: the technical fields are still worth having.
-         *     The route is nested under the character because an item knows its container, not whose it is.
-         *     Authorization is the character's — an account reads its own, staff read anyone's — and the item
-         *     must actually be in that character's equipment or backpack, so a serial cannot be probed here.
-         *     Answers 503 when the game loop does not respond: the property list is built on the loop, whose
-         *     cache is deliberately unsynchronized.
+         *     - The route is nested under the character because an item knows its container, not whose it
+         *     is. Authorization is the character's — an account reads its own, staff read anyone's — and the
+         *     item must actually be in that character's equipment or backpack, so a serial cannot be probed.
+         *     - Answers 503 when the game loop does not respond: the property list is built on the loop,
+         *     whose cache is deliberately unsynchronized.
          */
         get: operations["GetItemTooltip"];
         put?: never;
