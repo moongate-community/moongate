@@ -1,5 +1,10 @@
-import { NavLink, Outlet } from 'react-router'
+import { useState } from 'react'
+import { NavLink, Outlet, useNavigate } from 'react-router'
 import { useTranslation } from 'react-i18next'
+
+import { EntityPicker } from '../components/ui/entity-picker'
+import { FilterPill } from '../components/ui/filter-pill'
+import { toast } from '../components/ui/sonner'
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive
@@ -34,9 +39,17 @@ const groups: { to: string; key: string; end?: boolean }[][] = [
   ],
 ]
 
+/** Which catalogues have a page of their own to open. The rest hand back a value to copy. */
+const detailPages: Record<string, string> = {
+  itemTemplates: '/admin/items',
+  mobileTemplates: '/admin/mobiles',
+}
+
 /** The admin area's own tab row, above whichever admin screen is routed below it. */
 export function AdminLayout() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [finding, setFinding] = useState(false)
 
   return (
     <div className="flex flex-col gap-5">
@@ -51,9 +64,36 @@ export function AdminLayout() {
             ))}
           </div>
         ))}
+
+        <FilterPill className="ml-auto mb-1" onClick={() => setFinding(true)}>
+          {t('picker.open')}
+        </FilterPill>
       </nav>
 
       <Outlet />
+
+      {/* Mounted only while open: a closed picker would still put a React Query dependency into
+          every screen that hosts one, for a dialog nobody is looking at. */}
+      {finding && (
+        <EntityPicker
+          open
+          onOpenChange={setFinding}
+          onSelect={(entry, catalogue) => {
+            const page = detailPages[catalogue.id]
+
+            // A template has somewhere to go. A hue, a body or a raw tile is an id someone is about
+            // to type into a YAML file, so the useful thing is to put it on the clipboard.
+            if (page) {
+              void navigate(`${page}/${encodeURIComponent(entry.value)}`)
+
+              return
+            }
+
+            void navigator.clipboard?.writeText(entry.value)
+            toast.success(t('picker.copied', { value: entry.value }))
+          }}
+        />
+      )}
     </div>
   )
 }

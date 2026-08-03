@@ -420,5 +420,32 @@
       "amount": "Quantità",
       "serial": "Serial"
     }
+  },
+  "picker": {
+    "title": "Cerca nello shard",
+    "searchLabel": "Cerca nel catalogo",
+    "filterLabel": "Filtra per flag",
+    "anyFlag": "Qualsiasi flag",
+    "empty": "Nessun risultato per questa ricerca.",
+    "count_one": "{{count}} risultato",
+    "count_other": "{{count}} risultati",
+    "copied": "Copiato {{value}}.",
+    "open": "Cerca",
+    "catalogues": {
+      "itemTemplates": "Template item",
+      "mobileTemplates": "Template mobile",
+      "uoItems": "Item UO",
+      "hues": "Tinte",
+      "bodies": "Body",
+      "hairStyles": "Capelli"
+    },
+    "search": {
+      "itemTemplates": "Cerca nome o id…",
+      "mobileTemplates": "Cerca nome, id o tag…",
+      "uoItems": "Cerca id item, esadecimale 0x o nome…",
+      "hues": "Cerca numero o nome della tinta…",
+      "bodies": "Cerca id body o esadecimale 0x…",
+      "hairStyles": "Cerca nome dello stile…"
+    }
   }
 }
