@@ -9,6 +9,10 @@ namespace Moongate.Tests.Server.Items;
 /// Two stacks that were never one, merged by hand — a player dragging one pile of gold onto another.
 /// The existing merge test splits a stack and rejoins it, which exercises a different path: there the
 /// dropped entity was born a moment earlier from the very stack it returns to.
+/// <para>
+/// The drop names the pile it lands on, which is what the client sends for this gesture. Naming the
+/// backpack and a spot inside it is the other gesture, and it deliberately does not merge.
+/// </para>
 /// </summary>
 public class DragDropStackMergeTests
 {
@@ -19,7 +23,7 @@ public class DragDropStackMergeTests
         var second = SecondGoldStack(fixture, 500);
 
         fixture.Service.Lift(fixture.Actor, second.Id, 500, Serial.Zero, out var heldId, out _);
-        fixture.Service.Drop(fixture.Actor, heldId, fixture.Backpack.Id, Point3D.Zero, new(50, 70));
+        fixture.Service.Drop(fixture.Actor, heldId, fixture.Gold.Id, Point3D.Zero, new(50, 70));
 
         var total = fixture.BackpackContents().Sum(item => item.Amount);
 
@@ -33,7 +37,7 @@ public class DragDropStackMergeTests
         var second = SecondGoldStack(fixture, 500);
 
         fixture.Service.Lift(fixture.Actor, second.Id, 500, Serial.Zero, out var heldId, out _);
-        fixture.Service.Drop(fixture.Actor, heldId, fixture.Backpack.Id, Point3D.Zero, new(50, 70));
+        fixture.Service.Drop(fixture.Actor, heldId, fixture.Gold.Id, Point3D.Zero, new(50, 70));
 
         var stack = Assert.Single(fixture.BackpackContents());
 
@@ -49,7 +53,7 @@ public class DragDropStackMergeTests
         var second = SecondGoldStack(fixture, 500);
 
         fixture.Service.Lift(fixture.Actor, second.Id, 500, Serial.Zero, out var heldId, out _);
-        fixture.Service.Drop(fixture.Actor, heldId, fixture.Backpack.Id, Point3D.Zero, new(50, 70));
+        fixture.Service.Drop(fixture.Actor, heldId, fixture.Gold.Id, Point3D.Zero, new(50, 70));
 
         var listed = fixture.Items.GetById(fixture.Backpack.Id)!.ContainedItemIds;
 

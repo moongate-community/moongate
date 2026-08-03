@@ -273,6 +273,16 @@ public sealed class DragDropService : IDragDropService
         return true;
     }
 
+    /// <summary>
+    /// What the client sends for X and Y when the item was released on the container itself rather than
+    /// at a spot inside its open gump. ModernUO reads the same value as -1 and splits on it.
+    /// </summary>
+    private const int NoGumpPosition = 0xFFFF;
+
+    /// <summary>True when the drop named a container but no place inside it.</summary>
+    private static bool IsUnpositioned(Point2D position)
+        => position.X == NoGumpPosition || position.Y == NoGumpPosition || position.X < 0 || position.Y < 0;
+
     private static AddItemToContainerPacket ContainerPacket(ItemEntity item, Serial containerId, Point2D position)
         => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
 
@@ -301,7 +311,11 @@ public sealed class DragDropService : IDragDropService
             return new(false, LiftRejectReasonType.OutOfRange);
         }
 
-        var stack = FindStack(container, item);
+        // Released on a spot inside the gump, the player is putting the item exactly there: counting
+        // coins out into two piles is the whole reason UO lets you split one. Merging is the other two
+        // gestures -- released on the container itself, which carries no position, and released onto
+        // the pile, which names the pile and arrives at DropOnItem.
+        var stack = IsUnpositioned(position) ? FindStack(container, item) : null;
 
         if (stack is not null)
         {
