@@ -25,6 +25,9 @@ public class MoongateEventSubscribersPlugin : ISquidStdPlugin
 
     public void Configure(IContainer container, PluginContext context)
     {
+        // First, so the greeting opens with what the shard is: anything else a subscriber says on
+        // entry reads as a follow-up to it.
+        container.RegisterEventSubscriber<MotdSubscriber>();
         container.RegisterEventSubscriber<PaperdollSubscriber>();
         container.RegisterEventSubscriber<ContainerSubscriber>();
         container.RegisterEventSubscriber<SpatialSubscriber>();
