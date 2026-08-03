@@ -117,6 +117,19 @@ describe('EntityPicker', () => {
     expect(await screen.findByText(/nothing matches/i)).toBeInTheDocument()
   })
 
+  // The width is invisible to jsdom, but the trap that swallowed it is not: DialogContent caps
+  // itself at sm:max-w-lg, and undoing only the unprefixed max-width leaves that cap standing on
+  // every screen wider than 640px -- which is every screen this is used on.
+  it('undoes the dialog cap that would otherwise decide its width', () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(page([]))
+    renderPicker()
+
+    const dialog = screen.getByRole('dialog')
+
+    expect(dialog.className).toContain('sm:max-w-none')
+    expect(dialog.className).toContain('md:w-[60vw]')
+  })
+
   it('can be narrowed to one catalogue', () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(page([]))
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })

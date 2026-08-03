@@ -57,8 +57,12 @@ export function EntityPicker({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Three fifths of the viewport on a desktop, near-full on a phone where three fifths is a
-          column too narrow to put a tile and two lines of text beside each other. */}
-      <DialogContent className="flex max-h-[80vh] w-[92vw] max-w-none flex-col gap-4 md:w-[60vw]">
+          column too narrow to put a tile and two lines of text beside each other.
+
+          Both max-widths have to be undone, not just the plain one: DialogContent caps itself at
+          sm:max-w-lg, and a responsive cap is a different class group, so an unprefixed max-w-none
+          leaves it standing and the width below has no effect on any screen wider than 640px. */}
+      <DialogContent className="flex max-h-[80vh] w-[92vw] max-w-none flex-col gap-4 sm:max-w-none md:w-[60vw]">
         <DialogHeader>
           <DialogTitle>{t('picker.title')}</DialogTitle>
         </DialogHeader>
