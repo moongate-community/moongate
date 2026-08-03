@@ -130,6 +130,7 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.Register<OplTextRenderer>(Reuse.Singleton);
         container.RegisterApiEndpoint<ItemTooltipEndpoints>();
         container.RegisterApiEndpoint<ItemTemplateEndpoints>();
+        container.RegisterApiEndpoint<MobileTemplateEndpoints>();
 
         // A REST web-terminal onto the admin command set: the registry holds the open SSE feeds,
         // the endpoints POST commands and stream their output.

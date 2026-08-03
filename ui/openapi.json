@@ -1093,6 +1093,83 @@
         }
       }
     },
+    "/api/v1/admin/mobiles/templates": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Every mobile template, paged.",
+        "description": "Ordered by template id. Pass search to filter: free text, case-insensitive, matching the\ntemplate's id, name, title, category or any tag. Page is 1-based and defaults to 1; pageSize\ndefaults to 25 and cannot exceed 100. A search matching nothing is an empty page, not an error.\n            \nA template's hues are reported as the specs they are — a value or a range resolved per spawn —\nrather than as numbers.",
+        "operationId": "ListMobileTemplates",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileTemplateSummaryResponsePagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/mobiles/templates/{id}": {
+      "get": {
+        "tags": [
+          "mobiles"
+        ],
+        "summary": "Fetches one mobile template by id, variants and equipment included.",
+        "description": "Ids are case-insensitive. Answers 404 when no template carries the id.",
+        "operationId": "GetMobileTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MobileTemplateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/admin/images/bodies": {
       "post": {
         "tags": [
@@ -3037,6 +3114,327 @@
         },
         "additionalProperties": false,
         "description": "How far the map image pre-warm has got."
+      },
+      "MobileAppearanceResponse": {
+        "required": [
+          "body",
+          "facialHairStyle",
+          "hairStyle"
+        ],
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "integer",
+            "description": "The animation body id.",
+            "format": "int32"
+          },
+          "skinHue": {
+            "type": "string",
+            "description": "A hue <em>spec</em>, not a number: a single value or a range like `0x455-0x45a` resolved once\nper spawn. Reported as written, because picking one end of a range would lie about the other.",
+            "nullable": true
+          },
+          "hairStyle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hairHue": {
+            "type": "string",
+            "description": "A hue spec, like SkinHue.",
+            "nullable": true
+          },
+          "facialHairStyle": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "facialHairHue": {
+            "type": "string",
+            "description": "A hue spec, like SkinHue.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "How a template says a mobile looks, shared by the template and each of its variants."
+      },
+      "MobileEquipmentResponse": {
+        "required": [
+          "item",
+          "layer"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string",
+            "description": "The item template id to spawn."
+          },
+          "layer": {
+            "type": "string",
+            "description": "The layer it goes on."
+          },
+          "hue": {
+            "type": "string",
+            "description": "A hue spec, or null to leave the item its own colour.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One item a template spawns its mobile wearing."
+      },
+      "MobileTemplateResponse": {
+        "required": [
+          "appearance",
+          "category",
+          "description",
+          "dexterity",
+          "equipment",
+          "id",
+          "imageUrl",
+          "intelligence",
+          "name",
+          "namePool",
+          "paperdollUrl",
+          "skills",
+          "strength",
+          "tags",
+          "title",
+          "variants"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "namePool": {
+            "type": "string",
+            "description": "The pool a spawn draws its name from when the template has no fixed one."
+          },
+          "gender": {
+            "type": "string",
+            "description": "The gender name, or null when the template lets a spawn pick.",
+            "nullable": true
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseMobile": {
+            "type": "string",
+            "description": "The template this one merges over, or null when it stands alone.",
+            "nullable": true
+          },
+          "strength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dexterity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "intelligence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skills": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "Skill values by name, as the template sets them."
+          },
+          "appearance": {
+            "$ref": "#/components/schemas/MobileAppearanceResponse"
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MobileEquipmentResponse"
+            }
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MobileVariantResponse"
+            },
+            "description": "Weighted alternatives, each with its own appearance and equipment."
+          },
+          "lootTableId": {
+            "type": "string",
+            "nullable": true
+          },
+          "brainScript": {
+            "type": "string",
+            "nullable": true
+          },
+          "imageUrl": {
+            "type": "string"
+          },
+          "paperdollUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One mobile spawn template in full."
+      },
+      "MobileTemplateSummaryResponse": {
+        "required": [
+          "body",
+          "category",
+          "dexterity",
+          "id",
+          "imageUrl",
+          "intelligence",
+          "name",
+          "strength",
+          "tags",
+          "title",
+          "variantCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "body": {
+            "type": "integer",
+            "description": "The animation body id, which is what the picture is drawn from.",
+            "format": "int32"
+          },
+          "strength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dexterity": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "intelligence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "variantCount": {
+            "type": "integer",
+            "description": "How many weighted alternatives the template carries.",
+            "format": "int32"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the staff mobile template listing."
+      },
+      "MobileTemplateSummaryResponsePagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MobileTemplateSummaryResponse"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
+      "MobileVariantResponse": {
+        "required": [
+          "appearance",
+          "equipment",
+          "name",
+          "weight"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "integer",
+            "description": "Its share of the draw, relative to the other variants.",
+            "format": "int32"
+          },
+          "gender": {
+            "type": "string",
+            "description": "The gender name, or null when the variant does not fix one.",
+            "nullable": true
+          },
+          "namePool": {
+            "type": "string",
+            "nullable": true
+          },
+          "lootTableId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appearance": {
+            "$ref": "#/components/schemas/MobileAppearanceResponse"
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MobileEquipmentResponse"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "One variant of a template: a weighted alternative look, name pool and loot."
       },
       "NewsResponse": {
         "required": [
