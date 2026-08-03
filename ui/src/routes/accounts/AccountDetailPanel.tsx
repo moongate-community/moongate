@@ -30,7 +30,11 @@ export function AccountDetailPanel({ account }: { account: Account | null }) {
   const [password, setPassword] = useState('')
   const [confirmingDelete, setConfirmingDelete] = useState(false)
 
-  // Start over whenever a different row is picked, so no edit leaks from one account to the next.
+  // Start over when a different row is picked, so no edit leaks from one account to the next. Keyed
+  // on the name rather than the object: the list refetches on its own and hands over a fresh object
+  // for the same account every time, and reloading the form on that would wipe a half-made choice
+  // out from under whoever is making it.
+  const editing = account?.username
   useEffect(() => {
     if (account) {
       setLevel(account.level)
@@ -38,7 +42,8 @@ export function AccountDetailPanel({ account }: { account: Account | null }) {
       setPassword('')
       setConfirmingDelete(false)
     }
-  }, [account])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing])
 
   if (account === null) {
     return (

@@ -68,6 +68,26 @@ describe('AccountDetailPanel', () => {
     })
   })
 
+  // The list refetches on its own -- on window focus, after a save elsewhere. Each refetch hands the
+  // panel a new object for the same account, and that must not throw away what staff is halfway
+  // through typing.
+  it('keeps a level the staff picked when the list refetches', async () => {
+    const { rerender } = renderPanel()
+
+    await userEvent.click(screen.getByRole('combobox'))
+    await userEvent.click(screen.getByRole('option', { name: 'Administrator' }))
+    expect(screen.getByRole('combobox')).toHaveTextContent('Administrator')
+
+    const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+    rerender(
+      <QueryClientProvider client={client}>
+        <AccountDetailPanel account={{ ...account }} />
+      </QueryClientProvider>,
+    )
+
+    expect(screen.getByRole('combobox')).toHaveTextContent('Administrator')
+  })
+
   // Picking a second account while the first one's form is dirty must not carry the edit across.
   it('starts over when a different account is picked', async () => {
     const { rerender } = renderPanel()
