@@ -267,7 +267,10 @@
       "empty": "No character matches that search.",
       "loadFailed": "The characters could not be loaded.",
       "noImage": "—",
-      "unknownAccount": "Unknown"
+      "unknownAccount": "Unknown",
+      "totalLabel": "Characters",
+      "page": "Page",
+      "online": "Shown"
     },
     "templates": {
       "weight": "Weight",
@@ -319,7 +322,11 @@
       "lootTable": "Loot table",
       "layer": "Layer",
       "item": "Item",
-      "anyGender": "Any"
+      "anyGender": "Any",
+      "onThisShard": "on this shard",
+      "page": "Page",
+      "showing": "Showing",
+      "withVariants": "With variants"
     },
     "news": {
       "title": "News",
@@ -340,7 +347,10 @@
       "empty": "No news yet",
       "loadFailed": "The news could not be loaded.",
       "deleteConfirm": "Delete “{{title}}”? This cannot be undone.",
-      "announceHint": "Publishing announces the title to everyone in the world."
+      "announceHint": "Publishing announces the title to everyone in the world.",
+      "publishedCount": "Published",
+      "draftCount": "Drafts",
+      "total": "Entries"
     }
   },
   "characters": {

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
 import { Card } from '../../components/ui/card'
+import { SectionTitle } from '../../components/ui/section-title'
 import { ApiError } from '../../lib/api'
 import { useMobileTemplate, type MobileTemplate } from '../../lib/templates'
 
@@ -75,13 +76,13 @@ function Detail({ template }: { template: MobileTemplate }) {
       </Card>
 
       <Card className="gap-3 p-4">
-        <h2 className="font-bold text-ink">{t('admin.templates.appearance')}</h2>
+        <SectionTitle>{t('admin.templates.appearance')}</SectionTitle>
         <AppearanceFields appearance={template.appearance} />
       </Card>
 
       {Object.keys(template.skills).length > 0 && (
         <Card className="gap-3 p-4">
-          <h2 className="font-bold text-ink">{t('admin.templates.skills')}</h2>
+          <SectionTitle>{t('admin.templates.skills')}</SectionTitle>
           <dl className="grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
             {Object.entries(template.skills).map(([skill, value]) => (
               <Field key={skill} label={skill} value={value} />
@@ -92,7 +93,7 @@ function Detail({ template }: { template: MobileTemplate }) {
 
       {template.equipment.length > 0 && (
         <Card className="gap-3 p-4">
-          <h2 className="font-bold text-ink">{t('admin.templates.equipment')}</h2>
+          <SectionTitle>{t('admin.templates.equipment')}</SectionTitle>
           <EquipmentList equipment={template.equipment} />
         </Card>
       )}
@@ -109,12 +110,15 @@ function VariantCard({ variant }: { variant: Variant }) {
 
   return (
     <Card className="gap-3 p-4">
-      <h2 className="font-bold text-ink">
+      <SectionTitle
+        action={
+          <span className="font-mono text-xs text-muted">
+            {t('admin.templates.weight')} {variant.weight}
+          </span>
+        }
+      >
         {variant.name}
-        <span className="ml-2 text-xs font-normal text-muted">
-          {t('admin.templates.weight')} {variant.weight}
-        </span>
-      </h2>
+      </SectionTitle>
 
       <dl className="grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
         <Field label={t('admin.templates.gender')} value={variant.gender ?? t('admin.templates.anyGender')} />

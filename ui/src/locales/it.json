@@ -267,7 +267,10 @@
       "empty": "Nessun personaggio corrisponde alla ricerca.",
       "loadFailed": "Non è stato possibile caricare i personaggi.",
       "noImage": "—",
-      "unknownAccount": "Sconosciuto"
+      "unknownAccount": "Sconosciuto",
+      "totalLabel": "Personaggi",
+      "page": "Pagina",
+      "online": "Mostrati"
     },
     "templates": {
       "weight": "Peso",
@@ -319,7 +322,11 @@
       "lootTable": "Loot table",
       "layer": "Layer",
       "item": "Oggetto",
-      "anyGender": "Qualsiasi"
+      "anyGender": "Qualsiasi",
+      "onThisShard": "su questo shard",
+      "page": "Pagina",
+      "showing": "Mostrati",
+      "withVariants": "Con varianti"
     },
     "news": {
       "title": "News",
@@ -340,7 +347,10 @@
       "empty": "Nessuna news",
       "loadFailed": "Non è stato possibile caricare le news.",
       "deleteConfirm": "Eliminare «{{title}}»? L’operazione non è reversibile.",
-      "announceHint": "Pubblicandola, il titolo viene annunciato a tutti nel mondo."
+      "announceHint": "Pubblicandola, il titolo viene annunciato a tutti nel mondo.",
+      "publishedCount": "Pubblicate",
+      "draftCount": "Bozze",
+      "total": "Voci"
     }
   },
   "characters": {

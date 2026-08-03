@@ -112,7 +112,9 @@ describe('CharactersAdminScreen', () => {
   it('reports the total, which counts every match and not just this page', () => {
     renderWith(page([character('0x1', 'Squid', 'tom')], { total: 87, totalPages: 4 }))
 
-    expect(screen.getByText('87 characters')).toBeInTheDocument()
+    // The total is its own stat card now: the number is the fact, and it counts every match rather
+    // than the rows on this page.
+    expect(screen.getByText('87')).toBeInTheDocument()
   })
 
   it('says so when a search matches nothing', () => {

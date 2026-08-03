@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
 import { Card } from '../../components/ui/card'
+import { SectionTitle } from '../../components/ui/section-title'
 import { RarityBadge, rarityColor } from '../../components/templates/RarityBadge'
 import { ApiError } from '../../lib/api'
 import { useItemTemplate, type ItemTemplate } from '../../lib/templates'
@@ -117,7 +118,7 @@ function Spec({ label, spec }: { label: string; spec: unknown }) {
 
   return (
     <Card className="gap-3 p-4">
-      <h2 className="font-bold text-ink">{label}</h2>
+      <SectionTitle>{label}</SectionTitle>
       <dl className="grid gap-x-8 gap-y-2 text-sm sm:grid-cols-2">
         {entries.map(([key, value]) => (
           <Field key={key} label={key} value={String(value)} />

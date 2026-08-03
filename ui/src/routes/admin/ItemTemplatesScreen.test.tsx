@@ -108,7 +108,8 @@ describe('ItemTemplatesScreen', () => {
   it('reports the total, which counts every match and not just this page', () => {
     renderWith(page([template('plate_mail', 'Plate Mail')], { total: 87, totalPages: 4 }))
 
-    expect(screen.getByText('87 templates')).toBeInTheDocument()
+    // The total is its own stat card now, counting every match rather than the rows on this page.
+    expect(screen.getByText('87')).toBeInTheDocument()
   })
 
   it('says so when a search matches nothing', () => {

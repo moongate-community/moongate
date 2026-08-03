@@ -55,7 +55,8 @@ describe('NewsScreen', () => {
   it('tells a draft from a published entry', () => {
     renderWith([entry(1, 'Maintenance', true), entry(2, 'Still cooking', false)])
 
-    expect(screen.getByText('Published')).toBeInTheDocument()
+    // "Published" is now both a stat-card label and a row badge, so the row is what this asserts.
+    expect(screen.getAllByText('Published').length).toBeGreaterThan(1)
     expect(screen.getByText('Draft')).toBeInTheDocument()
   })
 
