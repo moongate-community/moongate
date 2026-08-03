@@ -14,6 +14,7 @@ using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Tests.Support;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -27,6 +28,10 @@ public class RestConsoleIntegrationTests
 
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add(text);
+
+        public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+        {
+        }
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
 

@@ -24,6 +24,10 @@ public class AiActionServiceTests
 
         public void Broadcast(string text, Hue? hue = null) { }
 
+        public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+        {
+        }
+
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
             => Messages.Add((speaker.Id, type, text, hue, range));
 

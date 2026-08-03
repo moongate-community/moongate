@@ -3,6 +3,7 @@ using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Scripting;
 using Moongate.Tests.Support;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -19,6 +20,10 @@ public class ChatModuleTests
 
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add((text, hue));
+
+        public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+        {
+        }
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
             => Said.Add((speaker.Id, type, text));

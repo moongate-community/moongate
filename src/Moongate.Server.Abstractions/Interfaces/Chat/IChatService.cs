@@ -1,4 +1,5 @@
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -13,6 +14,14 @@ namespace Moongate.Server.Abstractions.Interfaces.Chat;
 public interface IChatService
 {
     void Broadcast(string text, Hue? hue = null);
+
+    /// <summary>
+    /// Sends a system message to one session — the sibling of <see cref="Broadcast" />, which sends to
+    /// every session. Exists on the contract rather than inside the server because the packet factory
+    /// that builds these messages does not, and a plugin with something to tell one player would
+    /// otherwise have nowhere to say it.
+    /// </summary>
+    void SendSystemMessage(PlayerSession session, string text, Hue? hue = null);
 
     void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range);
 

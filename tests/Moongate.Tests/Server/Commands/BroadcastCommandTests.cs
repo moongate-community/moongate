@@ -3,6 +3,7 @@ using Moongate.Server.Abstractions.Data.Commands;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Types;
 using Moongate.Server.Commands;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -16,6 +17,10 @@ public class BroadcastCommandTests
 
         public void Broadcast(string text, Hue? hue = null)
             => Broadcasts.Add(text);
+
+        public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+        {
+        }
 
         public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range) { }
 

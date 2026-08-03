@@ -39,10 +39,11 @@ public sealed class StubSessionManager : ISessionManager
 
     public void Remove(long sessionId) { }
 
+    /// <summary>Looks the session up among <see cref="Connections" />, as the real manager does.</summary>
     public bool TryGet(long sessionId, out PlayerSession session)
     {
-        session = null!;
+        session = Connections.FirstOrDefault(connection => connection.SessionId == sessionId)!;
 
-        return false;
+        return session is not null;
     }
 }
