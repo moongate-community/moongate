@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '../../components/ui/data-table'
+import { StatCard } from '../../components/ui/stat-card'
+import { ScreenTitle } from '../../components/ui/section-title'
 import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { toast } from '../../components/ui/sonner'
@@ -45,7 +47,9 @@ export function NewsScreen() {
       {
         accessorKey: 'updatedAt',
         header: t('admin.news.updated'),
-        cell: ({ getValue }) => new Date(getValue() as string).toLocaleString(),
+        cell: ({ getValue }) => (
+          <span className="font-mono text-xs text-muted">{new Date(getValue() as string).toLocaleString()}</span>
+        ),
       },
       {
         id: 'actions',
@@ -83,17 +87,32 @@ export function NewsScreen() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl text-ink">{t('admin.news.title')}</h1>
-        <Button
-          onClick={() => {
-            setEditing(null)
-            setOpen(true)
-          }}
-        >
-          {t('admin.news.new')}
-        </Button>
-      </div>
+      <ScreenTitle
+        action={
+          <Button
+            onClick={() => {
+              setEditing(null)
+              setOpen(true)
+            }}
+          >
+            {t('admin.news.new')}
+          </Button>
+        }
+      >
+        {t('admin.news.title')}
+      </ScreenTitle>
+
+      {news.data && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard label={t('admin.news.total')} value={news.data.length} />
+          <StatCard
+            label={t('admin.news.publishedCount')}
+            value={news.data.filter((entry) => entry.isPublished).length}
+            tone="text-gold"
+          />
+          <StatCard label={t('admin.news.draftCount')} value={news.data.filter((entry) => !entry.isPublished).length} />
+        </div>
+      )}
 
       <DataTable columns={columns} data={news.data ?? []} searchPlaceholder={t('admin.news.search')} />
 

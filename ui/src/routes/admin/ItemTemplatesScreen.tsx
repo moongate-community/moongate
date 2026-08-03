@@ -4,7 +4,10 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '../../components/ui/data-table'
+import { StatCard } from '../../components/ui/stat-card'
+import { ScreenTitle } from '../../components/ui/section-title'
 import { ItemTemplateTooltip } from '../../components/templates/ItemTemplateTooltip'
+import { RarityTile } from '../../components/ui/rarity-tile'
 import { rarityColor } from '../../components/templates/RarityBadge'
 import { useItemTemplates, type ItemTemplateSummary } from '../../lib/templates'
 
@@ -28,7 +31,12 @@ export function ItemTemplatesScreen() {
               tabIndex={0}
               className="inline-block rounded outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
-              <img src={row.original.imageUrl} alt={label(row.original)} className="h-16 w-16 object-contain" />
+              <RarityTile
+                src={row.original.imageUrl}
+                alt={label(row.original)}
+                rarity={row.original.rarity}
+                size={64}
+              />
             </span>
           </ItemTemplateTooltip>
         ),
@@ -46,10 +54,22 @@ export function ItemTemplatesScreen() {
           </Link>
         ),
       },
-      { accessorKey: 'id', header: t('admin.templates.id') },
+      {
+        accessorKey: 'id',
+        header: t('admin.templates.id'),
+        cell: ({ getValue }) => <span className="font-mono text-xs text-muted">{getValue() as string}</span>,
+      },
       { accessorKey: 'category', header: t('admin.templates.category') },
-      { accessorKey: 'weight', header: t('admin.templates.weight') },
-      { accessorKey: 'goldValue', header: t('admin.templates.value') },
+      {
+        accessorKey: 'weight',
+        header: t('admin.templates.weight'),
+        cell: ({ getValue }) => <span className="font-mono tabular-nums">{getValue() as number}</span>,
+      },
+      {
+        accessorKey: 'goldValue',
+        header: t('admin.templates.value'),
+        cell: ({ getValue }) => <span className="font-mono tabular-nums text-gold">{getValue() as number}</span>,
+      },
       {
         id: 'tags',
         header: t('admin.templates.tags'),
@@ -79,10 +99,20 @@ export function ItemTemplatesScreen() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl text-ink">{t('admin.templates.itemsTitle')}</h1>
-        {result && <span className="text-sm text-muted">{t('admin.templates.total', { count: result.total })}</span>}
-      </div>
+      <ScreenTitle>{t('admin.templates.itemsTitle')}</ScreenTitle>
+
+      {/* The count is the fact this screen is about: 1665 templates is the shape of the catalogue. */}
+      {result && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard
+            label={t('admin.templates.itemsTitle')}
+            value={result.total}
+            sub={t('admin.templates.onThisShard')}
+          />
+          <StatCard label={t('admin.templates.page')} value={`${result.page} / ${Math.max(result.totalPages, 1)}`} />
+          <StatCard label={t('admin.templates.showing')} value={result.items.length} tone="text-gold" />
+        </div>
+      )}
 
       <DataTable
         columns={columns}

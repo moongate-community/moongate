@@ -4,7 +4,10 @@ import { Link } from 'react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '../../components/ui/data-table'
+import { StatCard } from '../../components/ui/stat-card'
+import { ScreenTitle } from '../../components/ui/section-title'
 import { MobileTemplateTooltip, mobileTemplateLabel } from '../../components/templates/MobileTemplateTooltip'
+import { RarityTile } from '../../components/ui/rarity-tile'
 import { useMobileTemplates, type MobileTemplateSummary } from '../../lib/templates'
 
 export function MobileTemplatesScreen() {
@@ -24,11 +27,7 @@ export function MobileTemplatesScreen() {
               tabIndex={0}
               className="inline-block rounded outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
-              <img
-                src={row.original.imageUrl}
-                alt={mobileTemplateLabel(row.original)}
-                className="h-16 w-12 object-contain"
-              />
+              <RarityTile src={row.original.imageUrl} alt={mobileTemplateLabel(row.original)} size={64} />
             </span>
           </MobileTemplateTooltip>
         ),
@@ -44,13 +43,25 @@ export function MobileTemplatesScreen() {
       },
       { accessorKey: 'title', header: t('admin.templates.title') },
       { accessorKey: 'category', header: t('admin.templates.category') },
-      { accessorKey: 'body', header: t('admin.templates.body') },
+      {
+        accessorKey: 'body',
+        header: t('admin.templates.body'),
+        cell: ({ getValue }) => <span className="font-mono tabular-nums text-muted">{getValue() as number}</span>,
+      },
       {
         id: 'stats',
         header: t('admin.templates.stats'),
-        cell: ({ row }) => `${row.original.strength} / ${row.original.dexterity} / ${row.original.intelligence}`,
+        cell: ({ row }) => (
+          <span className="font-mono tabular-nums">
+            {`${row.original.strength} / ${row.original.dexterity} / ${row.original.intelligence}`}
+          </span>
+        ),
       },
-      { accessorKey: 'variantCount', header: t('admin.templates.variants') },
+      {
+        accessorKey: 'variantCount',
+        header: t('admin.templates.variants'),
+        cell: ({ getValue }) => <span className="font-mono tabular-nums">{getValue() as number}</span>,
+      },
     ],
     [t],
   )
@@ -74,10 +85,23 @@ export function MobileTemplatesScreen() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl text-ink">{t('admin.templates.mobilesTitle')}</h1>
-        {result && <span className="text-sm text-muted">{t('admin.templates.total', { count: result.total })}</span>}
-      </div>
+      <ScreenTitle>{t('admin.templates.mobilesTitle')}</ScreenTitle>
+
+      {result && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard
+            label={t('admin.templates.mobilesTitle')}
+            value={result.total}
+            sub={t('admin.templates.onThisShard')}
+          />
+          <StatCard label={t('admin.templates.page')} value={`${result.page} / ${Math.max(result.totalPages, 1)}`} />
+          <StatCard
+            label={t('admin.templates.withVariants')}
+            value={result.items.filter((template) => template.variantCount > 0).length}
+            tone="text-gold"
+          />
+        </div>
+      )}
 
       <DataTable
         columns={columns}

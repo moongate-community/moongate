@@ -109,7 +109,7 @@ describe('MobileTemplatesScreen', () => {
   it('reports the total, which counts every match and not just this page', () => {
     renderWith(page([template('warrior_guard', 'a guard')], { total: 87, totalPages: 4 }))
 
-    expect(screen.getByText('87 templates')).toBeInTheDocument()
+    expect(screen.getByText('87')).toBeInTheDocument()
   })
 
   it('says so when a search matches nothing', () => {

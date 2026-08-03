@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { cn } from '@/lib/utils'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table'
 import { Input } from './input'
 import { Button } from './button'
@@ -32,12 +33,18 @@ export function DataTable<T>({
   searchPlaceholder,
   search,
   pagination,
+  onRowClick,
+  isRowSelected,
 }: {
   columns: ColumnDef<T>[]
   data: T[]
   searchPlaceholder?: string
   search?: DataTableSearch
   pagination?: DataTablePagination
+  /** Makes rows pick something. Given, the table becomes the master half of a master-detail screen. */
+  onRowClick?: (row: T) => void
+  /** Which row is currently picked, so it can be marked while its detail is open. */
+  isRowSelected?: (row: T) => boolean
 }) {
   const { t } = useTranslation()
   const [globalFilter, setGlobalFilter] = useState('')
@@ -96,7 +103,16 @@ export function DataTable<T>({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow
+              key={row.id}
+              onClick={onRowClick ? () => onRowClick(row.original) : undefined}
+              data-selected={isRowSelected?.(row.original) ? 'true' : undefined}
+              className={cn(
+                onRowClick && 'cursor-pointer',
+                isRowSelected?.(row.original) &&
+                  'bg-gold/10 [&>td:first-child]:border-l-2 [&>td:first-child]:border-gold',
+              )}
+            >
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id}>
                   {cell.column.columnDef.cell

@@ -1,6 +1,8 @@
 {
   "app": {
-    "name": "Moongate"
+    "name": "Moongate",
+    "live": "LIVE",
+    "online": "{{count}} online"
   },
   "theme": {
     "dark": "Scuro",
@@ -175,7 +177,6 @@
       "characters": "Personaggi",
       "active": "attivo",
       "suspended": "sospeso",
-      "manage": "Gestisci",
       "none": "—",
       "password": "Password",
       "create": "Crea",
@@ -187,7 +188,6 @@
         "GrandMaster": "GrandMaster",
         "Administrator": "Administrator"
       },
-      "edit": "Gestisci {{username}}",
       "suspendedLabel": "Sospeso",
       "newPassword": "Nuova password",
       "newPasswordHint": "Lascia vuoto per non cambiarla.",
@@ -196,7 +196,11 @@
       "delete": "Elimina account",
       "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
       "deleteYes": "Elimina",
-      "deleted": "Account eliminato."
+      "deleted": "Account eliminato.",
+      "pickOne": "Scegli un account per gestirlo.",
+      "detail": "Account",
+      "characterCount_one": "{{count}} personaggio",
+      "characterCount_other": "{{count}} personaggi"
     },
     "settings": {
       "title": "Impostazioni shard",
@@ -267,7 +271,10 @@
       "empty": "Nessun personaggio corrisponde alla ricerca.",
       "loadFailed": "Non è stato possibile caricare i personaggi.",
       "noImage": "—",
-      "unknownAccount": "Sconosciuto"
+      "unknownAccount": "Sconosciuto",
+      "totalLabel": "Personaggi",
+      "page": "Pagina",
+      "online": "Mostrati"
     },
     "templates": {
       "weight": "Peso",
@@ -319,7 +326,11 @@
       "lootTable": "Loot table",
       "layer": "Layer",
       "item": "Oggetto",
-      "anyGender": "Qualsiasi"
+      "anyGender": "Qualsiasi",
+      "onThisShard": "su questo shard",
+      "page": "Pagina",
+      "showing": "Mostrati",
+      "withVariants": "Con varianti"
     },
     "news": {
       "title": "News",
@@ -340,7 +351,10 @@
       "empty": "Nessuna news",
       "loadFailed": "Non è stato possibile caricare le news.",
       "deleteConfirm": "Eliminare «{{title}}»? L’operazione non è reversibile.",
-      "announceHint": "Pubblicandola, il titolo viene annunciato a tutti nel mondo."
+      "announceHint": "Pubblicandola, il titolo viene annunciato a tutti nel mondo.",
+      "publishedCount": "Pubblicate",
+      "draftCount": "Bozze",
+      "total": "Voci"
     }
   },
   "characters": {

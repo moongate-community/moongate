@@ -35,4 +35,30 @@ describe('AdminLayout', () => {
     renderAt('/admin/accounts')
     expect(screen.getByText('accounts page')).toBeInTheDocument()
   })
+
+  // Nine equal targets in a row is a list you read; the rules are what make it a bar you aim at.
+  it('parts the tabs into groups', () => {
+    const { container } = renderAt('/admin')
+
+    expect(container.querySelectorAll('nav [aria-hidden="true"]')).toHaveLength(3)
+  })
+
+  // Related things sit together: the catalogues, then the people, then operating the shard.
+  it('keeps related tabs adjacent', () => {
+    renderAt('/admin')
+
+    const order = [...document.querySelectorAll('nav a')].map((link) => link.getAttribute('href'))
+
+    expect(order).toEqual([
+      '/admin',
+      '/admin/items',
+      '/admin/mobiles',
+      '/admin/accounts',
+      '/admin/characters',
+      '/admin/news',
+      '/admin/plugins',
+      '/admin/settings',
+      '/admin/console',
+    ])
+  })
 })

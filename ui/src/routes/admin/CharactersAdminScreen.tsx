@@ -4,6 +4,8 @@ import type { ColumnDef } from '@tanstack/react-table'
 import { Link } from 'react-router'
 
 import { DataTable } from '../../components/ui/data-table'
+import { StatCard } from '../../components/ui/stat-card'
+import { ScreenTitle } from '../../components/ui/section-title'
 import { CharacterImage } from '../../components/characters/CharacterImage'
 import { figureUrl, useAllCharacters, type Character } from '../../lib/characters'
 
@@ -49,17 +51,25 @@ export function CharactersAdminScreen() {
       {
         id: 'stats',
         header: t('admin.characters.stats'),
-        cell: ({ row }) => `${row.original.strength} / ${row.original.dexterity} / ${row.original.intelligence}`,
+        cell: ({ row }) => (
+          <span className="font-mono tabular-nums">
+            {`${row.original.strength} / ${row.original.dexterity} / ${row.original.intelligence}`}
+          </span>
+        ),
       },
       {
         id: 'hits',
         header: t('admin.characters.hits'),
-        cell: ({ row }) => `${row.original.hits} / ${row.original.hitsMax}`,
+        cell: ({ row }) => (
+          <span className="font-mono tabular-nums">{`${row.original.hits} / ${row.original.hitsMax}`}</span>
+        ),
       },
       {
         id: 'location',
         header: t('admin.characters.location'),
-        cell: ({ row }) => `${row.original.x}, ${row.original.y}`,
+        cell: ({ row }) => (
+          <span className="font-mono text-xs text-muted">{`${row.original.x}, ${row.original.y}`}</span>
+        ),
       },
     ],
     [t],
@@ -85,10 +95,15 @@ export function CharactersAdminScreen() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-xl text-ink">{t('admin.characters.title')}</h1>
-        {result && <span className="text-sm text-muted">{t('admin.characters.total', { count: result.total })}</span>}
-      </div>
+      <ScreenTitle>{t('admin.characters.title')}</ScreenTitle>
+
+      {result && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <StatCard label={t('admin.characters.totalLabel')} value={result.total} />
+          <StatCard label={t('admin.characters.page')} value={`${result.page} / ${Math.max(result.totalPages, 1)}`} />
+          <StatCard label={t('admin.characters.online')} value={result.items.length} tone="text-gold" />
+        </div>
+      )}
 
       <DataTable
         columns={columns}

@@ -1,6 +1,8 @@
 {
   "app": {
-    "name": "Moongate"
+    "name": "Moongate",
+    "live": "LIVE",
+    "online": "{{count}} online"
   },
   "theme": {
     "dark": "Dark",
@@ -175,7 +177,6 @@
       "characters": "Characters",
       "active": "active",
       "suspended": "suspended",
-      "manage": "Manage",
       "none": "—",
       "password": "Password",
       "create": "Create",
@@ -187,7 +188,6 @@
         "GrandMaster": "GrandMaster",
         "Administrator": "Administrator"
       },
-      "edit": "Manage {{username}}",
       "suspendedLabel": "Suspended",
       "newPassword": "New password",
       "newPasswordHint": "Leave blank to keep the current password.",
@@ -196,7 +196,11 @@
       "delete": "Delete account",
       "deleteConfirm": "Delete {{username}} for good? This cannot be undone.",
       "deleteYes": "Delete",
-      "deleted": "Account deleted."
+      "deleted": "Account deleted.",
+      "pickOne": "Pick an account to manage it.",
+      "detail": "Account",
+      "characterCount_one": "{{count}} character",
+      "characterCount_other": "{{count}} characters"
     },
     "settings": {
       "title": "Shard settings",
@@ -267,7 +271,10 @@
       "empty": "No character matches that search.",
       "loadFailed": "The characters could not be loaded.",
       "noImage": "—",
-      "unknownAccount": "Unknown"
+      "unknownAccount": "Unknown",
+      "totalLabel": "Characters",
+      "page": "Page",
+      "online": "Shown"
     },
     "templates": {
       "weight": "Weight",
@@ -319,7 +326,11 @@
       "lootTable": "Loot table",
       "layer": "Layer",
       "item": "Item",
-      "anyGender": "Any"
+      "anyGender": "Any",
+      "onThisShard": "on this shard",
+      "page": "Page",
+      "showing": "Showing",
+      "withVariants": "With variants"
     },
     "news": {
       "title": "News",
@@ -340,7 +351,10 @@
       "empty": "No news yet",
       "loadFailed": "The news could not be loaded.",
       "deleteConfirm": "Delete “{{title}}”? This cannot be undone.",
-      "announceHint": "Publishing announces the title to everyone in the world."
+      "announceHint": "Publishing announces the title to everyone in the world.",
+      "publishedCount": "Published",
+      "draftCount": "Drafts",
+      "total": "Entries"
     }
   },
   "characters": {

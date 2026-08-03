@@ -45,4 +45,19 @@ describe('AccountsScreen', () => {
     await userEvent.click(screen.getByRole('button', { name: /new account/i }))
     expect(await screen.findByRole('dialog')).toBeInTheDocument()
   })
+
+  it('shows the detail panel for the row that was clicked', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(json(accounts))
+    renderScreen()
+
+    expect(await screen.findByText(/pick an account/i)).toBeInTheDocument()
+    await screen.findByText('aelric')
+
+    await userEvent.click(screen.getByText('grimble'))
+
+    expect(screen.queryByText(/pick an account/i)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+    // Suspended in the fixture, and the panel is where staff sees that.
+    expect(screen.getByRole('switch', { name: /suspended/i })).toBeChecked()
+  })
 })

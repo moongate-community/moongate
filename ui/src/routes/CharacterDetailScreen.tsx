@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams } from 'react-router'
 
 import { Card } from '../components/ui/card'
+import { SectionTitle } from '../components/ui/section-title'
 import { CharacterImage } from '../components/characters/CharacterImage'
 import { InventoryTree } from '../components/characters/InventoryTree'
 import { SkillList } from '../components/characters/SkillList'
@@ -99,7 +100,7 @@ function Detail({ detail }: { detail: CharacterDetail }) {
 
         <div className="flex flex-col gap-6">
           <Card className="gap-3 p-4">
-            <h2 className="font-bold text-ink">{t('characters.detail.equipment')}</h2>
+            <SectionTitle>{t('characters.detail.equipment')}</SectionTitle>
             <InventoryTree
               items={detail.equipment}
               emptyLabel={t('characters.detail.equipmentEmpty')}
@@ -108,12 +109,12 @@ function Detail({ detail }: { detail: CharacterDetail }) {
           </Card>
 
           <Card className="gap-3 p-4">
-            <h2 className="font-bold text-ink">{t('characters.skills.title')}</h2>
+            <SectionTitle>{t('characters.skills.title')}</SectionTitle>
             <SkillList skills={detail.skills} />
           </Card>
 
           <Card className="gap-3 p-4">
-            <h2 className="font-bold text-ink">{t('characters.detail.backpack')}</h2>
+            <SectionTitle>{t('characters.detail.backpack')}</SectionTitle>
             <InventoryTree
               items={detail.backpack}
               emptyLabel={t('characters.detail.backpackEmpty')}
