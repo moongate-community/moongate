@@ -5,6 +5,7 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Console;
+using Moongate.Http.Plugin.Endpoints.Graphics;
 using Moongate.Http.Plugin.Endpoints.Images;
 using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
@@ -100,6 +101,8 @@ public class MoongateHttpPlugin : ISquidStdPlugin
         container.RegisterApiEndpoint<HairImageEndpoints>();
         container.RegisterApiEndpoint<MobileTemplateImageEndpoints>();
         container.RegisterApiEndpoint<MobileImageAdminEndpoints>();
+        container.RegisterApiEndpoint<HueEndpoints>();
+        container.RegisterApiEndpoint<UoItemEndpoints>();
         container.Register<IGumpCatalog, GumpCatalog>(Reuse.Singleton);
         container.Register<IPaperdollRenderer, PaperdollRenderer>(Reuse.Singleton);
         container.Register<IPaperdollImageService, PaperdollImageService>(Reuse.Singleton);

@@ -6,6 +6,7 @@ using Moongate.Http.Plugin.Endpoints.Admin;
 using Moongate.Http.Plugin.Endpoints.Auth;
 using Moongate.Http.Plugin.Endpoints.Characters;
 using Moongate.Http.Plugin.Endpoints.Console;
+using Moongate.Http.Plugin.Endpoints.Graphics;
 using Moongate.Http.Plugin.Endpoints.Images;
 using Moongate.Http.Plugin.Endpoints.Items;
 using Moongate.Http.Plugin.Endpoints.Maps;
@@ -51,6 +52,7 @@ public class MoongateHttpPluginTests
                 typeof(CharacterEndpoints),
                 typeof(ConsoleEndpoints),
                 typeof(HairImageEndpoints),
+                typeof(HueEndpoints),
                 typeof(ItemImageAdminEndpoints),
                 typeof(ItemImageEndpoints),
                 typeof(ItemTemplateEndpoints),
@@ -69,6 +71,7 @@ public class MoongateHttpPluginTests
                 typeof(ServerInfoEndpoints),
                 typeof(ServerSettingsAdminEndpoints),
                 typeof(StatsEndpoints),
+                typeof(UoItemEndpoints),
                 typeof(VersionEndpoints)
             ],
             registered

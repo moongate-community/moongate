@@ -420,6 +420,103 @@
         }
       }
     },
+    "/api/v1/admin/hues": {
+      "get": {
+        "tags": [
+          "graphics"
+        ],
+        "summary": "Every hue the client files describe, paged.",
+        "description": "Values are 1-based, the way packets and the image routes take them: hue 1 is the first row of\nhues.mul and hue 0 means unhued, so 0 is not listed. Each row carries a representative colour for\na swatch and eight evenly spaced steps of the full ramp. Search matches the number or the name.\nWithout client files the catalogue is empty rather than an error, because a shard can run\nheadless — the hue table exists either way, but its unread entries paint nothing and are left\nout.",
+        "operationId": "ListHues",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HueSummaryPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/admin/uo-items": {
+      "get": {
+        "tags": [
+          "graphics"
+        ],
+        "summary": "Every item tile the client files describe, paged.",
+        "description": "Rows carry the tile's flags, weight and height, and the URL of its art. Search matches the\ndecimal id, the 0x-prefixed hex, or the tiledata name. Pass flag to keep only tiles carrying one\n— Container, Wearable, Weapon and the rest of TileFlagType — and an unknown flag name is a 400\nrather than a silently unfiltered list. Nameless tiles are the unused ids and are listed too,\nbecause their graphic may still be worth picking. Without client files the catalogue is empty\nrather than an error, because a shard can run headless.",
+        "operationId": "ListUoItems",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "flag",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UoItemSummaryPagedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/images/items/{id}.png": {
       "get": {
         "tags": [
@@ -2660,6 +2757,76 @@
         },
         "additionalProperties": {}
       },
+      "HueSummary": {
+        "required": [
+          "gradient",
+          "hex",
+          "name",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hex": {
+            "type": "string"
+          },
+          "gradient": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the hue catalogue: what to call a hue, and what it looks like."
+      },
+      "HueSummaryPagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HueSummary"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
       "ItemImageExportStatus": {
         "required": [
           "done",
@@ -3952,6 +4119,90 @@
         "additionalProperties": false,
         "description": "How much the world holds: creatures nobody plays, and persisted items."
       },
+      "UoItemSummary": {
+        "required": [
+          "flags",
+          "height",
+          "hex",
+          "imageUrl",
+          "itemId",
+          "name",
+          "weight"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hex": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "height": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "imageUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One row of the raw item catalogue: a tile as the client files describe it, before any template has\nhad an opinion about it."
+      },
+      "UoItemSummaryPagedResponse": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "total",
+          "totalPages"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UoItemSummary"
+            },
+            "description": "The results on this page."
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many results matched in total, before paging.",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "description": "The 1-based page this is.",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "The page size used. The last page may hold fewer items.",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "How many pages exist at this page size. 0 when nothing matched.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One page of results, and what a caller needs to walk the rest."
+      },
       "UpdateAccountRequest": {
         "type": "object",
         "properties": {
@@ -4118,6 +4369,9 @@
     },
     {
       "name": "console"
+    },
+    {
+      "name": "graphics"
     },
     {
       "name": "images"

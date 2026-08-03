@@ -270,6 +270,56 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/hues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Every hue the client files describe, paged.
+         * @description Values are 1-based, the way packets and the image routes take them: hue 1 is the first row of
+         *     hues.mul and hue 0 means unhued, so 0 is not listed. Each row carries a representative colour for
+         *     a swatch and eight evenly spaced steps of the full ramp. Search matches the number or the name.
+         *     Without client files the catalogue is empty rather than an error, because a shard can run
+         *     headless — the hue table exists either way, but its unread entries paint nothing and are left
+         *     out.
+         */
+        get: operations["ListHues"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/uo-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Every item tile the client files describe, paged.
+         * @description Rows carry the tile's flags, weight and height, and the URL of its art. Search matches the
+         *     decimal id, the 0x-prefixed hex, or the tiledata name. Pass flag to keep only tiles carrying one
+         *     — Container, Wearable, Weapon and the rest of TileFlagType — and an unknown flag name is a 400
+         *     rather than a silently unfiltered list. Nameless tiles are the unused ids and are listed too,
+         *     because their graphic may still be worth picking. Without client files the catalogue is empty
+         *     rather than an error, because a shard can run headless.
+         */
+        get: operations["ListUoItems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/images/items/{id}.png": {
         parameters: {
             query?: never;
@@ -1360,6 +1410,39 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        /** @description One row of the hue catalogue: what to call a hue, and what it looks like. */
+        HueSummary: {
+            /** Format: int32 */
+            value: number;
+            name: string;
+            hex: string;
+            gradient: string[];
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        HueSummaryPagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["HueSummary"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
         /** @description How far the bulk item-image export has got. */
         ItemImageExportStatus: {
             /** @description Idle, Running, Completed or Failed. */
@@ -1890,6 +1973,47 @@ export interface components {
             items: number;
         };
         /**
+         * @description One row of the raw item catalogue: a tile as the client files describe it, before any template has
+         *     had an opinion about it.
+         */
+        UoItemSummary: {
+            /** Format: int32 */
+            itemId: number;
+            hex: string;
+            name: string;
+            flags: string[];
+            /** Format: int32 */
+            weight: number;
+            /** Format: int32 */
+            height: number;
+            imageUrl: string;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        UoItemSummaryPagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["UoItemSummary"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
+        /**
          * @description The fields to change. Every one is optional: absent means "leave alone", which is what makes this a
          *     PATCH rather than a PUT. Password is write-only — it enters here and never appears in a response.
          *     Email is not here: the account service has no setter for it.
@@ -2255,6 +2379,55 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ListHues: {
+        parameters: {
+            query?: {
+                page?: string;
+                pageSize?: string;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HueSummaryPagedResponse"];
+                };
+            };
+        };
+    };
+    ListUoItems: {
+        parameters: {
+            query?: {
+                page?: string;
+                pageSize?: string;
+                search?: string;
+                flag?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UoItemSummaryPagedResponse"];
+                };
             };
         };
     };
