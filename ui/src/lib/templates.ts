@@ -1,0 +1,51 @@
+import { useQuery } from '@tanstack/react-query'
+
+import { apiFetch } from './api'
+import type { components } from './api-types'
+
+export type ItemTemplateSummary = components['schemas']['ItemTemplateSummaryResponse']
+export type ItemTemplate = components['schemas']['ItemTemplateResponse']
+export type ItemTemplatePage = components['schemas']['ItemTemplateSummaryResponsePagedResponse']
+
+/** The server's own default. Named here so the pager and the request cannot disagree. */
+export const TEMPLATES_PAGE_SIZE = 25
+
+/**
+ * The catalogue URL. A blank search is omitted rather than sent empty: the server reads a blank
+ * `search` as "no filter" anyway, and leaving it out keeps the query key stable so paging with an
+ * empty box does not miss the cache.
+ */
+export function itemTemplatesQuery({ page, search }: { page: number; search: string }): string {
+  const params = new URLSearchParams({
+    page: String(Math.max(page, 1)),
+    pageSize: String(TEMPLATES_PAGE_SIZE),
+  })
+
+  const trimmed = search.trim()
+
+  if (trimmed !== '') {
+    params.set('search', trimmed)
+  }
+
+  return `/api/v1/admin/items/templates?${params}`
+}
+
+/** Every item template, paged and searched by the server. Staff only. */
+export const useItemTemplates = (params: { page: number; search: string }) =>
+  useQuery({
+    queryKey: ['admin', 'itemTemplates', params.page, params.search.trim()],
+    queryFn: () => apiFetch<ItemTemplatePage>(itemTemplatesQuery(params)),
+    // Holding the previous page while the next loads is what makes it read as a table rather than a
+    // slideshow.
+    placeholderData: (previous: ItemTemplatePage | undefined) => previous,
+  })
+
+/**
+ * One item template in full, specs included. The id is escaped because template ids come from YAML
+ * and are not guaranteed to be URL-safe.
+ */
+export const useItemTemplate = (id: string) =>
+  useQuery({
+    queryKey: ['admin', 'itemTemplates', id],
+    queryFn: () => apiFetch<ItemTemplate>(`/api/v1/admin/items/templates/${encodeURIComponent(id)}`),
+  })
