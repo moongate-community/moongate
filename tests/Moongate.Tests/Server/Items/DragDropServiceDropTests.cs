@@ -101,11 +101,15 @@ public class DragDropServiceDropTests
     [Fact]
     public void Drop_OntoACompatibleStack_MergesAndDeletesTheDroppedEntity()
     {
-        // 100 gold in the backpack; lift 40, then drop the 40 back onto the 60.
+        // 100 gold in the backpack; lift 40, then drop the 40 back onto the 60 -- which the client
+        // reports by naming the 60, not the backpack. Named with a spot inside the backpack instead,
+        // the two halves would stay apart, and SplitStackPlacementTests covers that.
         var fixture = DragDropFixture.WithGoldInBackpack(100);
         fixture.Service.Lift(fixture.Actor, fixture.Gold.Id, 40, Serial.Zero, out var heldId, out _);
 
-        fixture.Service.Drop(fixture.Actor, heldId, fixture.Backpack.Id, Point3D.Zero, new(60, 80));
+        var remainder = fixture.BackpackContents().Single(item => item.Id != heldId);
+
+        fixture.Service.Drop(fixture.Actor, heldId, remainder.Id, Point3D.Zero, new(60, 80));
 
         var stack = Assert.Single(fixture.BackpackContents());
         Assert.Equal(100, stack.Amount);

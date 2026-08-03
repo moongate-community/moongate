@@ -190,6 +190,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
                 container.Register<IItemService, ItemService>(Reuse.Singleton);
                 container.Register<IStackableRule, TileDataStackableRule>(Reuse.Singleton);
+                container.Register<IContainerRule, TileDataContainerRule>(Reuse.Singleton);
                 container.Register<IDragDropService, DragDropService>(Reuse.Singleton);
                 container.Register<IContainerOpenerRegistry, ContainerOpenerRegistry>(Reuse.Singleton);
                 container.Register<ILootService, LootService>(Reuse.Singleton);
