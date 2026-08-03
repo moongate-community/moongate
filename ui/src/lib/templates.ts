@@ -49,3 +49,38 @@ export const useItemTemplate = (id: string) =>
     queryKey: ['admin', 'itemTemplates', id],
     queryFn: () => apiFetch<ItemTemplate>(`/api/v1/admin/items/templates/${encodeURIComponent(id)}`),
   })
+
+export type MobileTemplateSummary = components['schemas']['MobileTemplateSummaryResponse']
+export type MobileTemplate = components['schemas']['MobileTemplateResponse']
+export type MobileTemplatePage = components['schemas']['MobileTemplateSummaryResponsePagedResponse']
+
+/** The catalogue URL for spawn templates. Blank searches are omitted, as in {@link itemTemplatesQuery}. */
+export function mobileTemplatesQuery({ page, search }: { page: number; search: string }): string {
+  const params = new URLSearchParams({
+    page: String(Math.max(page, 1)),
+    pageSize: String(TEMPLATES_PAGE_SIZE),
+  })
+
+  const trimmed = search.trim()
+
+  if (trimmed !== '') {
+    params.set('search', trimmed)
+  }
+
+  return `/api/v1/admin/mobiles/templates?${params}`
+}
+
+/** Every mobile spawn template, paged and searched by the server. Staff only. */
+export const useMobileTemplates = (params: { page: number; search: string }) =>
+  useQuery({
+    queryKey: ['admin', 'mobileTemplates', params.page, params.search.trim()],
+    queryFn: () => apiFetch<MobileTemplatePage>(mobileTemplatesQuery(params)),
+    placeholderData: (previous: MobileTemplatePage | undefined) => previous,
+  })
+
+/** One mobile template in full, variants and equipment included. */
+export const useMobileTemplate = (id: string) =>
+  useQuery({
+    queryKey: ['admin', 'mobileTemplates', id],
+    queryFn: () => apiFetch<MobileTemplate>(`/api/v1/admin/mobiles/templates/${encodeURIComponent(id)}`),
+  })

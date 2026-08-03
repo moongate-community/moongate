@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { itemTemplatesQuery } from './templates'
+import { itemTemplatesQuery, mobileTemplatesQuery } from './templates'
 
 describe('item template query', () => {
   it('asks for the page it was given', () => {
@@ -22,5 +22,25 @@ describe('item template query', () => {
   // a failed request.
   it('never asks for a page below 1', () => {
     expect(itemTemplatesQuery({ page: 0, search: '' })).toBe('/api/v1/admin/items/templates?page=1&pageSize=25')
+  })
+})
+
+describe('mobile template query', () => {
+  it('asks for the page it was given', () => {
+    expect(mobileTemplatesQuery({ page: 2, search: '' })).toBe('/api/v1/admin/mobiles/templates?page=2&pageSize=25')
+  })
+
+  it('omits an empty search', () => {
+    expect(mobileTemplatesQuery({ page: 1, search: ' ' })).toBe('/api/v1/admin/mobiles/templates?page=1&pageSize=25')
+  })
+
+  it('encodes the search', () => {
+    expect(mobileTemplatesQuery({ page: 1, search: 'town guard' })).toBe(
+      '/api/v1/admin/mobiles/templates?page=1&pageSize=25&search=town+guard',
+    )
+  })
+
+  it('never asks for a page below 1', () => {
+    expect(mobileTemplatesQuery({ page: 0, search: '' })).toBe('/api/v1/admin/mobiles/templates?page=1&pageSize=25')
   })
 })

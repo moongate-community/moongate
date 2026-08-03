@@ -160,7 +160,8 @@
       "settings": "Impostazioni",
       "console": "Console",
       "characters": "Personaggi",
-      "items": "Oggetti"
+      "items": "Oggetti",
+      "mobiles": "Mobili"
     },
     "accounts": {
       "title": "Account",
@@ -300,7 +301,24 @@
       "book": "Libro",
       "yes": "Sì",
       "no": "No",
-      "noImage": "—"
+      "noImage": "—",
+      "mobilesTitle": "Template mobili",
+      "mobilesSearch": "Cerca per id, nome, titolo, categoria o tag…",
+      "title": "Titolo",
+      "body": "Body",
+      "stats": "For / Des / Int",
+      "variants": "Varianti",
+      "skills": "Abilità",
+      "equipment": "Equipaggiamento",
+      "appearance": "Aspetto",
+      "gender": "Genere",
+      "namePool": "Pool nomi",
+      "base": "Base",
+      "brain": "Brain",
+      "lootTable": "Loot table",
+      "layer": "Layer",
+      "item": "Oggetto",
+      "anyGender": "Qualsiasi"
     }
   },
   "characters": {

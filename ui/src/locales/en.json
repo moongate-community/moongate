@@ -160,7 +160,8 @@
       "settings": "Settings",
       "console": "Console",
       "characters": "Characters",
-      "items": "Items"
+      "items": "Items",
+      "mobiles": "Mobiles"
     },
     "accounts": {
       "title": "Accounts",
@@ -300,7 +301,24 @@
       "book": "Book",
       "yes": "Yes",
       "no": "No",
-      "noImage": "—"
+      "noImage": "—",
+      "mobilesTitle": "Mobile Templates",
+      "mobilesSearch": "Search by id, name, title, category or tag…",
+      "title": "Title",
+      "body": "Body",
+      "stats": "Str / Dex / Int",
+      "variants": "Variants",
+      "skills": "Skills",
+      "equipment": "Equipment",
+      "appearance": "Appearance",
+      "gender": "Gender",
+      "namePool": "Name pool",
+      "base": "Base",
+      "brain": "Brain",
+      "lootTable": "Loot table",
+      "layer": "Layer",
+      "item": "Item",
+      "anyGender": "Any"
     }
   },
   "characters": {
