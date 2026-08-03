@@ -635,6 +635,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/mobiles/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Every mobile template, paged.
+         * @description Ordered by template id. Pass search to filter: free text, case-insensitive, matching the
+         *     template's id, name, title, category or any tag. Page is 1-based and defaults to 1; pageSize
+         *     defaults to 25 and cannot exceed 100. A search matching nothing is an empty page, not an error.
+         *
+         *     A template's hues are reported as the specs they are — a value or a range resolved per spawn —
+         *     rather than as numbers.
+         */
+        get: operations["ListMobileTemplates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/mobiles/templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fetches one mobile template by id, variants and equipment included.
+         * @description Ids are case-insensitive. Answers 404 when no template carries the id.
+         */
+        get: operations["GetMobileTemplate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/images/bodies": {
         parameters: {
             query?: never;
@@ -1517,6 +1562,134 @@ export interface components {
              * @description When the current or last pre-warm started; null if none ever has.
              */
             startedAt?: string | null;
+        };
+        /** @description How a template says a mobile looks, shared by the template and each of its variants. */
+        MobileAppearanceResponse: {
+            /**
+             * Format: int32
+             * @description The animation body id.
+             */
+            body: number;
+            /**
+             * @description A hue <em>spec</em>, not a number: a single value or a range like `0x455-0x45a` resolved once
+             *     per spawn. Reported as written, because picking one end of a range would lie about the other.
+             */
+            skinHue?: string | null;
+            /** Format: int32 */
+            hairStyle: number;
+            /** @description A hue spec, like SkinHue. */
+            hairHue?: string | null;
+            /** Format: int32 */
+            facialHairStyle: number;
+            /** @description A hue spec, like SkinHue. */
+            facialHairHue?: string | null;
+        };
+        /** @description One item a template spawns its mobile wearing. */
+        MobileEquipmentResponse: {
+            /** @description The item template id to spawn. */
+            item: string;
+            /** @description The layer it goes on. */
+            layer: string;
+            /** @description A hue spec, or null to leave the item its own colour. */
+            hue?: string | null;
+        };
+        /** @description One mobile spawn template in full. */
+        MobileTemplateResponse: {
+            id: string;
+            name: string;
+            /** @description The pool a spawn draws its name from when the template has no fixed one. */
+            namePool: string;
+            /** @description The gender name, or null when the template lets a spawn pick. */
+            gender?: string | null;
+            title: string;
+            category: string;
+            description: string;
+            tags: string[];
+            /** @description The template this one merges over, or null when it stands alone. */
+            baseMobile?: string | null;
+            /** Format: int32 */
+            strength: number;
+            /** Format: int32 */
+            dexterity: number;
+            /** Format: int32 */
+            intelligence: number;
+            /** @description Skill values by name, as the template sets them. */
+            skills: {
+                [key: string]: number;
+            };
+            appearance: components["schemas"]["MobileAppearanceResponse"];
+            equipment: components["schemas"]["MobileEquipmentResponse"][];
+            /** @description Weighted alternatives, each with its own appearance and equipment. */
+            variants: components["schemas"]["MobileVariantResponse"][];
+            lootTableId?: string | null;
+            brainScript?: string | null;
+            imageUrl: string;
+            paperdollUrl: string;
+        };
+        /** @description One row of the staff mobile template listing. */
+        MobileTemplateSummaryResponse: {
+            id: string;
+            name: string;
+            title: string;
+            category: string;
+            tags: string[];
+            /**
+             * Format: int32
+             * @description The animation body id, which is what the picture is drawn from.
+             */
+            body: number;
+            /** Format: int32 */
+            strength: number;
+            /** Format: int32 */
+            dexterity: number;
+            /** Format: int32 */
+            intelligence: number;
+            /**
+             * Format: int32
+             * @description How many weighted alternatives the template carries.
+             */
+            variantCount: number;
+            imageUrl: string;
+        };
+        /** @description One page of results, and what a caller needs to walk the rest. */
+        MobileTemplateSummaryResponsePagedResponse: {
+            /** @description The results on this page. */
+            items: components["schemas"]["MobileTemplateSummaryResponse"][];
+            /**
+             * Format: int32
+             * @description How many results matched in total, before paging.
+             */
+            total: number;
+            /**
+             * Format: int32
+             * @description The 1-based page this is.
+             */
+            page: number;
+            /**
+             * Format: int32
+             * @description The page size used. The last page may hold fewer items.
+             */
+            pageSize: number;
+            /**
+             * Format: int32
+             * @description How many pages exist at this page size. 0 when nothing matched.
+             */
+            totalPages: number;
+        };
+        /** @description One variant of a template: a weighted alternative look, name pool and loot. */
+        MobileVariantResponse: {
+            name: string;
+            /**
+             * Format: int32
+             * @description Its share of the draw, relative to the other variants.
+             */
+            weight: number;
+            /** @description The gender name, or null when the variant does not fix one. */
+            gender?: string | null;
+            namePool?: string | null;
+            lootTableId?: string | null;
+            appearance: components["schemas"]["MobileAppearanceResponse"];
+            equipment: components["schemas"]["MobileEquipmentResponse"][];
         };
         /** @description A news entry as returned by the API. */
         NewsResponse: {
@@ -2492,6 +2665,52 @@ export interface operations {
                 };
                 content: {
                     "image/png": string;
+                };
+            };
+        };
+    };
+    ListMobileTemplates: {
+        parameters: {
+            query?: {
+                page?: string;
+                pageSize?: string;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobileTemplateSummaryResponsePagedResponse"];
+                };
+            };
+        };
+    };
+    GetMobileTemplate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MobileTemplateResponse"];
                 };
             };
         };

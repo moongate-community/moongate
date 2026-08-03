@@ -5,7 +5,7 @@ namespace Moongate.Server.Abstractions.Interfaces.Mobiles;
 /// <summary>In-memory registry of mobile spawn templates, queryable by id, tag or category.</summary>
 public interface IMobileTemplateService
 {
-    /// <summary>All registered mobile templates.</summary>
+    /// <summary>All registered mobile templates, ordered by id.</summary>
     IReadOnlyList<MobileTemplate> All { get; }
 
     /// <summary>Number of registered mobile templates.</summary>
