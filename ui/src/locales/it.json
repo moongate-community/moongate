@@ -177,7 +177,6 @@
       "characters": "Personaggi",
       "active": "attivo",
       "suspended": "sospeso",
-      "manage": "Gestisci",
       "none": "—",
       "password": "Password",
       "create": "Crea",
@@ -189,7 +188,6 @@
         "GrandMaster": "GrandMaster",
         "Administrator": "Administrator"
       },
-      "edit": "Gestisci {{username}}",
       "suspendedLabel": "Sospeso",
       "newPassword": "Nuova password",
       "newPasswordHint": "Lascia vuoto per non cambiarla.",
@@ -198,7 +196,11 @@
       "delete": "Elimina account",
       "deleteConfirm": "Eliminare {{username}} definitivamente? Non è reversibile.",
       "deleteYes": "Elimina",
-      "deleted": "Account eliminato."
+      "deleted": "Account eliminato.",
+      "pickOne": "Scegli un account per gestirlo.",
+      "detail": "Account",
+      "characterCount_one": "{{count}} personaggio",
+      "characterCount_other": "{{count}} personaggi"
     },
     "settings": {
       "title": "Impostazioni shard",

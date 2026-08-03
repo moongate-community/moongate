@@ -2,16 +2,16 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '../../lib/i18n'
-import { EditAccountDialog } from './EditAccountDialog'
+import { AccountDetailPanel } from './AccountDetailPanel'
 import type { Account } from '../../lib/accounts'
 
 const account: Account = { username: 'grimble', email: null, level: 'Player', isActive: true, characterCount: 1 }
 
-function renderDialog() {
+function renderPanel(shown: Account | null = account) {
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
   return render(
     <QueryClientProvider client={client}>
-      <EditAccountDialog account={account} onOpenChange={() => {}} />
+      <AccountDetailPanel account={shown} />
     </QueryClientProvider>,
   )
 }
@@ -20,12 +20,28 @@ function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
 }
 
-describe('EditAccountDialog', () => {
+describe('AccountDetailPanel', () => {
   beforeEach(() => vi.restoreAllMocks())
+
+  it('asks for a pick when nothing is selected', () => {
+    renderPanel(null)
+
+    expect(screen.getByText(/pick an account/i)).toBeInTheDocument()
+  })
+
+  it('names the account and shows its standing', () => {
+    renderPanel()
+
+    expect(screen.getByText('grimble')).toBeInTheDocument()
+    expect(screen.getByText('active')).toBeInTheDocument()
+    expect(screen.getByText('1 character')).toBeInTheDocument()
+    // 'Player' is both the badge and the level the form is set to, so this names which one it means.
+    expect(screen.getByRole('combobox')).toHaveTextContent('Player')
+  })
 
   it('saves the suspended state via PATCH', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(json({ ...account, isActive: false }))
-    renderDialog()
+    renderPanel()
 
     await userEvent.click(screen.getByRole('switch', { name: /suspended/i }))
     await userEvent.click(screen.getByRole('button', { name: /save/i }))
@@ -40,7 +56,7 @@ describe('EditAccountDialog', () => {
 
   it('deletes after confirming', async () => {
     const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(null, { status: 204 }))
-    renderDialog()
+    renderPanel()
 
     await userEvent.click(screen.getByRole('button', { name: /delete account/i }))
     await userEvent.click(screen.getByRole('button', { name: /^delete$/i }))
@@ -50,5 +66,22 @@ describe('EditAccountDialog', () => {
       expect(url).toBe('/api/v1/admin/accounts/grimble')
       expect((init as RequestInit).method).toBe('DELETE')
     })
+  })
+
+  // Picking a second account while the first one's form is dirty must not carry the edit across.
+  it('starts over when a different account is picked', async () => {
+    const { rerender } = renderPanel()
+
+    await userEvent.click(screen.getByRole('switch', { name: /suspended/i }))
+    expect(screen.getByRole('switch', { name: /suspended/i })).toBeChecked()
+
+    const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
+    rerender(
+      <QueryClientProvider client={client}>
+        <AccountDetailPanel account={{ ...account, username: 'thorne' }} />
+      </QueryClientProvider>,
+    )
+
+    expect(screen.getByRole('switch', { name: /suspended/i })).not.toBeChecked()
   })
 })
