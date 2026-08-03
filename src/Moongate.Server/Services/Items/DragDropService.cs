@@ -35,6 +35,7 @@ public sealed class DragDropService : IDragDropService
     private readonly IItemTemplateService _templates;
     private readonly IWorldService _world;
     private readonly IStackableRule _stackable;
+    private readonly IContainerRule _containers;
     private readonly ILoopAffinity? _loopAffinity;
     private readonly IEventBus? _eventBus;
 
@@ -44,6 +45,7 @@ public sealed class DragDropService : IDragDropService
         IItemTemplateService templates,
         IWorldService world,
         IStackableRule stackable,
+        IContainerRule containers,
         ILoopAffinity? loopAffinity = null,
         IEventBus? eventBus = null
     )
@@ -53,6 +55,7 @@ public sealed class DragDropService : IDragDropService
         _templates = templates;
         _world = world;
         _stackable = stackable;
+        _containers = containers;
         _loopAffinity = loopAffinity;
         _eventBus = eventBus;
     }
@@ -119,9 +122,21 @@ public sealed class DragDropService : IDragDropService
             return new(false, LiftRejectReasonType.Inspecific);
         }
 
-        return containerId == Serial.Zero
-                   ? DropOnGround(actor, item, groundPosition)
-                   : DropInContainer(actor, item, containerId, containerPosition);
+        if (containerId == Serial.Zero)
+        {
+            return DropOnGround(actor, item, groundPosition);
+        }
+
+        // One serial, two gestures. Released over a bag the client sends the bag; released over
+        // whatever is drawn in a slot it sends that item. Only the first is a container drop, and
+        // taking the second for one nests the item inside something that never opens.
+        if (_items.GetById(containerId) is { } target &&
+            !_containers.IsContainer(target, _templates.GetById(target.TemplateId)))
+        {
+            return DropOnItem(actor, item, target, containerPosition);
+        }
+
+        return DropInContainer(actor, item, containerId, containerPosition);
     }
 
     /// <summary>
@@ -290,15 +305,7 @@ public sealed class DragDropService : IDragDropService
 
         if (stack is not null)
         {
-            stack.Amount += item.Amount;
-            _items.Save(stack);
-            _items.Delete(item.Id);
-
-            _world.SendToPlayer(actor.Id, ContainerPacket(stack, container.Id, stack.ContainerPosition));
-
-            _eventBus?.Publish(new ItemDroppedEvent(stack.Id, actor.Id, container.Id));
-
-            return new(true, LiftRejectReasonType.Inspecific);
+            return MergeInto(actor, stack, item);
         }
 
         _items.AddToContainer(container, item, position);
@@ -306,6 +313,64 @@ public sealed class DragDropService : IDragDropService
         _world.SendToPlayer(actor.Id, ContainerPacket(item, container.Id, position));
 
         _eventBus?.Publish(new ItemDroppedEvent(item.Id, actor.Id, container.Id));
+
+        return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    /// <summary>
+    /// A release onto an item rather than into one. Piles merge -- coins onto coins is the gesture
+    /// players make constantly -- and anything that cannot merge lands beside the target, in whatever
+    /// holds it, because the target itself has nowhere to put it.
+    /// </summary>
+    private LiftDecision DropOnItem(MobileEntity actor, ItemEntity item, ItemEntity target, Point2D position)
+    {
+        if (target.Id == item.Id || IsDescendantOf(target, item.Id) || !Reachable(target, actor))
+        {
+            return new(false, LiftRejectReasonType.CannotLift);
+        }
+
+        var (mapId, worldPosition) = WorldLocation(target, actor);
+
+        if (actor.MapId != mapId || !actor.Position.InRange(worldPosition, LiftRange))
+        {
+            return new(false, LiftRejectReasonType.OutOfRange);
+        }
+
+        var targetStackable = _stackable.IsStackable(target, _templates.GetById(target.TemplateId));
+        var droppedStackable = _stackable.IsStackable(item, _templates.GetById(item.TemplateId));
+
+        if (CanStack(target, item, targetStackable, droppedStackable))
+        {
+            return MergeInto(actor, target, item);
+        }
+
+        // Loose on the ground with nothing to merge into: refusing bounces it back where it came
+        // from, which beats inventing a spot for it.
+        return target.ParentContainerId != Serial.Zero
+                   ? DropInContainer(actor, item, target.ParentContainerId, position)
+                   : new LiftDecision(false, LiftRejectReasonType.CannotLift);
+    }
+
+    /// <summary>
+    /// Pours one pile into another. The target keeps its serial and grows; the dropped entity stops
+    /// existing. Sending the target's new amount is what redraws it -- the client has been showing the
+    /// old one since before the drag started.
+    /// </summary>
+    private LiftDecision MergeInto(MobileEntity actor, ItemEntity stack, ItemEntity item)
+    {
+        stack.Amount += item.Amount;
+        _items.Save(stack);
+        _items.Delete(item.Id);
+
+        if (stack.ParentContainerId != Serial.Zero)
+        {
+            _world.SendToPlayer(
+                actor.Id,
+                ContainerPacket(stack, stack.ParentContainerId, stack.ContainerPosition)
+            );
+        }
+
+        _eventBus?.Publish(new ItemDroppedEvent(stack.Id, actor.Id, stack.ParentContainerId));
 
         return new(true, LiftRejectReasonType.Inspecific);
     }
