@@ -1,6 +1,8 @@
 {
   "app": {
-    "name": "Moongate"
+    "name": "Moongate",
+    "live": "LIVE",
+    "online": "{{count}} online"
   },
   "theme": {
     "dark": "Scuro",
