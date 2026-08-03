@@ -8,7 +8,11 @@ public sealed class MobileTemplateService : IMobileTemplateService
 {
     private readonly Dictionary<string, MobileTemplate> _byId = new(StringComparer.OrdinalIgnoreCase);
 
-    public IReadOnlyList<MobileTemplate> All => _byId.Values.ToList();
+    // Ordered, because the admin catalogue pages over this: a page taken from an unordered
+    // dictionary can repeat a row or drop one with nothing in the response admitting it. The item
+    // registry orders by id for the same reason.
+    public IReadOnlyList<MobileTemplate> All =>
+        [.. _byId.Values.OrderBy(template => template.Id, StringComparer.OrdinalIgnoreCase)];
 
     public int Count => _byId.Count;
 
