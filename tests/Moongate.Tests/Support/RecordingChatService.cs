@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Chat;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Types;
 
@@ -18,6 +19,10 @@ public sealed class RecordingChatService : IChatService
 
     public void Broadcast(string text, Hue? hue = null)
         => _broadcasts.Add((text, hue));
+
+    public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+    {
+    }
 
     public void Say(MobileEntity speaker, ChatMessageType type, string text, Hue hue, int range)
         => _messages.Add((speaker.Id, type, text, hue, range));

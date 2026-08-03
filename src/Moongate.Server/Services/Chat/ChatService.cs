@@ -1,5 +1,6 @@
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
+using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.Chat;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Data.Internal.Chat;
@@ -39,6 +40,9 @@ public sealed class ChatService : IChatService
 
     public void Broadcast(string text, Hue? hue = null)
         => _world.Broadcast(ChatMessageFactory.CreateSystem(text, hue));
+
+    public void SendSystemMessage(PlayerSession session, string text, Hue? hue = null)
+        => session.Send(ChatMessageFactory.CreateSystem(text, hue));
 
     public static ChatDecision Classify(string rawText)
     {

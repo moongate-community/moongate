@@ -1,10 +1,15 @@
 using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Extensions;
+using Moongate.Core.Types;
+using Moongate.News.Plugin.Commands;
 using Moongate.News.Plugin.Endpoints;
 using Moongate.News.Plugin.Entities;
 using Moongate.News.Plugin.Interfaces;
 using Moongate.News.Plugin.Services;
+using Moongate.News.Plugin.Subscribers;
+using Moongate.Server.Abstractions.Extensions;
+using Moongate.Server.Abstractions.Types;
 using Moongate.Persistence.Generators;
 using SquidStd.Core.Utils;
 using SquidStd.Persistence.Extensions;
@@ -39,5 +44,15 @@ public sealed class MoongateNewsPlugin : ISquidStdPlugin
         container.Register<INewsService, NewsService>(Reuse.Singleton);
         container.RegisterApiEndpoint<NewsAdminEndpoints>();
         container.RegisterApiEndpoint<NewsEndpoints>();
+
+        // The in-game half: a greeting on the way in, and the archive on demand. Both live here
+        // rather than in the server, which cannot reference a plugin.
+        container.RegisterEventSubscriber<NewsMotdSubscriber>();
+        container.RegisterCommand<NewsCommand>(
+            "news",
+            AccountLevelType.Player,
+            "Shows the shard's published news.",
+            CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest
+        );
     }
 }

@@ -45,6 +45,8 @@ using SquidStd.Core.Config;
 using SquidStd.Core.Data.Bootstrap;
 using SquidStd.Core.Extensions.Directories;
 using SquidStd.Core.Interfaces.Events;
+using SquidStd.Core.Directories;
+using Moongate.Server.Abstractions.Types;
 using SquidStd.Core.Utils;
 using SquidStd.Plugin.Abstractions.Interfaces.Plugins;
 using SquidStd.Plugin.Extensions;
@@ -195,6 +197,21 @@ await ConsoleApp.RunAsync(
                 container.Register<ILightService, LightService>(Reuse.Singleton);
                 container.Register<IWorldService, WorldService>(Reuse.Singleton);
                 container.Register<IChatService, ChatService>(Reuse.Singleton);
+
+                // The message of the day needs the runtime root, the build it is running, and a way
+                // to count who is in the world -- none of which a constructor can be handed by name.
+                container.RegisterDelegate<IMotdService>(
+                    resolver => new MotdService(
+                        resolver.Resolve<DirectoriesConfig>(),
+                        VersionUtils.GetVersion(typeof(Program).Assembly),
+                        () => resolver.Resolve<ISessionManager>()
+                                      .All.Count(
+                                          session => session.State == SessionStateType.InWorld &&
+                                                     session.Character is not null
+                                      )
+                    ),
+                    Reuse.Singleton
+                );
                 container.Register<IVisibilityService, VisibilityService>(Reuse.Singleton);
                 container.Register<IPlayerTargetService, PlayerTargetService>(Reuse.Singleton);
                 container.Register<IGumpService, GumpService>(Reuse.Singleton);
@@ -261,6 +278,11 @@ await ConsoleApp.RunAsync(
                     (_, _) =>
                     {
                         container.Resolve<TimerAutostartService>().InitDefaultTimers();
+
+                        // Resolved at startup so motd.txt is on disk for the operator to find and
+                        // edit. Left to the first greeting, it would appear only once somebody had
+                        // logged in -- by which point they had already been greeted without it.
+                        container.Resolve<IMotdService>().Lines();
 
                         var loop = container.Resolve<IGameLoopContext>();
 
