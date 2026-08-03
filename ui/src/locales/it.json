@@ -265,6 +265,14 @@
       "loadFailed": "Non è stato possibile caricare i personaggi.",
       "noImage": "—",
       "unknownAccount": "Sconosciuto"
+    },
+    "templates": {
+      "weight": "Peso",
+      "value": "Valore",
+      "category": "Categoria",
+      "tags": "Tag",
+      "graphic": "Grafica",
+      "hue": "Hue"
     }
   },
   "characters": {

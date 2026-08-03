@@ -265,6 +265,14 @@
       "loadFailed": "The characters could not be loaded.",
       "noImage": "—",
       "unknownAccount": "Unknown"
+    },
+    "templates": {
+      "weight": "Weight",
+      "value": "Value",
+      "category": "Category",
+      "tags": "Tags",
+      "graphic": "Graphic",
+      "hue": "Hue"
     }
   },
   "characters": {
