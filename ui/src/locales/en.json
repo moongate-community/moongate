@@ -420,5 +420,32 @@
       "amount": "Amount",
       "serial": "Serial"
     }
+  },
+  "picker": {
+    "title": "Find in the shard",
+    "searchLabel": "Search the catalogue",
+    "filterLabel": "Filter by flag",
+    "anyFlag": "Any flag",
+    "empty": "Nothing matches this search.",
+    "count_one": "{{count}} result",
+    "count_other": "{{count}} results",
+    "copied": "Copied {{value}}.",
+    "open": "Find",
+    "catalogues": {
+      "itemTemplates": "Item templates",
+      "mobileTemplates": "Mobile templates",
+      "uoItems": "UO items",
+      "hues": "Hues",
+      "bodies": "Bodies",
+      "hairStyles": "Hair styles"
+    },
+    "search": {
+      "itemTemplates": "Search name or id…",
+      "mobileTemplates": "Search name, id or tag…",
+      "uoItems": "Search item id, 0x hex or name…",
+      "hues": "Search hue number or name…",
+      "bodies": "Search body id or 0x hex…",
+      "hairStyles": "Search style name…"
+    }
   }
 }

@@ -2,32 +2,22 @@ import { useQuery } from '@tanstack/react-query'
 
 import { apiFetch } from './api'
 import type { components } from './api-types'
+import { CATALOGUE_PAGE_SIZE, cataloguePath } from './catalogues'
 
 export type ItemTemplateSummary = components['schemas']['ItemTemplateSummaryResponse']
 export type ItemTemplate = components['schemas']['ItemTemplateResponse']
 export type ItemTemplatePage = components['schemas']['ItemTemplateSummaryResponsePagedResponse']
 
 /** The server's own default. Named here so the pager and the request cannot disagree. */
-export const TEMPLATES_PAGE_SIZE = 25
+export const TEMPLATES_PAGE_SIZE = CATALOGUE_PAGE_SIZE
 
 /**
  * The catalogue URL. A blank search is omitted rather than sent empty: the server reads a blank
  * `search` as "no filter" anyway, and leaving it out keeps the query key stable so paging with an
  * empty box does not miss the cache.
  */
-export function itemTemplatesQuery({ page, search }: { page: number; search: string }): string {
-  const params = new URLSearchParams({
-    page: String(Math.max(page, 1)),
-    pageSize: String(TEMPLATES_PAGE_SIZE),
-  })
-
-  const trimmed = search.trim()
-
-  if (trimmed !== '') {
-    params.set('search', trimmed)
-  }
-
-  return `/api/v1/admin/items/templates?${params}`
+export function itemTemplatesQuery(params: { page: number; search: string }): string {
+  return cataloguePath('/api/v1/admin/items/templates', params)
 }
 
 /** Every item template, paged and searched by the server. Staff only. */
@@ -55,19 +45,8 @@ export type MobileTemplate = components['schemas']['MobileTemplateResponse']
 export type MobileTemplatePage = components['schemas']['MobileTemplateSummaryResponsePagedResponse']
 
 /** The catalogue URL for spawn templates. Blank searches are omitted, as in {@link itemTemplatesQuery}. */
-export function mobileTemplatesQuery({ page, search }: { page: number; search: string }): string {
-  const params = new URLSearchParams({
-    page: String(Math.max(page, 1)),
-    pageSize: String(TEMPLATES_PAGE_SIZE),
-  })
-
-  const trimmed = search.trim()
-
-  if (trimmed !== '') {
-    params.set('search', trimmed)
-  }
-
-  return `/api/v1/admin/mobiles/templates?${params}`
+export function mobileTemplatesQuery(params: { page: number; search: string }): string {
+  return cataloguePath('/api/v1/admin/mobiles/templates', params)
 }
 
 /** Every mobile spawn template, paged and searched by the server. Staff only. */
