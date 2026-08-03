@@ -16,6 +16,8 @@ import { CharacterDetailScreen } from './routes/CharacterDetailScreen'
 import { AdminLayout } from './routes/AdminLayout'
 import { AccountsScreen } from './routes/AccountsScreen'
 import { CharactersAdminScreen } from './routes/admin/CharactersAdminScreen'
+import { ItemTemplatesScreen } from './routes/admin/ItemTemplatesScreen'
+import { ItemTemplateDetailScreen } from './routes/admin/ItemTemplateDetailScreen'
 import { PluginsScreen } from './routes/PluginsScreen'
 import { SettingsScreen } from './routes/SettingsScreen'
 import { ConsoleScreen } from './routes/ConsoleScreen'
@@ -91,6 +93,8 @@ export function App() {
                 <Route index element={<AdminScreen />} />
                 <Route path="accounts" element={<AccountsScreen />} />
                 <Route path="characters" element={<CharactersAdminScreen />} />
+                <Route path="items" element={<ItemTemplatesScreen />} />
+                <Route path="items/:id" element={<ItemTemplateDetailScreen />} />
                 <Route path="plugins" element={<PluginsScreen />} />
                 <Route path="settings" element={<SettingsScreen />} />
                 <Route path="console" element={<ConsoleScreen />} />

@@ -159,7 +159,8 @@
       "plugins": "Plugins",
       "settings": "Settings",
       "console": "Console",
-      "characters": "Characters"
+      "characters": "Characters",
+      "items": "Items"
     },
     "accounts": {
       "title": "Accounts",
@@ -272,7 +273,34 @@
       "category": "Category",
       "tags": "Tags",
       "graphic": "Graphic",
-      "hue": "Hue"
+      "hue": "Hue",
+      "itemsTitle": "Item Templates",
+      "search": "Search by id, name, category or tag…",
+      "preview": "Preview",
+      "name": "Name",
+      "id": "Id",
+      "empty": "No template matches that search.",
+      "loadFailed": "The templates could not be loaded.",
+      "total": "{{count}} templates",
+      "notFound": "No template with that id.",
+      "back": "Back to templates",
+      "description": "Description",
+      "script": "Script",
+      "movable": "Movable",
+      "stackable": "Stackable",
+      "dyeable": "Dyeable",
+      "visibility": "Visibility",
+      "lootType": "Loot type",
+      "flippable": "Flippable",
+      "lootTables": "Loot tables",
+      "params": "Params",
+      "equip": "Equip",
+      "weapon": "Weapon",
+      "container": "Container",
+      "book": "Book",
+      "yes": "Yes",
+      "no": "No",
+      "noImage": "—"
     }
   },
   "characters": {

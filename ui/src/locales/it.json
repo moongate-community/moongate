@@ -159,7 +159,8 @@
       "plugins": "Plugin",
       "settings": "Impostazioni",
       "console": "Console",
-      "characters": "Personaggi"
+      "characters": "Personaggi",
+      "items": "Oggetti"
     },
     "accounts": {
       "title": "Account",
@@ -272,7 +273,34 @@
       "category": "Categoria",
       "tags": "Tag",
       "graphic": "Grafica",
-      "hue": "Hue"
+      "hue": "Hue",
+      "itemsTitle": "Template oggetti",
+      "search": "Cerca per id, nome, categoria o tag…",
+      "preview": "Anteprima",
+      "name": "Nome",
+      "id": "Id",
+      "empty": "Nessun template corrisponde alla ricerca.",
+      "loadFailed": "Non è stato possibile caricare i template.",
+      "total": "{{count}} template",
+      "notFound": "Nessun template con questo id.",
+      "back": "Torna ai template",
+      "description": "Descrizione",
+      "script": "Script",
+      "movable": "Spostabile",
+      "stackable": "Impilabile",
+      "dyeable": "Tingibile",
+      "visibility": "Visibilità",
+      "lootType": "Tipo loot",
+      "flippable": "Ribaltabile",
+      "lootTables": "Loot table",
+      "params": "Params",
+      "equip": "Equipaggiamento",
+      "weapon": "Arma",
+      "container": "Contenitore",
+      "book": "Libro",
+      "yes": "Sì",
+      "no": "No",
+      "noImage": "—"
     }
   },
   "characters": {
