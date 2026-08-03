@@ -7,6 +7,7 @@ import { DataTable } from '../../components/ui/data-table'
 import { StatCard } from '../../components/ui/stat-card'
 import { ScreenTitle } from '../../components/ui/section-title'
 import { MobileTemplateTooltip, mobileTemplateLabel } from '../../components/templates/MobileTemplateTooltip'
+import { RarityTile } from '../../components/ui/rarity-tile'
 import { useMobileTemplates, type MobileTemplateSummary } from '../../lib/templates'
 
 export function MobileTemplatesScreen() {
@@ -26,11 +27,7 @@ export function MobileTemplatesScreen() {
               tabIndex={0}
               className="inline-block rounded outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
-              <img
-                src={row.original.imageUrl}
-                alt={mobileTemplateLabel(row.original)}
-                className="h-16 w-12 object-contain"
-              />
+              <RarityTile src={row.original.imageUrl} alt={mobileTemplateLabel(row.original)} size={64} />
             </span>
           </MobileTemplateTooltip>
         ),

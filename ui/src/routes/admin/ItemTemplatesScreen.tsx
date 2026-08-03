@@ -7,6 +7,7 @@ import { DataTable } from '../../components/ui/data-table'
 import { StatCard } from '../../components/ui/stat-card'
 import { ScreenTitle } from '../../components/ui/section-title'
 import { ItemTemplateTooltip } from '../../components/templates/ItemTemplateTooltip'
+import { RarityTile } from '../../components/ui/rarity-tile'
 import { rarityColor } from '../../components/templates/RarityBadge'
 import { useItemTemplates, type ItemTemplateSummary } from '../../lib/templates'
 
@@ -30,7 +31,12 @@ export function ItemTemplatesScreen() {
               tabIndex={0}
               className="inline-block rounded outline-none focus-visible:ring-2 focus-visible:ring-gold"
             >
-              <img src={row.original.imageUrl} alt={label(row.original)} className="h-16 w-16 object-contain" />
+              <RarityTile
+                src={row.original.imageUrl}
+                alt={label(row.original)}
+                rarity={row.original.rarity}
+                size={64}
+              />
             </span>
           </ItemTemplateTooltip>
         ),

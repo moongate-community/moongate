@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 
-import { CharacterImage } from './CharacterImage'
+import { RarityTile } from '../ui/rarity-tile'
 import { ItemTooltip } from './ItemTooltip'
 import { itemImageUrl, type CharacterItem } from '../../lib/characters'
 
@@ -35,15 +35,10 @@ export function InventoryTree({
             */}
             <ItemTooltip characterSerial={characterSerial} itemSerial={item.serial}>
               <span tabIndex={0} className="shrink-0 rounded outline-none focus-visible:ring-2 focus-visible:ring-gold">
-                <CharacterImage
+                <RarityTile
                   src={itemImageUrl(item.itemId, item.hue)}
                   alt={item.name === '' ? t('characters.inventory.unnamed') : item.name}
-                  className="h-16 w-16 object-contain"
-                  fallback={
-                    <span className="flex h-16 w-16 items-center justify-center text-muted">
-                      {t('characters.inventory.noImage')}
-                    </span>
-                  }
+                  size={64}
                 />
               </span>
             </ItemTooltip>

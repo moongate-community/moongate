@@ -6,41 +6,53 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
     ? 'flex items-center border-b-2 border-gold py-2 text-sm font-bold text-gold'
     : 'flex items-center border-b-2 border-transparent py-2 text-sm text-muted hover:text-ink'
 
+/**
+ * The admin tabs, in groups.
+ *
+ * The design draws five staff tabs in one row; there are nine, so it does not say what to do here and
+ * this is a choice rather than a transcription. They are clustered by what the things are — the shard
+ * itself, then its content, then its people, then operating it — and parted by a rule, because nine
+ * equal targets in a row is a list you read rather than a bar you aim at.
+ *
+ * If this ever passes a dozen, the answer is a side rail, not more separators.
+ */
+const groups: { to: string; key: string; end?: boolean }[][] = [
+  [{ to: '/admin', key: 'overview', end: true }],
+  [
+    { to: '/admin/items', key: 'items' },
+    { to: '/admin/mobiles', key: 'mobiles' },
+  ],
+  [
+    { to: '/admin/accounts', key: 'accounts' },
+    { to: '/admin/characters', key: 'characters' },
+  ],
+  [
+    { to: '/admin/news', key: 'news' },
+    { to: '/admin/plugins', key: 'plugins' },
+    { to: '/admin/settings', key: 'settings' },
+    { to: '/admin/console', key: 'console' },
+  ],
+]
+
 /** The admin area's own tab row, above whichever admin screen is routed below it. */
 export function AdminLayout() {
   const { t } = useTranslation()
 
   return (
     <div className="flex flex-col gap-5">
-      <nav className="flex gap-6 border-b border-border-subtle">
-        <NavLink to="/admin" end className={linkClass}>
-          {t('admin.nav.overview')}
-        </NavLink>
-        <NavLink to="/admin/accounts" className={linkClass}>
-          {t('admin.nav.accounts')}
-        </NavLink>
-        <NavLink to="/admin/characters" className={linkClass}>
-          {t('admin.nav.characters')}
-        </NavLink>
-        <NavLink to="/admin/items" className={linkClass}>
-          {t('admin.nav.items')}
-        </NavLink>
-        <NavLink to="/admin/mobiles" className={linkClass}>
-          {t('admin.nav.mobiles')}
-        </NavLink>
-        <NavLink to="/admin/news" className={linkClass}>
-          {t('admin.nav.news')}
-        </NavLink>
-        <NavLink to="/admin/plugins" className={linkClass}>
-          {t('admin.nav.plugins')}
-        </NavLink>
-        <NavLink to="/admin/settings" className={linkClass}>
-          {t('admin.nav.settings')}
-        </NavLink>
-        <NavLink to="/admin/console" className={linkClass}>
-          {t('admin.nav.console')}
-        </NavLink>
+      <nav className="flex flex-wrap items-center gap-x-5 gap-y-1 border-b border-border-subtle">
+        {groups.map((group, index) => (
+          <div key={group[0].key} className="flex items-center gap-5">
+            {index > 0 && <span aria-hidden="true" className="h-4 w-px bg-border-subtle" />}
+            {group.map((tab) => (
+              <NavLink key={tab.key} to={tab.to} end={tab.end} className={linkClass}>
+                {t(`admin.nav.${tab.key}`)}
+              </NavLink>
+            ))}
+          </div>
+        ))}
       </nav>
+
       <Outlet />
     </div>
   )
