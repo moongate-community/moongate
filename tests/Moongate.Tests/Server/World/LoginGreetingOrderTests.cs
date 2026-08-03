@@ -36,7 +36,7 @@ public class LoginGreetingOrderTests : IDisposable
         File.WriteAllText(Path.Combine(_root, "motd.txt"), "Welcome to Britannia!");
 
         var persistence = new FakePersistenceService();
-        var news = new NewsService(persistence);
+        var news = new NewsService(persistence, new RecordingChatService(), new StubGameLoopContext());
 
         await news.CreateAsync("Maintenance on Sunday", "at 22:00", "tom", true);
 

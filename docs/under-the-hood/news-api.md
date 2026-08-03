@@ -22,6 +22,22 @@ All require a JWT for an `Administrator` or `GrandMaster` account (the `admin` p
 - `GET /api/v1/admin/news` — every entry, drafts included, newest first.
 - `GET /api/v1/admin/news/{id}` — one entry in any state.
 
+## Announced when it goes public
+
+Publishing an entry **broadcasts its title to everyone in the world**. The trigger is the
+transition, not the save: created already published, or a draft flipped to published. Editing
+something already published announces nothing — a typo corrected three times would otherwise be
+three interruptions — and neither does unpublishing. Publishing again after a retraction does
+announce, because the shard is saying it is back on.
+
+The broadcast is **posted to the game loop** rather than sent from the request thread, which is what
+the REST console already does: it reaches every live session, and the calls that touch sessions
+belong on the loop.
+
+The portal manages news at `/admin/news` — every entry including drafts, with create, edit, delete
+and a draft/published switch. The dialog warns before an entry is published for the first time,
+since that is the moment everyone gets interrupted.
+
 ## In the world
 
 News reaches players in the game, not only over REST.
