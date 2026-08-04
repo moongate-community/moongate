@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Scripting.Views;
@@ -26,18 +27,21 @@ public sealed class ItemModule
     private readonly IItemService _items;
     private readonly IEntityStore<MobileEntity, Serial> _mobiles;
     private readonly IClilocService _clilocs;
+    private readonly IItemTemplateService _templates;
 
     public ItemModule(
         IItemFactoryService factory,
         IItemService items,
         IPersistenceService persistence,
-        IClilocService clilocs
+        IClilocService clilocs,
+        IItemTemplateService templates
     )
     {
         _factory = factory;
         _items = items;
         _mobiles = persistence.GetStore<MobileEntity, Serial>();
         _clilocs = clilocs;
+        _templates = templates;
     }
 
     [ScriptFunction("add_to_container", "Places an item into a container at (x, y); false on unknown serials.")]
@@ -194,9 +198,7 @@ public sealed class ItemModule
     /// template id. The same chain the tooltip uses in OplService.
     /// </summary>
     private string DisplayName(ItemEntity item)
-        => item.Name.Length > 0
-               ? item.Name
-               : _clilocs.Text(ItemClilocs.ForItemId(item.ItemId)) ?? item.TemplateId;
+        => _clilocs.DisplayName(item, _templates.GetById(item.TemplateId));
 
     private uint? Persist(IReadOnlyList<ItemEntity> created)
     {

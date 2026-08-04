@@ -1,7 +1,9 @@
 using Moongate.Core.Primitives;
 using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Abstractions.Extensions;
 using Moongate.Server.Abstractions.Interfaces.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 
 namespace Moongate.Http.Plugin.Services.Characters;
 
@@ -18,10 +20,14 @@ public sealed class CharacterInventoryReader
     public const int MaxDepth = 10;
 
     private readonly IItemService _items;
+    private readonly IItemTemplateService _templates;
+    private readonly IClilocService _clilocs;
 
-    public CharacterInventoryReader(IItemService items)
+    public CharacterInventoryReader(IItemService items, IItemTemplateService templates, IClilocService clilocs)
     {
         _items = items;
+        _templates = templates;
+        _clilocs = clilocs;
     }
 
     /// <summary>The backpack's contents as a tree. Empty when the character has no backpack.</summary>
@@ -60,7 +66,7 @@ public sealed class CharacterInventoryReader
 
         return new(
             item.Id.ToString(),
-            item.Name,
+            _clilocs.DisplayName(item, _templates.GetById(item.TemplateId)),
             item.TemplateId,
             item.ItemId,
             item.Hue.Value,
