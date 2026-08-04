@@ -1,14 +1,15 @@
 using System.Runtime.InteropServices;
 using Moongate.Ultima.Graphics;
 using Moongate.Ultima.Helpers;
+using Moongate.Ultima.Caching;
 using Moongate.Ultima.Io;
 
 namespace Moongate.Ultima.Maps;
 
 public sealed class TileMatrix : IDisposable
 {
-    private readonly HuedTile[][][][][] _staticTiles;
-    private readonly Tile[][][] _landTiles;
+    private readonly LruBlockCache<HuedTile[][][]> _staticTiles;
+    private readonly LruBlockCache<Tile[]> _landTiles;
     private bool[][] _removedStaticBlock;
     private List<StaticTile>[][] _staticTilesToAdd;
 
@@ -118,8 +119,8 @@ public sealed class TileMatrix : IDisposable
 
         InvalidLandBlock = new Tile[196];
 
-        _landTiles = new Tile[BlockWidth][][];
-        _staticTiles = new HuedTile[BlockWidth][][][][];
+        _landTiles = new(Files.CacheCapacityMapBlocks);
+        _staticTiles = new(Files.CacheCapacityMapBlocks);
 
         Patch = new(this, mapId, path);
     }
@@ -183,6 +184,20 @@ public sealed class TileMatrix : IDisposable
     public void Dispose()
         => CloseStreams();
 
+    /// <summary>Blocks currently held, land and statics counted separately. Diagnostic.</summary>
+    public (int Land, int Statics) CachedBlockCount
+        => (_landTiles.Count, _staticTiles.Count);
+
+    /// <summary>
+    /// Resizes both block caches after construction. Lowering the cap evicts down to it at once, so a
+    /// host can give memory back without restarting.
+    /// </summary>
+    public void SetCacheCapacity(int capacity)
+    {
+        _landTiles.SetCapacity(capacity);
+        _staticTiles.SetCapacity(capacity);
+    }
+
     public Tile[] GetLandBlock(int x, int y, bool patch = true)
     {
         if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
@@ -190,12 +205,7 @@ public sealed class TileMatrix : IDisposable
             return InvalidLandBlock;
         }
 
-        if (_landTiles[x] == null)
-        {
-            _landTiles[x] = new Tile[BlockHeight][];
-        }
-
-        var tiles = _landTiles[x][y] ?? (_landTiles[x][y] = ReadLandBlock(x, y));
+        var tiles = _landTiles.GetOrAdd(LruBlockCache<Tile[]>.Key(x, y), () => ReadLandBlock(x, y));
 
         if (Map.UseDiff && patch && Patch.LandBlocksCount > 0 && Patch.LandBlocks[x]?[y] != null)
         {
@@ -249,12 +259,7 @@ public sealed class TileMatrix : IDisposable
             return EmptyStaticBlock;
         }
 
-        if (_staticTiles[x] == null)
-        {
-            _staticTiles[x] = new HuedTile[BlockHeight][][][];
-        }
-
-        HuedTile[][][] tiles = _staticTiles[x][y] ?? (_staticTiles[x][y] = ReadStaticBlock(x, y));
+        var tiles = _staticTiles.GetOrAdd(LruBlockCache<HuedTile[][][]>.Key(x, y), () => ReadStaticBlock(x, y));
 
         if (Map.UseDiff && patch && Patch.StaticBlocksCount > 0 && Patch.StaticBlocks[x]?[y] != null)
         {
@@ -309,12 +314,7 @@ public sealed class TileMatrix : IDisposable
 
         _removedStaticBlock[blockX][blockY] = true;
 
-        if (_staticTiles[blockX] == null)
-        {
-            _staticTiles[blockX] = new HuedTile[BlockHeight][][][];
-        }
-
-        _staticTiles[blockX][blockY] = EmptyStaticBlock;
+        _staticTiles.Set(LruBlockCache<HuedTile[][][]>.Key(blockX, blockY), EmptyStaticBlock);
     }
 
     public void SetLandBlock(int x, int y, Tile[] value)
@@ -324,12 +324,7 @@ public sealed class TileMatrix : IDisposable
             return;
         }
 
-        if (_landTiles[x] == null)
-        {
-            _landTiles[x] = new Tile[BlockHeight][];
-        }
-
-        _landTiles[x][y] = value;
+        _landTiles.Set(LruBlockCache<Tile[]>.Key(x, y), value);
     }
 
     private long CalculateOffsetFromUOP(long offset)

@@ -40,6 +40,17 @@ public sealed class Files
     public static int CacheCapacityAnimations { get; set; } = 1024;
 
     /// <summary>
+    /// Initial LRU capacity for each map's land and statics block caches, counted in 8x8-tile blocks
+    /// and applied to both caches of every facet. Default 4096 — a contiguous 512x512-tile region,
+    /// which is far more than gameplay ever needs (a player sees roughly 18 tiles, so 25 blocks) and
+    /// enough that panning the web map viewer around one area does not thrash. Bounding matters most
+    /// for that viewer: it streams tiles across a whole facet, and Felucca alone is 393216 blocks that
+    /// the previous unbounded arrays would all have kept. Set this before a map is first read, or call
+    /// <see cref="Moongate.Ultima.Maps.TileMatrix.SetCacheCapacity" /> at runtime.
+    /// </summary>
+    public static int CacheCapacityMapBlocks { get; set; } = 4096;
+
+    /// <summary>
     /// Contains the path infos
     /// </summary>
     public static Dictionary<string, string> MulPath { get; set; }

@@ -11,9 +11,21 @@ launch generates it with defaults; edit and restart to apply changes.
 | `ShardName` | string | `Moongate` | The shard's name, shown in the client's server list. |
 | `StatsRefreshSeconds` | int | `30` | How often the public statistics snapshot is recomputed on the game loop. |
 | `UltimaDirectory` | string | — | Path to the UO client files. See the override note below. |
+| `MapBlockCacheSize` | int | `4096` | How many 8×8-tile map blocks each facet keeps in memory, land and statics counted separately. See the note below. |
 | `Network.Address` | string | `0.0.0.0` | Local bind address for the TCP listener. |
 | `Network.Port` | int | `2593` | TCP port for both login and game traffic (single process, single port). |
 | `Network.PublicAddress` | string | `127.0.0.1` | Address advertised to clients in the server list and game-server redirect. Must be reachable *from the client*. |
+
+### Map block cache
+
+Map blocks are read from the client files the first time something asks for them and kept in memory,
+least-recently-used dropped past `MapBlockCacheSize`. The default of 4096 holds a contiguous
+512×512-tile region per facet — far more than play needs, since a player sees roughly 18 tiles, and
+enough that panning the web map viewer around one area does not re-read constantly.
+
+Raise it on a shard whose players are spread thin across a facet; lower it on a memory-tight host.
+`0` disables the cache and re-reads every block, which is correct but slow. The bound matters most
+for the web map viewer: it streams tiles across a whole facet, and Felucca alone is 393,216 blocks.
 
 > [!NOTE]
 > **`UltimaDirectory` is currently always overridden at startup**: the

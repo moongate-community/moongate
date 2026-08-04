@@ -16,6 +16,15 @@ public sealed class MoongateConfig
     /// </summary>
     public string Language { get; set; } = "enu";
 
+    /// <summary>
+    /// How many 8x8-tile map blocks each facet keeps in memory, land and statics counted separately.
+    /// Blocks are read from the client files on demand and the least recently used are dropped past
+    /// this cap. The default holds a contiguous 512x512-tile region — far more than gameplay needs,
+    /// and enough that panning the web map viewer around one area does not re-read constantly. Lower
+    /// it on a memory-tight host; 0 disables caching entirely and re-reads every block.
+    /// </summary>
+    public int MapBlockCacheSize { get; set; } = 4096;
+
     public MoongateNetworkConfig Network { get; set; } = new();
 
     public NpcAiConfig NpcAi { get; set; } = new();

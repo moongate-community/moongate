@@ -99,6 +99,10 @@ await ConsoleApp.RunAsync(
 
         NpcAiConfigValidator.Validate(moongateConfig.NpcAi);
 
+        // Set before any facet is touched: a TileMatrix reads this at construction, and the first
+        // block query is what constructs it.
+        Moongate.Ultima.Io.Files.CacheCapacityMapBlocks = Math.Max(moongateConfig.MapBlockCacheSize, 0);
+
         if (string.IsNullOrEmpty(moongateConfig.UltimaDirectory))
         {
             throw new UODirectoryNotValidException(
