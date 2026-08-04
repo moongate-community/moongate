@@ -1,6 +1,7 @@
 using Moongate.Http.Plugin.Data.Api.Characters;
 using Moongate.Http.Plugin.Services.Characters;
 using Moongate.Persistence.Entities;
+using Moongate.Server.Services.Items;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
 
@@ -22,7 +23,7 @@ public class CharacterInventoryReaderTests
 
         Put(items, backpack, Item(items, 0x40000001, "sword"));
 
-        var contents = new CharacterInventoryReader(items).ReadBackpack(MobileWith(backpack));
+        var contents = new CharacterInventoryReader(items, new ItemTemplateService(), new StubClilocService()).ReadBackpack(MobileWith(backpack));
 
         Assert.Equal("0x40000001", Assert.Single(contents).Serial);
     }
@@ -37,7 +38,7 @@ public class CharacterInventoryReaderTests
         Put(items, backpack, bag);
         Put(items, bag, Item(items, 1, "potion"));
 
-        var contents = new CharacterInventoryReader(items).ReadBackpack(MobileWith(backpack));
+        var contents = new CharacterInventoryReader(items, new ItemTemplateService(), new StubClilocService()).ReadBackpack(MobileWith(backpack));
 
         var found = Assert.Single(contents);
 
@@ -48,7 +49,7 @@ public class CharacterInventoryReaderTests
     [Fact]
     public void ReadBackpack_IsEmptyWhenTheCharacterHasNoBackpack()
     {
-        var reader = new CharacterInventoryReader(new StubItemService([]));
+        var reader = new CharacterInventoryReader(new StubItemService([]), new ItemTemplateService(), new StubClilocService());
 
         Assert.Empty(reader.ReadBackpack(new() { Id = new(1) }));
     }
@@ -62,7 +63,7 @@ public class CharacterInventoryReaderTests
         Put(items, backpack, Item(items, 1, "sword"));
         Put(items, backpack, Item(items, 2, "gold"));
 
-        var contents = new CharacterInventoryReader(items).ReadBackpack(MobileWith(backpack));
+        var contents = new CharacterInventoryReader(items, new ItemTemplateService(), new StubClilocService()).ReadBackpack(MobileWith(backpack));
 
         Assert.Equal(["sword", "gold"], contents.Select(item => item.Name));
     }
@@ -82,7 +83,7 @@ public class CharacterInventoryReaderTests
             current = bag;
         }
 
-        var contents = new CharacterInventoryReader(items).ReadBackpack(MobileWith(backpack));
+        var contents = new CharacterInventoryReader(items, new ItemTemplateService(), new StubClilocService()).ReadBackpack(MobileWith(backpack));
 
         Assert.Equal(CharacterInventoryReader.MaxDepth, Depth(contents));
     }
@@ -99,7 +100,7 @@ public class CharacterInventoryReaderTests
         Put(items, backpack, bag);
         Put(items, bag, backpack); // the cycle
 
-        var contents = new CharacterInventoryReader(items).ReadBackpack(MobileWith(backpack));
+        var contents = new CharacterInventoryReader(items, new ItemTemplateService(), new StubClilocService()).ReadBackpack(MobileWith(backpack));
 
         // It returns rather than hanging, and stops where it would repeat itself.
         var bagNode = Assert.Single(contents);
@@ -115,7 +116,7 @@ public class CharacterInventoryReaderTests
 
         robe.EquippedLayer = LayerType.OuterTorso;
 
-        var worn = new CharacterInventoryReader(new StubItemService([robe])).ReadEquipment(new() { Id = new(1) });
+        var worn = new CharacterInventoryReader(new StubItemService([robe]), new ItemTemplateService(), new StubClilocService()).ReadEquipment(new() { Id = new(1) });
 
         var found = Assert.Single(worn);
 

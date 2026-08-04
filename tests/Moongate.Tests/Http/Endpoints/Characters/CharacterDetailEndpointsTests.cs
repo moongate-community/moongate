@@ -11,6 +11,8 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Mobiles;
 using Moongate.Server.Services.Accounts;
 using Moongate.Server.Services.Mobiles;
+using Moongate.Server.Services.Items;
+using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Types;
 
@@ -195,6 +197,8 @@ public class CharacterDetailEndpointsTests
                               container.RegisterInstance<IItemService>(new StubItemService([]));
                               container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
                               container.Register<CharacterAccessService>(Reuse.Singleton);
+                              container.RegisterInstance<IItemTemplateService>(new ItemTemplateService());
+                              container.RegisterInstance<IClilocService>(new StubClilocService());
                               container.Register<CharacterInventoryReader>(Reuse.Singleton);
                               container.RegisterInstance(SkillRegistry());
                               container.Register<CharacterSkillReader>(Reuse.Singleton);

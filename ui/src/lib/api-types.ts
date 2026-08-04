@@ -1185,7 +1185,10 @@ export interface components {
         CharacterItemResponse: {
             /** @description The item's serial, as `0x40000001`. */
             serial: string;
-            /** @description The item's name. Blank when the item is named by cliloc rather than stored text. */
+            /**
+             * @description What to call the item: whatever it was renamed to, else its template's name, else the client's own
+             *     word for that graphic. Almost nothing in UO stores a name, so the third case is the common one.
+             */
             name: string;
             /** @description The template it was built from. */
             templateId: string;

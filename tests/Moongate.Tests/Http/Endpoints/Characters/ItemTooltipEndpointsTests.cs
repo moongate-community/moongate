@@ -14,6 +14,7 @@ using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.Localization;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Services.Accounts;
+using Moongate.Server.Services.Items;
 using Moongate.Tests.Support;
 using Moongate.Ultima.Types;
 using Moongate.UO.Data.Types;
@@ -241,12 +242,13 @@ public class ItemTooltipEndpointsTests
                configure: container =>
                           {
                               container.RegisterInstance<IItemService>(world);
-                              container.RegisterInstance(
+                              container.RegisterInstance<IClilocService>(
                                   clilocs ?? StubClilocService.Entries((WeightCliloc, "Weight: ~1_WEIGHT~ stone"))
                               );
                               container.RegisterInstance<IOplService>(new StubOplService(WeightCliloc));
                               container.Register<ICharacterQueryService, CharacterQueryService>(Reuse.Singleton);
                               container.Register<CharacterAccessService>(Reuse.Singleton);
+                              container.RegisterInstance<IItemTemplateService>(new ItemTemplateService());
                               container.Register<CharacterInventoryReader>(Reuse.Singleton);
                               container.Register<OplTextRenderer>(Reuse.Singleton);
                               container.RegisterApiEndpointInstance(

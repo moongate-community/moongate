@@ -2260,7 +2260,7 @@
           },
           "name": {
             "type": "string",
-            "description": "The item's name. Blank when the item is named by cliloc rather than stored text."
+            "description": "What to call the item: whatever it was renamed to, else its template's name, else the client's own\nword for that graphic. Almost nothing in UO stores a name, so the third case is the common one."
           },
           "templateId": {
             "type": "string",
