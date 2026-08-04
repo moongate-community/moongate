@@ -52,6 +52,13 @@ public class AiActionServiceTests
 
         public void TryMove(PlayerSession session, DirectionType direction, byte sequence) { }
 
+
+        public void DrainQueue(PlayerSession session)
+
+        {
+
+        }
+
         public bool TryMoveNpc(Serial mobileId, DirectionType direction)
         {
             Moves.Add((mobileId, direction));
