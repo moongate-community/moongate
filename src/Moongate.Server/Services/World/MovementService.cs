@@ -10,6 +10,9 @@ using Moongate.Server.Abstractions.Data.Session;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.Server.Data.Internal.World;
 using Moongate.UO.Data.Mobiles;
+using Moongate.Server.Abstractions.Data.Internal;
+using Moongate.Server.Abstractions.Types;
+using Moongate.Server.Abstractions.Data.Config;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
@@ -28,6 +31,49 @@ public sealed class MovementService : IMovementService
     private static readonly TimeSpan WalkInterval = TimeSpan.FromMilliseconds(400);
     private static readonly TimeSpan RunInterval = TimeSpan.FromMilliseconds(200);
 
+    /// <summary>
+    /// What a step costs before the next one comes due. Turning is free — ModernUO's TurnDelay is 0 —
+    /// so only an actual step moves the clock.
+    /// </summary>
+    public static TimeSpan CostOf(MobileEntity mobile, DirectionType direction)
+        => direction.StripRunning() != mobile.Direction.StripRunning()
+               ? TimeSpan.Zero
+               : direction.IsRunning() ? RunInterval : WalkInterval;
+
+    /// <summary>
+    /// Whether a step arriving at <paramref name="now" /> is due, and the slack left afterwards.
+    /// <para>
+    /// A hard threshold refuses anything even a millisecond early, and network jitter delivers that
+    /// constantly — each refusal snaps the client back to the server's position, which is what makes
+    /// walking stutter. So arriving late rebuilds slack up to <paramref name="maxCredit" />, arriving
+    /// early spends it, and only once the slack is in debt past that same limit does the step wait its
+    /// turn. This is ModernUO's credit buffer; its extra allowance for high-latency players is
+    /// deliberately not copied, since nothing here measures round-trip time.
+    /// </para>
+    /// </summary>
+    public static MovementThrottleDecision Throttle(
+        DateTimeOffset now,
+        DateTimeOffset nextMoveAt,
+        TimeSpan credit,
+        TimeSpan maxCredit
+    )
+    {
+        var delta = now - nextMoveAt;
+
+        if (delta >= TimeSpan.Zero)
+        {
+            var rebuilt = credit + delta;
+
+            return new(MovementThrottleVerdictType.Run, rebuilt > maxCredit ? maxCredit : rebuilt);
+        }
+
+        var spent = credit + delta;
+
+        return spent >= -maxCredit
+                   ? new(MovementThrottleVerdictType.Run, spent)
+                   : new(MovementThrottleVerdictType.Queue, credit);
+    }
+
     private readonly IMapTileService _mapTiles;
     private readonly IRegionService _regions;
     private readonly ISpatialIndexService _spatial;
@@ -36,6 +82,8 @@ public sealed class MovementService : IMovementService
     private readonly TimeProvider _timeProvider;
     private readonly IEventBus _eventBus;
     private readonly ILoopAffinity? _loopAffinity;
+    private readonly TimeSpan _maxCredit;
+    private readonly int _queueLimit;
 
     public MovementService(
         IMapTileService mapTiles,
@@ -45,9 +93,13 @@ public sealed class MovementService : IMovementService
         IPersistenceService persistenceService,
         TimeProvider timeProvider,
         IEventBus eventBus,
+        MoongateConfig? config = null,
         ILoopAffinity? loopAffinity = null
     )
     {
+        var network = config?.Network;
+        _maxCredit = TimeSpan.FromMilliseconds(Math.Max(network?.MovementCreditMilliseconds ?? 200, 0));
+        _queueLimit = Math.Max(network?.MovementQueueLimit ?? 10, 1);
         _mapTiles = mapTiles;
         _regions = regions;
         _spatial = spatial;
@@ -82,17 +134,6 @@ public sealed class MovementService : IMovementService
         }
 
         var isTurnOnly = direction.StripRunning() != mobile.Direction.StripRunning();
-
-        // Turning has no timing gate (ModernUO: TurnDelay = 0); only an actual step does.
-        if (!isTurnOnly)
-        {
-            var minInterval = direction.IsRunning() ? RunInterval : WalkInterval;
-
-            if (now - lastMoveAt < minInterval)
-            {
-                return RejectDecision(mobile);
-            }
-        }
 
         if (isTurnOnly)
         {
@@ -133,6 +174,73 @@ public sealed class MovementService : IMovementService
         // down to the exact target tile itself.
         var groundItems = _spatial.GetItemsInRange(mobile.MapId, mobile.Position, 1);
 
+        // Steps already waiting must keep their order, so a new one joins the back of the queue
+        // rather than overtaking them.
+        if (session.MovementQueue.Count > 0)
+        {
+            Enqueue(session, mobile, direction, sequence);
+
+            return;
+        }
+
+        var gate = Throttle(now, session.NextMoveAt, session.MovementCredit, _maxCredit);
+
+        if (gate.Verdict == MovementThrottleVerdictType.Queue)
+        {
+            Enqueue(session, mobile, direction, sequence);
+
+            return;
+        }
+
+        session.SetMovementCredit(gate.Credit);
+        Step(session, mobile, direction, sequence, now, groundItems);
+    }
+
+    /// <summary>
+    /// Runs the steps that have come due, oldest first, and stops at the first one that has not. The
+    /// game loop calls this; without it the tail of a queue would sit there until the player moved
+    /// again, which reads as the character stopping a step short.
+    /// </summary>
+    public void DrainQueue(PlayerSession session)
+    {
+        _loopAffinity?.AssertOnLoop("movement.drain_queue");
+
+        var mobile = session.Character;
+
+        if (mobile is null)
+        {
+            session.ClearMovementQueue();
+
+            return;
+        }
+
+        var now = _timeProvider.GetUtcNow();
+
+        while (session.MovementQueue.Count > 0 && now >= session.NextMoveAt)
+        {
+            var queued = session.MovementQueue.Dequeue();
+            var groundItems = _spatial.GetItemsInRange(mobile.MapId, mobile.Position, 1);
+
+            if (!Step(session, mobile, queued.Direction, queued.Sequence, now, groundItems))
+            {
+                return;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Takes one step if it is legal, and reports whether it was. A refusal resyncs the client and
+    /// drops everything still queued: those steps describe a walk that no longer happened.
+    /// </summary>
+    private bool Step(
+        PlayerSession session,
+        MobileEntity mobile,
+        DirectionType direction,
+        byte sequence,
+        DateTimeOffset now,
+        IReadOnlyList<ItemEntity> groundItems
+    )
+    {
         var decision = Evaluate(
             mobile,
             direction,
@@ -148,18 +256,38 @@ public sealed class MovementService : IMovementService
         if (!decision.Accepted)
         {
             // Any rejection forces a resync: the next packet's sequence is accepted unconditionally,
-            // matching how a real UO client resets its counter after a rejected move. The timing
-            // baseline (LastMoveAt) is left untouched so a burst of illegal attempts cannot keep
-            // resetting the clock and starve the rate limiter.
+            // matching how a real UO client resets its counter after a rejected move.
             session.SetLastMove(null, session.LastMoveAt);
+            session.ClearMovementQueue();
+            Reject(session, mobile, sequence);
+
+            return false;
+        }
+
+        session.SetLastMove(sequence, now);
+        session.SetNextMoveAt(now + CostOf(mobile, direction));
+        Apply(mobile, decision);
+        Accept(session, mobile, sequence);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Holds a step that arrived too early. Past the limit the client is not merely fast — the UO
+    /// client leaves at most five movements unacknowledged — so it is resynced instead.
+    /// </summary>
+    private void Enqueue(PlayerSession session, MobileEntity mobile, DirectionType direction, byte sequence)
+    {
+        if (session.MovementQueue.Count >= _queueLimit)
+        {
+            session.SetLastMove(null, session.LastMoveAt);
+            session.ClearMovementQueue();
             Reject(session, mobile, sequence);
 
             return;
         }
 
-        session.SetLastMove(sequence, now);
-        Apply(mobile, decision);
-        Accept(session, mobile, sequence);
+        session.MovementQueue.Enqueue(new(direction, sequence));
     }
 
     public bool TryMoveNpc(Serial mobileId, DirectionType direction)

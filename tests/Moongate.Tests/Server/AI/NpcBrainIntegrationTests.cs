@@ -225,6 +225,9 @@ public sealed class NpcBrainIntegrationTests
         public void TryMove(PlayerSession session, DirectionType direction, byte sequence)
             => throw new InvalidOperationException("The guard integration flow must not move a player.");
 
+        public void DrainQueue(PlayerSession session)
+            => throw new InvalidOperationException("The guard integration flow must not move a player.");
+
         public bool TryMoveNpc(Serial mobileId, DirectionType direction)
             => throw new InvalidOperationException("The built-in guard flow must not emit movement intents.");
     }

@@ -75,6 +75,26 @@ public sealed class PlayerSession : ISeedTarget
     /// <summary>When the last accepted move was recorded — the baseline the walk/run rate limit measures against.</summary>
     public DateTimeOffset LastMoveAt { get; private set; }
 
+    /// <summary>
+    /// The earliest this client may take its next step. A step arriving before it is early, and is
+    /// paid for out of <see cref="MovementCredit" /> rather than refused outright.
+    /// </summary>
+    public DateTimeOffset NextMoveAt { get; private set; }
+
+    /// <summary>
+    /// Slack for early steps, in the ModernUO sense: network jitter routinely delivers a packet a few
+    /// milliseconds ahead of schedule, and refusing those is what makes movement stutter. Arriving
+    /// late rebuilds it, up to the configured ceiling; arriving early spends it, down to the matching
+    /// debt limit. Past that the step waits in <see cref="MovementQueue" /> instead.
+    /// </summary>
+    public TimeSpan MovementCredit { get; private set; }
+
+    /// <summary>
+    /// Steps that arrived too early to run and too soon to refuse, in the order they came. Drained on
+    /// the game loop as each becomes due. Empty for a client walking at a normal pace.
+    /// </summary>
+    public Queue<QueuedMove> MovementQueue { get; } = new();
+
     /// <summary>When the last accepted speech packet was recorded — the baseline the chat rate limit measures against.</summary>
     public DateTimeOffset LastChatAt { get; private set; }
 
@@ -196,6 +216,37 @@ public sealed class PlayerSession : ISeedTarget
         {
             LastMoveSequence = sequence;
             LastMoveAt = at;
+        }
+    }
+
+    /// <summary>Sets when the next step becomes due, after a step has been taken.</summary>
+    public void SetNextMoveAt(DateTimeOffset at)
+    {
+        lock (_stateSync)
+        {
+            NextMoveAt = at;
+        }
+    }
+
+    /// <summary>Spends or rebuilds the jitter slack. Clamping is the caller's, which knows the ceiling.</summary>
+    public void SetMovementCredit(TimeSpan credit)
+    {
+        lock (_stateSync)
+        {
+            MovementCredit = credit;
+        }
+    }
+
+    /// <summary>
+    /// Forgets every pending step and the slack with them. A refusal resyncs the client to the
+    /// server's position, so anything still queued describes a walk that no longer happened.
+    /// </summary>
+    public void ClearMovementQueue()
+    {
+        lock (_stateSync)
+        {
+            MovementQueue.Clear();
+            MovementCredit = TimeSpan.Zero;
         }
     }
 

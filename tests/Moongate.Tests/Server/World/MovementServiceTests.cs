@@ -24,32 +24,6 @@ public class MovementServiceTests
     // Same fix already applied in MapTileServiceTests.cs for the identical reason.
     private const ushort WallStaticId = 10;
 
-    [Fact]
-    public void Evaluate_AfterRejectionResetsSequence_StillEnforcesTimingAgainstPriorRealMove()
-    {
-        var (mapTiles, regions) = Build();
-        var mobile = Mobile(direction: DirectionType.East);
-        var lastRealMoveAt = DateTimeOffset.UtcNow;
-        var now = lastRealMoveAt.AddMilliseconds(50); // well under the 400ms walk interval
-
-        // Simulates: a real move was accepted at lastRealMoveAt, then a later packet was rejected
-        // (e.g. sequence mismatch), which reset lastSequence to null but left lastMoveAt untouched
-        // (TryMove's resync behavior). A subsequent attempt must still be timing-gated against the
-        // real prior move, not treated as a fresh first-ever move.
-        var decision = MovementService.Evaluate(
-            mobile,
-            DirectionType.East,
-            0,
-            null,
-            lastRealMoveAt,
-            now,
-            mapTiles,
-            regions,
-            []
-        );
-
-        Assert.False(decision.Accepted);
-    }
 
     [Fact]
     public void Evaluate_ImpassableRegion_IsRejected()
@@ -125,7 +99,7 @@ public class MovementServiceTests
     }
 
     [Fact]
-    public void Evaluate_TooSoonAfterLastMove_IsRejected()
+    public void Evaluate_NoLongerJudgesTiming_ThatIsThrottlesQuestion()
     {
         var (mapTiles, regions) = Build();
         var mobile = Mobile(direction: DirectionType.East);
@@ -134,7 +108,9 @@ public class MovementServiceTests
 
         var decision = MovementService.Evaluate(mobile, DirectionType.East, 1, 0, lastMoveAt, now, mapTiles, regions, []);
 
-        Assert.False(decision.Accepted);
+        // Legal, just not due yet -- and being early is no longer grounds for refusal, which is what
+        // MovementThrottleTests covers.
+        Assert.True(decision.Accepted);
     }
 
     [Fact]
@@ -276,7 +252,7 @@ public class MovementServiceTests
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), bus);
         var world = new StubWorldService();
 
-        return (new(mapTiles, regions, spatial, world, persistence, TimeProvider.System, bus, new StubLoopAffinity()),
+        return (new(mapTiles, regions, spatial, world, persistence, TimeProvider.System, bus, null, new StubLoopAffinity()),
                 persistence, spatial, bus);
     }
 

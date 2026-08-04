@@ -237,6 +237,7 @@ await ConsoleApp.RunAsync(
                 container.Register<IUltimaMapProvider, UltimaMapProvider>(Reuse.Singleton);
                 container.Register<IMapTileService, MapTileService>(Reuse.Singleton);
                 container.Register<IMovementService, MovementService>(Reuse.Singleton);
+                container.RegisterStdService<MovementQueueService, MovementQueueService>();
                 container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
 
