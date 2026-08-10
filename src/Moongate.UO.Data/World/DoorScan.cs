@@ -29,9 +29,12 @@ public static class DoorScan
     public static IReadOnlyList<DoorPlacement> Scan(
         int mapId,
         DoorScanRegion region,
-        Func<int, int, IReadOnlyList<(int Id, int Z)>> staticsAt
+        Func<int, int, IReadOnlyList<(int Id, int Z)>> staticsAt,
+        Func<int, bool>? isDoorwayFrame = null
     )
     {
+        isDoorwayFrame ??= _ => true;
+
         var placements = new List<DoorPlacement>();
 
         // Two scans of the same wall, or two frames sharing a tile, must not stack doors in one gap.
@@ -43,13 +46,20 @@ public static class DoorScan
             {
                 foreach (var (id, z) in staticsAt(x, y))
                 {
+                    // A window is a frame too, and hanging a door in one is what the reference
+                    // generators do. The caller knows what the graphic is called; this does not.
+                    if (!isDoorwayFrame(id))
+                    {
+                        continue;
+                    }
+
                     if (DoorFrames.IsWest(id))
                     {
-                        ScanWestward(mapId, x, y, z, staticsAt, taken, placements);
+                        ScanWestward(mapId, x, y, z, id, staticsAt, taken, placements);
                     }
                     else if (DoorFrames.IsNorth(id))
                     {
-                        ScanSouthward(mapId, x, y, z, staticsAt, taken, placements);
+                        ScanSouthward(mapId, x, y, z, id, staticsAt, taken, placements);
                     }
                 }
             }
@@ -65,13 +75,14 @@ public static class DoorScan
         int y,
         int z,
         DoorFacingType facing,
+        int frameId,
         HashSet<(int X, int Y, int Z)> taken,
         List<DoorPlacement> placements
     )
     {
         if (taken.Add((x, y, z)))
         {
-            placements.Add(new(mapId, new(x, y, z), facing));
+            placements.Add(new(mapId, new(x, y, z), facing, frameId));
         }
     }
 
@@ -101,6 +112,7 @@ public static class DoorScan
         int x,
         int y,
         int z,
+        int frameId,
         Func<int, int, IReadOnlyList<(int Id, int Z)>> staticsAt,
         HashSet<(int X, int Y, int Z)> taken,
         List<DoorPlacement> placements
@@ -108,7 +120,7 @@ public static class DoorScan
     {
         if (MatchingFrameZ(x, y + 2, z, staticsAt, DoorFrames.IsSouth) is { } single)
         {
-            Add(mapId, x, y + 1, Math.Min(z, single), DoorFacingType.SouthCW, taken, placements);
+            Add(mapId, x, y + 1, Math.Min(z, single), DoorFacingType.SouthCW, frameId, taken, placements);
 
             return;
         }
@@ -120,8 +132,8 @@ public static class DoorScan
 
         var floor = Math.Min(z, pair);
 
-        Add(mapId, x, y + 1, floor, DoorFacingType.SouthCW, taken, placements);
-        Add(mapId, x, y + 2, floor, DoorFacingType.NorthCCW, taken, placements);
+        Add(mapId, x, y + 1, floor, DoorFacingType.SouthCW, frameId, taken, placements);
+        Add(mapId, x, y + 2, floor, DoorFacingType.NorthCCW, frameId, taken, placements);
     }
 
     /// <summary>A west frame looking for its east partner: one door at +1, or a pair at +1 and +2.</summary>
@@ -130,6 +142,7 @@ public static class DoorScan
         int x,
         int y,
         int z,
+        int frameId,
         Func<int, int, IReadOnlyList<(int Id, int Z)>> staticsAt,
         HashSet<(int X, int Y, int Z)> taken,
         List<DoorPlacement> placements
@@ -137,7 +150,7 @@ public static class DoorScan
     {
         if (MatchingFrameZ(x + 2, y, z, staticsAt, DoorFrames.IsEast) is { } single)
         {
-            Add(mapId, x + 1, y, Math.Min(z, single), DoorFacingType.WestCW, taken, placements);
+            Add(mapId, x + 1, y, Math.Min(z, single), DoorFacingType.WestCW, frameId, taken, placements);
 
             return;
         }
@@ -149,7 +162,7 @@ public static class DoorScan
 
         var floor = Math.Min(z, pair);
 
-        Add(mapId, x + 1, y, floor, DoorFacingType.WestCW, taken, placements);
-        Add(mapId, x + 2, y, floor, DoorFacingType.EastCCW, taken, placements);
+        Add(mapId, x + 1, y, floor, DoorFacingType.WestCW, frameId, taken, placements);
+        Add(mapId, x + 2, y, floor, DoorFacingType.EastCCW, frameId, taken, placements);
     }
 }

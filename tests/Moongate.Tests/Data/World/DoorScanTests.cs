@@ -94,6 +94,28 @@ public class DoorScanTests
     public void AnEmptyRegion_IsNoDoorsRatherThanNull()
         => Assert.Empty(DoorScan.Scan(1, Region(0, 0, 10, 10), Statics()));
 
+    // The door has to know which frame made it, or the wall's material cannot pick its template.
+    [Fact]
+    public void ADoorway_RemembersTheFrameThatFoundIt()
+        => Assert.Equal(
+            WestFrame,
+            Assert.Single(
+                DoorScan.Scan(1, Region(10, 10, 14, 12), Statics((10, 10, 0, WestFrame), (12, 10, 0, EastFrame)))
+            ).FrameId
+        );
+
+    // Windows are frames too, and the reference generators hang doors in them.
+    [Fact]
+    public void AFrameTheCallerRejects_IsNotADoorway()
+        => Assert.Empty(
+            DoorScan.Scan(
+                1,
+                Region(10, 10, 14, 12),
+                Statics((10, 10, 0, WestFrame), (12, 10, 0, EastFrame)),
+                isDoorwayFrame: _ => false
+            )
+        );
+
     private static DoorScanRegion Region(int x1, int y1, int x2, int y2)
         => new(x1, y1, x2, y2);
 
