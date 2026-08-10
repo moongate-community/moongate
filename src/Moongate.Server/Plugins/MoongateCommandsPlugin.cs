@@ -37,5 +37,13 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
             AccountLevelType.GrandMaster,
             "Raises a target cursor and reports what was clicked."
         );
+
+        // Administrator, not GrandMaster: it writes forty thousand items and stalls the loop doing it.
+        container.RegisterCommand<DecorateCommand>(
+            "decorate",
+            AccountLevelType.Administrator,
+            "Places the world's catalogued decoration.",
+            CommandSourceType.InGame | CommandSourceType.Console
+        );
     }
 }

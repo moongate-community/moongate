@@ -13,6 +13,7 @@ public class ItemTemplateSplitDataTests
             ["base/keys.yaml"] = 1, ["base/royalty.yaml"] = 2, ["base/signs.yaml"] = 1,
             ["base/spawners.yaml"] = 1, ["base/static.yaml"] = 1,
             ["base/teleports.yaml"] = 10, ["base/test_containers.yaml"] = 1,
+            ["base/world_decoration.yaml"] = 1,
             ["body_parts.yaml"] = 6, ["books.yaml"] = 38, ["bulletin_boards.yaml"] = 2,
             ["champion_artifacts.yaml"] = 13, ["clothing.yaml"] = 71,
             ["construction.yaml"] = 128, ["containers.yaml"] = 23,
@@ -44,9 +45,9 @@ public class ItemTemplateSplitDataTests
         );
         var splitItems = splitByFile.Values.SelectMany(items => items).ToArray();
 
-        Assert.Equal(49, splitFiles.Length);
-        Assert.Equal(1665, splitItems.Length);
-        Assert.Equal(1665, splitItems.Select(item => item.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.Equal(50, splitFiles.Length);
+        Assert.Equal(1666, splitItems.Length);
+        Assert.Equal(1666, splitItems.Select(item => item.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count());
 
         Assert.Equal(
             ExpectedCounts.Keys.OrderBy(path => path, StringComparer.OrdinalIgnoreCase),

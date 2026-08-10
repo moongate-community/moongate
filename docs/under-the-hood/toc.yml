@@ -8,3 +8,5 @@
   href: rest-console.md
 - name: News API
   href: news-api.md
+- name: World decoration
+  href: world-decoration.md
