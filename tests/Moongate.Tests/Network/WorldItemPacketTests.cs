@@ -6,21 +6,21 @@ using Xunit.Abstractions;
 namespace Moongate.Tests.Network;
 
 /// <summary>
-/// A probe: the exact bytes our world-item packet puts on the wire, next to the bytes ModernUO's
-/// CreateWorldItem writes for the same item. The server provably sends these packets and the client
-/// provably draws nothing, so the difference — if there is one — is the whole bug.
+/// Holds the world-item packet to ModernUO's encoding, byte for byte. A drift here is invisible to
+/// every server-side test and shows up only as a client silently drawing nothing — which is exactly
+/// how a full day was lost before this file existed.
 /// </summary>
-public class WorldItemPacketBytesProbe
+public class WorldItemPacketTests
 {
     private readonly ITestOutputHelper _output;
 
-    public WorldItemPacketBytesProbe(ITestOutputHelper output)
+    public WorldItemPacketTests(ITestOutputHelper output)
     {
         _output = output;
     }
 
     [Fact]
-    public void DumpTheBytes()
+    public void Write_MatchesModernUOByteForByte()
     {
         // A metal door at the New Haven bank: serial 0x40000123, graphic 0x675, amount 1,
         // at 3508,2554,20, hue 0.

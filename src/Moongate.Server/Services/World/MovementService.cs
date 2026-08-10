@@ -16,8 +16,6 @@ using Moongate.Server.Abstractions.Data.Config;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
-using Serilog;
-
 namespace Moongate.Server.Services.World;
 
 /// <summary>
@@ -256,15 +254,6 @@ public sealed class MovementService : IMovementService
 
         if (!decision.Accepted)
         {
-            // TEMPORARY: hunting a desync where the client walks and the server does not follow.
-            Log.ForContext<MovementService>().Warning(
-                "MOVE REJECT seq={Sequence} lastSeq={Last} dir={Direction} at {Position} map {Map}",
-                sequence,
-                session.LastMoveSequence,
-                direction,
-                mobile.Position,
-                mobile.MapId
-            );
 
             // Any rejection forces a resync: the next packet's sequence is accepted unconditionally,
             // matching how a real UO client resets its counter after a rejected move.
