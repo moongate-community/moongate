@@ -181,6 +181,46 @@ re-reads the graphic rather than trusting what it saw: somebody may have shut th
 The behaviour lives in `scripts/items/door.lua`, seeded from the shipped assets on the first script
 any item asks for. Editing it takes effect without recompiling.
 
+### The doors the map draws and leaves empty
+
+The thirteen declared classes are the sparse doors — dungeons, isolated openings. **Almost every door
+a player meets is not among them.** The bank, the shops, every house: the map's static art draws two
+door frames with a gap between, and nothing in the gap.
+
+`doorgen` finds those gaps and fills them.
+
+```text
+> doorgen
+Scanning 21.4 million tiles for empty doorways. This takes minutes; the world keeps running.
+Doors done: placed 4211, skipped 0 already there, from 21356670 tile(s).
+```
+
+A doorway is a west frame with an east frame two tiles on — three tiles for a double — and the same
+again for north and south. Frames more than one apart in height are on different floors, not two sides
+of one door.
+
+**It does not stop the world.** Unlike `decorate`, the reading happens beside the game loop — the map
+files are read-only — and only the door creation is marshalled onto it, 250 at a time. The command
+answers immediately and reports when the work finishes.
+
+Felucca and Trammel are searched in sixteen rectangles apiece, Ilshenar and Malas whole. Tokuno and
+Ter Mur have no regions, exactly as upstream: their doors are not generated.
+
+#### Which door goes in
+
+The wall decides. Every frame graphic is named for its material in the client files, so:
+
+| Wall | Door |
+| --- | --- |
+| `wooden wall`, `log wall` | `strong_wood_door` |
+| `stone wall`, `brick wall`, `sandstone wall` | `metal_door` |
+| everything else | `dark_wood_door` |
+
+A bank gets a metal door because it is built of stone, which is the same reason the artist drew it
+that way. **Both reference implementations skip this** — RunUO and ModernUO hang a dark wood door in
+every doorway, unconditionally — and so do the thirteen windows among the west frames, which get a
+door hung in them upstream and none here. A window is a hole to look through, not to walk through.
+
 ### Doors placed before they could open
 
 A shard decorated before doors existed holds them built from the inert `world_decoration` template,

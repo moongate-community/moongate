@@ -204,6 +204,7 @@ public class DoorGenerationServiceTests
                 Loop,
                 StaticsAt,
                 NameOf,
+                (_, _, _, _) => CanStand,
                 new Dictionary<int, IReadOnlyList<DoorScanRegion>> { [1] = [new(0, 0, 20, 20)] }
             );
         }
@@ -217,6 +218,9 @@ public class DoorGenerationServiceTests
         public string WallName { get; init; } = "stone wall";
 
         public Doorways Doorway { get; init; } = Doorways.WestEast;
+
+        /// <summary>Whether the fake world lets a body stand in its doorway.</summary>
+        public bool CanStand { get; init; } = true;
 
         /// <summary>True when the map was read while the loop was running work.</summary>
         public bool ReadTheMapOnTheLoop { get; private set; }

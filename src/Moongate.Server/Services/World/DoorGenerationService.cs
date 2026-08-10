@@ -35,6 +35,7 @@ public sealed class DoorGenerationService
     private readonly IGameLoopContext _loop;
     private readonly Func<int, int, int, IReadOnlyList<(int Id, int Z)>> _staticsAt;
     private readonly Func<int, string> _nameOf;
+    private readonly Func<int, int, int, int, bool> _canStandAt;
     private readonly IReadOnlyDictionary<int, IReadOnlyList<DoorScanRegion>> _regions;
 
     public DoorGenerationService(
@@ -45,6 +46,7 @@ public sealed class DoorGenerationService
         IGameLoopContext loop,
         Func<int, int, int, IReadOnlyList<(int Id, int Z)>> staticsAt,
         Func<int, string> nameOf,
+        Func<int, int, int, int, bool> canStandAt,
         IReadOnlyDictionary<int, IReadOnlyList<DoorScanRegion>> regions
     )
     {
@@ -55,6 +57,7 @@ public sealed class DoorGenerationService
         _loop = loop;
         _staticsAt = staticsAt;
         _nameOf = nameOf;
+        _canStandAt = canStandAt;
         _regions = regions;
     }
 
@@ -144,6 +147,14 @@ public sealed class DoorGenerationService
         return (placed, skipped);
     }
 
+    /// <summary>
+    /// Whether a doorway is one a body could walk through. Without it the scan finds ten times too
+    /// many doors: the same graphics that frame a doorway also appear in solid wall, and the gap
+    /// between two of those is masonry rather than an opening.
+    /// </summary>
+    private bool CanStand(DoorPlacement placement)
+        => _canStandAt(placement.MapId, placement.Point.X, placement.Point.Y, placement.Point.Z);
+
     private bool AlreadyThere(int mapId, Point3D point, int itemId)
         => _spatial.GetItemsInRange(mapId, point, 0)
                    .Any(item => item.ItemId == itemId && item.Position == point);
@@ -156,11 +167,15 @@ public sealed class DoorGenerationService
     {
         scanned += (long)(region.EndX - region.StartX) * (region.EndY - region.StartY);
 
-        return DoorScan.Scan(
+        var found = DoorScan.Scan(
             mapId,
             region,
             (x, y) => _staticsAt(mapId, x, y),
             frameId => DoorMaterials.IsDoorway(_nameOf(frameId))
         );
+
+        // A gap between two frames is only a doorway if something could stand in it. Without this the
+        // scan finds ten times too many, because a frame graphic also appears in solid wall.
+        return [.. found.Where(CanStand)];
     }
 }
