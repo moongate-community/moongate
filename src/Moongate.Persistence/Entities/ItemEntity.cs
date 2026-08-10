@@ -25,6 +25,13 @@ public class ItemEntity : ISerialIdEntity, IPositionEntity
 
     public string Name { get; set; }
 
+    /// <summary>
+    /// A cliloc that names this item, or 0. Signs carry the cliloc that IS their text, and sending the
+    /// number rather than a string resolved on the server lets each client render it in its own
+    /// language.
+    /// </summary>
+    public int NameCliloc { get; set; }
+
     public string ScriptId { get; set; } = string.Empty;
 
     public ItemRarityType Rarity { get; set; } = ItemRarityType.Common;
