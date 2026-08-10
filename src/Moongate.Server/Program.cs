@@ -37,6 +37,7 @@ using Moongate.Server.Services.Notifications.Channels;
 using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Server;
 using Moongate.Server.Services.World;
+using Moongate.UO.Data.World;
 using Moongate.Smtp.Plugin;
 using Serilog;
 using SquidStd.Abstractions.Extensions.Config;
@@ -241,6 +242,24 @@ await ConsoleApp.RunAsync(
                 container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
                 container.Register<DecorationPlacementService>(Reuse.Singleton);
+
+                // The generator is given its map and tiledata readers rather than depending on
+                // Ultima's process-wide statics, so its threading and its arithmetic stay testable
+                // without a client directory.
+                container.RegisterDelegate(
+                    resolver => new DoorGenerationService(
+                        resolver.Resolve<IItemFactoryService>(),
+                        resolver.Resolve<IItemService>(),
+                        resolver.Resolve<ISpatialIndexService>(),
+                        resolver.Resolve<IItemTemplateService>(),
+                        resolver.Resolve<IGameLoopContext>(),
+                        UltimaStatics.Reader(resolver.Resolve<IUltimaMapProvider>()),
+                        UltimaStatics.Name,
+                        UltimaStatics.Standable(resolver.Resolve<IMapTileService>()),
+                        DoorScanRegions.Maps.ToDictionary(map => map, DoorScanRegions.For)
+                    ),
+                    Reuse.Singleton
+                );
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);
 

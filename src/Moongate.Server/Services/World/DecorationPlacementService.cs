@@ -1,9 +1,11 @@
 using Moongate.Core.Geometry;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
 using Moongate.UO.Data.Signs;
+using Moongate.UO.Data.World;
 using Serilog;
 
 namespace Moongate.Server.Services.World;
@@ -52,28 +54,39 @@ public sealed class DecorationPlacementService
     /// numbers. A command that places forty thousand objects in silence is one you cannot tell
     /// succeeded from one that did nothing.
     /// </summary>
-    public (int Placed, int Skipped) Place()
+    public (int Placed, int Skipped, int Converted) Place()
     {
         EnsureTemplate();
 
         var placed = 0;
         var skipped = 0;
+        var converted = 0;
 
-        foreach (var (mapId, point, itemId, hue, nameCliloc, name) in Everything())
+        foreach (var placement in Everything())
         {
-            if (AlreadyThere(mapId, point, itemId))
+            if (ExistingAt(placement.MapId, placement.Point, placement.ItemId) is { } existing)
             {
-                skipped++;
+                if (Convert(existing, placement.TemplateId))
+                {
+                    converted++;
+                }
+                else
+                {
+                    skipped++;
+                }
 
                 continue;
             }
 
-            var created = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)hue));
+            var created = _factory.CreateFromTemplate(placement.TemplateId, 1, 1, new Hue((ushort)placement.Hue));
 
             if (created.Count == 0)
             {
                 // The template is missing, which means every placement will fail the same way.
-                _logger.Error("Template {Template} is not registered; no decoration can be placed", TemplateId);
+                _logger.Error(
+                    "Template {Template} is not registered; no decoration can be placed",
+                    placement.TemplateId
+                );
 
                 break;
             }
@@ -81,16 +94,51 @@ public sealed class DecorationPlacementService
             // The instance carries its own appearance: one template, 2381 graphics.
             var item = created[0];
 
-            item.ItemId = itemId;
-            item.NameCliloc = nameCliloc;
-            item.Name = name;
-            _items.MoveToWorld(item, mapId, point);
+            item.ItemId = placement.ItemId;
+            item.NameCliloc = placement.NameCliloc;
+            item.Name = placement.Name;
+            _items.MoveToWorld(item, placement.MapId, placement.Point);
             placed++;
         }
 
-        _logger.Information("Decoration: placed {Placed}, skipped {Skipped} already present", placed, skipped);
+        _logger.Information(
+            "Decoration: placed {Placed}, skipped {Skipped} already present, converted {Converted}",
+            placed,
+            skipped,
+            converted
+        );
 
-        return (placed, skipped);
+        return (placed, skipped, converted);
+    }
+
+    /// <summary>
+    /// Gives an object already standing there the template it should have been built from, and returns
+    /// whether it needed it.
+    /// <para>
+    /// This exists because of a shard that was decorated before doors could open: 944 of them are
+    /// built from the inert template, and the idempotence check would leave them that way forever —
+    /// it sees the right graphic at the right point and moves on. So the check asks a second question,
+    /// is it here as the right kind of thing, and repairs it where the answer is no.
+    /// </para>
+    /// <para>
+    /// The item keeps its serial, so nothing that references it breaks. It is idempotent for the same
+    /// reason placement is: a second run finds the template already correct and converts nothing.
+    /// </para>
+    /// </summary>
+    private bool Convert(ItemEntity existing, string templateId)
+    {
+        if (existing.TemplateId == templateId || _templates.GetById(templateId) is not { } template)
+        {
+            return false;
+        }
+
+        existing.TemplateId = templateId;
+        existing.ScriptId = template.ScriptId;
+
+        // Save publishes ItemChangedEvent, so anyone standing there sees the door become a door.
+        _items.Save(existing);
+
+        return true;
     }
 
     /// <summary>
@@ -103,24 +151,59 @@ public sealed class DecorationPlacementService
     /// cannot both be true of one object.
     /// </para>
     /// </summary>
-    private IEnumerable<(int MapId, Point3D Point, int ItemId, int Hue, int NameCliloc, string Name)> Everything()
+    private IEnumerable<WorldPlacement> Everything()
     {
         foreach (var placement in _decorations.All)
         {
-            yield return (placement.MapId, placement.Point, placement.ItemId, placement.Hue, 0, string.Empty);
+            yield return new(
+                placement.MapId,
+                placement.Point,
+                placement.ItemId,
+                placement.Hue,
+                0,
+                "",
+                TemplateFor(placement.Type)
+            );
         }
 
         foreach (var sign in _signs.All)
         {
             var (cliloc, text) = SignLabel.Split(sign.Label);
 
-            yield return ((int)sign.Map, new(sign.X, sign.Y, sign.Z), sign.ItemId, 0, cliloc, text);
+            yield return new(
+                (int)sign.Map,
+                new(sign.X, sign.Y, sign.Z),
+                sign.ItemId,
+                0,
+                cliloc,
+                text,
+                TemplateId
+            );
         }
     }
 
-    private bool AlreadyThere(int mapId, Moongate.Core.Geometry.Point3D point, int itemId)
+    /// <summary>
+    /// The object already standing on that tile with that graphic, or null. Keyed on graphic, map and
+    /// point rather than on anything the object says about itself, so a corrected name or template
+    /// still finds the same object instead of placing a second one beside it.
+    /// </summary>
+    private ItemEntity? ExistingAt(int mapId, Point3D point, int itemId)
         => _spatial.GetItemsInRange(mapId, point, 0)
-                   .Any(item => item.ItemId == itemId && item.Position == point);
+                   .FirstOrDefault(item => item.ItemId == itemId && item.Position == point);
+
+    /// <summary>
+    /// The template a declared object is built from: its own where that gives it behaviour, the inert
+    /// decoration one otherwise.
+    /// <para>
+    /// Falling back when a door's template is not registered is deliberate. A door that does not open
+    /// is worse than furniture, but a hole where a door should be is worse than both — and a shard
+    /// that has curated its own template set is entitled to be missing one.
+    /// </para>
+    /// </summary>
+    private string TemplateFor(string declaredType)
+        => DoorTemplates.For(declaredType) is { } door && _templates.GetById(door) is not null
+               ? door
+               : TemplateId;
 
     /// <summary>
     /// Registers the decoration template when the registry has none.

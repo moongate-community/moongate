@@ -116,6 +116,29 @@ Recognised keys: `amount` (number), `hue` (number), `item_id` (number),
 item.set(blade, { amount = 1, hue = 1153, name = "Frostbrand" })
 ```
 
+## item.move
+
+```lua
+item.move(serial, x, y, z) -> boolean
+```
+
+Moves the item to a position on the map it is already on. Returns `false` when
+the serial is unknown.
+
+Like [`item.set`](#itemset), the move is **redrawn on every client that can see
+the item** — an item has no separate "it moved" packet, and redrawing it where it
+now is *is* how it moves. An item inside a container or on a paperdoll is taken
+out of it and put on the ground.
+
+**Example** — a door swinging out of its own doorway:
+
+```lua
+local door = item.get(serial)
+
+item.set(serial, { item_id = door.item_id + 1 })
+item.move(serial, door.x + 1, door.y + 1, door.z)
+```
+
 ## item.flip
 
 ```lua

@@ -149,6 +149,94 @@ A first run typically places slightly fewer signs than the corpus holds: on a de
 handful of sign graphics already stand at the same tile as a decoration object, and the shared check
 skips them. The two numbers stay honest — what is missing from `placed` shows up in `skipped`.
 
+## Doors
+
+Thirteen of the declared types are doors, and they open.
+
+| | |
+| --- | --- |
+| `MetalDoor`, `MetalDoor2` | `BarredMetalDoor`, `BarredMetalDoor2` |
+| `StrongWoodDoor`, `DarkWoodDoor` | `LightWoodDoor`, `RattanDoor` |
+| `SecretDungeonDoor`, `SecretWoodenDoor` | `SecretStoneDoor1`, `SecretStoneDoor2`, `SecretStoneDoor3` |
+
+A door is an ordinary item, like every other decoration object. What makes it a door is only which
+template it was built from: each of those thirteen classes maps to a door template, and every door
+template ships with `ScriptId: items.door`. Building an item from one gives it the script — nothing
+else is wired.
+
+### A door needs no state
+
+Its graphic says everything. UO lays each door style out in a block of sixteen ids — eight facings of
+(closed, open) — and each door template's own `ItemId` is its class's **base** graphic. So:
+
+```
+facing = (graphic − base) / 2          open = (graphic − base) is odd
+opened graphic = closed graphic + 1
+```
+
+Opening also moves the door one tile, by an offset that depends on its facing, or it would open into
+itself and still block the doorway. It closes itself after twenty seconds, and that scheduled close
+re-reads the graphic rather than trusting what it saw: somebody may have shut the door already.
+
+The behaviour lives in `scripts/items/door.lua`, seeded from the shipped assets on the first script
+any item asks for. Editing it takes effect without recompiling.
+
+### The doors the map draws and leaves empty
+
+The thirteen declared classes are the sparse doors — dungeons, isolated openings. **Almost every door
+a player meets is not among them.** The bank, the shops, every house: the map's static art draws two
+door frames with a gap between, and nothing in the gap.
+
+`doorgen` finds those gaps and fills them.
+
+```text
+> doorgen
+Scanning 21.4 million tiles for empty doorways. This takes minutes; the world keeps running.
+Doors done: placed 4211, skipped 0 already there, from 21356670 tile(s).
+```
+
+A doorway is a west frame with an east frame two tiles on — three tiles for a double — and the same
+again for north and south. Frames more than one apart in height are on different floors, not two sides
+of one door.
+
+**It does not stop the world.** Unlike `decorate`, the reading happens beside the game loop — the map
+files are read-only — and only the door creation is marshalled onto it, 250 at a time. The command
+answers immediately and reports when the work finishes.
+
+Felucca and Trammel are searched in sixteen rectangles apiece, Ilshenar and Malas whole. Tokuno and
+Ter Mur have no regions, exactly as upstream: their doors are not generated.
+
+#### Which door goes in
+
+The wall decides. Every frame graphic is named for its material in the client files, so:
+
+| Wall | Door |
+| --- | --- |
+| `wooden wall`, `log wall` | `strong_wood_door` |
+| `stone wall`, `brick wall`, `sandstone wall` | `metal_door` |
+| everything else | `dark_wood_door` |
+
+A bank gets a metal door because it is built of stone, which is the same reason the artist drew it
+that way. **Both reference implementations skip this** — RunUO and ModernUO hang a dark wood door in
+every doorway, unconditionally — and so do the thirteen windows among the west frames, which get a
+door hung in them upstream and none here. A window is a hole to look through, not to walk through.
+
+### Doors placed before they could open
+
+A shard decorated before doors existed holds them built from the inert `world_decoration` template,
+and the idempotence check would skip them forever — it sees the right graphic at the right point and
+moves on. So `decorate` also **converts**:
+
+```text
+Decoration done: placed 0, skipped 62611 already present. Converted 1426 already-placed door(s).
+```
+
+The item keeps its serial, so nothing referencing it breaks, and the change is redrawn for anyone
+standing there. A second run converts nothing.
+
+That count is larger than the number of doors in the files because `britannia.yaml` is loaded onto
+both Felucca and Trammel: its 482 doors exist twice, once per facet.
+
 ## The template on an existing shard
 
 `ItemTemplatesLoader` seeds `<root>/templates/items/` **only when that directory does not exist**.

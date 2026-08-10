@@ -160,6 +160,27 @@ public class ItemModuleTests
         Assert.Equal(serial, module.Unequip(mobile.Id.Value, "OneHanded"));
     }
 
+    // A door that opens does not merely change graphic: it swings a tile out of the doorway.
+    [Fact]
+    public void Move_PutsTheItemWhereItWasAsked()
+    {
+        var (module, persistence) = Build();
+        var serial = module.Create("dagger", 1, 0)!.Value;
+
+        Assert.True(module.Move(serial, 20, 30, 5));
+
+        var moved = persistence.Store<ItemEntity>().GetById((Serial)serial)!;
+
+        Assert.Equal(20, moved.Position.X);
+        Assert.Equal(30, moved.Position.Y);
+        Assert.Equal(5, moved.Position.Z);
+    }
+
+    // A script holds a serial across time; the item it names may be gone by the time it acts.
+    [Fact]
+    public void Move_AnUnknownSerial_IsFalseRatherThanAThrow()
+        => Assert.False(Build().Module.Move(0xDEAD, 1, 1, 0));
+
     private static (ItemModule Module, FakePersistenceService Persistence) Build()
     {
         var persistence = new FakePersistenceService();

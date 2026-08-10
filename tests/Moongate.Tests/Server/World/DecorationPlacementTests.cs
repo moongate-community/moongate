@@ -19,7 +19,7 @@ public class DecorationPlacementTests
     {
         var (service, items) = Build([new DecorationGroup { ItemId = 100, At = [[10, 10, 0], [11, 10, 0]] }]);
 
-        var (placed, skipped) = service.Place();
+        var (placed, skipped, _) = service.Place();
 
         Assert.Equal(2, placed);
         Assert.Equal(0, skipped);
@@ -51,7 +51,7 @@ public class DecorationPlacementTests
         var (service, items) = Build([new DecorationGroup { ItemId = 100, At = [[10, 10, 0], [11, 10, 0]] }]);
 
         service.Place();
-        var (placed, skipped) = service.Place();
+        var (placed, skipped, _) = service.Place();
 
         Assert.Equal(0, placed);
         Assert.Equal(2, skipped);
@@ -73,7 +73,7 @@ public class DecorationPlacementTests
             registerTemplate: false
         );
 
-        var (placed, _) = service.Place();
+        var (placed, _, _) = service.Place();
 
         Assert.Equal(1, placed);
         var item = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
@@ -172,7 +172,7 @@ public class DecorationPlacementTests
         );
 
         service.Place();
-        var (placed, skipped) = service.Place();
+        var (placed, skipped, _) = service.Place();
 
         Assert.Equal(0, placed);
         Assert.Equal(1, skipped);
@@ -194,16 +194,146 @@ public class DecorationPlacementTests
         Assert.Equal(2, service.Place().Placed);
     }
 
+    // A door is built from the template that carries its behaviour, not from world_decoration -- and it
+    // keeps the graphic the corpus placed it with, which is what tells it which way it faces.
+    [Fact]
+    public void Place_ADeclaredDoor_IsBuiltFromItsDoorTemplate()
+    {
+        var (service, spatial) = Build(
+            [new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] }],
+            templates: TemplatesWithDoor()
+        );
+
+        service.Place();
+
+        var door = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
+
+        Assert.Equal("metal_door", door.TemplateId);
+        Assert.Equal("items.door", door.ScriptId);
+        Assert.Equal(0x677, door.ItemId);
+    }
+
+    [Fact]
+    public void Place_AnUndeclaredType_IsStillPlainDecoration()
+    {
+        var (service, spatial) = Build(
+            [new DecorationGroup { Type = "LibraryBookcase", ItemId = 0xA9C, At = [[10, 10, 0]] }],
+            templates: TemplatesWithDoor()
+        );
+
+        service.Place();
+
+        Assert.Equal(
+            DecorationPlacementService.TemplateId,
+            Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0)).TemplateId
+        );
+    }
+
+    // A door that does not open is worse than furniture, but a hole in the world is worse than both.
+    [Fact]
+    public void Place_ADoorWhoseTemplateIsNotRegistered_FallsBackToDecoration()
+    {
+        var (service, spatial) = Build([new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] }]);
+
+        Assert.Equal(1, service.Place().Placed);
+        Assert.Equal(
+            DecorationPlacementService.TemplateId,
+            Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0)).TemplateId
+        );
+    }
+
+    /// <summary>
+    /// The repair path: a shard decorated before doors could open holds 944 of them built from the
+    /// inert template, and the idempotence check would skip them forever — it sees the right graphic
+    /// standing at the right point and moves on.
+    /// </summary>
+    [Fact]
+    public void Place_ADoorAlreadyPlacedAsDecoration_IsConvertedInPlace()
+    {
+        var groups = new[] { new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] } };
+        var world = new World();
+        var (before, spatial) = Build(groups, world: world);
+
+        before.Place();
+        var original = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
+
+        var (after, _) = Build(groups, templates: TemplatesWithDoor(), world: world);
+        var result = after.Place();
+        var door = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
+
+        Assert.Equal(0, result.Placed);
+        Assert.Equal(1, result.Converted);
+
+        // The same serial: whatever referenced it still does.
+        Assert.Equal(original.Id, door.Id);
+        Assert.Equal("metal_door", door.TemplateId);
+        Assert.Equal("items.door", door.ScriptId);
+    }
+
+    // The one that matters. This edits items in a live world, from a command someone types twice.
+    [Fact]
+    public void Place_RunTwice_ConvertsNothingTheSecondTime()
+    {
+        var (service, _) = Build(
+            [new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] }],
+            templates: TemplatesWithDoor()
+        );
+
+        service.Place();
+        var second = service.Place();
+
+        Assert.Equal(0, second.Placed);
+        Assert.Equal(0, second.Converted);
+        Assert.Equal(1, second.Skipped);
+    }
+
+    [Fact]
+    public void Place_ADecorationObjectAlreadyThere_IsNotConverted()
+    {
+        var (service, _) = Build([new DecorationGroup { ItemId = 100, At = [[10, 10, 0]] }]);
+
+        service.Place();
+
+        var second = service.Place();
+
+        Assert.Equal(0, second.Converted);
+        Assert.Equal(1, second.Skipped);
+    }
+
+    /// <summary>One world two services can be built over, so a second run sees what the first placed.</summary>
+    private sealed class World
+    {
+        public FakePersistenceService Persistence { get; } = new();
+
+        public SpatialIndexService? Spatial { get; set; }
+    }
+
+    private static ItemTemplateService TemplatesWithDoor()
+    {
+        var templates = new ItemTemplateService();
+
+        templates.Register(
+            new ItemTemplate
+            {
+                Id = "metal_door", Name = "", Category = "Structure", ItemId = 0x675, ScriptId = "items.door"
+            }
+        );
+
+        return templates;
+    }
+
     private static (DecorationPlacementService Service, SpatialIndexService Spatial) Build(
         IEnumerable<DecorationGroup> groups,
         bool registerTemplate = true,
         ItemTemplateService? templates = null,
-        IEnumerable<SignEntry>? signs = null
+        IEnumerable<SignEntry>? signs = null,
+        World? world = null
     )
     {
-        var persistence = new FakePersistenceService();
+        world ??= new();
+        var persistence = world.Persistence;
         var events = new StubEventBus();
-        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), events);
+        var spatial = world.Spatial ??= new SpatialIndexService(persistence, new StubLoopAffinity(), events);
         var itemService = new ItemService(persistence, spatial: spatial);
 
         templates ??= new ItemTemplateService();

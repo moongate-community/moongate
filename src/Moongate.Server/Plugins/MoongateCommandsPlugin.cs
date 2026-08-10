@@ -52,5 +52,13 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
             "Places the world's catalogued decoration.",
             CommandSourceType.InGame | CommandSourceType.Console
         );
+
+        // Its sibling for the doors decoration never had: the ones the map art draws and leaves empty.
+        container.RegisterCommand<DoorGenCommand>(
+            "doorgen",
+            AccountLevelType.Administrator,
+            "Puts doors in the doorways the map art leaves empty.",
+            CommandSourceType.InGame | CommandSourceType.Console
+        );
     }
 }

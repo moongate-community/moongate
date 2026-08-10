@@ -121,6 +121,25 @@ public sealed class ItemModule
     public ItemLuaView? Get(uint serial)
         => _items.GetById((Serial)serial) is { } item ? new ItemLuaView(item, DisplayName(item)) : null;
 
+    [ScriptFunction("move", "Moves the item to a world position on its current map; false on an unknown serial.")]
+    public bool Move(uint serial, int x, int y, int z)
+    {
+        var item = _items.GetById((Serial)serial);
+
+        if (item is null)
+        {
+            return false;
+        }
+
+        // MoveToWorld rather than an assignment to Position: it detaches the item from any container
+        // first, updates the spatial index, and publishes the change -- which is what redraws it for
+        // everyone who can see it. A door that swings without that is a door only the server knows
+        // has moved.
+        _items.MoveToWorld(item, item.MapId, new(x, y, z));
+
+        return true;
+    }
+
     [ScriptFunction("remove_from_container", "Removes an item from a container; false on unknown serials.")]
     public bool RemoveFromContainer(uint container, uint serial)
     {
