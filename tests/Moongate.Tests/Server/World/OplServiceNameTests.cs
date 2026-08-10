@@ -16,6 +16,7 @@ public class OplServiceNameTests
     private const int GoldItemId = 3821;
     private const int GoldCliloc = 1023821;  // ItemClilocs.ForItemId(3821)
     private const int StackCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
+    private const int SignCliloc = 1016093;  // "Britain Bank", as a sign would carry it
 
     [Fact]
     public void NamedStack_KeepsItsTextArgument()
@@ -83,11 +84,59 @@ public class OplServiceNameTests
         Assert.Contains("gold", entry.Arguments);
     }
 
+    // A sign's cliloc IS its text, so it beats the one the graphic implies -- the graphic is a
+    // signpost, and every signpost in the world shares it.
+    [Fact]
+    public void ItemWithItsOwnNameCliloc_IsNamedByThatCliloc()
+    {
+        var (service, item) = Build(
+            "",
+            "",
+            1,
+            StubClilocService.Entries((GoldCliloc, "gold coin"), (SignCliloc, "Britain Bank")),
+            SignCliloc
+        );
+
+        var entry = service.GetOrBuild(item.Id).Entries[0];
+
+        Assert.Equal(SignCliloc, entry.Cliloc);
+        Assert.Equal(string.Empty, entry.Arguments);
+    }
+
+    // The guard that matters more than the one above: this field is new on every item in the world,
+    // and an item without one has to be named exactly as it was before it existed.
+    [Fact]
+    public void ItemWithoutANameCliloc_IsNamedExactlyAsBefore()
+    {
+        var (service, item) = Build("", "", 1);
+
+        var entry = service.GetOrBuild(item.Id).Entries[0];
+
+        Assert.Equal(GoldCliloc, entry.Cliloc);
+        Assert.Equal(string.Empty, entry.Arguments);
+    }
+
+    // A shard that renamed the thing still wins: a name is a deliberate act, a cliloc is data.
+    [Fact]
+    public void ARenamedItem_BeatsItsOwnNameCliloc()
+    {
+        var (service, item) = Build(
+            "",
+            "Squid's Anchor",
+            1,
+            StubClilocService.Entries((SignCliloc, "Britain Bank")),
+            SignCliloc
+        );
+
+        Assert.Contains("Squid's Anchor", service.GetOrBuild(item.Id).Entries[0].Arguments);
+    }
+
     private static (OplService Service, ItemEntity Item) Build(
         string templateName,
         string itemName,
         int amount,
-        IClilocService? clilocs = null
+        IClilocService? clilocs = null,
+        int nameCliloc = 0
     )
     {
         var persistence = new FakePersistenceService();
@@ -97,7 +146,7 @@ public class OplServiceNameTests
 
         var item = new ItemEntity
         {
-            TemplateId = "gold", ItemId = GoldItemId, Amount = amount, Name = itemName
+            TemplateId = "gold", ItemId = GoldItemId, Amount = amount, Name = itemName, NameCliloc = nameCliloc
         };
 
         persistence.Store<ItemEntity>().UpsertAsync(item).WaitSync();
