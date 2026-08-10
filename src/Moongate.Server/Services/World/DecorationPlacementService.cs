@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
@@ -53,18 +54,26 @@ public sealed class DecorationPlacementService
     /// numbers. A command that places forty thousand objects in silence is one you cannot tell
     /// succeeded from one that did nothing.
     /// </summary>
-    public (int Placed, int Skipped) Place()
+    public (int Placed, int Skipped, int Converted) Place()
     {
         EnsureTemplate();
 
         var placed = 0;
         var skipped = 0;
+        var converted = 0;
 
         foreach (var placement in Everything())
         {
-            if (AlreadyThere(placement.MapId, placement.Point, placement.ItemId))
+            if (ExistingAt(placement.MapId, placement.Point, placement.ItemId) is { } existing)
             {
-                skipped++;
+                if (Convert(existing, placement.TemplateId))
+                {
+                    converted++;
+                }
+                else
+                {
+                    skipped++;
+                }
 
                 continue;
             }
@@ -92,9 +101,44 @@ public sealed class DecorationPlacementService
             placed++;
         }
 
-        _logger.Information("Decoration: placed {Placed}, skipped {Skipped} already present", placed, skipped);
+        _logger.Information(
+            "Decoration: placed {Placed}, skipped {Skipped} already present, converted {Converted}",
+            placed,
+            skipped,
+            converted
+        );
 
-        return (placed, skipped);
+        return (placed, skipped, converted);
+    }
+
+    /// <summary>
+    /// Gives an object already standing there the template it should have been built from, and returns
+    /// whether it needed it.
+    /// <para>
+    /// This exists because of a shard that was decorated before doors could open: 944 of them are
+    /// built from the inert template, and the idempotence check would leave them that way forever —
+    /// it sees the right graphic at the right point and moves on. So the check asks a second question,
+    /// is it here as the right kind of thing, and repairs it where the answer is no.
+    /// </para>
+    /// <para>
+    /// The item keeps its serial, so nothing that references it breaks. It is idempotent for the same
+    /// reason placement is: a second run finds the template already correct and converts nothing.
+    /// </para>
+    /// </summary>
+    private bool Convert(ItemEntity existing, string templateId)
+    {
+        if (existing.TemplateId == templateId || _templates.GetById(templateId) is not { } template)
+        {
+            return false;
+        }
+
+        existing.TemplateId = templateId;
+        existing.ScriptId = template.ScriptId;
+
+        // Save publishes ItemChangedEvent, so anyone standing there sees the door become a door.
+        _items.Save(existing);
+
+        return true;
     }
 
     /// <summary>
@@ -138,9 +182,14 @@ public sealed class DecorationPlacementService
         }
     }
 
-    private bool AlreadyThere(int mapId, Moongate.Core.Geometry.Point3D point, int itemId)
+    /// <summary>
+    /// The object already standing on that tile with that graphic, or null. Keyed on graphic, map and
+    /// point rather than on anything the object says about itself, so a corrected name or template
+    /// still finds the same object instead of placing a second one beside it.
+    /// </summary>
+    private ItemEntity? ExistingAt(int mapId, Point3D point, int itemId)
         => _spatial.GetItemsInRange(mapId, point, 0)
-                   .Any(item => item.ItemId == itemId && item.Position == point);
+                   .FirstOrDefault(item => item.ItemId == itemId && item.Position == point);
 
     /// <summary>
     /// The template a declared object is built from: its own where that gives it behaviour, the inert

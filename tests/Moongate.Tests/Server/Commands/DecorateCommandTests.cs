@@ -147,14 +147,54 @@ public class DecorateCommandTests
         Assert.DoesNotContain("Nothing to place", replies[0]);
     }
 
+    // The repair is the whole reason the number exists: an operator who never sees it has no way to
+    // know their shard's doors were fixed, or that they needed fixing.
+    [Fact]
+    public void Execute_WhenDoorsAreConverted_SaysSo()
+    {
+        var groups = new[] { new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] } };
+        var world = new World();
+
+        Build(groups, world: world).Command.Execute(Context([]));
+
+        var replies = new List<string>();
+
+        Build(groups, world: world, withDoorTemplate: true).Command.Execute(Context(replies));
+
+        Assert.Contains("Converted 1 already-placed door(s).", replies[^1]);
+    }
+
+    // A line about zero converted doors on every run is noise.
+    [Fact]
+    public void Execute_WhenNothingIsConverted_DoesNotMentionConversion()
+    {
+        var (command, _) = Build([new DecorationGroup { ItemId = 100, At = [[1, 1, 0]] }]);
+        var replies = new List<string>();
+
+        command.Execute(Context(replies));
+
+        Assert.DoesNotContain("Converted", replies[^1]);
+    }
+
+    /// <summary>One world two commands can be built over, so the second sees what the first placed.</summary>
+    private sealed class World
+    {
+        public FakePersistenceService Persistence { get; } = new();
+
+        public SpatialIndexService? Spatial { get; set; }
+    }
+
     private static (DecorateCommand Command, SpatialIndexService Spatial) Build(
         IEnumerable<DecorationGroup> groups,
         bool factoryReturnsNothing = false,
-        IEnumerable<SignEntry>? signs = null
+        IEnumerable<SignEntry>? signs = null,
+        World? world = null,
+        bool withDoorTemplate = false
     )
     {
-        var persistence = new FakePersistenceService();
-        var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
+        world ??= new();
+        var persistence = world.Persistence;
+        var spatial = world.Spatial ??= new SpatialIndexService(persistence, new StubLoopAffinity(), new StubEventBus());
         var items = new ItemService(persistence, spatial: spatial);
 
         var templates = new ItemTemplateService();
@@ -164,6 +204,16 @@ public class DecorateCommandTests
                 Id = DecorationPlacementService.TemplateId, Name = "", Category = "World", ItemId = 1
             }
         );
+
+        if (withDoorTemplate)
+        {
+            templates.Register(
+                new ItemTemplate
+                {
+                    Id = "metal_door", Name = "", Category = "Structure", ItemId = 0x675, ScriptId = "items.door"
+                }
+            );
+        }
 
         var catalog = new DecorationCatalog();
         catalog.Add(1, groups);

@@ -69,13 +69,14 @@ public sealed class DecorateCommand : ICommand
             )
         );
 
-        var (placed, skipped) = _placement.Place();
+        var (placed, skipped, converted) = _placement.Place();
 
-        // Neither placed nor already there, out of a catalogue that holds objects: whatever went wrong,
-        // reporting it as "done" would read exactly like an idempotent second run. That is how the
-        // missing-template failure presented on a real shard -- the reason was in the server log and
-        // the operator was told the job had finished.
-        if (placed == 0 && skipped == 0)
+        // Nothing placed, nothing already there and nothing converted, out of a catalogue that holds
+        // objects: whatever went wrong, reporting it as "done" would read exactly like an idempotent
+        // second run. That is how the missing-template failure presented on a real shard -- the reason
+        // sat in the server log while the operator was told the job had finished. Converting counts as
+        // having done something, or a run that repaired every door would report itself as broken.
+        if (placed == 0 && skipped == 0 && converted == 0)
         {
             context.Reply(
                 string.Create(
@@ -87,10 +88,19 @@ public sealed class DecorateCommand : ICommand
             return;
         }
 
+        // Only mentioned when it happened: a line about 0 converted doors on every run is noise, and
+        // the number is only interesting the once, on the shard that needed repairing.
+        var conversion = converted == 0
+                             ? string.Empty
+                             : string.Create(
+                                 CultureInfo.InvariantCulture,
+                                 $" Converted {converted} already-placed door(s)."
+                             );
+
         context.Reply(
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"Decoration done: placed {placed}, skipped {skipped} already present."
+                $"Decoration done: placed {placed}, skipped {skipped} already present.{conversion}"
             )
         );
     }
