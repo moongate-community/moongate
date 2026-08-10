@@ -20,20 +20,23 @@ namespace Moongate.Server.Loaders;
 public sealed class DecorationsLoader : IDataLoader
 {
     /// <summary>
-    /// The facet files, and the map id each carries. Britannia and the two Magincia ruins are named
-    /// for their content rather than a facet: Britannia is Felucca's landmass, and the ruins are the
-    /// post-invasion versions of the Magincia on each of the two mirror facets.
+    /// The facet files, and the map ids each is loaded onto. Some are named for their content rather
+    /// than for a facet, and one of them lands on two maps: <c>britannia</c> is the shared landmass,
+    /// authored once and standing on both Felucca and Trammel, which are mirrors of the same continent
+    /// — this is what RunUO and ModernUO both do, and loading it onto one facet leaves the other with
+    /// only its handful of exclusives. The Magincia ruins are the post-invasion Magincia of each
+    /// mirror facet, so those stay one map apiece.
     /// </summary>
-    private static readonly (string File, int MapId)[] Facets =
+    private static readonly (string File, int[] MapIds)[] Facets =
     [
-        ("britannia", 0),
-        ("felucca", 0),
-        ("trammel", 1),
-        ("ilshenar", 2),
-        ("malas", 3),
-        ("tokuno", 4),
-        ("ruinedmaginciafel", 0),
-        ("ruinedmaginciatram", 1)
+        ("britannia", [0, 1]),
+        ("felucca", [0]),
+        ("trammel", [1]),
+        ("ilshenar", [2]),
+        ("malas", [3]),
+        ("tokuno", [4]),
+        ("ruinedmaginciafel", [0]),
+        ("ruinedmaginciatram", [1])
     ];
 
     private readonly ILogger _logger = Log.ForContext<DecorationsLoader>();
@@ -51,7 +54,7 @@ public sealed class DecorationsLoader : IDataLoader
         var directory = Path.Combine(_directories.RegisterDirectory("data"), "decorations");
         Directory.CreateDirectory(directory);
 
-        foreach (var (file, mapId) in Facets)
+        foreach (var (file, mapIds) in Facets)
         {
             var path = Path.Combine(directory, file + ".yaml");
 
@@ -65,8 +68,12 @@ public sealed class DecorationsLoader : IDataLoader
                 _logger.Information("Seeded default {File}.yaml at {Path}", file, path);
             }
 
-            var groups = YamlUtils.DeserializeFromFile<List<DecorationGroup>>(path);
-            _decorations.Add(mapId, groups ?? []);
+            var groups = YamlUtils.DeserializeFromFile<List<DecorationGroup>>(path) ?? [];
+
+            foreach (var mapId in mapIds)
+            {
+                _decorations.Add(mapId, groups);
+            }
         }
 
         _logger.Information(
