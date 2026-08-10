@@ -18,6 +18,18 @@ public interface IDragDropService
     void Bounce(MobileEntity actor, Serial itemId, HeldItemOrigin? origin);
 
     /// <summary>
+    /// Puts the held item on <paramref name="targetMobileId" />, at the layer the item itself occupies.
+    /// The layer is never taken from the client: which layer an item uses is a property of the item, and
+    /// trusting the request would let a client wear a dagger as a pair of boots.
+    /// <para>
+    /// Refuses when nothing is held, when the held item is not the one named, when the item is not
+    /// wearable, when the layer is already occupied, or when the target is anyone but the actor —
+    /// dressing another player needs a permission concept the shard does not have yet.
+    /// </para>
+    /// </summary>
+    LiftDecision Wear(MobileEntity actor, Serial heldItemId, Serial targetMobileId);
+
+    /// <summary>
     /// Drops the held item into <paramref name="containerId" /> (or on the ground when it is
     /// <see cref="Serial.Zero" />) and reports whether it went through.
     /// </summary>
