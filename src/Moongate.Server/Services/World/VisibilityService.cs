@@ -75,6 +75,19 @@ public sealed class VisibilityService : IVisibilityService
             }
         }
 
+        // TEMPORARY: proving whether item packets ever reach a session at all.
+        if (entered.Count > 0)
+        {
+            Serilog.Log.ForContext<VisibilityService>().Information(
+                "VIS session {Session} at {Position}: sent {Items} item(s) + {Mobiles} mobile(s), knows {Known}",
+                session.SessionId,
+                character.Position,
+                items.Count(i => entered.Contains(i.Id)),
+                mobiles.Count(m => entered.Contains(m.Id)),
+                known.Count
+            );
+        }
+
         var left = known.Where(serial => !visible.Contains(serial)).ToList();
 
         foreach (var serial in left)
