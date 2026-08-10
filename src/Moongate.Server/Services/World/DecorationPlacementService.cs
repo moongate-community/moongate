@@ -1,7 +1,9 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
+using Moongate.UO.Data.Signs;
 using Serilog;
 
 namespace Moongate.Server.Services.World;
@@ -26,13 +28,15 @@ public sealed class DecorationPlacementService
     private readonly IItemService _items;
     private readonly ISpatialIndexService _spatial;
     private readonly IItemTemplateService _templates;
+    private readonly ISignService _signs;
 
     public DecorationPlacementService(
         IDecorationCatalog decorations,
         IItemFactoryService factory,
         IItemService items,
         ISpatialIndexService spatial,
-        IItemTemplateService templates
+        IItemTemplateService templates,
+        ISignService signs
     )
     {
         _decorations = decorations;
@@ -40,6 +44,7 @@ public sealed class DecorationPlacementService
         _items = items;
         _spatial = spatial;
         _templates = templates;
+        _signs = signs;
     }
 
     /// <summary>
@@ -54,16 +59,16 @@ public sealed class DecorationPlacementService
         var placed = 0;
         var skipped = 0;
 
-        foreach (var placement in _decorations.All)
+        foreach (var (mapId, point, itemId, hue, nameCliloc, name) in Everything())
         {
-            if (AlreadyThere(placement.MapId, placement.Point, placement.ItemId))
+            if (AlreadyThere(mapId, point, itemId))
             {
                 skipped++;
 
                 continue;
             }
 
-            var created = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)placement.Hue));
+            var created = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)hue));
 
             if (created.Count == 0)
             {
@@ -76,14 +81,41 @@ public sealed class DecorationPlacementService
             // The instance carries its own appearance: one template, 2381 graphics.
             var item = created[0];
 
-            item.ItemId = placement.ItemId;
-            _items.MoveToWorld(item, placement.MapId, placement.Point);
+            item.ItemId = itemId;
+            item.NameCliloc = nameCliloc;
+            item.Name = name;
+            _items.MoveToWorld(item, mapId, point);
             placed++;
         }
 
         _logger.Information("Decoration: placed {Placed}, skipped {Skipped} already present", placed, skipped);
 
         return (placed, skipped);
+    }
+
+    /// <summary>
+    /// Every object the world should hold, from both sources, in one sequence.
+    /// <para>
+    /// Signs are kept in their own registry rather than converted into decoration groups — they are
+    /// already loaded, already keyed by map, and converting them would buy nothing. What the two do
+    /// share is the only thing that matters here: becoming an item at a point, once. Flattening them
+    /// into one sequence is what lets a single loop own the counting, so "placed" and "already there"
+    /// cannot both be true of one object.
+    /// </para>
+    /// </summary>
+    private IEnumerable<(int MapId, Point3D Point, int ItemId, int Hue, int NameCliloc, string Name)> Everything()
+    {
+        foreach (var placement in _decorations.All)
+        {
+            yield return (placement.MapId, placement.Point, placement.ItemId, placement.Hue, 0, string.Empty);
+        }
+
+        foreach (var sign in _signs.All)
+        {
+            var (cliloc, text) = SignLabel.Split(sign.Label);
+
+            yield return ((int)sign.Map, new(sign.X, sign.Y, sign.Z), sign.ItemId, 0, cliloc, text);
+        }
     }
 
     private bool AlreadyThere(int mapId, Moongate.Core.Geometry.Point3D point, int itemId)

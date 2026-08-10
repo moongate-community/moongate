@@ -34,16 +34,24 @@ public sealed class DecorateCommand : ICommand
 {
     private readonly IDecorationCatalog _decorations;
     private readonly DecorationPlacementService _placement;
+    private readonly ISignService _signs;
 
-    public DecorateCommand(IDecorationCatalog decorations, DecorationPlacementService placement)
+    public DecorateCommand(
+        IDecorationCatalog decorations,
+        DecorationPlacementService placement,
+        ISignService signs
+    )
     {
         _decorations = decorations;
         _placement = placement;
+        _signs = signs;
     }
 
     public void Execute(CommandContext context)
     {
-        var total = _decorations.All.Count;
+        // Signs count too: a shard whose decoration is already down but whose signs are not would
+        // otherwise be told there is nothing to place.
+        var total = _decorations.All.Count + _signs.Count;
 
         // An empty catalogue means the loader found nothing at boot. Saying that here is cheaper than
         // reading the log to find out why "placed 0" was not the idempotent answer it looked like.

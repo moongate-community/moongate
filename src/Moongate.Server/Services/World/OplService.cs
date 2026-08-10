@@ -79,7 +79,10 @@ public sealed class OplService : IOplService
         var rotation = 0;
         var template = _templates.GetById(item.TemplateId);
         var name = FirstNonEmpty(item.Name, template?.Name, string.Empty);
-        var cliloc = ItemClilocs.ForItemId(item.ItemId);
+
+        // A sign carries the cliloc that IS its text, and it beats the one the graphic implies: the
+        // graphic is a signpost, and every signpost in the world shares it.
+        var cliloc = item.NameCliloc != 0 ? item.NameCliloc : ItemClilocs.ForItemId(item.ItemId);
 
         if (name.Length == 0 && _clilocs.Text(cliloc) is not null)
         {

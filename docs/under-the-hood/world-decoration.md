@@ -107,6 +107,48 @@ Placed nothing of 63528 object(s), and none were already there. Check the server
 Distinct from `placed 0, skipped 63528`, which is a healthy second run. This one means placement could
 not build a single item, and the reason is in the server log.
 
+## Signs
+
+The 509 signposts that name shops, banks and towns are a second corpus, placed by the same command.
+
+Their data lives in `Assets/signs.yaml`, seeded to `<root>/data/signs.yaml` and loaded by
+`SignsLoader` into `ISignService` — one entry per sign, with its own facet:
+
+```yaml
+-   Map: Felucca
+    ItemId: 3032
+    X: 373
+    Y: 904
+    Z: -1
+    Label: '#1016093'
+```
+
+`decorate` places them alongside decoration, through the same idempotence check and counted in the
+same totals. They are not folded into the decoration catalogue: they are already loaded and already
+keyed by map, and the only thing the two corpora have in common is becoming an item at a point, once.
+
+### How a sign says what it says
+
+`Label` is one of two things, and the corpus uses both — **450 clilocs and 59 literal texts**:
+
+| Label | What the item carries | What the player sees |
+| --- | --- | --- |
+| `#1016093` | `NameCliloc = 1016093` | the client's own text, in the client's language |
+| `The Shakin' Bakery` | `Name = "The Shakin' Bakery"` | exactly that |
+| blank, `#`, `#abc` | neither | the name the graphic implies |
+
+A cliloc travels to the client **as a number**. Resolving it to a string on the server would work, and
+would freeze every sign in one language; sending the number lets each client render it in its own.
+`OplService` prefers an item's own `NameCliloc` over the one derived from its graphic — which matters,
+because the graphic is a signpost and every signpost in the world shares it. A deliberate `Name` still
+beats both.
+
+### Signs already standing as decoration
+
+A first run typically places slightly fewer signs than the corpus holds: on a decorated shard, a
+handful of sign graphics already stand at the same tile as a decoration object, and the shared check
+skips them. The two numbers stay honest — what is missing from `placed` shows up in `skipped`.
+
 ## The template on an existing shard
 
 `ItemTemplatesLoader` seeds `<root>/templates/items/` **only when that directory does not exist**.

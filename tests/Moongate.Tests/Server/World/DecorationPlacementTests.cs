@@ -2,6 +2,8 @@ using Moongate.Server.Services.Items;
 using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Items;
+using Moongate.UO.Data.Signs;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.World;
 
 namespace Moongate.Tests.Server.World;
@@ -111,10 +113,92 @@ public class DecorationPlacementTests
         Assert.Equal(2, service.Place().Placed);
     }
 
+    [Fact]
+    public void Place_ASignWithACliloc_LandsCarryingThatCliloc()
+    {
+        var (service, spatial) = Build(
+            [],
+            signs:
+            [
+                new SignEntry
+                {
+                    Map = MapType.Trammel, ItemId = 3032, X = 10, Y = 10, Z = 0, Label = "#1016093"
+                }
+            ]
+        );
+
+        Assert.Equal(1, service.Place().Placed);
+
+        var sign = Assert.Single(spatial.GetItemsInRange((int)MapType.Trammel, new(10, 10, 0), 0));
+
+        Assert.Equal(3032, sign.ItemId);
+        Assert.Equal(1016093, sign.NameCliloc);
+        Assert.Equal("", sign.Name);
+    }
+
+    // 59 of the 509 shipped signs carry their words rather than a cliloc.
+    [Fact]
+    public void Place_ASignWithLiteralText_LandsCarryingThatName()
+    {
+        var (service, spatial) = Build(
+            [],
+            signs:
+            [
+                new SignEntry
+                {
+                    Map = MapType.Felucca, ItemId = 3032, X = 5, Y = 5, Z = 0, Label = "The Shakin' Bakery"
+                }
+            ]
+        );
+
+        service.Place();
+
+        var sign = Assert.Single(spatial.GetItemsInRange((int)MapType.Felucca, new(5, 5, 0), 0));
+
+        Assert.Equal("The Shakin' Bakery", sign.Name);
+        Assert.Equal(0, sign.NameCliloc);
+    }
+
+    // Signs go through the same check as decoration: typing decorate twice must not double them.
+    [Fact]
+    public void Place_RunTwice_DoesNotDoubleTheSigns()
+    {
+        var (service, spatial) = Build(
+            [],
+            signs:
+            [
+                new SignEntry { Map = MapType.Felucca, ItemId = 3032, X = 5, Y = 5, Z = 0, Label = "#1016093" }
+            ]
+        );
+
+        service.Place();
+        var (placed, skipped) = service.Place();
+
+        Assert.Equal(0, placed);
+        Assert.Equal(1, skipped);
+        Assert.Single(spatial.GetItemsInRange((int)MapType.Felucca, new(5, 5, 0), 0));
+    }
+
+    // Both sources report through one pair of numbers, because one command placed both.
+    [Fact]
+    public void Place_CountsDecorationAndSignsTogether()
+    {
+        var (service, _) = Build(
+            [new DecorationGroup { ItemId = 100, At = [[1, 1, 0]] }],
+            signs:
+            [
+                new SignEntry { Map = MapType.Trammel, ItemId = 3032, X = 2, Y = 2, Z = 0, Label = "#1016093" }
+            ]
+        );
+
+        Assert.Equal(2, service.Place().Placed);
+    }
+
     private static (DecorationPlacementService Service, SpatialIndexService Spatial) Build(
         IEnumerable<DecorationGroup> groups,
         bool registerTemplate = true,
-        ItemTemplateService? templates = null
+        ItemTemplateService? templates = null,
+        IEnumerable<SignEntry>? signs = null
     )
     {
         var persistence = new FakePersistenceService();
@@ -137,8 +221,15 @@ public class DecorationPlacementTests
         var catalog = new DecorationCatalog();
         catalog.Add(1, groups);
 
+        var signService = new SignService();
+
+        foreach (var sign in signs ?? [])
+        {
+            signService.Register(sign);
+        }
+
         return (
-            new(catalog, new ItemFactoryService(templates, new(1)), itemService, spatial, templates),
+            new(catalog, new ItemFactoryService(templates, new(1)), itemService, spatial, templates, signService),
             spatial
         );
     }
