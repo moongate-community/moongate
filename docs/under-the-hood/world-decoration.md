@@ -149,6 +149,54 @@ A first run typically places slightly fewer signs than the corpus holds: on a de
 handful of sign graphics already stand at the same tile as a decoration object, and the shared check
 skips them. The two numbers stay honest — what is missing from `placed` shows up in `skipped`.
 
+## Doors
+
+Thirteen of the declared types are doors, and they open.
+
+| | |
+| --- | --- |
+| `MetalDoor`, `MetalDoor2` | `BarredMetalDoor`, `BarredMetalDoor2` |
+| `StrongWoodDoor`, `DarkWoodDoor` | `LightWoodDoor`, `RattanDoor` |
+| `SecretDungeonDoor`, `SecretWoodenDoor` | `SecretStoneDoor1`, `SecretStoneDoor2`, `SecretStoneDoor3` |
+
+A door is an ordinary item, like every other decoration object. What makes it a door is only which
+template it was built from: each of those thirteen classes maps to a door template, and every door
+template ships with `ScriptId: items.door`. Building an item from one gives it the script — nothing
+else is wired.
+
+### A door needs no state
+
+Its graphic says everything. UO lays each door style out in a block of sixteen ids — eight facings of
+(closed, open) — and each door template's own `ItemId` is its class's **base** graphic. So:
+
+```
+facing = (graphic − base) / 2          open = (graphic − base) is odd
+opened graphic = closed graphic + 1
+```
+
+Opening also moves the door one tile, by an offset that depends on its facing, or it would open into
+itself and still block the doorway. It closes itself after twenty seconds, and that scheduled close
+re-reads the graphic rather than trusting what it saw: somebody may have shut the door already.
+
+The behaviour lives in `scripts/items/door.lua`, seeded from the shipped assets on the first script
+any item asks for. Editing it takes effect without recompiling.
+
+### Doors placed before they could open
+
+A shard decorated before doors existed holds them built from the inert `world_decoration` template,
+and the idempotence check would skip them forever — it sees the right graphic at the right point and
+moves on. So `decorate` also **converts**:
+
+```text
+Decoration done: placed 0, skipped 62611 already present. Converted 1426 already-placed door(s).
+```
+
+The item keeps its serial, so nothing referencing it breaks, and the change is redrawn for anyone
+standing there. A second run converts nothing.
+
+That count is larger than the number of doors in the files because `britannia.yaml` is loaded onto
+both Felucca and Trammel: its 482 doors exist twice, once per facet.
+
 ## The template on an existing shard
 
 `ItemTemplatesLoader` seeds `<root>/templates/items/` **only when that directory does not exist**.

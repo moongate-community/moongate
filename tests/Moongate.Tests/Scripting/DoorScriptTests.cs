@@ -118,6 +118,35 @@ public class DoorScriptTests
         Assert.Equal(0, fixture.ScheduledAfterMs);
     }
 
+    /// <summary>
+    /// The script has to reach a shard that already exists, and it is seeded lazily — on the first
+    /// script any item asks for, not at boot. So a fresh runtime over an empty directory must produce
+    /// a working door with nothing put there by hand; this is what proves the shipped file is an
+    /// embedded resource and that the seeder finds it.
+    /// </summary>
+    [Fact]
+    public void TheShippedScript_SeedsItselfOntoAShardThatHasNone()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "mg-door-seed-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+
+        try
+        {
+            var runtime = new LuaItemScriptRuntime(new(), new(root, ["scripts"]));
+
+            Assert.True(runtime.HasHook("items.door", ItemScriptHookType.DoubleClick));
+            Assert.True(File.Exists(Path.Combine(root, "scripts", "items", "door.lua")));
+        }
+        finally
+        {
+            try
+            {
+                Directory.Delete(root, true);
+            }
+            catch (IOException) { }
+        }
+    }
+
     private sealed class Fixture : IDisposable
     {
         private const string DoorScript = "../../../../../src/Moongate.Scripting/Assets/Items/door.lua";
