@@ -134,7 +134,7 @@ public class DecorateCommandTests
                                           : new ItemFactoryService(templates, new(1));
 
         return (
-            new(catalog, new(catalog, factory, items, spatial, templates)),
+            new(catalog, new(catalog, factory, items, spatial, templates, new SignService())),
             spatial
         );
     }
