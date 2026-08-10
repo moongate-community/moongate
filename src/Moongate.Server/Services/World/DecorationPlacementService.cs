@@ -111,7 +111,15 @@ public sealed class DecorationPlacementService
     {
         foreach (var placement in _decorations.All)
         {
-            yield return new(placement.MapId, placement.Point, placement.ItemId, placement.Hue, 0, "", TemplateId);
+            yield return new(
+                placement.MapId,
+                placement.Point,
+                placement.ItemId,
+                placement.Hue,
+                0,
+                "",
+                TemplateFor(placement.Type)
+            );
         }
 
         foreach (var sign in _signs.All)
@@ -133,6 +141,20 @@ public sealed class DecorationPlacementService
     private bool AlreadyThere(int mapId, Moongate.Core.Geometry.Point3D point, int itemId)
         => _spatial.GetItemsInRange(mapId, point, 0)
                    .Any(item => item.ItemId == itemId && item.Position == point);
+
+    /// <summary>
+    /// The template a declared object is built from: its own where that gives it behaviour, the inert
+    /// decoration one otherwise.
+    /// <para>
+    /// Falling back when a door's template is not registered is deliberate. A door that does not open
+    /// is worse than furniture, but a hole where a door should be is worse than both — and a shard
+    /// that has curated its own template set is entitled to be missing one.
+    /// </para>
+    /// </summary>
+    private string TemplateFor(string declaredType)
+        => DoorTemplates.For(declaredType) is { } door && _templates.GetById(door) is not null
+               ? door
+               : TemplateId;
 
     /// <summary>
     /// Registers the decoration template when the registry has none.

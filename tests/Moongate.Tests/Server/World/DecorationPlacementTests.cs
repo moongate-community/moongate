@@ -194,6 +194,68 @@ public class DecorationPlacementTests
         Assert.Equal(2, service.Place().Placed);
     }
 
+    // A door is built from the template that carries its behaviour, not from world_decoration -- and it
+    // keeps the graphic the corpus placed it with, which is what tells it which way it faces.
+    [Fact]
+    public void Place_ADeclaredDoor_IsBuiltFromItsDoorTemplate()
+    {
+        var (service, spatial) = Build(
+            [new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] }],
+            templates: TemplatesWithDoor()
+        );
+
+        service.Place();
+
+        var door = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
+
+        Assert.Equal("metal_door", door.TemplateId);
+        Assert.Equal("items.door", door.ScriptId);
+        Assert.Equal(0x677, door.ItemId);
+    }
+
+    [Fact]
+    public void Place_AnUndeclaredType_IsStillPlainDecoration()
+    {
+        var (service, spatial) = Build(
+            [new DecorationGroup { Type = "LibraryBookcase", ItemId = 0xA9C, At = [[10, 10, 0]] }],
+            templates: TemplatesWithDoor()
+        );
+
+        service.Place();
+
+        Assert.Equal(
+            DecorationPlacementService.TemplateId,
+            Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0)).TemplateId
+        );
+    }
+
+    // A door that does not open is worse than furniture, but a hole in the world is worse than both.
+    [Fact]
+    public void Place_ADoorWhoseTemplateIsNotRegistered_FallsBackToDecoration()
+    {
+        var (service, spatial) = Build([new DecorationGroup { Type = "MetalDoor", ItemId = 0x677, At = [[10, 10, 0]] }]);
+
+        Assert.Equal(1, service.Place().Placed);
+        Assert.Equal(
+            DecorationPlacementService.TemplateId,
+            Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0)).TemplateId
+        );
+    }
+
+    private static ItemTemplateService TemplatesWithDoor()
+    {
+        var templates = new ItemTemplateService();
+
+        templates.Register(
+            new ItemTemplate
+            {
+                Id = "metal_door", Name = "", Category = "Structure", ItemId = 0x675, ScriptId = "items.door"
+            }
+        );
+
+        return templates;
+    }
+
     private static (DecorationPlacementService Service, SpatialIndexService Spatial) Build(
         IEnumerable<DecorationGroup> groups,
         bool registerTemplate = true,
