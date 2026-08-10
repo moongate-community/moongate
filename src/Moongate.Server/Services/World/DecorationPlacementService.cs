@@ -57,10 +57,9 @@ public sealed class DecorationPlacementService
                 continue;
             }
 
-            var item = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)placement.Hue))
-                               .FirstOrDefault();
+            var created = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)placement.Hue));
 
-            if (item is null)
+            if (created.Count == 0)
             {
                 // The template is missing, which means every placement will fail the same way.
                 _logger.Error("Template {Template} is not registered; no decoration can be placed", TemplateId);
@@ -69,6 +68,8 @@ public sealed class DecorationPlacementService
             }
 
             // The instance carries its own appearance: one template, 2381 graphics.
+            var item = created[0];
+
             item.ItemId = placement.ItemId;
             _items.MoveToWorld(item, placement.MapId, placement.Point);
             placed++;

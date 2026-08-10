@@ -240,6 +240,7 @@ await ConsoleApp.RunAsync(
                 container.RegisterStdService<MovementQueueService, MovementQueueService>();
                 container.Register<ISpatialIndexService, SpatialIndexService>(Reuse.Singleton);
                 container.Register<IOplService, OplService>(Reuse.Singleton);
+                container.Register<DecorationPlacementService>(Reuse.Singleton);
 
                 container.Register<TimerAutostartService>(Reuse.Singleton);
 
