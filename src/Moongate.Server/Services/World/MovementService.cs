@@ -16,7 +16,6 @@ using Moongate.Server.Abstractions.Data.Config;
 using Moongate.UO.Data.Types;
 using SquidStd.Core.Interfaces.Events;
 using SquidStd.Persistence.Abstractions.Interfaces.Persistence;
-
 namespace Moongate.Server.Services.World;
 
 /// <summary>
@@ -255,6 +254,7 @@ public sealed class MovementService : IMovementService
 
         if (!decision.Accepted)
         {
+
             // Any rejection forces a resync: the next packet's sequence is accepted unconditionally,
             // matching how a real UO client resets its counter after a rejected move.
             session.SetLastMove(null, session.LastMoveAt);
@@ -317,6 +317,7 @@ public sealed class MovementService : IMovementService
 
         if (!decision.Accepted)
         {
+
             return false;
         }
 

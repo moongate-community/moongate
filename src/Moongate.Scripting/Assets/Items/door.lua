@@ -87,7 +87,7 @@ local function swing(serial, item_id, x, y, z, state)
 
     -- A door left open is a door somebody forgot. Closing it costs one timer and no bookkeeping:
     -- the graphic is the state, so the callback re-reads it rather than trusting what it saw now.
-    game.schedule(CLOSE_AFTER_MS, function()
+    game.schedule("door_close_" .. serial, CLOSE_AFTER_MS, function()
         local now = item.get(serial)
 
         if now == nil then

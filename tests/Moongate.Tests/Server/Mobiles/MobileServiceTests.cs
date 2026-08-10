@@ -1,4 +1,5 @@
 using Moongate.Core.Extensions;
+using Moongate.Network.Packets.Outgoing;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Entities;
 using Moongate.Server.Abstractions.Data.Events;
@@ -25,6 +26,16 @@ public class MobileServiceTests
         Assert.Single(moves);
     }
 
+    // An NPC has no client, and a teleport that assumed one would throw on every spawner placement.
+    [Fact]
+    public void Teleport_AMobileWithNoSession_IsStillMoved()
+    {
+        var (service, persistence, _) = Build(out var mobile, out _);
+
+        Assert.True(service.Teleport(mobile.Id, 10, 20, 5));
+        Assert.Equal(new(10, 20, 5), persistence.Store<MobileEntity>().GetById(mobile.Id)!.Position);
+    }
+
     // The guard MobileModule already had, and the reason this is not a blind write.
     [Fact]
     public void Teleport_ToWhereItAlreadyIs_AnnouncesNothing()
@@ -48,6 +59,12 @@ public class MobileServiceTests
     private static (MobileService Service, FakePersistenceService Persistence, List<MobileMovedEvent> Moves) Build(
         out MobileEntity mobile
     )
+        => Build(out mobile, out _);
+
+    private static (MobileService Service, FakePersistenceService Persistence, List<MobileMovedEvent> Moves) Build(
+        out MobileEntity mobile,
+        out StubSessionManager sessions
+    )
     {
         var persistence = new FakePersistenceService();
         var events = new EventBusService();
@@ -67,6 +84,8 @@ public class MobileServiceTests
 
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), events);
 
-        return (new(persistence, spatial, events), persistence, moves);
+        sessions = new();
+
+        return (new(persistence, spatial, events, sessions), persistence, moves);
     }
 }

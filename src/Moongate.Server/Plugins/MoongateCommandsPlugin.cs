@@ -31,6 +31,13 @@ public class MoongateCommandsPlugin : ISquidStdPlugin
             CommandSourceType.InGame | CommandSourceType.Console | CommandSourceType.Rest
         );
 
+        // In-game only: a console has nobody to move.
+        container.RegisterCommand<GoCommand>(
+            "go",
+            AccountLevelType.GrandMaster,
+            "Moves you to x y [z] on your current map."
+        );
+
         // In-game only: a console has no target cursor to raise.
         container.RegisterCommand<WhereCommand>(
             "where",

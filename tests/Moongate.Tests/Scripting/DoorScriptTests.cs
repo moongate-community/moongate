@@ -232,7 +232,7 @@ public class DoorScriptTests
 
             var game = new Table(_script)
             {
-                ["schedule"] = (Func<double, DynValue, string>)((delayMs, _) =>
+                ["schedule"] = (Func<string, double, DynValue, string>)((_, delayMs, _) =>
                 {
                     ScheduledAfterMs = (int)delayMs;
 
