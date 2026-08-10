@@ -4,6 +4,7 @@ using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
 using Moongate.UO.Data.Signs;
+using Moongate.UO.Data.World;
 using Serilog;
 
 namespace Moongate.Server.Services.World;
@@ -59,21 +60,24 @@ public sealed class DecorationPlacementService
         var placed = 0;
         var skipped = 0;
 
-        foreach (var (mapId, point, itemId, hue, nameCliloc, name) in Everything())
+        foreach (var placement in Everything())
         {
-            if (AlreadyThere(mapId, point, itemId))
+            if (AlreadyThere(placement.MapId, placement.Point, placement.ItemId))
             {
                 skipped++;
 
                 continue;
             }
 
-            var created = _factory.CreateFromTemplate(TemplateId, 1, 1, new Hue((ushort)hue));
+            var created = _factory.CreateFromTemplate(placement.TemplateId, 1, 1, new Hue((ushort)placement.Hue));
 
             if (created.Count == 0)
             {
                 // The template is missing, which means every placement will fail the same way.
-                _logger.Error("Template {Template} is not registered; no decoration can be placed", TemplateId);
+                _logger.Error(
+                    "Template {Template} is not registered; no decoration can be placed",
+                    placement.TemplateId
+                );
 
                 break;
             }
@@ -81,10 +85,10 @@ public sealed class DecorationPlacementService
             // The instance carries its own appearance: one template, 2381 graphics.
             var item = created[0];
 
-            item.ItemId = itemId;
-            item.NameCliloc = nameCliloc;
-            item.Name = name;
-            _items.MoveToWorld(item, mapId, point);
+            item.ItemId = placement.ItemId;
+            item.NameCliloc = placement.NameCliloc;
+            item.Name = placement.Name;
+            _items.MoveToWorld(item, placement.MapId, placement.Point);
             placed++;
         }
 
@@ -103,18 +107,26 @@ public sealed class DecorationPlacementService
     /// cannot both be true of one object.
     /// </para>
     /// </summary>
-    private IEnumerable<(int MapId, Point3D Point, int ItemId, int Hue, int NameCliloc, string Name)> Everything()
+    private IEnumerable<WorldPlacement> Everything()
     {
         foreach (var placement in _decorations.All)
         {
-            yield return (placement.MapId, placement.Point, placement.ItemId, placement.Hue, 0, string.Empty);
+            yield return new(placement.MapId, placement.Point, placement.ItemId, placement.Hue, 0, "", TemplateId);
         }
 
         foreach (var sign in _signs.All)
         {
             var (cliloc, text) = SignLabel.Split(sign.Label);
 
-            yield return ((int)sign.Map, new(sign.X, sign.Y, sign.Z), sign.ItemId, 0, cliloc, text);
+            yield return new(
+                (int)sign.Map,
+                new(sign.X, sign.Y, sign.Z),
+                sign.ItemId,
+                0,
+                cliloc,
+                text,
+                TemplateId
+            );
         }
     }
 
