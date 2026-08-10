@@ -1,0 +1,11 @@
+-   Id: world_decoration
+    Name: ""
+    Category: World
+    Description: Scenery placed by world decoration. One template for every appearance -- each instance carries its own graphic and hue.
+    ItemId: 1
+    Hue: 0
+    GoldValue: 0
+    IsMovable: false
+    Rarity: Common
+    Tags:
+        - decoration
