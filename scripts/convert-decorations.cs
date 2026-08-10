@@ -140,15 +140,15 @@ foreach (var mapDirectory in Directory.GetDirectories(sourceRoot).OrderBy(d => d
 
     foreach (var group in groups)
     {
-        yaml.AppendLine($"- type: {group.Type}");
-        yaml.AppendLine($"  itemId: {group.ItemId}");
+        yaml.AppendLine($"- Type: {group.Type}");
+        yaml.AppendLine($"  ItemId: {group.ItemId}");
 
         if (group.Hue != 0)
         {
-            yaml.AppendLine($"  hue: {group.Hue}");
+            yaml.AppendLine($"  Hue: {group.Hue}");
         }
 
-        yaml.AppendLine("  at:");
+        yaml.AppendLine("  At:");
 
         foreach (var (x, y, z) in group.Points)
         {
