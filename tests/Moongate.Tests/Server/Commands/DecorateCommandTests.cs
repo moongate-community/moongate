@@ -8,6 +8,8 @@ using Moongate.Server.Services.World;
 using Moongate.Tests.Support;
 using Moongate.UO.Data.Hues;
 using Moongate.UO.Data.Items;
+using Moongate.UO.Data.Signs;
+using Moongate.UO.Data.Types;
 using Moongate.UO.Data.World;
 
 namespace Moongate.Tests.Server.Commands;
@@ -109,9 +111,46 @@ public class DecorateCommandTests
     private static CommandContext Context(List<string> replies)
         => new(CommandSourceType.Console, null, [], replies.Add);
 
+    [Fact]
+    public void Execute_AnnouncesDecorationAndSignsTogether()
+    {
+        var (command, _) = Build(
+            [new DecorationGroup { ItemId = 100, At = [[1, 1, 0]] }],
+            signs:
+            [
+                new SignEntry { Map = MapType.Felucca, ItemId = 3032, X = 5, Y = 5, Z = 0, Label = "#1016093" }
+            ]
+        );
+        var replies = new List<string>();
+
+        command.Execute(Context(replies));
+
+        Assert.Equal("Placing 2 catalogued decoration object(s). The world pauses while it runs.", replies[0]);
+    }
+
+    // Signs alone are still something to place: a shard whose decoration is already down would
+    // otherwise be told there was nothing to do.
+    [Fact]
+    public void Execute_NoDecorationButSomeSigns_DoesNotSayThereIsNothingToPlace()
+    {
+        var (command, _) = Build(
+            [],
+            signs:
+            [
+                new SignEntry { Map = MapType.Felucca, ItemId = 3032, X = 5, Y = 5, Z = 0, Label = "#1016093" }
+            ]
+        );
+        var replies = new List<string>();
+
+        command.Execute(Context(replies));
+
+        Assert.DoesNotContain("Nothing to place", replies[0]);
+    }
+
     private static (DecorateCommand Command, SpatialIndexService Spatial) Build(
         IEnumerable<DecorationGroup> groups,
-        bool factoryReturnsNothing = false
+        bool factoryReturnsNothing = false,
+        IEnumerable<SignEntry>? signs = null
     )
     {
         var persistence = new FakePersistenceService();
@@ -133,8 +172,15 @@ public class DecorateCommandTests
                                           ? new BarrenItemFactory()
                                           : new ItemFactoryService(templates, new(1));
 
+        var signService = new SignService();
+
+        foreach (var sign in signs ?? [])
+        {
+            signService.Register(sign);
+        }
+
         return (
-            new(catalog, new(catalog, factory, items, spatial, templates, new SignService())),
+            new(catalog, new(catalog, factory, items, spatial, templates, signService), signService),
             spatial
         );
     }
