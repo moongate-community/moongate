@@ -1,6 +1,6 @@
 <div class="mg-stats">
-  <div class="mg-stat"><div class="mg-stat-num">61</div><div class="mg-stat-label">implemented packets</div></div>
-  <div class="mg-stat"><div class="mg-stat-num mg-grass">21</div><div class="mg-stat-label">incoming (client → server)</div></div>
+  <div class="mg-stat"><div class="mg-stat-num">62</div><div class="mg-stat-label">implemented packets</div></div>
+  <div class="mg-stat"><div class="mg-stat-num mg-grass">22</div><div class="mg-stat-label">incoming (client → server)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-violet">40</div><div class="mg-stat-label">outgoing (server → client)</div></div>
   <div class="mg-stat"><div class="mg-stat-num mg-stone">7.x</div><div class="mg-stat-label">client target</div></div>
 </div>
@@ -13,6 +13,7 @@
 | [`0x08`](../incoming/0x08-drop-item.md) | Drop Item | C → S | 15 bytes (fixed) | Where the client wants to put the item it is holding. |
 | [`0x09`](../incoming/0x09-single-click.md) | Single Click | C → S | 5 bytes (fixed) | The client clicked an entity, identified by its serial. |
 | [`0x11`](../outgoing/0x11-status-bar-info.md) | Status Bar Info | S → C | Variable | The player's own status window. |
+| [`0x13`](../incoming/0x13-drop-wear-item.md) | Drop Wear Item | C → S | 10 bytes (fixed) | The client dropped what it was holding onto a paperdoll. |
 | [`0x1B`](../outgoing/0x1b-login-confirm.md) | Login Confirm | S → C | 37 bytes (fixed) | The first packet of the enter-world burst. |
 | [`0x1D`](../outgoing/0x1d-delete-object.md) | Delete Object | S → C | 5 bytes (fixed) | The entity is gone — stop drawing it. |
 | [`0x20`](../outgoing/0x20-draw-game-player.md) | Draw Game Player | S → C | 19 bytes (fixed) | Positions and renders the player's own mobile. |
