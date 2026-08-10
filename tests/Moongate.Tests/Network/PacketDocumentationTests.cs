@@ -24,7 +24,7 @@ public class PacketDocumentationTests
 
     [Fact]
     public void AllPacketTypes_AreDiscovered()
-        => Assert.Equal(61, PacketTypes.Count);
+        => Assert.Equal(62, PacketTypes.Count);
 
     [Theory, MemberData(nameof(Packets))]
     public void DeclaredSize_MatchesThePacketLengthsTable(Type packetType)

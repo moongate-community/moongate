@@ -6,6 +6,7 @@ World items, worn items, container gumps, contents and lift rejects.
 |---|---|---|---|---|
 | [`0x07`](../incoming/0x07-pick-up-item.md) | Pick Up Item | C → S | 7 bytes (fixed) | The client asks to lift an item onto its cursor. |
 | [`0x08`](../incoming/0x08-drop-item.md) | Drop Item | C → S | 15 bytes (fixed) | Where the client wants to put the item it is holding. |
+| [`0x13`](../incoming/0x13-drop-wear-item.md) | Drop Wear Item | C → S | 10 bytes (fixed) | The client dropped what it was holding onto a paperdoll. |
 | [`0x24`](../outgoing/0x24-draw-container.md) | Draw Container | S → C | 7 bytes (fixed) | Opens the container's gump on the client. |
 | [`0x25`](../outgoing/0x25-add-item-to-container.md) | Add Item To Container | S → C | 21 bytes (fixed) | Drops one item into an already-open container gump. |
 | [`0x27`](../outgoing/0x27-lift-reject.md) | Lift Reject | S → C | 2 bytes (fixed) | The lift the client asked for is refused, and why. |

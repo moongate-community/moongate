@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces;
 using Moongate.Core.Primitives;
+using Moongate.Ultima.Types;
 using Moongate.Network.Packets.Outgoing;
 using Moongate.Network.Types;
 using Moongate.Persistence.Entities;
@@ -283,6 +284,44 @@ public sealed class DragDropService : IDragDropService
     private static bool IsUnpositioned(Point2D position)
         => position.X == NoGumpPosition || position.Y == NoGumpPosition || position.X < 0 || position.Y < 0;
 
+    /// <summary>
+    /// Whether the held item may be worn, and nothing else — no I/O, no session, no persistence.
+    /// <para>
+    /// The layer comes from <paramref name="template" />, which the tiledata resolver filled from the
+    /// item's own graphic at load. The client's layer byte is not consulted: POL validates it and then
+    /// assigns the item's own tile layer over the top (eqpitem.cpp), because taking the request's word
+    /// for it would let a client wear a dagger as a pair of boots.
+    /// </para>
+    /// </summary>
+    public static WearDecision EvaluateWear(
+        MobileEntity actor,
+        ItemEntity? held,
+        Serial heldItemId,
+        Serial targetMobileId,
+        ItemTemplate? template
+    )
+    {
+        // The held serial is the authority, exactly as it is on a drop: a packet naming anything else
+        // is a desynced or hostile client.
+        if (held is null || held.Id != heldItemId)
+        {
+            return new(false, LayerType.None);
+        }
+
+        // Dressing someone else is POL's can_clothe, which has no equivalent here yet.
+        if (targetMobileId != actor.Id)
+        {
+            return new(false, LayerType.None);
+        }
+
+        if (template?.Equip is not { Layer: var layer } || layer == LayerType.None)
+        {
+            return new(false, LayerType.None);
+        }
+
+        return actor.EquippedItemIds.ContainsKey(layer) ? new(false, layer) : new(true, layer);
+    }
+
     private static AddItemToContainerPacket ContainerPacket(ItemEntity item, Serial containerId, Point2D position)
         => new(item.Id, (ushort)item.ItemId, (ushort)item.Amount, position, containerId, item.Hue);
 
@@ -385,6 +424,33 @@ public sealed class DragDropService : IDragDropService
         }
 
         _eventBus?.Publish(new ItemDroppedEvent(stack.Id, actor.Id, stack.ParentContainerId));
+
+        return new(true, LiftRejectReasonType.Inspecific);
+    }
+
+    public LiftDecision Wear(MobileEntity actor, Serial heldItemId, Serial targetMobileId)
+    {
+        _loopAffinity?.AssertOnLoop("drag_drop.wear");
+
+        var held = heldItemId == Serial.Zero ? null : _items.GetById(heldItemId);
+        var template = held is null ? null : _templates.GetById(held.TemplateId);
+        var decision = EvaluateWear(actor, held, heldItemId, targetMobileId, template);
+
+        if (!decision.Accepted || held is null)
+        {
+            return new(false, LiftRejectReasonType.Inspecific);
+        }
+
+        // Equip raises ItemEquippedEvent itself, so nothing is published here. What it does not do is
+        // tell anyone looking: no subscriber turns that event into a WornItemPacket, so without this
+        // the item would be worn and invisible, to the wearer as much as to everyone else.
+        _items.Equip(actor, held, decision.Layer);
+        _world.SendToPlayersInRange(
+            actor.MapId,
+            actor.Position,
+            PlayerSession.MaxViewRange,
+            new WornItemPacket(held.Id, (ushort)held.ItemId, decision.Layer, actor.Id, held.Hue)
+        );
 
         return new(true, LiftRejectReasonType.Inspecific);
     }
