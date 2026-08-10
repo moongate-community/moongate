@@ -63,6 +63,22 @@ public sealed class DecorateCommand : ICommand
 
         var (placed, skipped) = _placement.Place();
 
+        // Neither placed nor already there, out of a catalogue that holds objects: whatever went wrong,
+        // reporting it as "done" would read exactly like an idempotent second run. That is how the
+        // missing-template failure presented on a real shard -- the reason was in the server log and
+        // the operator was told the job had finished.
+        if (placed == 0 && skipped == 0)
+        {
+            context.Reply(
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"Placed nothing of {total} object(s), and none were already there. Check the server log."
+                )
+            );
+
+            return;
+        }
+
         context.Reply(
             string.Create(
                 CultureInfo.InvariantCulture,

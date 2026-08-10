@@ -98,6 +98,33 @@ The data loader found nothing at boot — check the startup log for
 `Loaded N decoration object(s) across 8 facet file(s)`. A zero there points at the YAML in
 `<root>/data/decorations/`, not at the command.
 
+### When it places nothing at all
+
+```text
+Placed nothing of 63528 object(s), and none were already there. Check the server log.
+```
+
+Distinct from `placed 0, skipped 63528`, which is a healthy second run. This one means placement could
+not build a single item, and the reason is in the server log.
+
+## The template on an existing shard
+
+`ItemTemplatesLoader` seeds `<root>/templates/items/` **only when that directory does not exist**.
+That is deliberate: once it exists it belongs to the operator, and the server never writes into a
+curated set. The consequence is that a template added after a shard's first boot never reaches it —
+`world_decoration.yaml` included.
+
+So decoration does not depend on it. If the registry has no `world_decoration` when `decorate` runs,
+the placement service registers its own built-in copy and says so:
+
+```text
+Registered the built-in world_decoration template: this shard's item templates do not ship one
+```
+
+A `world_decoration.yaml` that *is* present always wins — the built-in only fills a gap. To customise
+the template on an existing shard, copy it out of the embedded assets into
+`<root>/templates/items/base/` and edit it there.
+
 ## What is not placed
 
 The corpus declares **283 named types** — `Teleporter`, `MetalDoor`, `LibraryBookcase` and the rest.

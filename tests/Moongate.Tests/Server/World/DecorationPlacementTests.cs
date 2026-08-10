@@ -56,6 +56,47 @@ public class DecorationPlacementTests
         Assert.Equal(2, items.GetItemsInRange(1, new(10, 10, 0), 5).Count);
     }
 
+    /// <summary>
+    /// A shard whose <c>templates/items/</c> already existed never received <c>world_decoration.yaml</c>
+    /// — the loader seeds that directory only when it is absent, deliberately, so an operator's
+    /// curated set is left alone. Decoration must not be hostage to that: its template is an
+    /// implementation detail of this service, not content anyone curates, so the service supplies its
+    /// own when the registry has none. A shipped YAML still wins where one exists.
+    /// </summary>
+    [Fact]
+    public void Place_WhenTheTemplateIsNotRegistered_UsesItsOwnAndStillPlaces()
+    {
+        var (service, spatial) = Build(
+            [new DecorationGroup { ItemId = 100, Hue = 7, At = [[10, 10, 0]] }],
+            registerTemplate: false
+        );
+
+        var (placed, _) = service.Place();
+
+        Assert.Equal(1, placed);
+        var item = Assert.Single(spatial.GetItemsInRange(1, new(10, 10, 0), 0));
+        Assert.Equal(100, item.ItemId);
+        Assert.Equal(7, item.Hue.Value);
+    }
+
+    // The operator's YAML is authoritative where it exists: the built-in is a fallback, not an override.
+    [Fact]
+    public void Place_WhenTheTemplateIsRegistered_DoesNotReplaceIt()
+    {
+        var templates = new ItemTemplateService();
+        templates.Register(
+            new ItemTemplate
+            {
+                Id = DecorationPlacementService.TemplateId, Name = "Operator override", Category = "World", ItemId = 1
+            }
+        );
+        var (service, _) = Build([new DecorationGroup { ItemId = 100, At = [[10, 10, 0]] }], templates: templates);
+
+        service.Place();
+
+        Assert.Equal("Operator override", templates.GetById(DecorationPlacementService.TemplateId)!.Name);
+    }
+
     // A different graphic on the same tile is a different object -- statics stack.
     [Fact]
     public void Place_ADifferentGraphicOnTheSameTile_IsStillPlaced()
@@ -71,7 +112,9 @@ public class DecorationPlacementTests
     }
 
     private static (DecorationPlacementService Service, SpatialIndexService Spatial) Build(
-        IEnumerable<DecorationGroup> groups
+        IEnumerable<DecorationGroup> groups,
+        bool registerTemplate = true,
+        ItemTemplateService? templates = null
     )
     {
         var persistence = new FakePersistenceService();
@@ -79,19 +122,23 @@ public class DecorationPlacementTests
         var spatial = new SpatialIndexService(persistence, new StubLoopAffinity(), events);
         var itemService = new ItemService(persistence, spatial: spatial);
 
-        var templates = new ItemTemplateService();
-        templates.Register(
-            new ItemTemplate
-            {
-                Id = DecorationPlacementService.TemplateId, Name = "", Category = "World", ItemId = 1
-            }
-        );
+        templates ??= new ItemTemplateService();
+
+        if (registerTemplate && templates.GetById(DecorationPlacementService.TemplateId) is null)
+        {
+            templates.Register(
+                new ItemTemplate
+                {
+                    Id = DecorationPlacementService.TemplateId, Name = "", Category = "World", ItemId = 1
+                }
+            );
+        }
 
         var catalog = new DecorationCatalog();
         catalog.Add(1, groups);
 
         return (
-            new(catalog, new ItemFactoryService(templates, new(1)), itemService, spatial),
+            new(catalog, new ItemFactoryService(templates, new(1)), itemService, spatial, templates),
             spatial
         );
     }

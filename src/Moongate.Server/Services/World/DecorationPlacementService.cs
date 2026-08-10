@@ -1,6 +1,7 @@
 using Moongate.Server.Abstractions.Interfaces.Items;
 using Moongate.Server.Abstractions.Interfaces.World;
 using Moongate.UO.Data.Hues;
+using Moongate.UO.Data.Items;
 using Serilog;
 
 namespace Moongate.Server.Services.World;
@@ -24,18 +25,21 @@ public sealed class DecorationPlacementService
     private readonly IItemFactoryService _factory;
     private readonly IItemService _items;
     private readonly ISpatialIndexService _spatial;
+    private readonly IItemTemplateService _templates;
 
     public DecorationPlacementService(
         IDecorationCatalog decorations,
         IItemFactoryService factory,
         IItemService items,
-        ISpatialIndexService spatial
+        ISpatialIndexService spatial,
+        IItemTemplateService templates
     )
     {
         _decorations = decorations;
         _factory = factory;
         _items = items;
         _spatial = spatial;
+        _templates = templates;
     }
 
     /// <summary>
@@ -45,6 +49,8 @@ public sealed class DecorationPlacementService
     /// </summary>
     public (int Placed, int Skipped) Place()
     {
+        EnsureTemplate();
+
         var placed = 0;
         var skipped = 0;
 
@@ -83,4 +89,45 @@ public sealed class DecorationPlacementService
     private bool AlreadyThere(int mapId, Moongate.Core.Geometry.Point3D point, int itemId)
         => _spatial.GetItemsInRange(mapId, point, 0)
                    .Any(item => item.ItemId == itemId && item.Position == point);
+
+    /// <summary>
+    /// Registers the decoration template when the registry has none.
+    /// <para>
+    /// It ships as YAML under Assets, but a shard whose <c>templates/items/</c> directory already
+    /// existed never received it: <see cref="Loaders.ItemTemplatesLoader" /> seeds that directory only
+    /// when it is absent, on purpose, so an operator's curated template set is never written into.
+    /// That contract is right and stays — but it means every template added after a shard's first boot
+    /// is invisible to it, and decoration would be dead on every existing shard.
+    /// </para>
+    /// <para>
+    /// So the template is treated as what it is: an implementation detail of this service rather than
+    /// content anyone curates. A YAML that is present wins, because this only fills a gap.
+    /// </para>
+    /// </summary>
+    private void EnsureTemplate()
+    {
+        if (_templates.GetById(TemplateId) is not null)
+        {
+            return;
+        }
+
+        _templates.Register(
+            new ItemTemplate
+            {
+                Id = TemplateId,
+                Name = "",
+                Category = "World",
+                Description = "Scenery placed by world decoration. One template for every appearance -- " +
+                              "each instance carries its own graphic and hue.",
+                ItemId = 1,
+                IsMovable = false,
+                Tags = ["decoration"]
+            }
+        );
+
+        _logger.Information(
+            "Registered the built-in {Template} template: this shard's item templates do not ship one",
+            TemplateId
+        );
+    }
 }
