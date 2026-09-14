@@ -1,10 +1,13 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:10.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/runtime-deps:10.0 AS base
 USER $APP_UID
 WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
+COPY ["Directory.Build.props", "./"]
+COPY ["src/Moongate.Core/Moongate.Core.csproj", "src/Moongate.Core/"]
+COPY ["src/Moongate.Server.Core/Moongate.Server.Core.csproj", "src/Moongate.Server.Core/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
 COPY . .
@@ -13,9 +16,9 @@ RUN dotnet build "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/buil
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Moongate.Server.dll"]
+ENTRYPOINT ["./Moongate.Server"]

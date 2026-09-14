@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
+    <ProjectReference Include="..\..\src\Moongate.Server.Core\Moongate.Server.Core.csproj" />
     <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj" />
   </ItemGroup>
 

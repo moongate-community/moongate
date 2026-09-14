@@ -1,4 +1,4 @@
-namespace Moongate.Server.Core.Interfaces;
+namespace Moongate.Server.Core.Interfaces.Bootstrap;
 
 public interface IMoongateServerBootstrap
 {

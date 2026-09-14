@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Server.Core.Interfaces;
+using Moongate.Server.Core.Interfaces.Bootstrap;
 using Serilog;
 
 namespace Moongate.Server.Bootstrap;
@@ -28,13 +29,22 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _logger.Information("Moongate Server is stopping...");
 
         await Log.CloseAndFlushAsync();
+
+        _container.Dispose();
     }
 
     public async Task RunAsync()
     {
-        while (!_cancellationToken.IsCancellationRequested)
+        try
         {
-            await Task.Delay(100, _cancellationToken);
+            while (!_cancellationToken.IsCancellationRequested)
+            {
+                await Task.Delay(100, _cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.Debug("Moongate Server is shutting down due to cancellation request.");
         }
     }
 }
