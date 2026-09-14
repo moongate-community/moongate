@@ -3,10 +3,12 @@ using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Extensions;
-using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Persistence;
 using Moongate.Tests.Support.Server;
+using Moongate.Tests.Support.Server.Interfaces;
 
 namespace Moongate.Tests.Server.Bootstrap;
 
@@ -137,16 +139,22 @@ public class MoongateServerBootstrapTests
     }
 
     [Fact]
-    public async Task RunAsync_CancellationDuringMainRun_StopsStartedServices()
+    public async Task RunAsync_CancellationAfterMainRunBegins_StopsStartedServices()
     {
         using var cancellation = new CancellationTokenSource();
         var events = new List<string>();
-        var service = new RecordingStartupService("service", events, cancellation.Cancel);
+        var service = new RecordingStartupService("service", events);
         var container = new Container();
         container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
 
-        await MoongateServerRunner.RunAsync(bootstrap);
+        var runTask = MoongateServerRunner.RunAsync(bootstrap);
+
+        Assert.False(runTask.IsCompleted);
+        Assert.Equal(["start:service"], events);
+
+        cancellation.Cancel();
+        await runTask;
 
         Assert.Equal(["start:service", "stop:service"], events);
     }

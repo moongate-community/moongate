@@ -4,9 +4,10 @@ using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Data.Args;
-using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Persistence.Internal;
 using Serilog;
 
 await ConsoleApp.RunAsync(

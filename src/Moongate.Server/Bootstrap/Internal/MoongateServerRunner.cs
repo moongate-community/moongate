@@ -2,7 +2,7 @@ using System.Runtime.ExceptionServices;
 
 using Moongate.Server.Core.Interfaces.Bootstrap;
 
-namespace Moongate.Server.Bootstrap;
+namespace Moongate.Server.Bootstrap.Internal;
 
 internal static class MoongateServerRunner
 {

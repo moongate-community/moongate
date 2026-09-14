@@ -1,6 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Services;
-using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Persistence;
 
 namespace Moongate.Tests.Integration.Persistence;

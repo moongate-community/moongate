@@ -1,7 +1,7 @@
 using Moongate.Persistence.Services;
 using Moongate.Server.Core.Interfaces.Services;
 
-namespace Moongate.Server.Services.Persistence;
+namespace Moongate.Server.Services.Persistence.Internal;
 
 internal sealed class MoongatePersistenceStartupService : IMoongateStartupService
 {
