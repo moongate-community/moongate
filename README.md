@@ -16,6 +16,49 @@ dotnet build Moongate.slnx
 dotnet test Moongate.slnx
 ```
 
+## Standalone packet library
+
+`Moongate.Network.Packets` provides complete-buffer parsing and encoding for the
+ClassicUO 7.x initial login flow. The first slice supports Ping, login seed,
+account login, login denial, server list, server selection, server redirect,
+game login, login complete, and the separate client-version request and response
+types. Client-version responses may contain no terminator or one trailing NUL;
+embedded NUL bytes and mismatched length headers are rejected.
+
+```csharp
+using System;
+
+using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Serialization;
+
+if (PacketCodec.TryDecode<PingPacket>([0x73, 0x2A], out var ping))
+{
+    Console.WriteLine($"Ping sequence: {ping.Sequence}");
+}
+
+var acknowledgement = PacketCodec.Encode(new PingPacket(0x2A));
+var loginDenied = PacketCodec.Encode(new LoginDeniedPacket(0x04));
+
+ReadOnlySpan<byte> malformed = [0x73];
+if (!PacketCodec.TryDecode<PingPacket>(malformed, out _))
+{
+    Console.WriteLine("The complete packet buffer is malformed.");
+}
+```
+
+Parsing accepts exactly one complete packet, including its opcode and any length
+header. It does not frame TCP streams. The packet assembly's only direct
+production dependency is `Moongate.Core`; Core still brings its existing
+transitive packages. No Moongate server, socket, dependency container, Ultima
+Online installation, or asset files are needed.
+
+Run the packet tests independently:
+
+```bash
+dotnet test tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj
+```
+
 ## Publish server
 
 Publish a self-contained executable for Linux x64:
