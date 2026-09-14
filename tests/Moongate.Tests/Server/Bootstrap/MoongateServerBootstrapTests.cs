@@ -5,6 +5,7 @@ using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Persistence;
 using Moongate.Tests.Support.Server;
@@ -14,6 +15,20 @@ namespace Moongate.Tests.Server.Bootstrap;
 
 public class MoongateServerBootstrapTests
 {
+    [Fact]
+    public async Task Constructor_NoPluginsOrServices_EnsuresSharedEventBus()
+    {
+        var container = new Container();
+        Assert.False(container.IsRegistered<IMoongateEventBus>());
+
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        Assert.True(container.IsRegistered<IMoongateEventBus>());
+        Assert.Same(container.Resolve<IMoongateEventBus>(), container.Resolve<IMoongateEventBus>());
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+    }
+
     [Fact]
     public async Task StartAndStopAsync_AutostartMetadata_OrdersServicesAndDeduplicatesAliases()
     {
