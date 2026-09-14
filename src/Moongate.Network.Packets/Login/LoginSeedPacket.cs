@@ -1,18 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class LoginSeedPacket : IIncomingPacket<LoginSeedPacket>
+[PacketHandler(0xEF, PacketSizing.Fixed, Length = 21)]
+public sealed class LoginSeedPacket : BaseFixedPacket<LoginSeedPacket>, IIncomingPacket<LoginSeedPacket>
 {
-    private const byte PacketOpCode = 0xEF;
-    private const int PacketLength = 21;
-
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
     public uint Seed { get; }
     public uint Major { get; }
     public uint Minor { get; }
@@ -31,7 +29,7 @@ public sealed class LoginSeedPacket : IIncomingPacket<LoginSeedPacket>
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out LoginSeedPacket? packet)
     {
         packet = null;
-        if (!PacketValidation.HasFixedHeader(data, PacketOpCode, PacketLength))
+        if (!HasValidHeader(data))
         {
             return false;
         }

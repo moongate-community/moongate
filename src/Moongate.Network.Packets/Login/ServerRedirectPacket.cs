@@ -1,19 +1,19 @@
 using System.Net;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class ServerRedirectPacket : IOutgoingPacket
+[PacketHandler(0x8C, PacketSizing.Fixed, Length = 11)]
+public sealed class ServerRedirectPacket : BaseFixedPacket<ServerRedirectPacket>, IOutgoingPacket
 {
-    private const byte PacketOpCode = 0x8C;
-    private const int PacketLength = 11;
     private readonly byte[] _addressBytes;
 
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
     public IPAddress Address => new(_addressBytes);
     public ushort Port { get; }
     public uint AuthKey { get; }

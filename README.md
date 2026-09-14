@@ -25,6 +25,61 @@ game login, login complete, and the separate client-version request and response
 types. Client-version responses may contain no terminator or one trailing NUL;
 embedded NUL bytes and mismatched length headers are rejected.
 
+Packet classes declare their opcode and fixed or variable sizing with
+`PacketHandlerAttribute` and inherit a common packet base. Direction is inferred
+from the packet interfaces. Metadata for each explicitly known type is read once
+at type initialization, possibly on first use, and cached for subsequent
+operations. The handwritten `PacketTable` registers packet types directly, with
+no source generation or assembly discovery. Add a built-in packet by giving it
+an attribute and adding one type registration to that table.
+
+`PacketDescriptor.FixedLength` describes fixed wire metadata. `IPacket.Length`
+is always the actual complete packet length, including for variable packets.
+The default registry is complete and frozen, supports direction-specific lookup,
+and can decode an incoming packet without the caller knowing its concrete type:
+
+```csharp
+using System;
+
+using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Registry;
+using Moongate.Network.Packets.Types.Packets;
+
+var registry = PacketRegistry.Default;
+
+registry.TryGetDescriptor(0xBD, PacketDirection.Incoming, out var responseDescriptor);
+registry.TryGetDescriptor(0xBD, PacketDirection.Outgoing, out var requestDescriptor);
+Console.WriteLine($"Response minimum: {responseDescriptor!.MinimumLength}");
+Console.WriteLine($"Request fixed: {requestDescriptor!.FixedLength}");
+
+if (registry.TryDecode([0x73, 0x2A], out var packet)
+    && packet is PingPacket ping)
+{
+    Console.WriteLine($"Ping sequence: {ping.Sequence}");
+}
+
+if (!registry.TryDecode([0xBD, 0x00, 0x04, 0x00], out var malformed))
+{
+    Console.WriteLine(malformed is null);
+}
+
+if (registry.TryDecode(Convert.FromHexString("BD000C372E302E3130392E30"), out packet)
+    && packet is ClientVersionPacket version)
+{
+    Console.WriteLine($"Actual variable packet length: {version.Length}");
+}
+
+var custom = new PacketRegistry();
+custom.RegisterIncoming<PingPacket>();
+custom.Freeze();
+```
+
+Configure a custom registry serially before calling `Freeze`; freezing is
+idempotent and enables concurrent lookup and decoding. `PacketTable.Register`
+configures an empty mutable registry, while `PacketTable.CreateRegistry` returns
+a fully configured frozen registry.
+
 ```csharp
 using System;
 

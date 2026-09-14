@@ -1,18 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.General;
 
-public sealed class PingPacket : IIncomingPacket<PingPacket>, IOutgoingPacket
+[PacketHandler(0x73, PacketSizing.Fixed, Length = 2)]
+public sealed class PingPacket : BaseFixedPacket<PingPacket>, IIncomingPacket<PingPacket>, IOutgoingPacket
 {
-    private const byte PacketOpCode = 0x73;
-    private const int PacketLength = 2;
-
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
     public byte Sequence { get; }
 
     public PingPacket(byte sequence)
@@ -23,7 +21,7 @@ public sealed class PingPacket : IIncomingPacket<PingPacket>, IOutgoingPacket
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out PingPacket? packet)
     {
         packet = null;
-        if (!PacketValidation.HasFixedHeader(data, PacketOpCode, PacketLength))
+        if (!HasValidHeader(data))
         {
             return false;
         }

@@ -1,19 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Internal;
+using Moongate.Network.Packets.Internal.Login;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class ClientVersionPacket : IIncomingPacket<ClientVersionPacket>
+[PacketHandler(0xBD, PacketSizing.Variable, MinimumLength = 4)]
+public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IIncomingPacket<ClientVersionPacket>
 {
-    private const byte PacketOpCode = 0xBD;
-    private const int HeaderLength = 3;
-    private const int MinimumPacketLength = 4;
-
-    public byte OpCode => PacketOpCode;
-    public int Length { get; }
+    public override int Length { get; }
     public string Version { get; }
 
     public ClientVersionPacket(string version)
@@ -41,12 +41,12 @@ public sealed class ClientVersionPacket : IIncomingPacket<ClientVersionPacket>
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ClientVersionPacket? packet)
     {
         packet = null;
-        if (!PacketValidation.HasVariableHeader(data, PacketOpCode, MinimumPacketLength))
+        if (!HasValidHeader(data))
         {
             return false;
         }
 
-        var payload = data[HeaderLength..];
+        var payload = data[LoginProtocolConstants.VariableHeaderLength..];
         var reader = new PacketReader(payload);
         var parsed = payload[^1] == 0
                          ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
@@ -63,6 +63,6 @@ public sealed class ClientVersionPacket : IIncomingPacket<ClientVersionPacket>
     private static int GetCanonicalLength(string version)
     {
         ArgumentNullException.ThrowIfNull(version);
-        return checked(HeaderLength + version.Length);
+        return checked(LoginProtocolConstants.VariableHeaderLength + version.Length);
     }
 }

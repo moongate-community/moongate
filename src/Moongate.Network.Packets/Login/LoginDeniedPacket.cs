@@ -1,15 +1,14 @@
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class LoginDeniedPacket : IOutgoingPacket
+[PacketHandler(0x82, PacketSizing.Fixed, Length = 2)]
+public sealed class LoginDeniedPacket : BaseFixedPacket<LoginDeniedPacket>, IOutgoingPacket
 {
-    private const byte PacketOpCode = 0x82;
-    private const int PacketLength = 2;
-
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
     public byte Reason { get; }
 
     public LoginDeniedPacket(byte reason)

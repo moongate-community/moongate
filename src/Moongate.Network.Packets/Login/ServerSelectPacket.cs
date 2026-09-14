@@ -1,18 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class ServerSelectPacket : IIncomingPacket<ServerSelectPacket>
+[PacketHandler(0xA0, PacketSizing.Fixed, Length = 3)]
+public sealed class ServerSelectPacket : BaseFixedPacket<ServerSelectPacket>, IIncomingPacket<ServerSelectPacket>
 {
-    private const byte PacketOpCode = 0xA0;
-    private const int PacketLength = 3;
-
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
     public ushort ServerIndex { get; }
 
     public ServerSelectPacket(ushort serverIndex)
@@ -23,7 +21,7 @@ public sealed class ServerSelectPacket : IIncomingPacket<ServerSelectPacket>
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ServerSelectPacket? packet)
     {
         packet = null;
-        if (!PacketValidation.HasFixedHeader(data, PacketOpCode, PacketLength))
+        if (!HasValidHeader(data))
         {
             return false;
         }
