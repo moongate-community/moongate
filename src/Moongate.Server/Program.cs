@@ -1,5 +1,6 @@
 ﻿using ConsoleAppFramework;
 using DryIoc;
+using Moongate.Core.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Server.Bootstrap;
@@ -17,6 +18,10 @@ await ConsoleApp.RunAsync(
 
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
+
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "saves"]);
+
+        container.RegisterInstance(directoriesConfig);
 
         var serverArgs = new MoongateServerArgs()
         {
