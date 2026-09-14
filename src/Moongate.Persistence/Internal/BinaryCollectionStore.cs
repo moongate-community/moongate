@@ -8,7 +8,7 @@ namespace Moongate.Persistence.Internal;
 internal sealed class BinaryCollectionStore : IAsyncDisposable
 {
     private readonly SemaphoreSlim _gate = new(1, 1);
-    private readonly object _closeSync = new();
+    private readonly Lock _closeSync = new();
     private readonly Dictionary<Serial, byte[]> _entries = new();
     private readonly BinaryCollectionFiles _files;
     private readonly long _checkpointThreshold;
@@ -28,9 +28,14 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(options);
         if (options.MaxPayloadBytes <= 0 || options.MaxPayloadBytes > Array.MaxLength)
+        {
             throw new ArgumentOutOfRangeException(nameof(options), "Payload limit must be positive and fit a byte array.");
+        }
+
         if (options.JournalCheckpointThresholdBytes <= 0)
+        {
             throw new ArgumentOutOfRangeException(nameof(options), "Checkpoint threshold must be positive.");
+        }
         _checkpointThreshold = options.JournalCheckpointThresholdBytes;
         _maxPayloadBytes = options.MaxPayloadBytes;
         _files = new BinaryCollectionFiles(new PersistencePaths(directory, collectionName), fileSystem);
@@ -43,8 +48,15 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         try
         {
             ThrowIfClosing();
-            if (_fault is not null) throw new InvalidOperationException("Collection is faulted; reopen it.", _fault);
-            if (_initialized) return;
+            if (_fault is not null)
+            {
+                throw new InvalidOperationException("Collection is faulted; reopen it.", _fault);
+            }
+
+            if (_initialized)
+            {
+                return;
+            }
             cancellationToken.ThrowIfCancellationRequested();
             try
             {
@@ -81,7 +93,7 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         try
         {
             EnsureReady();
-            return _entries.Values.ToArray();
+            return [.. _entries.Values];
         }
         finally { _gate.Release(); }
     }
@@ -93,7 +105,7 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         try
         {
             EnsureReady();
-            return _entries.ToArray();
+            return [.. _entries];
         }
         finally { _gate.Release(); }
     }
@@ -106,7 +118,7 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         {
             EnsureReady();
             cancellationToken.ThrowIfCancellationRequested();
-            return _entries.Values.ToArray();
+            return [.. _entries.Values];
         }
         finally { _gate.Release(); }
     }
@@ -117,7 +129,9 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         ValidateId(id);
         ArgumentNullException.ThrowIfNull(payload);
         if (payload.Length == 0 || payload.Length > _maxPayloadBytes)
+        {
             throw new ArgumentOutOfRangeException(nameof(payload), "Payload must be nonempty and within the configured limit.");
+        }
         var captured = payload.ToArray();
         await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
@@ -152,7 +166,10 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
         {
             EnsureReady();
             cancellationToken.ThrowIfCancellationRequested();
-            if (!_entries.ContainsKey(id)) return false;
+            if (!_entries.ContainsKey(id))
+            {
+                return false;
+            }
             var sequence = checked(_sequence + 1);
             try
             {
@@ -194,7 +211,10 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
 
     private static void ValidateId(Serial id)
     {
-        if (!id.IsValid) throw new ArgumentOutOfRangeException(nameof(id), "Serial must be nonzero.");
+        if (!id.IsValid)
+        {
+            throw new ArgumentOutOfRangeException(nameof(id), "Serial must be nonzero.");
+        }
     }
 
     private void ThrowIfClosing()
@@ -205,13 +225,23 @@ internal sealed class BinaryCollectionStore : IAsyncDisposable
     private void EnsureReady()
     {
         ThrowIfClosing();
-        if (_fault is not null) throw new InvalidOperationException("Collection is faulted; reopen it.", _fault);
-        if (!_initialized) throw new InvalidOperationException("Collection has not been initialized.");
+        if (_fault is not null)
+        {
+            throw new InvalidOperationException("Collection is faulted; reopen it.", _fault);
+        }
+
+        if (!_initialized)
+        {
+            throw new InvalidOperationException("Collection has not been initialized.");
+        }
     }
 
     private void CheckpointIfNeeded()
     {
-        if (_files.JournalLength >= _checkpointThreshold) _files.Checkpoint(_sequence, _entries);
+        if (_files.JournalLength >= _checkpointThreshold)
+        {
+            _files.Checkpoint(_sequence, _entries);
+        }
     }
 
     private Task BeginClose(bool checkpoint)

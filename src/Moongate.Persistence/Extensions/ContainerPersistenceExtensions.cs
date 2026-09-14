@@ -9,26 +9,29 @@ namespace Moongate.Persistence.Extensions;
 
 public static class ContainerPersistenceExtensions
 {
-    public static Container RegisterMoongatePersistence(
-        this Container container, string directory, PersistenceOptions? options = null
-    )
+    extension(Container container)
     {
-        ArgumentNullException.ThrowIfNull(container);
-        var persistence = new MoongatePersistenceService(directory, options);
-        container.RegisterInstance(persistence);
+        public Container RegisterMoongatePersistence(
+            string directory, PersistenceOptions? options = null
+        )
+        {
+            ArgumentNullException.ThrowIfNull(container);
+            var persistence = new MoongatePersistenceService(directory, options);
+            container.RegisterInstance(persistence);
 
-        return container;
-    }
+            return container;
+        }
 
-    public static Container RegisterDataAccess<T>(this Container container, string collectionName)
-        where T : class, IMoongateEntity
-    {
-        ArgumentNullException.ThrowIfNull(container);
-        var dataAccess = container.Resolve<MoongatePersistenceService>().Register<T>(collectionName);
-        var setup = Setup.With(preventDisposal: true);
-        container.RegisterInstance(dataAccess, setup: setup);
-        container.RegisterInstance<IDataAccess<T>>(dataAccess, setup: setup);
+        public Container RegisterDataAccess<T>(string collectionName)
+            where T : class, IMoongateEntity
+        {
+            ArgumentNullException.ThrowIfNull(container);
+            var dataAccess = container.Resolve<MoongatePersistenceService>().Register<T>(collectionName);
+            var setup = Setup.With(preventDisposal: true);
+            container.RegisterInstance(dataAccess, setup: setup);
+            container.RegisterInstance<IDataAccess<T>>(dataAccess, setup: setup);
 
-        return container;
+            return container;
+        }
     }
 }

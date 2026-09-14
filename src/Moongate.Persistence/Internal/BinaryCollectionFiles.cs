@@ -30,7 +30,10 @@ internal sealed class BinaryCollectionFiles : IDisposable
         var snapshotExists = _fileSystem.Exists(_paths.Snapshot);
         var journalExists = _fileSystem.Exists(_paths.Journal);
         if (snapshotExists != journalExists)
+        {
             throw new InvalidDataException($"{_paths.DirectoryPath}: Both {_paths.CollectionName} snapshot and journal must exist together.");
+        }
+
         if (!snapshotExists)
         {
             PublishSnapshot(0, entries);
@@ -43,22 +46,31 @@ internal sealed class BinaryCollectionFiles : IDisposable
             snapshotSequence = header.Sequence;
             // Each upsert needs at least its fixed header and one payload byte.
             if (header.Count > (ulong)((snapshot.Length - snapshot.Position) / (BinaryPersistenceFormat.RecordHeaderSize + 1)))
+            {
                 throw new InvalidDataException($"{_paths.Snapshot}: Snapshot count exceeds available records.");
+            }
+
             for (ulong i = 0; i < header.Count; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 var record = BinaryPersistenceFormat.ReadRecord(snapshot, _paths.Snapshot, maxPayloadBytes);
                 if (record is null || record.Operation != PersistenceOperation.Upsert || record.Sequence != snapshotSequence ||
                     !entries.TryAdd(record.Id, record.Payload))
+                {
                     throw new InvalidDataException($"{_paths.Snapshot}: Invalid, incomplete or duplicate snapshot entry.");
+                }
             }
             if (snapshot.Position != snapshot.Length)
+            {
                 throw new InvalidDataException($"{_paths.Snapshot}: Unexpected snapshot trailing bytes.");
+            }
         }
         _journal = _fileSystem.Open(_paths.Journal, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
         var journalHeader = BinaryPersistenceFormat.ReadHeader(Journal, _paths.Journal, _paths.CollectionName, PersistenceFileKind.Journal);
         if (journalHeader.Sequence > snapshotSequence)
+        {
             throw new InvalidDataException($"{_paths.Journal}: Journal base exceeds snapshot sequence.");
+        }
         var sequence = journalHeader.Sequence;
         var completeLength = Journal.Position;
         while (Journal.Position < Journal.Length)
@@ -69,24 +81,36 @@ internal sealed class BinaryCollectionFiles : IDisposable
             {
                 // Validate the complete prefix before repairing any bytes.
                 if (sequence < snapshotSequence)
+                {
                     throw new InvalidDataException($"{_paths.Journal}: Journal does not reach the snapshot sequence.");
+                }
                 _logger.Warning("Discarding incomplete journal tail at {Path}, offset {Offset}", _paths.Journal, completeLength);
                 Journal.SetLength(completeLength);
                 _fileSystem.FlushToDisk(Journal);
                 break;
             }
             if (sequence == ulong.MaxValue || record.Sequence != sequence + 1)
+            {
                 throw new InvalidDataException($"{_paths.Journal}: Noncontiguous or overflowing journal sequence.");
+            }
             sequence = record.Sequence;
             if (sequence > snapshotSequence)
             {
-                if (record.Operation == PersistenceOperation.Upsert) entries[record.Id] = record.Payload;
-                else entries.Remove(record.Id);
+                if (record.Operation == PersistenceOperation.Upsert)
+                {
+                    entries[record.Id] = record.Payload;
+                }
+                else
+                {
+                    entries.Remove(record.Id);
+                }
             }
             completeLength = Journal.Position;
         }
         if (sequence < snapshotSequence)
+        {
             throw new InvalidDataException($"{_paths.Journal}: Journal does not reach the snapshot sequence.");
+        }
         Journal.Position = Journal.Length;
         return sequence;
     }
@@ -114,7 +138,9 @@ internal sealed class BinaryCollectionFiles : IDisposable
             {
                 BinaryPersistenceFormat.WriteHeader(stream, _paths.CollectionName, PersistenceFileKind.Snapshot, sequence, (ulong)entries.Count);
                 foreach (var entry in entries)
+                {
                     BinaryPersistenceFormat.WriteRecord(stream, PersistenceOperation.Upsert, sequence, entry.Key, entry.Value);
+                }
                 _fileSystem.FlushToDisk(stream);
             }
             _fileSystem.Move(temporary, _paths.Snapshot);

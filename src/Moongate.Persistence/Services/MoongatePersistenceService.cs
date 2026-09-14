@@ -8,7 +8,7 @@ namespace Moongate.Persistence.Services;
 
 public sealed class MoongatePersistenceService : IAsyncDisposable
 {
-    private readonly object _lifecycleSync = new();
+    private readonly Lock _lifecycleSync = new();
     private readonly string _directory;
     private readonly PersistenceOptions _options;
     private readonly List<IPersistenceCollection> _collections = [];
@@ -34,10 +34,15 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             ThrowIfDisposed();
             if (_initializationStarted)
+            {
                 throw new InvalidOperationException("Collections cannot be registered after initialization begins.");
+            }
             PersistencePaths.ValidateCollectionName(collectionName);
             if (!_collectionNames.Add(collectionName))
+            {
                 throw new InvalidOperationException($"Collection name '{collectionName}' is already registered.");
+            }
+
             if (!_entityTypes.Add(typeof(T)))
             {
                 _collectionNames.Remove(collectionName);
@@ -58,8 +63,15 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             ThrowIfDisposed();
             ThrowIfFaulted();
-            if (_initialized) return Task.CompletedTask;
-            if (_initializeTask is not null) return _initializeTask;
+            if (_initialized)
+            {
+                return Task.CompletedTask;
+            }
+
+            if (_initializeTask is not null)
+            {
+                return _initializeTask;
+            }
             _initializationStarted = true;
             _initializeTask = InitializeCoreAsync(cancellationToken);
 
@@ -74,8 +86,11 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             ThrowIfDisposed();
             ThrowIfFaulted();
-            if (!_initialized) throw new InvalidOperationException("Persistence has not been initialized.");
-            collections = _collections.ToArray();
+            if (!_initialized)
+            {
+                throw new InvalidOperationException("Persistence has not been initialized.");
+            }
+            collections = [.. _collections];
         }
 
         List<Exception>? failures = null;
@@ -92,15 +107,24 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         try
         {
             foreach (var collection in _collections)
+            {
                 await collection.InitializeAsync(cancellationToken).ConfigureAwait(false);
-            lock (_lifecycleSync) _initialized = true;
+            }
+            lock (_lifecycleSync)
+            {
+                _initialized = true;
+            }
         }
         catch (Exception exception)
         {
             var failures = new List<Exception> { exception };
             failures.AddRange(await CloseEveryCollectionAsync(abort: true).ConfigureAwait(false));
             var failure = failures.Count == 1 ? exception : new AggregateException(failures);
-            lock (_lifecycleSync) _fault = failure;
+            lock (_lifecycleSync)
+            {
+                _fault = failure;
+            }
+
             throw failure;
         }
     }
@@ -112,8 +136,14 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             try
             {
-                if (abort) await collection.AbortAsync().ConfigureAwait(false);
-                else await collection.DisposeAsync().ConfigureAwait(false);
+                if (abort)
+                {
+                    await collection.AbortAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await collection.DisposeAsync().ConfigureAwait(false);
+                }
             }
             catch (Exception exception) { failures.Add(exception); }
         }
@@ -123,8 +153,16 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
 
     private static void ThrowFailures(List<Exception>? failures)
     {
-        if (failures is null || failures.Count == 0) return;
-        if (failures.Count == 1) throw failures[0];
+        if (failures is null || failures.Count == 0)
+        {
+            return;
+        }
+
+        if (failures.Count == 1)
+        {
+            throw failures[0];
+        }
+
         throw new AggregateException(failures);
     }
 
@@ -135,13 +173,18 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
 
     private void ThrowIfFaulted()
     {
-        if (_fault is not null) throw new InvalidOperationException("Persistence initialization failed.", _fault);
+        if (_fault is not null)
+        {
+            throw new InvalidOperationException("Persistence initialization failed.", _fault);
+        }
     }
 
     private async Task DisposeCoreAsync(Task? initialization)
     {
         if (initialization is not null)
+        {
             await initialization.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        }
 
         var failures = await CloseEveryCollectionAsync(abort: false).ConfigureAwait(false);
         ThrowFailures(failures);

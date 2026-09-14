@@ -1,6 +1,5 @@
 namespace Moongate.Persistence.Internal;
-
-internal sealed class PersistencePaths
+public sealed class PersistencePaths
 {
     public string DirectoryPath { get; }
 

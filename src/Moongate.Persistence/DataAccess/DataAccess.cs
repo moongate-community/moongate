@@ -30,9 +30,7 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         return DeserializeAll(_store.Capture());
     }
 
-    public async Task<IReadOnlyList<T>> QueryAsync(
-        Func<T, bool> predicate, CancellationToken cancellationToken = default
-    )
+    public async Task<IReadOnlyList<T>> QueryAsync(Func<T, bool> predicate, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(predicate);
         var snapshot = await _store.CaptureAsync(cancellationToken).ConfigureAwait(false);
@@ -74,28 +72,30 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
 
     private static T DeserializeDetached(byte[] payload)
     {
-        return MemoryPackSerializer.Deserialize<T>(payload)
-               ?? throw new InvalidDataException($"A persisted {typeof(T).FullName} payload was null.");
+        return MemoryPackSerializer.Deserialize<T>(payload) ??
+               throw new InvalidDataException($"A persisted {typeof(T).FullName} payload was null.");
     }
 
     private static T[] DeserializeAll(byte[][] snapshot)
     {
         return snapshot.AsValueEnumerable()
-            .Select(DeserializeDetached)
-            .ToArray();
+                       .Select(DeserializeDetached)
+                       .ToArray();
     }
 
     private static T[] FilterSnapshot(byte[][] snapshot, Func<T, bool> predicate, CancellationToken cancellationToken)
     {
         var result = snapshot.AsValueEnumerable()
-            .Select(DeserializeDetached)
-            .Where(entity =>
-            {
-                cancellationToken.ThrowIfCancellationRequested();
+                             .Select(DeserializeDetached)
+                             .Where(
+                                 entity =>
+                                 {
+                                     cancellationToken.ThrowIfCancellationRequested();
 
-                return predicate(entity);
-            })
-            .ToArray();
+                                     return predicate(entity);
+                                 }
+                             )
+                             .ToArray();
         cancellationToken.ThrowIfCancellationRequested();
 
         return result;
@@ -103,7 +103,8 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
 
     private static void ValidateId(Serial id)
     {
-        if (!id.IsValid) throw new ArgumentOutOfRangeException(nameof(id), "Serial must be nonzero.");
+        if (!id.IsValid)
+            throw new ArgumentOutOfRangeException(nameof(id), "Serial must be nonzero.");
     }
 
     private async Task InitializeAsync(CancellationToken cancellationToken)
@@ -117,6 +118,7 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         foreach (var entry in entries)
         {
             var entity = DeserializeDetached(entry.Value);
+
             if (entity.Id != entry.Key)
             {
                 throw new InvalidDataException(
