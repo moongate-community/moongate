@@ -42,6 +42,17 @@ public class PacketReaderTests
     }
 
     [Fact]
+    public void TryReadBytes_ExactRemainingLength_ReturnsSpanAndAdvancesToEnd()
+    {
+        var reader = new PacketReader([0x12, 0x34, 0x56]);
+
+        Assert.True(reader.TryReadBytes(3, out var bytes));
+        Assert.Equal(new byte[] { 0x12, 0x34, 0x56 }, bytes.ToArray());
+        Assert.Equal(3, reader.Position);
+        Assert.Equal(0, reader.Remaining);
+    }
+
+    [Fact]
     public void TryReadByte_EmptyInput_ReturnsFalseWithoutAdvancing()
     {
         var reader = new PacketReader([]);

@@ -51,12 +51,12 @@ public sealed class ClientVersionPacket : IIncomingPacket<ClientVersionPacket>
         var parsed = payload[^1] == 0
                          ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
                          : reader.TryReadAscii(payload.Length, out version);
-        if (!parsed)
+        if (!parsed || string.IsNullOrEmpty(version))
         {
             return false;
         }
 
-        packet = new ClientVersionPacket(version!, data.Length);
+        packet = new ClientVersionPacket(version, data.Length);
         return true;
     }
 

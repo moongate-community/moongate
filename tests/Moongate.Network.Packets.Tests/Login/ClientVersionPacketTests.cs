@@ -19,11 +19,30 @@ public class ClientVersionPacketTests
         Assert.Equal(13, compatible.Length);
     }
 
+    [Fact]
+    public void TryDecode_EveryProperPrefixOfValidFrames_ReturnsFalse()
+    {
+        var fixtures = new[]
+        {
+            Convert.FromHexString("BD000C372E302E3130392E30"),
+            Convert.FromHexString("BD000D372E302E3130392E3000")
+        };
+
+        foreach (var fixture in fixtures)
+        {
+            for (var length = 0; length < fixture.Length; length++)
+            {
+                Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(fixture.AsSpan(0, length), out _));
+            }
+        }
+    }
+
     [Theory]
     [InlineData("BD0003")]
     [InlineData("BD0000")]
     [InlineData("BD0001")]
     [InlineData("BD0002")]
+    [InlineData("BD000400")]
     [InlineData("BD00044100")]
     [InlineData("BD000541")]
     [InlineData("BD0004414200")]
