@@ -589,3 +589,4 @@ definitions.lua
 
 dist/
 benchmarks/.compare
+.codegraph/
