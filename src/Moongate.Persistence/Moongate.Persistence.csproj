@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj" />
+        <PackageReference Include="MemoryPack" Version="1.21.4" />
+        <PackageReference Include="ZLinq" Version="1.5.6" />
+        <InternalsVisibleTo Include="Moongate.Tests" />
+    </ItemGroup>
+</Project>
