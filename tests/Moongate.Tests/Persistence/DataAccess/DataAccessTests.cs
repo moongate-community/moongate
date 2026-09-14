@@ -58,12 +58,21 @@ public sealed class DataAccessTests
         await access.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "saved" });
         await access.UpsertAsync(new TestEntity { Id = new Serial(2), Name = "other" });
 
-        var matches = await access.QueryAsync(entity => entity.Name == "saved");
-        var none = await access.QueryAsync(entity => entity.Name == "missing");
-        matches[0].Name = "changed";
+        var matches = await access.QueryAsync(entity =>
+        {
+            if (entity.Name != "saved") return false;
+            entity.Name = "predicate changed";
 
-        Assert.Equal(new Serial(1), Assert.Single(matches).Id);
+            return true;
+        });
+        var none = await access.QueryAsync(entity => entity.Name == "missing");
+
+        var match = Assert.Single(matches);
+        Assert.Equal(new Serial(1), match.Id);
+        Assert.Equal("predicate changed", match.Name);
         Assert.Empty(none);
+        Assert.Equal("saved", access.GetById(new Serial(1))!.Name);
+        match.Name = "result changed";
         Assert.Equal("saved", access.GetById(new Serial(1))!.Name);
     }
 
@@ -71,13 +80,13 @@ public sealed class DataAccessTests
     public async Task QueryAsync_PredicateWrites_DoNotDeadlockOrChangeCapturedView()
     {
         using var root = new TemporaryPersistenceDirectory();
-        await using var owner = new MoongatePersistenceService(root.Path);
+        var owner = new MoongatePersistenceService(root.Path);
         var access = owner.Register<TestEntity>("items");
         await owner.InitializeAsync();
         await access.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "first" });
         await access.UpsertAsync(new TestEntity { Id = new Serial(2), Name = "before" });
 
-        var snapshot = await access.QueryAsync(entity =>
+        var query = Task.Run(() => access.QueryAsync(entity =>
         {
             if (entity.Id == new Serial(1))
             {
@@ -85,11 +94,13 @@ public sealed class DataAccessTests
                 access.UpsertAsync(new TestEntity { Id = new Serial(3), Name = "added" }).GetAwaiter().GetResult();
             }
             return true;
-        }).WaitAsync(TimeSpan.FromSeconds(10));
+        }));
+        var snapshot = await query.WaitAsync(TimeSpan.FromSeconds(10));
 
         Assert.Equal(new[] { "first", "before" }, snapshot.Select(entity => entity.Name));
         Assert.Equal("after", access.GetById(new Serial(2))!.Name);
         Assert.Equal("added", access.GetById(new Serial(3))!.Name);
+        await owner.DisposeAsync();
     }
 
     [Fact]
