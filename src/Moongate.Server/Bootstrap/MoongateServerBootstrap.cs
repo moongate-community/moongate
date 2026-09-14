@@ -65,15 +65,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
     private async Task StartCoreAsync()
     {
-        var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
-                ? _container.Resolve<List<ServiceRegistrationData>>()
-                : [])
-            .Where(registration => registration.IsAutostart)
-            .OrderBy(registration => registration.Priority)
-            .ToArray();
-
         try
         {
+            var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
+                    ? _container.Resolve<List<ServiceRegistrationData>>()
+                    : [])
+                .Where(registration => registration.IsAutostart)
+                .OrderBy(registration => registration.Priority)
+                .ToArray();
+
             foreach (var registration in registrations)
             {
                 var service = (IMoongateStartupService)_container.Resolve(registration.ServiceType);

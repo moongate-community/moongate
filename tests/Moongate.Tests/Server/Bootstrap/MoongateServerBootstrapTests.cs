@@ -4,9 +4,11 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Services.Persistence.Internal;
+using Moongate.Tests.Support.Events;
 using Moongate.Tests.Support.Persistence;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
@@ -125,6 +127,32 @@ public class MoongateServerBootstrapTests
         Assert.Equal([startFailure, cleanupFailure], failure.InnerExceptions);
         Assert.Equal(["start:early", "start:failing", "stop:failing", "stop:early"], events);
         await bootstrap.StopAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_MetadataPreparationAndCleanupFail_PreservesFailuresAndCleansUpOnce()
+    {
+        var events = new List<string>();
+        var metadataFailure = new InvalidOperationException("metadata failed");
+        var stoppingFailure = new IOException("stopping failed");
+        var stoppedFailure = new ApplicationException("stopped failed");
+        var eventBus = new FaultingLifecycleEventBus(events, stoppingFailure, stoppedFailure);
+        var container = new Container();
+        container.RegisterDelegate<List<ServiceRegistrationData>>(
+            () => throw metadataFailure,
+            Reuse.Singleton
+        );
+        container.RegisterInstance<IMoongateEventBus>(eventBus);
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        var failure = await Assert.ThrowsAsync<AggregateException>(() => bootstrap.StartAsync());
+
+        Assert.Equal([metadataFailure, stoppingFailure, stoppedFailure], failure.InnerExceptions);
+        Assert.Equal(["stopping", "stopped"], events);
+
+        await bootstrap.StopAsync();
+
+        Assert.Equal(["stopping", "stopped"], events);
     }
 
     [Fact]
