@@ -304,11 +304,101 @@ abort startup and dispose the host container. The `using` scope above also
 disposes the container on failure. Plugin registration must be serial and happen
 before startup; nested registration is rejected.
 
-Plugin callbacks only register services. Existing singleton behavior, lazy
-factories and service registration metadata are preserved. Marking a service as
-`IMoongateStartupService` records its autostart eligibility; the plugin registry
-does not call its lifecycle methods. The host owns the container and service
-lifecycle.
+Plugin callbacks register services and event subscriptions. Existing singleton
+behavior, lazy factories and service registration metadata are preserved.
+Marking a service as `IMoongateStartupService` records its autostart eligibility;
+the plugin registry does not call its lifecycle methods. The host owns the
+container and service lifecycle.
+
+Plugins can also subscribe to host lifecycle events directly from `Register`.
+An event-only plugin needs no dummy service registration:
+
+```csharp
+using DryIoc;
+using Moongate.Server.Core.Data.Events;
+using Moongate.Server.Core.Data.Plugins;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Plugins;
+
+namespace Moongate.PluginExamples.Plugins;
+
+public sealed class LifecyclePlugin : IMoongatePlugin
+{
+    public MoongatePluginData Metadata { get; }
+
+    public LifecyclePlugin()
+    {
+        Metadata = new MoongatePluginData(
+            "com.github.author.Moongate.plugins.lifecycle",
+            "Lifecycle example",
+            new Version(1, 0, 0),
+            author: "Author"
+        );
+    }
+
+    public void Register(Container container)
+    {
+        container.OnEvent<MoongateStartedEvent>(OnStartedAsync)
+            .OnEvent<MoongateStoppingEvent>(OnStoppingAsync)
+            .OnEvent<MoongateStoppedEvent>(OnStoppedAsync);
+    }
+
+    private static Task OnStartedAsync(
+        MoongateStartedEvent message, CancellationToken cancellationToken
+    )
+    {
+        return Task.CompletedTask;
+    }
+
+    private static Task OnStoppingAsync(
+        MoongateStoppingEvent message, CancellationToken cancellationToken
+    )
+    {
+        // Save or flush resources here while startup services are still available.
+        return Task.CompletedTask;
+    }
+
+    private static Task OnStoppedAsync(
+        MoongateStoppedEvent message, CancellationToken cancellationToken
+    )
+    {
+        // The stop phase is complete; the container and logger remain available here.
+        return Task.CompletedTask;
+    }
+}
+```
+
+Server services inject `IEventBusService` and call its inherited `Subscribe` and
+`PublishAsync` methods. Compose the shared bus and singleton adapter once in the
+executable after logging is configured and before bootstrap starts:
+
+```csharp
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.Events;
+
+container.RegisterMoongateEventBus()
+    .RegisterMoongateService<IEventBusService, EventBusService>();
+```
+
+The injected service and plugin `OnEvent` registrations use the same
+container-owned bus, so publications flow in both directions. A direct
+`Subscribe` call returns an idempotent `IDisposable` token for early
+unsubscription; otherwise the container owns the subscription lifetime.
+
+Lifecycle events are transient and routed by exact event type; late subscribers
+do not receive earlier events. Handlers run sequentially in registration order,
+and the publisher awaits each returned task. One handler failure is logged and
+does not skip later handlers. Publisher cancellation stops dispatch, while a
+handler cancellation unrelated to the publisher is isolated like any other
+handler failure. There is no automatic retry.
+
+`OnEvent` subscriptions live until the host disposes its container. Use
+`Stopping` for work that needs running services, including persistence writes.
+`Stopped` runs after every service stop has been attempted and before container
+and logging disposal; it reports completion of the stop phase even when a
+service stop failed. Lifecycle callbacks must not await the host's own
+`StartAsync` or `StopAsync`, because the host is already awaiting the callback.
 
 ## License
 

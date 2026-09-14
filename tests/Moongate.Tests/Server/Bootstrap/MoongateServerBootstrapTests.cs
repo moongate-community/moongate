@@ -4,8 +4,11 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Services.Persistence.Internal;
+using Moongate.Tests.Support.Events;
 using Moongate.Tests.Support.Persistence;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
@@ -14,6 +17,20 @@ namespace Moongate.Tests.Server.Bootstrap;
 
 public class MoongateServerBootstrapTests
 {
+    [Fact]
+    public async Task Constructor_NoPluginsOrServices_EnsuresSharedEventBus()
+    {
+        var container = new Container();
+        Assert.False(container.IsRegistered<IMoongateEventBus>());
+
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        Assert.True(container.IsRegistered<IMoongateEventBus>());
+        Assert.Same(container.Resolve<IMoongateEventBus>(), container.Resolve<IMoongateEventBus>());
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+    }
+
     [Fact]
     public async Task StartAndStopAsync_AutostartMetadata_OrdersServicesAndDeduplicatesAliases()
     {
@@ -110,6 +127,92 @@ public class MoongateServerBootstrapTests
         Assert.Equal([startFailure, cleanupFailure], failure.InnerExceptions);
         Assert.Equal(["start:early", "start:failing", "stop:failing", "stop:early"], events);
         await bootstrap.StopAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_MetadataPreparationAndCleanupFail_PreservesFailuresAndCleansUpOnce()
+    {
+        var events = new List<string>();
+        var metadataFailure = new InvalidOperationException("metadata failed");
+        var stoppingFailure = new IOException("stopping failed");
+        var stoppedFailure = new ApplicationException("stopped failed");
+        var eventBus = new FaultingLifecycleEventBus(events, stoppingFailure, stoppedFailure);
+        var container = new Container();
+        container.RegisterDelegate<List<ServiceRegistrationData>>(
+            () => throw metadataFailure,
+            Reuse.Singleton
+        );
+        container.RegisterInstance<IMoongateEventBus>(eventBus);
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        var failure = await Assert.ThrowsAsync<AggregateException>(() => bootstrap.StartAsync());
+
+        Assert.Equal([metadataFailure, stoppingFailure, stoppedFailure], failure.InnerExceptions);
+        Assert.Equal(["stopping", "stopped"], events);
+
+        await bootstrap.StopAsync();
+
+        Assert.Equal(["stopping", "stopped"], events);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task StartAsync_ServiceCancellation_PreservesCancellationAndCleanupFailures(bool cleanupFails)
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var startFailure = new OperationCanceledException(cancellation.Token);
+        var cleanupFailure = new IOException("cleanup failed");
+        var events = new List<string>();
+        var service = new RecordingStartupService(
+            "service", events, startFailure: startFailure, stopFailure: cleanupFails ? cleanupFailure : null
+        );
+        var container = new Container();
+        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
+
+        var start = bootstrap.StartAsync();
+        var failure = await Record.ExceptionAsync(() => start.WaitAsync(TimeSpan.FromSeconds(5)));
+        await bootstrap.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        if (cleanupFails)
+        {
+            var aggregate = Assert.IsType<AggregateException>(failure);
+            Assert.Equal([startFailure, cleanupFailure], aggregate.InnerExceptions);
+            Assert.True(start.IsFaulted);
+        }
+        else
+        {
+            Assert.Same(startFailure, failure);
+            Assert.True(start.IsCanceled);
+            Assert.Equal(cancellation.Token, Assert.IsType<OperationCanceledException>(failure).CancellationToken);
+        }
+        Assert.Same(start, bootstrap.StartAsync());
+        Assert.Equal(["start:service", "stop:service"], events);
+    }
+
+    [Fact]
+    public async Task StopAsync_ServiceCancellation_PreservesOriginalCancellationInSharedTask()
+    {
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var stopFailure = new OperationCanceledException(cancellation.Token);
+        var events = new List<string>();
+        var service = new RecordingStartupService("service", events, stopFailure: stopFailure);
+        var container = new Container();
+        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        await bootstrap.StartAsync();
+
+        var stop = bootstrap.StopAsync();
+        var failure = await Record.ExceptionAsync(() => stop.WaitAsync(TimeSpan.FromSeconds(5)));
+
+        Assert.Same(stopFailure, failure);
+        Assert.True(stop.IsCanceled);
+        Assert.Equal(cancellation.Token, Assert.IsType<OperationCanceledException>(failure).CancellationToken);
+        Assert.Same(stop, bootstrap.StopAsync());
+        Assert.Equal(["start:service", "stop:service"], events);
     }
 
     [Fact]

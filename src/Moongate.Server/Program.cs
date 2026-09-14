@@ -7,7 +7,9 @@ using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Args;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Persistence.Internal;
 using Serilog;
 
@@ -55,6 +57,9 @@ await ConsoleApp.RunAsync(
         Console.WriteLine($"Running on container: {isDocker}");
 
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+        container.RegisterMoongateEventBus()
+            .RegisterMoongateService<IEventBusService, EventBusService>();
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken);
 
