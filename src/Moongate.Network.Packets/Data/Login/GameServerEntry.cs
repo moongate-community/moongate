@@ -1,12 +1,12 @@
 using System.Net;
 
 using Moongate.Network.Packets.Internal;
+using Moongate.Network.Packets.Internal.Login;
 
 namespace Moongate.Network.Packets.Data.Login;
 
 public sealed class GameServerEntry
 {
-    private const int NameLength = 32;
     private readonly byte[] _addressBytes;
 
     public ushort ServerIndex { get; }
@@ -22,7 +22,7 @@ public sealed class GameServerEntry
         sbyte timeZone,
         IPAddress address)
     {
-        PacketValidation.ValidateFixedAscii(name, NameLength, nameof(name));
+        PacketValidation.ValidateFixedAscii(name, LoginProtocolConstants.ServerNameLength, nameof(name));
         _addressBytes = PacketValidation.SnapshotIPv4(address, nameof(address));
         ServerIndex = serverIndex;
         Name = name;

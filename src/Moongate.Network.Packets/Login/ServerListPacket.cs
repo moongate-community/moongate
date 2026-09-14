@@ -1,22 +1,23 @@
 using System.Collections.ObjectModel;
 
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Data.Login;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Internal.Login;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class ServerListPacket : IOutgoingPacket
+[PacketHandler(0xA8, PacketSizing.Variable, MinimumLength = 6)]
+public sealed class ServerListPacket : BasePacket<ServerListPacket>, IOutgoingPacket
 {
-    private const byte PacketOpCode = 0xA8;
     private const byte SystemInfoFlag = 0x5D;
-    private const int HeaderLength = 6;
-    private const int EntryLength = 40;
-    private const int NameLength = 32;
-    private const int MaximumServerCount = (ushort.MaxValue - HeaderLength) / EntryLength;
+    private static readonly int MaximumServerCount =
+        (ushort.MaxValue - Descriptor.MinimumLength) / LoginProtocolConstants.ServerEntryLength;
 
-    public byte OpCode => PacketOpCode;
-    public int Length { get; }
+    public override int Length { get; }
     public IReadOnlyList<GameServerEntry> Servers { get; }
 
     public ServerListPacket(IEnumerable<GameServerEntry> servers)
@@ -33,7 +34,7 @@ public sealed class ServerListPacket : IOutgoingPacket
             throw new ArgumentException($"The server list cannot contain more than {MaximumServerCount} entries.", nameof(servers));
         }
 
-        Length = HeaderLength + EntryLength * snapshot.Length;
+        Length = Descriptor.MinimumLength + LoginProtocolConstants.ServerEntryLength * snapshot.Length;
         Servers = new ReadOnlyCollection<GameServerEntry>(snapshot);
     }
 
@@ -48,7 +49,7 @@ public sealed class ServerListPacket : IOutgoingPacket
         foreach (var server in Servers)
         {
             writer.WriteUInt16BigEndian(server.ServerIndex);
-            writer.WriteFixedAscii(server.Name, NameLength);
+            writer.WriteFixedAscii(server.Name, LoginProtocolConstants.ServerNameLength);
             writer.WriteByte(server.FullPercent);
             writer.WriteByte(unchecked((byte)server.TimeZone));
             var address = server.GetAddressBytes();

@@ -2,10 +2,23 @@ using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
 
+using Moongate.Network.Packets.Data.Packets;
+using Moongate.Network.Packets.Types.Packets;
+
 namespace Moongate.Network.Packets.Internal;
 
 internal static class PacketValidation
 {
+    public static bool HasValidHeader(ReadOnlySpan<byte> data, PacketDescriptor descriptor)
+    {
+        return descriptor.Sizing switch
+        {
+            PacketSizing.Fixed when descriptor.FixedLength is int length => HasFixedHeader(data, descriptor.OpCode, length),
+            PacketSizing.Variable => HasVariableHeader(data, descriptor.OpCode, descriptor.MinimumLength),
+            _ => false
+        };
+    }
+
     public static bool HasFixedHeader(ReadOnlySpan<byte> data, byte opCode, int expectedLength)
     {
         return data.Length == expectedLength && !data.IsEmpty && data[0] == opCode;

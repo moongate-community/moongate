@@ -4,18 +4,13 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Tests.Support.Registry;
 
-[PacketHandler(0x55, PacketSizing.Fixed, Length = 1)]
-public sealed class LoginCompletePacket : BaseFixedPacket<LoginCompletePacket>, IOutgoingPacket
+[PacketHandler(0xE1, PacketSizing.Fixed, Length = 1)]
+public sealed class OutgoingCollisionPacket : BaseFixedPacket<OutgoingCollisionPacket>, IOutgoingPacket
 {
-    public LoginCompletePacket()
-    {
-    }
-
     public void Write(ref PacketWriter writer)
     {
-        writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
     }
 }

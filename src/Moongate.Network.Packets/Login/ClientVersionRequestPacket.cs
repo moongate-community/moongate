@@ -1,16 +1,14 @@
+using Moongate.Network.Packets.Attributes;
+using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Login;
 
-public sealed class ClientVersionRequestPacket : IOutgoingPacket
+[PacketHandler(0xBD, PacketSizing.Fixed, Length = 3)]
+public sealed class ClientVersionRequestPacket : BaseFixedPacket<ClientVersionRequestPacket>, IOutgoingPacket
 {
-    private const byte PacketOpCode = 0xBD;
-    private const int PacketLength = 3;
-
-    public byte OpCode => PacketOpCode;
-    public int Length => PacketLength;
-
     public ClientVersionRequestPacket()
     {
     }
@@ -19,6 +17,6 @@ public sealed class ClientVersionRequestPacket : IOutgoingPacket
     {
         writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
-        writer.WriteUInt16BigEndian(PacketLength);
+        writer.WriteUInt16BigEndian((ushort)Length);
     }
 }
