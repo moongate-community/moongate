@@ -36,8 +36,8 @@ public static class TextEncoding
         {
             "utf-16BE" => 2,
             "utf-16" => 2,
-            "utf-32BE" => 3,
-            "utf-32" => 3,
+            "utf-32BE" => 4,
+            "utf-32" => 4,
             _ => 1
         };
 
@@ -174,6 +174,7 @@ public static class TextEncoding
                 }
                 else
                 {
+                    chars = [];
                     index = -1;
                 }
             }

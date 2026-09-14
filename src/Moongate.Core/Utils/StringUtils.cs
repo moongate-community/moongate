@@ -35,16 +35,18 @@ public static partial class StringUtils
         }
 
         var words = WordSplitterRegex.Split(text);
-        var result = new StringBuilder(words[0].ToLowerInvariant());
+        var result = new StringBuilder();
 
-        for (var i = 1; i < words.Length; i++)
+        foreach (var word in words)
         {
-            if (string.IsNullOrEmpty(words[i]))
+            if (string.IsNullOrEmpty(word))
             {
                 continue;
             }
 
-            result.Append(CultureInfo.InvariantCulture.TextInfo.ToTitleCase(words[i].ToLowerInvariant()));
+            result.Append(result.Length == 0
+                              ? word.ToLowerInvariant()
+                              : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(word.ToLowerInvariant()));
         }
 
         return result.ToString();

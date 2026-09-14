@@ -54,7 +54,7 @@ public static class StringHelpers
 
         var index = 0;
 
-        while (true)
+        while (!sliced.IsEmpty)
         {
             // Special case for titles - words that don't get capitalized
             if (sliced.InsensitiveStartsWith("the "))
@@ -147,6 +147,26 @@ public static class StringHelpers
             return;
         }
 
+        if (b.IsEmpty)
+        {
+            throw new ArgumentException("The search term cannot be empty.", nameof(b));
+        }
+
+        if (comparison is not StringComparison.Ordinal and not StringComparison.OrdinalIgnoreCase)
+        {
+            var result = a.ToString().Replace(b.ToString(), "", comparison);
+
+            if (result.Length > buffer.Length)
+            {
+                throw new OutOfMemoryException(nameof(buffer));
+            }
+
+            result.AsSpan().CopyTo(buffer);
+            size = result.Length;
+
+            return;
+        }
+
         var sliced = a;
 
         while (true)
@@ -171,7 +191,7 @@ public static class StringHelpers
                 break;
             }
 
-            sliced = sliced[(indexOf + 1)..];
+            sliced = sliced[(indexOf + b.Length)..];
         }
     }
 
@@ -188,16 +208,23 @@ public static class StringHelpers
             return "";
         }
 
+        if (b.IsEmpty)
+        {
+            throw new ArgumentException("The search term cannot be empty.", nameof(b));
+        }
+
         var chrs = ArrayPool<char>.Shared.Rent(a.Length);
-        var span = chrs.AsSpan(0, a.Length);
+        try
+        {
+            var span = chrs.AsSpan(0, a.Length);
+            a.Remove(b, comparison, span, out var size);
 
-        a.Remove(b, comparison, span, out var size);
-
-        var str = span[..size].ToString();
-
-        ArrayPool<char>.Shared.Return(chrs);
-
-        return str;
+            return span[..size].ToString();
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(chrs);
+        }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -317,7 +344,7 @@ public static class StringHelpers
 
                     if (list.Count == maxLines)
                     {
-                        break;
+                        return list;
                     }
 
                     index += perLine;

@@ -48,6 +48,9 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
             return true;
         }
 
+        _index = localList.Length + 1;
+        Current = default;
+
         return false;
     }
 

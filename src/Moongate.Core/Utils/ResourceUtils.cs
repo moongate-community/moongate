@@ -1,12 +1,11 @@
 using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Moongate.Core.Utils;
 
 /// <summary>
 /// Provides utilities for working with embedded resources.
 /// </summary>
-public static partial class ResourceUtils
+public static class ResourceUtils
 {
     /// <summary>
     /// Converts a resource name to a file path format.
@@ -243,8 +242,7 @@ public static partial class ResourceUtils
 
         foreach (var resource in resources)
         {
-            // Extract the final part of the resource name (file name with extension)
-            var fileName = resource.Substring(resource.LastIndexOf('.') + 1);
+            var fileName = GetFileNameFromResourceName(resource);
 
             // If not empty, add it to the list
             if (!string.IsNullOrEmpty(fileName))
@@ -377,11 +375,7 @@ public static partial class ResourceUtils
     /// <returns>File name without path</returns>
     public static string GetFileNameFromResourcePath(string resourceName)
     {
-        // Use a regex to extract the file name
-        var match = FileNameRegex().Match(resourceName);
-
-        return
-            match.Success ? match.Groups[1].Value : resourceName; // If it fails to find a pattern, return the original name
+        return GetFileNameFromResourceName(resourceName);
     }
 
     /// <summary>
@@ -421,7 +415,4 @@ public static partial class ResourceUtils
 
         return reader.ReadToEnd();
     }
-
-    [GeneratedRegex(@"\.([^\.]+)$")]
-    private static partial Regex FileNameRegex();
 }

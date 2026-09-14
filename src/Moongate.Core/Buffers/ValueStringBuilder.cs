@@ -204,6 +204,8 @@ public ref struct ValueStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public Span<char> AppendSpan(int length)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(length);
+
         var origPos = Length;
 
         if (origPos > _chars.Length - length)
@@ -237,7 +239,7 @@ public ref struct ValueStringBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan(int start)
-        => _chars[start..];
+        => _chars[start..Length];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan(int start, int length)
@@ -369,7 +371,7 @@ public ref struct ValueStringBuilder
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        var slice = _chars;
+        var slice = _chars.Slice(startIndex, count);
 
         while (true)
         {
@@ -400,7 +402,7 @@ public ref struct ValueStringBuilder
             throw new ArgumentOutOfRangeException(nameof(count));
         }
 
-        var slice = _chars;
+        var slice = _chars.Slice(startIndex, count);
 
         while (true)
         {

@@ -214,7 +214,7 @@ public ref struct PooledRefList<T>
                 throw new InvalidOperationException(CollectionThrowStrings.InvalidOperation_EnumFailedVersion);
             }
 
-            _index = -1;
+            _index = 0;
             _current = default;
         }
 
@@ -233,10 +233,10 @@ public ref struct PooledRefList<T>
 
         private void ThrowEnumerationNotStartedOrEnded()
         {
-            Debug.Assert(_index is -1 or -2);
+            Debug.Assert(_index == 0 || _index == _list._size + 1);
 
             throw new InvalidOperationException(
-                _index == -1
+                _index == 0
                     ? CollectionThrowStrings.InvalidOperation_EnumNotStarted
                     : CollectionThrowStrings.InvalidOperation_EnumEnded
             );
@@ -382,17 +382,26 @@ public ref struct PooledRefList<T>
     {
         ArgumentNullException.ThrowIfNull(match);
 
-        var list = new PooledRefList<T>();
+        var list = new PooledRefList<T>(0);
 
-        for (var i = 0; i < _size; i++)
+        try
         {
-            if (match(_items[i]))
+            for (var i = 0; i < _size; i++)
             {
-                list.Add(_items[i]);
+                if (match(_items[i]))
+                {
+                    list.Add(_items[i]);
+                }
             }
-        }
 
-        return list;
+            return list;
+        }
+        catch
+        {
+            list.Dispose();
+
+            throw;
+        }
     }
 
     public int FindIndex(Predicate<T> match)

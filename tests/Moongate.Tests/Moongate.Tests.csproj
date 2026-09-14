@@ -24,4 +24,9 @@
     <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="TestSupport/Resources/Fixtures/Nested/sample.txt"
+                      LogicalName="Moongate.Tests.TestSupport.Resources.Nested.sample.txt" />
+  </ItemGroup>
+
 </Project>
