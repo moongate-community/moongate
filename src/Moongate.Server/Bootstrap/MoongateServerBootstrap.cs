@@ -1,5 +1,4 @@
 using DryIoc;
-using Moongate.Server.Core.Interfaces;
 using Moongate.Server.Core.Interfaces.Bootstrap;
 using Serilog;
 

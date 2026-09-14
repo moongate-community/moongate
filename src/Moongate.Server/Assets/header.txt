@@ -1,0 +1,11 @@
+.        :                                             `::
+;;,.    ;;;                                             ;;
+[[[[, ,[[[[,  ,ccc,   ,ccc,  [ccccc,   ,ccc,    ,ccc,=[[[[[[.,cc[[[cc.
+$$$$$$$$"$$$ $$$"c$$$$$$"c$$$$$$$"$$$ $$$cc$$$ $$$cc$$$ $$   $$$___--'
+888 Y88" 888o888   88888   88888  Y88o888   888888   88888,  88b    ,o,
+MMM  M'  "MMM "YUMMP  "YUMMP MMM  "MMM "YUM" MP "YUM" MPMMM   "YUMMMMP"
+                                            MMM
+                                      ,c.   ###
+                                      \M###MMU
+
+    Version: {Version} Codename: {Codename}

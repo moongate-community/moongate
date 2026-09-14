@@ -1,6 +1,7 @@
 ﻿using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Types;
+using Moongate.Core.Utils;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Data.Args;
 using Serilog;
@@ -9,7 +10,7 @@ await ConsoleApp.RunAsync(
     args,
     async (
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
-        bool logPackets = false, string? rootDirectory = null
+        bool logPackets = false, string? rootDirectory = null, bool showHeader = true
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
@@ -24,6 +25,15 @@ await ConsoleApp.RunAsync(
             LogToFile = logToFile,
             RootDirectory = rootDirectory ?? AppContext.BaseDirectory
         };
+
+        if (showHeader)
+        {
+            var headerContent = ResourceUtils.GetEmbeddedResourceString(typeof(Program).Assembly, "Assets/header.txt");
+
+            headerContent = headerContent.Replace("{Version}", VersionUtils.GetVersion(typeof(Program).Assembly));
+
+            Console.WriteLine(headerContent);
+        }
 
         container.RegisterInstance(serverArgs);
 

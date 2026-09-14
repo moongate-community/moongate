@@ -32,4 +32,9 @@
       <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Assets\**\*.*" />
+      <EmbeddedResource Include="Assets\**\*.*" />
+    </ItemGroup>
+
 </Project>
