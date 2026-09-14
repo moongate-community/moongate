@@ -3,8 +3,12 @@ using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
+using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Data.Args;
+using Moongate.Server.Services.Persistence.Internal;
 using Serilog;
 
 await ConsoleApp.RunAsync(
@@ -41,6 +45,10 @@ await ConsoleApp.RunAsync(
         }
 
         container.RegisterInstance(serverArgs);
+        container.RegisterMoongatePersistence(Path.Combine(serverArgs.RootDirectory, "save"))
+            .RegisterMoongateService<MoongatePersistenceStartupService>(
+                MoongatePersistenceStartupService.StartupPriority
+            );
 
         Console.WriteLine($"Moongate Server starting with root directory: {serverArgs.RootDirectory}");
         Console.WriteLine($"Platform: {Environment.OSVersion.Platform}, Version: {Environment.OSVersion.Version}");
@@ -50,10 +58,6 @@ await ConsoleApp.RunAsync(
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken);
 
-        await bootstrap.StartAsync();
-
-        await bootstrap.RunAsync();
-
-        await bootstrap.StopAsync();
+        await MoongateServerRunner.RunAsync(bootstrap);
     }
 );

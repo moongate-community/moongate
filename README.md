@@ -60,6 +60,119 @@ PNG streams returned by the rendering facades start at position zero and must be
 disposed by the caller. `FromFile()` accepts formats supported by Skia's decoder
 (including PNG, JPEG, WebP and BMP); TIFF input is unsupported.
 
+## Persistence
+
+The server stores persistence files under `<root-directory>/save`. Register every
+closed entity collection before persistence startup; server services and plugins
+can then resolve `IDataAccess<T>`. The host initializes persistence before services
+at the default priority and awaits its shutdown before disposing the DryIoc
+container.
+
+Entities are MemoryPack version-tolerant contracts. Keep every public entity in
+its own file and assign explicit, stable member orders. ID allocation belongs to
+the caller, and `Serial.Zero` is rejected.
+
+`Entities/CharacterRecord.cs`:
+
+```csharp
+using MemoryPack;
+using Moongate.Core.Interfaces.Entities;
+using Moongate.Core.Primitives;
+
+namespace Moongate.PersistenceExample.Entities;
+
+[MemoryPackable(GenerateType.VersionTolerant)]
+public partial class CharacterRecord : IMoongateEntity
+{
+    [MemoryPackOrder(0)]
+    public Serial Id { get; set; }
+
+    [MemoryPackOrder(1)]
+    public string Name { get; set; } = "";
+
+    [MemoryPackOrder(2)]
+    public int Level { get; set; }
+}
+```
+
+Register the owner and all collections, initialize once, and explicitly dispose
+the asynchronous owner before synchronously disposing the container.
+
+`Program.cs`:
+
+```csharp
+using DryIoc;
+using Moongate.Core.Primitives;
+using Moongate.Persistence.Data;
+using Moongate.Persistence.Extensions;
+using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Services;
+using Moongate.PersistenceExample.Entities;
+
+var rootDirectory = args.Length == 0 ? AppContext.BaseDirectory : args[0];
+var options = new PersistenceOptions
+{
+    JournalCheckpointThresholdBytes = 64L * 1024 * 1024,
+    MaxPayloadBytes = 16 * 1024 * 1024
+};
+var container = new Container();
+container.RegisterMoongatePersistence(Path.Combine(rootDirectory, "save"), options)
+    .RegisterDataAccess<CharacterRecord>("characters");
+
+var persistence = container.Resolve<MoongatePersistenceService>();
+
+try
+{
+    await persistence.InitializeAsync();
+    var characters = container.Resolve<IDataAccess<CharacterRecord>>();
+    var id = new Serial(0x40000001);
+
+    await characters.UpsertAsync(new CharacterRecord { Id = id, Name = "Ada", Level = 24 });
+
+    var loaded = characters.GetById(id);
+    var veterans = await characters.QueryAsync(character => character.Level >= 20);
+
+    if (loaded is not null)
+    {
+        loaded.Level++;
+        await characters.UpsertAsync(loaded);
+    }
+
+    var deleted = await characters.DeleteAsync(id);
+    Console.WriteLine($"Matches: {veterans.Count}; deleted: {deleted}");
+}
+finally
+{
+    try
+    {
+        await persistence.DisposeAsync();
+    }
+    finally
+    {
+        container.Dispose();
+    }
+}
+```
+
+`GetById`, `GetAll`, and `QueryAsync` return detached objects. Changing a returned
+object does not change stored state; call `UpsertAsync` to persist it. `QueryAsync`
+uses ZLinq internally over one captured committed view, but accepts the ordinary
+`Func<T, bool>` shown above. There are no cross-collection transactions or indexes.
+
+Each collection creates `characters.snapshot.bin`, `characters.journal.bin`, and
+`characters.lock` in the configured save directory. Upserts and deletes are
+acknowledged only after a durable journal flush. Startup replays the journal, and
+healthy shutdown checkpoints it. Automatic checkpointing uses
+`JournalCheckpointThresholdBytes`; compaction replaces recovery history and is not
+an audit log, retention system, or backup.
+
+Initialization fails closed for an unsupported format version, corrupt header,
+checksum or payload, sequence errors, and when only one of the snapshot or journal
+files exists. It does not silently reset committed files. An incomplete final
+journal frame is the bounded recovery case and is truncated to its last complete
+record. The exact layout and recovery rules are in the
+[binary persistence format](docs/persistence-format.md).
+
 ## Plugins
 
 Plugins implement `IMoongatePlugin` from `Moongate.Server.Core`. Register plugin
