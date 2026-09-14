@@ -16,7 +16,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly Container _container;
     private readonly ILogger _logger = Log.ForContext<MoongateServerBootstrap>();
     private readonly CancellationToken _cancellationToken;
-    private readonly object _lifecycleSync = new();
+    private readonly Lock _lifecycleSync = new();
     private readonly List<IMoongateStartupService> _startedServices = [];
     private readonly HashSet<IMoongateStartupService> _knownServices = new(ReferenceEqualityComparer.Instance);
     private readonly IMoongateEventBus _eventBus;
@@ -34,18 +34,43 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
     public Task StartAsync()
     {
+        TaskCompletionSource<Task> completion;
+        Task startTask;
         lock (_lifecycleSync)
         {
-            return _startTask ??= StartCoreAsync();
+            if (_startTask is not null)
+            {
+                return _startTask;
+            }
+
+            // Publish the shared identity before invoking callbacks; Unwrap preserves faults and cancellation.
+            completion = new TaskCompletionSource<Task>(TaskCreationOptions.RunContinuationsAsynchronously);
+            startTask = _startTask = completion.Task.Unwrap();
         }
+
+        completion.SetResult(StartCoreAsync());
+        return startTask;
     }
 
     public Task StopAsync()
     {
+        TaskCompletionSource<Task> completion;
+        Task stopTask;
+        Task? startupTask;
         lock (_lifecycleSync)
         {
-            return _stopTask ??= StopAfterStartupAsync(_startTask);
+            if (_stopTask is not null)
+            {
+                return _stopTask;
+            }
+
+            completion = new TaskCompletionSource<Task>(TaskCreationOptions.RunContinuationsAsynchronously);
+            startupTask = _startTask;
+            stopTask = _stopTask = completion.Task.Unwrap();
         }
+
+        completion.SetResult(StopAfterStartupAsync(startupTask));
+        return stopTask;
     }
 
     public async Task RunAsync()
@@ -126,10 +151,21 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
     private Task<List<Exception>> GetOrCreateShutdownTask()
     {
+        TaskCompletionSource<Task<List<Exception>>> completion;
+        Task<List<Exception>> shutdownTask;
         lock (_lifecycleSync)
         {
-            return _shutdownTask ??= ShutdownCoreAsync();
+            if (_shutdownTask is not null)
+            {
+                return _shutdownTask;
+            }
+
+            completion = new TaskCompletionSource<Task<List<Exception>>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            shutdownTask = _shutdownTask = completion.Task.Unwrap();
         }
+
+        completion.SetResult(ShutdownCoreAsync());
+        return shutdownTask;
     }
 
     private async Task<List<Exception>> ShutdownCoreAsync()
