@@ -368,6 +368,24 @@ public sealed class LifecyclePlugin : IMoongatePlugin
 }
 ```
 
+Server services inject `IEventBusService` and call its inherited `Subscribe` and
+`PublishAsync` methods. Compose the shared bus and singleton adapter once in the
+executable after logging is configured and before bootstrap starts:
+
+```csharp
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.Events;
+
+container.RegisterMoongateEventBus()
+    .RegisterMoongateService<IEventBusService, EventBusService>();
+```
+
+The injected service and plugin `OnEvent` registrations use the same
+container-owned bus, so publications flow in both directions. A direct
+`Subscribe` call returns an idempotent `IDisposable` token for early
+unsubscription; otherwise the container owns the subscription lifetime.
+
 Lifecycle events are transient and routed by exact event type; late subscribers
 do not receive earlier events. Handlers run sequentially in registration order,
 and the publisher awaits each returned task. One handler failure is logged and
@@ -375,14 +393,12 @@ does not skip later handlers. Publisher cancellation stops dispatch, while a
 handler cancellation unrelated to the publisher is isolated like any other
 handler failure. There is no automatic retry.
 
-`OnEvent` subscriptions live until the host disposes its container. Code that
-resolves `IMoongateEventBus` and calls `Subscribe` directly receives an
-idempotent `IDisposable` token for earlier unsubscription. Use `Stopping` for
-work that needs running services, including persistence writes. `Stopped` runs
-after every service stop has been attempted and before container and logging
-disposal; it reports completion of the stop phase even when a service stop
-failed. Lifecycle callbacks must not await the host's own `StartAsync` or
-`StopAsync`, because the host is already awaiting the callback.
+`OnEvent` subscriptions live until the host disposes its container. Use
+`Stopping` for work that needs running services, including persistence writes.
+`Stopped` runs after every service stop has been attempted and before container
+and logging disposal; it reports completion of the stop phase even when a
+service stop failed. Lifecycle callbacks must not await the host's own
+`StartAsync` or `StopAsync`, because the host is already awaiting the callback.
 
 ## License
 
