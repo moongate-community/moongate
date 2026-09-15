@@ -25,6 +25,12 @@ game login, login complete, and the separate client-version request and response
 types. Client-version responses may contain no terminator or one trailing NUL;
 embedded NUL bytes and mismatched length headers are rejected.
 
+Packet namespaces and folders are grouped by direction from the server's
+perspective, then by domain: `Incoming.Login` for packets received from clients
+and `Outgoing.Login` for packets sent to clients. Bidirectional packets such
+as `PingPacket` are in `General`; shared login data is in `Data.Login`.
+These namespaces are all under `Moongate.Network.Packets`.
+
 Packet classes declare their opcode and fixed or variable sizing with
 `PacketHandlerAttribute` and inherit a common packet base. Direction is inferred
 from the packet interfaces. Metadata for each explicitly known type is read once
@@ -42,7 +48,7 @@ and can decode an incoming packet without the caller knowing its concrete type:
 using System;
 
 using Moongate.Network.Packets.General;
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 
@@ -84,7 +90,7 @@ a fully configured frozen registry.
 using System;
 
 using Moongate.Network.Packets.General;
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Serialization;
 
 if (PacketCodec.TryDecode<PingPacket>([0x73, 0x2A], out var ping))

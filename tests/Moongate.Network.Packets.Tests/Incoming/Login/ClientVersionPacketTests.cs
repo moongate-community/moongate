@@ -1,7 +1,7 @@
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Serialization;
 
-namespace Moongate.Network.Packets.Tests.Login;
+namespace Moongate.Network.Packets.Tests.Incoming.Login;
 
 public class ClientVersionPacketTests
 {

@@ -4,19 +4,22 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Outgoing.Login;
 
-[PacketHandler(0xBD, PacketSizing.Fixed, Length = 3)]
-public sealed class ClientVersionRequestPacket : BaseFixedPacket<ClientVersionRequestPacket>, IOutgoingPacket
+[PacketHandler(0x82, PacketSizing.Fixed, Length = 2)]
+public sealed class LoginDeniedPacket : BaseFixedPacket<LoginDeniedPacket>, IOutgoingPacket
 {
-    public ClientVersionRequestPacket()
+    public byte Reason { get; }
+
+    public LoginDeniedPacket(byte reason)
     {
+        Reason = reason;
     }
 
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
-        writer.WriteUInt16BigEndian((ushort)Length);
+        writer.WriteByte(Reason);
     }
 }

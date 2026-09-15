@@ -7,7 +7,7 @@ using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0x8C, PacketSizing.Fixed, Length = 11)]
 public sealed class ServerRedirectPacket : BaseFixedPacket<ServerRedirectPacket>, IOutgoingPacket

@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.General;
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 
 namespace Moongate.Network.Packets.Registry;
 

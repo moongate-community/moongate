@@ -6,7 +6,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xEF, PacketSizing.Fixed, Length = 21)]
 public sealed class LoginSeedPacket : BaseFixedPacket<LoginSeedPacket>, IIncomingPacket<LoginSeedPacket>

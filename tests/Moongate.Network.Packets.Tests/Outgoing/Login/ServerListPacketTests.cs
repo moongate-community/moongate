@@ -1,11 +1,11 @@
 using System.Net;
 
 using Moongate.Network.Packets.Data.Login;
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Serialization;
 using Moongate.Network.Packets.Tests.Support;
 
-namespace Moongate.Network.Packets.Tests.Login;
+namespace Moongate.Network.Packets.Tests.Outgoing.Login;
 
 public class ServerListPacketTests
 {
