@@ -11,6 +11,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Args;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Persistence.Internal;
+using Moongate.Server.Services.Plugins;
 using Serilog;
 
 await ConsoleApp.RunAsync(
@@ -59,7 +60,9 @@ await ConsoleApp.RunAsync(
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         container.RegisterMoongateEventBus()
-            .RegisterMoongateService<IEventBusService, EventBusService>();
+            .RegisterMoongateService<IEventBusService, EventBusService>()
+            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                () => new PluginLoaderService(container, directoriesConfig));
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken);
 

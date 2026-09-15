@@ -12,6 +12,19 @@ namespace Moongate.Tests.Server.Core.Extensions;
 public sealed class PluginContainerExtensionsTests
 {
     [Fact]
+    public void RegisterPlugin_RegistersInternalPluginInSharedRegistry()
+    {
+        using var container = new Container();
+
+        var result = container.RegisterPlugin<DefaultRegistrationPlugin>();
+
+        Assert.Same(container, result);
+        Assert.Equal("default", Assert.Single(container.Resolve<MoongatePluginRegistry>().Plugins).Id);
+        Assert.IsType<RegistrationService>(container.Resolve<IRegistrationService>());
+        Assert.Throws<InvalidOperationException>(() => container.RegisterMoongatePlugin<DefaultRegistrationPlugin>());
+    }
+
+    [Fact]
     public void GenericOverload_RegistersPluginAndServices()
     {
         using var container = new Container();
@@ -75,6 +88,7 @@ public sealed class PluginContainerExtensionsTests
         var instance = new DefaultRegistrationPlugin();
 
         Assert.Throws<ArgumentNullException>(() => missing.RegisterMoongatePlugin<DefaultRegistrationPlugin>());
+        Assert.Throws<ArgumentNullException>(() => missing.RegisterPlugin<DefaultRegistrationPlugin>());
         Assert.Throws<ArgumentNullException>(() => missing.RegisterMoongatePlugin(instance));
         Assert.Throws<ArgumentNullException>(() => missing.RegisterMoongatePlugins(instance));
         Assert.Throws<ArgumentNullException>(() => container.RegisterMoongatePlugin((IMoongatePlugin)null!));

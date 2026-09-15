@@ -31,4 +31,31 @@
                       LogicalName="Moongate.Tests.TestSupport.Resources.Nested.sample.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../Fixtures/Plugins/FoundationPlugin/FoundationPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="../Fixtures/Plugins/DependentPlugin/DependentPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="../Fixtures/Plugins/FailingPlugin/FailingPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CopyPluginFixtures" AfterTargets="Build">
+    <ItemGroup>
+      <_FoundationPluginFiles Include="../Fixtures/Plugins/FoundationPlugin/bin/$(Configuration)/net10.0/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_FoundationPluginFiles)"
+          DestinationFiles="@(_FoundationPluginFiles->'$(OutDir)PluginFixtures/FoundationPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <_DependentPluginFiles Include="../Fixtures/Plugins/DependentPlugin/bin/$(Configuration)/net10.0/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_DependentPluginFiles)"
+          DestinationFiles="@(_DependentPluginFiles->'$(OutDir)PluginFixtures/DependentPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <_FailingPluginFiles Include="../Fixtures/Plugins/FailingPlugin/bin/$(Configuration)/net10.0/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_FailingPluginFiles)"
+          DestinationFiles="@(_FailingPluginFiles->'$(OutDir)PluginFixtures/FailingPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
 </Project>

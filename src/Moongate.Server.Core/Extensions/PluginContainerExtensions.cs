@@ -9,6 +9,15 @@ public static class PluginContainerExtensions
 {
     extension(Container container)
     {
+        /// <summary>Registers an internal plugin and its services in the shared plugin registry.</summary>
+        /// <typeparam name="TPlugin">The plugin type with a public parameterless constructor.</typeparam>
+        /// <returns>The container for chaining further registrations.</returns>
+        public Container RegisterPlugin<TPlugin>()
+            where TPlugin : class, IMoongatePlugin, new()
+        {
+            return container.RegisterMoongatePlugin<TPlugin>();
+        }
+
         public Container RegisterMoongatePlugin<TPlugin>()
             where TPlugin : class, IMoongatePlugin, new()
         {
