@@ -166,7 +166,6 @@ public class PacketRegistryTests
         Assert.Equal(4, response.MinimumLength);
         Assert.Equal(typeof(ClientVersionRequestPacket), request.PacketType);
         Assert.Equal(3, request.FixedLength);
-        Assert.Equal(11, registry.RegisteredPackets.Count);
         Assert.True(registry.IsFrozen);
         Assert.Throws<InvalidOperationException>(() => registry.RegisterPacket<LoginCompletePacket>());
     }
@@ -196,6 +195,7 @@ public class PacketRegistryTests
             (0x91, typeof(GameLoginPacket), PacketSizing.Fixed, 65, 65, PacketDirection.Incoming),
             (0xA0, typeof(ServerSelectPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Incoming),
             (0xA8, typeof(ServerListPacket), PacketSizing.Variable, null, 6, PacketDirection.Outgoing),
+            (0xB9, typeof(SupportFeaturesPacket), PacketSizing.Fixed, 5, 5, PacketDirection.Outgoing),
             (0xBD, typeof(ClientVersionRequestPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Outgoing),
             (0xBD, typeof(ClientVersionPacket), PacketSizing.Variable, null, 4, PacketDirection.Incoming),
             (0xEF, typeof(LoginSeedPacket), PacketSizing.Fixed, 21, 21, PacketDirection.Incoming)

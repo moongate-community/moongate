@@ -16,14 +16,63 @@ dotnet build Moongate.slnx
 dotnet test Moongate.slnx
 ```
 
+## Geometry
+
+`Moongate.Core.Geometry` provides `Point2D`, `Point3D`, `Rectangle2D`,
+`Rectangle3D`, and `Point3DList`, ported from the archived Moongate implementation.
+The points are mutable value types; `IPoint2D` and `IPoint3D` expose read-only
+coordinates in `Moongate.Core.Interfaces.Geometry`. Movement directions live in
+`Moongate.Core.Types.Geometry.DirectionType`.
+
+```csharp
+using Moongate.Core.Geometry;
+using Moongate.Core.Types.Geometry;
+
+var position = new Point3D(100, 200, -5);
+var next = position.Move(DirectionType.NorthEast | DirectionType.Running);
+// next is (101, 199, -5); running does not change the one-tile offset.
+var area = Rectangle2D.Parse("(100, 200)+(10, 20)");
+var inside = area.Contains(new Point2D(109, 219)); // true
+```
+
+Rectangle text uses position plus size and round-trips through `Parse`/`TryParse`;
+constructors taking two points use start and end coordinates. Containment includes
+the start and excludes the end. `Point3D.GetDistance` and `InRange` use Euclidean
+2D distance, ignoring Z; their `3D` counterparts include Z. Negative ranges always
+return false. Point comparison operators compare every coordinate independently,
+while `CompareTo` sorts lexicographically by X, Y, then Z.
+
+`Point3DList.ToArray()` preserves the legacy drain behavior: it copies the points
+and clears the list. Indexing only exposes points below `Count`.
+
 ## Standalone packet library
 
 `Moongate.Network.Packets` provides complete-buffer parsing and encoding for the
 ClassicUO 7.x initial login flow. The first slice supports Ping, login seed,
 account login, login denial, server list, server selection, server redirect,
-game login, login complete, and the separate client-version request and response
-types. Client-version responses may contain no terminator or one trailing NUL;
-embedded NUL bytes and mismatched length headers are rejected.
+game login, login complete, supported client features, and the separate
+client-version request and response types. Client-version responses may contain
+no terminator or one trailing NUL; embedded NUL bytes and mismatched length
+headers are rejected.
+
+`SupportFeaturesPacket` (`0xB9`) writes a fixed five-byte packet: opcode followed
+by a 32-bit big-endian `FeatureFlags` mask. The flags and expansion presets live
+in `Moongate.Core.Types.Expansions`. The caller chooses the features explicitly:
+
+```csharp
+using Moongate.Core.Types.Expansions;
+using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Network.Packets.Serialization;
+
+var features = PacketCodec.Encode(new SupportFeaturesPacket(FeatureFlags.ExpansionEj));
+// B9 00 FF 82 D8
+```
+
+This is the format used by ClassicUO with UO 7.x data. The older three-byte
+variant is outside the current client target; this packet has no length header.
+The layout is verified against ClassicUO's
+[packet lengths](https://github.com/ClassicUO/ClassicUO/blob/main/src/ClassicUO.Client/Network/PacketsTable.cs)
+and [feature handler](https://github.com/ClassicUO/ClassicUO/blob/main/src/ClassicUO.Client/Network/PacketHandlers.cs).
 
 Packet namespaces and folders are grouped by direction from the server's
 perspective, then by domain: `Incoming.Login` for packets received from clients

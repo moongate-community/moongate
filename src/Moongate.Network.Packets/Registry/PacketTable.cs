@@ -24,6 +24,7 @@ public static class PacketTable
         registry.RegisterPacket<ClientVersionRequestPacket>();
         registry.RegisterPacket<ServerListPacket>();
         registry.RegisterPacket<ServerRedirectPacket>();
+        registry.RegisterPacket<SupportFeaturesPacket>();
     }
 
     /// <summary>
