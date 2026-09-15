@@ -23,6 +23,19 @@ public sealed class PacketRegistry
     {
     }
 
+    /// <summary>
+    /// Registers a packet using the direction inferred from its incoming and outgoing interfaces.
+    /// Bidirectional packets are registered for both directions in one operation.
+    /// </summary>
+    /// <typeparam name="TPacket">The concrete packet type with packet metadata.</typeparam>
+    public void RegisterPacket<TPacket>()
+        where TPacket : class, IPacket
+    {
+        EnsureMutable();
+        var descriptor = PacketMetadataCache<TPacket>.Descriptor;
+        Register(descriptor, PacketParserCache<TPacket>.Parser);
+    }
+
     public void RegisterIncoming<TPacket>()
         where TPacket : class, IIncomingPacket<TPacket>
     {
@@ -33,17 +46,7 @@ public sealed class PacketRegistry
             throw new InvalidOperationException($"Packet type '{typeof(TPacket).FullName}' is not incoming.");
         }
 
-        var keys = descriptor.Direction == PacketDirection.Both
-            ? new[] { (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing) }
-            : new[] { (descriptor.OpCode, PacketDirection.Incoming) };
-        EnsureAvailable(descriptor, keys);
-        foreach (var key in keys)
-        {
-            _descriptors.Add(key, descriptor);
-        }
-
-        _incomingParsers.Add(descriptor.OpCode, PacketParserAdapter<TPacket>.TryParse);
-        _registeredPackets.Add(descriptor);
+        Register(descriptor, PacketParserAdapter<TPacket>.TryParse);
     }
 
     public void RegisterOutgoing<TPacket>()
@@ -61,10 +64,7 @@ public sealed class PacketRegistry
             throw new InvalidOperationException($"Packet type '{typeof(TPacket).FullName}' is not outgoing.");
         }
 
-        var key = (descriptor.OpCode, PacketDirection.Outgoing);
-        EnsureAvailable(descriptor, [key]);
-        _descriptors.Add(key, descriptor);
-        _registeredPackets.Add(descriptor);
+        Register(descriptor, null);
     }
 
     public void Freeze()
@@ -104,6 +104,26 @@ public sealed class PacketRegistry
         }
 
         return parser(data, out packet);
+    }
+
+    private void Register(PacketDescriptor descriptor, PacketParser? parser)
+    {
+        var keys = descriptor.Direction == PacketDirection.Both
+            ? new[] { (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing) }
+            : new[] { (descriptor.OpCode, descriptor.Direction) };
+        EnsureAvailable(descriptor, keys);
+
+        foreach (var key in keys)
+        {
+            _descriptors.Add(key, descriptor);
+        }
+
+        if (parser is not null)
+        {
+            _incomingParsers.Add(descriptor.OpCode, parser);
+        }
+
+        _registeredPackets.Add(descriptor);
     }
 
     private ReadOnlyCollection<PacketDescriptor> CreateSnapshot()

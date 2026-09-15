@@ -39,6 +39,13 @@ operations. The handwritten `PacketTable` registers packet types directly, with
 no source generation or assembly discovery. Add a built-in packet by giving it
 an attribute and adding one type registration to that table.
 
+Use `RegisterPacket<TPacket>()` for every direction: it recognizes
+`IIncomingPacket<TPacket>`, `IOutgoingPacket`, or both. A bidirectional packet
+needs just one registration. The incoming parser delegate is bound once per
+type using reflection; decoding uses the cached delegate. The explicit
+`RegisterIncoming<TPacket>()` and `RegisterOutgoing<TPacket>()` methods remain
+available with their existing direction checks.
+
 `PacketDescriptor.FixedLength` describes fixed wire metadata. `IPacket.Length`
 is always the actual complete packet length, including for variable packets.
 The default registry is complete and frozen, supports direction-specific lookup,
@@ -49,6 +56,7 @@ using System;
 
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Types.Packets;
 
@@ -77,7 +85,9 @@ if (registry.TryDecode(Convert.FromHexString("BD000C372E302E3130392E30"), out pa
 }
 
 var custom = new PacketRegistry();
-custom.RegisterIncoming<PingPacket>();
+custom.RegisterPacket<ServerSelectPacket>();  // Incoming
+custom.RegisterPacket<LoginCompletePacket>(); // Outgoing
+custom.RegisterPacket<PingPacket>();          // Both
 custom.Freeze();
 ```
 

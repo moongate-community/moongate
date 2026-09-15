@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Registry;
+using Moongate.Network.Packets.Tests.Support.Metadata;
 using Moongate.Network.Packets.Tests.Support.Registry;
 using Moongate.Network.Packets.Types.Packets;
 
@@ -13,6 +14,146 @@ namespace Moongate.Network.Packets.Tests.Registry;
 
 public class PacketRegistryTests
 {
+    [Fact]
+    public void RegisterPacket_Incoming_RegistersDescriptorAndParser()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<ServerSelectPacket>();
+
+        Assert.True(registry.TryGetDescriptor(0xA0, PacketDirection.Incoming, out var descriptor));
+        Assert.Equal(PacketDirection.Incoming, descriptor.Direction);
+        Assert.False(registry.TryGetDescriptor(0xA0, PacketDirection.Outgoing, out _));
+        Assert.True(registry.TryDecode([0xA0, 0x12, 0x34], out var packet));
+        Assert.Equal((ushort)0x1234, Assert.IsType<ServerSelectPacket>(packet).ServerIndex);
+        Assert.Single(registry.RegisteredPackets);
+    }
+
+    [Fact]
+    public void RegisterPacket_Outgoing_RegistersOnlyOutgoingDescriptor()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<LoginCompletePacket>();
+
+        Assert.True(registry.TryGetDescriptor(0x55, PacketDirection.Outgoing, out var descriptor));
+        Assert.Equal(typeof(LoginCompletePacket), descriptor.PacketType);
+        Assert.Equal(PacketDirection.Outgoing, descriptor.Direction);
+        Assert.False(registry.TryGetDescriptor(0x55, PacketDirection.Incoming, out _));
+        Assert.False(registry.TryDecode([0x55], out var packet));
+        Assert.Null(packet);
+        Assert.Single(registry.RegisteredPackets);
+    }
+
+    [Fact]
+    public void RegisterPacket_Bidirectional_RegistersBothDirectionsOnce()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<PingPacket>();
+
+        Assert.True(registry.TryGetDescriptor(0x73, PacketDirection.Incoming, out var incoming));
+        Assert.True(registry.TryGetDescriptor(0x73, PacketDirection.Outgoing, out var outgoing));
+        Assert.Same(incoming, outgoing);
+        Assert.Equal(PacketDirection.Both, incoming.Direction);
+        Assert.True(registry.TryDecode([0x73, 0x2A], out var packet));
+        Assert.Equal((byte)42, Assert.IsType<PingPacket>(packet).Sequence);
+        Assert.Single(registry.RegisteredPackets);
+    }
+
+    [Fact]
+    public void RegisterPacket_SharedOpcodeWithOppositeDirections_KeepsBothTypes()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<ClientVersionRequestPacket>();
+        registry.RegisterPacket<ClientVersionPacket>();
+
+        Assert.True(registry.TryGetDescriptor(0xBD, PacketDirection.Incoming, out var incoming));
+        Assert.True(registry.TryGetDescriptor(0xBD, PacketDirection.Outgoing, out var outgoing));
+        Assert.Equal(typeof(ClientVersionPacket), incoming.PacketType);
+        Assert.Equal(typeof(ClientVersionRequestPacket), outgoing.PacketType);
+        Assert.True(registry.TryDecode(Convert.FromHexString("BD000C372E302E3130392E30"), out var packet));
+        Assert.Equal("7.0.109.0", Assert.IsType<ClientVersionPacket>(packet).Version);
+        Assert.Equal(2, registry.RegisteredPackets.Count);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void RegisterPacket_BidirectionalCollision_IsAtomic(bool bidirectionalFirst)
+    {
+        var registry = new PacketRegistry();
+        if (bidirectionalFirst)
+        {
+            registry.RegisterPacket<BidirectionalCollisionPacket>();
+            Assert.Throws<InvalidOperationException>(() => registry.RegisterPacket<OutgoingCollisionPacket>());
+            Assert.True(registry.TryDecode([0xE1], out var packet));
+            Assert.IsType<BidirectionalCollisionPacket>(packet);
+        }
+        else
+        {
+            registry.RegisterPacket<OutgoingCollisionPacket>();
+            Assert.Throws<InvalidOperationException>(() => registry.RegisterPacket<BidirectionalCollisionPacket>());
+            Assert.False(registry.TryGetDescriptor(0xE1, PacketDirection.Incoming, out _));
+            Assert.False(registry.TryDecode([0xE1], out _));
+        }
+
+        Assert.True(registry.TryGetDescriptor(0xE1, PacketDirection.Outgoing, out var outgoing));
+        Assert.Equal(
+            bidirectionalFirst ? typeof(BidirectionalCollisionPacket) : typeof(OutgoingCollisionPacket),
+            outgoing.PacketType);
+        Assert.Single(registry.RegisteredPackets);
+    }
+
+    [Fact]
+    public void RegisterPacket_DuplicateType_RejectsWithoutChangingExistingParser()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<PingPacket>();
+
+        Assert.Throws<InvalidOperationException>(() => registry.RegisterPacket<PingPacket>());
+        Assert.Single(registry.RegisteredPackets);
+        Assert.True(registry.TryDecode([0x73, 0x2A], out var packet));
+        Assert.Equal((byte)42, Assert.IsType<PingPacket>(packet).Sequence);
+    }
+
+    [Fact]
+    public void RegisterPacket_ExplicitIncomingContract_UsesInterfaceParser()
+    {
+        var registry = new PacketRegistry();
+        registry.RegisterPacket<ExplicitIncomingPacket>();
+
+        Assert.True(registry.TryDecode([0xD1, 0x2A], out var packet));
+        Assert.Equal((byte)42, Assert.IsType<ExplicitIncomingPacket>(packet).Value);
+        Assert.False(registry.TryDecode([0xD1, 0x00], out packet));
+        Assert.Null(packet);
+    }
+
+    [Fact]
+    public void RegisterPacket_MissingMetadata_RejectsWithoutChangingRegistry()
+    {
+        var registry = new PacketRegistry();
+
+        var error = Record.Exception(() => registry.RegisterPacket<MissingMetadataPacket>());
+
+        Assert.NotNull(error);
+        Assert.IsType<InvalidOperationException>(error.GetBaseException());
+        Assert.Empty(registry.RegisteredPackets);
+        registry.RegisterPacket<PingPacket>();
+        Assert.True(registry.TryDecode([0x73, 0x2A], out _));
+    }
+
+    [Fact]
+    public void RegisterPacket_NoDirectionContract_RejectsWithoutChangingRegistry()
+    {
+        var registry = new PacketRegistry();
+
+        var error = Record.Exception(() => registry.RegisterPacket<DirectionlessPacket>());
+
+        Assert.NotNull(error);
+        Assert.IsType<InvalidOperationException>(error.GetBaseException());
+        Assert.Empty(registry.RegisteredPackets);
+        registry.RegisterPacket<PingPacket>();
+        Assert.True(registry.TryDecode([0x73, 0x2A], out _));
+    }
+
     [Fact]
     public void Default_ClientVersionDirections_HaveDistinctDescriptors()
     {
@@ -27,6 +168,7 @@ public class PacketRegistryTests
         Assert.Equal(3, request.FixedLength);
         Assert.Equal(11, registry.RegisteredPackets.Count);
         Assert.True(registry.IsFrozen);
+        Assert.Throws<InvalidOperationException>(() => registry.RegisterPacket<LoginCompletePacket>());
     }
 
     [Fact]
