@@ -2,8 +2,9 @@ using System.Collections;
 
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Network.Packets.Login;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Tests.Support.Registry;
 using Moongate.Network.Packets.Types.Packets;

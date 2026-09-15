@@ -6,7 +6,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Incoming.Login;
 
 [PacketHandler(0xA0, PacketSizing.Fixed, Length = 3)]
 public sealed class ServerSelectPacket : BaseFixedPacket<ServerSelectPacket>, IIncomingPacket<ServerSelectPacket>

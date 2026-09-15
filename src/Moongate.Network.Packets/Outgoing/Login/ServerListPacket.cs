@@ -8,7 +8,7 @@ using Moongate.Network.Packets.Internal.Login;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.Login;
+namespace Moongate.Network.Packets.Outgoing.Login;
 
 [PacketHandler(0xA8, PacketSizing.Variable, MinimumLength = 6)]
 public sealed class ServerListPacket : BasePacket<ServerListPacket>, IOutgoingPacket
