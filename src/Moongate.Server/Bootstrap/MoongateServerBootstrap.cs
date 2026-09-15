@@ -8,6 +8,7 @@ using Moongate.Server.Core.Data.Events;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Bootstrap;
 using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Bootstrap;
 
@@ -58,6 +59,11 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         try
         {
+            if (_container.IsRegistered<IPluginLoaderService>())
+            {
+                _container.Resolve<IPluginLoaderService>().LoadPlugins();
+            }
+
             await _services.StartAsync().ConfigureAwait(false);
 
             await _eventBus.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);

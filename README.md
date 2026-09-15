@@ -293,7 +293,56 @@ Plugins implement `IMoongatePlugin` from `Moongate.Server.Core`. Register plugin
 instances explicitly after host services are configured and before
 `bootstrap.StartAsync()`. Pass related plugins in one batch: dependencies are
 validated and registered first, regardless of their position in the input.
-There is no DLL discovery in this version.
+Internal plugins with a public parameterless constructor can use the shorter
+`container.RegisterPlugin<MyPlugin>()` extension. It shares the registry and
+duplicate checks with the existing `RegisterMoongatePlugin` overloads.
+
+The server also registers `IPluginLoaderService` from `Moongate.Server.Core`,
+implemented by `PluginLoaderService` in `Moongate.Server.Services.Plugins`.
+The bootstrap calls it before capturing startup service registrations, so
+services and event subscriptions registered by disk plugins participate in
+the same lifecycle as internal plugins.
+
+Disk bundles live under `directoriesConfig["plugins"]`, one subdirectory per
+entry assembly. The directory name and entry DLL name must match:
+
+```text
+plugins/
+  MyPlugin/
+    MyPlugin.dll
+    MyPlugin.deps.json
+    PrivateDependency.dll
+```
+
+Build plugin projects for .NET 10 with `<EnableDynamicLoading>true</EnableDynamicLoading>`
+and copy their output into the bundle directory, including dependencies and any
+runtime assets. Each entry assembly can expose multiple public, concrete
+`IMoongatePlugin` classes, each with a public parameterless constructor. All disk
+plugins are registered in one batch, ordered by their declared dependencies.
+They can depend on internal plugins registered earlier with the container.
+
+Each bundle has a collectible load context. Assemblies supplied by the host
+are shared to preserve contract and service type identity; other dependencies
+are resolved privately using `AssemblyDependencyResolver` and adjacent DLLs.
+This follows the .NET [plugin loading APIs](https://learn.microsoft.com/en-us/dotnet/core/tutorials/creating-app-with-plugin-support).
+
+`LoadPlugins()` is synchronous and runs once per loader instance. Successful
+repeated calls do nothing. Missing entry DLLs, invalid assemblies, missing
+dependencies, duplicate IDs, and registration failures abort startup and trigger
+the bootstrap's normal cleanup. A failed loader cannot be retried with the same
+container. Container disposal requests unloading after the service stop phase;
+actual unloading occurs when references to plugin code are released.
+
+When composing a host manually, register the singleton using a factory because
+DryIoc does not inject the concrete `Container` automatically:
+
+```csharp
+container.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+    () => new PluginLoaderService(container, directoriesConfig));
+```
+
+`loader.Plugins` exposes metadata for both internal and disk plugins from the
+shared registry.
 
 For example, these three files define two plugins and a service. Each plugin
 implementation project references `Moongate.Server.Core`.
