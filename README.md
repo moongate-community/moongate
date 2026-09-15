@@ -504,6 +504,12 @@ and logging disposal; it reports completion of the stop phase even when a
 service stop failed. Lifecycle callbacks must not await the host's own
 `StartAsync` or `StopAsync`, because the host is already awaiting the callback.
 
+`MoongateServerBootstrap` coordinates lifecycle events, startup rollback, and
+resource cleanup. Its internal `BootstrapLifecycleTasks` shares start, stop,
+and shutdown tasks across concurrent or reentrant calls. `StartupServiceLifecycle`
+resolves autostart services in priority order, starts each instance once, and
+stops attempted services in reverse order, including a service whose start failed.
+
 ## License
 
 MIT - see [LICENSE](LICENSE).
