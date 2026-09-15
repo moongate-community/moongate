@@ -13,17 +13,17 @@ public static class PacketTable
     public static void Register(PacketRegistry registry)
     {
         ArgumentNullException.ThrowIfNull(registry);
-        registry.RegisterIncoming<PingPacket>();
-        registry.RegisterIncoming<LoginSeedPacket>();
-        registry.RegisterIncoming<AccountLoginPacket>();
-        registry.RegisterIncoming<GameLoginPacket>();
-        registry.RegisterIncoming<ServerSelectPacket>();
-        registry.RegisterIncoming<ClientVersionPacket>();
-        registry.RegisterOutgoing<LoginDeniedPacket>();
-        registry.RegisterOutgoing<LoginCompletePacket>();
-        registry.RegisterOutgoing<ClientVersionRequestPacket>();
-        registry.RegisterOutgoing<ServerListPacket>();
-        registry.RegisterOutgoing<ServerRedirectPacket>();
+        registry.RegisterPacket<PingPacket>();
+        registry.RegisterPacket<LoginSeedPacket>();
+        registry.RegisterPacket<AccountLoginPacket>();
+        registry.RegisterPacket<GameLoginPacket>();
+        registry.RegisterPacket<ServerSelectPacket>();
+        registry.RegisterPacket<ClientVersionPacket>();
+        registry.RegisterPacket<LoginDeniedPacket>();
+        registry.RegisterPacket<LoginCompletePacket>();
+        registry.RegisterPacket<ClientVersionRequestPacket>();
+        registry.RegisterPacket<ServerListPacket>();
+        registry.RegisterPacket<ServerRedirectPacket>();
     }
 
     /// <summary>
