@@ -26,7 +26,7 @@ await ConsoleApp.RunAsync(
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
 
-        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "saves"]);
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save"]);
 
         container.RegisterInstance(directoriesConfig);
 
@@ -48,10 +48,10 @@ await ConsoleApp.RunAsync(
         }
 
         container.RegisterInstance(serverArgs);
-        container.RegisterMoongatePersistence(Path.Combine(serverArgs.RootDirectory, "save"))
-            .RegisterMoongateService<MoongatePersistenceStartupService>(
-                MoongatePersistenceStartupService.StartupPriority
-            );
+        container.RegisterMoongatePersistence(directoriesConfig["save"])
+                 .RegisterMoongateService<MoongatePersistenceStartupService>(
+                     MoongatePersistenceStartupService.StartupPriority
+                 );
 
         Console.WriteLine($"Moongate Server starting with root directory: {serverArgs.RootDirectory}");
         Console.WriteLine($"Platform: {Environment.OSVersion.Platform}, Version: {Environment.OSVersion.Version}");
@@ -60,9 +60,11 @@ await ConsoleApp.RunAsync(
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         container.RegisterMoongateEventBus()
-            .RegisterMoongateService<IEventBusService, EventBusService>()
-            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                () => new PluginLoaderService(container, directoriesConfig));
+                 .RegisterMoongateService<IEventBusService, EventBusService>()
+                 .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                     () => new PluginLoaderService(container, directoriesConfig));
+
+
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken);
 

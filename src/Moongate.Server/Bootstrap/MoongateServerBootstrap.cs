@@ -1,5 +1,4 @@
 using System.Runtime.ExceptionServices;
-
 using DryIoc;
 using Serilog;
 
@@ -158,9 +157,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private static void ThrowFailures(List<Exception> failures)
     {
         if (failures.Count == 0)
-        {
             return;
-        }
 
         if (failures.Count == 1)
         {
