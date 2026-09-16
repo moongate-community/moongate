@@ -13,7 +13,7 @@ namespace Moongate.Server.Services.GameLoop;
 /// <summary>Executes bounded, synchronous work on one dedicated thread.</summary>
 public sealed class GameLoopService : IGameLoopService, IDisposable
 {
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private readonly Channel<QueuedGameLoopWorkItem> _inbox;
     private readonly AutoResetEvent _wake;
     private readonly GameLoopPump _pump;
@@ -22,6 +22,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     private readonly TaskCompletionSource _started = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly ILogger _logger = Log.ForContext<GameLoopService>();
+
+    private readonly GameLoopOptions _gameLoopOptions;
 
     private GameLoopState _state;
     private Thread? _thread;
@@ -41,6 +43,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     /// <summary>Creates a stopped inbox; StartAsync must complete before producers can post work.</summary>
     public GameLoopService(GameLoopOptions options, TimerWheelService timers, TimeProvider timeProvider)
     {
+
         _inbox = Channel.CreateBounded<QueuedGameLoopWorkItem>(
             new BoundedChannelOptions(options.QueueCapacity)
             {
@@ -50,6 +53,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 FullMode = BoundedChannelFullMode.Wait
             }
         );
+        _gameLoopOptions = options;
         _timeProvider = timeProvider;
         _timers = timers;
         _pump = new GameLoopPump(_inbox.Reader, options.MaxWorkItemsPerBatch, _timeProvider, options.WorkItemBudget);
@@ -85,6 +89,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
 
                 // The new thread cannot take _gate until its successful start is recorded.
                 _thread = thread;
+
+                _logger.Information("Started game loop thread {ThreadName} (ID {ThreadId}), process every {Tick}", thread.Name, thread.ManagedThreadId, _gameLoopOptions.MaxWorkItemsPerBatch);
             }
             catch (Exception exception)
             {
