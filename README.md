@@ -174,6 +174,41 @@ PNG streams returned by the rendering facades start at position zero and must be
 disposed by the caller. `FromFile()` accepts formats supported by Skia's decoder
 (including PNG, JPEG, WebP and BMP); TIFF input is unsupported.
 
+## TOML serialization
+
+`Moongate.Core.Utils.TomlUtils` uses Tomlyn to serialize configuration objects,
+deserialize TOML text, and read or write files without a server dependency:
+
+```csharp
+using Moongate.Core.Utils;
+
+var toml = TomlUtils.Serialize(settings);
+var restored = TomlUtils.Deserialize<ServerSettings>(toml);
+
+TomlUtils.SerializeToFile(settings, "config/server.toml");
+var fromFile = TomlUtils.DeserializeFromFile<ServerSettings>("config/server.toml");
+
+await TomlUtils.SerializeToFileAsync(settings, "config/server.toml", cancellationToken: cancellationToken);
+var fromFileAsync = await TomlUtils.DeserializeFromFileAsync<ServerSettings>(
+    "config/server.toml", cancellationToken: cancellationToken);
+```
+
+`settings` is an instance of your configuration model (`ServerSettings` here).
+All methods accept optional `TomlSerializerOptions`. By default, property names
+retain their CLR spelling. For snake_case keys, pass options with
+`PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower` to
+both serialization and deserialization. Options apply only to the current call.
+
+File writes create missing parent directories and overwrite existing files as
+UTF-8 without a BOM. Serialization completes before touching the file system;
+writes are not atomic, so an I/O failure or cancellation during writing can leave
+a partial file. Async methods perform asynchronous file I/O; TOML conversion is
+synchronous. A token canceled before the call prevents file-system changes.
+
+Invalid TOML raises `TomlException` with parser diagnostics. Missing files and
+other I/O failures propagate to the caller. Empty TOML is valid and preserves a
+model's default property values; null input is rejected.
+
 ## Persistence
 
 The server stores persistence files under `<root-directory>/save`. Register every
