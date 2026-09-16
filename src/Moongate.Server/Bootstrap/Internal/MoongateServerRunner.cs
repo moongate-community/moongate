@@ -27,12 +27,38 @@ internal static class MoongateServerRunner
         catch (Exception shutdownFailure)
         {
             if (primaryFailure is null) throw;
-            throw new AggregateException(primaryFailure, shutdownFailure);
+
+            // Run and Stop can independently observe the same lifetime fault.
+            // Retain distinct cleanup failures without reporting that original fault twice.
+            List<Exception> failures = [primaryFailure];
+            AddShutdownFailures(shutdownFailure, primaryFailure, failures);
+
+            if (failures.Count > 1)
+            {
+                throw new AggregateException(failures);
+            }
         }
 
         if (primaryFailure is not null)
         {
             ExceptionDispatchInfo.Capture(primaryFailure).Throw();
+        }
+    }
+
+    private static void AddShutdownFailures(Exception failure, Exception primaryFailure, List<Exception> failures)
+    {
+        if (ReferenceEquals(failure, primaryFailure)) return;
+
+        if (failure is AggregateException { InnerExceptions.Count: > 0 } aggregate)
+        {
+            foreach (var inner in aggregate.InnerExceptions)
+            {
+                AddShutdownFailures(inner, primaryFailure, failures);
+            }
+        }
+        else
+        {
+            failures.Add(failure);
         }
     }
 }

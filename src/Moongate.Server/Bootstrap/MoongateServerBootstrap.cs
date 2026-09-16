@@ -19,6 +19,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly Lazy<IMoongateEventBus> _eventBus;
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly StartupServiceLifecycle _services;
+    private Task? _gameLoopCompletion;
 
     public MoongateServerBootstrap(Container container, CancellationToken cancellationToken)
     {
@@ -61,17 +62,26 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
     public async Task RunAsync()
     {
-        try
+        var shutdownRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var registration = _cancellationToken.Register(
+            static state => ((TaskCompletionSource)state!).TrySetResult(), shutdownRequested);
+
+        if (_gameLoopCompletion is null)
         {
-            while (!_cancellationToken.IsCancellationRequested)
+            await shutdownRequested.Task.ConfigureAwait(false);
+        }
+        else
+        {
+            await Task.WhenAny(_gameLoopCompletion, shutdownRequested.Task).ConfigureAwait(false);
+
+            if (_gameLoopCompletion.IsCompleted)
             {
-                await Task.Delay(100, _cancellationToken);
+                await _gameLoopCompletion.ConfigureAwait(false);
+                return;
             }
         }
-        catch (OperationCanceledException)
-        {
-            _logger.Debug("Moongate Server is shutting down due to cancellation request.");
-        }
+
+        _logger.Debug("Moongate Server is shutting down due to cancellation request.");
     }
 
     private async Task StartCoreAsync()
@@ -83,7 +93,19 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
                 _container.Resolve<IPluginLoaderService>().LoadPlugins();
             }
 
-            await _services.StartAsync().ConfigureAwait(false);
+            await _services.StartAsync(service =>
+            {
+                if (service is IGameLoopService gameLoop)
+                {
+                    // Capture after priority-ordered resolution, even if a later startup step fails.
+                    _gameLoopCompletion = gameLoop.Completion;
+                }
+            }).ConfigureAwait(false);
+
+            if (_gameLoopCompletion is { IsCompleted: true })
+            {
+                await _gameLoopCompletion.ConfigureAwait(false);
+            }
 
             await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
             _logger.Information("Moongate Server started.");
@@ -91,6 +113,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         catch (Exception exception)
         {
             var cleanupFailures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
+            cleanupFailures.RemoveAll(failure => ReferenceEquals(failure, exception));
 
             if (cleanupFailures.Count == 0)
             {
@@ -136,6 +159,11 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         ).ConfigureAwait(false);
 
         failures.AddRange(await _services.StopAsync().ConfigureAwait(false));
+
+        if (_gameLoopCompletion is not null)
+        {
+            await CaptureFailureAsync(() => _gameLoopCompletion, failures).ConfigureAwait(false);
+        }
 
         await CaptureFailureAsync(
             () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None), failures

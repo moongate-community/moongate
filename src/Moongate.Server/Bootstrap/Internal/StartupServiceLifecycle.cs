@@ -20,7 +20,7 @@ internal sealed class StartupServiceLifecycle
         _container = container;
     }
 
-    public async Task StartAsync()
+    public async Task StartAsync(Action<IMoongateStartupService>? onStarting = null)
     {
         var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
                                  ? _container.Resolve<List<ServiceRegistrationData>>()
@@ -39,6 +39,7 @@ internal sealed class StartupServiceLifecycle
             }
 
             _startedServices.Add(service);
+            onStarting?.Invoke(service);
             await service.StartAsync().ConfigureAwait(false);
         }
     }

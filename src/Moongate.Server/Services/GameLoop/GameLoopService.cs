@@ -1,0 +1,293 @@
+using System.Threading.Channels;
+using Moongate.Server.Core.Data.GameLoop;
+using Moongate.Server.Core.Interfaces.GameLoop;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.GameLoop.Internal;
+using Moongate.Server.Types.GameLoop.Internal;
+using Serilog;
+
+namespace Moongate.Server.Services.GameLoop;
+
+/// <summary>Executes bounded, synchronous work on one dedicated thread.</summary>
+public sealed class GameLoopService : IGameLoopService, IDisposable
+{
+    private readonly object _gate = new();
+    private readonly Channel<IGameLoopWorkItem> _inbox;
+    private readonly AutoResetEvent _wake;
+    private readonly GameLoopPump _pump;
+    private readonly TaskCompletionSource _started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly ILogger _logger = Log.ForContext<GameLoopService>();
+
+    private GameLoopState _state;
+    private Thread? _thread;
+    private Task? _stopTask;
+    private int _loopThreadId;
+    private bool _disposed;
+
+    /// <inheritdoc />
+    public bool IsOnLoopThread => Volatile.Read(ref _loopThreadId) == Environment.CurrentManagedThreadId;
+
+    /// <inheritdoc />
+    public Task Completion => _completion.Task;
+
+    /// <summary>Creates a stopped inbox; StartAsync must complete before producers can post work.</summary>
+    public GameLoopService(GameLoopOptions options)
+    {
+        _inbox = Channel.CreateBounded<IGameLoopWorkItem>(new BoundedChannelOptions(options.QueueCapacity)
+        {
+            SingleReader = true,
+            SingleWriter = false,
+            AllowSynchronousContinuations = false,
+            FullMode = BoundedChannelFullMode.Wait
+        });
+        _pump = new GameLoopPump(_inbox.Reader, options.MaxWorkItemsPerBatch);
+        _wake = new AutoResetEvent(false);
+    }
+
+    /// <summary>Starts the dedicated thread and completes only after its identity is established.</summary>
+    /// <exception cref="InvalidOperationException">This instance has already stopped and cannot restart.</exception>
+    public Task StartAsync()
+    {
+        lock (_gate)
+        {
+            if (_state is GameLoopState.Starting or GameLoopState.Running)
+            {
+                return _started.Task;
+            }
+
+            if (_state != GameLoopState.Created)
+            {
+                throw new InvalidOperationException("The game loop cannot be restarted after shutdown.");
+            }
+
+            _state = GameLoopState.Starting;
+            try
+            {
+                var thread = new Thread(Run)
+                {
+                    Name = "Moongate Game Loop",
+                    IsBackground = true
+                };
+                thread.Start();
+                // The new thread cannot take _gate until its successful start is recorded.
+                _thread = thread;
+            }
+            catch (Exception exception)
+            {
+                _state = GameLoopState.Stopped;
+                _inbox.Writer.TryComplete();
+                _wake.Dispose();
+                _disposed = true;
+                _started.TrySetException(exception);
+                _completion.TrySetException(exception);
+            }
+
+            return _started.Task;
+        }
+    }
+
+    /// <summary>Closes admission, drains accepted work and waits for the dedicated thread to exit.</summary>
+    /// <remarks>
+    /// Cleanup succeeds after a handler fault; Completion retains the original failure for the host to observe.
+    /// Synchronous handlers cannot be preempted, so this operation has no forced shutdown timeout.
+    /// </remarks>
+    /// <exception cref="InvalidOperationException">The caller is executing on the loop thread.</exception>
+    public Task StopAsync()
+    {
+        RejectLoopThreadWait();
+        lock (_gate)
+        {
+            if (_stopTask is not null)
+            {
+                return _stopTask;
+            }
+
+            if (_state == GameLoopState.Created)
+            {
+                _state = GameLoopState.Stopped;
+                _inbox.Writer.TryComplete();
+                _completion.TrySetResult();
+            }
+            else if (_state is GameLoopState.Starting or GameLoopState.Running)
+            {
+                _state = GameLoopState.Stopping;
+                _inbox.Writer.TryComplete();
+                _wake.Set();
+            }
+
+            _stopTask = WaitForThreadExitAsync(_thread);
+            return _stopTask;
+        }
+    }
+
+    /// <inheritdoc />
+    public bool TryPost(IGameLoopWorkItem workItem)
+    {
+        ArgumentNullException.ThrowIfNull(workItem);
+        lock (_gate)
+        {
+            if (_state != GameLoopState.Running || !_inbox.Writer.TryWrite(workItem))
+            {
+                return false;
+            }
+
+            // Admission and signalling share the disposal lock: an accepted post cannot
+            // subsequently fail because another caller disposed the wake handle.
+            _wake.Set();
+            return true;
+        }
+    }
+
+    /// <inheritdoc />
+    public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(workItem);
+        RejectLoopThreadWait();
+        cancellationToken.ThrowIfCancellationRequested();
+        lock (_gate)
+        {
+            EnsureRunning();
+        }
+
+        return WaitForAdmissionAsync(workItem, cancellationToken);
+    }
+
+    private async ValueTask WaitForAdmissionAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken)
+    {
+        while (await _inbox.Writer.WaitToWriteAsync(cancellationToken).ConfigureAwait(false))
+        {
+            lock (_gate)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                EnsureRunning();
+                if (_inbox.Writer.TryWrite(workItem))
+                {
+                    _wake.Set();
+                    return;
+                }
+            }
+        }
+
+        throw new InvalidOperationException("The game loop is not accepting work.");
+    }
+
+    private void EnsureRunning()
+    {
+        if (_state != GameLoopState.Running)
+        {
+            throw new InvalidOperationException("The game loop is not accepting work.");
+        }
+    }
+
+    private void RejectLoopThreadWait()
+    {
+        if (IsOnLoopThread)
+        {
+            throw new InvalidOperationException("This operation cannot wait on the game loop's own thread.");
+        }
+    }
+
+    private void Run()
+    {
+        Exception? failure = null;
+        try
+        {
+            lock (_gate)
+            {
+                Volatile.Write(ref _loopThreadId, Environment.CurrentManagedThreadId);
+                if (_state == GameLoopState.Starting)
+                {
+                    _state = GameLoopState.Running;
+                }
+
+                _started.TrySetResult();
+            }
+
+            while (true)
+            {
+                var attempted = _pump.RunBatch();
+                lock (_gate)
+                {
+                    if (_state == GameLoopState.Stopping && !_inbox.Reader.TryPeek(out _))
+                    {
+                        break;
+                    }
+                }
+
+                if (attempted == 0)
+                {
+                    // Persistent signal prevents a write between the empty read and this wait from being lost.
+                    _wake.WaitOne();
+                }
+            }
+        }
+        catch (Exception exception)
+        {
+            failure = exception;
+            lock (_gate)
+            {
+                _state = GameLoopState.Stopping;
+                _inbox.Writer.TryComplete();
+            }
+
+            var abandoned = 0;
+            while (_inbox.Reader.TryRead(out _))
+            {
+                abandoned++;
+            }
+
+            try
+            {
+                _logger.Error(exception, "Game loop failed; abandoned {AbandonedWorkItems} queued work items", abandoned);
+            }
+            catch (Exception)
+            {
+                // A failing diagnostic sink must not replace the handler failure or prevent cleanup.
+            }
+        }
+        finally
+        {
+            lock (_gate)
+            {
+                Volatile.Write(ref _loopThreadId, 0);
+                _state = GameLoopState.Stopped;
+            }
+
+            if (failure is null)
+            {
+                _completion.TrySetResult();
+            }
+            else
+            {
+                _started.TrySetException(failure);
+                _completion.TrySetException(failure);
+            }
+        }
+    }
+
+    private async Task WaitForThreadExitAsync(Thread? thread)
+    {
+        // The host observes the primary failure through Completion. Cleanup does not report it a second time.
+        await Completion.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        // Completion is signalled in the worker's finally; join also covers the last instructions after that signal.
+        thread?.Join();
+    }
+
+    /// <summary>Drains the loop and releases its wake handle. Calls on the loop thread are rejected.</summary>
+    public void Dispose()
+    {
+        RejectLoopThreadWait();
+        StopAsync().GetAwaiter().GetResult();
+        lock (_gate)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _wake.Dispose();
+            _disposed = true;
+        }
+    }
+}
