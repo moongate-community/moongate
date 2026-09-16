@@ -209,6 +209,14 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 // Cancellation before any stateful transform does not compromise the stream.
                 sendToken.ThrowIfCancellationRequested();
+                lock (_lifecycleLock)
+                {
+                    // A prior sender may have closed the connection before deferred cleanup cancels I/O.
+                    if (_state is not (TcpClientState.Created or TcpClientState.Running))
+                    {
+                        throw new IOException("The connection is closed.");
+                    }
+                }
                 try
                 {
                     var processed = await _middlewarePipeline.ExecuteSendAsync(this, payload, sendToken)

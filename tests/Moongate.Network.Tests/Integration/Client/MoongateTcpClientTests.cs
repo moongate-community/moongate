@@ -33,6 +33,41 @@ public sealed class MoongateTcpClientTests
     }
 
     [Fact]
+    public async Task SendAsync_AdmittedWaiterAfterFailure_DoesNotTransformBeforeCleanupCancellation()
+    {
+        var stream = new GatedWriteStream { WriteFailure = new IOException("first write failed") };
+        await using var pair = await LoopbackPair.CreateAsync(stream);
+        var middleware = new GatedKeystreamMiddleware();
+        middleware.Release();
+        pair.Sender.AddMiddleware(middleware);
+        var cleanup = new CleanupExecutionContextGate();
+        var first = cleanup.CaptureSend(pair.Sender,
+            () => pair.Sender.SendAsync(new byte[] { 1 }, CancellationToken.None));
+        Task? second = null;
+        try
+        {
+            await stream.WriteEntered.Task.WaitAsync(Timeout);
+            second = pair.Sender.SendAsync(new byte[] { 2 }, CancellationToken.None);
+            stream.ReleaseWrite.TrySetResult();
+            await cleanup.Entered.WaitAsync(Timeout);
+            await Assert.ThrowsAsync<IOException>(() => second.WaitAsync(Timeout));
+            Assert.False(middleware.SecondEntered.Task.IsCompleted);
+            Assert.Equal(1, stream.WriteCount);
+        }
+        finally
+        {
+            cleanup.Release();
+            stream.ReleaseWrite.TrySetResult();
+            await Record.ExceptionAsync(() => first.WaitAsync(Timeout));
+            if (second is not null)
+            {
+                await Record.ExceptionAsync(() => second.WaitAsync(Timeout));
+            }
+            await pair.Sender.Completion.WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
     public async Task SendAsync_CancelDuringWrite_ClosesAndPreventsFurtherWrites()
     {
         var stream = new GatedWriteStream();
