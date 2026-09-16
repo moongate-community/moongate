@@ -2,6 +2,8 @@ using DryIoc;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.GameLoop;
+using Moongate.Server.Core.Data.Timing;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.GameLoop;
@@ -322,6 +324,10 @@ public sealed class GameLoopBootstrapTests
     private static Container CreateContainer()
     {
         var container = new Container();
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterInstance(new TimerWheelOptions());
+        container.RegisterMoongateService<TimerWheelService>(priority: -900);
+        container.RegisterDelegate<ITimerService>(services => services.Resolve<TimerWheelService>(), Reuse.Singleton);
         container.RegisterInstance(new GameLoopOptions { QueueCapacity = 4, MaxWorkItemsPerBatch = 2 });
         container.RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800);
         return container;

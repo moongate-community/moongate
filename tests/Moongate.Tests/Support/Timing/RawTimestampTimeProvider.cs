@@ -1,0 +1,30 @@
+namespace Moongate.Tests.Support.Timing;
+
+/// <summary>A monotonic clock advanced directly in provider units for sub-TimeSpan-tick boundary tests.</summary>
+public sealed class RawTimestampTimeProvider : TimeProvider
+{
+    private readonly long _timestampFrequency;
+    private long _timestamp;
+
+    public override long TimestampFrequency => _timestampFrequency;
+
+    public RawTimestampTimeProvider(long timestampFrequency)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(timestampFrequency);
+        _timestampFrequency = timestampFrequency;
+    }
+
+    public override long GetTimestamp() => Interlocked.Read(ref _timestamp);
+
+    public void AdvanceTimestamp(long elapsed)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(elapsed);
+        long before;
+        long after;
+        do
+        {
+            before = Interlocked.Read(ref _timestamp);
+            after = checked(before + elapsed);
+        } while (Interlocked.CompareExchange(ref _timestamp, after, before) != before);
+    }
+}

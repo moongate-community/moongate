@@ -7,11 +7,13 @@ using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.GameLoop;
+using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Args;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Plugins;
 using Serilog;
@@ -59,10 +61,14 @@ await ConsoleApp.RunAsync(
                 services.RegisterInstance(directoriesConfig);
                 services.RegisterInstance(serverArgs);
                 services.RegisterInstance(new GameLoopOptions());
+                services.RegisterInstance<TimeProvider>(TimeProvider.System);
+                services.RegisterInstance(new TimerWheelOptions());
+                services.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
 
                 return services.RegisterMoongatePersistence(directoriesConfig["save"])
                     .RegisterMoongateService<MoongatePersistenceStartupService>(
                         MoongatePersistenceStartupService.StartupPriority)
+                    .RegisterMoongateService<TimerWheelService>(priority: -900)
                     .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
                     .RegisterMoongateService<IEventBusService, EventBusService>()
                     .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
