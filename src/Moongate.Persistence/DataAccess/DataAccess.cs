@@ -11,10 +11,12 @@ namespace Moongate.Persistence.DataAccess;
 public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where T : class, IMoongateEntity
 {
     private readonly BinaryCollectionStore _store;
+    private readonly Func<IEnumerable<T>>? _entitySource;
 
-    internal DataAccess(BinaryCollectionStore store)
+    internal DataAccess(BinaryCollectionStore store, Func<IEnumerable<T>>? entitySource = null)
     {
         _store = store;
+        _entitySource = entitySource;
     }
 
     public T? GetById(Serial id)
@@ -63,6 +65,36 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
     Task IPersistenceCollection.CheckpointAsync(CancellationToken cancellationToken)
     {
         return _store.CheckpointAsync(cancellationToken);
+    }
+
+    async Task IPersistenceCollection.SaveAsync(CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        if (_entitySource is null)
+        {
+            return;
+        }
+
+        var entities = _entitySource() ??
+                       throw new InvalidOperationException($"The live source for {typeof(T).FullName} returned null.");
+        Dictionary<Serial, byte[]> captured = [];
+        foreach (var entity in entities)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            ArgumentNullException.ThrowIfNull(entity);
+            var id = entity.Id;
+            ValidateId(id);
+            if (!captured.TryAdd(id, MemoryPackSerializer.Serialize(entity)))
+            {
+                throw new InvalidOperationException($"The live source for {typeof(T).FullName} contains duplicate identity {id}.");
+            }
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        foreach (var (id, payload) in captured)
+        {
+            await _store.UpsertAsync(id, payload, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     Task IPersistenceCollection.AbortAsync()

@@ -273,6 +273,44 @@ object does not change stored state; call `UpsertAsync` to persist it. `QueryAsy
 uses ZLinq internally over one captured committed view, but accepts the ordinary
 `Func<T, bool>` shown above. There are no cross-collection transactions or indexes.
 
+### Saving all live entities
+
+To persist changes made to live objects, register a source for each collection
+before persistence startup. The source is invoked again for each save, so it can
+return the current entities from a world service or another in-memory owner.
+
+```csharp
+// Register before bootstrap.StartAsync(). Persistence is already registered by the server.
+List<CharacterRecord> liveCharacters = [];
+container.RegisterDataAccess<CharacterRecord>("characters", () => liveCharacters);
+
+// After startup, a command or service can save every registered live source.
+liveCharacters.Add(new CharacterRecord { Id = new Serial(1), Name = "Ada", Level = 24 });
+liveCharacters[0].Level++;
+await container.Resolve<MoongatePersistenceService>().SaveAllAsync(cancellationToken);
+```
+
+Standalone callers can use `persistence.Register<T>(name, source)` before
+`InitializeAsync()`. `SaveAllAsync` serializes each source completely before
+writing that collection, upserts its entities, and checkpoints every collection
+after all sources have been saved. Collections registered without a source
+checkpoint their explicit upserts. Sources are not invoked by `InitializeAsync`,
+`CheckpointAsync`, or disposal. Call `SaveAllAsync` before shutdown when live
+changes also need saving; disposal still checkpoints only committed data.
+
+Entities absent from a source are retained on disk: use `DeleteAsync` for removal.
+Null sources/results/entities, zero IDs, duplicate IDs within a source, and
+enumeration or serialization failures are rejected. A capture failure writes
+nothing from that collection. Earlier collections or writes can remain committed
+if a later operation fails or is canceled; this is not an atomic world snapshot.
+
+Concurrent `SaveAllAsync` calls run sequentially, and disposal waits for an active
+save before closing stores. Queued saves are rejected after shutdown starts.
+Sources must not call `SaveAllAsync` or dispose their owner recursively; these
+calls are rejected. The world owner must synchronize entity mutation and source
+enumeration, for example by pausing world updates during the save. Returning a
+copied list alone does not freeze the mutable entities it contains.
+
 Each collection creates `characters.snapshot.bin`, `characters.journal.bin`, and
 `characters.lock` in the configured save directory. Upserts and deletes are
 acknowledged only after a durable journal flush. Startup replays the journal, and

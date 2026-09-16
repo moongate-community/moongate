@@ -33,5 +33,23 @@ public static class ContainerPersistenceExtensions
 
             return container;
         }
+
+        /// <summary>Registers a typed collection whose live source is captured by SaveAllAsync.</summary>
+        /// <remarks>
+        /// Register before startup. The source must support synchronized enumeration; missing entities
+        /// are not deleted. The same data access instance remains available for explicit reads and writes.
+        /// </remarks>
+        public Container RegisterDataAccess<T>(string collectionName, Func<IEnumerable<T>> entitySource)
+            where T : class, IMoongateEntity
+        {
+            ArgumentNullException.ThrowIfNull(container);
+            ArgumentNullException.ThrowIfNull(entitySource);
+            var dataAccess = container.Resolve<MoongatePersistenceService>().Register(collectionName, entitySource);
+            var setup = Setup.With(preventDisposal: true);
+            container.RegisterInstance(dataAccess, setup: setup);
+            container.RegisterInstance<IDataAccess<T>>(dataAccess, setup: setup);
+
+            return container;
+        }
     }
 }
