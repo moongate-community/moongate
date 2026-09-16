@@ -16,6 +16,69 @@ dotnet build Moongate.slnx
 dotnet test Moongate.slnx
 ```
 
+## Standalone TCP transport
+
+`Moongate.Network` provides an asynchronous TCP server and client without a
+dependency on the Moongate executable, game protocol, game loop, packet library,
+or dependency container. A minimal server can bind, receive data, and stop cleanly:
+
+```csharp
+using System.Net;
+using Moongate.Network.Server;
+
+using var shutdown = new CancellationTokenSource();
+Console.CancelKeyPress += (_, args) =>
+{
+    args.Cancel = true;
+    shutdown.Cancel();
+};
+
+await using var server = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 2593));
+server.OnDataReceived += (_, args) =>
+    Console.WriteLine($"Session {args.Client.SessionId}: received {args.Data.Length} bytes");
+await server.StartAsync(shutdown.Token);
+try
+{
+    await Task.Delay(Timeout.Infinite, shutdown.Token);
+}
+catch (OperationCanceledException) when (shutdown.IsCancellationRequested)
+{
+}
+finally
+{
+    await server.StopAsync(CancellationToken.None);
+}
+```
+
+Without a framer, `OnDataReceived` exposes raw TCP chunks. A chunk is not an
+application packet: one packet can arrive in several chunks, and one chunk can
+contain several packets. Pass an `INetFramer` to `MoongateTcpServer` when every
+connection uses the same framing rule. Use `connectionPipelineFactory` to return
+a new `ConnectionPipeline` when framing, codecs, or middleware hold per-connection
+state. This transport does not parse or dispatch game packets.
+
+The server owns its listener, accepted sockets, connection objects, and cleanup
+tasks. A standalone `MoongateTcpClient` owns the connected socket supplied to it.
+Event data is a stable copy that a subscriber may retain after the synchronous
+callback returns. Middleware may use its input only until its `ValueTask`
+completes and must not retain that memory or return a view backed by released
+memory. The caller of `SendAsync` must keep the payload unchanged until the task
+completes, and must await the task to observe cancellation or write failure.
+
+`NoDelay` defaults to `true`. `receiveBufferSize` must be between 1 byte and
+1 MiB, and `maxFrameLength` between 1 byte and 16 MiB. Framed accumulation is
+bounded by `maxFrameLength + receiveBufferSize`; raw events contain at most one
+receive buffer. There is no application send queue: producers provide their own
+admission policy and await `SendAsync` for backpressure.
+
+Events and middleware callbacks run synchronously on the transport path. Do not
+use `async void` handlers or block a callback waiting for the same connection's
+completion. From a callback, request closure with `CloseAsync` or synchronous
+`Dispose`; from outside the callback, prefer `DisposeAsync` so all receive, send,
+and cleanup work is observed. Cancellation of `StopAsync` only cancels that
+caller's wait. Cleanup continues in the background and can be awaited by calling
+`StopAsync` again or by disposing the server asynchronously.
+
 ## Geometry
 
 `Moongate.Core.Geometry` provides `Point2D`, `Point3D`, `Rectangle2D`,
