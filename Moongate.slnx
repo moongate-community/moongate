@@ -1,4 +1,10 @@
 <Solution>
+    <Folder Name="/src/">
+        <Project Path="src/Moongate.Network/Moongate.Network.csproj" />
+    </Folder>
+    <Folder Name="/tests/">
+        <Project Path="tests/Moongate.Network.Tests/Moongate.Network.Tests.csproj" />
+    </Folder>
     <Project Path="src/Moongate.Core/Moongate.Core.csproj" />
     <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj" />
     <Project Path="src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
