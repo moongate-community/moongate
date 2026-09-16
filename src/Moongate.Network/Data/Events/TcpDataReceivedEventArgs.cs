@@ -13,7 +13,7 @@ public sealed class TcpDataReceivedEventArgs : EventArgs
     public MoongateTcpClient Client { get; }
 
     /// <summary>
-    /// Received data payload.
+    /// Stable payload copy that may be retained after the synchronous callback returns.
     /// </summary>
     public ReadOnlyMemory<byte> Data { get; }
 

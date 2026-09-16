@@ -35,22 +35,34 @@ public interface INetworkConnection
     INetFramer? Framer { get; }
 
     /// <summary>
-    /// Completes when the connection's receive work has ended.
+    /// Completes after receive work, all admitted sends and resource cleanup have ended.
+    /// Available before Start; faults if cleanup fails.
     /// </summary>
     Task Completion { get; }
 
     /// <summary>
-    /// Closes the connection.
+    /// Requests idempotent connection closure without waiting for callbacks or cleanup.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task that completes when the connection has closed.</returns>
+    /// <remarks>
+    /// Safe from synchronous callbacks, as is synchronous Dispose. Do not block a callback waiting
+    /// for Completion or DisposeAsync of its client or server, and do not use async-void handlers.
+    /// </remarks>
+    /// <returns>A task that completes when closure has been requested.</returns>
     Task CloseAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Sends raw bytes to the connected client.
     /// </summary>
-    /// <param name="payload">The payload bytes.</param>
+    /// <param name="payload">Payload bytes, which the caller must keep immutable until completion.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
+    /// <remarks>
+    /// Closed connections reject sends, including empty payloads. Empty payloads on open connections
+    /// are a no-op. Middleware, codec and writes are serialized together, without a FIFO guarantee
+    /// between simultaneous callers. Cancellation before entering the send gate leaves the connection
+    /// usable; failure after transformation or writing begins closes it. Send failures reach the caller.
+    /// There is no application queue or admission limit; producers must await their sends.
+    /// </remarks>
     /// <returns>A task that completes when the payload has been written.</returns>
     Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken);
 }

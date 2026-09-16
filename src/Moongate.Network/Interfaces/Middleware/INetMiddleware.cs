@@ -7,8 +7,8 @@ namespace Moongate.Network.Interfaces.Middleware;
 /// </summary>
 /// <remarks>
 /// Middleware operates on raw bytes and MUST NOT assume any message, packet, or frame
-/// semantics — framing and protocol parsing are the consumer's responsibility, applied
-/// to the <c>OnDataReceived</c> output of the client. Returning
+/// semantics. The client's optional framer runs after inbound middleware and before
+/// <c>OnDataReceived</c>; protocol parsing remains the consumer's responsibility. Returning
 /// <see cref="ReadOnlyMemory{T}.Empty" /> from either method drops the payload and
 /// short-circuits the remaining pipeline.
 ///
@@ -19,6 +19,9 @@ namespace Moongate.Network.Interfaces.Middleware;
 /// may run concurrently (one each), so an implementation MUST NOT share mutable state between them.
 /// Both guarantees are per connection: an instance registered on the server is shared by every
 /// connection, so per-connection state must be supplied fresh through <c>ConnectionPipeline</c>.
+///
+/// Input memory may be used only until the returned ValueTask completes; do not retain it or
+/// return a view over released memory. Event payloads are separate stable copies.
 ///
 /// The send lock is not reentrant. Calling <c>SendAsync</c> on the same client from inside
 /// <see cref="ProcessSendAsync" /> deadlocks that connection's send path — silently, and without

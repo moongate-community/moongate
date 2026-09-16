@@ -41,8 +41,7 @@ public sealed class SendMiddlewareSerializationTests
 
             var secondSend = sender.SendAsync(second, CancellationToken.None);
 
-            // Long enough for an unserialized second send to run the middleware and reach the socket.
-            await Task.Delay(250);
+            Assert.False(middleware.SecondEntered.Task.IsCompleted);
             middleware.Release();
             await Task.WhenAll(firstSend, secondSend).WaitAsync(Timeout);
 

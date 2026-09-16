@@ -9,8 +9,8 @@ namespace Moongate.Network.Pipeline;
 /// <remarks>
 /// The pipeline is a byte transformer: each middleware sees a <see cref="ReadOnlyMemory{T}" />
 /// of bytes and produces a <see cref="ReadOnlyMemory{T}" /> of bytes. There is no concept of
-/// message, packet, or frame at this layer — protocol-specific framing must happen on top of
-/// the client's <c>OnDataReceived</c> output. Returning <see cref="ReadOnlyMemory{T}.Empty" />
+/// message, packet, or frame at this layer. The client's optional framer processes inbound
+/// pipeline output before <c>OnDataReceived</c> is raised. Returning <see cref="ReadOnlyMemory{T}.Empty" />
 /// from a middleware drops the payload and stops the chain.
 /// </remarks>
 public sealed class NetMiddlewarePipeline

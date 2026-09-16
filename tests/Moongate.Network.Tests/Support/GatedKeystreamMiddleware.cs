@@ -9,6 +9,11 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
     private int _invocations;
     private int _position;
 
+    public bool IgnoreCancellationWhileHeld { get; set; }
+    public Exception? SendFailure { get; set; }
+
+    public TaskCompletionSource SecondEntered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public TaskCompletionSource KeystreamTaken { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     public GatedKeystreamMiddleware()
@@ -36,7 +41,17 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
         if (Interlocked.Increment(ref _invocations) == 1)
         {
             KeystreamTaken.TrySetResult();
-            await _gate.Task.WaitAsync(cancellationToken);
+            await _gate.Task.WaitAsync(IgnoreCancellationWhileHeld ? CancellationToken.None : cancellationToken);
+        }
+
+        else
+        {
+            SecondEntered.TrySetResult();
+        }
+
+        if (SendFailure is not null)
+        {
+            throw SendFailure;
         }
 
         return frame;

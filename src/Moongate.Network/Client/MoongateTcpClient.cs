@@ -9,6 +9,7 @@ using Moongate.Network.Interfaces.Codecs;
 using Moongate.Network.Interfaces.Framing;
 using Moongate.Network.Interfaces.Middleware;
 using Moongate.Network.Pipeline;
+using Moongate.Network.Types.Client;
 
 namespace Moongate.Network.Client;
 
@@ -31,14 +32,17 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly Socket _socket;
     private readonly Stream _stream;
-    private int _closed;
+    private readonly Lock _lifecycleLock = new();
+    private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource _sendsDrained = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private TcpClientState _state;
+    private int _admittedSends;
     private ITransportCodec? _codec;
 
     private CancellationTokenRegistration _externalCancellationTokenRegistration;
     private byte[]? _pendingBuffer;
     private int _pendingLength;
     private Task? _receiveLoopTask;
-    private int _started;
 
     /// <summary>
     /// Receives payload chunk size in bytes.
@@ -93,10 +97,19 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// <summary>
     /// True when the underlying socket is connected and client not closed.
     /// </summary>
-    public bool IsConnected => _socket.Connected && Volatile.Read(ref _closed) == 0;
+    public bool IsConnected
+    {
+        get
+        {
+            lock (_lifecycleLock)
+            {
+                return (_state is TcpClientState.Created or TcpClientState.Running) && _socket.Connected;
+            }
+        }
+    }
 
     /// <inheritdoc />
-    public Task Completion => _receiveLoopTask ?? Task.CompletedTask;
+    public Task Completion => _completion.Task;
 
     /// <summary>
     /// Creates a client wrapper for an accepted socket.
@@ -158,86 +171,99 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Closes the client connection and raises disconnect event once.
+    /// Requests connection closure without waiting for callbacks or resource cleanup.
     /// </summary>
-    public async Task CloseAsync(CancellationToken cancellationToken = default)
+    public Task CloseAsync(CancellationToken cancellationToken = default)
     {
-        if (Interlocked.Exchange(ref _closed, 1) != 0)
-        {
-            return;
-        }
-
-        try
-        {
-            await _internalCancellationTokenSource.CancelAsync().WaitAsync(cancellationToken);
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            // Once close has started, still tear down the socket below.
-        }
-
-        ShutdownSocket();
+        RequestClose();
+        return Task.CompletedTask;
     }
 
     /// <summary>
-    /// Sends a payload to the connected socket.
+    /// Sends bytes, preserving transformation order on the wire. Keep the payload immutable until completion.
     /// </summary>
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
-        if (payload.IsEmpty || !IsConnected)
+        lock (_lifecycleLock)
         {
-            return;
-        }
+            if (_state is not (TcpClientState.Created or TcpClientState.Running) || !_socket.Connected)
+            {
+                throw new IOException("The connection is closed.");
+            }
 
-        // The whole send path runs under the lock: a stateful send middleware — the only per-connection
-        // hook for a protocol that encrypts just part of a packet — must consume its state in the same
-        // order the bytes reach the socket, exactly as the codec below already does.
-        await _sendLock.WaitAsync(cancellationToken);
-
-        try
-        {
-            var processedPayload = await _middlewarePipeline.ExecuteSendAsync(this, payload, cancellationToken);
-
-            if (processedPayload.IsEmpty)
+            if (payload.IsEmpty)
             {
                 return;
             }
 
+            _admittedSends++;
+        }
+
+        try
+        {
+            using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
+                cancellationToken, _internalCancellationTokenSource.Token);
+            var sendToken = linkedCancellation.Token;
+            await _sendLock.WaitAsync(sendToken).ConfigureAwait(false);
             try
             {
-                var codec = Volatile.Read(ref _codec);
-
-                if (codec is null)
+                // Cancellation before any stateful transform does not compromise the stream.
+                sendToken.ThrowIfCancellationRequested();
+                try
                 {
-                    await _stream.WriteAsync(processedPayload, cancellationToken);
+                    var processed = await _middlewarePipeline.ExecuteSendAsync(this, payload, sendToken)
+                        .ConfigureAwait(false);
+                    if (processed.IsEmpty)
+                    {
+                        return;
+                    }
+
+                    var codec = Volatile.Read(ref _codec);
+                    if (codec is null)
+                    {
+                        await _stream.WriteAsync(processed, sendToken).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        var rented = ArrayPool<byte>.Shared.Rent(processed.Length);
+                        try
+                        {
+                            processed.Span.CopyTo(rented);
+                            codec.Encode(rented.AsSpan(0, processed.Length));
+                            await _stream.WriteAsync(rented.AsMemory(0, processed.Length), sendToken)
+                                .ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            ArrayPool<byte>.Shared.Return(rented);
+                        }
+                    }
                 }
-                else
+                catch (Exception exception)
                 {
-                    var sendBuffer = ArrayPool<byte>.Shared.Rent(processedPayload.Length);
-
-                    try
+                    if (!IsExpectedShutdown(exception))
                     {
-                        processedPayload.Span.CopyTo(sendBuffer);
-                        codec.Encode(sendBuffer.AsSpan(0, processedPayload.Length));
-                        await _stream.WriteAsync(sendBuffer.AsMemory(0, processedPayload.Length), cancellationToken);
+                        RaiseExceptionSafely(exception);
                     }
-                    finally
-                    {
-                        ArrayPool<byte>.Shared.Return(sendBuffer);
-                    }
+                    RequestClose();
+                    throw;
                 }
-
-                await _stream.FlushAsync(cancellationToken);
             }
-            catch (Exception ex)
+            finally
             {
-                RaiseException(ex);
-                await CloseAsync(CancellationToken.None);
+                _sendLock.Release();
             }
         }
         finally
         {
-            _sendLock.Release();
+            lock (_lifecycleLock)
+            {
+                _admittedSends--;
+                if (_admittedSends == 0 && _state is not (TcpClientState.Created or TcpClientState.Running))
+                {
+                    _sendsDrained.TrySetResult();
+                }
+            }
         }
     }
 
@@ -265,12 +291,26 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     )
     {
         var socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        await socket.ConnectAsync(endPoint, cancellationToken);
-
-        var client = new MoongateTcpClient(socket, middlewares, framer, codec, noDelay: noDelay);
-        await client.StartAsync(cancellationToken);
-
-        return client;
+        MoongateTcpClient? client = null;
+        try
+        {
+            await socket.ConnectAsync(endPoint, cancellationToken).ConfigureAwait(false);
+            client = new MoongateTcpClient(socket, middlewares, framer, codec, noDelay: noDelay);
+            await client.StartAsync(cancellationToken).ConfigureAwait(false);
+            return client;
+        }
+        catch
+        {
+            if (client is null)
+            {
+                socket.Dispose();
+            }
+            else
+            {
+                await client.DisposeAsync().ConfigureAwait(false);
+            }
+            throw;
+        }
     }
 
 
@@ -302,21 +342,56 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// </summary>
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        if (Interlocked.Exchange(ref _started, 1) != 0)
+        TaskCompletionSource receiveFinished;
+        lock (_lifecycleLock)
         {
-            return Task.CompletedTask;
+            if (_state == TcpClientState.Running)
+            {
+                return Task.CompletedTask;
+            }
+            if (_state != TcpClientState.Created)
+            {
+                return Task.FromException(new InvalidOperationException("A closed connection cannot be restarted."));
+            }
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return Task.FromCanceled(cancellationToken);
+            }
+
+            _state = TcpClientState.Running;
+            receiveFinished = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            // Publish before registration and callbacks: either can synchronously request close.
+            _receiveLoopTask = receiveFinished.Task;
         }
 
-        if (cancellationToken.CanBeCanceled)
+        try
         {
-            _externalCancellationTokenRegistration =
-                cancellationToken.Register(() => _ = CloseAsync(CancellationToken.None));
+            _externalCancellationTokenRegistration = cancellationToken.Register(RequestClose);
+            if (IsConnected)
+            {
+                RaiseConnected();
+            }
+            _ = Task.Run(() => RunReceiveAsync(receiveFinished), CancellationToken.None);
         }
-
-        RaiseConnected();
-        _receiveLoopTask = Task.Run(ReceiveLoopAsync, CancellationToken.None);
-
+        catch (Exception exception)
+        {
+            RaiseExceptionSafely(exception);
+            RequestClose();
+            receiveFinished.TrySetResult();
+        }
         return Task.CompletedTask;
+    }
+
+    private async Task RunReceiveAsync(TaskCompletionSource receiveFinished)
+    {
+        try
+        {
+            await ReceiveLoopAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            receiveFinished.TrySetResult();
+        }
     }
 
     private void AppendPending(ReadOnlySpan<byte> data)
@@ -344,28 +419,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 
         data.CopyTo(_pendingBuffer.AsSpan(_pendingLength));
         _pendingLength += data.Length;
-    }
-
-    /// <summary>
-    /// Synchronous counterpart of <see cref="CloseAsync" />, for the blocking dispose path.
-    /// </summary>
-    private void CloseSync()
-    {
-        if (Interlocked.Exchange(ref _closed, 1) != 0)
-        {
-            return;
-        }
-
-        try
-        {
-            _internalCancellationTokenSource.Cancel();
-        }
-        catch (ObjectDisposedException)
-        {
-            // A concurrent disposal already tore the token source down.
-        }
-
-        ShutdownSocket();
     }
 
     private void ConsumePending(int count)
@@ -449,18 +502,50 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             SessionId,
             RemoteEndPoint
         );
-        OnDisconnected?.Invoke(this, new(this));
+        if (OnDisconnected is not { } subscribers)
+        {
+            return;
+        }
+        foreach (EventHandler<TcpClientEventArgs> subscriber in subscribers.GetInvocationList())
+        {
+            try
+            {
+                subscriber(this, new(this));
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Disconnect subscriber failed for session {SessionId}", SessionId);
+            }
+        }
     }
 
-    private void RaiseException(Exception exception)
+    private void RaiseExceptionSafely(Exception exception)
     {
-        _logger.Error(
-            exception,
-            "Client exception. SessionId={SessionId}, RemoteEndPoint={RemoteEndPoint}",
-            SessionId,
-            RemoteEndPoint
-        );
-        OnException?.Invoke(this, new(exception, this));
+        _logger.Error(exception, "Client exception for session {SessionId}", SessionId);
+        if (OnException is not { } subscribers)
+        {
+            return;
+        }
+        foreach (EventHandler<TcpExceptionEventArgs> subscriber in subscribers.GetInvocationList())
+        {
+            try
+            {
+                subscriber(this, new(exception, this));
+            }
+            catch (Exception subscriberException)
+            {
+                _logger.Error(subscriberException, "Diagnostic subscriber failed for session {SessionId}", SessionId);
+            }
+        }
+    }
+
+    private bool IsExpectedShutdown(Exception exception)
+    {
+        lock (_lifecycleLock)
+        {
+            return _state is not (TcpClientState.Created or TcpClientState.Running)
+                && exception is OperationCanceledException or ObjectDisposedException or IOException or SocketException;
+        }
     }
 
     private async Task ReceiveLoopAsync()
@@ -521,20 +606,18 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                 }
             }
         }
-        catch (OperationCanceledException)
+        catch (Exception exception)
         {
-            // Expected during controlled shutdown.
-        }
-        catch (Exception ex)
-        {
-            _logger.Error(ex, "Receive loop failed for session {SessionId}", SessionId);
-            RaiseException(ex);
+            if (!IsExpectedShutdown(exception))
+            {
+                RaiseExceptionSafely(exception);
+            }
         }
         finally
         {
             ArrayPool<byte>.Shared.Return(buffer);
             ReleasePendingBuffer();
-            await CloseAsync(CancellationToken.None);
+            RequestClose();
         }
     }
 
@@ -550,38 +633,117 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         _pendingLength = 0;
     }
 
-    /// <summary>
-    /// Releases the resources the receive loop relies on. Only safe once that loop has finished.
-    /// </summary>
-    private void ReleaseResources()
+    private void RequestClose()
     {
-        _stream.Dispose();
-        _sendLock.Dispose();
-        _internalCancellationTokenSource.Dispose();
-        _socket.Dispose();
+        Task receiveTask;
+        lock (_lifecycleLock)
+        {
+            if (_state is not (TcpClientState.Created or TcpClientState.Running))
+            {
+                return;
+            }
+            _state = TcpClientState.Closing;
+            receiveTask = _receiveLoopTask ?? Task.CompletedTask;
+            if (_admittedSends == 0)
+            {
+                _sendsDrained.TrySetResult();
+            }
+        }
+
+        // Never invoke token callbacks or release resources on a synchronous application callback.
+        _ = Task.Run(() => CleanupAsync(receiveTask));
     }
 
-    private void ShutdownSocket()
+    private async Task CleanupAsync(Task receiveTask)
+    {
+        var failures = new List<Exception>();
+        Task cancellationTask;
+        try
+        {
+            cancellationTask = _internalCancellationTokenSource.CancelAsync();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+            cancellationTask = Task.CompletedTask;
+        }
+
+        try
+        {
+            _socket.Shutdown(SocketShutdown.Both);
+        }
+        catch (SocketException)
+        {
+            // The peer may have already disconnected.
+        }
+        catch (ObjectDisposedException)
+        {
+            // Socket ownership may have been released externally.
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+
+        AttemptRelease(_socket.Close, failures);
+        await AttemptAsync(cancellationTask, failures).ConfigureAwait(false);
+        await AttemptAsync(receiveTask, failures).ConfigureAwait(false);
+        await _sendsDrained.Task.ConfigureAwait(false);
+        lock (_lifecycleLock)
+        {
+            _state = TcpClientState.Closed;
+        }
+        RaiseDisconnected();
+
+        try
+        {
+            await _stream.DisposeAsync().ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+        AttemptRelease(_sendLock.Dispose, failures);
+        AttemptRelease(_externalCancellationTokenRegistration.Dispose, failures);
+        AttemptRelease(_internalCancellationTokenSource.Dispose, failures);
+        AttemptRelease(_socket.Dispose, failures);
+        lock (_lifecycleLock)
+        {
+            _state = TcpClientState.Disposed;
+        }
+        if (failures.Count == 0)
+        {
+            _completion.TrySetResult();
+        }
+        else
+        {
+            // Observe the fault even for synchronous Dispose; callers can still await the same task.
+            _completion.TrySetException(failures.Count == 1 ? failures[0] : new AggregateException(failures));
+            _ = _completion.Task.Exception;
+        }
+    }
+
+    private static async Task AttemptAsync(Task task, List<Exception> failures)
     {
         try
         {
-            if (_socket.Connected)
-            {
-                try
-                {
-                    _socket.Shutdown(SocketShutdown.Both);
-                }
-                catch (SocketException)
-                {
-                    // Socket might already be closed by peer.
-                }
-            }
+            await task.ConfigureAwait(false);
         }
-        finally
+        catch (Exception exception)
         {
-            _socket.Close();
-            _externalCancellationTokenRegistration.Dispose();
-            RaiseDisconnected();
+            failures.Add(exception);
+        }
+    }
+
+    private static void AttemptRelease(Action release, List<Exception> failures)
+    {
+        try
+        {
+            release();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
         }
     }
 
@@ -591,12 +753,13 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public event EventHandler<TcpClientEventArgs>? OnConnected;
 
     /// <summary>
-    /// Raised when the client is disconnected.
+    /// Raised once when I/O has drained. Resource cleanup may still be running; await Completion outside callbacks.
     /// </summary>
     public event EventHandler<TcpClientEventArgs>? OnDisconnected;
 
     /// <summary>
-    /// Raised when data is received (after middleware pipeline).
+    /// Raised synchronously with a stable payload copy after middleware and optional framing.
+    /// Callback failures close this connection; do not use async-void handlers.
     /// </summary>
     public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
 
@@ -606,56 +769,17 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public event EventHandler<TcpExceptionEventArgs>? OnException;
 
     /// <inheritdoc />
-    public async ValueTask DisposeAsync()
+    /// <remarks>Do not synchronously wait for this task from a connection callback.</remarks>
+    public ValueTask DisposeAsync()
     {
-        await CloseAsync(CancellationToken.None);
-
-        // Drain the receive loop before disposing the resources it relies on.
-        if (_receiveLoopTask is not null)
-        {
-            try
-            {
-                await _receiveLoopTask;
-            }
-            catch
-            {
-                // Loop failures are already surfaced via OnException.
-            }
-        }
-
-        await _stream.DisposeAsync();
-        _sendLock.Dispose();
-        _internalCancellationTokenSource.Dispose();
-        _socket.Dispose();
+        RequestClose();
+        return new ValueTask(Completion);
     }
 
     /// <inheritdoc />
-    /// <remarks>
-    /// Best-effort synchronous teardown. It must never wait on the receive loop: <c>OnDataReceived</c>
-    /// handlers run on that loop, so a handler disposing its own connection would wait on itself
-    /// forever. Closing the socket makes the pending read fail and the loop unwinds on its own; the
-    /// resources it still uses are released once it has. Prefer <see cref="DisposeAsync" />, which
-    /// drains the loop before returning.
-    /// </remarks>
+    /// <remarks>Requests cleanup without waiting, so it is safe inside synchronous callbacks.</remarks>
     public void Dispose()
     {
-        CloseSync();
-
-        var receiveLoopTask = _receiveLoopTask;
-
-        if (receiveLoopTask is null || receiveLoopTask.IsCompleted)
-        {
-            ReleaseResources();
-
-            return;
-        }
-
-        _ = receiveLoopTask.ContinueWith(
-            static (_, state) => ((MoongateTcpClient)state!).ReleaseResources(),
-            this,
-            CancellationToken.None,
-            TaskContinuationOptions.None,
-            TaskScheduler.Default
-        );
+        RequestClose();
     }
 }
