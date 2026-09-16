@@ -1,4 +1,5 @@
 using Moongate.Server.Core.Interfaces.GameLoop;
+using Moongate.Server.Core.Data.GameLoop;
 
 namespace Moongate.Server.Core.Interfaces.Services;
 
@@ -11,6 +12,10 @@ public interface IGameLoopService : IMoongateStartupService
     /// <summary>Gets the stable lifetime task, faulted with the original handler failure or completed after shutdown.</summary>
     /// <remarks>StopAsync performs cleanup successfully after a fault; observe this task to detect loop failure.</remarks>
     Task Completion { get; }
+
+    /// <summary>Returns queue depth/age, admission counters, command timings and fatal loop failures.</summary>
+    /// <remarks>Concurrent execution can advance between queue and execution measurements; durations use monotonic time.</remarks>
+    GameLoopMetricsSnapshot GetMetricsSnapshot();
 
     /// <summary>Attempts immediate admission; returns false when full or not running, without executing inline.</summary>
     /// <exception cref="ArgumentNullException">The work item is null.</exception>

@@ -2,7 +2,9 @@ using System.Threading.Channels;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Interfaces.GameLoop;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Data.GameLoop.Internal;
 using Moongate.Server.Services.GameLoop.Internal;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Types.GameLoop.Internal;
 using Serilog;
 
@@ -12,9 +14,11 @@ namespace Moongate.Server.Services.GameLoop;
 public sealed class GameLoopService : IGameLoopService, IDisposable
 {
     private readonly object _gate = new();
-    private readonly Channel<IGameLoopWorkItem> _inbox;
+    private readonly Channel<QueuedGameLoopWorkItem> _inbox;
     private readonly AutoResetEvent _wake;
     private readonly GameLoopPump _pump;
+    private readonly TimeProvider _timeProvider;
+    private readonly TimerWheelService _timers;
     private readonly TaskCompletionSource _started = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly ILogger _logger = Log.ForContext<GameLoopService>();
@@ -24,6 +28,9 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     private Task? _stopTask;
     private int _loopThreadId;
     private bool _disposed;
+    private long _acceptedWorkItems;
+    private long _rejectedWorkItems;
+    private long _faults;
 
     /// <inheritdoc />
     public bool IsOnLoopThread => Volatile.Read(ref _loopThreadId) == Environment.CurrentManagedThreadId;
@@ -32,16 +39,18 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     public Task Completion => _completion.Task;
 
     /// <summary>Creates a stopped inbox; StartAsync must complete before producers can post work.</summary>
-    public GameLoopService(GameLoopOptions options)
+    public GameLoopService(GameLoopOptions options, TimerWheelService timers, TimeProvider timeProvider)
     {
-        _inbox = Channel.CreateBounded<IGameLoopWorkItem>(new BoundedChannelOptions(options.QueueCapacity)
+        _inbox = Channel.CreateBounded<QueuedGameLoopWorkItem>(new BoundedChannelOptions(options.QueueCapacity)
         {
             SingleReader = true,
             SingleWriter = false,
             AllowSynchronousContinuations = false,
             FullMode = BoundedChannelFullMode.Wait
         });
-        _pump = new GameLoopPump(_inbox.Reader, options.MaxWorkItemsPerBatch);
+        _timeProvider = timeProvider;
+        _timers = timers;
+        _pump = new GameLoopPump(_inbox.Reader, options.MaxWorkItemsPerBatch, _timeProvider, options.WorkItemBudget);
         _wake = new AutoResetEvent(false);
     }
 
@@ -76,6 +85,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             catch (Exception exception)
             {
                 _state = GameLoopState.Stopped;
+                _faults++;
+                _timers.Close();
                 _inbox.Writer.TryComplete();
                 _wake.Dispose();
                 _disposed = true;
@@ -103,6 +114,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 return _stopTask;
             }
 
+            _timers.Close();
             if (_state == GameLoopState.Created)
             {
                 _state = GameLoopState.Stopped;
@@ -127,10 +139,14 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         ArgumentNullException.ThrowIfNull(workItem);
         lock (_gate)
         {
-            if (_state != GameLoopState.Running || !_inbox.Writer.TryWrite(workItem))
+            if (_state != GameLoopState.Running ||
+                !_inbox.Writer.TryWrite(new QueuedGameLoopWorkItem(workItem, _timeProvider.GetTimestamp())))
             {
+                _rejectedWorkItems++;
                 return false;
             }
+
+            _acceptedWorkItems++;
 
             // Admission and signalling share the disposal lock: an accepted post cannot
             // subsequently fail because another caller disposed the wake handle.
@@ -153,6 +169,26 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         return WaitForAdmissionAsync(workItem, cancellationToken);
     }
 
+    /// <inheritdoc />
+    public GameLoopMetricsSnapshot GetMetricsSnapshot()
+    {
+        lock (_gate)
+        {
+            var depth = _inbox.Reader.Count;
+            var age = depth > 0 && _inbox.Reader.TryPeek(out var oldest)
+                ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
+                : TimeSpan.Zero;
+            return _pump.GetMetricsSnapshot() with
+            {
+                QueueDepth = depth,
+                OldestQueuedItemAge = age,
+                AcceptedWorkItems = _acceptedWorkItems,
+                RejectedWorkItems = _rejectedWorkItems,
+                Faults = _faults
+            };
+        }
+    }
+
     private async ValueTask WaitForAdmissionAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken)
     {
         while (await _inbox.Writer.WaitToWriteAsync(cancellationToken).ConfigureAwait(false))
@@ -161,14 +197,16 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 EnsureRunning();
-                if (_inbox.Writer.TryWrite(workItem))
+                if (_inbox.Writer.TryWrite(new QueuedGameLoopWorkItem(workItem, _timeProvider.GetTimestamp())))
                 {
+                    _acceptedWorkItems++;
                     _wake.Set();
                     return;
                 }
             }
         }
 
+        lock (_gate) _rejectedWorkItems++;
         throw new InvalidOperationException("The game loop is not accepting work.");
     }
 
@@ -176,6 +214,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     {
         if (_state != GameLoopState.Running)
         {
+            _rejectedWorkItems++;
             throw new InvalidOperationException("The game loop is not accepting work.");
         }
     }
@@ -198,6 +237,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 Volatile.Write(ref _loopThreadId, Environment.CurrentManagedThreadId);
                 if (_state == GameLoopState.Starting)
                 {
+                    _timers.BindToCurrentThread(Wake);
                     _state = GameLoopState.Running;
                 }
 
@@ -207,18 +247,26 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             while (true)
             {
                 var attempted = _pump.RunBatch();
+                bool runTimers;
                 lock (_gate)
                 {
                     if (_state == GameLoopState.Stopping && !_inbox.Reader.TryPeek(out _))
                     {
                         break;
                     }
+                    runTimers = _state == GameLoopState.Running;
                 }
+
+                if (runTimers) _timers.ProcessDueTimers();
 
                 if (attempted == 0)
                 {
-                    // Persistent signal prevents a write between the empty read and this wait from being lost.
-                    _wake.WaitOne();
+                    // Timer mutations and command admission use this same persistent wake signal.
+                    // Ceil the wait: truncating a sub-millisecond remainder would busy-spin.
+                    var delay = _timers.GetNextDelay();
+                    var waitMilliseconds = delay is null ? Timeout.Infinite
+                        : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
+                    _wake.WaitOne(waitMilliseconds);
                 }
             }
         }
@@ -227,6 +275,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             failure = exception;
             lock (_gate)
             {
+                _faults++;
+                _timers.Close();
                 _state = GameLoopState.Stopping;
                 _inbox.Writer.TryComplete();
             }
@@ -250,6 +300,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         {
             lock (_gate)
             {
+                _timers.Close();
                 Volatile.Write(ref _loopThreadId, 0);
                 _state = GameLoopState.Stopped;
             }
@@ -262,6 +313,18 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             {
                 _started.TrySetException(failure);
                 _completion.TrySetException(failure);
+            }
+        }
+    }
+
+    private void Wake()
+    {
+        lock (_gate)
+        {
+            // A timer producer may hold a copied signal delegate while Stop/Dispose closes the loop.
+            if (!_disposed && _state is GameLoopState.Starting or GameLoopState.Running)
+            {
+                _wake.Set();
             }
         }
     }

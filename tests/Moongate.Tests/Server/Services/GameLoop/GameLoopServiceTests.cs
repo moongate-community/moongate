@@ -1,5 +1,7 @@
 using System.Collections.Concurrent;
 using Moongate.Server.Core.Data.GameLoop;
+using Moongate.Server.Core.Data.Timing;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Tests.Support.GameLoop;
 
@@ -8,6 +10,17 @@ namespace Moongate.Tests.Server.Services.GameLoop;
 public sealed class GameLoopServiceTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void WorkItemBudget_NonPositive_RejectsInvalidConfiguration(int milliseconds)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopOptions
+        {
+            WorkItemBudget = TimeSpan.FromMilliseconds(milliseconds)
+        });
+    }
 
     [Theory]
     [InlineData(0, 1)]
@@ -19,7 +32,7 @@ public sealed class GameLoopServiceTests
         Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopService(new GameLoopOptions
         {
             QueueCapacity = capacity, MaxWorkItemsPerBatch = batch
-        }));
+        }, new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System));
     }
 
     [Fact]
@@ -479,6 +492,7 @@ public sealed class GameLoopServiceTests
 
     private static GameLoopService Create(int capacity = 16, int batch = 4)
     {
-        return new GameLoopService(new GameLoopOptions { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch });
+        return new GameLoopService(new GameLoopOptions { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },
+            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);
     }
 }

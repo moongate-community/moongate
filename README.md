@@ -638,10 +638,15 @@ work without executing it themselves. `IsOnLoopThread` identifies the owner
 thread while it is running.
 
 ```csharp
+container.RegisterInstance<TimeProvider>(TimeProvider.System);
+container.RegisterInstance(new TimerWheelOptions());
+container.RegisterMoongateService<TimerWheelService>(priority: -900);
+container.RegisterDelegate<ITimerService>(services => services.Resolve<TimerWheelService>(), Reuse.Singleton);
 container.RegisterInstance(new GameLoopOptions
 {
     QueueCapacity = 4096,
-    MaxWorkItemsPerBatch = 256
+    MaxWorkItemsPerBatch = 256,
+    WorkItemBudget = TimeSpan.FromMilliseconds(5)
 });
 
 var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
@@ -689,10 +694,81 @@ Ordinary host cancellation
 drains the loop; it does not hide a loop failure already observed or raised
 during that drain.
 
-This first stage provides the execution queue and lifecycle. World ticks,
-timers, packet dispatch, TCP transport, and coordination of live-world saves
-are separate stages. The general event bus does not move its observers onto the
-loop automatically.
+Each loop turn alternates a command batch and a timer batch, bounded by item
+count and cooperative elapsed-time budgets. The loop waits for a signal or the
+next timer deadline when idle. A new timer wakes it if the deadline changes;
+immediate commands do not wait for the timer resolution. Slow synchronous
+handlers cannot be interrupted by a budget.
+
+`IGameLoopService.GetMetricsSnapshot()` exposes queue depth, oldest queued age,
+accepted/rejected submissions, attempted command executions, fatal loop failures,
+and batch/maximum handler durations. Queue depth excludes the active command.
+Rejected submissions count full/unavailable admission, not canceled waits or
+invalid arguments. Concurrent snapshots can observe execution progressing between
+measurements. All durations use the registered monotonic `TimeProvider`.
+
+Packet dispatch, TCP transport, the world model, and coordination of live-world
+saves remain separate stages. The general event bus does not move its observers
+onto the loop automatically.
+
+### Timer wheel
+
+`ITimerService` in `Moongate.Server.Core.Interfaces.Services` retains the legacy
+registration and cancellation API. Its singleton implementation is
+`Moongate.Server.Services.Timing.TimerWheelService`. The executable registers it
+at priority -900, after persistence and before the loop at -800; the interface
+and concrete registrations resolve to the same instance. Internal wheel driving
+is restricted to the loop thread. There is no separate timer thread.
+
+```csharp
+var timers = container.Resolve<ITimerService>();
+var updates = 0;
+var timerId = timers.RegisterTimer(
+    "world-update",
+    TimeSpan.FromMilliseconds(50),
+    () => updates++,
+    repeat: true);
+
+// Optional initial delay uses the same callback and repeat interval.
+var delayedId = timers.RegisterTimer(
+    "delayed-action",
+    TimeSpan.FromSeconds(1),
+    () => updates++,
+    delay: TimeSpan.FromSeconds(3));
+
+timers.UnregisterTimer(delayedId);
+timers.UnregisterTimersByName("world-update");
+// timers.UnregisterAllTimers();
+```
+
+Periodic world updates can use repeating timers once the world exists. Callback
+execution stays synchronous on the same thread as immediate game commands.
+Registration and cancellation are safe from producer threads, including before
+startup. Timer names may repeat; each registration returns a distinct opaque ID.
+Scheduling rejects registrations after stop/failure or when capacity is reached.
+
+`TimerWheelOptions` in `Moongate.Server.Core.Data.Timing` defaults to an 8 ms
+resolution, 512 wheel slots, 65,536 pending registrations, 256 callbacks per
+batch, and a 5 ms callback budget. Deadlines are measured from registration time
+and rounded **up** to the wheel resolution: callbacks never run early, but load
+can delay them. Equal wheel deadlines execute in registration order. Initial
+delay and repeat interval must both be positive.
+
+After a pause, one-shot timers execute once and repeating timers coalesce missed
+occurrences, then resume at a future deadline. The wheel skips elapsed revolutions
+without replaying every old tick. Due callbacks beyond a batch budget stay
+pending. Pending and ready timers share the capacity limit.
+
+Cancellation removes callbacks that have not yet been claimed, including another
+due callback canceled by an earlier callback. A claimed synchronous callback may
+finish; canceling an active repeating timer prevents its next occurrence. Stop
+closes timer admission and cancels pending timers before draining immediate work.
+The loop still waits for a running timer callback before ending. Unexpected timer
+exceptions fault the loop with the original exception, just like command faults.
+
+`ITimerService.GetMetricsSnapshot()` exposes active and registered timers,
+attempted callbacks, callback faults, coalesced occurrences, maximum lateness,
+and callback/batch duration. These snapshots require no external metrics backend.
 
 ## License
 
