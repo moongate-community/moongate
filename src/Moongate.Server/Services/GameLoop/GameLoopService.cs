@@ -206,7 +206,11 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             }
         }
 
-        lock (_gate) _rejectedWorkItems++;
+        lock (_gate)
+        {
+            _rejectedWorkItems++;
+        }
+
         throw new InvalidOperationException("The game loop is not accepting work.");
     }
 
@@ -257,7 +261,10 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     runTimers = _state == GameLoopState.Running;
                 }
 
-                if (runTimers) _timers.ProcessDueTimers();
+                if (runTimers)
+                {
+                    _timers.ProcessDueTimers();
+                }
 
                 if (attempted == 0)
                 {

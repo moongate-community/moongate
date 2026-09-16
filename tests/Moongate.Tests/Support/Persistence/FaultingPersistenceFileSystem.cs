@@ -24,7 +24,10 @@ internal sealed class FaultingPersistenceFileSystem : IPersistenceFileSystem, ID
     public Stream Open(string path, FileMode mode, FileAccess access, FileShare share)
     {
         if (FailJournalOpen && path.EndsWith(".journal.bin", StringComparison.Ordinal))
+        {
             throw new IOException("Injected journal open failure.");
+        }
+
         var stream = _physical.Open(path, mode, access, share);
         return path.EndsWith(".journal.bin", StringComparison.Ordinal)
             ? new FaultingPersistenceStream(stream, this)
@@ -40,7 +43,10 @@ internal sealed class FaultingPersistenceFileSystem : IPersistenceFileSystem, ID
     public void Move(string source, string destination)
     {
         if (FailJournalPublication && destination.EndsWith(".journal.bin", StringComparison.Ordinal))
+        {
             throw new IOException("Injected journal publication failure.");
+        }
+
         _physical.Move(source, destination);
     }
 
@@ -51,12 +57,22 @@ internal sealed class FaultingPersistenceFileSystem : IPersistenceFileSystem, ID
             if (BlockFlush)
             {
                 FlushEntered.TrySetResult();
-                if (!ContinueFlush.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException("Flush was not released.");
+                if (!ContinueFlush.Wait(TimeSpan.FromSeconds(10)))
+                {
+                    throw new TimeoutException("Flush was not released.");
+                }
             }
-            if (FailFlush) throw new IOException("Injected durable flush failure.");
+            if (FailFlush)
+            {
+                throw new IOException("Injected durable flush failure.");
+            }
+
             _physical.FlushToDisk(faulting.Inner);
         }
-        else _physical.FlushToDisk(stream);
+        else
+        {
+            _physical.FlushToDisk(stream);
+        }
     }
 
     public void Dispose()

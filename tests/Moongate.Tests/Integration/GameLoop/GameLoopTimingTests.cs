@@ -125,7 +125,10 @@ public sealed class GameLoopTimingTests
                 {
                     Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() => commandObserved.SetResult(callbacks))));
                 }
-                if (callbacks == 8) allTimers.SetResult();
+                if (callbacks == 8)
+                {
+                    allTimers.SetResult();
+                }
             });
         }
         clock.Advance(TimeSpan.FromMilliseconds(1));

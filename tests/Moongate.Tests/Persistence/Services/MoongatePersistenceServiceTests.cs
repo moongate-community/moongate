@@ -105,7 +105,11 @@ public sealed class MoongatePersistenceServiceTests
         IEnumerable<TestEntity> Source()
         {
             yield return new TestEntity { Id = new Serial(1), Name = "changed" };
-            if (valid) yield break;
+            if (valid)
+            {
+                yield break;
+            }
+
             switch (failure)
             {
                 case "null-entity": yield return null!; break;
@@ -203,7 +207,10 @@ public sealed class MoongatePersistenceServiceTests
             if (call == 1)
             {
                 entered.SetResult();
-                if (!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException();
+                if (!release.Wait(TimeSpan.FromSeconds(10)))
+                {
+                    throw new TimeoutException();
+                }
             }
             return [new TestEntity { Id = new Serial(1), Name = $"save-{call}" }];
         });
@@ -239,7 +246,11 @@ public sealed class MoongatePersistenceServiceTests
         owner.Register<TestEntity>("items", () =>
         {
             entered.SetResult();
-            if (!release.Wait(TimeSpan.FromSeconds(10))) throw new TimeoutException();
+            if (!release.Wait(TimeSpan.FromSeconds(10)))
+            {
+                throw new TimeoutException();
+            }
+
             return [new TestEntity { Id = new Serial(1), Name = "saved" }];
         });
         await owner.InitializeAsync();

@@ -14,7 +14,11 @@ public sealed class GameLoopOptions
         get => _workItemBudget;
         init
         {
-            if (value <= TimeSpan.Zero) throw new ArgumentOutOfRangeException(nameof(value));
+            if (value <= TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value));
+            }
+
             _workItemBudget = value;
         }
     }

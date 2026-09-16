@@ -15,7 +15,11 @@ public sealed class FaultingTimeProvider : TimeProvider
 
     public override long GetTimestamp()
     {
-        if (FailTimestampReads) throw new InvalidOperationException("Diagnostic clock failed.");
+        if (FailTimestampReads)
+        {
+            throw new InvalidOperationException("Diagnostic clock failed.");
+        }
+
         return _clock.GetTimestamp();
     }
 }

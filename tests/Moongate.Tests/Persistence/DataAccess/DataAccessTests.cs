@@ -90,7 +90,11 @@ public sealed class DataAccessTests
 
         var matches = await access.QueryAsync(entity =>
         {
-            if (entity.Name != "saved") return false;
+            if (entity.Name != "saved")
+            {
+                return false;
+            }
+
             entity.Name = "predicate changed";
 
             return true;

@@ -136,7 +136,9 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
     private static void ValidateId(Serial id)
     {
         if (!id.IsValid)
+        {
             throw new ArgumentOutOfRangeException(nameof(id), "Serial must be nonzero.");
+        }
     }
 
     private async Task InitializeAsync(CancellationToken cancellationToken)

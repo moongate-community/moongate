@@ -103,7 +103,11 @@ public sealed class MoongatePluginRegistryTests
         var registry = new MoongatePluginRegistry(container);
         var core = Create("core", version: new Version(1, 0, 0));
         var app = Create("app", dependencies: [new MoongatePluginDependencyData("core", new Version(2, 0, 0))]);
-        if (alreadyRegistered) registry.Register(core);
+        if (alreadyRegistered)
+        {
+            registry.Register(core);
+        }
+
         IMoongatePlugin[] batch = alreadyRegistered ? [app] : [core, app];
         var error = Assert.Throws<InvalidOperationException>(() => registry.Register(batch));
         Assert.Contains("app", error.Message);

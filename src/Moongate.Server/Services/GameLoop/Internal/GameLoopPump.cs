@@ -39,7 +39,11 @@ internal sealed class GameLoopPump
             {
                 attempted++;
                 var handlerStarted = _timeProvider.GetTimestamp();
-                lock (_metricsGate) _executedWorkItems++;
+                lock (_metricsGate)
+                {
+                    _executedWorkItems++;
+                }
+
                 try
                 {
                     workItem.WorkItem.Execute();
@@ -54,7 +58,10 @@ internal sealed class GameLoopPump
                     var duration = GetDiagnosticElapsedTime(handlerStarted, handlerFaulted);
                     lock (_metricsGate)
                     {
-                        if (duration > _maxHandlerDuration) _maxHandlerDuration = duration;
+                        if (duration > _maxHandlerDuration)
+                        {
+                            _maxHandlerDuration = duration;
+                        }
                     }
                 }
             }
@@ -66,7 +73,10 @@ internal sealed class GameLoopPump
             if (attempted > 0)
             {
                 var duration = GetDiagnosticElapsedTime(batchStarted, handlerFaulted);
-                lock (_metricsGate) _lastBatchDuration = duration;
+                lock (_metricsGate)
+                {
+                    _lastBatchDuration = duration;
+                }
             }
         }
     }

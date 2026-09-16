@@ -14,11 +14,18 @@ public sealed class TimerWheelService : ITimerService
     private readonly Dictionary<string, HashSet<string>> _timerIdsByName = new(StringComparer.Ordinal);
     private readonly Dictionary<string, TimerEntry> _timersById = new(StringComparer.Ordinal);
     private readonly LinkedList<TimerEntry>[] _wheel;
-    private readonly SortedSet<TimerEntry> _ready = new(Comparer<TimerEntry>.Create((left, right) =>
-    {
-        var due = left.DueTick.CompareTo(right.DueTick);
-        return due != 0 ? due : left.Sequence.CompareTo(right.Sequence);
-    }));
+
+    private readonly SortedSet<TimerEntry> _ready = new(
+        Comparer<TimerEntry>.Create(
+            (left, right) =>
+            {
+                var due = left.DueTick.CompareTo(right.DueTick);
+
+                return due != 0 ? due : left.Sequence.CompareTo(right.Sequence);
+            }
+        )
+    );
+
     private Action? _wakeUp;
     private int? _ownerThreadId;
     private bool _processing;
@@ -38,6 +45,7 @@ public sealed class TimerWheelService : ITimerService
         _timeProvider = timeProvider;
         _originTimestamp = timeProvider.GetTimestamp();
         _wheel = new LinkedList<TimerEntry>[options.WheelSize];
+
         for (var i = 0; i < _wheel.Length; i++)
         {
             _wheel[i] = new LinkedList<TimerEntry>();
@@ -53,9 +61,11 @@ public sealed class TimerWheelService : ITimerService
         ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(firstDelay, TimeSpan.Zero, nameof(delay));
         TimerEntry entry;
         Action? wakeUp;
+
         lock (_syncRoot)
         {
             ThrowIfClosed();
+
             if (_timersById.Count >= _options.MaxPendingTimers)
             {
                 throw new InvalidOperationException("Timer capacity has been reached.");
@@ -77,6 +87,7 @@ public sealed class TimerWheelService : ITimerService
                 DueTick = dueTick
             };
             _timersById.Add(entry.Id, entry);
+
             if (!_timerIdsByName.TryGetValue(name, out var ids))
             {
                 ids = new HashSet<string>(StringComparer.Ordinal);
@@ -88,43 +99,65 @@ public sealed class TimerWheelService : ITimerService
             wakeUp = _wakeUp;
         }
         wakeUp?.Invoke();
+
         return entry.Id;
     }
 
     public bool UnregisterTimer(string timerId)
     {
-        if (string.IsNullOrWhiteSpace(timerId)) return false;
+        if (string.IsNullOrWhiteSpace(timerId))
+        {
+            return false;
+        }
+
         bool removed;
         Action? wakeUp;
+
         lock (_syncRoot)
         {
             removed = RemoveEntryById(timerId);
             wakeUp = removed ? _wakeUp : null;
         }
         wakeUp?.Invoke();
+
         return removed;
     }
 
     public int UnregisterTimersByName(string name)
     {
-        if (string.IsNullOrWhiteSpace(name)) return 0;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return 0;
+        }
+
         int removed;
         Action? wakeUp;
+
         lock (_syncRoot)
         {
-            if (!_timerIdsByName.TryGetValue(name, out var ids)) return 0;
+            if (!_timerIdsByName.TryGetValue(name, out var ids))
+            {
+                return 0;
+            }
+
             var timerIds = ids.ToArray();
-            foreach (var timerId in timerIds) RemoveEntryById(timerId);
+            foreach (var timerId in timerIds)
+            {
+                RemoveEntryById(timerId);
+            }
+
             removed = timerIds.Length;
             wakeUp = _wakeUp;
         }
         wakeUp?.Invoke();
+
         return removed;
     }
 
     public void UnregisterAllTimers()
     {
         Action? wakeUp;
+
         lock (_syncRoot)
         {
             ClearTimers();
@@ -153,13 +186,18 @@ public sealed class TimerWheelService : ITimerService
 
     public Task StartAsync()
     {
-        lock (_syncRoot) ThrowIfClosed();
+        lock (_syncRoot)
+        {
+            ThrowIfClosed();
+        }
+
         return Task.CompletedTask;
     }
 
     public Task StopAsync()
     {
         Close();
+
         return Task.CompletedTask;
     }
 
@@ -168,7 +206,12 @@ public sealed class TimerWheelService : ITimerService
         lock (_syncRoot)
         {
             ThrowIfClosed();
-            if (_ownerThreadId.HasValue) throw new InvalidOperationException("The timer driver is already bound.");
+
+            if (_ownerThreadId.HasValue)
+            {
+                throw new InvalidOperationException("The timer driver is already bound.");
+            }
+
             _ownerThreadId = Environment.CurrentManagedThreadId;
             _wakeUp = wakeUp;
         }
@@ -182,37 +225,68 @@ public sealed class TimerWheelService : ITimerService
             {
                 throw new InvalidOperationException("Only the bound thread may drive timers, without reentrancy.");
             }
-            if (_closed) return 0;
+
+            if (_closed)
+            {
+                return 0;
+            }
+
             _processing = true;
         }
 
         var startedAt = _timeProvider.GetTimestamp();
         var attempted = 0;
         var callbackFaulted = false;
+
         try
         {
-            lock (_syncRoot) CollectDueEntries();
+            lock (_syncRoot)
+            {
+                CollectDueEntries();
+            }
+
             while (attempted < _options.MaxCallbacksPerBatch)
             {
                 // Never remove the next ready registration until its callback fits this batch.
-                if (attempted > 0 && _timeProvider.GetElapsedTime(startedAt) >= _options.CallbackBudget) break;
+                if (attempted > 0 && _timeProvider.GetElapsedTime(startedAt) >= _options.CallbackBudget)
+                {
+                    break;
+                }
+
                 TimerEntry entry;
                 long callbackStartedAt;
+
                 lock (_syncRoot)
                 {
-                    if (_closed || _ready.Count == 0) break;
+                    if (_closed || _ready.Count == 0)
+                    {
+                        break;
+                    }
+
                     entry = _ready.Min!;
                     _ready.Remove(entry);
                     entry.Ready = false;
-                    if (_executedCallbacks < long.MaxValue) _executedCallbacks++;
-                    if (!entry.Repeat) RemoveFromIndexes(entry);
+                    if (_executedCallbacks < long.MaxValue)
+                    {
+                        _executedCallbacks++;
+                    }
+
+                    if (!entry.Repeat)
+                    {
+                        RemoveFromIndexes(entry);
+                    }
+
                     callbackStartedAt = _timeProvider.GetTimestamp();
-                    var lateness = _timeProvider.GetElapsedTime(_originTimestamp, callbackStartedAt)
-                        - TimeSpan.FromTicks(entry.DueTick * _options.TickDuration.Ticks);
-                    if (lateness > _maxLateness) _maxLateness = lateness;
+                    var lateness = _timeProvider.GetElapsedTime(_originTimestamp, callbackStartedAt) -
+                                   TimeSpan.FromTicks(entry.DueTick * _options.TickDuration.Ticks);
+                    if (lateness > _maxLateness)
+                    {
+                        _maxLateness = lateness;
+                    }
                 }
 
                 attempted++;
+
                 try
                 {
                     entry.Callback();
@@ -220,33 +294,48 @@ public sealed class TimerWheelService : ITimerService
                 catch
                 {
                     callbackFaulted = true;
+
                     lock (_syncRoot)
                     {
-                        if (_callbackFaults < long.MaxValue) _callbackFaults++;
+                        if (_callbackFaults < long.MaxValue)
+                        {
+                            _callbackFaults++;
+                        }
+
                         CloseCore();
                     }
+
                     throw;
                 }
                 finally
                 {
                     var elapsed = GetDiagnosticElapsedTime(callbackStartedAt, callbackFaulted);
+
                     lock (_syncRoot)
                     {
-                        if (elapsed > _maxCallbackDuration) _maxCallbackDuration = elapsed;
+                        if (elapsed > _maxCallbackDuration)
+                        {
+                            _maxCallbackDuration = elapsed;
+                        }
                     }
                 }
 
                 lock (_syncRoot)
                 {
-                    if (entry.Repeat && _timersById.ContainsKey(entry.Id)) RescheduleRepeat(entry);
+                    if (entry.Repeat && _timersById.ContainsKey(entry.Id))
+                    {
+                        RescheduleRepeat(entry);
+                    }
                 }
             }
+
             return attempted;
         }
         catch
         {
             // Arithmetic or clock failures also leave no partially scheduled registry behind.
             Close();
+
             throw;
         }
         finally
@@ -263,22 +352,39 @@ public sealed class TimerWheelService : ITimerService
     {
         lock (_syncRoot)
         {
-            if (_ready.Count > 0) return TimeSpan.Zero;
+            if (_ready.Count > 0)
+            {
+                return TimeSpan.Zero;
+            }
+
             long? next = null;
+
             foreach (var entry in _timersById.Values)
             {
                 // A repeating callback being executed is indexed but has no scheduled deadline yet.
-                if (entry.Node is not null && (!next.HasValue || entry.DueTick < next.Value)) next = entry.DueTick;
+                if (entry.Node is not null && (!next.HasValue || entry.DueTick < next.Value))
+                {
+                    next = entry.DueTick;
+                }
             }
-            if (!next.HasValue) return null;
+
+            if (!next.HasValue)
+            {
+                return null;
+            }
+
             var remaining = checked(next.Value * _options.TickDuration.Ticks) - GetElapsedTicks(roundUp: false);
+
             return TimeSpan.FromTicks(Math.Max(0, remaining));
         }
     }
 
     internal void Close()
     {
-        lock (_syncRoot) CloseCore();
+        lock (_syncRoot)
+        {
+            CloseCore();
+        }
     }
 
     private void CloseCore()
@@ -299,22 +405,28 @@ public sealed class TimerWheelService : ITimerService
         _timersById.Clear();
         _timerIdsByName.Clear();
         _ready.Clear();
-        foreach (var bucket in _wheel) bucket.Clear();
+        foreach (var bucket in _wheel)
+        {
+            bucket.Clear();
+        }
     }
 
     private void CollectDueEntries()
     {
         var nowTick = GetElapsedTicks(roundUp: false) / _options.TickDuration.Ticks;
         var ticksToScan = Math.Min(nowTick - _processedTick, _wheel.Length);
+
         // A long pause visits at most one revolution, checking absolute deadlines instead of old rounds.
         for (long offset = 1; offset <= ticksToScan; offset++)
         {
             var bucket = _wheel[(int)((_processedTick + offset) % _wheel.Length)];
             var node = bucket.First;
+
             while (node is not null)
             {
                 var next = node.Next;
                 var entry = node.Value;
+
                 if (entry.DueTick <= nowTick)
                 {
                     bucket.Remove(node);
@@ -348,18 +460,24 @@ public sealed class TimerWheelService : ITimerService
 
     private bool RemoveEntryById(string timerId)
     {
-        if (!_timersById.TryGetValue(timerId, out var entry)) return false;
+        if (!_timersById.TryGetValue(timerId, out var entry))
+        {
+            return false;
+        }
+
         if (entry.Node is not null)
         {
             entry.Node.List!.Remove(entry.Node);
             entry.Node = null;
         }
+
         if (entry.Ready)
         {
             _ready.Remove(entry);
             entry.Ready = false;
         }
         RemoveFromIndexes(entry);
+
         return true;
     }
 
@@ -368,7 +486,10 @@ public sealed class TimerWheelService : ITimerService
         _timersById.Remove(entry.Id);
         var ids = _timerIdsByName[entry.Name];
         ids.Remove(entry.Id);
-        if (ids.Count == 0) _timerIdsByName.Remove(entry.Name);
+        if (ids.Count == 0)
+        {
+            _timerIdsByName.Remove(entry.Name);
+        }
     }
 
     private TimeSpan GetDiagnosticElapsedTime(long startedAt, bool callbackFaulted)
@@ -389,6 +510,7 @@ public sealed class TimerWheelService : ITimerService
         // TimestampFrequency need not equal TimeSpan.TicksPerSecond. Int128 avoids conversion overflow.
         var numerator = ((Int128)_timeProvider.GetTimestamp() - _originTimestamp) * TimeSpan.TicksPerSecond;
         var frequency = _timeProvider.TimestampFrequency;
+
         return checked((long)((numerator + (roundUp ? frequency - 1 : 0)) / frequency));
     }
 
@@ -397,11 +519,15 @@ public sealed class TimerWheelService : ITimerService
         var tickDuration = _options.TickDuration.Ticks;
         var dueTick = nominalDeadline / tickDuration + (nominalDeadline % tickDuration == 0 ? 0 : 1);
         _ = checked(dueTick * tickDuration);
+
         return dueTick;
     }
 
     private void ThrowIfClosed()
     {
-        if (_closed) throw new InvalidOperationException("Timer scheduling has been closed.");
+        if (_closed)
+        {
+            throw new InvalidOperationException("Timer scheduling has been closed.");
+        }
     }
 }

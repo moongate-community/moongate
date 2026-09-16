@@ -24,7 +24,11 @@ public sealed class BinaryCollectionStoreTests
         var path = System.IO.Path.Combine(root.Path, "items.snapshot.bin");
         var bytes = File.ReadAllBytes(path);
         bytes[offset] ^= 1;
-        if (repairCrc) PersistenceFixture.Rechecksum(bytes, 100, 28);
+        if (repairCrc)
+        {
+            PersistenceFixture.Rechecksum(bytes, 100, 28);
+        }
+
         File.WriteAllBytes(path, bytes);
         await using var failed = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions());
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
@@ -35,7 +39,10 @@ public sealed class BinaryCollectionStoreTests
     {
         using var root = new TemporaryPersistenceDirectory();
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
+        {
             await store.InitializeAsync();
+        }
+
         var path = System.IO.Path.Combine(root.Path, "items.journal.bin");
         var bytes = File.ReadAllBytes(path);
         BinaryPrimitives.WriteUInt64LittleEndian(bytes.AsSpan(16), 1);
@@ -102,8 +109,15 @@ public sealed class BinaryCollectionStoreTests
     {
         using var root = new TemporaryPersistenceDirectory();
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
+        {
             await store.InitializeAsync();
-        using (var stream = File.OpenWrite(System.IO.Path.Combine(root.Path, "items.snapshot.bin"))) stream.SetLength(length);
+        }
+
+        using (var stream = File.OpenWrite(System.IO.Path.Combine(root.Path, "items.snapshot.bin")))
+        {
+            stream.SetLength(length);
+        }
+
         await using var failed = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions());
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
     }
@@ -259,7 +273,11 @@ public sealed class BinaryCollectionStoreTests
         var path = System.IO.Path.Combine(root.Path, file);
         var bytes = File.ReadAllBytes(path);
         bytes[offset] = offset == 116 ? (byte)0 : (byte)(bytes[offset] ^ 0x80);
-        if (repairCrc) PersistenceFixture.Rechecksum(bytes, offset < 100 ? 0 : 100, offset < 100 ? 96 : 28);
+        if (repairCrc)
+        {
+            PersistenceFixture.Rechecksum(bytes, offset < 100 ? 0 : 100, offset < 100 ? 96 : 28);
+        }
+
         File.WriteAllBytes(path, bytes);
         await using var failed = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions { MaxPayloadBytes = 64 });
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
@@ -273,8 +291,15 @@ public sealed class BinaryCollectionStoreTests
     {
         using var root = new TemporaryPersistenceDirectory();
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
+        {
             await store.InitializeAsync();
-        using (var stream = File.OpenWrite(System.IO.Path.Combine(root.Path, file))) stream.SetLength(length);
+        }
+
+        using (var stream = File.OpenWrite(System.IO.Path.Combine(root.Path, file)))
+        {
+            stream.SetLength(length);
+        }
+
         await using var failed = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions());
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
     }
@@ -305,7 +330,10 @@ public sealed class BinaryCollectionStoreTests
     {
         using var root = new TemporaryPersistenceDirectory();
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
+        {
             await store.InitializeAsync();
+        }
+
         foreach (var file in new[] { "items.snapshot.bin", "items.journal.bin" })
         {
             var path = System.IO.Path.Combine(root.Path, file);
@@ -416,7 +444,10 @@ public sealed class BinaryCollectionStoreTests
     {
         using var root = new TemporaryPersistenceDirectory();
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
+        {
             await store.InitializeAsync();
+        }
+
         File.Delete(System.IO.Path.Combine(root.Path, missing));
         await using var failed = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions());
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
@@ -490,7 +521,11 @@ public sealed class BinaryCollectionStoreTests
             await store.UpsertAsync(new Serial(2), [2, 3]);
             await store.AbortAsync();
         }
-        using (var stream = File.OpenWrite(journal)) stream.SetLength(133 + tailLength);
+        using (var stream = File.OpenWrite(journal))
+        {
+            stream.SetLength(133 + tailLength);
+        }
+
         await using (var store = new BinaryCollectionStore(root.Path, "items", new PersistenceOptions()))
         {
             await store.InitializeAsync();

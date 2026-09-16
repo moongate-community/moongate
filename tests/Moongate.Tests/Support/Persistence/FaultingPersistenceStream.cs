@@ -37,7 +37,11 @@ internal sealed class FaultingPersistenceStream : Stream
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing) Inner.Dispose();
+        if (disposing)
+        {
+            Inner.Dispose();
+        }
+
         base.Dispose(disposing);
     }
 }

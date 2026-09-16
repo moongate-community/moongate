@@ -56,24 +56,31 @@ await ConsoleApp.RunAsync(
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
-            .RegisterServices(services =>
-            {
-                services.RegisterInstance(directoriesConfig);
-                services.RegisterInstance(serverArgs);
-                services.RegisterInstance(new GameLoopOptions());
-                services.RegisterInstance<TimeProvider>(TimeProvider.System);
-                services.RegisterInstance(new TimerWheelOptions());
-                services.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
+            .RegisterServices(
+                services =>
+                {
+                    services.RegisterInstance(directoriesConfig);
+                    services.RegisterInstance(serverArgs);
+                    services.RegisterInstance(new GameLoopOptions());
+                    services.RegisterInstance<TimeProvider>(TimeProvider.System);
+                    services.RegisterInstance(new TimerWheelOptions());
+                    services.RegisterDelegate<ITimerService>(
+                        resolver => resolver.Resolve<TimerWheelService>(),
+                        Reuse.Singleton
+                    );
 
-                return services.RegisterMoongatePersistence(directoriesConfig["save"])
-                    .RegisterMoongateService<MoongatePersistenceStartupService>(
-                        MoongatePersistenceStartupService.StartupPriority)
-                    .RegisterMoongateService<TimerWheelService>(priority: -900)
-                    .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                    .RegisterMoongateService<IEventBusService, EventBusService>()
-                    .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                        () => new PluginLoaderService(services, directoriesConfig));
-            });
+                    return services.RegisterMoongatePersistence(directoriesConfig["save"])
+                                   .RegisterMoongateService<MoongatePersistenceStartupService>(
+                                       MoongatePersistenceStartupService.StartupPriority
+                                   )
+                                   .RegisterMoongateService<TimerWheelService>(priority: -900)
+                                   .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                                   .RegisterMoongateService<IEventBusService, EventBusService>()
+                                   .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                                       () => new PluginLoaderService(services, directoriesConfig)
+                                   );
+                }
+            );
 
         await MoongateServerRunner.RunAsync(bootstrap);
     }

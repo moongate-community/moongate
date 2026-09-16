@@ -103,8 +103,14 @@ public sealed class TimerWheelServiceTests
         string id = "";
         id = timers.RegisterTimer("repeat", TimeSpan.FromMilliseconds(8), () =>
         {
-            if (all) timers.UnregisterAllTimers();
-            else Assert.True(timers.UnregisterTimer(id));
+            if (all)
+            {
+                timers.UnregisterAllTimers();
+            }
+            else
+            {
+                Assert.True(timers.UnregisterTimer(id));
+            }
         }, repeat: true);
         clock.Advance(TimeSpan.FromMilliseconds(8));
         Assert.Equal(1, timers.ProcessDueTimers());
@@ -386,7 +392,11 @@ public sealed class TimerWheelServiceTests
         try
         {
             Assert.True(entered.Wait(TimeSpan.FromSeconds(5)));
-            if (cancelFirst) Assert.True(timers.UnregisterTimer(id));
+            if (cancelFirst)
+            {
+                Assert.True(timers.UnregisterTimer(id));
+            }
+
             timers.Close();
             Assert.False(finished);
             Assert.Null(timers.GetNextDelay());
@@ -417,10 +427,18 @@ public sealed class TimerWheelServiceTests
                 catch (InvalidOperationException) { break; }
             }
         })).ToArray();
-        foreach (var writer in writers) writer.Start();
+        foreach (var writer in writers)
+        {
+            writer.Start();
+        }
+
         start.Set();
         timers.Close();
-        foreach (var writer in writers) Assert.True(writer.Join(TimeSpan.FromSeconds(5)));
+        foreach (var writer in writers)
+        {
+            Assert.True(writer.Join(TimeSpan.FromSeconds(5)));
+        }
+
         Assert.Equal(0, timers.GetMetricsSnapshot().ActiveTimers);
         Assert.Null(timers.GetNextDelay());
         clock.Advance(TimeSpan.FromMilliseconds(8));
