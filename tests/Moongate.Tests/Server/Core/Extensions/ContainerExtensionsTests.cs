@@ -8,11 +8,11 @@ namespace Moongate.Tests.Server.Core.Extensions;
 
 public class ContainerExtensionsTests
 {
-    [Theory]
-    [InlineData("generic-mapping", true)]
-    [InlineData("generic-self", false)]
-    [InlineData("runtime-mapping", true)]
-    [InlineData("runtime-self", false)]
+    [Theory,
+     InlineData("generic-mapping", true),
+     InlineData("generic-self", false),
+     InlineData("runtime-mapping", true),
+     InlineData("runtime-self", false)]
     public void Register_ByType_RegistersSingletonWithDependenciesAndStartupMetadata(string overload, bool mapped)
     {
         using var container = new Container();
@@ -41,11 +41,11 @@ public class ContainerExtensionsTests
         );
     }
 
-    [Theory]
-    [InlineData("generic-service", true)]
-    [InlineData("generic-mapping", true)]
-    [InlineData("inferred-self", false)]
-    [InlineData("runtime-service", true)]
+    [Theory,
+     InlineData("generic-service", true),
+     InlineData("generic-mapping", true),
+     InlineData("inferred-self", false),
+     InlineData("runtime-service", true)]
     public void Register_Instance_UsesExistingObjectAndItsActualType(string overload, bool mapped)
     {
         using var container = new Container();
@@ -72,17 +72,17 @@ public class ContainerExtensionsTests
         );
     }
 
-    [Theory]
-    [InlineData("generic-mapping-context", true)]
-    [InlineData("generic-mapping-parameterless", true)]
-    [InlineData("generic-self-context", false)]
-    [InlineData("generic-self-parameterless", false)]
-    [InlineData("inferred-self-context", false)]
-    [InlineData("inferred-self-parameterless", false)]
-    [InlineData("runtime-mapping-context", true)]
-    [InlineData("runtime-mapping-parameterless", true)]
-    [InlineData("runtime-self-context", false)]
-    [InlineData("runtime-self-parameterless", false)]
+    [Theory,
+     InlineData("generic-mapping-context", true),
+     InlineData("generic-mapping-parameterless", true),
+     InlineData("generic-self-context", false),
+     InlineData("generic-self-parameterless", false),
+     InlineData("inferred-self-context", false),
+     InlineData("inferred-self-parameterless", false),
+     InlineData("runtime-mapping-context", true),
+     InlineData("runtime-mapping-parameterless", true),
+     InlineData("runtime-self-context", false),
+     InlineData("runtime-self-parameterless", false)]
     public void Register_Factory_RemainsLazyAndCreatesOneInstanceWithStartupMetadata(string overload, bool mapped)
     {
         using var container = new Container();
@@ -159,10 +159,10 @@ public class ContainerExtensionsTests
         Assert.NotNull(container.Resolve<StartupRegistrationService>());
     }
 
-    [Theory]
-    [InlineData("type", typeof(ContainerException))]
-    [InlineData("instance", typeof(ContainerException))]
-    [InlineData("factory", typeof(ArgumentException))]
+    [Theory,
+     InlineData("type", typeof(ContainerException)),
+     InlineData("instance", typeof(ContainerException)),
+     InlineData("factory", typeof(ArgumentException))]
     public void Register_IncompatibleTypes_LeavesContainerAndMetadataUnchanged(string overload, Type exceptionType)
     {
         using var container = new Container();
@@ -205,10 +205,7 @@ public class ContainerExtensionsTests
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());
     }
 
-    [Theory]
-    [InlineData(typeof(Stream))]
-    [InlineData(typeof(List<>))]
-    [InlineData(typeof(int))]
+    [Theory, InlineData(typeof(Stream)), InlineData(typeof(List<>)), InlineData(typeof(int))]
     public void Register_FactoryWithInvalidImplementationType_DoesNotAddMetadata(Type implementationType)
     {
         using var container = new Container();
@@ -235,9 +232,7 @@ public class ContainerExtensionsTests
         );
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public void Resolve_FactoryReturnsWrongImplementationOrNull_Throws(bool returnsNull)
     {
         using var container = new Container();

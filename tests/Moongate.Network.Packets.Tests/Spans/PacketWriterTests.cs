@@ -73,10 +73,7 @@ public class PacketWriterTests
         Assert.Equal(new byte[] { 0x41, 0x42, 0x00, 0x00, 0x00 }, destination.ToArray());
     }
 
-    [Theory]
-    [InlineData("ABC", 2)]
-    [InlineData("A\0", 2)]
-    [InlineData("é", 2)]
+    [Theory, InlineData("ABC", 2), InlineData("A\0", 2), InlineData("é", 2)]
     public void WriteFixedAscii_InvalidText_LeavesDestinationUntouched(string value, int width)
     {
         var destination = new byte[] { 0xCC, 0xCC };

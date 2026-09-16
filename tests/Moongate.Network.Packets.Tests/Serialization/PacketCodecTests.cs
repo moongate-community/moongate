@@ -11,9 +11,7 @@ public class PacketCodecTests
         Assert.Throws<ArgumentNullException>(() => PacketCodec.Encode(null!));
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(65536)]
+    [Theory, InlineData(0), InlineData(65536)]
     public void Encode_InvalidDeclaredLength_ThrowsArgumentOutOfRangeException(int length)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => PacketCodec.Encode(new InvalidLengthPacket(length)));

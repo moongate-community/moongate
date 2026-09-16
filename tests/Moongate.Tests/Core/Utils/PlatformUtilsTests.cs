@@ -26,11 +26,7 @@ public sealed class PlatformUtilsTests
         Assert.Equal(expected, PlatformUtils.GetCurrentPlatform());
     }
 
-    [Theory]
-    [InlineData("true", true)]
-    [InlineData("TRUE", false)]
-    [InlineData("1", false)]
-    [InlineData(null, false)]
+    [Theory, InlineData("true", true), InlineData("TRUE", false), InlineData("1", false), InlineData(null, false)]
     public void IsRunningFromDocker_RequiresExactTrueValue(string? value, bool expected)
     {
         using var environment = new EnvironmentVariableScope("MOONGATE_IS_DOCKER", value);

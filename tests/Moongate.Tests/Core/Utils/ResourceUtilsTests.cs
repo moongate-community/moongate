@@ -18,9 +18,7 @@ public sealed class ResourceUtilsTests
         Assert.Equal(Path.Combine("TestSupport", "Resources", "Nested", "sample.txt"), result);
     }
 
-    [Theory]
-    [InlineData("Other.Root.file.txt", "Moongate.Tests")]
-    [InlineData("Moongate.Tests.NoExtension", "Moongate.Tests")]
+    [Theory, InlineData("Other.Root.file.txt", "Moongate.Tests"), InlineData("Moongate.Tests.NoExtension", "Moongate.Tests")]
     public void ConvertResourceNameToPath_InvalidName_ThrowsArgumentException(string resourceName, string prefix)
     {
         Assert.Throws<ArgumentException>(() => ResourceUtils.ConvertResourceNameToPath(resourceName, prefix));
@@ -36,9 +34,7 @@ public sealed class ResourceUtilsTests
         Assert.Equal("sample.txt", ResourceUtils.GetFileNameFromResourcePath(FullResourceName));
     }
 
-    [Theory]
-    [InlineData("file.txt")]
-    [InlineData("extensionless")]
+    [Theory, InlineData("file.txt"), InlineData("extensionless")]
     public void ResourceComponentHelpers_NamesWithoutDirectory_ReturnEmptyDirectoryAndOriginalFileName(string name)
     {
         Assert.Equal("", ResourceUtils.GetDirectoryPathFromResourceName(name));
@@ -62,9 +58,7 @@ public sealed class ResourceUtilsTests
         Assert.Equal(expected, reader.ReadToEnd());
     }
 
-    [Theory]
-    [InlineData("Nested/sample.txt")]
-    [InlineData("Nested\\sample.txt")]
+    [Theory, InlineData("Nested/sample.txt"), InlineData("Nested\\sample.txt")]
     public void GetEmbeddedResourceContent_PartialPath_ResolvesSuffixWithEitherSeparator(string path)
     {
         var bytes = ResourceUtils.GetEmbeddedResourceContent(path, _assembly);
@@ -82,10 +76,10 @@ public sealed class ResourceUtilsTests
             ResourceUtils.GetEmbeddedResourceFileNames(_assembly, "TestSupport/Resources/Nested"));
     }
 
-    [Theory]
-    [InlineData("sample.txt", "sample.txt")]
-    [InlineData("README", "README")]
-    [InlineData("Moongate.Tests.Resources.Nested.sample.txt", "sample.txt")]
+    [Theory,
+     InlineData("sample.txt", "sample.txt"),
+     InlineData("README", "README"),
+     InlineData("Moongate.Tests.Resources.Nested.sample.txt", "sample.txt")]
     public void GetFileNameFromResourcePath_CommonResourceNames_ReturnFileNameWithExtension(
         string resourceName,
         string expected)

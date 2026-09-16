@@ -32,9 +32,7 @@ public sealed class TomlUtilsTests
         Assert.Equal(2594, settings.Network.Port);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("# Empty configuration\n")]
+    [Theory, InlineData(""), InlineData("# Empty configuration\n")]
     public void Deserialize_EmptyDocument_KeepsModelDefaults(string toml)
     {
         var settings = TomlUtils.Deserialize<TomlTestSettings>(toml);
@@ -75,11 +73,7 @@ public sealed class TomlUtilsTests
         Assert.Throws<ArgumentNullException>(() => TomlUtils.Deserialize<TomlTestSettings>(null!));
     }
 
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
+    [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
     public async Task DeserializeFromFile_Utf8Document_UsesDefaultOrCustomNaming(bool asynchronous, bool customNaming)
     {
         using var directory = new TemporaryDirectory();
@@ -98,9 +92,7 @@ public sealed class TomlUtilsTests
         Assert.Equal(4000, settings.Network.Port);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task SerializeToFile_CreatesParentsAndOverwritesUtf8Document(bool asynchronous)
     {
         using var directory = new TemporaryDirectory();
@@ -138,9 +130,7 @@ public sealed class TomlUtilsTests
         Assert.False(File.ReadAllBytes(path).AsSpan().StartsWith(new byte[] { 0xEF, 0xBB, 0xBF }));
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task DeserializeFromFile_MissingFile_PreservesFileNotFoundException(bool asynchronous)
     {
         using var directory = new TemporaryDirectory();
@@ -156,9 +146,7 @@ public sealed class TomlUtilsTests
         }
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task SerializeToFile_SerializationFails_PreservesExistingFile(bool asynchronous)
     {
         using var directory = new TemporaryDirectory();

@@ -12,9 +12,7 @@ public class UopUtilsTests
     private const string ZlibPayload = "789CF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD4";
     private const string BestZlibPayload = "78DAF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD4";
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(new byte[0])]
+    [Theory, InlineData(null), InlineData(new byte[0])]
     public void Compress_NullOrEmptyInput_ReturnsFailure(byte[]? input)
     {
         var (success, data) = UopUtils.Compress(input!);
@@ -23,9 +21,7 @@ public class UopUtilsTests
         Assert.Empty(data);
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(new byte[0])]
+    [Theory, InlineData(null), InlineData(new byte[0])]
     public void Decompress_NullOrEmptyInput_ReturnsFailure(byte[]? input)
     {
         var (success, data) = UopUtils.Decompress(input!);
@@ -54,10 +50,7 @@ public class UopUtilsTests
         Assert.Equal(_expectedData, restored.ToArray());
     }
 
-    [Theory]
-    [InlineData(1, false)]
-    [InlineData(131072, false)]
-    [InlineData(131072, true)]
+    [Theory, InlineData(1, false), InlineData(131072, false), InlineData(131072, true)]
     public void Compression_RoundTrip_PreservesBinaryData(int length, bool repetitive)
     {
         var input = new byte[length];
@@ -84,10 +77,7 @@ public class UopUtilsTests
         Assert.Equal(input, destination);
     }
 
-    [Theory]
-    [InlineData(StoredZlibPayload)]
-    [InlineData(ZlibPayload)]
-    [InlineData(BestZlibPayload)]
+    [Theory, InlineData(StoredZlibPayload), InlineData(ZlibPayload), InlineData(BestZlibPayload)]
     public void Decompress_IndependentZlibPayload_ReturnsOriginalData(string hex)
     {
         var compressed = Convert.FromHexString(hex);
@@ -98,13 +88,13 @@ public class UopUtilsTests
         Assert.Equal(_expectedData, data);
     }
 
-    [Theory]
-    [InlineData("00000000")]
-    // Correct zlib header and data, but an invalid Adler-32 checksum.
-    [InlineData("789CF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD5")]
-    // The same payload in raw DEFLATE and gzip formats must not be accepted as zlib.
-    [InlineData("F3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D40300")]
-    [InlineData("1F8B0800000000000003F3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403007CB08B1A1C000000")]
+    [Theory,
+     InlineData("00000000"),
+     // Correct zlib header and data, but an invalid Adler-32 checksum.
+     InlineData("789CF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD5"),
+     // The same payload in raw DEFLATE and gzip formats must not be accepted as zlib.
+     InlineData("F3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D40300"),
+     InlineData("1F8B0800000000000003F3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403007CB08B1A1C000000")]
     public void Decompression_InvalidZlibPayload_ReturnsFailure(string hex)
     {
         var compressed = Convert.FromHexString(hex);
@@ -117,9 +107,7 @@ public class UopUtilsTests
         Assert.Equal(0, written);
     }
 
-    [Theory]
-    [InlineData(28)]
-    [InlineData(64)]
+    [Theory, InlineData(28), InlineData(64)]
     public void TryDecompressInto_InputSlice_WritesOnlyDecompressedBytes(int capacity)
     {
         var compressed = Convert.FromHexString(ZlibPayload);
@@ -137,9 +125,7 @@ public class UopUtilsTests
         Assert.All(destination[written..], value => Assert.Equal((byte)0xCC, value));
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(27)]
+    [Theory, InlineData(0), InlineData(27)]
     public void TryDecompressInto_DestinationTooSmall_ReturnsFailureAndZeroLength(int capacity)
     {
         var compressed = Convert.FromHexString(ZlibPayload);
@@ -150,12 +136,12 @@ public class UopUtilsTests
         Assert.Equal(0, written);
     }
 
-    [Theory]
-    [InlineData(-1, 1)]
-    [InlineData(0, -1)]
-    [InlineData(0, 0)]
-    [InlineData(int.MaxValue, 1)]
-    [InlineData(1, int.MaxValue)]
+    [Theory,
+     InlineData(-1, 1),
+     InlineData(0, -1),
+     InlineData(0, 0),
+     InlineData(int.MaxValue, 1),
+     InlineData(1, int.MaxValue)]
     public void TryDecompressInto_InvalidInputSlice_ReturnsFailureAndZeroLength(int offset, int length)
     {
         var compressed = Convert.FromHexString(ZlibPayload);
@@ -166,9 +152,7 @@ public class UopUtilsTests
         Assert.Equal(0, written);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public void TryDecompressInto_NullBuffer_ReturnsFailureAndZeroLength(bool nullSource)
     {
         var compressed = Convert.FromHexString(ZlibPayload);

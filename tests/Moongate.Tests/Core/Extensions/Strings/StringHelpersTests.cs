@@ -21,11 +21,11 @@ public class StringHelpersTests
         Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("", StringComparison.Ordinal));
     }
 
-    [Theory]
-    [InlineData("é", "e\u0301", "", StringComparison.InvariantCulture)]
-    [InlineData("e\u0301", "é", "", StringComparison.InvariantCulture)]
-    [InlineData("xéy", "e\u0301", "xy", StringComparison.CurrentCulture)]
-    [InlineData("xe\u0301y", "é", "xy", StringComparison.CurrentCulture)]
+    [Theory,
+     InlineData("é", "e\u0301", "", StringComparison.InvariantCulture),
+     InlineData("e\u0301", "é", "", StringComparison.InvariantCulture),
+     InlineData("xéy", "e\u0301", "xy", StringComparison.CurrentCulture),
+     InlineData("xe\u0301y", "é", "xy", StringComparison.CurrentCulture)]
     public void Remove_CulturallyEquivalentText_RemovesTheMatchedSourceCharacters(
         string source,
         string search,
@@ -38,11 +38,11 @@ public class StringHelpersTests
         Assert.Equal(expected, source.AsSpan().Remove(search, comparison));
     }
 
-    [Theory]
-    [InlineData("é", "e\u0301", "", StringComparison.InvariantCulture)]
-    [InlineData("e\u0301", "é", "", StringComparison.InvariantCulture)]
-    [InlineData("xéy", "e\u0301", "xy", StringComparison.CurrentCulture)]
-    [InlineData("xe\u0301y", "é", "xy", StringComparison.CurrentCulture)]
+    [Theory,
+     InlineData("é", "e\u0301", "", StringComparison.InvariantCulture),
+     InlineData("e\u0301", "é", "", StringComparison.InvariantCulture),
+     InlineData("xéy", "e\u0301", "xy", StringComparison.CurrentCulture),
+     InlineData("xe\u0301y", "é", "xy", StringComparison.CurrentCulture)]
     public void Remove_CulturallyEquivalentTextIntoBuffer_PreservesCharactersOutsideTheResult(
         string source,
         string search,
@@ -59,9 +59,7 @@ public class StringHelpersTests
         Assert.Equal(expected == "" ? "????" : "?xy?", new string(buffer));
     }
 
-    [Theory]
-    [InlineData(StringComparison.InvariantCulture)]
-    [InlineData(StringComparison.CurrentCulture)]
+    [Theory, InlineData(StringComparison.InvariantCulture), InlineData(StringComparison.CurrentCulture)]
     public void Remove_CulturalMatchWithInsufficientBuffer_ThrowsWithoutWriting(StringComparison comparison)
     {
         using var culture = new CultureScope("fr-FR");
@@ -80,14 +78,14 @@ public class StringHelpersTests
         Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("b", (StringComparison)99));
     }
 
-    [Theory]
-    [InlineData("the brave knight", "the Brave Knight")]
-    [InlineData("hello world", "Hello World")]
-    [InlineData("hello ", "Hello ")]
-    [InlineData("hello  world", "Hello  World")]
-    [InlineData("the ", "the ")]
-    [InlineData("", "")]
-    [InlineData(null, null)]
+    [Theory,
+     InlineData("the brave knight", "the Brave Knight"),
+     InlineData("hello world", "Hello World"),
+     InlineData("hello ", "Hello "),
+     InlineData("hello  world", "Hello  World"),
+     InlineData("the ", "the "),
+     InlineData("", ""),
+     InlineData(null, null)]
     public void Capitalize_PooledCharacters_PreservesWordRules(string? input, string? expected)
     {
         Assert.Equal(expected, input!.Capitalize());
@@ -101,9 +99,7 @@ public class StringHelpersTests
         Assert.Equal("Istanbul Izmir", "istanbul izmir".Capitalize());
     }
 
-    [Theory]
-    [InlineData("apple", true, "an apple of valor")]
-    [InlineData("sword", false, "a sword of valor")]
+    [Theory, InlineData("apple", true, "an apple of valor"), InlineData("sword", false, "a sword of valor")]
     public void AppendSpaceWithArticle_MultipleWords_AddsArticleOnlyAtTheBeginning(
         string noun,
         bool articleAn,
@@ -125,11 +121,11 @@ public class StringHelpersTests
         }
     }
 
-    [Theory]
-    [InlineData(null, "fallback")]
-    [InlineData("", "fallback")]
-    [InlineData(" \t\r\n", "fallback")]
-    [InlineData("  value  ", "  value  ")]
+    [Theory,
+     InlineData(null, "fallback"),
+     InlineData("", "fallback"),
+     InlineData(" \t\r\n", "fallback"),
+     InlineData("  value  ", "  value  ")]
     public void DefaultIfNullOrEmpty_BlankOrPopulatedText_SelectsTheAppropriateValue(
         string? input,
         string expected
@@ -154,12 +150,12 @@ public class StringHelpersTests
         Assert.Equal("one\r\ntwo\r\n", result);
     }
 
-    [Theory]
-    [InlineData(new byte[] { 0x41, 0x42, 0x00, 0x43 }, 1, 2)]
-    [InlineData(new byte[] { 0x41, 0x00, 0x00, 0x42, 0x00, 0x00 }, 2, 4)]
-    [InlineData(new byte[] { 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, 4, 4)]
-    [InlineData(new byte[] { 0x41, 0x00 }, 2, -1)]
-    [InlineData(new byte[] { 0x41, 0x00, 0x00 }, 2, -1)]
+    [Theory,
+     InlineData(new byte[] { 0x41, 0x42, 0x00, 0x43 }, 1, 2),
+     InlineData(new byte[] { 0x41, 0x00, 0x00, 0x42, 0x00, 0x00 }, 2, 4),
+     InlineData(new byte[] { 0x41, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }, 4, 4),
+     InlineData(new byte[] { 0x41, 0x00 }, 2, -1),
+     InlineData(new byte[] { 0x41, 0x00, 0x00 }, 2, -1)]
     public void IndexOfTerminator_EncodedCodeUnits_ReturnsAlignedByteOffset(byte[] bytes, int width, int expected)
     {
         Assert.Equal(expected, bytes.AsSpan().IndexOfTerminator(width));
@@ -218,10 +214,7 @@ public class StringHelpersTests
         Assert.Equal("a-b_c-d_e", new string(characters));
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" \t\r\n")]
+    [Theory, InlineData(null), InlineData(""), InlineData(" \t\r\n")]
     public void Wrap_BlankText_ProducesNoLines(string? input)
     {
         Assert.Null(input!.Wrap(10, 2));

@@ -144,6 +144,8 @@ dotnet_diagnostic.IDE0290.severity = error
 
 # ReSharper properties
 resharper_apply_auto_detected_rules = false
+# Keep multiple attributes in a single bracketed section.
+resharper_csharp_force_attribute_style = join
 # Keep Rider/ReSharper aligned with csharp_prefer_braces.
 resharper_braces_for_ifelse = required
 resharper_braces_for_for = required
@@ -188,6 +190,7 @@ resharper_wrap_chained_method_calls = chop_if_long
 resharper_wrap_lines = true
 
 # ReSharper inspection severities https://www.jetbrains.com/help/resharper/EditorConfig_Index.html
+resharper_arrange_attributes_highlighting = warning
 resharper_arrange_constructor_or_destructor_body_highlighting = suggestion
 resharper_arrange_local_function_body_highlighting = suggestion
 resharper_arrange_method_or_operator_body_highlighting = suggestion
@@ -273,4 +276,3 @@ end_of_line = crlf
 end_of_line = lf
 indent_size = 2
 tab_width = 2
-

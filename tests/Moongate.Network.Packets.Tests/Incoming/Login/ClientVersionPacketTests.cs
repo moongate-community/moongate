@@ -37,27 +37,24 @@ public class ClientVersionPacketTests
         }
     }
 
-    [Theory]
-    [InlineData("BD0003")]
-    [InlineData("BD0000")]
-    [InlineData("BD0001")]
-    [InlineData("BD0002")]
-    [InlineData("BD000400")]
-    [InlineData("BD00044100")]
-    [InlineData("BD000541")]
-    [InlineData("BD0004414200")]
-    [InlineData("BD000541004200")]
-    [InlineData("BD000480")]
-    [InlineData("BC000441")]
+    [Theory,
+     InlineData("BD0003"),
+     InlineData("BD0000"),
+     InlineData("BD0001"),
+     InlineData("BD0002"),
+     InlineData("BD000400"),
+     InlineData("BD00044100"),
+     InlineData("BD000541"),
+     InlineData("BD0004414200"),
+     InlineData("BD000541004200"),
+     InlineData("BD000480"),
+     InlineData("BC000441")]
     public void TryDecode_InvalidHeaderOrText_ReturnsFalse(string hex)
     {
         Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("é")]
-    [InlineData("7\0.0")]
+    [Theory, InlineData(""), InlineData("é"), InlineData("7\0.0")]
     public void Constructor_InvalidVersion_ThrowsArgumentException(string version)
     {
         Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));

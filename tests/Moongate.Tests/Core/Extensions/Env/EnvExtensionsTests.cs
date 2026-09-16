@@ -6,9 +6,7 @@ namespace Moongate.Tests.Core.Extensions.Env;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class EnvExtensionsTests
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
+    [Theory, InlineData(null), InlineData("")]
     public void ExpandEnvironmentVariables_NullOrEmpty_ReturnsInput(string? input)
     {
         Assert.Equal(input, input!.ExpandEnvironmentVariables());

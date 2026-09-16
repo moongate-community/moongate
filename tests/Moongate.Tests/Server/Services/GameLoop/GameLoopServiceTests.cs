@@ -11,9 +11,7 @@ public sealed class GameLoopServiceTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [Theory, InlineData(0), InlineData(-1)]
     public void WorkItemBudget_NonPositive_RejectsInvalidConfiguration(int milliseconds)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopOptions
@@ -22,11 +20,7 @@ public sealed class GameLoopServiceTests
         });
     }
 
-    [Theory]
-    [InlineData(0, 1)]
-    [InlineData(-1, 1)]
-    [InlineData(1, 0)]
-    [InlineData(1, -1)]
+    [Theory, InlineData(0, 1), InlineData(-1, 1), InlineData(1, 0), InlineData(1, -1)]
     public void Constructor_NonPositiveLimits_RejectsInvalidConfiguration(int capacity, int batch)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopService(new GameLoopOptions

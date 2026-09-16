@@ -283,11 +283,7 @@ public sealed class GameLoopBootstrapTests
         Assert.True(container.IsDisposed);
     }
 
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(true, false)]
-    [InlineData(false, true)]
-    [InlineData(true, true)]
+    [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
     public async Task RunAsync_ExternalStopAlreadyObservedFailure_ReportsEachFailureOnce(
         bool failOtherService, bool aggregateHandlerFailure)
     {

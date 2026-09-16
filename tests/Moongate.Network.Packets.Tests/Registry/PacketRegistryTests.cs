@@ -74,9 +74,7 @@ public class PacketRegistryTests
         Assert.Equal(2, registry.RegisteredPackets.Count);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void RegisterPacket_BidirectionalCollision_IsAtomic(bool bidirectionalFirst)
     {
         var registry = new PacketRegistry();
@@ -213,10 +211,7 @@ public class PacketRegistryTests
         }
     }
 
-    [Theory]
-    [InlineData(0)]
-    [InlineData(3)]
-    [InlineData(4)]
+    [Theory, InlineData(0), InlineData(3), InlineData(4)]
     public void TryGetDescriptor_AmbiguousOrUnknownDirection_ReturnsFalse(int direction)
     {
         Assert.False(PacketRegistry.Default.TryGetDescriptor(0x73, (PacketDirection)direction, out var descriptor));
@@ -269,12 +264,7 @@ public class PacketRegistryTests
         Assert.Equal(13, Assert.IsType<ClientVersionPacket>(versionPacket).Length);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("9900")]
-    [InlineData("8204")]
-    [InlineData("BD000400")]
-    [InlineData("7300FF")]
+    [Theory, InlineData(""), InlineData("9900"), InlineData("8204"), InlineData("BD000400"), InlineData("7300FF")]
     public void TryDecode_UnknownOutgoingOrMalformedFrame_ReturnsFalse(string hex)
     {
         Assert.False(PacketRegistry.Default.TryDecode(Convert.FromHexString(hex), out var packet));

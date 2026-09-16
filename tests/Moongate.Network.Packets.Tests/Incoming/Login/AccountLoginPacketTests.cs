@@ -55,10 +55,7 @@ public class AccountLoginPacketTests
         Assert.False(PacketCodec.TryDecode<AccountLoginPacket>([.. Fixture, 0x00], out _));
     }
 
-    [Theory]
-    [InlineData("1234567890123456789012345678901", "b")]
-    [InlineData("é", "b")]
-    [InlineData("a", "b\0")]
+    [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("é", "b"), InlineData("a", "b\0")]
     public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
     {
         Assert.Throws<ArgumentException>(() => new AccountLoginPacket(account, password, 0xFF));

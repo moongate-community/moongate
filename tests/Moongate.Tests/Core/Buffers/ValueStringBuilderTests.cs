@@ -8,9 +8,7 @@ namespace Moongate.Tests.Core.Buffers;
 
 public class ValueStringBuilderTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void Constructor_InitialTextWithOrWithoutSuppliedBuffer_CopiesTextBeforeAppending(bool suppliedBuffer)
     {
         var source = "seed".ToCharArray();
@@ -60,9 +58,7 @@ public class ValueStringBuilderTests
         Assert.Equal("plain text", builder.ToString());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void Append_SpanFormatterReportsInvalidCount_ThrowsWithoutAdvancingLength(bool negativeCount)
     {
         Assert.Throws<FormatException>(() =>
@@ -254,12 +250,12 @@ public class ValueStringBuilderTests
         Assert.Equal("<amiddleb>", builder.ToString());
     }
 
-    [Theory]
-    [InlineData(0, 2, "cdef!")]
-    [InlineData(4, 2, "abcd!")]
-    [InlineData(2, 2, "abef!")]
-    [InlineData(0, 6, "!")]
-    [InlineData(6, 0, "abcdef!")]
+    [Theory,
+     InlineData(0, 2, "cdef!"),
+     InlineData(4, 2, "abcd!"),
+     InlineData(2, 2, "abef!"),
+     InlineData(0, 6, "!"),
+     InlineData(6, 0, "abcdef!")]
     public void Remove_SelectedRange_PreservesRemainingTextAndSupportsAppending(int start, int count, string expected)
     {
         using var builder = new ValueStringBuilder(new char[8].AsSpan());
@@ -271,11 +267,11 @@ public class ValueStringBuilderTests
         Assert.Equal(expected, builder.ToString());
     }
 
-    [Theory]
-    [InlineData(-1, 1, "startIndex")]
-    [InlineData(0, -1, "length")]
-    [InlineData(4, 3, "length")]
-    [InlineData(7, 0, "length")]
+    [Theory,
+     InlineData(-1, 1, "startIndex"),
+     InlineData(0, -1, "length"),
+     InlineData(4, 3, "length"),
+     InlineData(7, 0, "length")]
     public void Remove_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -317,11 +313,11 @@ public class ValueStringBuilderTests
         Assert.Equal("abXcYa", builder.ToString());
     }
 
-    [Theory]
-    [InlineData(-1, 1, "startIndex")]
-    [InlineData(7, 0, "startIndex")]
-    [InlineData(0, -1, "count")]
-    [InlineData(4, 3, "count")]
+    [Theory,
+     InlineData(-1, 1, "startIndex"),
+     InlineData(7, 0, "startIndex"),
+     InlineData(0, -1, "count"),
+     InlineData(4, 3, "count")]
     public void Replace_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
@@ -341,11 +337,11 @@ public class ValueStringBuilderTests
         Assert.Equal(parameter, exception.ParamName);
     }
 
-    [Theory]
-    [InlineData(-1, 1, "startIndex")]
-    [InlineData(7, 0, "startIndex")]
-    [InlineData(0, -1, "count")]
-    [InlineData(4, 3, "count")]
+    [Theory,
+     InlineData(-1, 1, "startIndex"),
+     InlineData(7, 0, "startIndex"),
+     InlineData(0, -1, "count"),
+     InlineData(4, 3, "count")]
     public void ReplaceAny_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>

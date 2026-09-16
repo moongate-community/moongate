@@ -8,11 +8,7 @@ namespace Moongate.Tests.Integration.Persistence;
 
 public sealed class BinaryCollectionStoreTests
 {
-    [Theory]
-    [InlineData(100, false)]
-    [InlineData(108, true)]
-    [InlineData(132, false)]
-    [InlineData(120, true)]
+    [Theory, InlineData(100, false), InlineData(108, true), InlineData(132, false), InlineData(120, true)]
     public async Task InitializeAsync_CorruptSnapshotRecord_Rejects(int offset, bool repairCrc)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -102,9 +98,7 @@ public sealed class BinaryCollectionStoreTests
         await reopened.UpsertAsync(new Serial(2), [2]);
     }
 
-    [Theory]
-    [InlineData(32)]
-    [InlineData(133)]
+    [Theory, InlineData(32), InlineData(133)]
     public async Task InitializeAsync_SnapshotTruncatedOrHasTrailingData_Fails(int length)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -135,9 +129,7 @@ public sealed class BinaryCollectionStoreTests
         Assert.Empty(store.Capture());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task UpsertAsync_UncertainWrite_FaultsUntilRecovery(bool failFlush)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -249,18 +241,18 @@ public sealed class BinaryCollectionStoreTests
         Assert.Null(store.Get(new Serial(3)));
     }
 
-    [Theory]
-    [InlineData("items.snapshot.bin", 0, false)]
-    [InlineData("items.snapshot.bin", 8, true)]
-    [InlineData("items.snapshot.bin", 32, true)]
-    [InlineData("items.journal.bin", 0, false)]
-    [InlineData("items.journal.bin", 8, true)]
-    [InlineData("items.journal.bin", 132, false)]
-    [InlineData("items.journal.bin", 120, false)]
-    [InlineData("items.journal.bin", 104, true)]
-    [InlineData("items.journal.bin", 108, true)]
-    [InlineData("items.journal.bin", 116, true)]
-    [InlineData("items.journal.bin", 120, true)]
+    [Theory,
+     InlineData("items.snapshot.bin", 0, false),
+     InlineData("items.snapshot.bin", 8, true),
+     InlineData("items.snapshot.bin", 32, true),
+     InlineData("items.journal.bin", 0, false),
+     InlineData("items.journal.bin", 8, true),
+     InlineData("items.journal.bin", 132, false),
+     InlineData("items.journal.bin", 120, false),
+     InlineData("items.journal.bin", 104, true),
+     InlineData("items.journal.bin", 108, true),
+     InlineData("items.journal.bin", 116, true),
+     InlineData("items.journal.bin", 120, true)]
     public async Task InitializeAsync_CompleteCorruption_FailsVisibly(string file, int offset, bool repairCrc)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -283,10 +275,7 @@ public sealed class BinaryCollectionStoreTests
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
     }
 
-    [Theory]
-    [InlineData("items.snapshot.bin", 0)]
-    [InlineData("items.snapshot.bin", 99)]
-    [InlineData("items.journal.bin", 99)]
+    [Theory, InlineData("items.snapshot.bin", 0), InlineData("items.snapshot.bin", 99), InlineData("items.journal.bin", 99)]
     public async Task InitializeAsync_IncompleteFileHeader_Fails(string file, int length)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -304,9 +293,7 @@ public sealed class BinaryCollectionStoreTests
         await Assert.ThrowsAsync<InvalidDataException>(() => failed.InitializeAsync());
     }
 
-    [Theory]
-    [InlineData(0UL)]
-    [InlineData(3UL)]
+    [Theory, InlineData(0UL), InlineData(3UL)]
     public async Task InitializeAsync_DuplicateOrGappedSequence_Fails(ulong sequence)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -383,11 +370,7 @@ public sealed class BinaryCollectionStoreTests
         Assert.Equal(new byte[] { 1 }, reopened.Get(new Serial(1)));
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("../items")]
-    [InlineData("Items")]
-    [InlineData("itëms")]
+    [Theory, InlineData(""), InlineData("../items"), InlineData("Items"), InlineData("itëms")]
     public void Constructor_InvalidName_Rejects(string name)
     {
         Assert.Throws<ArgumentException>(() => new BinaryCollectionStore("unused", name, new PersistenceOptions()));
@@ -437,9 +420,7 @@ public sealed class BinaryCollectionStoreTests
         Assert.Null(store.Get(new Serial(1)));
     }
 
-    [Theory]
-    [InlineData("items.snapshot.bin")]
-    [InlineData("items.journal.bin")]
+    [Theory, InlineData("items.snapshot.bin"), InlineData("items.journal.bin")]
     public async Task InitializeAsync_OneCommittedFileMissingAtZero_FailsAndReleasesLock(string missing)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -506,10 +487,7 @@ public sealed class BinaryCollectionStoreTests
         Assert.Equal(2, reopened.Capture().Length);
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(20)]
-    [InlineData(33)]
+    [Theory, InlineData(1), InlineData(20), InlineData(33)]
     public async Task InitializeAsync_IncompleteFinalRecord_TruncatesBeforeNextAppend(int tailLength)
     {
         using var root = new TemporaryPersistenceDirectory();

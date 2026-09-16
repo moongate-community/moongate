@@ -7,21 +7,14 @@ namespace Moongate.Tests.Core.Utils;
 [Collection("Global random state")]
 public sealed class RandomUtilsTests
 {
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [Theory, InlineData(0), InlineData(-1)]
     public void CoinFlips_NoCoinsReturnsZero(int amount)
     {
         Assert.Equal(0, RandomUtils.CoinFlips(amount));
         Assert.Equal(0, RandomUtils.CoinFlips(amount, 10));
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(61)]
-    [InlineData(62)]
-    [InlineData(63)]
-    [InlineData(125)]
+    [Theory, InlineData(1), InlineData(61), InlineData(62), InlineData(63), InlineData(125)]
     public void CoinFlips_StaysWithinRequestedCountAndCap(int amount)
     {
         using var random = new RandomStateScope();
@@ -32,9 +25,7 @@ public sealed class RandomUtilsTests
         Assert.InRange(RandomUtils.CoinFlips(amount, amount + 1), 0, amount);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void CoinFlips_FullChunkCannotCountMoreThan62Heads(bool capped)
     {
         using var random = new RandomStateScope();
@@ -48,11 +39,7 @@ public sealed class RandomUtilsTests
         Assert.Equal(62, heads);
     }
 
-    [Theory]
-    [InlineData(0, 6)]
-    [InlineData(-2, 6)]
-    [InlineData(3, 0)]
-    [InlineData(3, -1)]
+    [Theory, InlineData(0, 6), InlineData(-2, 6), InlineData(3, 0), InlineData(3, -1)]
     public void Dice_InvalidCountOrSidesReturnsZeroWithoutBonus(int amount, int sides)
     {
         Assert.Equal(0, RandomUtils.Dice(amount, sides, 100));
@@ -66,9 +53,7 @@ public sealed class RandomUtilsTests
         Assert.Equal(12, RandomUtils.Dice(7, 1, 5));
     }
 
-    [Theory]
-    [InlineData(2)]
-    [InlineData(6)]
+    [Theory, InlineData(2), InlineData(6)]
     public void Dice_EachDieStartsAtOneAndBonusIsApplied(int sides)
     {
         using var random = new RandomStateScope();
@@ -76,10 +61,7 @@ public sealed class RandomUtilsTests
         Assert.InRange(RandomUtils.Dice(20, sides, -3), 17, 20 * sides - 3);
     }
 
-    [Theory]
-    [InlineData(5, 4, 5, 8)]
-    [InlineData(-5, 3, -5, -3)]
-    [InlineData(12, 0, 12, 12)]
+    [Theory, InlineData(5, 4, 5, 8), InlineData(-5, 3, -5, -3), InlineData(12, 0, 12, 12)]
     public void Random_UsesStartAndCountForIntegerAndLongRanges(int start, int count, int lower, int upper)
     {
         using var random = new RandomStateScope();
@@ -90,10 +72,7 @@ public sealed class RandomUtilsTests
         }
     }
 
-    [Theory]
-    [InlineData(4, 0, 3)]
-    [InlineData(-4, -3, 0)]
-    [InlineData(0, 0, 0)]
+    [Theory, InlineData(4, 0, 3), InlineData(-4, -3, 0), InlineData(0, 0, 0)]
     public void Random_SignedCountMirrorsTheRange(int count, int lower, int upper)
     {
         using var random = new RandomStateScope();

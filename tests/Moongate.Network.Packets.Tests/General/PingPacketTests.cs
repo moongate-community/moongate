@@ -31,11 +31,7 @@ public class PingPacketTests
         PacketWriteAssertions.AssertExactAndOversized(packet, expected);
     }
 
-    [Theory]
-    [InlineData("")]
-    [InlineData("73")]
-    [InlineData("732A00")]
-    [InlineData("742A")]
+    [Theory, InlineData(""), InlineData("73"), InlineData("732A00"), InlineData("742A")]
     public void TryDecode_InvalidCompleteFrame_ReturnsFalse(string hex)
     {
         Assert.False(PacketCodec.TryDecode<PingPacket>(Convert.FromHexString(hex), out _));

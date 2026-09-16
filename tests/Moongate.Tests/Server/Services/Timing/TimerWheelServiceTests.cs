@@ -93,9 +93,7 @@ public sealed class TimerWheelServiceTests
         Assert.Equal(1, timers.ProcessDueTimers());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void RepeatingCallback_CanCancelItselfOrAllTimers(bool all)
     {
         var clock = new ManualTimeProvider();
@@ -361,9 +359,7 @@ public sealed class TimerWheelServiceTests
         Assert.Equal(0, timers.ProcessDueTimers());
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void Close_DuringClaimedCallbackAllowsFinishButPreventsRepeat(bool cancelFirst)
     {
         var clock = new ManualTimeProvider();
@@ -479,11 +475,7 @@ public sealed class TimerWheelServiceTests
         Assert.Equal(1, timers.ProcessDueTimers());
     }
 
-    [Theory]
-    [InlineData(4, 0, 6)]
-    [InlineData(5, 0, 6)]
-    [InlineData(6, 1, 9)]
-    [InlineData(7, 1, 9)]
+    [Theory, InlineData(4, 0, 6), InlineData(5, 0, 6), InlineData(6, 1, 9), InlineData(7, 1, 9)]
     public void Repeat_FractionalCompletionOnlyCoalescesElapsedOccurrences(
         long firstTimestamp, long expectedCoalesced, long nextTimestamp)
     {

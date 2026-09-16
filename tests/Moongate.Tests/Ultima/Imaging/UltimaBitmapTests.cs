@@ -131,12 +131,12 @@ public class UltimaBitmapTests
         }
     }
 
-    [Theory]
-    [InlineData(".png", SKEncodedImageFormat.Png)]
-    [InlineData(".PNG", SKEncodedImageFormat.Png)]
-    [InlineData(".jpg", SKEncodedImageFormat.Jpeg)]
-    [InlineData(".jpeg", SKEncodedImageFormat.Jpeg)]
-    [InlineData(".webp", SKEncodedImageFormat.Webp)]
+    [Theory,
+     InlineData(".png", SKEncodedImageFormat.Png),
+     InlineData(".PNG", SKEncodedImageFormat.Png),
+     InlineData(".jpg", SKEncodedImageFormat.Jpeg),
+     InlineData(".jpeg", SKEncodedImageFormat.Jpeg),
+     InlineData(".webp", SKEncodedImageFormat.Webp)]
     public void Save_SupportedExtension_WritesMatchingImageFormat(string extension, SKEncodedImageFormat expectedFormat)
     {
         var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}{extension}");
@@ -162,9 +162,7 @@ public class UltimaBitmapTests
         }
     }
 
-    [Theory]
-    [InlineData(".bmp")]
-    [InlineData(".tiff")]
+    [Theory, InlineData(".bmp"), InlineData(".tiff")]
     public void Save_UnsupportedExtension_PreservesExistingFile(string extension)
     {
         var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}{extension}");

@@ -13,9 +13,7 @@ public sealed class VersionUtilsTests
         Assert.Equal("2.4.6-preview.3", VersionUtils.GetVersion(assembly));
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData(" ")]
+    [Theory, InlineData(null), InlineData(" ")]
     public void GetVersion_MissingInformationalVersionFallsBackToAssemblyVersion(string? informationalVersion)
     {
         var assembly = DynamicAssemblyFactory.Create(new Version(3, 2, 1, 0), informationalVersion);

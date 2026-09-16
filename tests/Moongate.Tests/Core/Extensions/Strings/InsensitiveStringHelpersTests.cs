@@ -5,13 +5,13 @@ namespace Moongate.Tests.Core.Extensions.Strings;
 
 public class InsensitiveStringHelpersTests
 {
-    [Theory]
-    [InlineData("alpha", "ALPHA", 0)]
-    [InlineData("alpha", "beta", -1)]
-    [InlineData("gamma", "beta", 1)]
-    [InlineData(null, null, 0)]
-    [InlineData(null, "", -1)]
-    [InlineData("", null, 1)]
+    [Theory,
+     InlineData("alpha", "ALPHA", 0),
+     InlineData("alpha", "beta", -1),
+     InlineData("gamma", "beta", 1),
+     InlineData(null, null, 0),
+     InlineData(null, "", -1),
+     InlineData("", null, 1)]
     public void InsensitiveCompare_TextAndNulls_OrdersValuesIgnoringCase(string? left, string? right, int expected)
     {
         Assert.Equal(expected, Math.Sign(left!.InsensitiveCompare(right!)));
@@ -41,10 +41,10 @@ public class InsensitiveStringHelpersTests
         Assert.Equal(-1, text.InsensitiveIndexOf("close"));
     }
 
-    [Theory]
-    [InlineData("Open Door", "open", true)]
-    [InlineData("Open Door", "close", false)]
-    [InlineData("İtem", "item", false)]
+    [Theory,
+     InlineData("Open Door", "open", true),
+     InlineData("Open Door", "close", false),
+     InlineData("İtem", "item", false)]
     public void InsensitiveContains_Substring_UsesOrdinalCaseFolding(string source, string search, bool expected)
     {
         Assert.Equal(expected, source.InsensitiveContains(search));

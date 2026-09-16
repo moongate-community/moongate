@@ -5,9 +5,7 @@ namespace Moongate.Tests.Core.Text;
 
 public class TextEncodingTests
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void GetByteLengthForEncoding_Utf32_UsesFourByteCodeUnits(bool bigEndian)
     {
         var encoding = new UTF32Encoding(bigEndian, false);
@@ -15,9 +13,7 @@ public class TextEncodingTests
         Assert.Equal(4, encoding.GetByteLengthForEncoding());
     }
 
-    [Theory]
-    [InlineData("hello\u0001", "hello")]
-    [InlineData("\u0001", "")]
+    [Theory, InlineData("hello\u0001", "hello"), InlineData("\u0001", "")]
     public void GetString_TrailingControlCharacter_IsRemovedFromSafeText(string input, string expected)
     {
         var bytes = Encoding.UTF8.GetBytes(input);
@@ -25,9 +21,7 @@ public class TextEncodingTests
         Assert.Equal(expected, TextEncoding.GetString(bytes, Encoding.UTF8, true));
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void GetBytes_MultibyteText_AllocatesExactlyTheEncodedLength(bool useSpan)
     {
         const string input = "Aé😀";
@@ -39,9 +33,7 @@ public class TextEncodingTests
         Assert.Equal(new byte[] { 0x41, 0xC3, 0xA9, 0xF0, 0x9F, 0x98, 0x80 }, bytes);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void GetBytes_EmptyText_ProducesNoBytes(bool useSpan)
     {
         var bytes = useSpan
@@ -114,11 +106,11 @@ public class TextEncodingTests
         Assert.Throws<ArgumentException>(() => "é".GetBytesUtf8(buffer));
     }
 
-    [Theory]
-    [InlineData("", "")]
-    [InlineData("Caffè 😀", "Caffè 😀")]
-    [InlineData("\u001fA \uFFFD\uFFFEB\uFFFF", "A \uFFFDB")]
-    [InlineData("\0\tA\r\nB", "AB")]
+    [Theory,
+     InlineData("", ""),
+     InlineData("Caffè 😀", "Caffè 😀"),
+     InlineData("\u001fA \uFFFD\uFFFEB\uFFFF", "A \uFFFDB"),
+     InlineData("\0\tA\r\nB", "AB")]
     public void GetString_SafeText_KeepsPrintableCharactersAndRemovesForbiddenCharacters(
         string input,
         string expected
@@ -155,11 +147,7 @@ public class TextEncodingTests
         Assert.Equal("A\uFFFDB", TextEncoding.GetString(bytes, TextEncoding.UTF8));
     }
 
-    [Theory]
-    [InlineData(16, false)]
-    [InlineData(16, true)]
-    [InlineData(512, false)]
-    [InlineData(512, true)]
+    [Theory, InlineData(16, false), InlineData(16, true), InlineData(512, false), InlineData(512, true)]
     public void GetString_StackAndPooledPaths_PreserveSafeFiltering(int prefixLength, bool safeString)
     {
         var prefix = new string('a', prefixLength);

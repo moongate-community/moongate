@@ -5,9 +5,7 @@ namespace Moongate.Tests.Core.Buffers;
 
 public class CircularBufferTests
 {
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-1)]
+    [Theory, InlineData(0), InlineData(-1)]
     public void Constructor_NonpositiveCapacity_Throws(int capacity)
     {
         var exception = Assert.Throws<ArgumentException>(() => new CircularBuffer<int>(capacity));
@@ -123,9 +121,7 @@ public class CircularBufferTests
         AssertContents(buffer, 9, 1);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public void Pop_DrainsWrappedBuffer_ThenAllowsReuse(bool fromFront)
     {
         var buffer = new CircularBuffer<int>(3, [1, 2, 3]);
@@ -190,12 +186,7 @@ public class CircularBufferTests
         AssertContents(buffer, 30, 4, 50);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(-2)]
-    [InlineData(int.MinValue)]
-    [InlineData(3)]
-    [InlineData(int.MaxValue)]
+    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
     public void IndexerGet_InvalidLogicalIndex_ThrowsAfterFrontHasMoved(int index)
     {
         var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);
@@ -204,12 +195,7 @@ public class CircularBufferTests
         Assert.Throws<IndexOutOfRangeException>(() => buffer[index]);
     }
 
-    [Theory]
-    [InlineData(-1)]
-    [InlineData(-2)]
-    [InlineData(int.MinValue)]
-    [InlineData(3)]
-    [InlineData(int.MaxValue)]
+    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
     public void IndexerSet_InvalidLogicalIndex_ThrowsWithoutChangingContents(int index)
     {
         var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);

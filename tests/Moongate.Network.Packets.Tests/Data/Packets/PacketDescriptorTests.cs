@@ -18,11 +18,11 @@ public class PacketDescriptorTests
         Assert.Same(first, registered);
     }
 
-    [Theory]
-    [InlineData(typeof(MissingMetadataPacket))]
-    [InlineData(typeof(InvalidFixedLengthPacket))]
-    [InlineData(typeof(InvalidVariableLengthPacket))]
-    [InlineData(typeof(UnknownSizingPacket))]
+    [Theory,
+     InlineData(typeof(MissingMetadataPacket)),
+     InlineData(typeof(InvalidFixedLengthPacket)),
+     InlineData(typeof(InvalidVariableLengthPacket)),
+     InlineData(typeof(UnknownSizingPacket))]
     public void Descriptor_InvalidMetadata_ThrowsTypeSpecificConfigurationError(Type packetType)
     {
         var descriptorProperty = packetType.GetProperty(

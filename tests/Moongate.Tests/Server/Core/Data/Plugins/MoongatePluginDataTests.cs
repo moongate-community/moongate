@@ -4,20 +4,14 @@ namespace Moongate.Tests.Server.Core.Data.Plugins;
 
 public sealed class MoongatePluginDataTests
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
+    [Theory, InlineData(null), InlineData(""), InlineData(" ")]
     public void Constructor_RejectsInvalidId(string? id)
     {
         Assert.ThrowsAny<ArgumentException>(() =>
             new MoongatePluginData(id!, "Plugin", new Version(1, 0, 0)));
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
+    [Theory, InlineData(null), InlineData(""), InlineData(" ")]
     public void Constructor_RejectsInvalidName(string? name)
     {
         Assert.ThrowsAny<ArgumentException>(() =>

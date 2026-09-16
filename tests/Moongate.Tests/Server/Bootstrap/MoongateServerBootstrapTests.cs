@@ -95,9 +95,7 @@ public class MoongateServerBootstrapTests
         Assert.False(other.IsDisposed);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public async Task RegisterServices_AfterLifecycleBegins_DoesNotInvokeCallback(bool startFirst)
     {
         using var container = new Container();
@@ -121,10 +119,7 @@ public class MoongateServerBootstrapTests
         await bootstrap.StopAsync();
     }
 
-    [Theory]
-    [InlineData("register")]
-    [InlineData("start")]
-    [InlineData("stop")]
+    [Theory, InlineData("register"), InlineData("start"), InlineData("stop")]
     public async Task RegisterServices_ReentrantLifecycle_IsRejectedWithoutStartingServices(string operation)
     {
         using var container = new Container();
@@ -310,9 +305,7 @@ public class MoongateServerBootstrapTests
         Assert.Equal(["stopping", "stopped"], events);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task StartAsync_ServiceCancellation_PreservesCancellationAndCleanupFailures(bool cleanupFails)
     {
         using var cancellation = new CancellationTokenSource();
@@ -417,9 +410,7 @@ public class MoongateServerBootstrapTests
         Assert.Equal(["start:service", "stop:service"], events);
     }
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
+    [Theory, InlineData(true), InlineData(false)]
     public async Task RunAsync_PrimaryAndShutdownFail_PreservesBothFailures(bool failDuringStart)
     {
         var events = new List<string>();

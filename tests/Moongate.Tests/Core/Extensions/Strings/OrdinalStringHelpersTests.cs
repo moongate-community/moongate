@@ -5,13 +5,13 @@ namespace Moongate.Tests.Core.Extensions.Strings;
 
 public class OrdinalStringHelpersTests
 {
-    [Theory]
-    [InlineData("alpha", "alpha", 0)]
-    [InlineData("Alpha", "alpha", -1)]
-    [InlineData("gamma", "beta", 1)]
-    [InlineData(null, null, 0)]
-    [InlineData(null, "", -1)]
-    [InlineData("", null, 1)]
+    [Theory,
+     InlineData("alpha", "alpha", 0),
+     InlineData("Alpha", "alpha", -1),
+     InlineData("gamma", "beta", 1),
+     InlineData(null, null, 0),
+     InlineData(null, "", -1),
+     InlineData("", null, 1)]
     public void CompareOrdinal_TextAndNulls_OrdersValuesByCodeUnit(string? left, string? right, int expected)
     {
         Assert.Equal(expected, Math.Sign(left!.CompareOrdinal(right!)));
@@ -39,10 +39,7 @@ public class OrdinalStringHelpersTests
         Assert.Equal(-1, text.AsSpan().IndexOfOrdinal("DOOR".AsSpan()));
     }
 
-    [Theory]
-    [InlineData("Door", true)]
-    [InlineData("door", false)]
-    [InlineData("", true)]
+    [Theory, InlineData("Door", true), InlineData("door", false), InlineData("", true)]
     public void ContainsOrdinal_Substring_RequiresExactCase(string search, bool expected)
     {
         Assert.Equal(expected, "Open Door".ContainsOrdinal(search));

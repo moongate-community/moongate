@@ -79,12 +79,12 @@ public sealed class MoongatePersistenceServiceTests
         Assert.Equal(100, new FileInfo(Path.Combine(root.Path, "items.journal.bin")).Length);
     }
 
-    [Theory]
-    [InlineData("null-source")]
-    [InlineData("null-entity")]
-    [InlineData("zero-id")]
-    [InlineData("duplicate-id")]
-    [InlineData("enumeration")]
+    [Theory,
+     InlineData("null-source"),
+     InlineData("null-entity"),
+     InlineData("zero-id"),
+     InlineData("duplicate-id"),
+     InlineData("enumeration")]
     public async Task SaveAllAsync_InvalidSource_FailsBeforeWritingItsCollectionAndCanRetry(string failure)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -276,9 +276,7 @@ public sealed class MoongatePersistenceServiceTests
         Assert.Equal("saved", items.GetById(new Serial(1))!.Name);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task SaveAllAsync_SourceReentersSaveOrDisposal_RejectsWithoutDeadlock(bool dispose)
     {
         using var root = new TemporaryPersistenceDirectory();
@@ -352,9 +350,7 @@ public sealed class MoongatePersistenceServiceTests
         Assert.Equal("persisted", restored.GetById(new Serial(9))!.Name);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public async Task InitializeAsync_InvalidTypedPayload_AbortsEveryOpenedCollectionAndFaultsOwner(bool mismatchedId)
     {
         using var root = new TemporaryPersistenceDirectory();

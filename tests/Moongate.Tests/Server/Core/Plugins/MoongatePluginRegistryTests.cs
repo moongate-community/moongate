@@ -50,9 +50,7 @@ public sealed class MoongatePluginRegistryTests
         Assert.Equal(1, shared.RegisterCalls);
     }
 
-    [Theory]
-    [InlineData("1.0.0")]
-    [InlineData("1.1.0")]
+    [Theory, InlineData("1.0.0"), InlineData("1.1.0")]
     public void Register_AcceptsInclusiveMinimumVersionFromExistingPlugin(string version)
     {
         using var container = new Container();
@@ -94,9 +92,7 @@ public sealed class MoongatePluginRegistryTests
         Assert.Single(registry.Plugins);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void Register_RejectsInsufficientVersionBeforeNewCallbacks(bool alreadyRegistered)
     {
         using var container = new Container();
@@ -118,9 +114,7 @@ public sealed class MoongatePluginRegistryTests
         Assert.Equal(alreadyRegistered ? 1 : 0, core.RegisterCalls);
     }
 
-    [Theory]
-    [InlineData("core")]
-    [InlineData("CORE")]
+    [Theory, InlineData("core"), InlineData("CORE")]
     public void Register_RejectsDuplicateIdsInBatchRegardlessOfVersion(string duplicateId)
     {
         using var container = new Container();
@@ -147,9 +141,7 @@ public sealed class MoongatePluginRegistryTests
         Assert.Single(registry.Plugins);
     }
 
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
+    [Theory, InlineData(false), InlineData(true)]
     public void Register_RejectsCyclesBeforeAnyCallback(bool selfDependency)
     {
         using var container = new Container();

@@ -7,10 +7,7 @@ namespace Moongate.Tests.Core.Extensions.Directories;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class DirectoriesExtensionTests
 {
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
+    [Theory, InlineData(null), InlineData(""), InlineData(" ")]
     public void ResolvePathAndEnvs_NullOrWhitespace_ReturnsNull(string? path)
     {
         Assert.Null(path!.ResolvePathAndEnvs());
