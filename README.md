@@ -629,6 +629,71 @@ and shutdown tasks across concurrent or reentrant calls. `StartupServiceLifecycl
 resolves autostart services in priority order, starts each instance once, and
 stops attempted services in reverse order, including a service whose start failed.
 
+## Game loop
+
+The server registers one `IGameLoopService` implemented by `GameLoopService`.
+Its dedicated thread executes synchronous `IGameLoopWorkItem.Execute()` calls in
+accepted queue order. Network workers, plugins, and other producers can submit
+work without executing it themselves. `IsOnLoopThread` identifies the owner
+thread while it is running.
+
+```csharp
+container.RegisterInstance(new GameLoopOptions
+{
+    QueueCapacity = 4096,
+    MaxWorkItemsPerBatch = 256
+});
+
+var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
+    .RegisterServices(services => services
+        .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800));
+
+await bootstrap.StartAsync();
+var loop = container.Resolve<IGameLoopService>();
+await loop.PostAsync(workItem, cancellationToken); // workItem implements IGameLoopWorkItem
+```
+
+The contracts live in `Moongate.Server.Core.Interfaces.Services` and
+`Moongate.Server.Core.Interfaces.GameLoop`, options in
+`Moongate.Server.Core.Data.GameLoop`, and the implementation in
+`Moongate.Server.Services.GameLoop`. The executable already registers the loop;
+the example shows composition for a standalone host.
+
+`PostAsync` completes when work is **accepted**, not when its execution finishes.
+It waits for capacity, so callers must await it rather than create unlimited
+pending writes. Cancellation before acceptance cancels that submission; after
+acceptance, it does not remove the work. `TryPost` never waits and returns false
+when the queue is full or the loop is unavailable. Posting before startup or
+after admission closes is rejected. FIFO applies to accepted entries; unrelated
+concurrent producers have no deterministic relative order.
+
+Handlers must stay synchronous and short: no `async void`, disk/socket waits,
+or blocking on tasks. Slow external work uses copied inputs outside the loop,
+then posts its result for validation and application. `PostAsync`, `StopAsync`,
+and disposal reject calls from the loop thread to prevent self-waits;
+`TryPost` may enqueue future work if there is capacity and never dispatches inline.
+
+Startup waits until the thread is ready. Stop closes admission, rejects pending
+writes, and drains accepted work before returning. The idle thread waits for a
+signal; batch limits never discard the next item. A synchronous handler cannot
+be preempted, so a stuck handler also prevents graceful shutdown. The same loop
+instance cannot be restarted after stop or failure.
+
+An unexpected handler exception is fatal: admission closes, remaining queued
+work is abandoned, and `Completion` retains the original failure. There is no
+automatic retry or rollback. Stop/disposal still perform cleanup. The bootstrap
+observes loop completion while running and reports failures arising during
+shutdown or startup rollback as well, before disposing the container. The runner
+reports a shared run/stop fault once while preserving distinct cleanup failures.
+Ordinary host cancellation
+drains the loop; it does not hide a loop failure already observed or raised
+during that drain.
+
+This first stage provides the execution queue and lifecycle. World ticks,
+timers, packet dispatch, TCP transport, and coordination of live-world saves
+are separate stages. The general event bus does not move its observers onto the
+loop automatically.
+
 ## License
 
 MIT - see [LICENSE](LICENSE).
