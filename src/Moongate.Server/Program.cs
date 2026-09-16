@@ -11,6 +11,7 @@ using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Args;
+using Moongate.Server.Helpers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Timing;
@@ -56,13 +57,18 @@ await ConsoleApp.RunAsync(
         Console.WriteLine($"Running on container: {isDocker}");
 
         Log.Logger = new LoggerConfiguration()
-                     .WriteTo.Console(new ExpressionTemplate(
-                         "{@t:HH:mm:ss.fff} {@l:u3} " +
-                         "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
-                         " | {@m}\n{@x}",
-                         theme: TemplateTheme.Code
-                     ))
+                     .WriteTo
+                     .Console(
+                         new ExpressionTemplate(
+                             "{@t:HH:mm:ss.fff} {@l:u3} " +
+                             "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
+                             " | {@m}\n{@x}",
+                             theme: TemplateTheme.Code
+                         )
+                     )
                      .CreateLogger();
+
+        var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
             .RegisterServices(
@@ -70,6 +76,7 @@ await ConsoleApp.RunAsync(
                 {
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
+                    services.RegisterInstance(serverConfig);
                     services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance<TimeProvider>(TimeProvider.System);
                     services.RegisterInstance(new TimerWheelOptions());
