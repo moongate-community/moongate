@@ -16,16 +16,16 @@ public interface INetworkServer : IAsyncDisposable
     bool IsRunning { get; }
 
     /// <summary>
-    /// Starts the listener.
+    /// Starts the listener after any previous generation has stopped. Repeated starts share startup.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">The first successful start token controls the listener generation.</param>
     /// <returns>A task that completes when the listener has started.</returns>
     Task StartAsync(CancellationToken cancellationToken);
 
     /// <summary>
-    /// Stops the listener.
+    /// Closes the listener and waits for every owned connection to finish cleanup.
     /// </summary>
-    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <param name="cancellationToken">Cancels only this wait; cleanup continues and can be awaited again.</param>
     /// <returns>A task that completes when the listener has stopped.</returns>
     Task StopAsync(CancellationToken cancellationToken);
 }

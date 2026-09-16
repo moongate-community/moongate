@@ -43,42 +43,44 @@ public sealed class DisposeFromHandlerTests
         }
     }
 
-    // Weaker than its client-side twin, and kept as a structural guard rather than as a regression
-    // detector. Against the pre-fix server the deadlock this targets was real, but the race that
-    // exposes it was reliably lost, so this test passed against the broken code too. Turning it into
-    // a real detector means strengthening the server's DisposeAsync, which is out of scope here.
     [Fact]
-    public async Task ServerDispose_CalledFromDataReceivedHandler_Completes()
+    public async Task ServerDispose_CalledFromDataReceivedHandler_ExternalDisposeDrainsCallback()
     {
-        // Arrange
-        // The server's synchronous dispose must not drain its clients: it runs on the receive loop of
-        // the very client a drain would wait for. It closes the listener and every client socket
-        // instead, and leaves both loops to unwind on their own.
         var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var release = new ManualResetEventSlim();
         var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
-
-        server.OnDataReceived += (_, _) =>
-                                 {
-                                     server.Dispose();
-                                     disposed.TrySetResult();
-                                 };
+        MoongateTcpClient? accepted = null;
+        server.OnDataReceived += (_, args) =>
+        {
+            accepted = args.Client;
+            server.Dispose();
+            disposed.TrySetResult();
+            if (!release.Wait(Timeout))
+            {
+                throw new TimeoutException("Data handler was not released.");
+            }
+        };
         await server.StartAsync(CancellationToken.None);
-
-        var client = await MoongateTcpClient.ConnectAsync(new(IPAddress.Loopback, server.Port));
-
+        using var peer = new TcpClient();
         try
         {
-            // Act
-            await client.SendAsync(new byte[] { 4, 5, 6 }, CancellationToken.None);
-
-            // Assert
+            await peer.ConnectAsync(IPAddress.Loopback, server.Port).WaitAsync(Timeout);
+            await peer.GetStream().WriteAsync(new byte[] { 4, 5, 6 });
             await disposed.Task.WaitAsync(Timeout);
-            Assert.False(server.IsRunning);
+            var cleanup = server.DisposeAsync().AsTask();
+            Assert.False(cleanup.IsCompleted);
         }
         finally
         {
-            await client.DisposeAsync();
+            release.Set();
+            await server.DisposeAsync().AsTask().WaitAsync(Timeout);
         }
+        Assert.NotNull(accepted);
+        Assert.False(accepted.IsConnected);
+        Assert.False(server.IsRunning);
+        Assert.Equal(0, server.Port);
+        Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
+        await Assert.ThrowsAsync<ObjectDisposedException>(() => server.StartAsync(CancellationToken.None));
     }
 
     private static async Task<(MoongateTcpClient Sender, MoongateTcpClient Receiver)> ConnectedPairAsync()
