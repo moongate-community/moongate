@@ -1,6 +1,5 @@
 using DryIoc;
 using Serilog;
-
 using Moongate.Core.Directories;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Interfaces.Plugins;
@@ -29,6 +28,7 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
     public PluginLoaderService(Container container, DirectoriesConfig directories)
     {
         _directories = directories;
+
         if (!container.IsRegistered<MoongatePluginRegistry>())
         {
             container.RegisterInstance(new MoongatePluginRegistry(container));
@@ -43,10 +43,12 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
         lock (_sync)
         {
             ObjectDisposedException.ThrowIf(_disposed, this);
+
             if (_loading || _faulted)
             {
                 throw new InvalidOperationException(
-                    "Plugin loading is already in progress or previously failed. Discard a failed host container.");
+                    "Plugin loading is already in progress or previously failed. Discard a failed host container."
+                );
             }
 
             if (_loaded)
@@ -55,11 +57,13 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
             }
 
             _loading = true;
+
             try
             {
                 var root = Path.GetFullPath(_directories["plugins"]);
                 var directories = Directory.EnumerateDirectories(root).Order(StringComparer.Ordinal).ToArray();
                 List<IMoongatePlugin> plugins = [];
+
                 foreach (var directory in directories)
                 {
                     plugins.AddRange(LoadBundle(directory));
@@ -72,6 +76,7 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
             catch
             {
                 _faulted = true;
+
                 // Rollback callbacks may still need plugin dependencies; disposal owns unloading.
                 throw;
             }
@@ -85,6 +90,7 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
     private List<IMoongatePlugin> LoadBundle(string directory)
     {
         var path = Path.Combine(directory, Path.GetFileName(directory) + ".dll");
+
         try
         {
             if (!File.Exists(path))
@@ -94,21 +100,30 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
 
             var context = new PluginLoadContext(path);
             _contexts.Add(context);
-            var types = context.LoadFromAssemblyPath(path).GetExportedTypes()
-                .Where(type => type.IsClass && !type.IsAbstract && !type.ContainsGenericParameters
-                               && typeof(IMoongatePlugin).IsAssignableFrom(type))
-                .OrderBy(type => type.FullName, StringComparer.Ordinal)
-                .ToArray();
+            var types = context.LoadFromAssemblyPath(path)
+                               .GetExportedTypes()
+                               .Where(
+                                   type => type.IsClass &&
+                                           !type.IsAbstract &&
+                                           !type.ContainsGenericParameters &&
+                                           typeof(IMoongatePlugin).IsAssignableFrom(type)
+                               )
+                               .OrderBy(type => type.FullName, StringComparer.Ordinal)
+                               .ToArray();
+
             if (types.Length == 0)
             {
                 throw new InvalidOperationException("The assembly contains no public concrete IMoongatePlugin types.");
             }
 
             List<IMoongatePlugin> plugins = [];
+
             foreach (var type in types)
             {
-                var constructor = type.GetConstructor(Type.EmptyTypes)
-                    ?? throw new InvalidOperationException($"Plugin '{type.FullName}' needs a public parameterless constructor.");
+                var constructor = type.GetConstructor(Type.EmptyTypes) ??
+                                  throw new InvalidOperationException(
+                                      $"Plugin '{type.FullName}' needs a public parameterless constructor."
+                                  );
                 plugins.Add((IMoongatePlugin)constructor.Invoke(null));
             }
 
@@ -125,6 +140,7 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
         var contexts = _contexts.ToArray();
         _contexts.Clear();
         List<Exception> failures = [];
+
         foreach (var context in contexts)
         {
             try
@@ -157,6 +173,7 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
 
             _disposed = true;
             var failures = UnloadContexts();
+
             if (failures.Count > 0)
             {
                 throw new AggregateException(failures);
