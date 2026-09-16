@@ -194,10 +194,14 @@ var fromFileAsync = await TomlUtils.DeserializeFromFileAsync<ServerSettings>(
 ```
 
 `settings` is an instance of your configuration model (`ServerSettings` here).
-All methods accept optional `TomlSerializerOptions`. By default, property names
-retain their CLR spelling. For snake_case keys, pass options with
-`PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower` to
-both serialization and deserialization. Options apply only to the current call.
+All methods use **snake_case** property names by default: `ServerName` becomes
+`server_name`, including properties of nested objects. The same policy applies
+when reading TOML back into a model.
+
+All methods accept optional `TomlSerializerOptions`. Explicit options replace
+the defaults for the current call only; use the same options when reading and
+writing. For example, `PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase`
+produces `serverName`, while `new TomlSerializerOptions()` preserves CLR spelling.
 
 File writes create missing parent directories and overwrite existing files as
 UTF-8 without a BOM. Serialization completes before touching the file system;

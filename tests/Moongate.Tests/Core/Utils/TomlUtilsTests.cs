@@ -10,13 +10,13 @@ namespace Moongate.Tests.Core.Utils;
 public sealed class TomlUtilsTests
 {
     private const string SettingsToml = """
-        ServerName = "Città di Luna"
-        Enabled = false
-        Tags = ["roleplay", "Italia"]
+        server_name = "Città di Luna"
+        enabled = false
+        tags = ["roleplay", "Italia"]
 
-        [Network]
-        Host = "127.0.0.1"
-        Port = 2594
+        [network]
+        host = "127.0.0.1"
+        port = 2594
         """;
 
     [Fact]
@@ -48,22 +48,22 @@ public sealed class TomlUtilsTests
     public void Serialize_CustomNamingPolicy_DoesNotChangeSubsequentDefaults()
     {
         var settings = new TomlTestSettings { ServerName = "Luna" };
-        var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+        var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         var customized = TomlUtils.Serialize(settings, options);
         var standard = TomlUtils.Serialize(settings);
 
-        Assert.Contains("server_name = \"Luna\"", customized);
-        Assert.Contains("[network]", customized);
-        Assert.Contains("ServerName = \"Luna\"", standard);
-        Assert.DoesNotContain("server_name", standard);
-        Assert.Equal("Britannia", TomlUtils.Deserialize<TomlTestSettings>("server_name = \"Britannia\"", options)!.ServerName);
+        Assert.Contains("serverName = \"Luna\"", customized);
+        Assert.Contains("server_name = \"Luna\"", standard);
+        Assert.Contains("[network]", standard);
+        Assert.DoesNotContain("serverName", standard);
+        Assert.Equal("Britannia", TomlUtils.Deserialize<TomlTestSettings>("serverName = \"Britannia\"", options)!.ServerName);
     }
 
     [Fact]
     public void Deserialize_MalformedDocument_PreservesTomlDiagnostics()
     {
-        var exception = Assert.Throws<TomlException>(() => TomlUtils.Deserialize<TomlTestSettings>("ServerName = ["));
+        var exception = Assert.Throws<TomlException>(() => TomlUtils.Deserialize<TomlTestSettings>("server_name = ["));
 
         Assert.NotNull(exception.Line);
     }
@@ -76,13 +76,18 @@ public sealed class TomlUtilsTests
     }
 
     [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task DeserializeFromFile_Utf8Document_AppliesCallerOptions(bool asynchronous)
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    [InlineData(true, true)]
+    public async Task DeserializeFromFile_Utf8Document_UsesDefaultOrCustomNaming(bool asynchronous, bool customNaming)
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("settings.toml", "server_name = \"Città di Luna\"\n[network]\nport = 4000\n");
-        var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+        var key = customNaming ? "serverName" : "server_name";
+        var path = directory.CreateFile("settings.toml", $"{key} = \"Città di Luna\"\n[network]\nport = 4000\n");
+        var options = customNaming
+            ? new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            : null;
 
         var settings = asynchronous
             ? await TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, options)
@@ -101,22 +106,8 @@ public sealed class TomlUtilsTests
         using var directory = new TemporaryDirectory();
         var path = Path.Combine(directory.Path, "nested", "settings.toml");
         var settings = new TomlTestSettings { ServerName = "Città di Luna" };
-        var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+        var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
-        if (asynchronous)
-        {
-            await TomlUtils.SerializeToFileAsync(settings, path, options);
-        }
-        else
-        {
-            TomlUtils.SerializeToFile(settings, path, options);
-        }
-
-        var table = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
-        Assert.Equal("Città di Luna", table["server_name"]);
-        Assert.Equal(2593L, Assert.IsType<TomlTable>(table["network"])["port"]);
-
-        File.AppendAllText(path, "\n# Previous trailing content\n");
         if (asynchronous)
         {
             await TomlUtils.SerializeToFileAsync(settings, path);
@@ -126,7 +117,24 @@ public sealed class TomlUtilsTests
             TomlUtils.SerializeToFile(settings, path);
         }
 
-        Assert.DoesNotContain("Previous trailing content", File.ReadAllText(path));
+        var table = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
+        Assert.Equal("Città di Luna", table["server_name"]);
+        Assert.Equal(2593L, Assert.IsType<TomlTable>(table["network"])["port"]);
+
+        File.AppendAllText(path, "\n# Previous trailing content\n");
+        if (asynchronous)
+        {
+            await TomlUtils.SerializeToFileAsync(settings, path, options);
+        }
+        else
+        {
+            TomlUtils.SerializeToFile(settings, path, options);
+        }
+
+        var overwritten = File.ReadAllText(path);
+        Assert.DoesNotContain("Previous trailing content", overwritten);
+        Assert.Contains("serverName = \"Città di Luna\"", overwritten);
+        Assert.DoesNotContain("server_name", overwritten);
         Assert.False(File.ReadAllBytes(path).AsSpan().StartsWith(new byte[] { 0xEF, 0xBB, 0xBF }));
     }
 

@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Tomlyn;
 
 namespace Moongate.Core.Utils;
@@ -6,11 +7,16 @@ namespace Moongate.Core.Utils;
 /// Serializes TOML documents and reads or writes UTF-8 configuration files using Tomlyn.
 /// </summary>
 /// <remarks>
-/// Options apply to the current call only. When omitted, Tomlyn's defaults preserve CLR property names.
+/// When options are omitted, property names use snake_case. Explicit options replace these defaults for the current call.
 /// Serialization, parsing and file-system exceptions propagate to the caller.
 /// </remarks>
 public static class TomlUtils
 {
+    private static readonly TomlSerializerOptions DefaultOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
+
     /// <summary>
     /// Serializes a non-null value into a TOML document.
     /// </summary>
@@ -18,7 +24,7 @@ public static class TomlUtils
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return TomlSerializer.Serialize(value, options);
+        return TomlSerializer.Serialize(value, options ?? DefaultOptions);
     }
 
     /// <summary>
@@ -28,7 +34,7 @@ public static class TomlUtils
     {
         ArgumentNullException.ThrowIfNull(toml);
 
-        return TomlSerializer.Deserialize<T>(toml, options);
+        return TomlSerializer.Deserialize<T>(toml, options ?? DefaultOptions);
     }
 
     /// <summary>
