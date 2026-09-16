@@ -28,8 +28,6 @@ await ConsoleApp.RunAsync(
 
         var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save"]);
 
-        container.RegisterInstance(directoriesConfig);
-
         var serverArgs = new MoongateServerArgs()
         {
             LogLevel = logLevel,
@@ -47,26 +45,25 @@ await ConsoleApp.RunAsync(
             Console.WriteLine(headerContent);
         }
 
-        container.RegisterInstance(serverArgs);
-        container.RegisterMoongatePersistence(directoriesConfig["save"])
-                 .RegisterMoongateService<MoongatePersistenceStartupService>(
-                     MoongatePersistenceStartupService.StartupPriority
-                 );
-
         Console.WriteLine($"Moongate Server starting with root directory: {serverArgs.RootDirectory}");
         Console.WriteLine($"Platform: {Environment.OSVersion.Platform}, Version: {Environment.OSVersion.Version}");
         Console.WriteLine($"Running on container: {isDocker}");
 
         Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 
-        container.RegisterMoongateEventBus()
-                 .RegisterMoongateService<IEventBusService, EventBusService>()
-                 .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                     () => new PluginLoaderService(container, directoriesConfig));
+        var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
+            .RegisterServices(services =>
+            {
+                services.RegisterInstance(directoriesConfig);
+                services.RegisterInstance(serverArgs);
 
-
-
-        var bootstrap = new MoongateServerBootstrap(container, cancellationToken);
+                return services.RegisterMoongatePersistence(directoriesConfig["save"])
+                    .RegisterMoongateService<MoongatePersistenceStartupService>(
+                        MoongatePersistenceStartupService.StartupPriority)
+                    .RegisterMoongateService<IEventBusService, EventBusService>()
+                    .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                        () => new PluginLoaderService(services, directoriesConfig));
+            });
 
         await MoongateServerRunner.RunAsync(bootstrap);
     }

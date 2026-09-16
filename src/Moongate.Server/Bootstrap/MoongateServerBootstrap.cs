@@ -16,7 +16,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly Container _container;
     private readonly ILogger _logger = Log.ForContext<MoongateServerBootstrap>();
     private readonly CancellationToken _cancellationToken;
-    private readonly IMoongateEventBus _eventBus;
+    private readonly Lazy<IMoongateEventBus> _eventBus;
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly StartupServiceLifecycle _services;
 
@@ -25,8 +25,28 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _container = container;
         _cancellationToken = cancellationToken;
         _container.RegisterMoongateEventBus();
-        _eventBus = _container.Resolve<IMoongateEventBus>();
+        _eventBus = new Lazy<IMoongateEventBus>(() => _container.Resolve<IMoongateEventBus>());
         _services = new StartupServiceLifecycle(container);
+    }
+
+    /// <summary>Configures services immediately and returns this bootstrap for fluent composition.</summary>
+    /// <remarks>
+    /// Call before starting or stopping the bootstrap. The callback must return the supplied container
+    /// and must not reenter registration or lifecycle methods. Exceptions propagate to the caller;
+    /// registrations already applied by the callback are not rolled back.
+    /// </remarks>
+    public MoongateServerBootstrap RegisterServices(Func<Container, Container> registerServices)
+    {
+        ArgumentNullException.ThrowIfNull(registerServices);
+        _lifecycle.Configure(() =>
+        {
+            if (!ReferenceEquals(registerServices(_container), _container))
+            {
+                throw new InvalidOperationException("Service registration must return the supplied container.");
+            }
+        });
+
+        return this;
     }
 
     public Task StartAsync()
@@ -65,7 +85,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
             await _services.StartAsync().ConfigureAwait(false);
 
-            await _eventBus.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
+            await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
             _logger.Information("Moongate Server started.");
         }
         catch (Exception exception)
@@ -112,13 +132,13 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         List<Exception> failures = [];
 
         await CaptureFailureAsync(
-            () => _eventBus.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None), failures
+            () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None), failures
         ).ConfigureAwait(false);
 
         failures.AddRange(await _services.StopAsync().ConfigureAwait(false));
 
         await CaptureFailureAsync(
-            () => _eventBus.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None), failures
+            () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None), failures
         ).ConfigureAwait(false);
 
         CaptureFailure(_container.Dispose, failures);
