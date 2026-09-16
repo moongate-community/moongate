@@ -90,7 +90,12 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 // The new thread cannot take _gate until its successful start is recorded.
                 _thread = thread;
 
-                _logger.Information("Started game loop thread {ThreadName} (ID {ThreadId}), process every {Tick}", thread.Name, thread.ManagedThreadId, _gameLoopOptions.MaxWorkItemsPerBatch);
+                _logger.Information(
+                    "Started game loop thread {ThreadName} (ID {ThreadId}), max {MaxWorkItemsPerBatch} work items per batch",
+                    thread.Name,
+                    thread.ManagedThreadId,
+                    _gameLoopOptions.MaxWorkItemsPerBatch
+                );
             }
             catch (Exception exception)
             {
