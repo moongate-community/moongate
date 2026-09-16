@@ -17,6 +17,8 @@ using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Plugins;
 using Serilog;
+using Serilog.Templates;
+using Serilog.Templates.Themes;
 
 await ConsoleApp.RunAsync(
     args,
@@ -53,7 +55,14 @@ await ConsoleApp.RunAsync(
         Console.WriteLine($"Platform: {Environment.OSVersion.Platform}, Version: {Environment.OSVersion.Version}");
         Console.WriteLine($"Running on container: {isDocker}");
 
-        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+        Log.Logger = new LoggerConfiguration()
+                     .WriteTo.Console(new ExpressionTemplate(
+                         "{@t:HH:mm:ss.fff} {@l:u3} " +
+                         "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
+                         " | {@m}\n{@x}",
+                         theme: TemplateTheme.Code
+                     ))
+                     .CreateLogger();
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
             .RegisterServices(

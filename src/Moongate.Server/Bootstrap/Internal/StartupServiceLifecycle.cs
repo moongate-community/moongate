@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using DryIoc;
+using Serilog;
 
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Interfaces.Services;
@@ -12,6 +14,7 @@ namespace Moongate.Server.Bootstrap.Internal;
 internal sealed class StartupServiceLifecycle
 {
     private readonly Container _container;
+    private readonly ILogger _logger = Log.ForContext<StartupServiceLifecycle>();
     private readonly List<IMoongateStartupService> _startedServices = [];
     private readonly HashSet<IMoongateStartupService> _knownServices = new(ReferenceEqualityComparer.Instance);
 
@@ -40,7 +43,26 @@ internal sealed class StartupServiceLifecycle
 
             _startedServices.Add(service);
             onStarting?.Invoke(service);
-            await service.StartAsync().ConfigureAwait(false);
+
+            var serviceName = service.GetType().Name;
+            _logger.Debug("Starting service {ServiceName:l}", serviceName);
+            var startedAt = Stopwatch.GetTimestamp();
+
+            try
+            {
+                await service.StartAsync().ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Failed to start service {ServiceName:l}", serviceName);
+                throw;
+            }
+
+            _logger.Information(
+                "Service {ServiceName:l} started in {ElapsedMilliseconds:F2} ms",
+                serviceName,
+                Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds
+            );
         }
     }
 
