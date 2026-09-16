@@ -4,6 +4,7 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Events;
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
@@ -17,6 +18,160 @@ namespace Moongate.Tests.Server.Bootstrap;
 
 public class MoongateServerBootstrapTests
 {
+    [Fact]
+    public async Task RegisterServices_ConfiguresExistingContainerBeforeStartingServices()
+    {
+        using var container = new Container();
+        var events = new List<string>();
+        var calls = 0;
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        var result = bootstrap.RegisterServices(services =>
+        {
+            Assert.Same(container, services);
+            calls++;
+            events.Add("register");
+            return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(() =>
+            {
+                events.Add("construct");
+                return new RecordingStartupService("custom", events);
+            });
+        });
+
+        Assert.Same(bootstrap, result);
+        Assert.Equal(["register"], events);
+        await bootstrap.StartAsync();
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+
+        Assert.Equal(1, calls);
+        Assert.Equal(["register", "construct", "start:custom", "stop:custom"], events);
+    }
+
+    [Fact]
+    public async Task RegisterServices_CustomEventBus_ReceivesLifecycleEvents()
+    {
+        using var container = new Container();
+        using var busContainer = new Container();
+        busContainer.RegisterMoongateEventBus();
+        var eventBus = busContainer.Resolve<IMoongateEventBus>();
+        var events = new List<string>();
+        eventBus.Subscribe<MoongateStartedEvent>((_, _) =>
+        {
+            events.Add("started");
+            return Task.CompletedTask;
+        });
+        eventBus.Subscribe<MoongateStoppedEvent>((_, _) =>
+        {
+            events.Add("stopped");
+            return Task.CompletedTask;
+        });
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        bootstrap.RegisterServices(services =>
+        {
+            services.RegisterInstance(eventBus, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+            return services;
+        });
+
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+
+        Assert.Equal(["started", "stopped"], events);
+    }
+
+    [Fact]
+    public async Task RegisterServices_InvalidCallbackOrReturnedContainer_IsRejected()
+    {
+        using var container = new Container();
+        using var other = new Container();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        Assert.Throws<ArgumentNullException>(() => bootstrap.RegisterServices(null!));
+        Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(_ => null!));
+        Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(_ => other));
+
+        await bootstrap.StopAsync();
+        Assert.True(container.IsDisposed);
+        Assert.False(other.IsDisposed);
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task RegisterServices_AfterLifecycleBegins_DoesNotInvokeCallback(bool startFirst)
+    {
+        using var container = new Container();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        if (startFirst)
+        {
+            await bootstrap.StartAsync();
+        }
+        else
+        {
+            await bootstrap.StopAsync();
+        }
+
+        var invoked = false;
+        Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
+        {
+            invoked = true;
+            return services;
+        }));
+        Assert.False(invoked);
+        await bootstrap.StopAsync();
+    }
+
+    [Theory]
+    [InlineData("register")]
+    [InlineData("start")]
+    [InlineData("stop")]
+    public async Task RegisterServices_ReentrantLifecycle_IsRejectedWithoutStartingServices(string operation)
+    {
+        using var container = new Container();
+        var events = new List<string>();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        bootstrap.RegisterServices(services =>
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                switch (operation)
+                {
+                    case "register": bootstrap.RegisterServices(value => value); break;
+                    case "start": bootstrap.StartAsync().GetAwaiter().GetResult(); break;
+                    case "stop": bootstrap.StopAsync().GetAwaiter().GetResult(); break;
+                }
+            });
+            return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                new RecordingStartupService("custom", events));
+        });
+
+        Assert.Empty(events);
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+        Assert.Equal(["start:custom", "stop:custom"], events);
+    }
+
+    [Fact]
+    public async Task RegisterServices_CallbackThrows_PropagatesFailureAndAllowsCleanup()
+    {
+        using var container = new Container();
+        var events = new List<string>();
+        var failure = new InvalidOperationException("registration failed");
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        var actual = Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
+        {
+            services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                new RecordingStartupService("custom", events));
+            throw failure;
+        }));
+
+        Assert.Same(failure, actual);
+        await bootstrap.StopAsync();
+        Assert.Empty(events);
+        Assert.True(container.IsDisposed);
+    }
+
     [Fact]
     public async Task Constructor_NoPluginsOrServices_EnsuresSharedEventBus()
     {

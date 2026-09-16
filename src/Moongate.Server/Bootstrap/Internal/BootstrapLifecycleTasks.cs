@@ -10,6 +10,30 @@ internal sealed class BootstrapLifecycleTasks
     private Task? _startTask;
     private Task? _stopTask;
     private Task<List<Exception>>? _shutdownTask;
+    private bool _configuring;
+
+    /// <summary>Runs configuration exclusively before any lifecycle task has been published.</summary>
+    public void Configure(Action configure)
+    {
+        lock (_lifecycleSync)
+        {
+            ThrowIfConfiguring();
+            if (_startTask is not null || _stopTask is not null)
+            {
+                throw new InvalidOperationException("Services cannot be registered after startup or shutdown begins.");
+            }
+
+            _configuring = true;
+            try
+            {
+                configure();
+            }
+            finally
+            {
+                _configuring = false;
+            }
+        }
+    }
 
     public Task StartAsync(Func<Task> start)
     {
@@ -18,6 +42,7 @@ internal sealed class BootstrapLifecycleTasks
 
         lock (_lifecycleSync)
         {
+            ThrowIfConfiguring();
             if (_startTask is not null)
             {
                 return _startTask;
@@ -41,6 +66,7 @@ internal sealed class BootstrapLifecycleTasks
 
         lock (_lifecycleSync)
         {
+            ThrowIfConfiguring();
             if (_stopTask is not null)
             {
                 return _stopTask;
@@ -75,5 +101,13 @@ internal sealed class BootstrapLifecycleTasks
         completion.SetResult(shutdown());
 
         return shutdownTask;
+    }
+
+    private void ThrowIfConfiguring()
+    {
+        if (_configuring)
+        {
+            throw new InvalidOperationException("Service registration cannot reenter configuration or lifecycle methods.");
+        }
     }
 }

@@ -601,6 +601,28 @@ and logging disposal; it reports completion of the stop phase even when a
 service stop failed. Lifecycle callbacks must not await the host's own
 `StartAsync` or `StopAsync`, because the host is already awaiting the callback.
 
+The bootstrap also exposes a fluent registration callback:
+
+```csharp
+var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
+    .RegisterServices(services => services
+        .RegisterMoongateService<IEventBusService, EventBusService>());
+
+await bootstrap.StartAsync();
+```
+
+`RegisterServices` accepts `Func<Container, Container>`, invokes it immediately,
+and returns the bootstrap. The callback must return the supplied container;
+returning null or another container is rejected. Calls can be chained before
+startup, and registrations are available when plugins load and services start.
+The shared event bus is registered by the constructor and resolved lazily, so
+the callback can also supply a custom bus before lifecycle events are published.
+
+Registration is closed as soon as `StartAsync` or `StopAsync` begins. Registration
+callbacks must not reenter registration or lifecycle methods. Callback failures
+propagate immediately without rolling back registrations already applied; call
+`StopAsync` to dispose the bootstrap's container when abandoning configuration.
+
 `MoongateServerBootstrap` coordinates lifecycle events, startup rollback, and
 resource cleanup. Its internal `BootstrapLifecycleTasks` shares start, stop,
 and shutdown tasks across concurrent or reentrant calls. `StartupServiceLifecycle`

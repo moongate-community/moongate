@@ -250,11 +250,14 @@ public sealed class PluginLoaderServiceTests
         files.Deploy("FoundationPlugin");
         using var container = new Container();
         List<string> events = [];
-        container.RegisterInstance(events);
-        container.RegisterInstance(files.Directories);
-        container.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-            () => new PluginLoaderService(container, files.Directories));
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
+            .RegisterServices(services =>
+            {
+                services.RegisterInstance(events);
+                services.RegisterInstance(files.Directories);
+                return services.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                    () => new PluginLoaderService(services, files.Directories));
+            });
 
         await bootstrap.StartAsync();
         await bootstrap.StopAsync();
