@@ -10,6 +10,142 @@ public sealed class MoongateTcpClientTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
+    [Theory]
+    [InlineData(0, 1, "receiveBufferSize")]
+    [InlineData(1024 * 1024 + 1, 1, "receiveBufferSize")]
+    [InlineData(1, 0, "maxFrameLength")]
+    [InlineData(1, 16 * 1024 * 1024 + 1, "maxFrameLength")]
+    public void Constructor_OutOfRangeBufferLimits_RejectsConfiguration(
+        int receiveBufferSize,
+        int maxFrameLength,
+        string parameterName
+    )
+    {
+        using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpClient(
+            socket,
+            Stream.Null,
+            receiveBufferSize: receiveBufferSize,
+            maxFrameLength: maxFrameLength
+        ));
+
+        Assert.Equal(parameterName, exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(1024 * 1024, 16 * 1024 * 1024)]
+    public async Task Constructor_ExactBufferLimitBoundaries_AcceptsConfiguration(
+        int receiveBufferSize,
+        int maxFrameLength
+    )
+    {
+        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        await using var client = new MoongateTcpClient(
+            socket,
+            Stream.Null,
+            receiveBufferSize: receiveBufferSize,
+            maxFrameLength: maxFrameLength
+        );
+
+        Assert.Equal(receiveBufferSize, client.ReceiveBufferSize);
+    }
+
+    [Fact]
+    public async Task ReceiveAsync_RawMiddlewareExpansionBeyondReceiveBudget_ClosesWithoutDispatch()
+    {
+        await using var pair = await LoopbackPair.CreateAsync(
+            receiverMiddlewares: [new AppendingMiddleware(0xAA)],
+            receiverBufferSize: 1
+        );
+        var outcome = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+        pair.Receiver.OnException += (_, args) => outcome.TrySetResult(args.Exception);
+        pair.Receiver.OnDataReceived += (_, args) => outcome.TrySetResult(args.Data.ToArray());
+
+        await pair.Sender.SendAsync(new byte[] { 0x01 }, CancellationToken.None);
+
+        Assert.IsType<InvalidDataException>(await outcome.Task.WaitAsync(Timeout));
+        await pair.Receiver.Completion.WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task ReceiveAsync_FramedMiddlewareExpansionBeyondPendingBudget_ClosesWithoutDispatch()
+    {
+        await using var pair = await LoopbackPair.CreateAsync(
+            receiverMiddlewares: [new AppendingMiddleware(0xAA), new AppendingMiddleware(0xBB)],
+            receiverFramer: new BogusLengthFramer(1),
+            receiverBufferSize: 1,
+            receiverMaxFrameLength: 1
+        );
+        var outcome = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+        pair.Receiver.OnException += (_, args) => outcome.TrySetResult(args.Exception);
+        pair.Receiver.OnDataReceived += (_, args) => outcome.TrySetResult(args.Data.ToArray());
+
+        await pair.Sender.SendAsync(new byte[] { 0x01 }, CancellationToken.None);
+
+        Assert.IsType<InvalidDataException>(await outcome.Task.WaitAsync(Timeout));
+        await pair.Receiver.Completion.WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task ReceiveAsync_RawEventsRemainValidAcrossReadBufferReuse()
+    {
+        await using var pair = await LoopbackPair.CreateAsync(receiverBufferSize: 1);
+        var firstReceived = new TaskCompletionSource<ReadOnlyMemory<byte>>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        var secondReceived = new TaskCompletionSource<ReadOnlyMemory<byte>>(
+            TaskCreationOptions.RunContinuationsAsynchronously
+        );
+        var eventCount = 0;
+        pair.Receiver.OnDataReceived += (_, args) =>
+        {
+            if (Interlocked.Increment(ref eventCount) == 1)
+            {
+                firstReceived.TrySetResult(args.Data);
+            }
+            else
+            {
+                secondReceived.TrySetResult(args.Data);
+            }
+        };
+
+        await pair.Sender.SendAsync(new byte[] { 0x11 }, CancellationToken.None);
+        var first = await firstReceived.Task.WaitAsync(Timeout);
+        await pair.Sender.SendAsync(new byte[] { 0x22 }, CancellationToken.None);
+        var second = await secondReceived.Task.WaitAsync(Timeout);
+
+        Assert.Equal(new byte[] { 0x11 }, first.ToArray());
+        Assert.Equal(new byte[] { 0x22 }, second.ToArray());
+    }
+
+    [Fact]
+    public async Task ReceiveAsync_MultipleFramesWhoseCombinedLengthExceedsFrameCap_DeliversEveryFrame()
+    {
+        await using var pair = await LoopbackPair.CreateAsync(
+            receiverFramer: new BogusLengthFramer(1),
+            receiverBufferSize: 4,
+            receiverMaxFrameLength: 1
+        );
+        var received = new List<byte>();
+        var allReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        pair.Receiver.OnDataReceived += (_, args) =>
+        {
+            received.Add(args.Data.Span[0]);
+            if (received.Count == 4)
+            {
+                allReceived.TrySetResult();
+            }
+        };
+
+        await pair.Sender.SendAsync(new byte[] { 1, 2, 3, 4 }, CancellationToken.None);
+        await allReceived.Task.WaitAsync(Timeout);
+
+        Assert.Equal(new byte[] { 1, 2, 3, 4 }, received);
+        Assert.True(pair.Receiver.IsConnected);
+    }
+
     [Fact]
     public async Task SendAsync_ClosedConnection_ReportsFailureToCaller()
     {

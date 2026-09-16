@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
 using Serilog;
+using Moongate.Network.Buffers.Internal;
 using Moongate.Network.Data.Events;
 using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Interfaces.Codecs;
@@ -24,11 +25,11 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     private static long _sessionIdSequence;
 
     private readonly INetFramer? _framer;
-    private readonly int _maxFrameLength;
     private readonly CancellationTokenSource _internalCancellationTokenSource = new();
 
     private readonly ILogger _logger = Log.ForContext<MoongateTcpClient>();
     private readonly NetMiddlewarePipeline _middlewarePipeline;
+    private readonly PendingFrameBuffer? _pendingFrames;
     private readonly SemaphoreSlim _sendLock = new(1, 1);
     private readonly Socket _socket;
     private readonly Stream _stream;
@@ -40,8 +41,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     private ITransportCodec? _codec;
 
     private CancellationTokenRegistration _externalCancellationTokenRegistration;
-    private byte[]? _pendingBuffer;
-    private int _pendingLength;
     private Task? _receiveLoopTask;
 
     /// <summary>
@@ -159,14 +158,24 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         ArgumentNullException.ThrowIfNull(socket);
         ArgumentNullException.ThrowIfNull(stream);
 
+        if (receiveBufferSize is < 1 or > 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(receiveBufferSize));
+        }
+
+        if (maxFrameLength is < 1 or > 16 * 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxFrameLength));
+        }
+
         _socket = socket;
         _stream = stream;
         _middlewarePipeline = new(middlewares);
         _framer = framer;
+        _pendingFrames = framer is null ? null : new(framer, receiveBufferSize, maxFrameLength);
         _codec = codec;
         socket.NoDelay = noDelay;
         ReceiveBufferSize = receiveBufferSize;
-        _maxFrameLength = maxFrameLength;
         SessionId = Interlocked.Increment(ref _sessionIdSequence);
     }
 
@@ -402,97 +411,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         }
     }
 
-    private void AppendPending(ReadOnlySpan<byte> data)
-    {
-        if (data.IsEmpty)
-        {
-            return;
-        }
-
-        if (_pendingBuffer is null)
-        {
-            _pendingBuffer = ArrayPool<byte>.Shared.Rent(Math.Max(ReceiveBufferSize, data.Length));
-        }
-
-        var required = _pendingLength + data.Length;
-
-        if (required > _pendingBuffer.Length)
-        {
-            var newCapacity = Math.Max(required, _pendingBuffer.Length * 2);
-            var newBuffer = ArrayPool<byte>.Shared.Rent(newCapacity);
-            _pendingBuffer.AsSpan(0, _pendingLength).CopyTo(newBuffer);
-            ArrayPool<byte>.Shared.Return(_pendingBuffer);
-            _pendingBuffer = newBuffer;
-        }
-
-        data.CopyTo(_pendingBuffer.AsSpan(_pendingLength));
-        _pendingLength += data.Length;
-    }
-
-    private void ConsumePending(int count)
-    {
-        var remaining = _pendingLength - count;
-
-        if (remaining > 0 && _pendingBuffer is not null)
-        {
-            _pendingBuffer.AsSpan(count, remaining).CopyTo(_pendingBuffer);
-        }
-
-        _pendingLength = remaining;
-    }
-
-    private void EmitFrames()
-    {
-        if (_framer is null || _pendingBuffer is null)
-        {
-            return;
-        }
-
-        while (_pendingLength > 0)
-        {
-            var view = _pendingBuffer.AsSpan(0, _pendingLength);
-
-            if (!_framer.TryReadFrame(view, out var frameLength))
-            {
-                // Incomplete frame. If the buffer already exceeds the cap, the in-progress frame is
-                // oversized (or the peer is streaming junk that never frames): reject and let the
-                // receive loop close the connection before the buffer grows further.
-                if (_pendingLength > _maxFrameLength)
-                {
-                    throw new InvalidDataException($"Incoming frame exceeds the maximum of {_maxFrameLength} bytes.");
-                }
-
-                break;
-            }
-
-            if (frameLength <= 0 || frameLength > _pendingLength)
-            {
-                // Malformed framer report. A framer that transforms in place has already consumed
-                // keystream over these bytes, so silently dropping the buffer would leave the
-                // connection open and permanently desynchronised: reject and let the receive loop
-                // close it, the same way the oversize branch below does.
-                throw new InvalidDataException(
-                    $"Framer reported an invalid frame length of {frameLength} bytes for {_pendingLength} pending bytes."
-                );
-            }
-
-            if (frameLength > _maxFrameLength)
-            {
-                throw new InvalidDataException(
-                    $"Incoming frame of {frameLength} bytes exceeds the maximum of {_maxFrameLength} bytes."
-                );
-            }
-
-            // Fresh copy so handlers can safely retain the payload.
-            var frame = new byte[frameLength];
-            view[..frameLength].CopyTo(frame);
-
-            ConsumePending(frameLength);
-
-            OnDataReceived?.Invoke(this, new(this, frame));
-        }
-    }
-
     private void RaiseConnected()
     {
         _logger.Information(
@@ -558,59 +476,49 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 
     private async Task ReceiveLoopAsync()
     {
+        var receiveToken = _internalCancellationTokenSource.Token;
         var buffer = ArrayPool<byte>.Shared.Rent(ReceiveBufferSize);
 
         try
         {
-            while (!_internalCancellationTokenSource.IsCancellationRequested && IsConnected)
+            while (!receiveToken.IsCancellationRequested && IsConnected)
             {
-                var received = await _stream.ReadAsync(
-                                   buffer.AsMemory(0, ReceiveBufferSize),
-                                   _internalCancellationTokenSource.Token
-                               );
+                var received = await _stream.ReadAsync(buffer.AsMemory(0, ReceiveBufferSize), receiveToken)
+                    .ConfigureAwait(false);
 
-                if (received <= 0)
+                if (received == 0)
                 {
                     break;
                 }
 
-                var chunk = ArrayPool<byte>.Shared.Rent(received);
+                Volatile.Read(ref _codec)?.Decode(buffer.AsSpan(0, received));
+                var processed = await _middlewarePipeline.ExecuteAsync(
+                    this,
+                    buffer.AsMemory(0, received),
+                    receiveToken
+                ).ConfigureAwait(false);
 
-                try
+                if (processed.IsEmpty)
                 {
-                    buffer.AsSpan(0, received).CopyTo(chunk);
-
-                    Volatile.Read(ref _codec)?.Decode(chunk.AsSpan(0, received));
-
-
-                    var chunkMemory = new ReadOnlyMemory<byte>(chunk, 0, received);
-                    var processed = await _middlewarePipeline.ExecuteAsync(
-                                        this,
-                                        chunkMemory,
-                                        _internalCancellationTokenSource.Token
-                                    );
-
-                    if (processed.IsEmpty)
-                    {
-                        continue;
-                    }
-
-                    if (_framer is null)
-                    {
-                        // Fresh copy so the event handler can outlive the pooled chunk.
-                        var payload = new byte[processed.Length];
-                        processed.CopyTo(payload);
-                        OnDataReceived?.Invoke(this, new(this, payload));
-                    }
-                    else
-                    {
-                        AppendPending(processed.Span);
-                        EmitFrames();
-                    }
+                    continue;
                 }
-                finally
+
+                if (_pendingFrames is null)
                 {
-                    ArrayPool<byte>.Shared.Return(chunk);
+                    if (processed.Length > ReceiveBufferSize)
+                    {
+                        throw new InvalidDataException("Raw TCP payload exceeds the configured receive budget.");
+                    }
+
+                    OnDataReceived?.Invoke(this, new(this, processed.ToArray()));
+                }
+                else
+                {
+                    _pendingFrames.Append(processed.Span);
+                    while (IsConnected && _pendingFrames.TryRead(out var frame))
+                    {
+                        OnDataReceived?.Invoke(this, new(this, frame));
+                    }
                 }
             }
         }
@@ -624,21 +532,9 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         finally
         {
             ArrayPool<byte>.Shared.Return(buffer);
-            ReleasePendingBuffer();
+            _pendingFrames?.Dispose();
             RequestClose();
         }
-    }
-
-    private void ReleasePendingBuffer()
-    {
-        if (_pendingBuffer is null)
-        {
-            return;
-        }
-
-        ArrayPool<byte>.Shared.Return(_pendingBuffer);
-        _pendingBuffer = null;
-        _pendingLength = 0;
     }
 
     private void RequestClose()

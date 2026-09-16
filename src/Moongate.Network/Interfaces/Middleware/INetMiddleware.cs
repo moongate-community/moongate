@@ -23,6 +23,11 @@ namespace Moongate.Network.Interfaces.Middleware;
 /// Input memory may be used only until the returned ValueTask completes; do not retain it or
 /// return a view over released memory. Event payloads are separate stable copies.
 ///
+/// Inbound output is bounded by the connection configuration. Raw connections accept at most the
+/// receive-buffer size per invocation. Framed connections bound pending data to the maximum frame
+/// length plus the receive-buffer size, while applying the frame-length limit to each frame rather
+/// than to the combined size of multiple complete frames. Exceeding either budget closes the connection.
+///
 /// The send lock is not reentrant. Calling <c>SendAsync</c> on the same client from inside
 /// <see cref="ProcessSendAsync" /> deadlocks that connection's send path — silently, and without
 /// bound whenever the original caller passed <see cref="CancellationToken.None" />.

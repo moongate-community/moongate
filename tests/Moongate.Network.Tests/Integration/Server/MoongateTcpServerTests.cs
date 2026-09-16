@@ -11,6 +11,43 @@ public sealed class MoongateTcpServerTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
+    [Theory]
+    [InlineData(0, 1, "receiveBufferSize")]
+    [InlineData(1024 * 1024 + 1, 1, "receiveBufferSize")]
+    [InlineData(1, 0, "maxFrameLength")]
+    [InlineData(1, 16 * 1024 * 1024 + 1, "maxFrameLength")]
+    public void Constructor_OutOfRangeBufferLimits_RejectsBeforeBind(
+        int receiveBufferSize,
+        int maxFrameLength,
+        string parameterName
+    )
+    {
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            receiveBufferSize: receiveBufferSize,
+            maxFrameLength: maxFrameLength
+        ));
+
+        Assert.Equal(parameterName, exception.ParamName);
+    }
+
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(1024 * 1024, 16 * 1024 * 1024)]
+    public void Constructor_ExactBufferLimitBoundaries_AcceptsConfiguration(
+        int receiveBufferSize,
+        int maxFrameLength
+    )
+    {
+        using var server = new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            receiveBufferSize: receiveBufferSize,
+            maxFrameLength: maxFrameLength
+        );
+
+        Assert.Equal(0, server.Port);
+    }
+
     [Fact]
     public async Task StartAsync_LoopbackClient_DeliversACompleteFrame()
     {

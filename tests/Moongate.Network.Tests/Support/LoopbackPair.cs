@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Interfaces.Codecs;
+using Moongate.Network.Interfaces.Framing;
+using Moongate.Network.Interfaces.Middleware;
 
 namespace Moongate.Network.Tests.Support;
 
@@ -16,7 +18,15 @@ public sealed class LoopbackPair : IAsyncDisposable
         Receiver = receiver;
     }
 
-    public static async Task<LoopbackPair> CreateAsync(Stream? senderStream = null, ITransportCodec? codec = null, bool startSender = true)
+    public static async Task<LoopbackPair> CreateAsync(
+        Stream? senderStream = null,
+        ITransportCodec? codec = null,
+        bool startSender = true,
+        IEnumerable<INetMiddleware>? receiverMiddlewares = null,
+        INetFramer? receiverFramer = null,
+        int receiverBufferSize = 8192,
+        int receiverMaxFrameLength = 1024 * 1024
+    )
     {
         using var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         listener.Bind(new IPEndPoint(IPAddress.Loopback, 0));
@@ -34,7 +44,13 @@ public sealed class LoopbackPair : IAsyncDisposable
                 ? new MoongateTcpClient(senderSocket, codec: codec)
                 : new MoongateTcpClient(senderSocket, senderStream, codec: codec);
             senderSocket = null;
-            receiver = new MoongateTcpClient(receiverSocket);
+            receiver = new MoongateTcpClient(
+                receiverSocket,
+                receiverMiddlewares,
+                receiverFramer,
+                receiveBufferSize: receiverBufferSize,
+                maxFrameLength: receiverMaxFrameLength
+            );
             receiverSocket = null;
             if (startSender)
             {

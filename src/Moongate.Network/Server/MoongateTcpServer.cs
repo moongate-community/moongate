@@ -78,6 +78,16 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         int maxFrameLength = 1024 * 1024,
         bool noDelay = true)
     {
+        if (receiveBufferSize is < 1 or > 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(receiveBufferSize));
+        }
+
+        if (maxFrameLength is < 1 or > 16 * 1024 * 1024)
+        {
+            throw new ArgumentOutOfRangeException(nameof(maxFrameLength));
+        }
+
         _endPoint = endPoint;
         _framer = framer;
         _receiveBufferSize = receiveBufferSize;

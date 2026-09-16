@@ -41,7 +41,7 @@ public sealed class TcpMaxFrameLengthTests
 
         try
         {
-            var payload = new byte[1000];
+            var payload = new byte[1020];
             var frame = new byte[4 + payload.Length];
             BinaryPrimitives.WriteInt32BigEndian(frame, payload.Length);
             payload.CopyTo(frame, 4);
