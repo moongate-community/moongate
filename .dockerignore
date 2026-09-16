@@ -2,6 +2,8 @@
 **/.env
 **/.git
 **/.gitignore
+**/.worktrees
+**/.codegraph
 **/.project
 **/.settings
 **/.toolstarget
