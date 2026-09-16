@@ -71,13 +71,14 @@ bounded by `maxFrameLength + receiveBufferSize`; raw events contain at most one
 receive buffer. There is no application send queue: producers provide their own
 admission policy and await `SendAsync` for backpressure.
 
-Events and middleware callbacks run synchronously on the transport path. Do not
-use `async void` handlers or block a callback waiting for the same connection's
-completion. From a callback, request closure with `CloseAsync` or synchronous
-`Dispose`; from outside the callback, prefer `DisposeAsync` so all receive, send,
-and cleanup work is observed. Cancellation of `StopAsync` only cancels that
-caller's wait. Cleanup continues in the background and can be awaited by calling
-`StopAsync` again or by disposing the server asynchronously.
+Event handlers run synchronously on the transport path. Middleware runs in series
+and is awaited before processing continues. Do not use `async void` handlers or
+block a callback waiting for the same connection's completion. From a callback,
+request closure with `CloseAsync` or synchronous `Dispose`; from outside the
+callback, prefer `DisposeAsync` so all receive, send, and cleanup work is observed.
+Cancellation of `StopAsync` only cancels that caller's wait. Cleanup continues in
+the background and can be awaited by calling `StopAsync` again or by disposing the
+server asynchronously.
 
 ## Geometry
 
