@@ -136,6 +136,43 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         }
     }
 
+    /// <summary>Captures and checkpoints every collection, then publishes a verified backup generation.</summary>
+    /// <remarks>
+    /// The target must not exist or overlap the persistence directory. Mutation and disposal remain
+    /// ordered until publication completes. Failure can leave live persistence writes committed,
+    /// but never exposes an incomplete backup at the target directory.
+    /// </remarks>
+    public Task SaveAllWithBackupAsync(
+        Func<Action, CancellationToken, Task> captureAsync,
+        string backupDirectory,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(captureAsync);
+        var destination = PersistenceBackupFiles.ValidateDestination(_directory, backupDirectory);
+        lock (_lifecycleSync)
+        {
+            ThrowIfDisposed();
+            ThrowIfFaulted();
+            if (!_initialized)
+            {
+                throw new InvalidOperationException("Persistence has not been initialized.");
+            }
+            IPersistenceCollection[] collections = [.. _collections];
+            string[] collectionNames = [.. _collectionNames.Order(StringComparer.Ordinal)];
+
+            return _mutationGate.RunAsync(
+                token => PersistenceBackupFiles.PublishDirectoryAsync(destination, async (staging, stageToken) =>
+                {
+                    await SaveAllCoreAsync(collections, captureAsync, stageToken).ConfigureAwait(false);
+                    await MoongatePersistenceBackup.WriteAsync(_directory, staging, collectionNames, stageToken)
+                        .ConfigureAwait(false);
+                }, token),
+                cancellationToken
+            );
+        }
+    }
+
     private async Task SaveAllCoreAsync(
         IPersistenceCollection[] collections,
         Func<Action, CancellationToken, Task> captureAsync,
