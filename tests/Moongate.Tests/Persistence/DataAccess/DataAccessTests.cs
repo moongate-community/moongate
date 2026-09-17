@@ -10,8 +10,128 @@ namespace Moongate.Tests.Persistence.DataAccess;
 
 public sealed class DataAccessTests
 {
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task DisposeAsync_AfterOwnerShutdown_ObservesCompletedCollectionClose(bool closeCollectionFirst)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items");
+        await owner.InitializeAsync();
+        await items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "saved" });
+
+        if (closeCollectionFirst)
+        {
+            await ((IAsyncDisposable)items).DisposeAsync();
+        }
+        await owner.DisposeAsync();
+
+        await ((IAsyncDisposable)items).DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        await ((IAsyncDisposable)items).DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+        await using var reopened = new MoongatePersistenceService(root.Path);
+        var restored = reopened.Register<TestEntity>("items");
+        await reopened.InitializeAsync();
+        Assert.Equal("saved", restored.GetById(new Serial(1))!.Name);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task DisposeAsync_RacesOwnerShutdown_DrainsAcceptedSaveAndMutation(bool closeOwnerFirst)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var captured = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "captured" }]);
+        await owner.InitializeAsync();
+        var save = owner.SaveAllAsync(async (capture, token) =>
+        {
+            capture();
+            captured.SetResult();
+            await release.Task.WaitAsync(token);
+        });
+        Task? mutation = null;
+        Task? collectionClose = null;
+        try
+        {
+            await captured.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            mutation = items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "queued" });
+            Task ownerClose;
+            if (closeOwnerFirst)
+            {
+                ownerClose = owner.DisposeAsync().AsTask();
+                collectionClose = ((IAsyncDisposable)items).DisposeAsync().AsTask();
+            }
+            else
+            {
+                collectionClose = ((IAsyncDisposable)items).DisposeAsync().AsTask();
+                ownerClose = owner.DisposeAsync().AsTask();
+            }
+
+            var repeatedClose = ((IAsyncDisposable)items).DisposeAsync().AsTask();
+            Assert.False(mutation.IsCompleted);
+            Assert.False(collectionClose.IsCompleted);
+            Assert.False(repeatedClose.IsCompleted);
+            Assert.False(ownerClose.IsCompleted);
+            release.TrySetResult();
+            await Task.WhenAll(save, mutation, collectionClose, repeatedClose, ownerClose)
+                .WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            release.TrySetResult();
+            await Task.WhenAll(save, mutation ?? Task.CompletedTask, collectionClose ?? Task.CompletedTask,
+                owner.DisposeAsync().AsTask()).WaitAsync(TimeSpan.FromSeconds(10));
+        }
+
+        await using var reopened = new MoongatePersistenceService(root.Path);
+        var restored = reopened.Register<TestEntity>("items");
+        await reopened.InitializeAsync();
+        Assert.Equal("queued", restored.GetById(new Serial(1))!.Name);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task DisposeAsync_AfterOwnerShutdown_PreservesOriginalCollectionFailure(bool closeCollectionFirst)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items");
+        await owner.InitializeAsync();
+        var snapshot = Path.Combine(root.Path, "items.snapshot.bin");
+        File.Delete(snapshot);
+        Directory.CreateDirectory(snapshot);
+
+        Exception? original = null;
+        if (closeCollectionFirst)
+        {
+            original = await Assert.ThrowsAnyAsync<IOException>(() => ((IAsyncDisposable)items).DisposeAsync().AsTask());
+        }
+        var ownerFailure = await Assert.ThrowsAnyAsync<IOException>(() => owner.DisposeAsync().AsTask());
+        original ??= ownerFailure;
+
+        var repeated = await Assert.ThrowsAnyAsync<IOException>(() => ((IAsyncDisposable)items).DisposeAsync().AsTask());
+        Assert.Same(original, ownerFailure);
+        Assert.Same(original, repeated);
+    }
+
     [Fact]
-    public async Task SaveAsync_LiveEntities_CapturesAllValuesBeforeFirstWrite()
+    public async Task DisposeAsync_AfterAnotherCollectionFailsShutdown_ObservesOwnSuccessfulClose()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items");
+        owner.Register<OtherTestEntity>("others");
+        await owner.InitializeAsync();
+        var snapshot = Path.Combine(root.Path, "others.snapshot.bin");
+        File.Delete(snapshot);
+        Directory.CreateDirectory(snapshot);
+
+        await Assert.ThrowsAnyAsync<IOException>(() => owner.DisposeAsync().AsTask());
+
+        await ((IAsyncDisposable)items).DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(10));
+    }
+
+    [Fact]
+    public async Task CaptureAndCommit_LiveEntities_UsesDetachedPayloads()
     {
         using var root = new TemporaryPersistenceDirectory();
         using var fileSystem = new FaultingPersistenceFileSystem();
@@ -20,24 +140,16 @@ public sealed class DataAccessTests
         List<TestEntity> live = [new TestEntity { Id = new Serial(1), Name = "first" }, second];
         var access = new DataAccess<TestEntity>(store, () => live);
         await ((IPersistenceCollection)access).InitializeAsync();
-        fileSystem.BlockFlush = true;
-        var save = Task.Run(() => ((IPersistenceCollection)access).SaveAsync());
-        try
-        {
-            await fileSystem.FlushEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
-            second.Name = "changed";
-            live.Clear();
-            fileSystem.ContinueFlush.Set();
-            await save.WaitAsync(TimeSpan.FromSeconds(10));
-            Assert.Equal("captured", access.GetById(new Serial(2))!.Name);
-            Assert.Equal(2, access.GetAll().Count);
-        }
-        finally
-        {
-            fileSystem.ContinueFlush.Set();
-            await save;
-            await ((IAsyncDisposable)access).DisposeAsync();
-        }
+        var captured = ((IPersistenceCollection)access).Capture(CancellationToken.None);
+        second.Name = "changed";
+        live.Clear();
+
+        Assert.Empty(access.GetAll());
+        await ((IPersistenceCollection)access).CommitAsync(captured, CancellationToken.None);
+
+        Assert.Equal("captured", access.GetById(new Serial(2))!.Name);
+        Assert.Equal(2, access.GetAll().Count);
+        await ((IAsyncDisposable)access).DisposeAsync();
     }
 
     [Fact]

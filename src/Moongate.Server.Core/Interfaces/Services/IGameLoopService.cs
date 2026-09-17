@@ -13,6 +13,16 @@ public interface IGameLoopService : IMoongateStartupService
     /// <remarks>StopAsync performs cleanup successfully after a fault; observe this task to detect loop failure.</remarks>
     Task Completion { get; }
 
+    /// <summary>Closes admission and timers, drains accepted work, then executes one final item on the loop thread.</summary>
+    /// <remarks>
+    /// Unlike ordinary cleanup, this overload propagates loop and final-item failures. A prior ordinary stop
+    /// or a different terminal item rejects this capture explicitly. Reusing the accepted item is idempotent.
+    /// The final item must perform synchronous in-memory work only; await disk work after this task completes.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">The final work item is null.</exception>
+    /// <exception cref="InvalidOperationException">The caller is on the loop thread or shutdown already won admission.</exception>
+    Task StopAsync(IGameLoopWorkItem finalWorkItem);
+
     /// <summary>Returns queue depth/age, admission counters, command timings and fatal loop failures.</summary>
     /// <remarks>Concurrent execution can advance between queue and execution measurements; durations use monotonic time.</remarks>
     GameLoopMetricsSnapshot GetMetricsSnapshot();

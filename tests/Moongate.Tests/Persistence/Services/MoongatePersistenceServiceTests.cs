@@ -1,6 +1,7 @@
 using MemoryPack;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Data;
+using Moongate.Persistence.DataAccess;
 using Moongate.Persistence.Internal;
 using Moongate.Persistence.Services;
 using Moongate.Tests.Support.Persistence;
@@ -77,6 +78,322 @@ public sealed class MoongatePersistenceServiceTests
 
         Assert.Equal("explicit", items.GetById(new Serial(1))!.Name);
         Assert.Equal(100, new FileInfo(Path.Combine(root.Path, "items.journal.bin")).Length);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_CaptureCallback_InvokesCaptureOnceAndCommitsCapturedBytes()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var live = new TestEntity { Id = new Serial(1), Name = "before capture" };
+        var sourceCalls = 0;
+        var items = owner.Register<TestEntity>("items", () =>
+        {
+            sourceCalls++;
+            return [live];
+        });
+        await owner.InitializeAsync();
+        var callbackCalls = 0;
+
+        await owner.SaveAllAsync((capture, _) =>
+        {
+            callbackCalls++;
+            capture();
+            live.Name = "after capture";
+            return Task.CompletedTask;
+        });
+
+        Assert.Equal(1, callbackCalls);
+        Assert.Equal(1, sourceCalls);
+        Assert.Equal("before capture", items.GetById(live.Id)!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_SecondSourceFails_DoesNotCommitFirstSource()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "changed" }]);
+        owner.Register<OtherTestEntity>("others", () => throw new InvalidOperationException("capture failed"));
+        await owner.InitializeAsync();
+        await items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "original" });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync());
+
+        Assert.Equal("original", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_QueuedMutations_RunAfterCapturedSave()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var captured = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "captured" }]);
+        await owner.InitializeAsync();
+        await items.UpsertAsync(new TestEntity { Id = new Serial(2), Name = "delete me" });
+        var save = owner.SaveAllAsync(async (capture, token) =>
+        {
+            capture();
+            captured.SetResult();
+            await release.Task.WaitAsync(token);
+        });
+        try
+        {
+            await captured.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            var queuedEntity = new TestEntity { Id = new Serial(1), Name = "queued" };
+
+            var upsert = items.UpsertAsync(queuedEntity);
+            var delete = items.DeleteAsync(new Serial(2));
+            queuedEntity.Name = "changed after call";
+
+            Assert.False(upsert.IsCompleted);
+            Assert.False(delete.IsCompleted);
+            release.TrySetResult();
+            await Task.WhenAll(save, upsert, delete).WaitAsync(TimeSpan.FromSeconds(10));
+
+            Assert.Equal("queued", items.GetById(new Serial(1))!.Name);
+            Assert.Null(items.GetById(new Serial(2)));
+        }
+        finally
+        {
+            release.TrySetResult();
+            await save.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+    }
+
+    [Fact]
+    public async Task CollectionDisposeAsync_DuringPausedSave_RunsAfterSaveCompletes()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var captured = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "captured" }]);
+        await owner.InitializeAsync();
+        var save = owner.SaveAllAsync(async (capture, token) =>
+        {
+            capture();
+            captured.SetResult();
+            await release.Task.WaitAsync(token);
+        });
+        Task? disposal = null;
+
+        try
+        {
+            await captured.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            disposal = ((IAsyncDisposable)items).DisposeAsync().AsTask();
+
+            Assert.False(disposal.IsCompleted);
+            release.TrySetResult();
+            await Task.WhenAll(save, disposal).WaitAsync(TimeSpan.FromSeconds(10));
+
+            Assert.Throws<ObjectDisposedException>(() => items.GetAll());
+        }
+        finally
+        {
+            release.TrySetResult();
+            await save.WaitAsync(TimeSpan.FromSeconds(10));
+            if (disposal is not null)
+            {
+                await disposal.WaitAsync(TimeSpan.FromSeconds(10));
+            }
+        }
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_SourceDisposesCollection_RejectsWithoutClosingCollection(bool separateCaptureContext)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var reenter = true;
+        DataAccess<TestEntity>? items = null;
+        items = owner.Register<TestEntity>("items", () =>
+        {
+            if (reenter)
+            {
+                var disposal = ((IAsyncDisposable)items!).DisposeAsync();
+                Assert.True(disposal.IsCompleted, "Collection disposal did not reject capture reentry.");
+                disposal.AsTask().GetAwaiter().GetResult();
+            }
+
+            return [new TestEntity { Id = new Serial(1), Name = "saved" }];
+        });
+        await owner.InitializeAsync();
+
+        var save = owner.SaveAllAsync(async (capture, _) =>
+        {
+            if (separateCaptureContext)
+            {
+                Task captureTask;
+                using (ExecutionContext.SuppressFlow())
+                {
+                    captureTask = Task.Run(capture, CancellationToken.None);
+                }
+                await captureTask;
+            }
+            else
+            {
+                capture();
+            }
+        });
+        await Assert.ThrowsAsync<InvalidOperationException>(() => save.WaitAsync(TimeSpan.FromSeconds(10)));
+        reenter = false;
+        await owner.SaveAllAsync();
+
+        Assert.Equal("saved", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_SourceDisposesCollectionDuringOwnerShutdown_RejectsBeforeJoiningOwner(bool separateCaptureContext)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var owner = new MoongatePersistenceService(root.Path);
+        DataAccess<TestEntity>? items = null;
+        items = owner.Register<TestEntity>("items", () =>
+        {
+            var failure = Record.Exception(() =>
+            {
+                var disposal = ((IAsyncDisposable)items!).DisposeAsync();
+                Assert.True(disposal.IsCompleted, "Collection disposal tried to join its own capture.");
+                disposal.GetAwaiter().GetResult();
+            });
+            Assert.IsType<InvalidOperationException>(failure);
+            return [new TestEntity { Id = new Serial(1), Name = "saved" }];
+        });
+        await owner.InitializeAsync();
+        var save = owner.SaveAllAsync(async (capture, token) =>
+        {
+            ready.SetResult();
+            await release.Task.WaitAsync(token);
+            if (separateCaptureContext)
+            {
+                Task captureTask;
+                using (ExecutionContext.SuppressFlow())
+                {
+                    captureTask = Task.Run(capture, CancellationToken.None);
+                }
+                await captureTask;
+            }
+            else
+            {
+                capture();
+            }
+        });
+        try
+        {
+            await ready.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            var shutdown = owner.DisposeAsync().AsTask();
+            release.TrySetResult();
+            await Task.WhenAll(save, shutdown).WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            release.TrySetResult();
+            await Task.WhenAll(save, owner.DisposeAsync().AsTask()).WaitAsync(TimeSpan.FromSeconds(10));
+        }
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_CaptureCallbackFailureOrCancellation_ReleasesMutationGate(bool cancel)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        using var cancellation = new CancellationTokenSource();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () => []);
+        await owner.InitializeAsync();
+
+        Task FailCapture(Action capture, CancellationToken token)
+        {
+            capture();
+            if (cancel)
+            {
+                cancellation.Cancel();
+                return Task.FromCanceled(token);
+            }
+
+            return Task.FromException(new InvalidOperationException("capture callback failed"));
+        }
+
+        var failed = owner.SaveAllAsync(FailCapture, cancellation.Token);
+        await Assert.ThrowsAnyAsync<Exception>(() => failed);
+        await items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "after failure" })
+                   .WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.Equal("after failure", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_OmittedOrDuplicateCapture_RejectsBeforeCommit(bool duplicate)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "changed" }]);
+        await owner.InitializeAsync();
+        await items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "original" });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync((capture, _) =>
+        {
+            if (duplicate)
+            {
+                capture();
+                Assert.Throws<InvalidOperationException>(capture);
+            }
+
+            return Task.CompletedTask;
+        }));
+
+        Assert.Equal("original", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_ConcurrentDuplicateBeforeCallbackReturns_RejectsBeforeCommit()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var items = owner.Register<TestEntity>("items", () =>
+            [new TestEntity { Id = new Serial(1), Name = "changed" }]);
+        await owner.InitializeAsync();
+        await items.UpsertAsync(new TestEntity { Id = new Serial(1), Name = "original" });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync(async (capture, token) =>
+        {
+            capture();
+            var duplicate = Task.Run(() => Record.Exception(capture), CancellationToken.None);
+            var duplicateFailure = await duplicate.WaitAsync(TimeSpan.FromSeconds(10), token);
+            Assert.IsType<InvalidOperationException>(duplicateFailure);
+        }));
+
+        Assert.Equal("original", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_DeferredCaptureAfterCompletion_RejectsWithoutChangingCommittedData()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var live = new TestEntity { Id = new Serial(1), Name = "captured" };
+        var items = owner.Register<TestEntity>("items", () => [live]);
+        await owner.InitializeAsync();
+        Action? deferred = null;
+
+        await owner.SaveAllAsync((capture, _) =>
+        {
+            deferred = capture;
+            capture();
+            return Task.CompletedTask;
+        });
+        live.Name = "late";
+
+        Assert.Throws<InvalidOperationException>(deferred!);
+        Assert.Equal("captured", items.GetById(new Serial(1))!.Name);
     }
 
     [Theory,
@@ -276,17 +593,35 @@ public sealed class MoongatePersistenceServiceTests
         Assert.Equal("saved", items.GetById(new Serial(1))!.Name);
     }
 
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task SaveAllAsync_SourceReentersSaveOrDisposal_RejectsWithoutDeadlock(bool dispose)
+    [Theory,
+     InlineData("upsert"),
+     InlineData("delete"),
+     InlineData("checkpoint"),
+     InlineData("save"),
+     InlineData("dispose")]
+    public async Task SaveAllAsync_SourceReentersMutationSaveOrDisposal_RejectsWithoutDeadlock(string operation)
     {
         using var root = new TemporaryPersistenceDirectory();
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         await using var owner = new MoongatePersistenceService(root.Path);
         var reenter = true;
-        owner.Register<TestEntity>("items", () =>
+        DataAccess<TestEntity>? items = null;
+        items = owner.Register<TestEntity>("items", () =>
         {
             if (reenter)
             {
-                var task = dispose ? owner.DisposeAsync().AsTask() : owner.SaveAllAsync();
+                Task task = operation switch
+                {
+                    "upsert" => items!.UpsertAsync(
+                        new TestEntity { Id = new Serial(1), Name = "reentry" },
+                        cancellation.Token
+                    ),
+                    "delete" => items!.DeleteAsync(new Serial(1), cancellation.Token),
+                    "checkpoint" => owner.CheckpointAsync(cancellation.Token),
+                    "save" => owner.SaveAllAsync(cancellation.Token),
+                    "dispose" => DisposeOwner(),
+                    _ => throw new InvalidOperationException(operation)
+                };
                 task.GetAwaiter().GetResult();
             }
             return [];
@@ -295,6 +630,49 @@ public sealed class MoongatePersistenceServiceTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             Task.Run(() => owner.SaveAllAsync()).WaitAsync(TimeSpan.FromSeconds(10)));
+        reenter = false;
+        await owner.SaveAllAsync();
+
+        Task DisposeOwner()
+        {
+            var disposal = owner.DisposeAsync();
+            Assert.True(disposal.IsCompleted, "Owner disposal did not reject capture reentry.");
+
+            return disposal.AsTask();
+        }
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_CaptureRunsWithoutCallerExecutionContext_SourceReentryStillRejectsPromptly()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        using var cancellation = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        await using var owner = new MoongatePersistenceService(root.Path);
+        var reenter = true;
+        owner.Register<TestEntity>("items", () =>
+        {
+            if (reenter)
+            {
+                owner.CheckpointAsync(cancellation.Token).GetAwaiter().GetResult();
+            }
+
+            return [];
+        });
+        await owner.InitializeAsync();
+
+        var failure = owner.SaveAllAsync(async (capture, _) =>
+        {
+            Task captureTask;
+            using (ExecutionContext.SuppressFlow())
+            {
+                captureTask = Task.Run(capture, CancellationToken.None);
+            }
+
+            await captureTask;
+        });
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            failure.WaitAsync(TimeSpan.FromSeconds(10)));
         reenter = false;
         await owner.SaveAllAsync();
     }

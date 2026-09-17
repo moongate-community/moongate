@@ -126,13 +126,64 @@ Any uncertain mutation or checkpoint I/O outcome faults the store. Further reads
 queries, mutations, and checkpoints reject until a new store instance recovers
 from disk. A failed append may still have reached disk; recovery may include it.
 Faulted or aborted disposal releases handles without checkpointing. Healthy
-disposal rejects new work immediately, drains in-flight operations, checkpoints,
-and releases handles even if checkpointing fails. Queued work that has not begun
-its operation rejects after shutdown starts. Dispose failure is propagated;
-repeated disposal observes the same completion or failure.
+disposal rejects new work immediately, drains every previously accepted operation
+including queued operations, checkpoints, and releases handles even if
+checkpointing fails. Dispose failure is propagated; repeated disposal observes
+the same completion or failure.
 
 Version 1 requests durable file flushes and same-filesystem atomic replacement.
 The integration suite exercises the implementation on Linux. It does not claim
 hardware power-loss guarantees or durable directory-entry publication across all
 filesystems; directory metadata is not explicitly fsynced. This is a recovery
 journal that may be compacted, not a permanent audit trail or backup system.
+
+## Backup manifest format, version 1
+
+The backup manifest version is independent of the binary collection version.
+Every completed backup generation contains `manifest.json` and exactly one
+snapshot/journal pair for every registered collection. Lock files, temporary
+files, and unregistered files are excluded. A backup with no registered
+collections is valid and has an empty `collections` array.
+
+The manifest uses camel-case JSON:
+
+```json
+{
+  "formatVersion": 1,
+  "collections": [
+    {
+      "name": "characters",
+      "snapshot": {
+        "fileName": "characters.snapshot.bin",
+        "length": 512,
+        "sha256": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      },
+      "journal": {
+        "fileName": "characters.journal.bin",
+        "length": 100,
+        "sha256": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"
+      }
+    }
+  ]
+}
+```
+
+Each `collections` entry has a unique valid collection `name`. Its `snapshot`
+and `journal` objects contain the exact canonical `fileName`, byte `length`, and
+64-character hexadecimal `sha256` of the copied file. The directory entry set must
+match the manifest exactly; duplicate collections, unknown versions, missing or
+extra entries, path traversal, mismatched filenames, lengths, hashes, and
+incomplete checkpoint pairs are rejected.
+
+`MoongatePersistenceBackup.RestoreAsync` verifies the complete generation before
+atomically publishing a previously nonexistent destination directory. The
+restored directory contains the snapshot/journal pairs, but not `manifest.json`.
+Typed MemoryPack payload validation occurs later when the application registers
+the collections and calls `MoongatePersistenceService.InitializeAsync` against
+that directory.
+
+SHA-256 detects accidental corruption; it does not authenticate a generation or
+protect against an attacker who can replace both data and manifest. Backup and
+restore integration is tested on Linux. As with live checkpoint publication, no
+durable directory-entry guarantee is claimed because directories are not
+explicitly fsynced.

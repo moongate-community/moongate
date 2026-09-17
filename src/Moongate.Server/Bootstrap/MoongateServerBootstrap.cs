@@ -20,6 +20,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly StartupServiceLifecycle _services;
     private Task? _gameLoopCompletion;
+    private bool _startupSucceeded;
 
     public MoongateServerBootstrap(Container container, CancellationToken cancellationToken)
     {
@@ -108,6 +109,8 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             }
 
             await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
+            _services.ActivateWorldSaving();
+            _startupSucceeded = true;
             _logger.Information("Moongate Server started.");
         }
         catch (Exception exception)
@@ -158,11 +161,22 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None), failures
         ).ConfigureAwait(false);
 
-        failures.AddRange(await _services.StopAsync().ConfigureAwait(false));
+        failures.AddRange(await _services.StopAsync(_startupSucceeded).ConfigureAwait(false));
 
         if (_gameLoopCompletion is not null)
         {
-            await CaptureFailureAsync(() => _gameLoopCompletion, failures).ConfigureAwait(false);
+            try
+            {
+                await _gameLoopCompletion.ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                // Terminal world-save shutdown may already have observed this lifetime fault.
+                if (!failures.Any(failure => ContainsFailure(failure, exception)))
+                {
+                    failures.Add(exception);
+                }
+            }
         }
 
         await CaptureFailureAsync(
@@ -176,6 +190,13 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         ).ConfigureAwait(false);
 
         return failures;
+    }
+
+    private static bool ContainsFailure(Exception failure, Exception expected)
+    {
+        return ReferenceEquals(failure, expected) ||
+               failure is AggregateException aggregate &&
+               aggregate.InnerExceptions.Any(inner => ContainsFailure(inner, expected));
     }
 
     private static void CaptureFailure(Action operation, List<Exception> failures)
