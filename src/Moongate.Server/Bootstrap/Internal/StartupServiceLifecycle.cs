@@ -66,7 +66,15 @@ internal sealed class StartupServiceLifecycle
         }
     }
 
-    public async Task<List<Exception>> StopAsync()
+    public void ActivateWorldSaving()
+    {
+        foreach (var service in _startedServices.OfType<IWorldSaveService>())
+        {
+            service.Activate();
+        }
+    }
+
+    public async Task<List<Exception>> StopAsync(bool saveWorld = false)
     {
         List<Exception> failures = [];
         var services = _startedServices.ToArray();
@@ -76,7 +84,14 @@ internal sealed class StartupServiceLifecycle
         {
             try
             {
-                await services[index].StopAsync().ConfigureAwait(false);
+                if (services[index] is IWorldSaveService worldSave)
+                {
+                    await worldSave.StopAsync(saveWorld).ConfigureAwait(false);
+                }
+                else
+                {
+                    await services[index].StopAsync().ConfigureAwait(false);
+                }
             }
             catch (Exception exception)
             {
