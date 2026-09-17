@@ -14,6 +14,7 @@ using Moongate.Server.Data.Args;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
@@ -86,17 +87,24 @@ await ConsoleApp.RunAsync(
                         Reuse.Singleton
                     );
 
-                    return services.RegisterMoongatePersistence(directoriesConfig["save"])
-                                   .RegisterMoongateService<MoongatePersistenceStartupService>(
-                                       MoongatePersistenceStartupService.StartupPriority
-                                   )
-                                   .RegisterMoongateService<TimerWheelService>(priority: -900)
-                                   .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                                   .RegisterMoongateService<ISessionService, SessionService>()
-                                   .RegisterMoongateService<IEventBusService, EventBusService>()
-                                   .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                                       () => new PluginLoaderService(services, directoriesConfig)
-                                   );
+
+                    services.Register<ISessionService, SessionService>();
+
+                    services.RegisterMoongatePersistence(directoriesConfig["save"])
+                            .RegisterMoongateService<MoongatePersistenceStartupService>(
+                                MoongatePersistenceStartupService.StartupPriority
+                            )
+                            .RegisterMoongateService<TimerWheelService>(priority: -900)
+                            .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                            .RegisterMoongateService<ISessionService, SessionService>()
+                            .RegisterMoongateService<IEventBusService, EventBusService>()
+                            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                                () => new PluginLoaderService(services, directoriesConfig)
+                            );
+
+                    services.RegisterMoongateService<INetworkService, NetworkService>(100);
+
+                    return services;
                 }
             );
 

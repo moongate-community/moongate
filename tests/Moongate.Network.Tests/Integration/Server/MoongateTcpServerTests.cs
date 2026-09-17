@@ -253,6 +253,11 @@ public sealed class MoongateTcpServerTests
         var server = new MoongateTcpServer(new(IPAddress.Loopback, 0), framer: new LengthPrefixFramer());
         try
         {
+            var configuredEndpoint = server.Endpoint;
+            Assert.Equal(new IPEndPoint(IPAddress.Loopback, 0), configuredEndpoint);
+            configuredEndpoint.Address = IPAddress.None;
+            configuredEndpoint.Port = 1;
+
             for (var generation = 0; generation < 25; generation++)
             {
                 var received = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -263,12 +268,16 @@ public sealed class MoongateTcpServerTests
                 try
                 {
                     await server.StartAsync(deadline.Token);
-                    await peer.ConnectAsync(IPAddress.Loopback, server.Port, deadline.Token);
+                    var listeningEndpoint = server.Endpoint;
+                    Assert.Equal(server.Port, listeningEndpoint.Port);
+                    await peer.ConnectAsync(listeningEndpoint, deadline.Token);
                     var frame = new byte[] { 1, (byte)generation };
                     await peer.GetStream().WriteAsync(frame, deadline.Token);
                     Assert.Equal(frame, await received.Task.WaitAsync(deadline.Token));
                     await server.StopAsync(CancellationToken.None).WaitAsync(deadline.Token);
                     Assert.Equal(0, server.Port);
+                    Assert.Equal(new IPEndPoint(IPAddress.Loopback, 0), server.Endpoint);
+                    Assert.InRange(listeningEndpoint.Port, 1, 65535);
                     Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1], deadline.Token));
                 }
                 finally
