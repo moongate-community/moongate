@@ -24,10 +24,7 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
     private ClientVersionPacket(string version, int length)
     {
         PacketValidation.ValidateAscii(version, nameof(version));
-        if (version.Length == 0)
-        {
-            throw new ArgumentException("The client version must not be empty.", nameof(version));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(version);
 
         if (length > ushort.MaxValue)
         {
@@ -51,7 +48,7 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
         var parsed = payload[^1] == 0
                          ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
                          : reader.TryReadAscii(payload.Length, out version);
-        if (!parsed || string.IsNullOrEmpty(version))
+        if (!parsed || string.IsNullOrWhiteSpace(version))
         {
             return false;
         }

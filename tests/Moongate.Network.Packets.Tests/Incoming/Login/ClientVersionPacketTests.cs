@@ -54,7 +54,24 @@ public class ClientVersionPacketTests
         Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
     }
 
-    [Theory, InlineData(""), InlineData("é"), InlineData("7\0.0")]
+    [Theory,
+     InlineData("BD000420"), InlineData("BD00052000"),
+     InlineData("BD000409"), InlineData("BD00050900"),
+     InlineData("BD00040A"), InlineData("BD00050A00"),
+     InlineData("BD00040B"), InlineData("BD00050B00"),
+     InlineData("BD00040C"), InlineData("BD00050C00"),
+     InlineData("BD00040D"), InlineData("BD00050D00"),
+     InlineData("BD000920090A0B0C0D"), InlineData("BD000A20090A0B0C0D00")]
+    public void TryDecode_WhitespaceVersion_ReturnsFalse(string hex)
+    {
+        Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out var packet));
+        Assert.Null(packet);
+    }
+
+    [Theory,
+     InlineData(""), InlineData("é"), InlineData("7\0.0"),
+     InlineData(" "), InlineData("\t"), InlineData("\n"), InlineData("\v"), InlineData("\f"), InlineData("\r"),
+     InlineData(" \t\n\v\f\r")]
     public void Constructor_InvalidVersion_ThrowsArgumentException(string version)
     {
         Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));

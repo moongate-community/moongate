@@ -18,6 +18,17 @@ public sealed class PacketSendService : IPacketSendService
     private bool _running;
     private bool _stopped;
 
+    internal int ActiveOutboxCount
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _outboxes.Count;
+            }
+        }
+    }
+
     public PacketSendService(ISessionService sessions, int capacity = 128)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);

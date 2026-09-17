@@ -166,10 +166,19 @@ public sealed class PacketSendServiceTests
         sessions.GetOrCreate(fixture.Client);
         var sender = new PacketSendService(sessions);
         await sender.StartAsync();
-        Assert.True(sender.TrySend(fixture.Client.SessionId, new PingPacket(1)));
-        await middleware.ReadAsync();
-        await fixture.Client.DisposeAsync().AsTask().WaitAsync(Timeout);
-        await sender.StopAsync().WaitAsync(Timeout);
-        Assert.False(sender.TrySend(fixture.Client.SessionId, new PingPacket(2)));
+        try
+        {
+            Assert.True(sender.TrySend(fixture.Client.SessionId, new PingPacket(1)));
+            await middleware.ReadAsync();
+            Assert.Equal(1, sender.ActiveOutboxCount);
+            await fixture.Client.DisposeAsync().AsTask().WaitAsync(Timeout);
+            Assert.True(SpinWait.SpinUntil(() => sender.ActiveOutboxCount == 0, Timeout),
+                "The idle outbox must retire after connection completion, before sender shutdown.");
+            Assert.False(sender.TrySend(fixture.Client.SessionId, new PingPacket(2)));
+        }
+        finally
+        {
+            await sender.StopAsync().WaitAsync(Timeout);
+        }
     }
 }

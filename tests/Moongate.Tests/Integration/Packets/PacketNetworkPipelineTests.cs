@@ -64,6 +64,30 @@ public sealed class PacketNetworkPipelineTests
         Assert.Equal("7.0", Assert.Single(fixture.Sessions.GetAll()).NetworkSession.ClientVersion);
     }
 
+    [Theory,
+     InlineData("BD000420"), InlineData("BD00052000"),
+     InlineData("BD000920090A0B0C0D"), InlineData("BD000A20090A0B0C0D00")]
+    public async Task WhitespaceVersion_ClosesOnlyOffenderAndKeepsLoopServingOtherClients(string hex)
+    {
+        await using var fixture = new PacketNetworkFixture();
+        await fixture.StartAsync();
+        using var healthy = await fixture.ConnectAsync();
+        await healthy.GetStream().WriteAsync(new byte[] { 0x73, 41 });
+        Assert.Equal(new byte[] { 0x73, 41 }, await ReadAsync(healthy, 2));
+
+        using var offender = await fixture.ConnectAsync();
+        await offender.GetStream().WriteAsync(Convert.FromHexString(hex));
+        using var deadline = new CancellationTokenSource(Timeout);
+        var closed = offender.GetStream().ReadAsync(new byte[1], deadline.Token).AsTask();
+        await Task.WhenAny(closed, fixture.Loop.Completion).WaitAsync(Timeout);
+        Assert.False(fixture.Loop.Completion.IsCompleted);
+        Assert.Equal(0, await closed.WaitAsync(Timeout));
+
+        await healthy.GetStream().WriteAsync(new byte[] { 0x73, 42 });
+        Assert.Equal(new byte[] { 0x73, 42 }, await ReadAsync(healthy, 2));
+        Assert.False(fixture.Loop.Completion.IsCompleted);
+    }
+
     [Theory, InlineData(new byte[] { 0xFF }), InlineData(new byte[] { 0xBD, 0, 3 }), InlineData(new byte[] { 0xBD, 0, 4, 0 }), InlineData(new byte[] { 0xA0, 0, 1 })]
     public async Task UnknownMalformedOrUnhandledPacket_ClosesConnection(byte[] bytes)
     {
