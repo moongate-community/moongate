@@ -132,6 +132,11 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         return _store.AbortAsync();
     }
 
+    Task IPersistenceCollection.CloseFromOwnerAsync()
+    {
+        return _store.DisposeAsync().AsTask();
+    }
+
     private static T DeserializeDetached(byte[] payload)
     {
         return MemoryPackSerializer.Deserialize<T>(payload) ??
@@ -196,7 +201,9 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
     {
         if (!_ownsMutationGate)
         {
-            return _store.DisposeAsync();
+            return new ValueTask(
+                _mutationGate.RunAsync(_ => _store.DisposeAsync().AsTask())
+            );
         }
 
         return new ValueTask(

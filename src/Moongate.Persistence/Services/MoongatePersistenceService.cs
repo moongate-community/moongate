@@ -142,57 +142,37 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         CancellationToken cancellationToken
     )
     {
-        const int awaitingCapture = 0;
-        const int capturing = 1;
-        const int captured = 2;
-        const int closed = 3;
-        const int failed = 4;
         CapturedPersistenceCollection[]? capturedCollections = null;
-        var captureState = awaitingCapture;
-        var invalidInvocation = 0;
+        var captureState = new PersistenceCaptureState();
         Action capture = () =>
         {
-            if (Interlocked.CompareExchange(ref captureState, capturing, awaitingCapture) != awaitingCapture)
-            {
-                Volatile.Write(ref invalidInvocation, 1);
-                throw new InvalidOperationException(
-                    "The persistence capture action must be invoked exactly once."
-                );
-            }
+            captureState.BeginCapture();
 
             try
             {
                 _mutationGate.RunCapture(
                     () => capturedCollections = CaptureAllCollections(collections, cancellationToken)
                 );
-                if (Interlocked.CompareExchange(ref captureState, captured, capturing) != capturing)
-                {
-                    Volatile.Write(ref invalidInvocation, 1);
-                    throw new InvalidOperationException(
-                        "The persistence capture action completed after its callback returned."
-                    );
-                }
+                captureState.CompleteCapture();
             }
             catch
             {
-                Interlocked.CompareExchange(ref captureState, failed, capturing);
+                captureState.FailCapture();
                 throw;
             }
         };
 
-        int completedState;
+        bool captureCompleted;
         try
         {
             await captureAsync(capture, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
-            completedState = Interlocked.Exchange(ref captureState, closed);
+            captureCompleted = captureState.Close();
         }
 
-        if (completedState != captured ||
-            Volatile.Read(ref invalidInvocation) != 0 ||
-            capturedCollections is null)
+        if (!captureCompleted || capturedCollections is null)
         {
             throw new InvalidOperationException(
                 "The persistence capture action must be invoked exactly once before its callback returns."
@@ -322,7 +302,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 }
                 else
                 {
-                    await collection.DisposeAsync().ConfigureAwait(false);
+                    await collection.CloseFromOwnerAsync().ConfigureAwait(false);
                 }
             }
             catch (Exception exception) { failures.Add(exception); }

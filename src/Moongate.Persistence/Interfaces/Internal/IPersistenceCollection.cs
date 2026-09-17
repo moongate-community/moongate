@@ -19,4 +19,7 @@ internal interface IPersistenceCollection : IAsyncDisposable
 
     /// <summary>Closes the collection without checkpointing its state.</summary>
     Task AbortAsync();
+
+    /// <summary>Closes the collection after its owner has drained the shared mutation gate.</summary>
+    Task CloseFromOwnerAsync();
 }
