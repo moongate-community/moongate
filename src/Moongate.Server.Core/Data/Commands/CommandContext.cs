@@ -1,3 +1,4 @@
+using System.Globalization;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Commands;
 
@@ -69,7 +70,7 @@ public sealed class CommandContext
 
     private void Write(string message, object[] args, CommandOutputLevel level)
     {
-        var formatted = args.Length == 0 ? message : string.Format(message, args);
+        var formatted = args.Length == 0 ? message : string.Format(CultureInfo.InvariantCulture, message, args);
 
         // A single-line message is kept verbatim so an empty echo still produces one line;
         // only genuinely multi-line text is split, and its blank segments are dropped.

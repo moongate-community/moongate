@@ -121,7 +121,7 @@ public sealed class CommandSystemService : ICommandSystemService
             return context.Output;
         }
 
-        if (!command.Definition.Source.HasFlag(source))
+        if (source == CommandSourceType.None || !command.Definition.Source.HasFlag(source))
         {
             context.PrintError("Command '{0}' is not available from source '{1}'.", name, source);
 

@@ -84,8 +84,28 @@ public sealed class CommandSystemServiceTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_NoneSourceIsRejectedEvenWhenEverySourceIsAllowed()
+    {
+        using var container = new Container();
+        container.RegisterCommand<RecordingCommandExecutor>(
+            "echo",
+            source: CommandSourceType.Console | CommandSourceType.InGame,
+            minimumAccountType: AccountType.Regular
+        );
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+
+        var line = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.None));
+
+        Assert.Equal(CommandOutputLevel.Error, line.Level);
+        Assert.Empty(container.Resolve<RecordingCommandExecutor>().Invocations);
+        await service.StopAsync();
+    }
+
+    [Fact]
     public async Task ExecuteAsync_ConsoleSourceResolvesToAdministrator()
     {
+        await using var fixture = await SessionFixture.CreateAsync();
         using var container = new Container();
         container.RegisterCommand<RecordingCommandExecutor>(
             "echo",
@@ -96,8 +116,12 @@ public sealed class CommandSystemServiceTests
         await service.StartAsync();
 
         var output = await service.ExecuteAsync("echo hi");
-
         Assert.Equal("ok", Assert.Single(output).Text);
+
+        var session = new GameSession(new NetworkSession(fixture.Client), fixture.Loop);
+        var outputWithSession = await service.ExecuteAsync("echo hi", CommandSourceType.Console, session);
+        Assert.Equal("ok", Assert.Single(outputWithSession).Text);
+
         await service.StopAsync();
     }
 
@@ -142,6 +166,28 @@ public sealed class CommandSystemServiceTests
 
         Assert.Equal("ok", allowed.Text);
         Assert.Same(session, Assert.Single(container.Resolve<RecordingCommandExecutor>().Invocations).Session);
+        await service.StopAsync();
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_InGameGameMasterBelowAdministratorMinimumIsRejected()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = new Container();
+        container.RegisterCommand<RecordingCommandExecutor>(
+            "echo",
+            source: CommandSourceType.InGame,
+            minimumAccountType: AccountType.Administrator
+        );
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+        var session = new GameSession(new NetworkSession(fixture.Client), fixture.Loop);
+        await fixture.ExecuteOnLoopAsync(() => session.SetAccountType(AccountType.GameMaster));
+
+        var line = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame, session));
+
+        Assert.Equal(CommandOutputLevel.Error, line.Level);
+        Assert.Empty(container.Resolve<RecordingCommandExecutor>().Invocations);
         await service.StopAsync();
     }
 
@@ -221,7 +267,7 @@ public sealed class CommandSystemServiceTests
     }
 
     [Fact]
-    public async Task StartAsync_BindsEachExecutorOnceAcrossItsAliases()
+    public async Task ExecuteAsync_DispatchesEveryAliasToTheSameExecutor()
     {
         using var container = new Container();
         container.RegisterCommand<RecordingCommandExecutor>("echo|e", minimumAccountType: AccountType.Regular);
