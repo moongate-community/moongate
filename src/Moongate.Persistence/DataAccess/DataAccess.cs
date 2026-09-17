@@ -11,11 +11,24 @@ namespace Moongate.Persistence.DataAccess;
 public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where T : class, IMoongateEntity
 {
     private readonly BinaryCollectionStore _store;
+    private readonly PersistenceMutationGate _mutationGate;
     private readonly Func<IEnumerable<T>>? _entitySource;
+    private readonly bool _ownsMutationGate;
 
     internal DataAccess(BinaryCollectionStore store, Func<IEnumerable<T>>? entitySource = null)
+        : this(store, new PersistenceMutationGate(), entitySource)
+    {
+        _ownsMutationGate = true;
+    }
+
+    internal DataAccess(
+        BinaryCollectionStore store,
+        PersistenceMutationGate mutationGate,
+        Func<IEnumerable<T>>? entitySource = null
+    )
     {
         _store = store;
+        _mutationGate = mutationGate;
         _entitySource = entitySource;
     }
 
@@ -47,14 +60,20 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         var id = entity.Id;
         var payload = MemoryPackSerializer.Serialize(entity);
 
-        return _store.UpsertAsync(id, payload, cancellationToken);
+        return _mutationGate.RunAsync(
+            token => _store.UpsertAsync(id, payload, token),
+            cancellationToken
+        );
     }
 
     public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
     {
         ValidateId(id);
 
-        return _store.DeleteAsync(id, cancellationToken);
+        return _mutationGate.RunAsync(
+            token => _store.DeleteAsync(id, token),
+            cancellationToken
+        );
     }
 
     Task IPersistenceCollection.InitializeAsync(CancellationToken cancellationToken)
@@ -67,12 +86,12 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         return _store.CheckpointAsync(cancellationToken);
     }
 
-    async Task IPersistenceCollection.SaveAsync(CancellationToken cancellationToken)
+    Dictionary<Serial, byte[]> IPersistenceCollection.Capture(CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (_entitySource is null)
         {
-            return;
+            return [];
         }
 
         var entities = _entitySource() ??
@@ -91,8 +110,19 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        foreach (var (id, payload) in captured)
+
+        return captured;
+    }
+
+    async Task IPersistenceCollection.CommitAsync(
+        Dictionary<Serial, byte[]> payloads,
+        CancellationToken cancellationToken
+    )
+    {
+        ArgumentNullException.ThrowIfNull(payloads);
+        foreach (var (id, payload) in payloads)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             await _store.UpsertAsync(id, payload, cancellationToken).ConfigureAwait(false);
         }
     }
@@ -164,6 +194,13 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
 
     ValueTask IAsyncDisposable.DisposeAsync()
     {
-        return _store.DisposeAsync();
+        if (!_ownsMutationGate)
+        {
+            return _store.DisposeAsync();
+        }
+
+        return new ValueTask(
+            _mutationGate.CloseAsync(() => _store.DisposeAsync().AsTask())
+        );
     }
 }

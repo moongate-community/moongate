@@ -11,7 +11,7 @@ namespace Moongate.Tests.Persistence.DataAccess;
 public sealed class DataAccessTests
 {
     [Fact]
-    public async Task SaveAsync_LiveEntities_CapturesAllValuesBeforeFirstWrite()
+    public async Task CaptureAndCommit_LiveEntities_UsesDetachedPayloads()
     {
         using var root = new TemporaryPersistenceDirectory();
         using var fileSystem = new FaultingPersistenceFileSystem();
@@ -20,24 +20,16 @@ public sealed class DataAccessTests
         List<TestEntity> live = [new TestEntity { Id = new Serial(1), Name = "first" }, second];
         var access = new DataAccess<TestEntity>(store, () => live);
         await ((IPersistenceCollection)access).InitializeAsync();
-        fileSystem.BlockFlush = true;
-        var save = Task.Run(() => ((IPersistenceCollection)access).SaveAsync());
-        try
-        {
-            await fileSystem.FlushEntered.Task.WaitAsync(TimeSpan.FromSeconds(10));
-            second.Name = "changed";
-            live.Clear();
-            fileSystem.ContinueFlush.Set();
-            await save.WaitAsync(TimeSpan.FromSeconds(10));
-            Assert.Equal("captured", access.GetById(new Serial(2))!.Name);
-            Assert.Equal(2, access.GetAll().Count);
-        }
-        finally
-        {
-            fileSystem.ContinueFlush.Set();
-            await save;
-            await ((IAsyncDisposable)access).DisposeAsync();
-        }
+        var captured = ((IPersistenceCollection)access).Capture(CancellationToken.None);
+        second.Name = "changed";
+        live.Clear();
+
+        Assert.Empty(access.GetAll());
+        await ((IPersistenceCollection)access).CommitAsync(captured, CancellationToken.None);
+
+        Assert.Equal("captured", access.GetById(new Serial(2))!.Name);
+        Assert.Equal(2, access.GetAll().Count);
+        await ((IAsyncDisposable)access).DisposeAsync();
     }
 
     [Fact]
