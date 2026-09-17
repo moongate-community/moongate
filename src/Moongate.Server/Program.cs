@@ -8,14 +8,18 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Data.Args;
 using Moongate.Server.Handlers.General;
 using Moongate.Server.Handlers.Login;
 using Moongate.Server.Helpers;
+using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Sessions;
@@ -102,7 +106,14 @@ await ConsoleApp.RunAsync(
                                 () => new PluginLoaderService(services, directoriesConfig)
                             )
                             .RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
+                            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
+                            .RegisterMoongateService<ICommandSystemService, CommandSystemService>()
+                            .RegisterCommand<EchoCommand>(
+                                "echo|e",
+                                "Echoes back its arguments.",
+                                CommandSourceType.Console | CommandSourceType.InGame,
+                                AccountType.Regular
+                            );
 
                     PacketPipelineRegistration.Register(services);
 
