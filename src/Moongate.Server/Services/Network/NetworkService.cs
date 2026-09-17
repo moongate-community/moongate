@@ -17,7 +17,6 @@ public class NetworkService : INetworkService
     private readonly ISessionService _sessionService;
     private readonly IPacketDispatchService _dispatcher;
     private readonly IPacketSendService _sender;
-    private readonly IReadOnlyList<MoongateTcpServer> _tcpServers;
     private readonly Lock _cleanupGate = new();
     private readonly HashSet<Task> _cleanups = [];
     private readonly BootstrapLifecycleTasks _lifecycle = new();
@@ -25,22 +24,29 @@ public class NetworkService : INetworkService
 
     private bool _stopping;
 
-    internal IReadOnlyList<MoongateTcpServer> Listeners => _tcpServers;
+    internal IReadOnlyList<MoongateTcpServer> Listeners { get; }
 
-    public NetworkService(MoongateServerConfig config, ISessionService sessionService,
-        IPacketDispatchService dispatcher, IPacketSendService sender)
-        : this(CreateListeners(config), sessionService, dispatcher, sender)
-    {
-    }
+    public NetworkService(
+        MoongateServerConfig config,
+        ISessionService sessionService,
+        IPacketDispatchService dispatcher,
+        IPacketSendService sender
+    )
+        : this(CreateListeners(config), sessionService, dispatcher, sender) { }
 
-    internal NetworkService(IReadOnlyList<MoongateTcpServer> listeners, ISessionService sessionService,
-        IPacketDispatchService dispatcher, IPacketSendService sender)
+    internal NetworkService(
+        IReadOnlyList<MoongateTcpServer> listeners,
+        ISessionService sessionService,
+        IPacketDispatchService dispatcher,
+        IPacketSendService sender
+    )
     {
         _sessionService = sessionService;
         _dispatcher = dispatcher;
         _sender = sender;
-        _tcpServers = listeners;
-        foreach (var listener in _tcpServers)
+        Listeners = listeners;
+
+        foreach (var listener in Listeners)
         {
             listener.OnClientConnect += TcpServerOnOnClientConnect;
             listener.OnClientDisconnect += TcpServerOnOnClientDisconnect;
@@ -53,9 +59,14 @@ public class NetworkService : INetworkService
         var addresses = config.Network.ListenAddress == "0.0.0.0"
                             ? new List<IPAddress>(NetworkUtils.GetLocalIpAddresses())
                             : new List<IPAddress> { IPAddress.Parse(config.Network.ListenAddress) };
-        return addresses.Select(address => new MoongateTcpServer(
-            new IPEndPoint(address, config.Network.GamePort), framer: new UoPacketFramer(PacketRegistry.Default)
-        )).ToArray();
+
+        return addresses.Select(
+                            address => new MoongateTcpServer(
+                                new IPEndPoint(address, config.Network.GamePort),
+                                framer: new UoPacketFramer(PacketRegistry.Default)
+                            )
+                        )
+                        .ToArray();
     }
 
     private void TcpServerOnOnDataReceived(object? sender, TcpDataReceivedEventArgs e)
@@ -69,8 +80,12 @@ public class NetworkService : INetworkService
         var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
                              ? descriptor.PacketType.Name
                              : "Unknown";
-        _logger.Warning("Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
-            e.Client.SessionId, opCode, packetName);
+        _logger.Warning(
+            "Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
+            e.Client.SessionId,
+            opCode,
+            packetName
+        );
         e.Client.Dispose();
     }
 
@@ -79,6 +94,7 @@ public class NetworkService : INetworkService
         // Completion follows this synchronous event. Publish ownership before starting cleanup,
         // and return without waiting for either the client completion or the game loop.
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
         lock (_cleanupGate)
         {
             _cleanups.Add(completion.Task);
@@ -92,9 +108,10 @@ public class NetworkService : INetworkService
         {
             // Start both operations even if the first throws synchronously or fails asynchronously.
             await Task.WhenAll(
-                CleanupAsync(() => _sender.DisconnectAsync(sessionId), sessionId),
-                CleanupAsync(() => _dispatcher.DisconnectAsync(sessionId), sessionId)
-            ).ConfigureAwait(false);
+                          CleanupAsync(() => _sender.DisconnectAsync(sessionId), sessionId),
+                          CleanupAsync(() => _dispatcher.DisconnectAsync(sessionId), sessionId)
+                      )
+                      .ConfigureAwait(false);
         }
         finally
         {
@@ -121,8 +138,11 @@ public class NetworkService : INetworkService
     private void TcpServerOnOnClientConnect(object? sender, TcpClientEventArgs e)
     {
         _sessionService.GetOrCreate(e.Client);
-        _logger.Information("Client connected from {Address} with session ID {SessionId}",
-            e.Client.RemoteEndPoint, e.Client.SessionId);
+        _logger.Information(
+            "Client connected from {Address} with session ID {SessionId}",
+            e.Client.RemoteEndPoint,
+            e.Client.SessionId
+        );
     }
 
     public Task StartAsync()
@@ -142,9 +162,13 @@ public class NetworkService : INetworkService
     {
         try
         {
-            foreach (var listener in _tcpServers)
+            foreach (var listener in Listeners)
             {
-                _logger.Information("Starting TCP server on {Address}:{Port}", listener.Endpoint.Address, listener.Endpoint.Port);
+                _logger.Information(
+                    "Starting TCP server on {Address}:{Port}",
+                    listener.Endpoint.Address,
+                    listener.Endpoint.Port
+                );
                 await listener.StartAsync(default).ConfigureAwait(false);
             }
         }
@@ -158,6 +182,7 @@ public class NetworkService : INetworkService
             {
                 _logger.Error(cleanupFailure, "TCP cleanup failed after listener startup failure");
             }
+
             throw;
         }
     }
@@ -169,43 +194,55 @@ public class NetworkService : INetworkService
             // Serialize shutdown admission with the first startup so a cached stop task can
             // never be followed by newly opened listeners.
             _stopping = true;
-            return _lifecycle.StopAsync(async startup =>
-            {
-                if (startup is not null)
+
+            return _lifecycle.StopAsync(
+                async startup =>
                 {
-                    await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    if (startup is not null)
+                    {
+                        await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    }
+                    await StopListenersAsync().ConfigureAwait(false);
                 }
-                await StopListenersAsync().ConfigureAwait(false);
-            });
+            );
         }
     }
 
     private async Task StopListenersAsync()
     {
         List<Exception> failures = [];
+
         // Request every listener stop before awaiting any of them.
-        await Task.WhenAll(_tcpServers.Select(async listener =>
-        {
-            try
-            {
-                await listener.StopAsync(default).ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                lock (failures)
-                {
-                    failures.Add(exception);
-                }
-            }
-        })).ConfigureAwait(false);
+        await Task.WhenAll(
+                      Listeners.Select(
+                          async listener =>
+                          {
+                              try
+                              {
+                                  await listener.StopAsync(default).ConfigureAwait(false);
+                              }
+                              catch (Exception exception)
+                              {
+                                  lock (failures)
+                                  {
+                                      failures.Add(exception);
+                                  }
+                              }
+                          }
+                      )
+                  )
+                  .ConfigureAwait(false);
 
         Task[] pending;
+
         lock (_cleanupGate)
         {
             pending = _cleanups.ToArray();
         }
+
         // Listener stop has joined callbacks, so no new disconnect cleanup can arrive.
         await Task.WhenAll(pending).ConfigureAwait(false);
+
         if (failures.Count > 0)
         {
             throw new AggregateException(failures);
