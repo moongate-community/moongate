@@ -224,6 +224,27 @@ public sealed class PacketNetworkPipelineTests
         Assert.Empty(fixture.Sessions.GetAll());
     }
 
+    [Fact]
+    public async Task StopBeforeStart_RejectsStartupAndRepeatedStopLeavesListenersClosed()
+    {
+        await using var fixture = new PacketNetworkFixture();
+        try
+        {
+            await fixture.Network.StopAsync().WaitAsync(Timeout);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Network.StartAsync());
+            await fixture.Network.StopAsync().WaitAsync(Timeout);
+            Assert.All(fixture.Listeners, listener => Assert.Equal(0, listener.Port));
+        }
+        finally
+        {
+            // Keep the regression test leak-free even when startup incorrectly opens a listener.
+            foreach (var listener in fixture.Listeners)
+            {
+                await listener.StopAsync(default).WaitAsync(Timeout);
+            }
+        }
+    }
+
     private static async Task<byte[]> ReadAsync(TcpClient peer, int count)
     {
         var bytes = new byte[count];

@@ -21,6 +21,9 @@ public class NetworkService : INetworkService
     private readonly Lock _cleanupGate = new();
     private readonly HashSet<Task> _cleanups = [];
     private readonly BootstrapLifecycleTasks _lifecycle = new();
+    private readonly Lock _lifecycleGate = new();
+
+    private bool _stopping;
 
     internal IReadOnlyList<MoongateTcpServer> Listeners => _tcpServers;
 
@@ -124,7 +127,15 @@ public class NetworkService : INetworkService
 
     public Task StartAsync()
     {
-        return _lifecycle.StartAsync(StartCoreAsync);
+        lock (_lifecycleGate)
+        {
+            if (_stopping)
+            {
+                throw new InvalidOperationException("Network listeners cannot start after shutdown begins.");
+            }
+
+            return _lifecycle.StartAsync(StartCoreAsync);
+        }
     }
 
     private async Task StartCoreAsync()
@@ -153,14 +164,20 @@ public class NetworkService : INetworkService
 
     public Task StopAsync()
     {
-        return _lifecycle.StopAsync(async startup =>
+        lock (_lifecycleGate)
         {
-            if (startup is not null)
+            // Serialize shutdown admission with the first startup so a cached stop task can
+            // never be followed by newly opened listeners.
+            _stopping = true;
+            return _lifecycle.StopAsync(async startup =>
             {
-                await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-            }
-            await StopListenersAsync().ConfigureAwait(false);
-        });
+                if (startup is not null)
+                {
+                    await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                }
+                await StopListenersAsync().ConfigureAwait(false);
+            });
+        }
     }
 
     private async Task StopListenersAsync()
