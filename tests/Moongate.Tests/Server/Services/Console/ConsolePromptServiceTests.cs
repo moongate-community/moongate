@@ -210,4 +210,28 @@ public sealed class ConsolePromptServiceTests
         service.RunWithPromptHidden(() => writes++);
         Assert.Equal(2, writes);
     }
+
+    [Fact]
+    public void RunWithPromptHidden_WriteItselfThrowingDoesNotRunItTwice()
+    {
+        var driver = new RecordingConsoleDriver { WindowWidth = 20, WindowHeight = 10, BufferHeight = 10 };
+        var service = new ConsolePromptService(driver, interactive: true);
+        service.ShowPrompt();
+        driver.ThrowOnOperation = driver.Operations.Count + 3;
+        var writes = 0;
+
+        var exception = Record.Exception(
+            () => service.RunWithPromptHidden(
+                () =>
+                {
+                    writes++;
+                    driver.Write("callback write");
+                }
+            )
+        );
+
+        Assert.Null(exception);
+        Assert.Equal(1, writes);
+        Assert.False(service.IsInteractive);
+    }
 }

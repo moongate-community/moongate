@@ -79,8 +79,8 @@ public sealed class ConsolePromptService : IConsolePromptService
                     ClearPromptRow();
                 }
 
-                write();
                 written = true;
+                write();
 
                 if (_promptVisible)
                 {
@@ -226,9 +226,7 @@ public sealed class ConsolePromptService : IConsolePromptService
         var width = _driver.WindowWidth;
         var row = GetPromptRow();
 
-        _driver.SetCursorPosition(0, row);
-        _driver.Write(new string(' ', width));
-        _driver.SetCursorPosition(0, row);
+        EraseRow(row, width);
     }
 
     private void RenderPrompt()
@@ -238,11 +236,16 @@ public sealed class ConsolePromptService : IConsolePromptService
         var prefix = _locked ? LockedPromptPrefix : PromptPrefix;
         var line = prefix + _input;
 
+        EraseRow(row, width);
+        _driver.Write(line.Length > width ? line[..width] : line);
+        _driver.SetCursorPosition(Math.Min(width - 1, line.Length), row);
+    }
+
+    private void EraseRow(int row, int width)
+    {
         _driver.SetCursorPosition(0, row);
         _driver.Write(new string(' ', width));
         _driver.SetCursorPosition(0, row);
-        _driver.Write(line.Length > width ? line[..width] : line);
-        _driver.SetCursorPosition(Math.Min(width - 1, line.Length), row);
     }
 
     private int GetPromptRow()
