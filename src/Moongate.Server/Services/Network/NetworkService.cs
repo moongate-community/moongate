@@ -1,5 +1,7 @@
 using System.Net;
 using Moongate.Core.Utils;
+using Moongate.Network.Data.Events;
+using Moongate.Network.Packets.Registry;
 using Moongate.Network.Server;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Config;
@@ -41,8 +43,59 @@ public class NetworkService : INetworkService
         foreach (var ipAddress in ipAddressToBind)
         {
             var tcpServer = new MoongateTcpServer(new IPEndPoint(ipAddress, _config.Network.GamePort));
+
             _tcpServers.Add(tcpServer);
+
+            tcpServer.OnClientConnect += TcpServerOnOnClientConnect;
+
+            tcpServer.OnClientDisconnect += TcpServerOnOnClientDisconnect;
+
+            tcpServer.OnDataReceived += TcpServerOnOnDataReceived;
         }
+    }
+
+    private void TcpServerOnOnDataReceived(object? sender, TcpDataReceivedEventArgs e)
+    {
+        _logger.Debug("Received {Length} bytes from client {SessionId}", e.Data.Length, e.Client.SessionId);
+
+        var success = PacketRegistry.Default.TryDecode(e.Data.Span, out var packet, out var opCode);
+
+        if (success)
+        {
+            _logger.Debug("Decoded packet {PacketType} from client {SessionId}", packet.GetType().Name, e.Client.SessionId);
+        }
+        else
+        {
+            var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
+                                 ? descriptor.PacketType.Name
+                                 : "Unknown";
+
+            _logger.Warning(
+                "Unknown packet received from client {SessionId}, opCode: {OpCode} name: {PacketName}",
+                e.Client.SessionId,
+                opCode,
+                packetName
+            );
+        }
+    }
+
+    private void TcpServerOnOnClientDisconnect(object? sender, TcpClientEventArgs e)
+    {
+        if (_sessionService.TryGet(e.Client.SessionId, out var session))
+        {
+            session.NetworkSession.DetachClient();
+            _sessionService.Remove(e.Client.SessionId);
+        }
+    }
+
+    private void TcpServerOnOnClientConnect(object? sender, TcpClientEventArgs e)
+    {
+        _logger.Information(
+            "Client connected from {Address} with session ID {SessionId}",
+            e.Client.RemoteEndPoint,
+            e.Client.SessionId
+        );
+        _sessionService.GetOrCreate(e.Client);
     }
 
     public Task StartAsync()
@@ -60,7 +113,7 @@ public class NetworkService : INetworkService
         return Task.CompletedTask;
     }
 
-    public Task StopAsync()
+    public async Task StopAsync()
     {
         foreach (var tcpServer in _tcpServers)
         {
@@ -69,9 +122,7 @@ public class NetworkService : INetworkService
                 tcpServer.Endpoint.Address,
                 tcpServer.Endpoint.Port
             );
-            tcpServer.StopAsync(default);
+            await tcpServer.StopAsync(default);
         }
-
-        return Task.CompletedTask;
     }
 }

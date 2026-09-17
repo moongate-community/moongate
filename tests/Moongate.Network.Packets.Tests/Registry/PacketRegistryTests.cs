@@ -218,6 +218,41 @@ public class PacketRegistryTests
         Assert.Null(descriptor);
     }
 
+    [Theory, InlineData(0xA0, typeof(ServerSelectPacket)), InlineData(0x55, typeof(LoginCompletePacket)),
+     InlineData(0x73, typeof(PingPacket))]
+    public void TryGetDescriptor_WithoutDirection_FindsRegisteredPacket(byte opCode, Type expectedType)
+    {
+        Assert.True(PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor));
+        Assert.Equal(expectedType, descriptor.PacketType);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public void TryGetDescriptor_SharedOpCode_PrefersIncomingRegardlessOfRegistrationOrder(bool incomingFirst)
+    {
+        var registry = new PacketRegistry();
+
+        if (incomingFirst)
+        {
+            registry.RegisterPacket<ClientVersionPacket>();
+            registry.RegisterPacket<ClientVersionRequestPacket>();
+        }
+        else
+        {
+            registry.RegisterPacket<ClientVersionRequestPacket>();
+            registry.RegisterPacket<ClientVersionPacket>();
+        }
+
+        Assert.True(registry.TryGetDescriptor(0xBD, out var descriptor));
+        Assert.Equal(typeof(ClientVersionPacket), descriptor.PacketType);
+    }
+
+    [Fact]
+    public void TryGetDescriptor_UnknownOpCode_ReturnsFalseAndNull()
+    {
+        Assert.False(PacketRegistry.Default.TryGetDescriptor(0x99, out var descriptor));
+        Assert.Null(descriptor);
+    }
+
     [Fact]
     public void TryDecode_KnownIncomingPackets_DispatchesAndReadsFields()
     {
@@ -264,11 +299,21 @@ public class PacketRegistryTests
         Assert.Equal(13, Assert.IsType<ClientVersionPacket>(versionPacket).Length);
     }
 
-    [Theory, InlineData(""), InlineData("9900"), InlineData("8204"), InlineData("BD000400"), InlineData("7300FF")]
-    public void TryDecode_UnknownOutgoingOrMalformedFrame_ReturnsFalse(string hex)
+    [Fact]
+    public void TryDecode_WithOpCodeOutput_DecodesPacketAndReturnsOpCode()
     {
-        Assert.False(PacketRegistry.Default.TryDecode(Convert.FromHexString(hex), out var packet));
+        Assert.True(PacketRegistry.Default.TryDecode([0x73, 0x2A], out var packet, out var opCode));
+        Assert.Equal((byte)0x73, opCode);
+        Assert.Equal((byte)42, Assert.IsType<PingPacket>(packet).Sequence);
+    }
+
+    [Theory, InlineData("", 0x00), InlineData("9900", 0x99), InlineData("8204", 0x82),
+     InlineData("BD000400", 0xBD), InlineData("7300FF", 0x73), InlineData("73", 0x73)]
+    public void TryDecode_UnknownOutgoingOrMalformedFrame_ReturnsFalseAndOpCode(string hex, byte expectedOpCode)
+    {
+        Assert.False(PacketRegistry.Default.TryDecode(Convert.FromHexString(hex), out var packet, out var opCode));
         Assert.Null(packet);
+        Assert.Equal(expectedOpCode, opCode);
     }
 
     [Fact]

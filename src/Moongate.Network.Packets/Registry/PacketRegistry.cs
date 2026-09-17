@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Internal;
@@ -19,9 +18,7 @@ public sealed class PacketRegistry
     public bool IsFrozen { get; private set; }
     public IReadOnlyList<PacketDescriptor> RegisteredPackets => IsFrozen ? _snapshot : CreateSnapshot();
 
-    public PacketRegistry()
-    {
-    }
+    public PacketRegistry() { }
 
     /// <summary>
     /// Registers a packet using the direction inferred from its incoming and outgoing interfaces.
@@ -41,6 +38,7 @@ public sealed class PacketRegistry
     {
         EnsureMutable();
         var descriptor = PacketMetadataCache<TPacket>.Descriptor;
+
         if ((descriptor.Direction & PacketDirection.Incoming) == 0)
         {
             throw new InvalidOperationException($"Packet type '{typeof(TPacket).FullName}' is not incoming.");
@@ -54,9 +52,12 @@ public sealed class PacketRegistry
     {
         EnsureMutable();
         var descriptor = PacketMetadataCache<TPacket>.Descriptor;
+
         if (descriptor.Direction == PacketDirection.Both)
         {
-            throw new InvalidOperationException($"Bidirectional packet type '{typeof(TPacket).FullName}' must be registered with RegisterIncoming.");
+            throw new InvalidOperationException(
+                $"Bidirectional packet type '{typeof(TPacket).FullName}' must be registered with RegisterIncoming."
+            );
         }
 
         if (descriptor.Direction != PacketDirection.Outgoing)
@@ -78,27 +79,52 @@ public sealed class PacketRegistry
         IsFrozen = true;
     }
 
+    /// <summary>Finds a registered packet by opcode, preferring the incoming packet when both directions exist.</summary>
+    /// <param name="opCode">The opcode to look up.</param>
+    /// <param name="descriptor">The matching descriptor, or null when the opcode is unknown.</param>
+    /// <returns>True when a packet is registered for the opcode; otherwise, false.</returns>
+    public bool TryGetDescriptor(byte opCode, [NotNullWhen(true)] out PacketDescriptor? descriptor)
+    {
+        return TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
+               TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+    }
+
     public bool TryGetDescriptor(
         byte opCode,
         PacketDirection direction,
-        [NotNullWhen(true)] out PacketDescriptor? descriptor)
+        [NotNullWhen(true)] out PacketDescriptor? descriptor
+    )
     {
         if (direction is not (PacketDirection.Incoming or PacketDirection.Outgoing))
         {
             descriptor = null;
+
             return false;
         }
 
         return _descriptors.TryGetValue((opCode, direction), out descriptor);
     }
 
+    /// <summary>Tries to decode one complete incoming packet, including its opcode and header.</summary>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet)
     {
+        return TryDecode(data, out packet, out _);
+    }
+
+    /// <summary>Tries to decode one complete incoming packet and returns its opcode even when decoding fails.</summary>
+    /// <param name="data">The complete packet, including its opcode and header.</param>
+    /// <param name="packet">The decoded packet on success, or null on failure.</param>
+    /// <param name="opCode">The first byte of the packet, or 0 when the input is empty.</param>
+    /// <returns>True when the packet was successfully decoded; otherwise, false.</returns>
+    public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet, out byte opCode)
+    {
         packet = null;
-        if (data.IsEmpty
-            || !TryGetDescriptor(data[0], PacketDirection.Incoming, out var descriptor)
-            || !PacketValidation.HasValidHeader(data, descriptor)
-            || !_incomingParsers.TryGetValue(data[0], out var parser))
+        opCode = data.IsEmpty ? (byte)0 : data[0];
+
+        if (data.IsEmpty ||
+            !TryGetDescriptor(opCode, PacketDirection.Incoming, out var descriptor) ||
+            !PacketValidation.HasValidHeader(data, descriptor) ||
+            !_incomingParsers.TryGetValue(opCode, out var parser))
         {
             return false;
         }
@@ -109,8 +135,11 @@ public sealed class PacketRegistry
     private void Register(PacketDescriptor descriptor, PacketParser? parser)
     {
         var keys = descriptor.Direction == PacketDirection.Both
-            ? new[] { (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing) }
-            : new[] { (descriptor.OpCode, descriptor.Direction) };
+                       ? new[]
+                       {
+                           (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
+                       }
+                       : new[] { (descriptor.OpCode, descriptor.Direction) };
         EnsureAvailable(descriptor, keys);
 
         foreach (var key in keys)
@@ -128,15 +157,18 @@ public sealed class PacketRegistry
 
     private ReadOnlyCollection<PacketDescriptor> CreateSnapshot()
     {
-        return Array.AsReadOnly(_registeredPackets
-            .OrderBy(descriptor => descriptor.OpCode)
-            .ThenBy(descriptor => descriptor.Direction)
-            .ToArray());
+        return Array.AsReadOnly(
+            _registeredPackets
+                .OrderBy(descriptor => descriptor.OpCode)
+                .ThenBy(descriptor => descriptor.Direction)
+                .ToArray()
+        );
     }
 
     private void EnsureAvailable(
         PacketDescriptor descriptor,
-        IEnumerable<(byte OpCode, PacketDirection Direction)> keys)
+        IEnumerable<(byte OpCode, PacketDirection Direction)> keys
+    )
     {
         if (_registeredPackets.Any(existing => existing.PacketType == descriptor.PacketType))
         {
@@ -148,7 +180,8 @@ public sealed class PacketRegistry
             if (_descriptors.TryGetValue(key, out var existing))
             {
                 throw new InvalidOperationException(
-                    $"Packet type '{descriptor.PacketType.FullName}' conflicts with '{existing.PacketType.FullName}' for opcode 0x{key.OpCode:X2} {key.Direction}.");
+                    $"Packet type '{descriptor.PacketType.FullName}' conflicts with '{existing.PacketType.FullName}' for opcode 0x{key.OpCode:X2} {key.Direction}."
+                );
             }
         }
     }
