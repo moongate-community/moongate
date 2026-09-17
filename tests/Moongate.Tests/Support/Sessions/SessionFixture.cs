@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.ExceptionServices;
 using Moongate.Network.Client;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Timing;
@@ -48,14 +49,17 @@ public sealed class SessionFixture : IAsyncDisposable
 
             return new SessionFixture(client, peer, loop);
         }
-        catch
+        catch (Exception creationException)
         {
-            loop?.Dispose();
-            peer?.Dispose();
-            if (client is not null)
+            try
             {
-                await client.DisposeAsync();
+                await DisposeResourcesAsync(client, peer, loop);
             }
+            catch (Exception cleanupException)
+            {
+                throw new AggregateException(creationException, cleanupException);
+            }
+
             throw;
         }
         finally
@@ -72,11 +76,83 @@ public sealed class SessionFixture : IAsyncDisposable
         await completion.Task.WaitAsync(Timeout);
     }
 
+    private static async Task DisposeResourcesAsync(
+        MoongateTcpClient? client,
+        Socket? peer,
+        GameLoopService? loop
+    )
+    {
+        var failures = new List<Exception>();
+
+        try
+        {
+            if (client is not null)
+            {
+                await AttemptAsync(() => client.DisposeAsync().AsTask().WaitAsync(Timeout), failures);
+            }
+        }
+        finally
+        {
+            try
+            {
+                if (peer is not null)
+                {
+                    Attempt(peer.Dispose, failures);
+                }
+            }
+            finally
+            {
+                if (loop is not null)
+                {
+                    try
+                    {
+                        await AttemptAsync(() => loop.StopAsync().WaitAsync(Timeout), failures);
+                    }
+                    finally
+                    {
+                        Attempt(loop.Dispose, failures);
+                    }
+                }
+            }
+        }
+
+        if (failures.Count == 1)
+        {
+            ExceptionDispatchInfo.Capture(failures[0]).Throw();
+        }
+
+        if (failures.Count > 1)
+        {
+            throw new AggregateException(failures);
+        }
+    }
+
+    private static async Task AttemptAsync(Func<Task> action, List<Exception> failures)
+    {
+        try
+        {
+            await action();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+    }
+
+    private static void Attempt(Action action, List<Exception> failures)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+    }
+
     public async ValueTask DisposeAsync()
     {
-        await Client.DisposeAsync();
-        _peer.Dispose();
-        await Loop.StopAsync().WaitAsync(Timeout);
-        Loop.Dispose();
+        await DisposeResourcesAsync(Client, _peer, Loop);
     }
 }

@@ -47,6 +47,7 @@ public sealed class NetworkSessionTests
         var session = new NetworkSession(fixture.Client);
 
         session.SetState(NetworkSessionState.Disconnected);
+        session.SetState(NetworkSessionState.Disconnected);
 
         Assert.Null(session.Client);
         Assert.Equal(NetworkSessionState.Disconnected, session.State);
@@ -107,5 +108,22 @@ public sealed class NetworkSessionTests
         Assert.Equal(NetworkSessionState.Disconnected, session.State);
         Assert.Equal(7u, session.Seed);
         Assert.Equal("7.0.90.15", session.ClientVersion);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" \t ")]
+    public async Task InvalidMutatorInputs_AfterDetachReportTerminalState(string? invalidVersion)
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = new NetworkSession(fixture.Client);
+        session.DetachClient();
+
+        Assert.Throws<InvalidOperationException>(() => session.SetState((NetworkSessionState)int.MaxValue));
+        Assert.Throws<InvalidOperationException>(() => session.SetClientVersion(invalidVersion!));
+
+        Assert.Equal(NetworkSessionState.Disconnected, session.State);
+        Assert.Null(session.ClientVersion);
     }
 }

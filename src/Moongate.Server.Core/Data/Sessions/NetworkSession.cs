@@ -84,14 +84,19 @@ public sealed class NetworkSession
 
     public void SetState(NetworkSessionState state)
     {
-        if (!Enum.IsDefined(state))
-        {
-            throw new ArgumentOutOfRangeException(nameof(state));
-        }
-
         lock (_sync)
         {
+            if (_state == NetworkSessionState.Disconnected && state == NetworkSessionState.Disconnected)
+            {
+                return;
+            }
+
             ThrowIfDisconnected();
+            if (!Enum.IsDefined(state))
+            {
+                throw new ArgumentOutOfRangeException(nameof(state));
+            }
+
             if (state == NetworkSessionState.Disconnected)
             {
                 DetachClientUnsafe();
@@ -113,11 +118,10 @@ public sealed class NetworkSession
 
     public void SetClientVersion(string clientVersion)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(clientVersion);
-
         lock (_sync)
         {
             ThrowIfDisconnected();
+            ArgumentException.ThrowIfNullOrWhiteSpace(clientVersion);
             _clientVersion = clientVersion;
         }
     }
