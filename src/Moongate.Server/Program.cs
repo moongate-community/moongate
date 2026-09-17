@@ -3,6 +3,8 @@ using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
+using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
@@ -11,6 +13,8 @@ using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Args;
+using Moongate.Server.Handlers.General;
+using Moongate.Server.Handlers.Login;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
@@ -96,7 +100,9 @@ await ConsoleApp.RunAsync(
                             .RegisterMoongateService<IEventBusService, EventBusService>()
                             .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
                                 () => new PluginLoaderService(services, directoriesConfig)
-                            );
+                            )
+                            .RegisterPacketHandler<PingPacket, PingPacketHandler>()
+                            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
 
                     PacketPipelineRegistration.Register(services);
 

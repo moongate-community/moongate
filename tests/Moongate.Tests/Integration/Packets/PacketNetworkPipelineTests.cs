@@ -6,6 +6,8 @@ using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Handlers.General;
+using Moongate.Server.Handlers.Login;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Sessions;
@@ -15,6 +17,8 @@ using System.Net.Sockets;
 using Moongate.Network.Server;
 using Moongate.Network.Data;
 using Moongate.Network.Packets.Registry;
+using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Services.Network.Framing;
 using Moongate.Tests.Support.GameLoop;
 using Moongate.Tests.TestSupport.Packets;
@@ -122,6 +126,8 @@ public sealed class PacketNetworkPipelineTests
         container.RegisterMoongateService<IGameLoopService, GameLoopService>(-800);
         container.RegisterMoongateService<ISessionService, SessionService>();
         container.RegisterInstance<IPluginLoaderService>(new DeferredPacketPluginLoader(container));
+        container.RegisterPacketHandler<PingPacket, PingPacketHandler>()
+                 .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         PacketPipelineRegistration.Register(container);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         try
