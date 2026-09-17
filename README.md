@@ -243,6 +243,55 @@ Run the packet tests independently:
 dotnet test tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj
 ```
 
+## Server sessions
+
+The executable registers `ISessionService` as a singleton. Resolve it from the
+server container and call `GetOrCreate` whenever a connected
+`MoongateTcpClient` needs its game session. `TryGet` looks up the transport
+session ID, `TryGetByCharacterId` scans current nonzero character associations,
+and `GetAll` returns a membership snapshot. `Remove` and `Clear` change registry
+membership only.
+
+Account and character associations must be changed by an
+`IGameLoopWorkItem`, because `GameSession` rejects writes made outside the game
+loop thread:
+
+```csharp
+using DryIoc;
+using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Interfaces.GameLoop;
+using Moongate.Server.Core.Interfaces.Services;
+
+var sessions = container.Resolve<ISessionService>();
+var session = sessions.GetOrCreate(client);
+await gameLoop.PostAsync(new SelectCharacterWorkItem(session, new Serial(42)));
+
+sealed class SelectCharacterWorkItem : IGameLoopWorkItem
+{
+    private readonly GameSession _session;
+    private readonly Serial _characterId;
+
+    public SelectCharacterWorkItem(GameSession session, Serial characterId)
+    {
+        _session = session;
+        _characterId = characterId;
+    }
+
+    public void Execute()
+    {
+        _session.SetCharacterId(_characterId);
+    }
+}
+```
+
+A `GetAll` result keeps the session references that were members when the
+snapshot was taken, even if later calls remove or clear them. The network owner
+must explicitly detach a session and remove it in the required callback order.
+The registry never closes or disposes sockets, and looking up a registered
+detached session does not reattach its client. TCP listener events and packet
+dispatch will be connected to this service in a later integration step.
+
 ## Publish server
 
 Publish a self-contained executable for Linux x64:

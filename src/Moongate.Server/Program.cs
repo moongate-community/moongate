@@ -14,6 +14,7 @@ using Moongate.Server.Data.Args;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Plugins;
@@ -91,6 +92,7 @@ await ConsoleApp.RunAsync(
                                    )
                                    .RegisterMoongateService<TimerWheelService>(priority: -900)
                                    .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                                   .RegisterMoongateService<ISessionService, SessionService>()
                                    .RegisterMoongateService<IEventBusService, EventBusService>()
                                    .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
                                        () => new PluginLoaderService(services, directoriesConfig)
