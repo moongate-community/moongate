@@ -148,16 +148,21 @@ public sealed class SessionServiceTests
     [Fact]
     public async Task RegisterAndRemove_SeparateClientKeysConcurrently_HasCorrectQuiescentCount()
     {
-        var fixtures = await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => SessionFixture.CreateAsync()));
+        var fixtures = new List<SessionFixture>();
         try
         {
+            foreach (var _ in Enumerable.Range(0, 8))
+            {
+                fixtures.Add(await SessionFixture.CreateAsync());
+            }
+
             ISessionService service = new SessionService(fixtures[0].Loop);
 
             var sessions = await Task.WhenAll(
                 fixtures.Select(fixture => Task.Run(() => service.GetOrCreate(fixture.Client)))
             );
 
-            Assert.Equal(fixtures.Length, service.Count);
+            Assert.Equal(fixtures.Count, service.Count);
 
             var removals = await Task.WhenAll(
                 sessions.Select(session => Task.Run(() => service.Remove(session.SessionId)))
@@ -168,10 +173,7 @@ public sealed class SessionServiceTests
         }
         finally
         {
-            foreach (var fixture in fixtures)
-            {
-                await fixture.DisposeAsync();
-            }
+            await Task.WhenAll(fixtures.Select(fixture => fixture.DisposeAsync().AsTask()));
         }
     }
 
