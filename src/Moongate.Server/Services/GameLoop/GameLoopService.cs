@@ -28,6 +28,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     private GameLoopState _state;
     private Thread? _thread;
     private Task? _stopTask;
+    private Task? _finalStopTask;
+    private IGameLoopWorkItem? _finalWorkItem;
     private int _loopThreadId;
     private bool _disposed;
     private long _acceptedWorkItems;
@@ -148,6 +150,40 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             _stopTask = WaitForThreadExitAsync(_thread);
 
             return _stopTask;
+        }
+    }
+
+    /// <inheritdoc />
+    public Task StopAsync(IGameLoopWorkItem finalWorkItem)
+    {
+        ArgumentNullException.ThrowIfNull(finalWorkItem);
+        RejectLoopThreadWait();
+
+        lock (_gate)
+        {
+            if (ReferenceEquals(_finalWorkItem, finalWorkItem))
+            {
+                return _finalStopTask!;
+            }
+
+            if (_stopTask is not null || _state is not (GameLoopState.Starting or GameLoopState.Running))
+            {
+                return CompleteFinalStopAsync(StopAsync(), captureAccepted: false);
+            }
+
+            _finalWorkItem = finalWorkItem;
+            _finalStopTask = CompleteFinalStopAsync(StopAsync(), captureAccepted: true);
+            return _finalStopTask;
+        }
+    }
+
+    private async Task CompleteFinalStopAsync(Task stopping, bool captureAccepted)
+    {
+        await stopping.ConfigureAwait(false);
+        await Completion.ConfigureAwait(false);
+        if (!captureAccepted)
+        {
+            throw new InvalidOperationException("The game loop already stopped without this terminal work item.");
         }
     }
 
@@ -306,6 +342,10 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     _wake.WaitOne(waitMilliseconds);
                 }
             }
+
+            // Admission and timers are closed, and every accepted command has finished.
+            // Keep the loop identity until this final synchronous capture completes.
+            _finalWorkItem?.Execute();
         }
         catch (Exception exception)
         {

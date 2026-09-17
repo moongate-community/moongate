@@ -1,5 +1,6 @@
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Persistence.Data;
+using Moongate.Persistence.Data.Internal;
 using Moongate.Persistence.DataAccess;
 using Moongate.Persistence.Interfaces.Internal;
 using Moongate.Persistence.Internal;
@@ -9,8 +10,7 @@ namespace Moongate.Persistence.Services;
 public sealed class MoongatePersistenceService : IAsyncDisposable
 {
     private readonly Lock _lifecycleSync = new();
-    private readonly SemaphoreSlim _saveGate = new(1, 1);
-    private readonly AsyncLocal<bool> _insideSave = new();
+    private readonly PersistenceMutationGate _mutationGate = new();
     private readonly string _directory;
     private readonly PersistenceOptions _options;
     private readonly List<IPersistenceCollection> _collections = [];
@@ -69,9 +69,8 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         }
     }
 
-    public async Task CheckpointAsync(CancellationToken cancellationToken = default)
+    public Task CheckpointAsync(CancellationToken cancellationToken = default)
     {
-        IPersistenceCollection[] collections;
         lock (_lifecycleSync)
         {
             ThrowIfDisposed();
@@ -80,55 +79,151 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             {
                 throw new InvalidOperationException("Persistence has not been initialized.");
             }
-            collections = [.. _collections];
-        }
+            IPersistenceCollection[] collections = [.. _collections];
 
-        await CheckpointCollectionsAsync(collections, cancellationToken).ConfigureAwait(false);
+            return _mutationGate.RunAsync(
+                token => CheckpointCollectionsAsync(collections, token),
+                cancellationToken
+            );
+        }
     }
 
     /// <summary>Persists registered live sources and checkpoints every collection.</summary>
     /// <remarks>
     /// Collections without a live source checkpoint their explicit upserts. Saves run sequentially;
     /// this is not a transaction across entities or collections. Cancellation or failure can leave
-    /// earlier writes committed. Sources must not reenter SaveAllAsync or dispose this service.
+    /// earlier writes committed. Sources must not reenter persistence mutations, checkpoints,
+    /// SaveAllAsync, or disposal.
     /// </remarks>
-    public async Task SaveAllAsync(CancellationToken cancellationToken = default)
+    public Task SaveAllAsync(CancellationToken cancellationToken = default)
     {
-        if (_insideSave.Value)
-        {
-            throw new InvalidOperationException("A live entity source cannot reenter SaveAllAsync.");
-        }
+        return SaveAllAsync(
+            static (capture, _) =>
+            {
+                capture();
+                return Task.CompletedTask;
+            },
+            cancellationToken
+        );
+    }
 
-        await _saveGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+    /// <summary>Captures registered live sources in caller-controlled context, then persists them.</summary>
+    /// <remarks>
+    /// The callback must invoke its supplied action exactly once and await that invocation before
+    /// returning. All sources are serialized before any captured payload is committed. Mutations,
+    /// checkpoints, saves, and disposal are ordered around the complete capture and commit sequence.
+    /// </remarks>
+    public Task SaveAllAsync(
+        Func<Action, CancellationToken, Task> captureAsync,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(captureAsync);
+        lock (_lifecycleSync)
+        {
+            ThrowIfDisposed();
+            ThrowIfFaulted();
+            if (!_initialized)
+            {
+                throw new InvalidOperationException("Persistence has not been initialized.");
+            }
+            IPersistenceCollection[] collections = [.. _collections];
+
+            return _mutationGate.RunAsync(
+                token => SaveAllCoreAsync(collections, captureAsync, token),
+                cancellationToken
+            );
+        }
+    }
+
+    /// <summary>Captures and checkpoints every collection, then publishes a verified backup generation.</summary>
+    /// <remarks>
+    /// The target must not exist or overlap the persistence directory. Mutation and disposal remain
+    /// ordered until publication completes. Failure can leave live persistence writes committed,
+    /// but never exposes an incomplete backup at the target directory.
+    /// </remarks>
+    public Task SaveAllWithBackupAsync(
+        Func<Action, CancellationToken, Task> captureAsync,
+        string backupDirectory,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(captureAsync);
+        var destination = PersistenceBackupFiles.ValidateDestination(_directory, backupDirectory);
+        lock (_lifecycleSync)
+        {
+            ThrowIfDisposed();
+            ThrowIfFaulted();
+            if (!_initialized)
+            {
+                throw new InvalidOperationException("Persistence has not been initialized.");
+            }
+            IPersistenceCollection[] collections = [.. _collections];
+            string[] collectionNames = [.. _collectionNames.Order(StringComparer.Ordinal)];
+
+            return _mutationGate.RunAsync(
+                token => PersistenceBackupFiles.PublishDirectoryAsync(destination, async (staging, stageToken) =>
+                {
+                    await SaveAllCoreAsync(collections, captureAsync, stageToken).ConfigureAwait(false);
+                    await MoongatePersistenceBackup.WriteAsync(_directory, staging, collectionNames, stageToken)
+                        .ConfigureAwait(false);
+                }, token),
+                cancellationToken
+            );
+        }
+    }
+
+    private async Task SaveAllCoreAsync(
+        IPersistenceCollection[] collections,
+        Func<Action, CancellationToken, Task> captureAsync,
+        CancellationToken cancellationToken
+    )
+    {
+        CapturedPersistenceCollection[]? capturedCollections = null;
+        var captureState = new PersistenceCaptureState();
+        Action capture = () =>
+        {
+            captureState.BeginCapture();
+
+            try
+            {
+                _mutationGate.RunCapture(
+                    () => capturedCollections = CaptureAllCollections(collections, cancellationToken)
+                );
+                captureState.CompleteCapture();
+            }
+            catch
+            {
+                captureState.FailCapture();
+                throw;
+            }
+        };
+
+        bool captureCompleted;
         try
         {
-            IPersistenceCollection[] collections;
-            lock (_lifecycleSync)
-            {
-                ThrowIfDisposed();
-                ThrowIfFaulted();
-                if (!_initialized)
-                {
-                    throw new InvalidOperationException("Persistence has not been initialized.");
-                }
-                collections = [.. _collections];
-            }
-
-            _insideSave.Value = true;
-            foreach (var collection in collections)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                await collection.SaveAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            await CheckpointCollectionsAsync(collections, cancellationToken).ConfigureAwait(false);
+            await captureAsync(capture, cancellationToken).ConfigureAwait(false);
         }
         finally
         {
-            _insideSave.Value = false;
-            _saveGate.Release();
+            captureCompleted = captureState.Close();
         }
+
+        if (!captureCompleted || capturedCollections is null)
+        {
+            throw new InvalidOperationException(
+                "The persistence capture action must be invoked exactly once before its callback returns."
+            );
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        foreach (var snapshot in capturedCollections)
+        {
+            await snapshot.Collection.CommitAsync(snapshot.Payloads, cancellationToken).ConfigureAwait(false);
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+        await CheckpointCollectionsAsync(collections, cancellationToken).ConfigureAwait(false);
     }
 
     private DataAccess<T> RegisterCore<T>(string collectionName, Func<IEnumerable<T>>? entitySource)
@@ -154,7 +249,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             }
 
             var store = new BinaryCollectionStore(_directory, collectionName, _options);
-            var dataAccess = new DataAccess<T>(store, entitySource);
+            var dataAccess = new DataAccess<T>(store, _mutationGate, entitySource);
             _collections.Add(dataAccess);
 
             return dataAccess;
@@ -181,6 +276,27 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             catch (Exception exception) { (failures ??= []).Add(exception); }
         }
         ThrowFailures(failures);
+    }
+
+    private static CapturedPersistenceCollection[] CaptureAllCollections(
+        IPersistenceCollection[] collections,
+        CancellationToken cancellationToken
+    )
+    {
+        var captured = new CapturedPersistenceCollection[collections.Length];
+        for (var index = 0; index < collections.Length; index++)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var collection = collections[index];
+            captured[index] = new CapturedPersistenceCollection(
+                collection,
+                collection.Capture(cancellationToken)
+            );
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return captured;
     }
 
     private async Task InitializeCoreAsync(CancellationToken cancellationToken)
@@ -223,7 +339,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 }
                 else
                 {
-                    await collection.DisposeAsync().ConfigureAwait(false);
+                    await collection.CloseFromOwnerAsync().ConfigureAwait(false);
                 }
             }
             catch (Exception exception) { failures.Add(exception); }
@@ -267,21 +383,13 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             await initialization.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         }
 
-        await _saveGate.WaitAsync().ConfigureAwait(false);
-        try
-        {
-            var failures = await CloseEveryCollectionAsync(abort: false).ConfigureAwait(false);
-            ThrowFailures(failures);
-        }
-        finally
-        {
-            _saveGate.Release();
-        }
+        var failures = await CloseEveryCollectionAsync(abort: false).ConfigureAwait(false);
+        ThrowFailures(failures);
     }
 
     public ValueTask DisposeAsync()
     {
-        if (_insideSave.Value)
+        if (_mutationGate.IsInsideCapture)
         {
             throw new InvalidOperationException("A live entity source cannot dispose its persistence service.");
         }
@@ -289,7 +397,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         lock (_lifecycleSync)
         {
             _disposed = true;
-            _disposeTask ??= DisposeCoreAsync(_initializeTask);
+            _disposeTask ??= _mutationGate.CloseAsync(() => DisposeCoreAsync(_initializeTask));
 
             return new ValueTask(_disposeTask);
         }

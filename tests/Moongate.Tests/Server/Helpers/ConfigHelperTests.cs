@@ -90,4 +90,57 @@ public sealed class ConfigHelperTests
 
         Assert.Equal("Existing data", File.ReadAllText(parent));
     }
+    [Fact]
+    public void Load_WorldSaveDefaults_WritesSnakeCaseAndMapsBackupDirectory()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        var config = ConfigHelper.Load(path);
+        var worldSave = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["world_save"]);
+        Assert.Equal(true, worldSave["enabled"]);
+        Assert.Equal(300L, worldSave["interval_seconds"]);
+        Assert.Equal(true, worldSave["backups_enabled"]);
+        Assert.Equal(5L, worldSave["backup_retention_count"]);
+        var options = config.WorldSave.ToOptions(Path.Combine(directory.Path, "backups"));
+        Assert.True(options.Enabled);
+        Assert.True(options.BackupsEnabled);
+        Assert.Equal(TimeSpan.FromSeconds(300), options.Interval);
+        Assert.Equal(5, options.BackupRetentionCount);
+        Assert.Equal(Path.Combine(directory.Path, "backups"), options.BackupDirectory);
+    }
+
+    [Fact]
+    public void Load_WorldSaveOverrides_MapsConfiguredValues()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", """
+            [world_save]
+            enabled = false
+            interval_seconds = 45
+            backups_enabled = false
+            backup_retention_count = 2
+            """);
+        var options = ConfigHelper.Load(path).WorldSave.ToOptions(directory.Path);
+        Assert.False(options.Enabled);
+        Assert.False(options.BackupsEnabled);
+        Assert.Equal(TimeSpan.FromSeconds(45), options.Interval);
+        Assert.Equal(2, options.BackupRetentionCount);
+    }
+
+    [Theory, InlineData(0, 5), InlineData(-1, 5), InlineData(300, 0), InlineData(300, -1)]
+    public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval, int retention)
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml",
+            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\nbackup_retention_count = {retention}\n");
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
+    }
+
+    [Fact]
+    public void Validate_NullWorldSaveSection_RejectsBeforeServerStartup()
+    {
+        var config = new MoongateServerConfig { WorldSave = null! };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+    }
+
 }

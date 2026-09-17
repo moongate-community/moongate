@@ -21,6 +21,7 @@ using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
+using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
 using Serilog;
 using Serilog.Templates;
@@ -38,7 +39,7 @@ await ConsoleApp.RunAsync(
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
 
-        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save"]);
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save", "backups"]);
 
         var serverArgs = new MoongateServerArgs()
         {
@@ -82,6 +83,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
+                    services.RegisterInstance(serverConfig.WorldSave.ToOptions(directoriesConfig["backups"]));
                     services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance<TimeProvider>(TimeProvider.System);
                     services.RegisterInstance(new TimerWheelOptions());
@@ -96,6 +98,7 @@ await ConsoleApp.RunAsync(
                             )
                             .RegisterMoongateService<TimerWheelService>(priority: -900)
                             .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                            .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
                             .RegisterMoongateService<ISessionService, SessionService>()
                             .RegisterMoongateService<IEventBusService, EventBusService>()
                             .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(

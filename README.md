@@ -476,41 +476,133 @@ uses ZLinq internally over one captured committed view, but accepts the ordinary
 
 ### Saving all live entities
 
-To persist changes made to live objects, register a source for each collection
-before persistence startup. The source is invoked again for each save, so it can
-return the current entities from a world service or another in-memory owner.
+Persistence does not discover live entities from `IMoongateEntity`. Register an
+explicit source for each live collection before persistence startup. The source
+is invoked for every save and must return the current entities from their
+in-memory owner.
 
 ```csharp
+using Moongate.Server.Core.Interfaces.Services;
+
 // Register before bootstrap.StartAsync(). Persistence is already registered by the server.
 List<CharacterRecord> liveCharacters = [];
 container.RegisterDataAccess<CharacterRecord>("characters", () => liveCharacters);
 
-// After startup, a command or service can save every registered live source.
-liveCharacters.Add(new CharacterRecord { Id = new Serial(1), Name = "Ada", Level = 24 });
-liveCharacters[0].Level++;
-await container.Resolve<MoongatePersistenceService>().SaveAllAsync(cancellationToken);
+// After bootstrap startup completes, request a server-coordinated save outside the GameLoop.
+var worldSave = container.Resolve<IWorldSaveService>();
+await worldSave.SaveAsync(cancellationToken);
 ```
 
-Standalone callers can use `persistence.Register<T>(name, source)` before
-`InitializeAsync()`. `SaveAllAsync` serializes each source completely before
-writing that collection, upserts its entities, and checkpoints every collection
-after all sources have been saved. Collections registered without a source
-checkpoint their explicit upserts. Sources are not invoked by `InitializeAsync`,
-`CheckpointAsync`, or disposal. Call `SaveAllAsync` before shutdown when live
-changes also need saving; disposal still checkpoints only committed data.
+Keep live mutations on the GameLoop. `SaveAsync` posts capture work there and
+moves persistence and backup I/O to a worker; callers must not block the loop on
+the returned task. Standalone hosts can instead use
+`persistence.Register<T>(name, source)` before `InitializeAsync()` and provide a
+capture dispatcher to the raw API:
+
+```csharp
+await persistence.SaveAllAsync(
+    (capture, token) => worldThread.InvokeAsync(capture, token),
+    cancellationToken);
+```
+
+The callback must invoke and await the supplied `capture` action exactly once in
+the context that owns the live entities. The overload without a callback provides
+no thread-affinity guarantee and is suitable only when every source is already
+safe to enumerate from the persistence operation. Thread-affine sources require
+the capture-dispatcher overload shown above; the running server handles this
+through `IWorldSaveService`. Every registered source is fully enumerated and
+serialized before any captured payload is written, so a capture error makes no
+writes. Collections registered without a source still checkpoint their explicit
+upserts. Sources are not invoked by `InitializeAsync`, `CheckpointAsync`, or
+disposal. Plain persistence disposal checkpoints committed bytes only; the
+server's world-save service adds the live final save.
 
 Entities absent from a source are retained on disk: use `DeleteAsync` for removal.
 Null sources/results/entities, zero IDs, duplicate IDs within a source, and
-enumeration or serialization failures are rejected. A capture failure writes
-nothing from that collection. Earlier collections or writes can remain committed
-if a later operation fails or is canceled; this is not an atomic world snapshot.
+enumeration or serialization failures are rejected. A synchronized capture is an
+immutable view, but committing its collection files is not transactional. Earlier
+writes can remain committed if a later write, checkpoint, or cancellation fails.
 
-Concurrent `SaveAllAsync` calls run sequentially, and disposal waits for an active
-save before closing stores. Queued saves are rejected after shutdown starts.
-Sources must not call `SaveAllAsync` or dispose their owner recursively; these
-calls are rejected. The world owner must synchronize entity mutation and source
-enumeration, for example by pausing world updates during the save. Returning a
-copied list alone does not freeze the mutable entities it contains.
+Raw persistence operations run sequentially. Once disposal starts, new mutations,
+checkpoints, and saves are rejected; every operation accepted before that point,
+including queued operations, drains before the stores checkpoint and close.
+During capture, a source must not call `UpsertAsync`, `DeleteAsync`,
+`CheckpointAsync`, `SaveAllAsync`, or dispose its collection or persistence
+owner. These reentrant operations fail promptly. The owner must synchronize
+entity mutation and source enumeration; returning a copied list alone does not
+freeze the mutable entities it contains.
+
+### Server world saves and backups
+
+The executable registers a singleton `IWorldSaveService`. Its default TOML
+settings are:
+
+```toml
+[world_save]
+enabled = true
+interval_seconds = 300
+backups_enabled = true
+backup_retention_count = 5
+```
+
+`enabled` controls the automatic timer only. Manual saves and the final save on a
+successful host shutdown remain available when it is false. Live persistence
+files are stored under `<root-directory>/save`; backups are stored under
+`<root-directory>/backups`.
+
+Saving becomes active only after the entire `MoongateStartedEvent` publication
+completes. A save request from one of those observers is therefore too early.
+Ordinary observer exceptions remain logged and isolated, and later observers
+still run without aborting startup; critical initialization belongs in startup
+services. Concurrent `SaveAsync` requests join the same capture and durable
+write, even after that capture has occurred. Canceling one caller stops only that
+caller's wait and does not cancel the shared save. The next request after
+completion captures current state again. Autosave ticks join an active save
+instead of creating an unbounded queue.
+
+Register services that own live sources below world-save priority 40; the default
+priority 0 works. Owners must retain their entities until their `StopAsync`
+callback. During normal shutdown, network and packet admission close first, an
+active save finishes, and the GameLoop closes admission and timers. The loop then
+drains accepted work and performs one terminal capture on its own thread before
+disk and backup completion. Only then may source owners release their entities.
+Plugins make final gameplay mutations during `MoongateStoppingEvent`; later
+`StopAsync` callbacks release resources and cannot enqueue more game work.
+
+Custom host composers call `Activate()` after startup publication and call
+`StopAsync(saveFinal: true)` for normal shutdown. Startup rollback and cleanup use
+the parameterless `StopAsync()`, which does not capture live state. The ordinary
+`IGameLoopService.StopAsync()` is also cleanup-only; the terminal overload must
+win stop admission to run final work. A failed startup never enables automatic or
+final saves. A fatal GameLoop failure prevents final capture, preserves the loop
+failure for the host, and still closes resources. An uncertain persistence I/O
+outcome faults the affected store until it is reopened.
+
+Each successful backup contains the exact registered snapshot/journal pairs and
+a verified `manifest.json`. Completed directory names use
+`world-save-yyyyMMddTHHmmssfffffffZ-<GUID in N format>`. The timestamp increases
+with generation order even if the clock ties or moves backward, so it is not
+always an exact creation time. Retention counts only directories with the
+canonical name and manifest marker; foreign and incomplete directories are left
+untouched.
+
+Restore offline into a new directory, never over the running server's save
+directory:
+
+```csharp
+using Moongate.Persistence.Services;
+
+await MoongatePersistenceBackup.RestoreAsync(backupDirectory, newSaveDirectory);
+```
+
+Restore validates the manifest, exact filenames, lengths, SHA-256 hashes, and
+snapshot/journal checkpoint pairs before publishing the destination. It never
+changes server configuration or selects a backup automatically. Start a new
+persistence instance against the restored directory to perform normal typed
+payload validation, and keep the original save directory until the restored
+world is verified. Hashes detect accidental corruption; they do not authenticate
+a backup. The manifest layout is documented with the
+[binary persistence format](docs/persistence-format.md).
 
 Each collection creates `characters.snapshot.bin`, `characters.journal.bin`, and
 `characters.lock` in the configured save directory. Upserts and deletes are
@@ -879,11 +971,13 @@ then posts its result for validation and application. `PostAsync`, `StopAsync`,
 and disposal reject calls from the loop thread to prevent self-waits;
 `TryPost` may enqueue future work if there is capacity and never dispatches inline.
 
-Startup waits until the thread is ready. Stop closes admission, rejects pending
-writes, and drains accepted work before returning. The idle thread waits for a
-signal; batch limits never discard the next item. A synchronous handler cannot
-be preempted, so a stuck handler also prevents graceful shutdown. The same loop
-instance cannot be restarted after stop or failure.
+Startup waits until the thread is ready. Ordinary stop closes admission and
+drains accepted work before returning. The terminal overload additionally runs
+one reserved final work item after the drain when it wins stop admission. The
+idle thread waits for a signal; batch limits never discard the next item. A
+synchronous handler cannot be preempted, so a stuck handler also prevents
+graceful shutdown. The same loop instance cannot be restarted after stop or
+failure.
 
 An unexpected handler exception is fatal: admission closes, remaining queued
 work is abandoned, and `Completion` retains the original failure. There is no
@@ -908,9 +1002,9 @@ Rejected submissions count full/unavailable admission, not canceled waits or
 invalid arguments. Concurrent snapshots can observe execution progressing between
 measurements. All durations use the registered monotonic `TimeProvider`.
 
-Packet dispatch, TCP transport, the world model, and coordination of live-world
-saves remain separate stages. The general event bus does not move its observers
-onto the loop automatically.
+Packet dispatch, TCP transport, and the world model retain their existing
+boundaries. World saving posts its registered-source capture to the loop; the
+general event bus does not move its observers onto the loop automatically.
 
 ### Timer wheel
 

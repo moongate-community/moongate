@@ -484,6 +484,99 @@ public sealed class GameLoopServiceTests
         Assert.Throws<ArgumentNullException>(() => loop.TryPost(null!));
     }
 
+    [Fact]
+    public async Task StopAsync_TerminalItem_CapturesDrainedMutationsOnLoopThreadAfterTimersClose()
+    {
+        var timers = new TimerWheelService(new TimerWheelOptions(), TimeProvider.System);
+        using var loop = new GameLoopService(new GameLoopOptions(), timers, TimeProvider.System);
+        using var blocker = new BlockingGameLoopWorkItem();
+        var mutations = 0;
+        var captured = -1;
+        var loopThread = 0;
+        var finalThread = 0;
+        await loop.StartAsync();
+        await loop.PostAsync(blocker);
+        await blocker.Entered.WaitAsync(Timeout);
+        await loop.PostAsync(new ActionGameLoopWorkItem(() =>
+        {
+            loopThread = Environment.CurrentManagedThreadId;
+            mutations++;
+        }));
+        var stopping = loop.StopAsync(new ActionGameLoopWorkItem(() =>
+        {
+            Assert.True(loop.IsOnLoopThread);
+            Assert.Throws<InvalidOperationException>(() => timers.RegisterTimer("late", TimeSpan.FromSeconds(1), () => { }));
+            finalThread = Environment.CurrentManagedThreadId;
+            captured = mutations;
+        }));
+        Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => mutations++)));
+        blocker.Release();
+        await stopping.WaitAsync(Timeout);
+        Assert.Equal(1, captured);
+        Assert.Equal(loopThread, finalThread);
+    }
+
+    [Fact]
+    public async Task StopAsync_HandlerFault_SkipsTerminalItemAndReportsOriginalFailure()
+    {
+        using var loop = Create();
+        using var blocker = new BlockingGameLoopWorkItem();
+        var failure = new ApplicationException("fatal handler");
+        var captured = false;
+        await loop.StartAsync();
+        await loop.PostAsync(blocker);
+        await blocker.Entered.WaitAsync(Timeout);
+        await loop.PostAsync(new ActionGameLoopWorkItem(() => throw failure));
+        var stopping = loop.StopAsync(new ActionGameLoopWorkItem(() => captured = true));
+        blocker.Release();
+        Assert.Same(failure, await Assert.ThrowsAsync<ApplicationException>(() => stopping.WaitAsync(Timeout)));
+        Assert.False(captured);
+        await loop.StopAsync().WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task StopAsync_NormalStopWins_RejectsMissedTerminalCaptureWithoutHanging()
+    {
+        using var loop = Create();
+        using var blocker = new BlockingGameLoopWorkItem();
+        await loop.StartAsync();
+        await loop.PostAsync(blocker);
+        await blocker.Entered.WaitAsync(Timeout);
+        var stopping = loop.StopAsync();
+        var captured = false;
+        var terminal = Assert.ThrowsAsync<InvalidOperationException>(() =>
+            loop.StopAsync(new ActionGameLoopWorkItem(() => captured = true)).WaitAsync(Timeout));
+        blocker.Release();
+        await Task.WhenAll(stopping, terminal).WaitAsync(Timeout);
+        Assert.False(captured);
+    }
+
+    [Fact]
+    public async Task StopAsync_TerminalStopWins_NormalStopStillSucceedsAndTerminalRunsOnce()
+    {
+        using var loop = Create();
+        var captures = 0;
+        await loop.StartAsync();
+        var item = new ActionGameLoopWorkItem(() => captures++);
+        var terminal = loop.StopAsync(item);
+        var ordinary = loop.StopAsync();
+        await Task.WhenAll(terminal, ordinary).WaitAsync(Timeout);
+        await loop.StopAsync(item).WaitAsync(Timeout);
+        Assert.Equal(1, captures);
+    }
+
+    [Fact]
+    public async Task StopAsync_TerminalFailure_PropagatesWhileOrdinaryCleanupRemainsSuccessful()
+    {
+        using var loop = Create();
+        var failure = new ApplicationException("terminal failure");
+        await loop.StartAsync();
+        Assert.Same(failure, await Assert.ThrowsAsync<ApplicationException>(() =>
+            loop.StopAsync(new ActionGameLoopWorkItem(() => throw failure)).WaitAsync(Timeout)));
+        await loop.StopAsync().WaitAsync(Timeout);
+        Assert.Same(failure, await Assert.ThrowsAsync<ApplicationException>(() => loop.Completion));
+    }
+
     private static GameLoopService Create(int capacity = 16, int batch = 4)
     {
         return new GameLoopService(new GameLoopOptions { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },

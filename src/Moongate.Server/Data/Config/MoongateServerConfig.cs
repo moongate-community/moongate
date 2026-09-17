@@ -9,4 +9,16 @@ public class MoongateServerConfig
     public NetworkConfig Network { get; set; } = new NetworkConfig();
 
     public UltimaConfig Ultima { get; set; } = new UltimaConfig();
+
+    public WorldSaveConfig WorldSave { get; set; } = new();
+
+    /// <summary>Validates configuration before server services begin startup.</summary>
+    public void Validate()
+    {
+        if (WorldSave is null)
+        {
+            throw new InvalidOperationException("The world_save configuration section cannot be null.");
+        }
+        WorldSave.Validate();
+    }
 }
