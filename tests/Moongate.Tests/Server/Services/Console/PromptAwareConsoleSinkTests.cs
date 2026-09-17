@@ -21,7 +21,7 @@ public sealed class PromptAwareConsoleSinkTests
 
         sink.Emit(CreateEvent("hello"));
 
-        Assert.Equal(1, inner.Events.Count);
+        Assert.Single(inner.Events);
         var after = driver.Operations.Skip(marker).ToArray();
         Assert.Equal("pos:0,9", after[0]);
         Assert.Contains("writeline:emitted", after);
@@ -39,7 +39,7 @@ public sealed class PromptAwareConsoleSinkTests
 
         sink.Emit(CreateEvent("hello"));
 
-        Assert.Equal(1, inner.Events.Count);
+        Assert.Single(inner.Events);
     }
 
     private static LogEvent CreateEvent(string message)
