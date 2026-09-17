@@ -1,6 +1,7 @@
 using System.Collections.Frozen;
 using DryIoc;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -37,6 +38,8 @@ public sealed class PacketDispatchService : IPacketDispatchService
     /// <inheritdoc />
     public Task StartAsync()
     {
+
+
         lock (_gate)
         {
             if (_stopped)
@@ -49,6 +52,11 @@ public sealed class PacketDispatchService : IPacketDispatchService
                 _handlers = _registry.Freeze().ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
                 _everStarted = true;
                 _running = true;
+                _logger.Information(
+                    "Packet dispatcher started with {PacketCount} registered packets and {HandlerCount} registered handlers",
+                    PacketRegistry.Default.RegisteredPackets.Count,
+                    _handlers.Count
+                );
             }
         }
 
