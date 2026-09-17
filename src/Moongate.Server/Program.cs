@@ -14,7 +14,6 @@ using Moongate.Server.Data.Args;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
-using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
@@ -87,9 +86,6 @@ await ConsoleApp.RunAsync(
                         Reuse.Singleton
                     );
 
-
-                    services.Register<ISessionService, SessionService>();
-
                     services.RegisterMoongatePersistence(directoriesConfig["save"])
                             .RegisterMoongateService<MoongatePersistenceStartupService>(
                                 MoongatePersistenceStartupService.StartupPriority
@@ -102,7 +98,7 @@ await ConsoleApp.RunAsync(
                                 () => new PluginLoaderService(services, directoriesConfig)
                             );
 
-                    services.RegisterMoongateService<INetworkService, NetworkService>(100);
+                    PacketPipelineRegistration.Register(services);
 
                     return services;
                 }
