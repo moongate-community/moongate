@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Sessions;
 
@@ -10,6 +11,7 @@ public sealed class GameSession
 
     private Serial _accountId;
     private Serial _characterId;
+    private AccountType _accountType = AccountType.Regular;
 
     public NetworkSession NetworkSession { get; }
 
@@ -33,6 +35,17 @@ public sealed class GameSession
             lock (_sync)
             {
                 return _characterId;
+            }
+        }
+    }
+
+    public AccountType AccountType
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _accountType;
             }
         }
     }
@@ -61,6 +74,15 @@ public sealed class GameSession
         lock (_sync)
         {
             _characterId = characterId;
+        }
+    }
+
+    public void SetAccountType(AccountType accountType)
+    {
+        EnsureLoopThread();
+        lock (_sync)
+        {
+            _accountType = accountType;
         }
     }
 

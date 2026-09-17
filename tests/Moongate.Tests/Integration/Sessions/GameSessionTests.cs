@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Tests.Support.Sessions;
 
 namespace Moongate.Tests.Integration.Sessions;
@@ -59,5 +60,20 @@ public sealed class GameSessionTests
         await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(Serial.Zero));
 
         Assert.Equal(Serial.Zero, session.CharacterId);
+    }
+
+    [Fact]
+    public async Task SetAccountType_DefaultsToRegularAndOnlyLoopWritesApply()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = new GameSession(new NetworkSession(fixture.Client), fixture.Loop);
+
+        Assert.Equal(AccountType.Regular, session.AccountType);
+
+        Assert.Throws<InvalidOperationException>(() => session.SetAccountType(AccountType.Administrator));
+        Assert.Equal(AccountType.Regular, session.AccountType);
+
+        await fixture.ExecuteOnLoopAsync(() => session.SetAccountType(AccountType.GameMaster));
+        Assert.Equal(AccountType.GameMaster, session.AccountType);
     }
 }
