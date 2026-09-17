@@ -104,13 +104,17 @@ public sealed class SessionFixture : IAsyncDisposable
             {
                 if (loop is not null)
                 {
+                    var stopped = false;
                     try
                     {
-                        await AttemptAsync(() => loop.StopAsync().WaitAsync(Timeout), failures);
+                        stopped = await AttemptAsync(() => loop.StopAsync().WaitAsync(Timeout), failures);
                     }
                     finally
                     {
-                        Attempt(loop.Dispose, failures);
+                        if (stopped)
+                        {
+                            Attempt(loop.Dispose, failures);
+                        }
                     }
                 }
             }
@@ -127,15 +131,17 @@ public sealed class SessionFixture : IAsyncDisposable
         }
     }
 
-    private static async Task AttemptAsync(Func<Task> action, List<Exception> failures)
+    private static async Task<bool> AttemptAsync(Func<Task> action, List<Exception> failures)
     {
         try
         {
             await action();
+            return true;
         }
         catch (Exception exception)
         {
             failures.Add(exception);
+            return false;
         }
     }
 
