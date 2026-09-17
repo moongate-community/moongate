@@ -506,13 +506,16 @@ await persistence.SaveAllAsync(
 ```
 
 The callback must invoke and await the supplied `capture` action exactly once in
-the context that owns the live entities. The overload without a callback captures
-on its caller. Every registered source is fully enumerated and serialized before
-any captured payload is written, so a capture error makes no writes. Collections
-registered without a source still checkpoint their explicit upserts. Sources are
-not invoked by `InitializeAsync`, `CheckpointAsync`, or disposal. Plain
-persistence disposal checkpoints committed bytes only; the server's world-save
-service adds the live final save.
+the context that owns the live entities. The overload without a callback provides
+no thread-affinity guarantee and is suitable only when every source is already
+safe to enumerate from the persistence operation. Thread-affine sources require
+the capture-dispatcher overload shown above; the running server handles this
+through `IWorldSaveService`. Every registered source is fully enumerated and
+serialized before any captured payload is written, so a capture error makes no
+writes. Collections registered without a source still checkpoint their explicit
+upserts. Sources are not invoked by `InitializeAsync`, `CheckpointAsync`, or
+disposal. Plain persistence disposal checkpoints committed bytes only; the
+server's world-save service adds the live final save.
 
 Entities absent from a source are retained on disk: use `DeleteAsync` for removal.
 Null sources/results/entities, zero IDs, duplicate IDs within a source, and
