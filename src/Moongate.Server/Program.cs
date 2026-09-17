@@ -20,6 +20,8 @@ using Moongate.Server.Handlers.General;
 using Moongate.Server.Handlers.Login;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Commands;
+using Moongate.Server.Services.Console;
+using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Sessions;
@@ -66,16 +68,23 @@ await ConsoleApp.RunAsync(
         Console.WriteLine($"Platform: {Environment.OSVersion.Platform}, Version: {Environment.OSVersion.Version}");
         Console.WriteLine($"Running on container: {isDocker}");
 
+        var consolePrompt = new ConsolePromptService();
+
+        var consoleLogger = new LoggerConfiguration()
+                            .WriteTo
+                            .Console(
+                                new ExpressionTemplate(
+                                    "{@t:HH:mm:ss.fff} {@l:u3} " +
+                                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
+                                    " | {@m}\n{@x}",
+                                    theme: TemplateTheme.Code
+                                )
+                            )
+                            .CreateLogger();
+
         Log.Logger = new LoggerConfiguration()
                      .WriteTo
-                     .Console(
-                         new ExpressionTemplate(
-                             "{@t:HH:mm:ss.fff} {@l:u3} " +
-                             "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
-                             " | {@m}\n{@x}",
-                             theme: TemplateTheme.Code
-                         )
-                     )
+                     .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger))
                      .CreateLogger();
 
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
@@ -116,7 +125,9 @@ await ConsoleApp.RunAsync(
                                 "Echoes back its arguments.",
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
-                            );
+                            )
+                            .RegisterMoongateService<IConsolePromptService>(consolePrompt)
+                            .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(priority: 1000);
 
                     PacketPipelineRegistration.Register(services);
 
