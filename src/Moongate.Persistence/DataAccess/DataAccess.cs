@@ -202,7 +202,7 @@ public sealed class DataAccess<T> : IDataAccess<T>, IPersistenceCollection where
         if (!_ownsMutationGate)
         {
             return new ValueTask(
-                _mutationGate.RunAsync(_ => _store.DisposeAsync().AsTask())
+                _mutationGate.CloseCollectionAsync(() => _store.DisposeAsync().AsTask())
             );
         }
 

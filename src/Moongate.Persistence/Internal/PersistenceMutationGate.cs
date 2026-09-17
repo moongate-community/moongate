@@ -84,6 +84,29 @@ internal sealed class PersistenceMutationGate : IDisposable
         }
     }
 
+    public Task CloseCollectionAsync(Func<Task> close)
+    {
+        ArgumentNullException.ThrowIfNull(close);
+        ThrowIfCaptureReentry();
+        lock (_lifecycleSync)
+        {
+            if (_closeTask is not null)
+            {
+                return ObserveCollectionCloseAsync(_closeTask, close);
+            }
+
+            return RunAsync(_ => close());
+        }
+    }
+
+    private static async Task ObserveCollectionCloseAsync(Task ownerClose, Func<Task> close)
+    {
+        // The owner drains accepted work and closes every collection before completing.
+        // Observe this collection's cached result, not failures from other collections.
+        await ownerClose.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        await close().ConfigureAwait(false);
+    }
+
     private void ThrowIfCaptureReentry()
     {
         if (_insideCapture.Value)

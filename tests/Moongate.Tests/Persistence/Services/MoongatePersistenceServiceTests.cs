@@ -205,8 +205,8 @@ public sealed class MoongatePersistenceServiceTests
         }
     }
 
-    [Fact]
-    public async Task SaveAllAsync_SourceDisposesCollection_RejectsWithoutClosingCollection()
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_SourceDisposesCollection_RejectsWithoutClosingCollection(bool separateCaptureContext)
     {
         using var root = new TemporaryPersistenceDirectory();
         await using var owner = new MoongatePersistenceService(root.Path);
@@ -225,12 +225,79 @@ public sealed class MoongatePersistenceServiceTests
         });
         await owner.InitializeAsync();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            owner.SaveAllAsync().WaitAsync(TimeSpan.FromSeconds(10)));
+        var save = owner.SaveAllAsync(async (capture, _) =>
+        {
+            if (separateCaptureContext)
+            {
+                Task captureTask;
+                using (ExecutionContext.SuppressFlow())
+                {
+                    captureTask = Task.Run(capture, CancellationToken.None);
+                }
+                await captureTask;
+            }
+            else
+            {
+                capture();
+            }
+        });
+        await Assert.ThrowsAsync<InvalidOperationException>(() => save.WaitAsync(TimeSpan.FromSeconds(10)));
         reenter = false;
         await owner.SaveAllAsync();
 
         Assert.Equal("saved", items.GetById(new Serial(1))!.Name);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SaveAllAsync_SourceDisposesCollectionDuringOwnerShutdown_RejectsBeforeJoiningOwner(bool separateCaptureContext)
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var owner = new MoongatePersistenceService(root.Path);
+        DataAccess<TestEntity>? items = null;
+        items = owner.Register<TestEntity>("items", () =>
+        {
+            var failure = Record.Exception(() =>
+            {
+                var disposal = ((IAsyncDisposable)items!).DisposeAsync();
+                Assert.True(disposal.IsCompleted, "Collection disposal tried to join its own capture.");
+                disposal.GetAwaiter().GetResult();
+            });
+            Assert.IsType<InvalidOperationException>(failure);
+            return [new TestEntity { Id = new Serial(1), Name = "saved" }];
+        });
+        await owner.InitializeAsync();
+        var save = owner.SaveAllAsync(async (capture, token) =>
+        {
+            ready.SetResult();
+            await release.Task.WaitAsync(token);
+            if (separateCaptureContext)
+            {
+                Task captureTask;
+                using (ExecutionContext.SuppressFlow())
+                {
+                    captureTask = Task.Run(capture, CancellationToken.None);
+                }
+                await captureTask;
+            }
+            else
+            {
+                capture();
+            }
+        });
+        try
+        {
+            await ready.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            var shutdown = owner.DisposeAsync().AsTask();
+            release.TrySetResult();
+            await Task.WhenAll(save, shutdown).WaitAsync(TimeSpan.FromSeconds(10));
+        }
+        finally
+        {
+            release.TrySetResult();
+            await Task.WhenAll(save, owner.DisposeAsync().AsTask()).WaitAsync(TimeSpan.FromSeconds(10));
+        }
     }
 
     [Theory, InlineData(false), InlineData(true)]
