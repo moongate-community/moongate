@@ -62,6 +62,16 @@ public class NetworkService : INetworkService
 
     public Task StopAsync()
     {
+        foreach (var tcpServer in _tcpServers)
+        {
+            _logger.Information(
+                "Stopping TCP server on {Address}:{Port}",
+                tcpServer.Endpoint.Address,
+                tcpServer.Endpoint.Port
+            );
+            tcpServer.StopAsync(default);
+        }
+
         return Task.CompletedTask;
     }
 }
