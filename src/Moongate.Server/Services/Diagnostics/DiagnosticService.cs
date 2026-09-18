@@ -29,8 +29,12 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
 
     public const int StartupPriority = 900;
 
-    public DiagnosticService(IEnumerable<IMetricProvider> providers, DiagnosticOptions options,
-        IEventBusService eventBus, TimeProvider timeProvider)
+    public DiagnosticService(
+        IEnumerable<IMetricProvider> providers,
+        DiagnosticOptions options,
+        IEventBusService eventBus,
+        TimeProvider timeProvider
+    )
     {
         _options = new DiagnosticOptions
         {
@@ -42,12 +46,17 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         _timeProvider = timeProvider;
         _providers = providers.Select(provider => (provider.ProviderName, provider)).ToArray();
         var names = new HashSet<string>(StringComparer.Ordinal);
+
         foreach (var (name, _) in _providers)
         {
             if (!IsValidName(name))
             {
-                throw new ArgumentException($"Invalid diagnostic provider name '{name}'; expected [a-z][a-z0-9_]*.", nameof(providers));
+                throw new ArgumentException(
+                    $"Invalid diagnostic provider name '{name}'; expected [a-z][a-z0-9_]*.",
+                    nameof(providers)
+                );
             }
+
             if (!names.Add(name))
             {
                 throw new ArgumentException($"Duplicate diagnostic provider name '{name}'.", nameof(providers));
@@ -57,7 +66,8 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
     }
 
     /// <inheritdoc />
-    public DiagnosticSnapshot? GetSnapshot() => Volatile.Read(ref _snapshot);
+    public DiagnosticSnapshot? GetSnapshot()
+        => Volatile.Read(ref _snapshot);
 
     /// <inheritdoc />
     public Task StartAsync()
@@ -68,6 +78,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
             {
                 throw new InvalidOperationException("Diagnostics cannot start after shutdown begins.");
             }
+
             return _lifecycle.StartAsync(StartCoreAsync);
         }
     }
@@ -76,9 +87,11 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
     public Task StopAsync()
     {
         ThrowIfWorkerContext();
+
         lock (_lifecycleGate)
         {
             _stopping = true;
+
             return _lifecycle.StopAsync(StopCoreAsync);
         }
     }
@@ -88,12 +101,17 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         try
         {
             _options.Validate();
+
             if (_options.Enabled)
             {
-                _logger.Information("Starting diagnostics with {ProviderCount} providers at interval {Interval}",
-                    _providers.Length, _options.Interval);
+                _logger.Information(
+                    "Starting diagnostics with {ProviderCount} providers at interval {Interval}",
+                    _providers.Length,
+                    _options.Interval
+                );
                 _worker = Task.Run(() => RunAsync(_lifetime.Token));
             }
+
             return Task.CompletedTask;
         }
         catch (Exception exception)
@@ -106,15 +124,16 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
     private async Task RunAsync(CancellationToken cancellationToken)
     {
         _workerContext.Value = true;
+
         try
         {
             // Create before the immediate collection so ticks during it coalesce deterministically.
             using var timer = new PeriodicTimer(_options.Interval, _timeProvider);
+
             do
             {
                 await CollectOnceAsync(cancellationToken).ConfigureAwait(false);
-            }
-            while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false));
+            } while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -123,6 +142,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         catch (Exception exception)
         {
             _logger.Error(exception, "Diagnostic worker failed");
+
             throw;
         }
         finally
@@ -136,28 +156,35 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         var started = _timeProvider.GetTimestamp();
         var metrics = new Dictionary<string, MetricSample>(StringComparer.Ordinal);
         var failedProviders = new List<string>();
+
         foreach (var (name, provider) in _providers)
         {
             cancellationToken.ThrowIfCancellationRequested();
+
             try
             {
                 var samples = await provider.CollectAsync(cancellationToken).ConfigureAwait(false);
                 var providerMetrics = new Dictionary<string, MetricSample>(StringComparer.Ordinal);
+
                 foreach (var sample in samples)
                 {
-                    if (sample is null || !IsValidName(sample.Name) || string.IsNullOrWhiteSpace(sample.Unit) ||
+                    if (sample is null ||
+                        !IsValidName(sample.Name) ||
+                        string.IsNullOrWhiteSpace(sample.Unit) ||
                         !double.IsFinite(sample.Value) ||
                         sample.Type is not (DiagnosticMetricType.Gauge or DiagnosticMetricType.Counter) ||
                         (sample.Type == DiagnosticMetricType.Counter && sample.Value < 0))
                     {
                         throw new InvalidOperationException($"Provider '{name}' returned an invalid diagnostic sample.");
                     }
+
                     if (!providerMetrics.TryAdd(name + "." + sample.Name, sample))
                     {
                         throw new InvalidOperationException($"Provider '{name}' returned duplicate metric '{sample.Name}'.");
                     }
                 }
-                foreach (var metric in providerMetrics) metrics.Add(metric.Key, metric.Value);
+                foreach (var metric in providerMetrics)
+                    metrics.Add(metric.Key, metric.Value);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -171,15 +198,26 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         }
 
         cancellationToken.ThrowIfCancellationRequested();
-        var snapshot = new DiagnosticSnapshot(++_sequence, _timeProvider.GetUtcNow(),
-            _timeProvider.GetElapsedTime(started), metrics, failedProviders);
+        var snapshot = new DiagnosticSnapshot(
+            ++_sequence,
+            _timeProvider.GetUtcNow(),
+            _timeProvider.GetElapsedTime(started),
+            metrics,
+            failedProviders
+        );
         Volatile.Write(ref _snapshot, snapshot);
+
         if (_options.LogMetrics)
         {
-            _logger.Information("Diagnostic snapshot {Sequence}: {@Metrics}; failed providers: {FailedProviders}",
-                snapshot.Sequence, snapshot.Metrics, snapshot.FailedProviders);
+            _logger.Information(
+                "Diagnostic snapshot {Sequence}: {@Metrics}; failed providers: {FailedProviders}",
+                snapshot.Sequence,
+                snapshot.Metrics,
+                snapshot.FailedProviders
+            );
         }
-        await _eventBus.PublishAsync(new DiagnosticSnapshotCollectedEvent(snapshot), cancellationToken).ConfigureAwait(false);
+        await _eventBus.PublishAsync(new DiagnosticSnapshotCollectedEvent(snapshot), cancellationToken)
+                       .ConfigureAwait(false);
     }
 
     private async Task StopCoreAsync(Task? startup)
@@ -196,6 +234,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                 {
                     await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
                 }
+
                 if (_worker is not null)
                 {
                     await _worker.ConfigureAwait(false);
@@ -210,11 +249,15 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
 
     private static bool IsValidName(string? name)
     {
-        if (string.IsNullOrEmpty(name) || name[0] is < 'a' or > 'z') return false;
+        if (string.IsNullOrEmpty(name) || name[0] is < 'a' or > 'z')
+            return false;
+
         foreach (var character in name)
         {
-            if (character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '_') return false;
+            if (character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '_')
+                return false;
         }
+
         return true;
     }
 
@@ -222,13 +265,16 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
     {
         if (_workerContext.Value)
         {
-            throw new InvalidOperationException("Diagnostic providers and observers cannot stop or dispose their own collector.");
+            throw new InvalidOperationException(
+                "Diagnostic providers and observers cannot stop or dispose their own collector."
+            );
         }
     }
 
     public void Dispose()
     {
         ThrowIfWorkerContext();
+
         try
         {
             StopAsync().GetAwaiter().GetResult();
