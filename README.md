@@ -1,8 +1,35 @@
-# Moongate
+<p align="center">
+  <img src="images/moongate_logo.png" alt="Moongate logo" width="220" />
+</p>
+
+<h1 align="center">Moongate</h1>
+
+<p align="center">
+  <a href="https://github.com/moongate-community/moongate/actions/workflows/ci.yml"><img src="https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg?branch=develop" alt="CI"></a>
+  <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
+  <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
+</p>
 
 ## Overview
 
-Short description goes here.
+Moongate is an Ultima Online server emulator written from scratch in C# on .NET 10.
+Gameplay state is owned by a single deterministic game loop, and every other
+subsystem is a standalone library that can be referenced, tested, and run without
+the server executable.
+
+- **Transport** - asynchronous TCP server and client with pluggable framing,
+  codecs, and per-connection middleware.
+- **Packets** - complete-buffer parsing and encoding for the ClassicUO 7.x login
+  flow, with a frozen registry and no source generation.
+- **Game loop** - one dedicated thread running synchronous work items in accepted
+  order, with a timer wheel and cooperative batch budgets on the same thread.
+- **Persistence** - MemoryPack snapshot and journal stores, coordinated world
+  saves, and backups verified by manifest and SHA-256.
+- **Extensibility** - DryIoc service registration, disk plugins in collectible
+  load contexts, a lifecycle event bus, and a console command system.
+
+The project is early. The implemented protocol surface covers the initial login
+flow; the world model and in-game packets are not built yet.
 
 ## Build
 
