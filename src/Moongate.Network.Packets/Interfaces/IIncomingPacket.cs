@@ -9,7 +9,7 @@ namespace Moongate.Network.Packets.Interfaces;
 public interface IIncomingPacket<TSelf> : IPacket
     where TSelf : class, IIncomingPacket<TSelf>
 {
-    static abstract bool TryParse(
+    abstract static bool TryParse(
         ReadOnlySpan<byte> data,
         [NotNullWhen(true)] out TSelf? packet);
 }
