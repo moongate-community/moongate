@@ -33,6 +33,7 @@ jobs:
       DOTNET_NOLOGO: 1
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
     strategy:
+      fail-fast: false
       matrix:
         rid: [linux-x64, win-x64, osx-arm64]
     steps:
