@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Attributes.Entities;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.DataAccess;
 using Moongate.Persistence.Extensions;
@@ -42,6 +43,62 @@ public sealed class ContainerPersistenceExtensionsTests
         Assert.Same(container.Resolve<MoongatePersistenceService>(), container.Resolve<MoongatePersistenceService>());
         Assert.Same(container.Resolve<DataAccess<TestEntity>>(), container.Resolve<IDataAccess<TestEntity>>());
         Assert.Empty(Directory.GetFiles(root.Path));
+    }
+
+    [Fact]
+    public async Task AddPersistenceEntity_StoresUnderTheNameTheEntityDeclares()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        using var container = new Container();
+
+        var result = container.RegisterMoongatePersistence(root.Path)
+            .AddPersistenceEntity<DeclaredCollectionEntity>();
+        await using var owner = container.Resolve<MoongatePersistenceService>();
+        await owner.InitializeAsync();
+        await container.Resolve<IDataAccess<DeclaredCollectionEntity>>()
+            .UpsertAsync(new DeclaredCollectionEntity { Id = new Serial(1), Name = "stored" });
+
+        Assert.Same(container, result);
+        Assert.Same(
+            container.Resolve<DataAccess<DeclaredCollectionEntity>>(),
+            container.Resolve<IDataAccess<DeclaredCollectionEntity>>()
+        );
+        Assert.True(File.Exists(Path.Combine(root.Path, "declared-items.journal.bin")));
+    }
+
+    [Fact]
+    public async Task AddPersistenceEntity_WithLiveSource_CapturesCurrentEntities()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        using var container = new Container();
+        var entity = new DeclaredCollectionEntity { Id = new Serial(1), Name = "before" };
+        container.RegisterMoongatePersistence(root.Path)
+            .AddPersistenceEntity(() => new[] { entity });
+        await using var owner = container.Resolve<MoongatePersistenceService>();
+        await owner.InitializeAsync();
+        entity.Name = "after";
+
+        await owner.SaveAllAsync();
+
+        Assert.Equal(
+            "after",
+            container.Resolve<IDataAccess<DeclaredCollectionEntity>>().GetById(entity.Id)!.Name
+        );
+    }
+
+    [Fact]
+    public void AddPersistenceEntity_EntityWithoutTheAttribute_ThrowsNamingTheType()
+    {
+        using var root = new TemporaryPersistenceDirectory();
+        using var container = new Container();
+        container.RegisterMoongatePersistence(root.Path);
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => container.AddPersistenceEntity<TestEntity>()
+        );
+
+        Assert.Contains(typeof(TestEntity).FullName!, exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(PersistenceCollectionAttribute), exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
