@@ -1,0 +1,14 @@
+<Project>
+    <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+        <PackageIcon>moongate_logo.png</PackageIcon>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(IsPackable)' == 'true'">
+        <None Include="$(MSBuildThisFileDirectory)images/moongate_logo.png"
+              Pack="true" PackagePath="/" />
+        <None Update="README.md" Pack="true" PackagePath="/" />
+    </ItemGroup>
+</Project>
