@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  release-please:
+    runs-on: [self-hosted, gung-dotnet]
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+    steps:
+      - name: Run release-please
+        id: release
+        uses: googleapis/release-please-action@v4
+
+  assets:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: [self-hosted, gung-dotnet]
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+    strategy:
+      matrix:
+        rid: [linux-x64, win-x64, osx-arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Publish ${{ matrix.rid }}
+        run: >
+          dotnet publish src/Moongate.Server/Moongate.Server.csproj
+          -c Release -r ${{ matrix.rid }}
+          -o dist/moongate-${{ matrix.rid }}
+
+      - name: Package
+        run: >
+          tar -C dist -czf
+          moongate-${{ matrix.rid }}-${{ needs.release-please.outputs.version }}.tar.gz
+          moongate-${{ matrix.rid }}
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: moongate-${{ matrix.rid }}-${{ needs.release-please.outputs.version }}.tar.gz
