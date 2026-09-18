@@ -10,6 +10,10 @@ permissions:
   pull-requests: write
   issues: write
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release-please:
     runs-on: [self-hosted, gung-dotnet]
@@ -17,10 +21,13 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
       - name: Run release-please
         id: release
         uses: googleapis/release-please-action@v4
+        with:
+          target-branch: main
 
   assets:
     needs: release-please
@@ -39,6 +46,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.sha }}
 
       - name: Publish ${{ matrix.rid }}
         run: >
