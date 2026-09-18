@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    # Self-hosted Forgejo runner "gung-server" (gung-server-01), label declared
+    # in /mnt/data/apps/forgejo-runner/config.yml. Jobs run in a dedicated
+    # rootless Docker daemon, capped at 8G / 4 CPU each.
+    # Codeberg's hosted runners (codeberg-medium: 4 CPU / 8G / 10 min) stay
+    # available as a fallback by switching this label back.
+    runs-on: gung-dotnet
+
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore
+        run: dotnet restore Moongate.slnx
+
+      - name: Build
+        run: dotnet build Moongate.slnx --no-restore
+
+      - name: Test
+        run: dotnet test Moongate.slnx --no-build
