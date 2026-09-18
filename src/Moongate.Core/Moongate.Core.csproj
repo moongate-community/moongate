@@ -23,4 +23,13 @@
 
     </ItemGroup>
 
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+        <PackageId>Moongate.Core</PackageId>
+        <Description>Shared primitives, geometry, collections, configuration helpers, and utilities for Moongate applications.</Description>
+        <PackageTags>moongate;ultima-online;utilities;geometry</PackageTags>
+    </PropertyGroup>
+
 </Project>

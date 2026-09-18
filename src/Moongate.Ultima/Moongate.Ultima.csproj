@@ -4,7 +4,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <IsPackable>true</IsPackable>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
@@ -21,5 +20,14 @@
     <ItemGroup>
         <InternalsVisibleTo Include="Moongate.Tests"/>
     </ItemGroup>
+
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+        <PackageId>Moongate.Ultima</PackageId>
+        <Description>Ultima Online client data readers and rendering utilities for MUL/UOP assets, maps, art, and localization.</Description>
+        <PackageTags>moongate;ultima-online;mul;uop;assets</PackageTags>
+    </PropertyGroup>
 
 </Project>

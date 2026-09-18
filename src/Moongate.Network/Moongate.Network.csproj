@@ -8,4 +8,13 @@
     <PackageReference Include="Serilog" Version="4.4.0" />
     <InternalsVisibleTo Include="Moongate.Network.Tests" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+    <PackageId>Moongate.Network</PackageId>
+    <Description>Standalone asynchronous TCP transport with framing, middleware, and per-connection pipelines for .NET.</Description>
+    <PackageTags>moongate;networking;tcp;transport</PackageTags>
+  </PropertyGroup>
+
 </Project>

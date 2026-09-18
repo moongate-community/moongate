@@ -10,4 +10,13 @@
     <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj" />
   </ItemGroup>
 
+
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+    <PackageId>Moongate.Network.Packets</PackageId>
+    <Description>Ultima Online packet definitions, span-based serialization, and packet registration for Moongate.</Description>
+    <PackageTags>moongate;ultima-online;protocol;packets</PackageTags>
+  </PropertyGroup>
+
 </Project>

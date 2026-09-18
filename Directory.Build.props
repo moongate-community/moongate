@@ -23,6 +23,7 @@
 
     <!-- Package Metadata -->
     <PropertyGroup>
+        <IsPackable>false</IsPackable>
         <Version>0.2.0</Version>
         <Authors>Squid Development</Authors>
         <Product>Moongate</Product>
@@ -34,8 +35,6 @@
         <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
 
     <!-- Build Configuration -->

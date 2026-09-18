@@ -10,4 +10,13 @@
         <PackageReference Include="ZLinq" Version="1.5.6" />
         <InternalsVisibleTo Include="Moongate.Tests" />
     </ItemGroup>
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+        <PackageId>Moongate.Persistence</PackageId>
+        <Description>Binary snapshot and journal persistence for serial-identified entities, powered by MemoryPack.</Description>
+        <PackageTags>moongate;persistence;memorypack;serialization</PackageTags>
+    </PropertyGroup>
+
 </Project>

@@ -12,4 +12,13 @@
       <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
     </ItemGroup>
 
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+        <PackageId>Moongate.Server.Core</PackageId>
+        <Description>Plugin-facing server contracts, events, registries, and dependency injection extensions for Moongate.</Description>
+        <PackageTags>moongate;ultima-online;plugins;events</PackageTags>
+    </PropertyGroup>
+
 </Project>
