@@ -6,13 +6,16 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
 {
     private readonly Queue<ConsoleKeyInfo> _keys = new();
 
+    /// <summary>When set, the next <see cref="ReadKey" /> throws this exception instead of returning a key.</summary>
+    public Exception? ThrowOnNextRead { get; set; }
+
     public bool KeyAvailable
     {
         get
         {
             lock (_keys)
             {
-                return _keys.Count > 0;
+                return ThrowOnNextRead is not null || _keys.Count > 0;
             }
         }
     }
@@ -47,6 +50,13 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
     {
         lock (_keys)
         {
+            if (ThrowOnNextRead is { } exception)
+            {
+                ThrowOnNextRead = null;
+
+                throw exception;
+            }
+
             return _keys.Dequeue();
         }
     }

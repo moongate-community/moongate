@@ -45,7 +45,7 @@ public sealed class ConsolePromptServiceTests
 
         var after = driver.Operations.Skip(marker).ToArray();
         Assert.Equal("pos:0,9", after[0]);
-        Assert.Equal($"write:{new string(' ', 20)}", after[1]);
+        Assert.Equal($"write:{new string(' ', 19)}", after[1]);
         Assert.Equal("pos:0,9", after[2]);
         Assert.Equal("writeline:log line", after[3]);
         Assert.Contains("write:MG [LOCKED]> ", after);
@@ -101,7 +101,7 @@ public sealed class ConsolePromptServiceTests
 
         service.UpdateInput("0123456789");
 
-        Assert.Contains("write:MG> 0123", driver.Operations);
+        Assert.Contains("write:MG> 012", driver.Operations);
         Assert.Equal("pos:7,4", driver.Operations[^1]);
     }
 

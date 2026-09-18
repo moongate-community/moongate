@@ -71,6 +71,8 @@ await ConsoleApp.RunAsync(
         var consolePrompt = new ConsolePromptService();
 
         var consoleLogger = new LoggerConfiguration()
+                            // pass-through: the outer logger owns level policy
+                            .MinimumLevel.Verbose()
                             .WriteTo
                             .Console(
                                 new ExpressionTemplate(

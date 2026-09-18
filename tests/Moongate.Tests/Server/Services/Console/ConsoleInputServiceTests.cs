@@ -21,7 +21,7 @@ public sealed class ConsoleInputServiceTests
         var keys = new ScriptedConsoleKeySource();
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
 
         await service.StartAsync();
 
@@ -37,7 +37,7 @@ public sealed class ConsoleInputServiceTests
         var keys = new ScriptedConsoleKeySource();
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
 
         await service.StartAsync();
 
@@ -56,7 +56,7 @@ public sealed class ConsoleInputServiceTests
         keys.Enqueue('*');
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await WaitForAsync(() => !prompt.IsInputLocked);
@@ -76,7 +76,7 @@ public sealed class ConsoleInputServiceTests
         keys.Enqueue(ConsoleKey.Backspace);
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await WaitForAsync(() => prompt.CurrentInput == "ech");
@@ -98,7 +98,7 @@ public sealed class ConsoleInputServiceTests
         keys.Enqueue(ConsoleKey.Enter);
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await WaitForAsync(() => prompt.Output.Count > 0);
@@ -121,7 +121,7 @@ public sealed class ConsoleInputServiceTests
         keys.Enqueue(ConsoleKey.Enter);
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await WaitForAsync(() => prompt.Output.Count > 0);
@@ -141,7 +141,7 @@ public sealed class ConsoleInputServiceTests
         keys.Enqueue(ConsoleKey.Enter);
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await WaitForAsync(() => prompt.Output.Count > 0);
@@ -157,13 +157,34 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task RunAsync_KeySourceFailureStopsTheLoopAndHidesThePrompt()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        keys.ThrowOnNextRead = new IOException("console detached");
+
+        await WaitForAsync(() => !prompt.PromptVisible);
+
+        var exception = await Record.ExceptionAsync(() => service.StopAsync());
+
+        Assert.Null(exception);
+        Assert.False(prompt.PromptVisible);
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task StopAsync_EndsTheLoopAndHidesThePrompt()
     {
         var prompt = new RecordingPromptService();
         var keys = new ScriptedConsoleKeySource();
         using var container = CreateContainer();
         var commands = await CreateCommandsAsync(container);
-        var service = new ConsoleInputService(prompt, commands, keys);
+        using var service = new ConsoleInputService(prompt, commands, keys);
         await service.StartAsync();
 
         await service.StopAsync();

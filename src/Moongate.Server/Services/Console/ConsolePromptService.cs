@@ -236,15 +236,22 @@ public sealed class ConsolePromptService : IConsolePromptService
         var prefix = _locked ? LockedPromptPrefix : PromptPrefix;
         var line = prefix + _input;
 
+        // Stay one cell short of the full width: writing the final column wraps
+        // immediately on Windows conhost without VT processing, which scrolls the
+        // viewport and drags the pinned prompt row off-screen.
+        var renderWidth = Math.Max(1, width - 1);
+
         EraseRow(row, width);
-        _driver.Write(line.Length > width ? line[..width] : line);
+        _driver.Write(line.Length > renderWidth ? line[..renderWidth] : line);
         _driver.SetCursorPosition(Math.Min(width - 1, line.Length), row);
     }
 
     private void EraseRow(int row, int width)
     {
+        var eraseWidth = Math.Max(1, width - 1);
+
         _driver.SetCursorPosition(0, row);
-        _driver.Write(new string(' ', width));
+        _driver.Write(new string(' ', eraseWidth));
         _driver.SetCursorPosition(0, row);
     }
 

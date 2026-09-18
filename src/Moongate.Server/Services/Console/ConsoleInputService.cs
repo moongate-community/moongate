@@ -80,78 +80,102 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         var buffer = new StringBuilder();
         var lockWarningShown = false;
 
-        while (!cancellationToken.IsCancellationRequested)
+        try
         {
-            if (!_keys.KeyAvailable)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                try
-                {
-                    await Task.Delay(PollDelayMilliseconds, cancellationToken);
-                }
-                catch (OperationCanceledException)
-                {
-                    return;
-                }
+                var hasKey = _keys.KeyAvailable;
+                var key = default(ConsoleKeyInfo);
 
-                continue;
-            }
-
-            var key = _keys.ReadKey();
-
-            if (_prompt.IsInputLocked)
-            {
-                if (key.KeyChar == _prompt.UnlockCharacter)
+                if (hasKey)
                 {
-                    _prompt.UnlockInput();
-                    lockWarningShown = false;
-                }
-                else if (!lockWarningShown)
-                {
-                    _logger.Warning(
-                        "Console input is locked. Press '{UnlockCharacter}' to unlock.",
-                        _prompt.UnlockCharacter
-                    );
-                    lockWarningShown = true;
+                    key = _keys.ReadKey();
+                    hasKey = !IsNoKey(key);
                 }
 
-                continue;
-            }
-
-            if (key.Key == ConsoleKey.Enter)
-            {
-                var commandLine = buffer.ToString();
-                buffer.Clear();
-                _prompt.UpdateInput("");
-                await SubmitAsync(commandLine, cancellationToken);
-
-                continue;
-            }
-
-            if (key.Key == ConsoleKey.Backspace)
-            {
-                if (buffer.Length > 0)
+                if (!hasKey)
                 {
-                    buffer.Length--;
+                    try
+                    {
+                        await Task.Delay(PollDelayMilliseconds, cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return;
+                    }
+
+                    continue;
+                }
+
+                if (_prompt.IsInputLocked)
+                {
+                    if (key.KeyChar == _prompt.UnlockCharacter)
+                    {
+                        _prompt.UnlockInput();
+                        lockWarningShown = false;
+                    }
+                    else if (!lockWarningShown)
+                    {
+                        _logger.Warning(
+                            "Console input is locked. Press '{UnlockCharacter}' to unlock.",
+                            _prompt.UnlockCharacter
+                        );
+                        lockWarningShown = true;
+                    }
+
+                    continue;
+                }
+
+                if (key.Key == ConsoleKey.Enter)
+                {
+                    var commandLine = buffer.ToString();
+                    buffer.Clear();
+                    _prompt.UpdateInput("");
+                    await SubmitAsync(commandLine, cancellationToken);
+
+                    continue;
+                }
+
+                if (key.Key == ConsoleKey.Backspace)
+                {
+                    if (buffer.Length > 0)
+                    {
+                        buffer.Length--;
+                        _prompt.UpdateInput(buffer.ToString());
+                    }
+
+                    continue;
+                }
+
+                if (key.Key == ConsoleKey.Escape)
+                {
+                    buffer.Clear();
+                    _prompt.UpdateInput("");
+
+                    continue;
+                }
+
+                if (!char.IsControl(key.KeyChar))
+                {
+                    buffer.Append(key.KeyChar);
                     _prompt.UpdateInput(buffer.ToString());
                 }
-
-                continue;
-            }
-
-            if (key.Key == ConsoleKey.Escape)
-            {
-                buffer.Clear();
-                _prompt.UpdateInput("");
-
-                continue;
-            }
-
-            if (!char.IsControl(key.KeyChar))
-            {
-                buffer.Append(key.KeyChar);
-                _prompt.UpdateInput(buffer.ToString());
             }
         }
+        catch (OperationCanceledException)
+        {
+            // normal cancellation exit
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Console input has stopped unexpectedly; no further keys will be processed.");
+            _prompt.HidePrompt();
+        }
+    }
+
+    private static bool IsNoKey(ConsoleKeyInfo key)
+    {
+        return key.KeyChar == '\0' && key.Key == default(ConsoleKey) && key.Modifiers == 0;
     }
 
     private async Task SubmitAsync(string commandLine, CancellationToken cancellationToken)
