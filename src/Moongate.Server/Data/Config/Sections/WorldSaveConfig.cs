@@ -11,7 +11,8 @@ public sealed class WorldSaveConfig
     public int BackupRetentionCount { get; set; } = 5;
 
     /// <summary>Maps validated TOML settings to the service's immutable options.</summary>
-    public WorldSaveOptions ToOptions(string backupDirectory)
+    /// <remarks>The backup directory is not configured here: the service derives it from the root.</remarks>
+    public WorldSaveOptions ToOptions()
     {
         Validate();
         var options = new WorldSaveOptions
@@ -19,8 +20,7 @@ public sealed class WorldSaveConfig
             Enabled = Enabled,
             Interval = TimeSpan.FromSeconds(IntervalSeconds),
             BackupsEnabled = BackupsEnabled,
-            BackupRetentionCount = BackupRetentionCount,
-            BackupDirectory = backupDirectory
+            BackupRetentionCount = BackupRetentionCount
         };
         options.Validate();
         return options;

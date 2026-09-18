@@ -220,6 +220,8 @@ csx/
 ecf/
 moongate_data/images/
 moongate.pid
+moongate.pid.lock
+moongate_root/
 rcf/
 
 # Windows Store app package directories and files

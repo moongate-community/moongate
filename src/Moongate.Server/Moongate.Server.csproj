@@ -5,6 +5,7 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <Codename>Lilly</Codename>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <PublishSingleFile>true</PublishSingleFile>
         <PublishSelfContained>true</PublishSelfContained>
@@ -14,6 +15,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <AssemblyMetadata Include="Codename" Value="$(Codename)" />
       <InternalsVisibleTo Include="Moongate.Tests" />
     </ItemGroup>
 
@@ -37,6 +39,7 @@
       <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
       <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj" />
       <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
+      <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj" />
     </ItemGroup>
 
     <ItemGroup>

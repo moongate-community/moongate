@@ -219,6 +219,7 @@ public sealed class WorldSaveBootstrapTests
         using var fixture = new Moongate.Tests.Support.Persistence.TemporaryPersistenceDirectory();
         var persistence = new Moongate.Persistence.Services.MoongatePersistenceService(fixture.Path);
         container.RegisterInstance(persistence);
+        container.RegisterInstance(new Moongate.Core.Directories.DirectoriesConfig(fixture.Path, []));
         var timers = new Moongate.Server.Services.Timing.TimerWheelService(new Moongate.Server.Core.Data.Timing.TimerWheelOptions(), TimeProvider.System);
         container.RegisterInstance<ITimerService>(timers);
         container.RegisterInstance<IGameLoopService>(new Moongate.Server.Services.GameLoop.GameLoopService(

@@ -1,6 +1,6 @@
 using Moongate.Core.Types;
 
-namespace Moongate.Server.Data.Args;
+namespace Moongate.Server.Core.Data.Args;
 
 public class MoongateServerArgs
 {

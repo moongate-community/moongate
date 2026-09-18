@@ -6,4 +6,4 @@
 |       |   '. '-.   \      /  |    \ |  \     |   |       |      |      |
 '       '     `'--'   \____/   '     \'   \____|   '       '      '      '-----'
 
-                 Version: {Version} Codename: {Codename}
+                 Version: {Version} Codename: "{Codename}"

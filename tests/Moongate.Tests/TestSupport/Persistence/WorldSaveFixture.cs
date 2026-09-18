@@ -1,3 +1,4 @@
+using Moongate.Core.Directories;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.DataAccess;
 using Moongate.Persistence.Services;
@@ -15,9 +16,12 @@ namespace Moongate.Tests.TestSupport.Persistence;
 internal sealed class WorldSaveFixture : IAsyncDisposable
 {
     private readonly TemporaryPersistenceDirectory _root = new();
+    private readonly DirectoriesConfig _directories;
 
     public string SaveDirectory => Path.Combine(_root.Path, "save");
-    public string BackupDirectory => Path.Combine(_root.Path, "backups");
+
+    /// <summary>Where the service actually writes backups: it derives this from the root, ignoring the option.</summary>
+    public string BackupDirectory => Path.Join(_root.Path, "world-saves");
     public WorldSaveTimeProvider Clock { get; } = new();
     public ControlledWorldSaveFileSystem FileSystem { get; } = new();
     public MoongatePersistenceService Persistence { get; }
@@ -31,6 +35,9 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
 
     public WorldSaveFixture(bool autosave = false, bool backups = false, int retention = 5)
     {
+        // Passing no directory names keeps Init from pre-creating the backup root, which several
+        // tests assert is absent until a backup is actually published.
+        _directories = new DirectoriesConfig(_root.Path, []);
         Persistence = new MoongatePersistenceService(SaveDirectory);
         Timers = new TimerWheelService(new TimerWheelOptions(), Clock);
         Loop = new GameLoopService(new GameLoopOptions(), Timers, Clock);
@@ -48,8 +55,8 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         Saves = new WorldSaveService(Persistence, Loop, Timers, new WorldSaveOptions
         {
             Enabled = autosave, Interval = TimeSpan.FromSeconds(2), BackupsEnabled = backups,
-            BackupDirectory = BackupDirectory, BackupRetentionCount = retention
-        }, Clock);
+            BackupRetentionCount = retention
+        }, Clock, _directories);
     }
 
     public async Task StartAsync(bool activate = true)

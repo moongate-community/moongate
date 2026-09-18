@@ -1,6 +1,7 @@
 ﻿using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Directories;
+using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
@@ -9,13 +10,13 @@ using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Commands;
+using Moongate.Server.Core.Data.Args;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
-using Moongate.Server.Data.Args;
 using Moongate.Server.Handlers.General;
 using Moongate.Server.Handlers.Login;
 using Moongate.Server.Helpers;
@@ -29,6 +30,7 @@ using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
+using Moongate.Server.Services.Ultima;
 using Serilog;
 using Serilog.Templates;
 using Serilog.Templates.Themes;
@@ -37,15 +39,35 @@ await ConsoleApp.RunAsync(
     args,
     async (
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
-        bool logPackets = false, string? rootDirectory = null, bool showHeader = true
+        bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid"
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
+        rootDirectory = rootDirectory.ResolvePathAndEnvs();
+
+        PidFileGuard processGuard;
+
+        try
+        {
+            processGuard = PidFileGuard.Acquire(rootDirectory, pidFileName);
+        }
+        catch (Exception exception) when (exception is InvalidOperationException or
+                                                       IOException or
+                                                       UnauthorizedAccessException)
+        {
+            await Console.Error.WriteLineAsync($"Moongate startup aborted: {exception.Message}");
+            Environment.ExitCode = 1;
+
+            return;
+        }
+
+        using var pidFileGuard = processGuard;
+
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
 
-        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save", "backups"]);
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save"]);
 
         var serverArgs = new MoongateServerArgs()
         {
@@ -60,6 +82,7 @@ await ConsoleApp.RunAsync(
             var headerContent = ResourceUtils.GetEmbeddedResourceString(typeof(Program).Assembly, "Assets/header.txt");
 
             headerContent = headerContent.Replace("{Version}", VersionUtils.GetVersion(typeof(Program).Assembly));
+            headerContent = headerContent.Replace("{Codename}", VersionUtils.GetCodename(typeof(Program).Assembly));
 
             Console.WriteLine(headerContent);
         }
@@ -71,8 +94,10 @@ await ConsoleApp.RunAsync(
         var consolePrompt = new ConsolePromptService();
 
         var consoleLogger = new LoggerConfiguration()
+
                             // pass-through: the outer logger owns level policy
-                            .MinimumLevel.Verbose()
+                            .MinimumLevel
+                            .Verbose()
                             .WriteTo
                             .Console(
                                 new ExpressionTemplate(
@@ -98,7 +123,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
-                    services.RegisterInstance(serverConfig.WorldSave.ToOptions(directoriesConfig["backups"]));
+                    services.RegisterInstance(serverConfig.WorldSave.ToOptions());
                     services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance<TimeProvider>(TimeProvider.System);
                     services.RegisterInstance(new TimerWheelOptions());
@@ -113,6 +138,7 @@ await ConsoleApp.RunAsync(
                             )
                             .RegisterMoongateService<TimerWheelService>(priority: -900)
                             .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                            .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
                             .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
                             .RegisterMoongateService<ISessionService, SessionService>()
                             .RegisterMoongateService<IEventBusService, EventBusService>()

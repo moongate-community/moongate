@@ -91,7 +91,7 @@ public sealed class ConfigHelperTests
         Assert.Equal("Existing data", File.ReadAllText(parent));
     }
     [Fact]
-    public void Load_WorldSaveDefaults_WritesSnakeCaseAndMapsBackupDirectory()
+    public void Load_WorldSaveDefaults_WriteSnakeCaseAndMapToOptions()
     {
         using var directory = new TemporaryDirectory();
         var path = Path.Combine(directory.Path, "moongate.toml");
@@ -101,12 +101,11 @@ public sealed class ConfigHelperTests
         Assert.Equal(300L, worldSave["interval_seconds"]);
         Assert.Equal(true, worldSave["backups_enabled"]);
         Assert.Equal(5L, worldSave["backup_retention_count"]);
-        var options = config.WorldSave.ToOptions(Path.Combine(directory.Path, "backups"));
+        var options = config.WorldSave.ToOptions();
         Assert.True(options.Enabled);
         Assert.True(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(300), options.Interval);
         Assert.Equal(5, options.BackupRetentionCount);
-        Assert.Equal(Path.Combine(directory.Path, "backups"), options.BackupDirectory);
     }
 
     [Fact]
@@ -120,7 +119,7 @@ public sealed class ConfigHelperTests
             backups_enabled = false
             backup_retention_count = 2
             """);
-        var options = ConfigHelper.Load(path).WorldSave.ToOptions(directory.Path);
+        var options = ConfigHelper.Load(path).WorldSave.ToOptions();
         Assert.False(options.Enabled);
         Assert.False(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(45), options.Interval);
