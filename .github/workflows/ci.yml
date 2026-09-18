@@ -7,6 +7,12 @@ on:
       - main
   pull_request:
 
+# A single self-hosted runner serves this repository, so a superseded run would
+# otherwise hold the queue against the run that replaced it.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-and-test:
     # Self-hosted runner on gung-server-01, registered with the custom label
@@ -17,6 +23,12 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk:10.0
 
+    strategy:
+      # Report both configurations even when one of them fails.
+      fail-fast: false
+      matrix:
+        configuration: [Debug, Release]
+
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
@@ -26,11 +38,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
       - name: Restore
         run: dotnet restore Moongate.slnx
 
       - name: Build
-        run: dotnet build Moongate.slnx --no-restore
+        run: dotnet build Moongate.slnx -c ${{ matrix.configuration }} --no-restore
 
       - name: Test
-        run: dotnet test Moongate.slnx --no-build
+        run: dotnet test Moongate.slnx -c ${{ matrix.configuration }} --no-build
