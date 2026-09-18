@@ -39,7 +39,6 @@ Group by domain first, not by technical suffix.
 | `Services` | Service implementations |
 | `Internal` | Implementation details not part of public API |
 | `Subscribers` | `IEventBus` subscriber classes |
-| `DBus` | D-Bus interface definitions |
 
 ## 3. C# File and Type Rules
 
@@ -143,20 +142,16 @@ internal class MySubscriber
 - Plugins receive an `IPluginContext` — use `context.EventBus` to publish, `context.Logger` to log, `context.ConfigPath` for config.
 - Plugin hosts are loaded via `PluginLoadContext` (`AssemblyLoadContext(isCollectible: true)`) for hot-reload support.
 
-## 11. D-Bus Interfaces
+## 11. Startup Services / Subscribers
 
-- D-Bus proxy interfaces live in `DBus/` and must be `public` (required by Tmds.DBus runtime proxy generation via Reflection.Emit).
-- Annotate with `[DBusInterface("...")]` and inherit `IDBusObject`.
+- Services that own work across the host lifetime implement `IMoongateStartupService`, which extends `IMoongateService` with `StartAsync()` and `StopAsync()`.
+- Register them with `container.RegisterMoongateService<TContract, TService>(priority)`. Services start in ascending priority order and stop in reverse, so a dependency takes a lower number than its dependents; the default is `0`.
+- If an optional dependency is unavailable at startup, log a `Warning` and return cleanly — do not bring the host down. Throw only when the server cannot run without it; the bootstrap then stops every service it already started, in reverse order.
+- Subscribers that are not startup services are registered as singletons and force-resolved in `Program.cs` to trigger constructor subscription registration.
 
-## 12. Hosted Services / Subscribers
+## 12. Test Conventions
 
-- Background services implement `IHostedService` (or extend `BackgroundService`).
-- If an optional external dependency (e.g., D-Bus session bus) is unavailable at startup, log a `Warning` and return cleanly — do not crash the host.
-- Subscribers that are not hosted services are registered as singletons and force-resolved in `Program.cs` to trigger constructor subscription registration.
-
-## 13. Test Conventions
-
-### 13.1 Structure
+### 12.1 Structure
 
 ```
 tests/Moongate.Tests/<Domain>/<Subdomain>/<SubjectName>Tests.cs
@@ -170,32 +165,32 @@ tests/Moongate.Tests/Service/UnixSocketServerTests.cs → namespace Moongate.Tes
 tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests.Support;
 ```
 
-### 13.2 Naming
+### 12.2 Naming
 
 - File: `<SubjectName>Tests.cs`
 - Class: `<SubjectName>Tests`
 - One main test class per file.
 - Test method style: `Method_Scenario_ExpectedResult`.
 
-### 13.3 Test Support
+### 12.3 Test Support
 
 - Shared fakes, builders, and helpers go in `tests/Moongate.Tests/Support/`.
 - Do not mix reusable test infrastructure into domain test files.
 
-### 13.4 InternalsVisibleTo
+### 12.4 InternalsVisibleTo
 
 `Moongate.Service.csproj` exposes internals to `Moongate.Tests` via:
 ```xml
 <InternalsVisibleTo Include="Moongate.Tests"/>
 ```
 
-## 14. Commits
+## 13. Commits
 
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, etc.).
-- Scope commits to the affected subsystem: `feat(dbus):`, `fix(socket):`, `test(eventbus):`.
+- Scope commits to the affected subsystem: `feat(persistence):`, `fix(network):`, `test(eventbus):`.
 - Never add `Co-Authored-By: Claude` to commits.
 
-## 15. Non-Negotiable Hygiene
+## 14. Non-Negotiable Hygiene
 
 - No dead code.
 - No TODO comments without a tracked follow-up.
@@ -205,7 +200,7 @@ tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests
 - No primary constructors.
 - No expression-bodied constructors.
 
-## 16. Additional Conventions
+## 15. Additional Conventions
 
 **Nullability**
 - Use nullable reference types consistently.
