@@ -3,14 +3,14 @@ using System.Reflection;
 namespace Moongate.Core.Utils;
 
 /// <summary>
-/// Provides utility methods for reading assembly version metadata.
+/// Provides utility methods for reading assembly version and codename metadata.
 /// </summary>
 public static class VersionUtils
 {
     /// <summary>
-    /// Gets the informational version of the Nocturnia.Core assembly.
+    /// Gets the informational version of the Moongate.Core assembly.
     /// </summary>
-    /// <returns>The version declared for Nocturnia.Core, without build metadata.</returns>
+    /// <returns>The version declared for Moongate.Core, without build metadata.</returns>
     public static string GetVersion()
         => GetVersion(typeof(VersionUtils).Assembly);
 
@@ -38,5 +38,18 @@ public static class VersionUtils
         }
 
         return assembly.GetName().Version?.ToString() ?? "";
+    }
+
+    /// <summary>
+    /// Gets the codename embedded in the specified assembly's metadata.
+    /// </summary>
+    /// <param name="assembly">The assembly to read codename metadata from.</param>
+    /// <returns>The codename, or an empty string when the metadata is unavailable.</returns>
+    public static string GetCodename(Assembly assembly)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        return assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+                       .FirstOrDefault(attribute => attribute.Key == "Codename")?.Value ?? "";
     }
 }

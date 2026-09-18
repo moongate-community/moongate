@@ -35,4 +35,36 @@ public sealed class VersionUtilsTests
     {
         Assert.Throws<ArgumentNullException>(() => VersionUtils.GetVersion(null!));
     }
+
+    [Fact]
+    public void GetCodename_ReturnsTheValueOfTheCodenameMetadata()
+    {
+        var assembly = DynamicAssemblyFactory.Create(new Version(1, 0, 0, 0), "1.0.0", codename: "Lilly");
+
+        Assert.Equal("Lilly", VersionUtils.GetCodename(assembly));
+    }
+
+    [Fact]
+    public void GetCodename_MissingMetadataReturnsEmpty()
+    {
+        var assembly = DynamicAssemblyFactory.Create(new Version(1, 0, 0, 0), "1.0.0");
+
+        Assert.Equal("", VersionUtils.GetCodename(assembly));
+    }
+
+    [Fact]
+    public void GetCodename_IgnoresMetadataUnderAnotherKey()
+    {
+        var assembly = DynamicAssemblyFactory.Create(new Version(1, 0, 0, 0), "1.0.0", codename: "Lilly");
+
+        // The lookup is keyed, so an assembly carrying other AssemblyMetadata entries cannot be mistaken for a match.
+        Assert.Equal("Lilly", VersionUtils.GetCodename(assembly));
+        Assert.Equal("", VersionUtils.GetCodename(DynamicAssemblyFactory.Create(new Version(1, 0, 0, 0))));
+    }
+
+    [Fact]
+    public void GetCodename_NullAssembly_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => VersionUtils.GetCodename(null!));
+    }
 }
