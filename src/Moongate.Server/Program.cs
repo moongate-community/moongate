@@ -14,6 +14,7 @@ using Moongate.Server.Core.Data.Args;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Diagnostics;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -23,6 +24,8 @@ using Moongate.Server.Helpers;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
 using Moongate.Server.Services.Console.Internal.Logging;
+using Moongate.Server.Services.Diagnostics;
+using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Sessions;
@@ -124,6 +127,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
                     services.RegisterInstance(serverConfig.WorldSave.ToOptions());
+                    services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance<TimeProvider>(TimeProvider.System);
                     services.RegisterInstance(new TimerWheelOptions());
@@ -141,7 +145,15 @@ await ConsoleApp.RunAsync(
                             .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
                             .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
                             .RegisterMoongateService<ISessionService, SessionService>()
-                            .RegisterMoongateService<IEventBusService, EventBusService>()
+                            .RegisterMoongateService<IEventBusService, EventBusService>();
+
+                    services.Register<IMetricProvider, SystemMetricsProvider>(Reuse.Singleton);
+                    services.Register<IMetricProvider, GameLoopMetricsProvider>(Reuse.Singleton);
+                    services.Register<IMetricProvider, TimerMetricsProvider>(Reuse.Singleton);
+                    services.Register<IMetricProvider, SessionMetricsProvider>(Reuse.Singleton);
+                    services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(
+                                DiagnosticService.StartupPriority
+                            )
                             .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
                                 () => new PluginLoaderService(services, directoriesConfig)
                             )

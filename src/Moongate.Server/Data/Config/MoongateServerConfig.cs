@@ -12,6 +12,8 @@ public class MoongateServerConfig
 
     public WorldSaveConfig WorldSave { get; set; } = new();
 
+    public DiagnosticConfig Diagnostics { get; set; } = new();
+
     /// <summary>Validates configuration before server services begin startup.</summary>
     public void Validate()
     {
@@ -20,5 +22,11 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The world_save configuration section cannot be null.");
         }
         WorldSave.Validate();
+
+        if (Diagnostics is null)
+        {
+            throw new InvalidOperationException("The diagnostics configuration section cannot be null.");
+        }
+        Diagnostics.ToOptions();
     }
 }

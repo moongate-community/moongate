@@ -50,3 +50,5 @@ docker run -d --name moongate \
 `MOONGATE_ROOT` and `--root-directory` move that root elsewhere. Run several
 shards from the same image by giving each container its own volume and its own
 published port; a root is meant for one server at a time.
+
+[Diagnostics](docs/diagnostics.md)
