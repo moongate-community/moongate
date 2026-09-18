@@ -40,8 +40,6 @@ await ConsoleApp.RunAsync(
         bool logPackets = false, string? rootDirectory = null, bool showHeader = true
     ) =>
     {
-        ProcessShutdownGuard.CaptureTerminalState();
-
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
@@ -137,13 +135,6 @@ await ConsoleApp.RunAsync(
                 }
             );
 
-        try
-        {
-            await MoongateServerRunner.RunAsync(bootstrap);
-        }
-        finally
-        {
-            ProcessShutdownGuard.ArmForcedExit();
-        }
+        await MoongateServerRunner.RunAsync(bootstrap);
     }
 );
