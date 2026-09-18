@@ -70,7 +70,7 @@ Inside a type, use this order:
 All `private readonly` fields must start with `_`:
 
 ```csharp
-private readonly IEventBus _eventBus;
+private readonly IEventBusService _eventBus;
 private readonly DirectoriesConfig _directoriesConfig;
 ```
 
@@ -81,7 +81,9 @@ If a class implements `IDisposable` or `IAsyncDisposable`, `Dispose`/`DisposeAsy
 ## 5. Interfaces
 
 - Interfaces live only under `Interfaces` namespaces.
-- Every interface must have XML docs (`///`).
+- Every interface, and every member it declares, carries XML docs (`///`) **written in English**. Release
+  builds emit the documentation file and the NuGet packages ship it, so these comments are the public
+  reference for the libraries, not notes for the next reader of the source.
 - Interface names must use `I` prefix and clear domain naming.
 
 ## 6. Enums
@@ -118,7 +120,6 @@ private readonly ILogger _logger = Log.ForContext<MyService>();
 
 - Where a project namespace shadows a framework type, qualify or alias rather than renaming the namespace.
   `Moongate.Server.Services.Console` shadows `System.Console`, so that code writes `System.Console.WriteLine`.
-
 - Use static message templates; never use string interpolation for structured logs.
 - Keep template shape stable across calls.
 
@@ -132,12 +133,33 @@ private readonly ILogger _logger = Log.ForContext<MyService>();
   logged and does not skip the handlers after it. Events are routed by exact type, and a late subscriber
   never receives an earlier event.
 
+- A service subscribes in `StartAsync` and disposes the token in `StopAsync`, never in the constructor:
+  a singleton's constructor runs only when something resolves it, so a constructor subscription is
+  silently absent until then.
+
 ```csharp
-internal sealed class MySubscriber
+internal sealed class MySubscriber : IMoongateStartupService
 {
+    private readonly IEventBusService _eventBus;
+    private IDisposable? _subscription;
+
     public MySubscriber(IEventBusService eventBus)
     {
-        eventBus.Subscribe<MoongateStartedEvent>(HandleAsync);
+        _eventBus = eventBus;
+    }
+
+    public Task StartAsync()
+    {
+        _subscription = _eventBus.Subscribe<MoongateStartedEvent>(HandleAsync);
+
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync()
+    {
+        _subscription?.Dispose();
+
+        return Task.CompletedTask;
     }
 }
 ```
@@ -163,7 +185,7 @@ internal sealed class MySubscriber
 - Services that own work across the host lifetime implement `IMoongateStartupService`, which extends `IMoongateService` with `StartAsync()` and `StopAsync()`.
 - Register them with `container.RegisterMoongateService<TContract, TService>(priority)`. Services start in ascending priority order and stop in reverse, so a dependency takes a lower number than its dependents; the default is `0`.
 - If an optional dependency is unavailable at startup, log a `Warning` and return cleanly — do not bring the host down. Throw only when the server cannot run without it; the bootstrap then stops every service it already started, in reverse order.
-- Subscribers that are not startup services are registered as singletons and force-resolved in `Program.cs` to trigger constructor subscription registration.
+- A service that only subscribes to events still implements `IMoongateStartupService` and subscribes in `StartAsync`, so that its subscription exists exactly while the host runs. Nothing is force-resolved from `Program.cs` to make a constructor run.
 
 ## 12. Test Conventions
 
@@ -264,13 +286,10 @@ nothing else.
 **Collection exposure**
 - Expose `IReadOnlyList<>` or `IReadOnlyDictionary<>` where mutation by callers is not intended.
 
-**Test naming**
-- Prefer `Method_Scenario_ExpectedResult`.
-- Keep tests focused on a single behavior.
-
 **No magic numbers**
 - Replace protocol/timing literals with named constants.
 
 **Using directives**
-- Keep usings ordered: system first, then third-party, then project namespaces.
+- `System` namespaces first, then every other namespace in alphabetical order. Third-party and project
+  namespaces are not separated: `DryIoc` sits between `ConsoleAppFramework` and `Moongate.Core`.
 - Add using aliases when a name is ambiguous across two libraries in scope.
