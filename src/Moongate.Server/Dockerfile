@@ -1,6 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/runtime-deps:10.0 AS base
+# The server keeps its logs, config, plugins and saves under one root. Hold that
+# root outside /app and create it owned by the runtime user, so a fresh named
+# volume inherits that ownership instead of landing root-owned and unwritable.
+ENV MOONGATE_ROOT=/data
+RUN mkdir -p /data && chown $APP_UID:$APP_UID /data
 USER $APP_UID
 WORKDIR /app
+VOLUME ["/data"]
+EXPOSE 2593
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
