@@ -2,7 +2,7 @@ using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Attributes;
 
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class PacketHandlerAttribute : Attribute
 {
     public byte OpCode { get; }
