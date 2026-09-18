@@ -1,0 +1,56 @@
+name: Docker
+
+# Development images. Released images are built by the release workflow, which
+# tags them with the version; this one only ever moves the develop tag.
+on:
+  push:
+    branches:
+      - develop
+    paths:
+      - src/**
+      - Directory.Build.props
+      - .github/workflows/docker.yml
+  workflow_dispatch:
+
+concurrency:
+  group: docker-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  image:
+    # Deliberately not a container job: building an image needs the runner's own
+    # Docker daemon, which a containerised job cannot reach.
+    runs-on: [self-hosted, gung-dotnet]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Compute the short commit
+        id: commit
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: src/Moongate.Server/Dockerfile
+          # One architecture on purpose: the runner is x64, so an arm64 image
+          # would be emulated through QEMU and take far longer to build.
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ghcr.io/moongate-community/moongate:develop
+            ghcr.io/moongate-community/moongate:sha-${{ steps.commit.outputs.short_sha }}
