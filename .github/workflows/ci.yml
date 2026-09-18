@@ -54,3 +54,10 @@ jobs:
 
       - name: Test
         run: dotnet test Moongate.slnx -c ${{ matrix.configuration }} --no-build
+
+      # The notices ship beside the binaries, so a dependency change that does not
+      # reach them would distribute the wrong attributions.
+      - name: Verify the third-party notices are current
+        run: |
+          ./scripts/third-party-notices.sh
+          git diff --exit-code -- THIRD-PARTY-NOTICES.md

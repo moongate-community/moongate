@@ -22,6 +22,16 @@
       <InternalsVisibleTo Include="Moongate.Tests" />
     </ItemGroup>
 
+    <!-- These travel with the binaries: the AGPL asks for the licence to be conveyed
+         alongside them, and the notices carry the attributions the bundled packages
+         require. Publishing here covers both the release archives and the image. -->
+    <ItemGroup>
+      <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest"
+               CopyToPublishDirectory="PreserveNewest" />
+      <Content Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md"
+               CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
     <ItemGroup>
       <Content Include="..\..\.dockerignore">
         <Link>.dockerignore</Link>
