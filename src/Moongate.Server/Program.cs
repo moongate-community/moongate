@@ -35,6 +35,7 @@ using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Ultima;
 using Serilog;
+using Serilog.Formatting.Compact;
 using Serilog.Templates;
 using Serilog.Templates.Themes;
 
@@ -112,10 +113,29 @@ await ConsoleApp.RunAsync(
                             )
                             .CreateLogger();
 
-        Log.Logger = new LoggerConfiguration()
-                     .WriteTo
-                     .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger))
-                     .CreateLogger();
+        var loggingConfiguration = new LoggerConfiguration()
+                                   .WriteTo
+                                   .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
+
+        if (logToFile)
+        {
+            // .clef is the conventional extension for this format, and log shippers
+            // recognise it without being told what the file holds.
+            var logFilePath = Path.Combine(directoriesConfig["logs"], "moongate-.clef");
+
+            loggingConfiguration = loggingConfiguration.WriteTo.File(
+                // One JSON object per line, keeping the message template and its
+                // properties separate so a log reader can group events by template.
+                new CompactJsonFormatter(),
+                logFilePath,
+                rollingInterval: RollingInterval.Day,
+                rollOnFileSizeLimit: true,
+                fileSizeLimitBytes: 10 * 1024 * 1024, // 10 MB
+                retainedFileCountLimit: 30
+            );
+        }
+
+        Log.Logger = loggingConfiguration.CreateLogger();
 
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
 
