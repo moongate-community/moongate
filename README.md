@@ -9,3 +9,5 @@
   <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
+
+[Diagnostics](docs/diagnostics.md)
