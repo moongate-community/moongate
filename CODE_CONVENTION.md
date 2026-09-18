@@ -210,7 +210,23 @@ Projects expose internals to their own test project:
 `Moongate.Persistence`, `Moongate.Server` and `Moongate.Ultima` grant it to `Moongate.Tests`;
 `Moongate.Network` grants it to `Moongate.Network.Tests`.
 
-## 13. Commits
+## 13. Branching and Commits
+
+### 13.1 Feature Workflow
+
+Every feature takes the same three steps, in this order. None of them is optional.
+
+1. **Open an issue first.** It describes the feature in detail: what it does, why it is wanted, how it
+   behaves at its edges, and how it will be verified. The issue is the specification the work is judged
+   against, so a title and a sentence are not an issue.
+2. **Branch from `develop`**, named `feature/<short-name>`, carrying that one feature and nothing else.
+3. **Open a pull request into `develop`** and link the issue. Work reaches `develop` through that
+   request, never through a direct push.
+
+Fixes follow the same path under `fix/<short-name>`. `main` receives `develop` at release time and takes
+nothing else.
+
+### 13.2 Commit Messages
 
 - Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, etc.). Release versions are
   derived from them, so the type and any `!` breaking marker decide the next version number.
