@@ -1067,4 +1067,8 @@ and callback/batch duration. These snapshots require no external metrics backend
 
 ## License
 
-MIT - see [LICENSE](LICENSE).
+GNU Affero General Public License v3.0 or later (`AGPL-3.0-or-later`) - see [LICENSE](LICENSE).
+
+Parts of `Moongate.Core` are ported from [ModernUO](https://github.com/modernuo/ModernUO) and keep their
+original GPL-3.0-or-later headers; parts of `Moongate.Ultima` are ported from UOFiddler under the Beer-Ware
+License. Both are compatible with the AGPL-3.0-or-later terms of this repository.
