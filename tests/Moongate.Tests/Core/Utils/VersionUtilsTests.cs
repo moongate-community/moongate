@@ -22,12 +22,12 @@ public sealed class VersionUtilsTests
     }
 
     [Fact]
-    public void GetVersion_CoreAssembly_ReturnsConfiguredVersionWithoutBuildMetadata()
+    public void GetVersion_CoreAssembly_ReturnsThreePartSemverWithoutBuildMetadata()
     {
         var version = VersionUtils.GetVersion();
 
-        Assert.NotEmpty(version);
         Assert.DoesNotContain('+', version);
+        Assert.Matches(@"^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$", version);
     }
 
     [Fact]

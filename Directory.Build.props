@@ -24,16 +24,13 @@
     <!-- Package Metadata -->
     <PropertyGroup>
         <Version>0.1.0</Version>
-        <AssemblyVersion>0.1.0.0</AssemblyVersion>
-        <FileVersion>0.1.0.0</FileVersion>
-        <InformationalVersion>0.1.0</InformationalVersion>
         <Authors>Squid Development</Authors>
         <Product>Moongate</Product>
         <Company>Squid Development</Company>
         <Copyright>© $(Company) $([System.DateTime]::Now.Year)</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <RepositoryType>git</RepositoryType>
-        <PackageProjectUrl>https://github.com/tgiachi/Moongate</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/moongate-community/moongate</PackageProjectUrl>
         <RepositoryUrl>$(PackageProjectUrl)</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
