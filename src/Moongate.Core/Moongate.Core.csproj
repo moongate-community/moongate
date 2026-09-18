@@ -23,7 +23,6 @@
 
     </ItemGroup>
 
-
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>

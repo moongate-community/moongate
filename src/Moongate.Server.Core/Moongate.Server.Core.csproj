@@ -12,7 +12,6 @@
       <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
     </ItemGroup>
 
-
     <PropertyGroup>
         <IsPackable>true</IsPackable>
         <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>

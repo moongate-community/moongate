@@ -42,7 +42,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'Directory.Build.targets') }}
           restore-keys: |
             nuget-${{ runner.os }}-
 
@@ -54,6 +54,10 @@ jobs:
 
       - name: Test
         run: dotnet test Moongate.slnx -c ${{ matrix.configuration }} --no-build
+
+      - name: Verify NuGet packages and README examples
+        if: matrix.configuration == 'Release'
+        run: bash scripts/verify-packages.sh
 
       # The notices ship beside the binaries, so a dependency change that does not
       # reach them would distribute the wrong attributions.

@@ -52,3 +52,9 @@ shards from the same image by giving each container its own volume and its own
 published port; a root is meant for one server at a time.
 
 [Diagnostics](docs/diagnostics.md)
+
+## Libraries
+
+The six library packages have their own English READMEs and runnable examples.
+See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
+package list, dependencies, and the local verification command.
