@@ -1,18 +1,3 @@
-/*************************************************************************
- * ModernUO                                                              *
- * Copyright 2019-2023 - ModernUO Development Team                       *
- * Email: hi@modernuo.com                                                *
- * File: Point3D.cs                                                      *
- *                                                                       *
- * This program is free software: you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation, either version 3 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- * You should have received a copy of the GNU General Public License     *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *************************************************************************/
-
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using Moongate.Core.Interfaces.Geometry;
@@ -25,7 +10,7 @@ namespace Moongate.Core.Geometry;
 /// </summary>
 public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
-        IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
+      IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
     public static readonly Point3D Zero = new(0, 0, 0);
 
@@ -36,19 +21,13 @@ public struct Point3D
     public int Z { get; set; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z)
-    {
-    }
+    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point3D p) : this(p.X, p.Y, p.Z)
-    {
-    }
+    public Point3D(Point3D p) : this(p.X, p.Y, p.Z) { }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point2D p, int z) : this(p.X, p.Y, z)
-    {
-    }
+    public Point3D(Point2D p, int z) : this(p.X, p.Y, z) { }
 
     public Point3D(int x, int y, int z)
     {
@@ -338,6 +317,7 @@ public struct Point3D
     public static Point3D operator +(DirectionType direction, Point3D point)
     {
         return point + direction;
+
         // Delegate to the other operator
     }
 
@@ -384,15 +364,15 @@ public struct Point3D
 
         return baseDirection switch
         {
-            DirectionType.North => new Point3D(0, -1, 0),  // North: Y decreases
+            DirectionType.North     => new Point3D(0, -1, 0),  // North: Y decreases
             DirectionType.NorthEast => new Point3D(1, -1, 0),  // Northeast: X+, Y-
-            DirectionType.East => new Point3D(1, 0, 0),   // East: X increases
+            DirectionType.East      => new Point3D(1, 0, 0),   // East: X increases
             DirectionType.SouthEast => new Point3D(1, 1, 0),   // Southeast: X+, Y+
-            DirectionType.South => new Point3D(0, 1, 0),   // South: Y increases
+            DirectionType.South     => new Point3D(0, 1, 0),   // South: Y increases
             DirectionType.SouthWest => new Point3D(-1, 1, 0),  // Southwest: X-, Y+
-            DirectionType.West => new Point3D(-1, 0, 0),  // West: X decreases
+            DirectionType.West      => new Point3D(-1, 0, 0),  // West: X decreases
             DirectionType.NorthWest => new Point3D(-1, -1, 0), // Northwest: X-, Y-
-            _ => new Point3D(0, 0, 0)    // No movement
+            _                       => new Point3D(0, 0, 0)    // No movement
         };
     }
 
@@ -410,15 +390,15 @@ public struct Point3D
 
         return (deltaX, deltaY) switch
         {
-            (0, -1) => DirectionType.North,     // North: Y-
-            (1, -1) => DirectionType.NorthEast, // Northeast: X+, Y-
-            (1, 0) => DirectionType.East,      // East: X+
-            (1, 1) => DirectionType.SouthEast, // Southeast: X+, Y+
-            (0, 1) => DirectionType.South,     // South: Y+
-            (-1, 1) => DirectionType.SouthWest, // Southwest: X-, Y+
-            (-1, 0) => DirectionType.West,      // West: X-
+            (0, -1)  => DirectionType.North,     // North: Y-
+            (1, -1)  => DirectionType.NorthEast, // Northeast: X+, Y-
+            (1, 0)   => DirectionType.East,      // East: X+
+            (1, 1)   => DirectionType.SouthEast, // Southeast: X+, Y+
+            (0, 1)   => DirectionType.South,     // South: Y+
+            (-1, 1)  => DirectionType.SouthWest, // Southwest: X-, Y+
+            (-1, 0)  => DirectionType.West,      // West: X-
             (-1, -1) => DirectionType.NorthWest, // Northwest: X-, Y-
-            _ => DirectionType.North      // Default to North for no movement
+            _        => DirectionType.North      // Default to North for no movement
         };
     }
 
