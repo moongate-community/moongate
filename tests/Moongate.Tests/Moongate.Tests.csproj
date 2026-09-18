@@ -5,6 +5,14 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
+    <!--
+      The plugin fixtures below are deliberately outside the solution. When this
+      project is built through the solution, MSBuild strips Configuration from
+      the properties passed to references it cannot find in the solution, so the
+      fixtures would build as Debug while CopyPluginFixtures looks for them under
+      the current configuration. Keep the configuration flowing instead.
+    -->
+    <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
   </PropertyGroup>
 
   <ItemGroup>
