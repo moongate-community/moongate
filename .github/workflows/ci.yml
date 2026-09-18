@@ -9,12 +9,10 @@ on:
 
 jobs:
   build-and-test:
-    # Self-hosted Forgejo runner "gung-server" (gung-server-01), label declared
-    # in /mnt/data/apps/forgejo-runner/config.yml. Jobs run in a dedicated
-    # rootless Docker daemon, capped at 8G / 4 CPU each.
-    # Codeberg's hosted runners (codeberg-medium: 4 CPU / 8G / 10 min) stay
-    # available as a fallback by switching this label back.
-    runs-on: gung-dotnet
+    # Self-hosted runner on gung-server-01, registered with the custom label
+    # "gung-dotnet"; GitHub adds "self-hosted", "Linux" and "X64" on its own.
+    # The container step below needs a working Docker daemon on that host.
+    runs-on: [self-hosted, gung-dotnet]
 
     container:
       image: mcr.microsoft.com/dotnet/sdk:10.0
