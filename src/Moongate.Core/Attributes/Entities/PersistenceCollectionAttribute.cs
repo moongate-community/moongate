@@ -7,7 +7,7 @@ namespace Moongate.Core.Attributes.Entities;
 /// rename from pointing the server at a different collection and orphaning what is already stored.
 /// The persistence layer validates the name when the collection is registered.
 /// </remarks>
-[AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class PersistenceCollectionAttribute : Attribute
 {
     /// <summary>Gets the name of the collection that stores the annotated entity.</summary>
