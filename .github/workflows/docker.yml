@@ -9,6 +9,11 @@ on:
     paths:
       - src/**
       - Directory.Build.props
+      # The image carries these, and .dockerignore decides what reaches the build
+      # context at all, so a change to any of them can break or alter the image.
+      - .dockerignore
+      - LICENSE
+      - THIRD-PARTY-NOTICES.md
       - .github/workflows/docker.yml
   workflow_dispatch:
 
