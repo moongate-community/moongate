@@ -17,9 +17,9 @@ This document defines coding conventions for the Moongate project. It is intenti
 Namespace must match folder path exactly.
 
 ```
-src/Moongate.Core/Services/ConfigService.cs        → namespace Moongate.Core.Services;
-src/Moongate.Service/Subscribers/SocketBroadcastSubscriber.cs → namespace Moongate.Service.Subscribers;
-tests/Moongate.Tests/Core/EventBusServiceTests.cs  → namespace Moongate.Tests.Core;
+src/Moongate.Core/Geometry/Point3D.cs                          → namespace Moongate.Core.Geometry;
+src/Moongate.Server/Services/Persistence/WorldSaveService.cs   → namespace Moongate.Server.Services.Persistence;
+tests/Moongate.Tests/Server/Services/Events/EventBusServiceTests.cs → namespace Moongate.Tests.Server.Services.Events;
 ```
 
 ### 2.2 Domain-First Organization
@@ -33,12 +33,15 @@ Group by domain first, not by technical suffix.
 | `Types` | Enums, type constants (domain-prefixed) |
 | `Data` | DTOs, records, simple data carriers |
 | `Data.Config` | Configuration models |
-| `Data.Notifications` | Notification DTO |
 | `Data.Internal.*` | Internal-only data models |
 | `Interfaces` | Contracts only |
 | `Services` | Service implementations |
+| `Extensions` | Extension members, grouped by the type they extend |
+| `Attributes` | Custom attributes |
 | `Internal` | Implementation details not part of public API |
-| `Subscribers` | `IEventBus` subscriber classes |
+
+Each bucket takes a domain subfolder once it holds more than a handful of types: `Types/Accounts`,
+`Data/Sessions`, `Interfaces/Services`, `Extensions/Strings`.
 
 ## 3. C# File and Type Rules
 
@@ -83,7 +86,7 @@ If a class implements `IDisposable` or `IAsyncDisposable`, `Dispose`/`DisposeAsy
 
 ## 6. Enums
 
-- Enums must live under a `Types` namespace for their domain.
+- Enums must live under a `Types` namespace, in the subfolder of the domain they belong to.
 - Always include the domain in the enum name.
 
 ```csharp
@@ -91,14 +94,18 @@ If a class implements `IDisposable` or `IAsyncDisposable`, `Dispose`/`DisposeAsy
 namespace Moongate.Core.Types;
 public enum LogLevelType { ... }
 
-// Types/DirectoryType.cs
-namespace Moongate.Core.Types;
-public enum DirectoryType { Scripts, Logs, Plugins, Configs }
+// Types/Accounts/AccountType.cs
+namespace Moongate.Server.Core.Types.Accounts;
+public enum AccountType { Regular = 0, GameMaster = 1, Administrator = 2 }
 ```
+
+- A flags enum gives every member an explicit value and declares a zero member, so that
+  `HasFlag` cannot answer true for an unset value.
 
 ## 7. Strings
 
-- Always use `""` instead of `string.Empty`.
+- Empty strings have no imposed form. Neither `""` nor `string.Empty` is the standard: leave whichever
+  a file already uses and do not convert in either direction.
 
 ## 8. Logging
 
@@ -109,12 +116,8 @@ public enum DirectoryType { Scripts, Logs, Plugins, Configs }
 private readonly ILogger _logger = Log.ForContext<MyService>();
 ```
 
-- When both Serilog and Microsoft.Extensions.Logging are in scope (e.g., `Moongate.Service` which uses `Microsoft.NET.Sdk.Web`), add a using alias to resolve the ambiguity:
-
-```csharp
-using Serilog;
-using ILogger = Serilog.ILogger;
-```
+- Where a project namespace shadows a framework type, qualify or alias rather than renaming the namespace.
+  `Moongate.Server.Services.Console` shadows `System.Console`, so that code writes `System.Console.WriteLine`.
 
 - Use static message templates; never use string interpolation for structured logs.
 - Keep template shape stable across calls.
@@ -122,25 +125,38 @@ using ILogger = Serilog.ILogger;
 ## 9. Event Bus
 
 - All event types must implement `IMoongateEvent`.
-- Use `IEventBus.Subscribe<T>` to register handlers; use `IEventBus.PublishAsync<T>` to emit events.
-- Subscriber classes live in `Subscribers/` and register themselves in the constructor.
+- `IMoongateEventBus` declares the bus: `Subscribe<TEvent>` returns an idempotent `IDisposable`, and
+  `PublishAsync<TEvent>` emits. Services inject `IEventBusService`, which is that contract plus
+  `IMoongateService`, so both reach the one container-owned bus.
+- Handlers run sequentially in registration order and the publisher awaits each. One failing handler is
+  logged and does not skip the handlers after it. Events are routed by exact type, and a late subscriber
+  never receives an earlier event.
 
 ```csharp
-// Pattern: SocketBroadcastSubscriber
-internal class MySubscriber
+internal sealed class MySubscriber
 {
-    public MySubscriber(IEventBus eventBus, ...)
+    public MySubscriber(IEventBusService eventBus)
     {
-        eventBus.Subscribe<Notification>(HandleAsync);
+        eventBus.Subscribe<MoongateStartedEvent>(HandleAsync);
     }
 }
 ```
 
+- Plugins subscribe from `Register` with `container.OnEvent<TEvent>(handler)`, which the container owns
+  for the lifetime of the host.
+
 ## 10. Plugin System
 
-- Plugins implement `ISourcePlugin` (Id in reverse-domain format: `com.github.author.Moongate.plugins.name`).
-- Plugins receive an `IPluginContext` — use `context.EventBus` to publish, `context.Logger` to log, `context.ConfigPath` for config.
-- Plugin hosts are loaded via `PluginLoadContext` (`AssemblyLoadContext(isCollectible: true)`) for hot-reload support.
+- Plugins implement `IMoongatePlugin`: a `MoongatePluginData Metadata` property and `void Register(Container)`.
+  The Id uses reverse-domain format, `com.github.author.Moongate.plugins.name`, and is case-insensitive.
+- `Register` registers services and event subscriptions. It never starts them; the host owns the container
+  and the service lifecycle.
+- Declare dependencies in `MoongatePluginData`. They are required, and a batch is validated and ordered
+  before any `Register` callback runs, so duplicate ids, missing dependencies and cycles reject the whole
+  batch rather than leaving half of it applied.
+- Disk plugins live one bundle per directory under `plugins/`, where the directory name matches the entry
+  assembly. Each bundle gets its own collectible load context; host assemblies are shared to preserve
+  contract identity, and the rest resolve privately.
 
 ## 11. Startup Services / Subscribers
 
@@ -160,10 +176,13 @@ namespace Moongate.Tests.<Domain>.<Subdomain>;
 
 Examples:
 ```
-tests/Moongate.Tests/Core/EventBusServiceTests.cs   → namespace Moongate.Tests.Core;
-tests/Moongate.Tests/Service/UnixSocketServerTests.cs → namespace Moongate.Tests.Service;
-tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests.Support;
+tests/Moongate.Tests/Core/Geometry/Point3DTests.cs                  → namespace Moongate.Tests.Core.Geometry;
+tests/Moongate.Tests/Server/Services/Events/EventBusServiceTests.cs → namespace Moongate.Tests.Server.Services.Events;
+tests/Moongate.Tests/TestSupport/Persistence/WorldSaveFixture.cs    → namespace Moongate.Tests.TestSupport.Persistence;
 ```
+
+Integration, contract and performance tests go in their own folder rather than beside unit tests:
+`tests/Moongate.Tests/Integration/<Domain>/`. Nothing lives in the test project root.
 
 ### 12.2 Naming
 
@@ -174,29 +193,39 @@ tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests
 
 ### 12.3 Test Support
 
-- Shared fakes, builders, and helpers go in `tests/Moongate.Tests/Support/`.
+- Shared fakes, builders, and fixtures go in `tests/Moongate.Tests/TestSupport/<Domain>/`, mirroring the
+  domain layout of the tests that use them.
+- `tests/Moongate.Tests/Support/` is the older location and still holds part of this material. Put new
+  helpers in `TestSupport/`, and move an existing one when you are already editing it.
 - Do not mix reusable test infrastructure into domain test files.
 
 ### 12.4 InternalsVisibleTo
 
-`Moongate.Service.csproj` exposes internals to `Moongate.Tests` via:
+Projects expose internals to their own test project:
+
 ```xml
-<InternalsVisibleTo Include="Moongate.Tests"/>
+<InternalsVisibleTo Include="Moongate.Tests" />
 ```
+
+`Moongate.Persistence`, `Moongate.Server` and `Moongate.Ultima` grant it to `Moongate.Tests`;
+`Moongate.Network` grants it to `Moongate.Network.Tests`.
 
 ## 13. Commits
 
-- Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, etc.).
+- Use Conventional Commits (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`, etc.). Release versions are
+  derived from them, so the type and any `!` breaking marker decide the next version number.
 - Scope commits to the affected subsystem: `feat(persistence):`, `fix(network):`, `test(eventbus):`.
-- Never add `Co-Authored-By: Claude` to commits.
+- Write every commit in English, subject and body alike.
+- Never add AI attribution anywhere: no `Co-Authored-By: Claude` trailer, and no generated-with line in a
+  commit, pull request, issue or release note.
 
 ## 14. Non-Negotiable Hygiene
 
 - No dead code.
 - No TODO comments without a tracked follow-up.
 - No inconsistent naming across domains.
-- Keep warnings under control; do not normalize noisy warnings.
-- No `string.Empty` — use `""`.
+- Keep warnings under control; do not normalize noisy warnings. The build is at zero warnings, so a new
+  one is a regression.
 - No primary constructors.
 - No expression-bodied constructors.
 
@@ -211,7 +240,9 @@ tests/Moongate.Tests/Support/FakeSourcePlugin.cs    → namespace Moongate.Tests
 - Include `CancellationToken` on I/O-bound public async methods.
 
 **Exception handling**
-- Use guard clauses (`ArgumentNullException.ThrowIfNull`, etc.).
+- Guard the arguments of public API surface with `ArgumentNullException.ThrowIfNull` and friends.
+- Do **not** guard constructor dependencies that arrive from the container: let the container fail on a
+  missing registration instead of repeating the check in every service.
 - Do not swallow exceptions silently.
 
 **Collection exposure**
