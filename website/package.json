@@ -1,0 +1,23 @@
+{
+  "name": "moongate-docs",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=24.21.0 <25" },
+  "scripts": {
+    "prepare:docs": "node scripts/prepare-docs.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "dev": "npm run prepare:docs && astro dev",
+    "build": "npm run prepare:docs && astro build && npm run check:links",
+    "check:links": "node scripts/check-links.mjs",
+    "preview": "astro preview"
+  },
+  "devDependencies": {
+    "@astrojs/markdown-remark": "7.3.1",
+    "@astrojs/starlight": "0.42.2",
+    "astro": "7.3.3",
+    "parse5": "8.0.1",
+    "remark": "15.0.1",
+    "remark-gfm": "4.0.1",
+    "unist-util-visit": "5.1.0"
+  }
+}
