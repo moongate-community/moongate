@@ -243,8 +243,11 @@ The built-in services use these priorities:
 | -800 | `IGameLoopService` (`GameLoopService`) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
 | 0 (default) | `ISessionService`, `IEventBusService`, `IPluginLoaderService`, `ICommandSystemService`, and any registration that omits `priority` |
-| 40 | `IWorldSaveService` (`WorldSaveService`) |
+| 40 | `IWorldSaveService` (`WorldSaveService`), `IConnectionService` |
+| 50 | `IPacketSendService` |
+| 60 | `IPacketDispatchService` |
 | 70 | `IScriptEngine` (`LuaScriptEngineService`) |
+| 100 | `IGameServerService` |
 | 900 | `IDiagnosticService` (`DiagnosticService`) |
 | 1000 | `IConsoleInputService` (`ConsoleInputService`) |
 
@@ -257,6 +260,10 @@ singleton (`Handle(GameSession session, TPacket packet)`,
 `src/Moongate.Server.Core/Interfaces/Packets/IPacketHandler.cs`) to one incoming
 packet type; the dispatcher calls it synchronously on the game loop thread, and
 registering a second handler for the same packet type throws before startup.
+The [packet guide](packets.md) shows the complete implementation and explains why
+handler registration alone cannot add an opcode to the frozen default wire registry.
+`INetworkService` is a singleton owned by the game coordinator, not an independently
+autostarted listener service. See [game-loop ownership](game-loop-and-timers.md).
 
 `OnEvent<TEvent>(handler)`, from
 `src/Moongate.Server.Core/Extensions/ContainerEventExtensions.cs`, is how a plugin

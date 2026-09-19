@@ -45,7 +45,7 @@ await bus.PublishAsync(new MoongateStartedEvent());
 
 ## Dependencies and scope
 
-This package depends on `Moongate.Core`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is available through the dependency graph.
+This package depends on `Moongate.Core`, `Moongate.Api`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is available through the dependency graph.
 
 The executable host and implementations of server runtime services are provided by `Moongate.Server`, which is not distributed as part of this library package. Referencing this package does not start the host, listener, timers, or game loop.
 
@@ -85,6 +85,13 @@ snapshotted after detach, and missing local endpoint metadata remains null.
 
 See the [migration guide](https://github.com/moongate-community/moongate/blob/develop/docs/network-game-separation.md)
 for composition and shutdown examples.
+
+## Runtime guides
+
+See [packets and handlers](https://moongate-community.github.io/moongate/server/packets/),
+[game loop and timers](https://moongate-community.github.io/moongate/server/game-loop-and-timers/)
+and [world saves](https://moongate-community.github.io/moongate/server/persistence/)
+for registration, threading, completion and shutdown examples.
 
 ## License and source
 

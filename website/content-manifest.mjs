@@ -5,6 +5,8 @@ export const contentEntries = [
   { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Server guides' },
   { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Server guides' },
+  { source: 'docs/packets.md', slug: 'server/packets', title: 'Packets and handlers', group: 'Server guides' },
+  { source: 'docs/game-loop-and-timers.md', slug: 'server/game-loop-and-timers', title: 'Game loop and timers', group: 'Server guides' },
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Server guides' },
   { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Server guides' },
   { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Server guides' },
