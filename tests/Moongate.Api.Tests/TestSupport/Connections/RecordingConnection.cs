@@ -7,6 +7,7 @@ internal sealed class RecordingConnection : INetworkConnection
 {
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public ConcurrentQueue<byte[]> Sent { get; } = new();
+    public System.Threading.Channels.Channel<byte[]> Written { get; } = System.Threading.Channels.Channel.CreateUnbounded<byte[]>();
     public TaskCompletionSource SendEntered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public TaskCompletionSource? SendGate { get; set; }
     public long SessionId => 1;
@@ -19,7 +20,9 @@ internal sealed class RecordingConnection : INetworkConnection
         SendEntered.TrySetResult();
         if (SendGate is { } gate) { await gate.Task.WaitAsync(cancellationToken); }
         cancellationToken.ThrowIfCancellationRequested();
-        Sent.Enqueue(payload.ToArray());
+        var copy = payload.ToArray();
+        Sent.Enqueue(copy);
+        Written.Writer.TryWrite(copy);
     }
     public Task CloseAsync(CancellationToken cancellationToken = default)
     {
