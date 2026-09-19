@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Commands;
@@ -11,19 +12,19 @@ using Moongate.Tests.TestSupport.Scripting;
 
 namespace Moongate.Tests.Server.Commands;
 
-public sealed class ScriptReloadCommandTests
+public sealed class ScriptCommandTests
 {
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
 
-    [Fact]
-    public async Task ExecuteAsync_WithoutAFile_PrintsTheUsageLine()
+    [Theory, InlineData("script"), InlineData("script reload"), InlineData("script metrics extra"), InlineData("script frobnicate")]
+    public async Task ExecuteAsync_WithoutAKnownSubcommand_PrintsTheUsageLine(string input)
     {
         var service = await CreateStartedServiceAsync();
 
-        var line = Assert.Single(await service.ExecuteAsync("script reload"));
+        var line = Assert.Single(await service.ExecuteAsync(input));
 
-        Assert.Equal("Usage: script reload <file relative to scripts/>", line.Text);
+        Assert.Equal("Usage: script reload <file relative to scripts/> | script metrics", line.Text);
         Assert.Equal(CommandOutputLevel.Error, line.Level);
         Assert.Empty(_engine.Loaded);
         await service.StopAsync();
@@ -69,14 +70,39 @@ public sealed class ScriptReloadCommandTests
         await service.StopAsync();
     }
 
+    [Fact]
+    public async Task ExecuteAsync_Metrics_PrintsOneLinePerCounter()
+    {
+        _engine.Metrics = new ScriptExecutionMetrics(3, 12, 40, 7, 2, 1, 5);
+        var service = await CreateStartedServiceAsync();
+
+        var lines = await service.ExecuteAsync("script metrics");
+
+        Assert.Equal(
+            [
+                "Files loaded: 3",
+                "Calls started: 12",
+                "Coroutines resumed: 40",
+                "Coroutines finished: 7",
+                "Coroutine errors: 2",
+                "Budget aborts: 1",
+                "Active coroutines: 5"
+            ],
+            lines.Select(line => line.Text).ToArray()
+        );
+        Assert.All(lines, line => Assert.Equal(CommandOutputLevel.Information, line.Level));
+        Assert.Equal(0, _loop.PostedWorkItems);
+        await service.StopAsync();
+    }
+
     private async Task<CommandSystemService> CreateStartedServiceAsync()
     {
         var container = new Container();
         container.RegisterInstance<IScriptEngine>(_engine);
         container.RegisterInstance<IGameLoopService>(_loop);
-        container.RegisterCommand<ScriptReloadCommand>(
+        container.RegisterCommand<ScriptCommand>(
             "script",
-            "Reloads a script file: script reload <file>.",
+            "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
             CommandSourceType.Console,
             AccountType.Administrator
         );
