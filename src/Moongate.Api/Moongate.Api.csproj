@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Moongate.Network/Moongate.Network.csproj" />
+    <PackageReference Include="MessagePack" Version="3.1.9" />
+    <InternalsVisibleTo Include="Moongate.Api.Tests" />
+  </ItemGroup>
+</Project>
