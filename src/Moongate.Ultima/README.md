@@ -68,7 +68,8 @@ var mapPath = Files.GetFilePath("map0.mul") ?? Files.GetFilePath("map0LegacyMUL.
 if (mapPath is not null)
 {
     // Use dimensions matching the client map; these are the modern Felucca defaults.
-    using var tiles = new TileMatrix(0, 0, 6144, 4096, clientDirectory);
+    // The implementation accepts null for Files mapping despite its non-null annotation.
+    using var tiles = new TileMatrix(0, 0, 6144, 4096, path: null!);
     var tile = tiles.GetLandTile(0, 0);
     Console.WriteLine($"Map tile: {tile.Id}, Z: {tile.Z}");
 }
