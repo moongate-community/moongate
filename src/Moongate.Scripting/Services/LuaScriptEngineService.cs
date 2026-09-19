@@ -97,6 +97,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         var scheduler = new CoroutineScheduler(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
 
         BindModules(state, scheduler, ownership);
+        WriteDefinitions();
         budget.Scoped(() =>
         {
             RunPrelude(state);
@@ -110,7 +111,6 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _budget = budget;
 
         RunBootstrap();
-        WriteDefinitions();
         _logger.Information("Script engine started with {ModuleCount} modules from {ScriptsDirectory}",
             _boundModules.Count, _options.ScriptsDirectory);
         // Module count includes the two built-ins, engine and timer.

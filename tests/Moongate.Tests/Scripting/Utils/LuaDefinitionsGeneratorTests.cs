@@ -10,12 +10,21 @@ namespace Moongate.Tests.Scripting.Utils;
 
 public sealed class LuaDefinitionsGeneratorTests
 {
+    private static List<BoundModule> Modules()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        var binder = new LuaModuleBinder(NoThreadGuard.Instance);
+
+        return BindProbeAndLogModules(state, binder);
+    }
+
     private static (List<BoundModule> Modules, List<Type> Enums) BindProbeAndLog()
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        var modules = new List<BoundModule> { binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule()) };
+        var modules = BindProbeAndLogModules(state, binder);
 
         foreach (var enumType in binder.DiscoveredEnums)
         {
@@ -23,6 +32,11 @@ public sealed class LuaDefinitionsGeneratorTests
         }
 
         return (modules, binder.PublishedEnums.ToList());
+    }
+
+    private static List<BoundModule> BindProbeAndLogModules(LuaState state, LuaModuleBinder binder)
+    {
+        return [binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule())];
     }
 
     [Fact]
@@ -39,7 +53,7 @@ public sealed class LuaDefinitionsGeneratorTests
         Assert.Contains("function probe.add(left, right) end", text, StringComparison.Ordinal);
         Assert.Contains("---@param factor? number", text, StringComparison.Ordinal);
         Assert.Contains("function probe.scale(value, factor) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param extras any", text, StringComparison.Ordinal);
+        Assert.Contains("---@param ... any", text, StringComparison.Ordinal);
         Assert.Contains("function probe.record(what, ...) end", text, StringComparison.Ordinal);
         Assert.Contains("---@param colour ProbeColour", text, StringComparison.Ordinal);
         Assert.Contains("---@field LEVEL_INFO integer", text, StringComparison.Ordinal);
@@ -106,5 +120,56 @@ public sealed class LuaDefinitionsGeneratorTests
         LuaDefinitionsGenerator.Write(scripts.Path, modules, enums);
 
         Assert.Equal(first, File.ReadAllText(Path.Combine(scripts.Path, "definitions.lua")));
+    }
+
+    [Fact]
+    public void Render_IsIndependentOfInputOrder()
+    {
+        var modules = Modules();
+        var enums = new List<Type> { typeof(ProbeColour) };
+        var forward = LuaDefinitionsGenerator.Render(modules, enums);
+        var backward = LuaDefinitionsGenerator.Render(modules.AsEnumerable().Reverse().ToList(), enums.AsEnumerable().Reverse().ToList());
+        Assert.Equal(forward, backward);
+    }
+
+    [Fact]
+    public void Render_EmptyInput_StillDeclaresWait()
+    {
+        var text = LuaDefinitionsGenerator.Render([], []);
+        Assert.Contains("function wait(seconds) end", text, StringComparison.Ordinal);
+        Assert.DoesNotContain("---@class", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_EscapesControlCharactersInStringConstants()
+    {
+        var module = new BoundModule(
+            "probe",
+            null,
+            typeof(ProbeModule),
+            new LuaTable(),
+            [],
+            [new BoundConstant("BANNER", typeof(string), "line one\nline \"two\"\t\\", null)]
+        );
+        var text = LuaDefinitionsGenerator.Render([module], []);
+        Assert.Contains("BANNER = \"line one\\nline \\\"two\\\"\\t\\\\\"", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_PrefixesEveryHelpLine()
+    {
+        var module = new BoundModule("probe", "first line\nsecond line", typeof(ProbeModule), new LuaTable(), [], []);
+        var text = LuaDefinitionsGenerator.Render([module], []);
+        Assert.Contains("---first line\n---second line\n", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Write_IsIdempotent_ForTheLuarcFileToo()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        LuaDefinitionsGenerator.Write(scripts.Path, Modules(), [typeof(ProbeColour)]);
+        var first = File.ReadAllText(Path.Combine(scripts.Path, ".luarc.json"));
+        LuaDefinitionsGenerator.Write(scripts.Path, Modules(), [typeof(ProbeColour)]);
+        Assert.Equal(first, File.ReadAllText(Path.Combine(scripts.Path, ".luarc.json")));
     }
 }
