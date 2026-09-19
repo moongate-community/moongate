@@ -56,7 +56,8 @@ public sealed class LuaDefinitionsGeneratorTests
         Assert.Contains("function probe.scale(value, factor) end", text, StringComparison.Ordinal);
         Assert.Contains("---@param ... any", text, StringComparison.Ordinal);
         Assert.Contains("function probe.record(what, ...) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param colour ProbeColour", text, StringComparison.Ordinal);
+        Assert.Contains("---@param colour ProbeColour|string\n", text, StringComparison.Ordinal);
+        Assert.Contains("---@return ProbeColour\nfunction probe.next_colour(colour) end", text, StringComparison.Ordinal);
         Assert.Contains("---@field LEVEL_INFO integer", text, StringComparison.Ordinal);
         Assert.Contains("log.LEVEL_INFO = 2", text, StringComparison.Ordinal);
     }
