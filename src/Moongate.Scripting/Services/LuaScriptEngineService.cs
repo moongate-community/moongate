@@ -67,7 +67,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>Opens the sandboxed Lua libraries, binds every module, and runs the prelude and the bootstrap file.</summary>
-    public Task StartAsync()
+    public async Task StartAsync()
     {
         if (_disposed)
         {
@@ -79,6 +79,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             throw new InvalidOperationException("The script engine has already started.");
         }
 
+        await RunOnLoopAsync(Start).ConfigureAwait(false);
+    }
+
+    /// <summary>Disposes the engine, releasing the LuaState.</summary>
+    public async Task StopAsync()
+    {
+        await RunOnLoopAsync(Dispose).ConfigureAwait(false);
+    }
+
+    private void Start()
+    {
         _options.Validate();
         Directory.CreateDirectory(_options.ScriptsDirectory);
         var state = LuaState.Create();
@@ -114,17 +125,36 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _logger.Information("Script engine started with {ModuleCount} modules from {ScriptsDirectory}",
             _boundModules.Count, _options.ScriptsDirectory);
         // Module count includes the two built-ins, engine and timer.
-
-        return Task.CompletedTask;
     }
 
-    /// <summary>Disposes the engine, releasing the LuaState.</summary>
-    public Task StopAsync()
+    /// <summary>
+    /// Runs a lifecycle step on the loop thread. Called from the bootstrap thread in production, so the step is posted and
+    /// awaited; unit tests and any caller already on the loop run it inline, and a loop that no longer accepts work
+    /// (it faulted, or stopped before this service) runs it inline as well so shutdown still completes.
+    /// </summary>
+    private async Task RunOnLoopAsync(Action step)
     {
-        // Pending Lua timers die with the wheel, which stops after this service (priority -900 stops last).
-        Dispose();
+        if (_gameLoop.IsOnLoopThread)
+        {
+            step();
 
-        return Task.CompletedTask;
+            return;
+        }
+
+        var item = new ScriptLifecycleWorkItem(step);
+
+        try
+        {
+            await _gameLoop.PostAsync(item).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException)
+        {
+            step();
+
+            return;
+        }
+
+        await item.Completion.ConfigureAwait(false);
     }
 
     /// <inheritdoc />

@@ -26,6 +26,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         _container.RegisterInstance<IGameLoopService>(_loop);
         _container.RegisterInstance<ITimerService>(_timers);
         _container.RegisterScriptModule<ProbeModule>();
+        _container.RegisterScriptModule<LogModule>();
         _container.Resolve<Moongate.Server.Core.Interfaces.Events.IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) => { _events.Add(evt); return Task.CompletedTask; });
     }
@@ -84,6 +85,34 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         Assert.Contains("init.lua", exception.Message, StringComparison.Ordinal);
         Assert.Contains("broken boot", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task StartAsync_OffTheLoopThread_RunsTheBootstrapThroughTheLoop()
+    {
+        _scripts.Write("init.lua", "log.info('booted')");
+        _loop.IsOnLoopThread = false;
+        _loop.SimulateLoopThreadWhilePosting = true;
+        using var engine = NewEngine();
+
+        await engine.StartAsync();
+
+        Assert.Equal(1, _loop.PostedWorkItems);
+        Assert.Equal(1, engine.GetMetrics().FilesLoaded);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
+    public async Task StartAsync_OffTheLoopThread_BootstrapError_SurfacesToTheCallerNotTheLoop()
+    {
+        _scripts.Write("init.lua", "local x = nil\nreturn x.field");
+        _loop.IsOnLoopThread = false;
+        _loop.SimulateLoopThreadWhilePosting = true;
+        using var engine = NewEngine();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => engine.StartAsync());
+
+        Assert.StartsWith("Script bootstrap failed at init.lua:2:", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -188,6 +217,21 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         {
             _timers.Fire(timer.Id);
         }
+    }
+
+    [Fact]
+    public async Task StopAsync_OffTheLoopThread_DisposesThroughTheLoop()
+    {
+        _scripts.Write("init.lua", "timer.every(1, function() end)");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        _loop.IsOnLoopThread = false;
+        _loop.SimulateLoopThreadWhilePosting = true;
+
+        await engine.StopAsync();
+
+        Assert.Equal(1, _loop.PostedWorkItems);
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]
