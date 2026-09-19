@@ -41,6 +41,20 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     [Fact]
+    public void Render_AnnotatesEnumParameters_AsEnumOrString_InEveryPosition()
+    {
+        using var state = LuaState.Create();
+        var binder = new LuaModuleBinder(NoThreadGuard.Instance);
+        var module = binder.Bind(state, new EnumSignaturesModule());
+
+        var text = LuaDefinitionsGenerator.Render([module], [typeof(ProbeColour)]);
+
+        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.paint(colour) end", text, StringComparison.Ordinal);
+        Assert.Contains("---@param ... ProbeColour|string\n---@return integer\nfunction palette.mix(...) end", text, StringComparison.Ordinal);
+        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.tint(colour) end", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Render_DeclaresEachModuleAsAClassWithTypedFunctionsAndConstants()
     {
         var (modules, enums) = BindProbeAndLog();
@@ -56,7 +70,8 @@ public sealed class LuaDefinitionsGeneratorTests
         Assert.Contains("function probe.scale(value, factor) end", text, StringComparison.Ordinal);
         Assert.Contains("---@param ... any", text, StringComparison.Ordinal);
         Assert.Contains("function probe.record(what, ...) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param colour ProbeColour", text, StringComparison.Ordinal);
+        Assert.Contains("---@param colour ProbeColour|string\n", text, StringComparison.Ordinal);
+        Assert.Contains("---@return ProbeColour\nfunction probe.next_colour(colour) end", text, StringComparison.Ordinal);
         Assert.Contains("---@field LEVEL_INFO integer", text, StringComparison.Ordinal);
         Assert.Contains("log.LEVEL_INFO = 2", text, StringComparison.Ordinal);
     }

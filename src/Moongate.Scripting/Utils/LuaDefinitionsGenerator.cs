@@ -118,7 +118,10 @@ internal static class LuaDefinitionsGenerator
             var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
             var name = isParams ? "..." : parameter.Name!;
             var optional = !isParams && (parameter.HasDefaultValue || IsNullableValueType(parameter.ParameterType)) ? "?" : "";
-            builder.Append("---@param ").Append(name).Append(optional).Append(' ').Append(LuaTypeName(type)).Append('\n');
+            // The converter also accepts an enum member by name, so a script may pass the string; returns
+            // stay the bare enum because the engine always hands back the number.
+            var typeName = (Nullable.GetUnderlyingType(type) ?? type).IsEnum ? LuaTypeName(type) + "|string" : LuaTypeName(type);
+            builder.Append("---@param ").Append(name).Append(optional).Append(' ').Append(typeName).Append('\n');
             names.Add(name);
         }
 
