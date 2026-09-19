@@ -121,12 +121,11 @@ public sealed class LuaModuleBinder
                 continue;
             }
 
-            var (type, value, isStaticReadOnly) = member switch
+            var (type, isStaticReadOnly) = member switch
             {
-                FieldInfo field => (field.FieldType, field.IsStatic ? field.GetValue(null) : null, field.IsStatic && field.IsInitOnly && field.IsPublic),
-                PropertyInfo property => (property.PropertyType, property.GetMethod?.IsStatic == true ? property.GetValue(null) : null,
-                    property.GetMethod is { IsStatic: true, IsPublic: true } && property.SetMethod is null),
-                _ => (typeof(void), null, false)
+                FieldInfo field => (field.FieldType, field.IsStatic && field.IsInitOnly && field.IsPublic),
+                PropertyInfo property => (property.PropertyType, property.GetMethod is { IsStatic: true, IsPublic: true } && property.SetMethod is null),
+                _ => (typeof(void), false)
             };
 
             if (!isStaticReadOnly)
@@ -149,6 +148,7 @@ public sealed class LuaModuleBinder
                     $"{moduleType.FullName}.{member.Name}: Lua name '{luaName}' is already used in module '{moduleName}'.");
             }
 
+            var value = ReadConstant(moduleType, member);
             NoteEnum(type);
             hidden[luaName] = LuaValueConverter.ToLua(value, type);
             constants.Add(new BoundConstant(luaName, type, value, attribute.HelpText));
@@ -193,6 +193,26 @@ public sealed class LuaModuleBinder
         if (type.IsEnum && !_discoveredEnums.Contains(type))
         {
             _discoveredEnums.Add(type);
+        }
+    }
+
+    /// <summary>Reads a validated constant; a getter that throws becomes a binding error naming the member, with the getter's exception as the cause.</summary>
+    private static object? ReadConstant(Type moduleType, MemberInfo member)
+    {
+        try
+        {
+            return member switch
+            {
+                FieldInfo field => field.GetValue(null),
+                PropertyInfo property => property.GetValue(null),
+                _ => null
+            };
+        }
+        catch (TargetInvocationException exception) when (exception.InnerException is not null)
+        {
+            throw new InvalidOperationException(
+                $"{moduleType.FullName}.{member.Name}: the constant's getter threw {exception.InnerException.GetType().Name}: {exception.InnerException.Message}",
+                exception.InnerException);
         }
     }
 
