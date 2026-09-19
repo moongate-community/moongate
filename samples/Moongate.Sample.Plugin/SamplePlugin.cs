@@ -18,7 +18,7 @@ public sealed class SamplePlugin : IMoongatePlugin
 {
     /// <inheritdoc />
     public MoongatePluginData Metadata { get; } = new(
-        "sample.greeter",
+        "com.github.moongate-community.moongate.plugins.greeter",
         "Greeter sample",
         new Version(1, 0),
         author: "Moongate",

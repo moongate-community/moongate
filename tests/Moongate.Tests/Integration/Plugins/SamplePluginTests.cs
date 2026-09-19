@@ -54,7 +54,7 @@ public sealed class SamplePluginTests
         try
         {
             var loader = container.Resolve<IPluginLoaderService>();
-            Assert.Contains(loader.Plugins, plugin => plugin.Id == "sample.greeter");
+            Assert.Contains(loader.Plugins, plugin => plugin.Id == "com.github.moongate-community.moongate.plugins.greeter");
 
             var engine = container.Resolve<IScriptEngine>();
             var loop = container.Resolve<IGameLoopService>();
