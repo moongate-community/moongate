@@ -118,7 +118,7 @@ if (registry.TryDecode(new byte[] { 0xFE }, out _, out var failedOpCode) || fail
 Console.WriteLine("Packet bytes and failure opcode verified");
 ```
 
-For variable packets, use `BaseVariablePacket<T>` with
+For variable packets, use `BasePacket<T>` with
 `[PacketHandler(opcode, PacketSizing.Variable, MinimumLength = ...)]`, validate the
 whole declared frame and write its complete length header. See the built-in
 `ClientVersionPacket` and `ServerListPacket` for examples of parsing and writing.

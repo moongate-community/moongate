@@ -17,7 +17,7 @@ dotnet add package Moongate.Scripting
 - `[ScriptModule]`, `[ScriptFunction]` and `[ScriptConstant]` publish a C# class to Lua behind a read-only table.
 - `IScriptEngine` loads files, calls functions, invalidates files for reload and reports metrics.
 - `wait(seconds)` suspends a script and the timer wheel resumes it on the game loop.
-- Every resume is bounded by an instruction count, so a runaway script cannot stall the loop.
+- VM resumes have an instruction budget; blocking C# bindings and total memory are not bounded by it.
 - `definitions.lua` and `.luarc.json` are written at startup for editor completion.
 
 ## Sandbox
@@ -54,6 +54,9 @@ public sealed class GreeterModule
     }
 }
 ```
+
+See [Writing Lua scripts](https://moongate-community.github.io/moongate/server/scripting/)
+for bootstrap/module examples, timer ownership, reload and editor support.
 
 ## Dependencies and scope
 

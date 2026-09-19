@@ -58,6 +58,9 @@ await server.StopAsync(CancellationToken.None);
 Console.WriteLine("TCP listener started and stopped.");
 ```
 
+See the [standalone TCP cookbook](https://moongate-community.github.io/moongate/libraries/network-cookbook/)
+for a runnable framed client/server exchange, per-connection middleware and cleanup.
+
 ## Dependencies and scope
 
 This package depends on Serilog and has no dependency on other Moongate packages.
@@ -78,7 +81,9 @@ string DescribeLocalEndpoint(Moongate.Network.Interfaces.Client.INetworkConnecti
 }
 ```
 
-Receive callbacks expose borrowed memory: decode or copy it synchronously before returning.
+TCP event payloads are stable copies; middleware inputs are borrowed until their
+`ValueTask` completes. The host `INetworkService` contract requires decoding or
+copying before its callback returns.
 Keep connection ownership separate from game sessions; the host's `IConnectionService`
 and `INetworkService` contracts live in `Moongate.Server.Core`, not in this transport library.
 

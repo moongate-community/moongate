@@ -8,6 +8,8 @@ export const contentEntries = [
   { source: 'docs/packets.md', slug: 'server/packets', title: 'Packets and handlers', group: 'Server guides' },
   { source: 'docs/game-loop-and-timers.md', slug: 'server/game-loop-and-timers', title: 'Game loop and timers', group: 'Server guides' },
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Server guides' },
+  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Server guides' },
+  { source: 'docs/network.md', slug: 'libraries/network-cookbook', title: 'Standalone TCP cookbook', group: 'Libraries' },
   { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Server guides' },
   { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Server guides' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Server guides' },
