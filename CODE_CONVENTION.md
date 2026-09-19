@@ -262,6 +262,18 @@ nothing else.
 - Never add AI attribution anywhere: no `Co-Authored-By: Claude` trailer, and no generated-with line in a
   commit, pull request, issue or release note.
 
+### 13.3 Release Documentation Review
+
+Before **every release**, including patch releases, verify that the documentation matches the exact
+code being released. This check is mandatory.
+
+- Review the repository and library READMEs, `docs/`, public API XML comments, examples and release
+  notes against the implementation, including configuration defaults, commands and deployment steps.
+- Update outdated or missing documentation, remove claims about unsupported behavior, and verify
+  documented commands and runnable examples against the release candidate.
+- Record the review and relevant verification results in the release pull request. Resolve all
+  documentation/code mismatches before publishing the release.
+
 ## 14. Non-Negotiable Hygiene
 
 - No dead code.
