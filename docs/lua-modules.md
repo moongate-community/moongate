@@ -103,11 +103,11 @@ greeter.DEFAULT_GREETING = "Hello"
 function greeter.hello(name, tone) end
 ```
 
-Note the parameter annotation: `tone? Tone|string` — the `?` because `tone` has a C# default, `Tone|string` because the converter accepts either the enum's number or a member's name; the return stays the bare `Tone` because the engine always hands a number back to the caller.
+Note the parameter annotation: `tone? Tone|string` — the `?` because `tone` has a C# default, `Tone|string` because the converter accepts either the enum's number or a member's name on input. A function *returning* an enum would be annotated with the bare enum name — `@return Tone`, not `Tone|string` — because the engine always hands the caller the member's number, never its name.
 
 ## Functions
 
-`[ScriptFunction]` only has an effect on **public instance methods**. The binder reflects a module type's methods with `BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly` (`src/Moongate.Scripting/Binding/LuaModuleBinder.cs`), so a static or non-public method never turns up in that scan — the attribute goes unseen and the method is simply not published, exactly as if it carried no attribute at all (`ProbeModule.NotExposed()` in `tests/Moongate.Tests/TestSupport/Scripting/ProbeModule.cs` is the test fixture for this: public, unattributed, and `probe.not_exposed` reads back `nil`). It is not the binding error the term might suggest — no exception is raised, the method is simply invisible to Lua.
+`[ScriptFunction]` only has an effect on **public instance methods**. The binder reflects a module type's methods with `BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly` (`src/Moongate.Scripting/Binding/LuaModuleBinder.cs`), so a static or non-public method never turns up in that scan — the attribute goes unseen and the method is simply not published, exactly as if it carried no attribute at all (`ProbeModule.NotExposed()` in `tests/Moongate.Tests/TestSupport/Scripting/ProbeModule.cs` is the test fixture for this: public, unattributed, and `probe.not_exposed` reads back `nil`).
 
 The Lua name is the attribute's `name` argument when given (it must itself be a lower-case Lua identifier — `ScriptFunctionAttribute`'s constructor rejects anything else), or the method name converted to snake_case otherwise (`LuaModuleBinder.ToSnakeCase`): each new run of uppercase letters starts a new lowercase, underscore-separated word. `NextColour` becomes `next_colour` — see `ProbeModule.NextColour` and its test in `LuaModuleBinderTests.Bind_PublishesTheModuleUnderItsName_WithSnakeCaseFunctionNames`, which calls it as `probe.next_colour(1)`.
 
@@ -115,16 +115,18 @@ Parameters and returns are converted by `src/Moongate.Scripting/Internal/LuaValu
 
 | C# type | Accepts from Lua | Error on mismatch |
 | --- | --- | --- |
-| `bool` | boolean | `"{Type} expected, got {kind}"` (e.g. `Boolean expected, got number`) |
-| `int`, `long` | an integral number in range | `"{number} has no integer representation for {Type}"` or `"{number} is out of range for {Type}"` |
-| `double`, `float` | any number | `"{Type} expected, got {kind}"` |
+| `bool` | boolean | `"{Type} expected, got {kind}"` (e.g. `Boolean expected, got number`); for `nil`: `"nil cannot be converted to {Type}"` |
+| `int`, `long` | an integral number in range | `"{number} has no integer representation for {Type}"` or `"{number} is out of range for {Type}"`; for `nil`: `"nil cannot be converted to {Type}"` |
+| `double`, `float` | any number | `"{Type} expected, got {kind}"`; for `nil`: `"nil cannot be converted to {Type}"` |
 | `string` | string | `"{Type} expected, got {kind}"` |
-| an enum | the underlying number (must be a defined member) or the member's name (case-sensitive) | `"{number} is not a member of {Enum}"`, `"'{name}' is not a member of {Enum}"`, or `"{Enum} expected, got {kind}"` |
+| an enum | the underlying number (must be a defined member) or the member's name (case-sensitive) | `"{number} is not a member of {Enum}"`, `"'{name}' is not a member of {Enum}"`, or `"{Enum} expected, got {kind}"`; for `nil`: `"nil cannot be converted to {Enum}"` |
 | a nullable value type (`int?`, `Tone?`, …) | the above, or Lua `nil` (becomes C# `null`) | same as the underlying type |
 | `LuaValue` | anything, unconverted, including `nil` | never |
 | `LuaTable` | table | `"{Type} expected, got {kind}"` (e.g. `LuaTable expected, got string`) |
-| `object` | number (as `double`), string, boolean or table, unwrapped; anything else stays a `LuaValue` | never |
+| `object` | number (as `double`), string, boolean, table, or `nil` (becomes C# `null`), unwrapped; anything else stays a `LuaValue` | never |
 | `params` array | every remaining argument, converted one by one to the array's element type | same as the element type, indexed from where the `params` slice starts |
+
+Lua takes an enum member by name case-sensitively (`ignoreCase: false` in the converter's `ReadEnum`); `GreetCommand`'s own tone parsing on the console side is deliberately more lenient (see [Writing a plugin: Console commands](plugins.md#console-commands)) — the two are independent choices for different callers, not a contradiction to reconcile.
 
 Every mismatch is an `InvalidCastException` from the converter, which `LuaModuleBinder` catches and rethrows as a `LuaRuntimeException` with the message `"bad argument #{n} to '{module}.{function}' ({converter message})"` — running `probe.add('x', 1)` against `ProbeModule` (`tests/Moongate.Tests/TestSupport/Scripting/ProbeModule.cs`) raises exactly `bad argument #1 to 'probe.add' (Int32 expected, got string)` (the LuaCSharp runtime prefixes the exception's `Message` with `Lua-CSharp: `; the quoted part is what Moongate constructs). `LuaModuleBinderTests.Bind_WrongArgumentType_RaisesALuaErrorNamingTheFunction` asserts on that shape (`"probe.add"` and `"argument #1"`).
 
@@ -145,6 +147,8 @@ Supported constant types are `int`, `long`, `double`, `float`, `bool`, `string`,
 Every module table is a read-only proxy (`src/Moongate.Scripting/Internal/ReadOnlyTable.cs`): reads pass through to the real table, but any assignment — to an existing key or a new one — raises `"'{name}' is read-only"`, and `setmetatable` on it raises too, since its `__metatable` is locked. `rawset`, the one call that could otherwise bypass this, is removed from the sandbox entirely.
 
 An enum is published as a read-only global table named after the type, keyed by member name with the member's numeric value (`Tone.Plain == 0`, and so on). This happens automatically the first time a bound function's parameter or return type, or a constant's type, is that enum — or explicitly via `container.RegisterScriptEnum<TEnum>()`, which publishes it even if nothing else mentions it (`SamplePlugin.cs` does this for `Tone`, even though `GreeterModule.Hello` already causes automatic discovery). A script may pass either the member's underlying number or its exact-case name to a parameter of that enum type; the engine always returns the number. `definitions.lua` renders each one as `---@enum Name` followed by a table literal, as shown above for `Tone`.
+
+The published table's name is exactly the C# enum's own type name, with no domain qualifier — a script writes `Tone.Warm`, not `ToneType.Warm` — which is why the sample's enum is `Tone` rather than the `*Type` suffix `CODE_CONVENTION.md` §6 otherwise asks for.
 
 ## Registering
 

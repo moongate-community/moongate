@@ -179,7 +179,7 @@ public enum DiagnosticMetricType
 
 Use `Gauge` for a value that can move up or down between samples, such as `game_loop.queue_depth` or `system.working_set_bytes` in the built-in metrics table. Use `Counter` for a value that only accumulates since the process started, such as `game_loop.accepted_work_items_total`; `DiagnosticService` enforces the "only accumulates" half by rejecting a negative `Counter` value, but it cannot detect a counter that silently resets to a lower number and still reports a valid, non-negative value — that stays a semantic contract between the provider and its consumers (see [Common mistakes](#common-mistakes)).
 
-`DiagnosticService` builds the key each sample appears under in `DiagnosticSnapshot.Metrics` as `ProviderName + "." + sample.Name`. `DiagnosticService.IsValidName` requires provider names and local metric names alike to match `[a-z][a-z0-9_]*`. That pattern applies to `sample.Name` the same way it applies to `ProviderName`, so the local name a provider returns cannot itself contain a `.` — it is the leaf part only, in snake_case, with the provider prefix added by the service. `GreetingMetricProvider`'s sample above is exactly this: it returns the local name `hello_calls`, and `DiagnosticService` qualifies it into the `greeter.hello_calls` key that shows up in the snapshot (see [Testing](#testing) for a test that collects it through the real service and checks that key). Local names must also be unique within one provider's own result; a repeat is rejected the same way an invalid name is (see [Failures](#failures)). Units are short nouns — `calls`, `bytes`, `seconds`, `count` — matching the built-in metrics table, not abbreviations or symbols.
+`DiagnosticService` builds the key each sample appears under in `DiagnosticSnapshot.Metrics` as `ProviderName + "." + sample.Name`. `DiagnosticService.IsValidName` requires provider names and local metric names alike to match `[a-z][a-z0-9_]*`. That pattern applies to `sample.Name` the same way it applies to `ProviderName`, so the local name a provider returns cannot itself contain a `.` — it is the leaf part only, in snake_case, with the provider prefix added by the service. `GreetingMetricProvider`'s sample above is exactly this: it returns the local name `hello_calls`, and `DiagnosticService` qualifies it into the `greeter.hello_calls` key that shows up in the snapshot (see [Testing](#testing) for a test that collects it through the real service and checks that key). Local names must also be unique within one provider's own result; a repeat is rejected the same way an invalid name is (see [Failures](#failures)). Units are short nouns — `calls`, `bytes`, `seconds`, `count` — in the same style as the built-in metrics table, not abbreviations or symbols.
 
 ## Failures
 
@@ -347,82 +347,9 @@ private void PrintMetrics(CommandContext context)
 
 ## Testing
 
-`tests/Moongate.Tests/TestSupport/Diagnostics/DelegateMetricProvider.cs` wraps a delegate as an `IMetricProvider`, for tests that need arbitrary or failing `CollectAsync` behavior without a bespoke class:
+[`tests/Moongate.Tests/TestSupport/Diagnostics/DelegateMetricProvider.cs`](../tests/Moongate.Tests/TestSupport/Diagnostics/DelegateMetricProvider.cs) wraps a delegate as an `IMetricProvider`, for tests that need arbitrary or failing `CollectAsync` behavior without a bespoke class.
 
-```csharp
-using Moongate.Server.Core.Data.Diagnostics;
-using Moongate.Server.Core.Interfaces.Diagnostics;
-
-namespace Moongate.Tests.TestSupport.Diagnostics;
-
-internal sealed class DelegateMetricProvider : IMetricProvider, IDisposable
-{
-    private readonly Func<CancellationToken, ValueTask<IReadOnlyList<MetricSample>>> _collect;
-    public string ProviderName { get; set; }
-    public bool IsDisposed { get; private set; }
-
-    public DelegateMetricProvider(string name, Func<CancellationToken, ValueTask<IReadOnlyList<MetricSample>>> collect)
-    {
-        ProviderName = name;
-        _collect = collect;
-    }
-
-    public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default) => _collect(cancellationToken);
-    public void Dispose() => IsDisposed = true;
-}
-```
-
-`tests/Moongate.Tests/TestSupport/Diagnostics/ControlledMetricProvider.cs` is a provider a test can pause mid-collection, to check concurrency and ordering:
-
-```csharp
-using Moongate.Server.Core.Data.Diagnostics;
-using Moongate.Server.Core.Interfaces.Diagnostics;
-using Moongate.Server.Core.Types.Diagnostics;
-
-namespace Moongate.Tests.TestSupport.Diagnostics;
-
-internal sealed class ControlledMetricProvider : IMetricProvider
-{
-    private readonly Lock _concurrencyGate = new();
-    private readonly TaskCompletionSource _release;
-    private readonly TaskCompletionSource<int> _entered;
-    private int _active;
-    private int _calls;
-    private int _maximumConcurrency;
-
-    public string ProviderName { get; }
-    public int Calls => Volatile.Read(ref _calls);
-    public int MaximumConcurrency => Volatile.Read(ref _maximumConcurrency);
-
-    public ControlledMetricProvider(string providerName = "test")
-    {
-        ProviderName = providerName;
-        _release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _entered = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-    }
-
-    public async ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
-    {
-        var active = Interlocked.Increment(ref _active);
-        lock (_concurrencyGate) _maximumConcurrency = Math.Max(active, _maximumConcurrency);
-        _entered.TrySetResult(Interlocked.Increment(ref _calls));
-        try
-        {
-            await _release.Task.WaitAsync(cancellationToken);
-            return [new MetricSample("value", 42, "count", DiagnosticMetricType.Gauge)];
-        }
-        finally
-        {
-            Interlocked.Decrement(ref _active);
-        }
-    }
-
-    public Task<int> WaitForEntryAsync() => _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
-    public void Release() => _release.TrySetResult();
-}
-```
-
-It blocks inside `CollectAsync` until `Release()` is called, so a test can assert on the state of a collection that has started but not finished, and it counts `Calls` and `MaximumConcurrency` to prove the one-at-a-time guarantee from [The contract](#the-contract).
+[`tests/Moongate.Tests/TestSupport/Diagnostics/ControlledMetricProvider.cs`](../tests/Moongate.Tests/TestSupport/Diagnostics/ControlledMetricProvider.cs) is a provider a test can pause mid-collection with `Release()`, to assert on the state of a collection that has started but not finished, and it counts `Calls` and `MaximumConcurrency` to prove the one-at-a-time guarantee from [The contract](#the-contract).
 
 `tests/Moongate.Tests/Server/Services/Diagnostics/DiagnosticServiceTests.cs` drives the service through a fixture (`DiagnosticServiceFixture`) that wires a `ControlledMetricProvider` or `DelegateMetricProvider` into a real `DiagnosticService`, with a fake `TimeProvider` to advance the collection timer on demand and a channel that captures each published `DiagnosticSnapshotCollectedEvent`. `StartAsync_PublishesSnapshotBeforeEventAndReadsDoNotCollect` is a representative test that starts the service, releases a paused provider, and checks both the event and `GetSnapshot()` see the same snapshot:
 
@@ -452,22 +379,11 @@ public async Task StartAsync_PublishesSnapshotBeforeEventAndReadsDoNotCollect()
 }
 ```
 
-The sample plugin's own provider is exercised end to end in `tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs`, which resolves it from the container and collects it through a real `DiagnosticService` (via `DiagnosticServiceFixture`, the same fixture `DiagnosticServiceTests` uses) rather than calling `CollectAsync` directly — proving the qualified name from [The contract](#the-contract) round-trips through the service's own validation:
-
-```csharp
-var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
-using var diagnostics = new DiagnosticServiceFixture([provider]);
-await diagnostics.Service.StartAsync();
-var snapshot = await diagnostics.NextAsync();
-Assert.Empty(snapshot.FailedProviders);
-Assert.Equal(2, snapshot.Metrics["greeter.hello_calls"].Value);
-```
-
-The count is `2` because the test calls `greeter.hello` once from Lua and once more through the `greet` console command before collecting. `FailedProviders` is empty and `greeter.hello_calls` is present, so the sample's local name (`hello_calls`) passed `DiagnosticService`'s validation and was qualified into the snapshot key exactly as the naming rule predicts.
+The sample plugin's own provider is exercised end to end in [Testing a plugin](plugins.md#testing-a-plugin), which resolves it from the container and collects it through a real `DiagnosticService` (via `DiagnosticServiceFixture`, the same fixture `DiagnosticServiceTests` uses) rather than calling `CollectAsync` directly — proving the qualified name from [The contract](#the-contract) round-trips through the service's own validation. The count comes back `2` because the test calls `greeter.hello` once from Lua and once more through the `greet` console command before collecting; `FailedProviders` is empty and `greeter.hello_calls` is present, so the sample's local name (`hello_calls`) passed `DiagnosticService`'s validation and was qualified into the snapshot key exactly as the naming rule predicts.
 
 ## Common mistakes
 
 - **Returning the same mutable list on every call.** `CollectAsync` must return "a fresh metric list," per `IMetricProvider`'s own doc comment; a provider that caches and reuses one `List<MetricSample>` (or mutates it in place between calls) breaks that contract, and any code still holding an older `DiagnosticSnapshot` built from that list can see it change out from under an object that is supposed to be immutable.
 - **Blocking on the loop from `CollectAsync`.** Providers are awaited one at a time, on the diagnostics worker; a provider that synchronously blocks waiting for game-loop work (instead of awaiting a work item's own `Completion`, as in [Threading](#threading)) stalls every provider queued after it for that cycle. `DiagnosticServiceTests.Tick_DuringBlockedCollectionCoalescesWithoutOverlap` shows the service's own response to a stuck collection: ticks that land while it is blocked simply coalesce into one more cycle once it unblocks, rather than overlapping — it does not run your blocked provider any sooner.
-- **Provider names that collide.** Two providers sharing a `ProviderName` fail the service at construction, with `ArgumentException($"Duplicate diagnostic provider name '{name}'.")`, before any collection happens — not a per-cycle isolation like a `CollectAsync` failure.
+- **Provider names that collide.** Two providers sharing a `ProviderName` fail the service at construction, with `"Duplicate diagnostic provider name '{name}'."` (`DiagnosticService.cs:62`), before any collection happens — not a per-cycle isolation like a `CollectAsync` failure.
 - **Reporting a counter that resets.** `DiagnosticService` rejects a negative `Counter` value, but a counter that drops back to a smaller non-negative number (for example, one reset on every restart of some inner component instead of the process) passes validation while breaking the "accumulates since start" meaning `Counter` is documented to have. If a value can legitimately go down, it is a `Gauge`.

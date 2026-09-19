@@ -45,7 +45,10 @@ public MoongatePluginData(
 
 `id` is the value every dependency and error message refers to; it, and every ID
 compared against it, is matched case-insensitively (`StringComparer.OrdinalIgnoreCase`
-throughout `MoongatePluginRegistry`). `dependencies` is a list of
+throughout `MoongatePluginRegistry`). `CODE_CONVENTION.md` §10 fixes its shape: "The
+Id uses reverse-domain format, `com.github.author.Moongate.plugins.name`, and is
+case-insensitive." The sample's id follows it:
+`com.github.moongate-community.moongate.plugins.greeter`. `dependencies` is a list of
 `MoongatePluginDependencyData`, whose constructor
 (`src/Moongate.Server.Core/Data/Plugins/MoongatePluginDependencyData.cs`) is:
 
@@ -112,7 +115,6 @@ needs one and a real plugin usually does not) — it looks like this:
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
 
@@ -124,20 +126,23 @@ needs one and a real plugin usually does not) — it looks like this:
 </Project>
 ```
 
-`0.4.0` is the current released version; pin whatever is actually published — check
+`0.4.0` is the current released version; pin the version shown on
 [nuget.org/packages/Moongate.Server.Core](https://www.nuget.org/packages/Moongate.Server.Core)
-or the repository's GitHub releases page, not `Directory.Build.props`, which tracks
-`develop` and can be ahead of or behind what NuGet has published.
+or the repository's GitHub releases page.
 `ExcludeAssets="runtime"` keeps each package's own `.dll` out of your
 build output — the host already loads `Moongate.Server.Core.dll` and
 `Moongate.Scripting.dll`, so a copy in your bundle would only be dead weight (see
 [Deployment and loading](#deployment-and-loading)). A package the host does not ship
 must **not** carry that attribute, so its assembly does end up in the bundle.
 
-`EnableDynamicLoading` is what makes the SDK emit `MyShard.Plugin.deps.json` next to
-the build output; `PluginLoadContext` builds an `AssemblyDependencyResolver` from
-that file to resolve any dependency the host does not already supply, so without it
-the resolver has nothing to read.
+`EnableDynamicLoading` controls whether the SDK copies your NuGet package
+dependencies next to the build output (via `CopyLocalLockFileAssemblies`) and writes
+`MyShard.Plugin.runtimeconfig.json` for a plugin host; `MyShard.Plugin.deps.json` is
+written either way. Without it the SDK does not copy a private package's own `.dll`
+into your output at all, so a dependency the host does not ship is simply missing
+from the bundle — neither `PluginLoadContext`'s `AssemblyDependencyResolver` (built
+from that `.deps.json`) nor its adjacent-file fallback (see
+[Deployment and loading](#deployment-and-loading)) has anything to find.
 
 ## The plugin class
 
@@ -165,7 +170,7 @@ public sealed class SamplePlugin : IMoongatePlugin
 {
     /// <inheritdoc />
     public MoongatePluginData Metadata { get; } = new(
-        "sample.greeter",
+        "com.github.moongate-community.moongate.plugins.greeter",
         "Greeter sample",
         new Version(1, 0),
         author: "Moongate",
@@ -220,16 +225,16 @@ publish it in a snapshot as `greeter.hello_calls`. See
 | `RegisterMoongateService<TService, TImpl>(priority)` / `RegisterMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order (`src/Moongate.Server.Core/Extensions/ContainerExtensions.cs` has further overloads for factories and runtime types) | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
+| `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
-| `AddPersistenceEntity<T>()` | A typed entity collection, named by the entity's `[PersistenceCollection]` attribute | [docs/persistence-format.md](persistence-format.md) |
+| `AddPersistenceEntity<T>()` | A typed entity collection, named by the entity's `[PersistenceCollection]` attribute (needs a reference to the `Moongate.Persistence` package) | [src/Moongate.Persistence/README.md](../src/Moongate.Persistence/README.md) |
 
 `priority` only matters for a service that also implements `IMoongateStartupService`
 (`src/Moongate.Server.Core/Interfaces/Services/IMoongateStartupService.cs`): the
 bootstrap starts registered services in ascending priority and stops them in
 reverse, so a service takes a lower priority than the services that depend on it.
-The built-in services, in the order `Program.cs` registers them, use these
-priorities:
+The built-in services use these priorities:
 
 | Priority | Service |
 | --- | --- |
@@ -252,6 +257,19 @@ singleton (`Handle(GameSession session, TPacket packet)`,
 `src/Moongate.Server.Core/Interfaces/Packets/IPacketHandler.cs`) to one incoming
 packet type; the dispatcher calls it synchronously on the game loop thread, and
 registering a second handler for the same packet type throws before startup.
+
+`OnEvent<TEvent>(handler)`, from
+`src/Moongate.Server.Core/Extensions/ContainerEventExtensions.cs`, is how a plugin
+subscribes to the host's event bus from `Register`:
+
+```csharp
+public Container OnEvent<TEvent>(Func<TEvent, CancellationToken, Task> handler)
+    where TEvent : class, IMoongateEvent
+```
+
+It resolves (registering, if needed) the one container-owned `IMoongateEventBus` and
+calls its `Subscribe`, so the handler is awaited for every published `TEvent` for as
+long as the container lives.
 
 ### Registering Lua modules
 
@@ -328,8 +346,8 @@ public sealed class GreetCommand : ICommandExecutor
 }
 ```
 
-`Enum.TryParse` accepts a numeric string like `"7"` as a defined value of the
-underlying type even though no member is named `"7"`, which is why the guard also
+`Enum.TryParse` parses a numeric string like `"7"` into the enum even though no
+member has that value, which is why the guard also
 checks `Enum.IsDefined(tone)`: `greet Bob 7` fails that second check and prints the
 usage line rather than crashing or silently picking `Tone.Plain`
 (`SamplePluginTests` asserts this).
@@ -359,10 +377,10 @@ Of `CommandContext`'s members (`src/Moongate.Server.Core/Data/Commands/CommandCo
 - `PrintError(message, args)` — appends an error output line; used for every usage
   failure.
 
-`CancellationToken` — the token cancelling this invocation — is the fourth member the
-outline calls out; `GreetCommand` does not need it, but a loop-affine command does,
-to pass along to `IGameLoopService.PostAsync` and to the work item's own
-`WaitAsync`, exactly as `ScriptCommand` does.
+`CommandContext.CancellationToken` is the token cancelling this invocation;
+`GreetCommand` does not need it, but a loop-affine command does, to pass along to
+`IGameLoopService.PostAsync` and to the work item's own `WaitAsync`, exactly as
+`ScriptCommand` does.
 
 `RegisterCommand<GreetCommand>("greet", ..., CommandSourceType.Console, AccountType.Regular)`
 ties the command to a source and a minimum account type.
@@ -378,16 +396,29 @@ own account type is checked against it.
 
 ## Deployment and loading
 
+Build the plugin project in Release and copy its output — everything under
+`bin/Release/net10.0/`, not just the entry DLL — into `<root>/plugins/<BundleName>/`
+on the target server. `<root>` is the directory `Program.cs`
+(`src/Moongate.Server/Program.cs`) resolves at startup: the `--root-directory`
+command-line option, then the `MOONGATE_ROOT` environment variable, then the running
+executable's own directory (`AppContext.BaseDirectory`) if neither is given.
+
 A bundle is a directory under `<root>/plugins/`; its name is also the name the
 loader expects for its entry assembly. `PluginLoaderService.LoadBundle`
 (`src/Moongate.Server/Services/Plugins/PluginLoaderService.cs`) builds the path as
 `Path.Combine(directory, Path.GetFileName(directory) + ".dll")`, so a bundle at
-`plugins/mymod/` must contain `mymod.dll`, its matching `mymod.deps.json`, and any
-private dependency the host does not already ship. This is also why the sample's
-`.csproj` sets `<AssemblyName>SamplePlugin</AssemblyName>`: its integration test
-deploys the built output into `plugins/sample/` through a fixture that copies and
-renames the DLL and `.deps.json` to `sample.*` — an author who names the project
-directory after the intended bundle name (`MyShard.Plugin/` producing
+`plugins/mymod/` must contain `mymod.dll` and any private dependency the host does
+not already ship; `mymod.deps.json` should sit alongside it too, so
+`AssemblyDependencyResolver` can resolve those dependencies by name, though the
+adjacent-`.dll` fallback shown below still finds a dependency placed directly in the
+bundle even without one. This is also why the sample's `.csproj` sets
+`<AssemblyName>SamplePlugin</AssemblyName>`: `PluginDirectoryFixture.Deploy("SamplePlugin",
+"sample")` expects the built output at `PluginFixtures/SamplePlugin/SamplePlugin.dll`
+so it can copy `SamplePlugin.dll`/`SamplePlugin.deps.json` into `plugins/sample/` as
+`sample.dll`/`sample.deps.json`, alongside the original `SamplePlugin.*` files rather
+than renaming them — a test-infrastructure naming constraint
+(`PluginDirectoryFixture.cs:18,29`), not the loader's rule. An author who names the
+project directory after the intended bundle name (`MyShard.Plugin/` producing
 `plugins/MyShard.Plugin/`) does not need an `AssemblyName` override at all.
 
 The loader enumerates bundle directories with `Directory.EnumerateDirectories(root).Order(StringComparer.Ordinal)`,
@@ -429,7 +460,7 @@ protected override Assembly? Load(AssemblyName assemblyName)
 ```
 
 It always tries `AssemblyLoadContext.Default` — the host's own load context — first.
-Every assembly the host already loaded (every `Moongate.*` assembly, Serilog,
+Every assembly the host ships (every `Moongate.*` assembly, Serilog,
 DryIoc, LuaCSharp, and so on) resolves there, and any copy of that same assembly
 sitting in the bundle is never touched; only `FileNotFoundException` falls through to
 the bundle's own `AssemblyDependencyResolver` (built from the bundle's
@@ -446,9 +477,13 @@ Consequences of that rule:
   ship: each bundle's `PluginLoadContext` resolves that dependency independently, so
   two bundles carrying their own copies of the same third-party library get two
   separate instances of its static state, not one.
-- A dependency the host *does* ship must be binary-compatible with the host's
-  version: the bundle's copy of that assembly, whatever version it is, is never
-  loaded — the host's is used regardless.
+- A dependency the host *does* ship must be compiled against a package version no
+  newer than the host you deploy to: the bundle's own copy of that assembly is never
+  loaded regardless of version, and an older reference binds cleanly to the host's
+  copy — but `PluginLoadContext.Load` only catches `FileNotFoundException`, so a
+  reference to a *newer* assembly version than the host's is refused by the default
+  context with an uncaught `FileLoadException`, which surfaces as
+  `Failed to load plugin bundle '{path}'.`
 
 `PluginLoaderService.LoadPlugins()` is called from `MoongateServerBootstrap.StartCoreAsync`
 (`src/Moongate.Server/Bootstrap/MoongateServerBootstrap.cs`) as the very first step,
@@ -465,14 +500,21 @@ if (_container.IsRegistered<IPluginLoaderService>())
 ```
 
 Every failure refuses the start with a named `InvalidOperationException`. Loading a
-bundle wraps any failure — including the two below — as:
+bundle wraps any failure — including the three below — as:
 
 ```
 Failed to load plugin bundle '{path}'.
 ```
 
-with the original problem as `InnerException`. The two loader-level problems it can
-wrap are no plugin type in the assembly:
+with the original problem as `InnerException`. The three loader-level problems it can
+wrap are a missing entry assembly — the bundle directory holds no DLL named after
+itself, the naming rule from [Deployment and loading](#deployment-and-loading):
+
+```
+The plugin entry assembly is missing.
+```
+
+no plugin type in the assembly:
 
 ```
 The assembly contains no public concrete IMoongatePlugin types.
@@ -558,7 +600,7 @@ public sealed class SamplePluginTests
         try
         {
             var loader = container.Resolve<IPluginLoaderService>();
-            Assert.Contains(loader.Plugins, plugin => plugin.Id == "sample.greeter");
+            Assert.Contains(loader.Plugins, plugin => plugin.Id == "com.github.moongate-community.moongate.plugins.greeter");
 
             var engine = container.Resolve<IScriptEngine>();
             var loop = container.Resolve<IGameLoopService>();
@@ -608,26 +650,30 @@ public sealed class SamplePluginTests
 }
 ```
 
-Three things this test proves: first, deploying the built sample under
-`plugins/sample/` and calling the production `PluginLoaderService.LoadPlugins()`
-through a real `MoongateServerBootstrap` start proves the bundle loads exactly the
-way a shipped plugin would, and that `sample.greeter` ends up in
-`IPluginLoaderService.Plugins`. Second, running `report()` on the game loop thread
-and then executing `greet Moongate formal`, the bare `greet`, and `greet Bob 7`
-through `CommandSystemService` proves the Lua module, the `Tone` enum and the
-console command all resolve through the one container the loader populated — the
-same `GreeterModule` instance backs both call sites, and both a missing argument and
-an undefined numeric tone (`greet Bob 7`) are refused with the usage line rather than
-accepted. Third, wrapping the resolved provider in a real `DiagnosticService`
-through `DiagnosticServiceFixture` and collecting one snapshot proves the provider
-passes the same validation and naming a shipped provider would — `snapshot.FailedProviders`
-is empty, meaning `GreetingMetricProvider`'s local name `hello_calls` was accepted —
-and that the snapshot carries `greeter.hello_calls` (the service's own
-`ProviderName + "." + sample.Name` qualification) equal to `2` after exactly two
-`Hello` calls (one from Lua, one from the command), proving the shared
-`GreetingCounter` is genuinely shared. Asserting `definitions.lua` contains
-`---@class greeter` and `---@enum Tone` proves `RegisterScriptModule`/`RegisterScriptEnum`
-fed the editor tooling the plugin asked for.
+This test proves three things:
+
+- Deploying the built sample under `plugins/sample/` and calling the production
+  `PluginLoaderService.LoadPlugins()` through a real `MoongateServerBootstrap` start
+  proves the bundle loads exactly the way a shipped plugin would, and that
+  `com.github.moongate-community.moongate.plugins.greeter` ends up in
+  `IPluginLoaderService.Plugins`.
+- Running `report()` on the game loop thread and then executing `greet Moongate
+  formal`, the bare `greet`, and `greet Bob 7` through `CommandSystemService` proves
+  the Lua module, the `Tone` enum and the console command all resolve through the
+  one container the loader populated — the same `GreeterModule` instance backs both
+  call sites, and both a missing argument and an undefined numeric tone (`greet Bob
+  7`) are refused with the usage line rather than accepted.
+- Wrapping the resolved provider in a real `DiagnosticService` through
+  `DiagnosticServiceFixture` and collecting one snapshot proves the provider passes
+  the same validation and naming a shipped provider would — `snapshot.FailedProviders`
+  is empty, meaning `GreetingMetricProvider`'s local name `hello_calls` was accepted —
+  and that the snapshot carries `greeter.hello_calls` (the service's own
+  `ProviderName + "." + sample.Name` qualification) equal to `2` after exactly two
+  `Hello` calls (one from Lua, one from the command), proving the shared
+  `GreetingCounter` is genuinely shared. Asserting `definitions.lua` contains
+  `---@class greeter` and `---@enum Tone` proves
+  `RegisterScriptModule`/`RegisterScriptEnum` fed the editor tooling the plugin
+  asked for.
 
 The unit approach skips the disk and the loader and exercises the registry
 directly, the way `MoongatePluginRegistryTests`
@@ -642,25 +688,16 @@ and resolves the service itself to assert the factory ran lazily exactly once.
 
 ## Common mistakes
 
-- **Missing `EnableDynamicLoading`.** Without it the SDK never writes
-  `<AssemblyName>.deps.json`; `PluginLoadContext`'s `AssemblyDependencyResolver` has
-  nothing to read, so any dependency the host does not already ship fails to
-  resolve at load time.
-- **Shipping host assemblies in the bundle.** `PluginLoadContext.Load` always tries
-  `AssemblyLoadContext.Default` first, so a bundled `Moongate.*.dll` (or Serilog,
-  DryIoc, LuaCSharp, …) is never the copy that loads — it just adds dead weight to
-  the bundle.
-- **Doing work — I/O, starting threads — in `Register` instead of an
-  `IMoongateStartupService`.** `Register` runs synchronously while
-  `MoongatePluginRegistry` loads the batch, before the game loop or any other
-  service exists; register a service that implements `IMoongateStartupService` and
-  do the work in its `StartAsync`.
+- **Missing `EnableDynamicLoading`.** A dependency the host does not ship never
+  reaches the bundle; see [Creating the project](#creating-the-project).
+- **Shipping host assemblies in the bundle.** The host's own copy always wins, so a
+  bundled `Moongate.*.dll` is dead weight; see
+  [Deployment and loading](#deployment-and-loading).
+- **Doing work — I/O, starting threads — in `Register`.** `Register` only registers;
+  nothing may start yet; see [The contract](#the-contract).
 - **Registering a loop-affine object and touching it from a command without
-  posting.** `ICommandExecutor.ExecuteAsync` always runs on the caller's thread,
-  never the game loop; read or mutate loop-owned state only by posting a work item
-  to `IGameLoopService`, as `ScriptCommand` does.
+  posting.** Commands run on the caller's thread, never the game loop; see
+  [Console commands](#console-commands).
 - **A `[ScriptModule]` class with a constructor dependency that is not registered
-  before startup.** `RegisterScriptModule<T>()` only registers `T` as a singleton
-  and records its type; the script engine resolves an instance when it starts, so
-  every dependency `T`'s constructor needs must already be registered in the
-  container by then.
+  before startup.** The engine resolves the instance only when it starts; see
+  [docs/lua-modules.md#registering](lua-modules.md#registering).
