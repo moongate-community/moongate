@@ -9,6 +9,8 @@ using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Serilog;
+using Serilog.Events;
 
 namespace Moongate.Tests.Scripting.Services;
 
@@ -289,6 +291,21 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task StartAsync_WhenTheLoopRefusesWork_RunsTheBootstrapInline()
+    {
+        _scripts.Write("init.lua", "booted = true");
+        _loop.IsOnLoopThread = false;
+        _loop.ThrowOnPost = true;
+        using var engine = NewEngine();
+
+        await engine.StartAsync();
+
+        Assert.Equal(1, _loop.PostedWorkItems);
+        Assert.Equal(1, engine.GetMetrics().FilesLoaded);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
     public async Task StopAsync_OffTheLoopThread_DisposesThroughTheLoop()
     {
         _scripts.Write("init.lua", "timer.every(1, function() end)");
@@ -301,6 +318,25 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         Assert.Equal(1, _loop.PostedWorkItems);
         Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task Print_IsRoutedToTheLog_UnderTheCallingScript()
+    {
+        var sink = new CapturingLogSink();
+        // The engine takes script output from a logger registered in the container, so no global swap
+        // is needed and tests in other classes cannot interfere.
+        _container.RegisterInstance<ILogger>(new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger());
+        _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
+        using var engine = NewEngine();
+
+        await engine.StartAsync();
+
+        var printed = Assert.Single(sink.Events, e => e.MessageTemplate.Text == "{ScriptFile}: {Output}");
+        Assert.Equal(LogEventLevel.Information, printed.Level);
+        Assert.Equal("a\t1\tnil\ttrue\tcustom", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
+        Assert.Equal("init.lua", Assert.IsType<ScalarValue>(printed.Properties["ScriptFile"]).Value);
+        Assert.Equal(typeof(LogModule).FullName, Assert.IsType<ScalarValue>(printed.Properties["SourceContext"]).Value);
     }
 
     [Fact]

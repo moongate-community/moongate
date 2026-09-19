@@ -63,6 +63,34 @@ public sealed class TimerModuleTests : IDisposable
     }
 
     [Fact]
+    public void Cancel_AfterAOneShotTimerFired_ReportsFalse()
+    {
+        Run("h = timer.after(1, function() fired = true end)");
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Run("late = timer.cancel(h)");
+
+        Assert.True(_state.Environment["fired"].Read<bool>());
+        Assert.False(_state.Environment["late"].Read<bool>());
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void Every_WhenTheCallbackThrows_ReportsEachFailure_AndTheTimerStaysAlive()
+    {
+        Run("timer.every(1, function() ticks = (ticks or 0) + 1 error('boom') end)");
+        var timer = Assert.Single(_timers.Timers);
+
+        _timers.Fire(timer.Id);
+        _timers.Fire(timer.Id);
+
+        Assert.Equal(2, _state.Environment["ticks"].Read<double>());
+        Assert.Equal(2, _errors.Count);
+        Assert.All(_errors, error => Assert.Contains("boom", error.Message, StringComparison.Ordinal));
+        Assert.Single(_timers.Timers);
+    }
+
+    [Fact]
     public void Cancel_UnregistersByHandle_AndReportsWhetherItExisted()
     {
         Run("h = timer.after(5, function() end) first = timer.cancel(h) second = timer.cancel(h)");

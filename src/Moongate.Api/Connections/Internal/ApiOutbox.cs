@@ -52,18 +52,6 @@ internal sealed class ApiOutbox : IAsyncDisposable
         }
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        Complete();
-
-        try { await Completion.ConfigureAwait(false); }
-        finally
-        {
-            _signal.Dispose();
-            _stop.Dispose();
-        }
-    }
-
     public bool TryEnqueue(ApiOutboundFrame frame)
     {
         lock (SyncRoot)
@@ -148,6 +136,18 @@ internal sealed class ApiOutbox : IAsyncDisposable
             await _transport.CloseAsync().ConfigureAwait(false);
 
             throw _failure;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        Complete();
+
+        try { await Completion.ConfigureAwait(false); }
+        finally
+        {
+            _signal.Dispose();
+            _stop.Dispose();
         }
     }
 }

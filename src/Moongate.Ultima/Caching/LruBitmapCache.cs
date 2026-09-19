@@ -143,28 +143,6 @@ public sealed class LruBitmapCache : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        lock (_lock)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
-            foreach (var kvp in _list)
-            {
-                kvp.Value?.Dispose();
-                _disposedCount++;
-            }
-
-            _list.Clear();
-            _map.Clear();
-        }
-    }
-
     public bool Remove(int key)
     {
         lock (_lock)
@@ -294,6 +272,28 @@ public sealed class LruBitmapCache : IDisposable
                 lru.Value.Value?.Dispose();
                 _disposedCount++;
             }
+        }
+    }
+
+    public void Dispose()
+    {
+        lock (_lock)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            foreach (var kvp in _list)
+            {
+                kvp.Value?.Dispose();
+                _disposedCount++;
+            }
+
+            _list.Clear();
+            _map.Clear();
         }
     }
 }

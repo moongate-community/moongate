@@ -132,33 +132,6 @@ public sealed class ApiClient : IApiClient
         }
     }
 
-    public ValueTask DisposeAsync()
-    {
-        Task result;
-
-        lock (_gate)
-        {
-            _closing = true;
-
-            if (_disposeCompletion is null)
-            {
-                _disposeCompletion = DisposeCoreAsync();
-                _disposeResult = ApiShutdown.WaitAsync(
-                    _disposeCompletion,
-                    ForceClose,
-                    _options.ShutdownTimeout,
-                    _clock,
-                    Remaining
-                );
-                _ = ApiShutdown.ObserveAsync(_disposeCompletion);
-                _ = ApiShutdown.ObserveAsync(_disposeResult);
-            }
-            result = _disposeCompletion.IsCompleted ? _disposeCompletion : _disposeResult!;
-        }
-
-        return new(result);
-    }
-
     private async Task DisposeCoreAsync()
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
@@ -202,5 +175,32 @@ public sealed class ApiClient : IApiClient
         {
             if (_connections.Remove(connection)) { _admitted--; }
         }
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Task result;
+
+        lock (_gate)
+        {
+            _closing = true;
+
+            if (_disposeCompletion is null)
+            {
+                _disposeCompletion = DisposeCoreAsync();
+                _disposeResult = ApiShutdown.WaitAsync(
+                    _disposeCompletion,
+                    ForceClose,
+                    _options.ShutdownTimeout,
+                    _clock,
+                    Remaining
+                );
+                _ = ApiShutdown.ObserveAsync(_disposeCompletion);
+                _ = ApiShutdown.ObserveAsync(_disposeResult);
+            }
+            result = _disposeCompletion.IsCompleted ? _disposeCompletion : _disposeResult!;
+        }
+
+        return new(result);
     }
 }

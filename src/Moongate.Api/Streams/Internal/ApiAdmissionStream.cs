@@ -25,23 +25,6 @@ internal sealed class ApiAdmissionStream : Stream
         _admission = admission;
     }
 
-    public override async ValueTask DisposeAsync()
-    {
-        try
-        {
-            if (Interlocked.Exchange(ref _disposed, 1) == 0)
-            {
-                try { await _inner.DisposeAsync().ConfigureAwait(false); }
-                finally { _admission.ReleaseTransport(); }
-            }
-        }
-        finally
-        {
-            await base.DisposeAsync().ConfigureAwait(false);
-            GC.SuppressFinalize(this);
-        }
-    }
-
     public override void Flush()
         => _inner.Flush();
 
@@ -77,6 +60,23 @@ internal sealed class ApiAdmissionStream : Stream
 
     public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         => _inner.WriteAsync(buffer, cancellationToken);
+
+    public override async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (Interlocked.Exchange(ref _disposed, 1) == 0)
+            {
+                try { await _inner.DisposeAsync().ConfigureAwait(false); }
+                finally { _admission.ReleaseTransport(); }
+            }
+        }
+        finally
+        {
+            await base.DisposeAsync().ConfigureAwait(false);
+            GC.SuppressFinalize(this);
+        }
+    }
 
     protected override void Dispose(bool disposing)
     {
