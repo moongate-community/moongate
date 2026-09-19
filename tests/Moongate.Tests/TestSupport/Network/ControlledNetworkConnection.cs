@@ -24,6 +24,7 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     public Task SendStarted => _sendStarted.Task;
     public Task? SendGate { get; init; }
     public Exception? SendFailure { get; init; }
+    public bool CompleteOnSendFailure { get; init; }
     public int CloseCalls => Volatile.Read(ref _closeCalls);
     public bool DelayCompletion { get; init; }
     public bool DelayDisconnectionState { get; init; }
@@ -51,7 +52,11 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         if (!IsConnected) { throw new IOException("Connection is closed."); }
         _sendStarted.TrySetResult();
         if (SendGate is not null) { await SendGate.WaitAsync(cancellationToken); }
-        if (SendFailure is not null) { throw SendFailure; }
+        if (SendFailure is not null)
+        {
+            if (CompleteOnSendFailure) { Complete(); }
+            throw SendFailure;
+        }
         _sent.Writer.TryWrite(payload.ToArray());
     }
 

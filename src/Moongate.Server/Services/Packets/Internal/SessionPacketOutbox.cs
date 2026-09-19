@@ -7,15 +7,18 @@ internal sealed class SessionPacketOutbox
 {
     private readonly Channel<byte[]> _queue;
     private readonly Func<long, Task> _disconnect;
+    private readonly Task _disconnectRequested;
     private readonly TaskCompletionSource _closure = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private int _closed;
+    private int _closeRequested;
 
     public INetworkConnection Connection { get; }
     public Task Completion { get; private set; } = Task.CompletedTask;
 
-    public SessionPacketOutbox(INetworkConnection connection, int capacity, Func<long, Task> disconnect)
+    public SessionPacketOutbox(INetworkConnection connection, Task disconnectRequested, int capacity, Func<long, Task> disconnect)
     {
         Connection = connection;
+        _disconnectRequested = disconnectRequested;
         _disconnect = disconnect;
         _queue = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(capacity)
         {
@@ -39,9 +42,14 @@ internal sealed class SessionPacketOutbox
 
     public void Close()
     {
-        if (Interlocked.Exchange(ref _closed, 1) != 0) { return; }
+        CloseQueue();
+        if (Interlocked.Exchange(ref _closeRequested, 1) == 0) { _ = CloseConnectionAsync(); }
+    }
+
+    private void CloseQueue()
+    {
+        Interlocked.Exchange(ref _closed, 1);
         _queue.Writer.TryComplete();
-        _ = CloseConnectionAsync();
     }
 
     private async Task CloseConnectionAsync()
@@ -60,10 +68,11 @@ internal sealed class SessionPacketOutbox
         List<Exception> failures = [];
         var drain = DrainAsync();
         await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
-        Close();
+        CloseQueue();
         try { await drain.ConfigureAwait(false); }
-        catch (OperationCanceledException) when (!Connection.IsConnected) { }
         catch (Exception exception) { failures.Add(exception); }
+        // Classify the send result before automatic failure cleanup can publish a close request.
+        Close();
         try { await _closure.Task.ConfigureAwait(false); }
         catch (Exception exception) { failures.Add(exception); }
         while (_queue.Reader.TryRead(out _)) { }
@@ -76,11 +85,11 @@ internal sealed class SessionPacketOutbox
         {
             if (Volatile.Read(ref _closed) != 0 || !Connection.IsConnected) { break; }
             try { await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false); }
-            catch (Exception exception) when (Volatile.Read(ref _closed) != 0 &&
+            catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
                                               exception is IOException or ObjectDisposedException or OperationCanceledException)
             {
-                // A requested local close can interrupt an active write with a platform-specific socket error.
-                // Classify it here, before RunAsync requests closure in response to a genuine send failure.
+                // Only the captured owner request identifies an intentionally interrupted write.
+                // A send failure may close the transport itself, so its current state is not a cause.
                 break;
             }
         }

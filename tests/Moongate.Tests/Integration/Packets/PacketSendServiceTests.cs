@@ -145,11 +145,12 @@ public sealed class PacketSendServiceTests
         }
     }
 
-    [Fact]
-    public async Task SendFailure_ClosesConnectionAndIsObservedByCleanup()
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SendFailure_ClosesConnectionAndIsObservedByCleanup(bool canceled)
     {
         await using var fixture = await SessionFixture.CreateAsync();
-        using var middleware = new ControlledSendMiddleware { Fail = true };
+        Exception failure = canceled ? new OperationCanceledException("independent send cancellation") : new IOException("send failure");
+        using var middleware = new ControlledSendMiddleware { Failure = failure };
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
         sessions.GetOrCreate(fixture.Client);
@@ -159,7 +160,8 @@ public sealed class PacketSendServiceTests
         Assert.True(sender.TrySend(fixture.Client.SessionId, new PingPacket(1)));
         await fixture.Client.Completion.WaitAsync(Timeout);
         Assert.False(sender.TrySend(fixture.Client.SessionId, new PingPacket(2)));
-        await Assert.ThrowsAsync<AggregateException>(() => sender.StopAsync().WaitAsync(Timeout));
+        var error = await Assert.ThrowsAsync<AggregateException>(() => sender.StopAsync().WaitAsync(Timeout));
+        Assert.Contains(failure, error.Flatten().InnerExceptions);
     }
 
     [Fact]

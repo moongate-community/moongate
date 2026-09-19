@@ -73,15 +73,24 @@ public sealed class ConnectionService : IConnectionService
     /// <inheritdoc />
     public bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection)
     {
+        return TryGet(sessionId, out connection, out _);
+    }
+
+    /// <inheritdoc />
+    public bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
+        [NotNullWhen(true)] out Task? disconnectRequested)
+    {
         lock (_gate)
         {
             if (_running && _entries.TryGetValue(sessionId, out var entry) &&
                 !entry.IsClosing && entry.Connection.IsConnected)
             {
                 connection = entry.Connection;
+                disconnectRequested = entry.DisconnectRequested.Task;
                 return true;
             }
             connection = null;
+            disconnectRequested = null;
             return false;
         }
     }
@@ -92,17 +101,21 @@ public sealed class ConnectionService : IConnectionService
         lock (_gate)
         {
             if (!_entries.TryGetValue(sessionId, out var entry)) { return Task.CompletedTask; }
-            RequestClose(entry);
+            RequestClose(entry, ownerRequested: true);
             return entry.Cleanup.Task;
         }
     }
 
-    private void RequestClose(ConnectionEntry entry)
+    private void RequestClose(ConnectionEntry entry, bool ownerRequested)
     {
         lock (_gate)
         {
             if (entry.IsClosing) { return; }
             entry.IsClosing = true;
+            if (ownerRequested && entry.Connection.IsConnected)
+            {
+                entry.DisconnectRequested.TrySetResult();
+            }
         }
         _ = CloseCoreAsync(entry);
     }
@@ -129,7 +142,7 @@ public sealed class ConnectionService : IConnectionService
         try { await entry.Connection.Completion.ConfigureAwait(false); }
         catch (Exception exception) { failures.Add(exception); }
 
-        RequestClose(entry);
+        RequestClose(entry, ownerRequested: false);
         try { await entry.CloseRequest.Task.ConfigureAwait(false); }
         catch (Exception exception) { failures.Add(exception); }
 
@@ -157,7 +170,7 @@ public sealed class ConnectionService : IConnectionService
     private async Task StopCoreAsync(ConnectionEntry[] entries)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-        foreach (var entry in entries) { RequestClose(entry); }
+        foreach (var entry in entries) { RequestClose(entry, ownerRequested: true); }
         await Task.WhenAll(entries.Select(entry => entry.Cleanup.Task))
                   .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         Exception[] failures;

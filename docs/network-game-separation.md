@@ -74,7 +74,10 @@ at construction, including endpoint objects.
 The sender capacity defaults to 128 waiting encoded frames per connection, plus one
 active write. It snapshots packets before a successful `TrySend` returns and preserves
 FIFO order. Overflow or encoding/send failure closes admission and requests closure.
-No new outbox can admit sends while closure is pending. Cleanup failures are logged and
+No new outbox can admit sends while closure is pending. The sender atomically captures
+a per-registration owner-close signal through the three-argument `IConnectionService.TryGet`
+overload. That signal survives registry removal and distinguishes an explicit live-connection
+close from transport failure or remote completion. Cleanup failures are logged and
 remain observable at shutdown; writes interrupted by a requested local close are expected.
 
 ## Migrate consumers and plugins

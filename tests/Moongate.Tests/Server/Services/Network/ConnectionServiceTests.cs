@@ -7,6 +7,37 @@ public sealed class ConnectionServiceTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task TryGet_DisconnectSignalSurvivesMembershipRemoval(bool stop)
+    {
+        var service = new ConnectionService();
+        await service.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        service.TryRegister(connection);
+        Assert.True(service.TryGet(1, out var found, out var requested));
+        Assert.Same(connection, found);
+        Assert.False(requested.IsCompleted);
+        if (stop) { await service.StopAsync().WaitAsync(Timeout); }
+        else { await service.DisconnectAsync(1).WaitAsync(Timeout); }
+        Assert.Equal(0, service.Count);
+        Assert.True(requested.IsCompletedSuccessfully);
+        await service.StopAsync();
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task RemoteCompletion_DoesNotBecomeAnOwnerRequestedClose(bool redundantDisconnect)
+    {
+        var service = new ConnectionService();
+        await service.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        service.TryRegister(connection);
+        Assert.True(service.TryGet(1, out _, out var requested));
+        connection.Complete();
+        if (redundantDisconnect) { await service.DisconnectAsync(1).WaitAsync(Timeout); }
+        await service.StopAsync().WaitAsync(Timeout);
+        Assert.False(requested.IsCompleted);
+    }
+
     [Fact]
     public async Task TryRegister_RequiresRunningAndLiveConnection()
     {

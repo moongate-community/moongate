@@ -137,6 +137,47 @@ public sealed class NetworkServiceTests
     }
 
     [Fact]
+    public async Task PartialBindFailure_ConcurrentStopJoinsRollbackAndPreservesBothFailures()
+    {
+        using var occupied = new TcpListener(IPAddress.Loopback, 0);
+        occupied.Start();
+        using var middleware = new BlockingFailingCleanupMiddleware();
+        var registry = new ConnectionService();
+        await registry.StartAsync();
+        var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
+            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [middleware]));
+        var network = new NetworkService([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)], registry);
+        var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        network.DataReceived += (_, _) => received.TrySetResult();
+        try
+        {
+            await first.StartAsync(default);
+            using var peer = new TcpClient();
+            await peer.ConnectAsync(first.Endpoint);
+            await peer.GetStream().WriteAsync(new byte[] { 1 });
+            await received.Task.WaitAsync(Timeout);
+            var starting = network.StartAsync();
+            await middleware.Entered.WaitAsync(Timeout);
+            var stopping = network.StopAsync();
+            Assert.False(starting.IsCompleted);
+            Assert.False(stopping.IsCompleted);
+            Assert.Same(stopping, network.StopAsync());
+            middleware.Release();
+            await Assert.ThrowsAsync<SocketException>(() => starting.WaitAsync(Timeout));
+            var failure = await Assert.ThrowsAsync<AggregateException>(() => stopping.WaitAsync(Timeout));
+            Assert.Contains(failure.Flatten().InnerExceptions, exception => exception is IOException);
+            Assert.All(network.Listeners, listener => Assert.Equal(0, listener.Port));
+            Assert.Equal(0, registry.Count);
+        }
+        finally
+        {
+            middleware.Release();
+            await network.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await registry.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+        }
+    }
+
+    [Fact]
     public void EmptyEndpoints_AreRejectedBeforeBinding()
     {
         Assert.Throws<ArgumentException>(() => new NetworkService(new NetworkListenerOptions(), new ConnectionService()));

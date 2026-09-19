@@ -55,7 +55,10 @@ The executable host and implementations of server runtime services are provided 
 `TryGet` returns only live connections whose admission is still open. `DisconnectAsync`
 closes admission immediately and joins both the close request and actual transport
 completion. Closing connections remain in `Count` and membership snapshots until
-cleanup finishes. Stop is terminal and reports cleanup failures.
+cleanup finishes. Stop is terminal and reports cleanup failures. The three-argument
+`TryGet` overload also captures an owner-requested disconnect signal atomically with the
+connection; the sender uses that stable signal to classify intentionally interrupted writes.
+Remote closure or a send failure that closes its own transport does not complete it.
 
 `INetworkService` owns listeners and raises synchronous `ConnectionAccepted`,
 `DataReceived`, and `ConnectionClosed` events. **Receive memory is borrowed until the

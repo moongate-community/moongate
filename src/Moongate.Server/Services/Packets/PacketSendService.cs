@@ -60,10 +60,10 @@ public sealed class PacketSendService : IPacketSendService
     {
         lock (_gate)
         {
-            if (!_running || !_connections.TryGet(sessionId, out var connection)) { return false; }
+            if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested)) { return false; }
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new SessionPacketOutbox(connection, _capacity, _connections.DisconnectAsync);
+                outbox = new SessionPacketOutbox(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));

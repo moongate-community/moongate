@@ -20,6 +20,15 @@ public interface IConnectionService : IMoongateStartupService
     /// <summary>Finds a live connection still accepting sends; a closing connection is unavailable immediately.</summary>
     bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection);
 
+    /// <summary>Atomically finds an admitted connection and captures its owner-initiated disconnect signal.</summary>
+    /// <remarks>
+    /// The signal completes successfully when DisconnectAsync or StopAsync initiates closure of the live connection.
+    /// Remote closure and cleanup of an already closed transport do not signal it. It remains valid after membership
+    /// removal, allowing senders to distinguish interrupted writes from failures that themselves closed the transport.
+    /// </remarks>
+    bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
+        [NotNullWhen(true)] out Task? disconnectRequested);
+
     /// <summary>Closes send admission immediately and returns the shared task joining closure and actual cleanup.</summary>
     /// <remarks>Unknown identifiers are a no-op. Never wait for this task inside a transport callback.</remarks>
     Task DisconnectAsync(long sessionId);
