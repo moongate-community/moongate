@@ -21,7 +21,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
         _state.OpenBasicLibrary();
         _state.OpenCoroutineLibrary();
         _state.OpenMathLibrary();
-        _budget = new InstructionBudget(_state, maxInstructionsPerResume: 5_000, hookInterval: 100);
+        _budget = new InstructionBudget(_state, maxInstructionsPerResume: 5_000, maxInstructionsPerChunk: 5_000, hookInterval: 100);
         _budget.Install();
         _scheduler = new CoroutineScheduler(_state, _timers, _budget, _ownership, _errors.Add, () => "test.lua");
         SyncValueTask.Run(_state.DoStringAsync("function wait(s) return coroutine.yield('wait', s) end", "prelude", default));
@@ -113,6 +113,9 @@ public sealed class CoroutineSchedulerTests : IDisposable
 
         Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
         Assert.Contains("budget exceeded", outcome.Error!.Message, StringComparison.Ordinal);
+        // The abort is built inside the hook, so it carries the position of the instruction that tripped it.
+        Assert.Equal("spin.lua", outcome.Error.File);
+        Assert.Equal(1, outcome.Error.Line);
         Assert.Equal(1, _scheduler.BudgetAborts);
         Assert.Equal(0, _scheduler.ActiveCount);
     }
@@ -203,12 +206,41 @@ public sealed class CoroutineSchedulerTests : IDisposable
     [Fact]
     public void Budget_IsScopedPerUnit_SoATopLevelChunkAfterAResumeStartsFresh()
     {
-        _scheduler.Start(Define("f", "local n = 0 for i = 1, 400 do n = n + i end wait(1)"), "a.lua");
+        // Both units are a 2,000-iteration loop, about 4,000 instructions each (measured at ~2 per
+        // iteration) against a 5,000 limit: each fits on its own, and their sum does not. A count that
+        // leaked from the resume into the chunk would abort the chunk.
+        _scheduler.Start(Define("f", "local n = 0 for i = 1, 2000 do n = n + i end wait(1)"), "a.lua");
 
-        var result = _budget.Scoped(() => SyncValueTask.Run(_state.DoStringAsync("local n = 0 for i = 1, 400 do n = n + i end return n", "chunk", default)));
+        var result = _budget.Chunk(token =>
+            SyncValueTask.Run(_state.DoStringAsync("local n = 0 for i = 1, 2000 do n = n + i end return n", "chunk", token)));
 
-        Assert.Equal(80200, result[0].Read<double>());
+        Assert.Equal(2001000, result[0].Read<double>());
         Assert.Equal(0, _scheduler.BudgetAborts);
+    }
+
+    [Fact]
+    public void Budget_SurvivesAnAbort_OnTheSameState()
+    {
+        var first = _scheduler.Start(Define("spin1", "while true do end"), "spin.lua");
+        var second = _scheduler.Start(Define("spin2", "while true do end"), "spin.lua");
+
+        Assert.Equal(ScriptResultKind.Failed, first.Kind);
+        Assert.Contains("script budget exceeded", first.Error!.Message, StringComparison.Ordinal);
+        Assert.Equal(ScriptResultKind.Failed, second.Kind);
+        Assert.Contains("script budget exceeded", second.Error!.Message, StringComparison.Ordinal);
+        Assert.Equal(2, _scheduler.BudgetAborts);
+        Assert.Equal(0, _scheduler.ActiveCount);
+    }
+
+    [Fact]
+    public void Budget_CannotBeSwallowedByPcall()
+    {
+        var outcome = _scheduler.Start(Define("f", "pcall(function() while true do end end) escaped = true"), "a.lua");
+
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
+        Assert.Contains("script budget exceeded", outcome.Error!.Message, StringComparison.Ordinal);
+        Assert.Equal(1, _scheduler.BudgetAborts);
+        Assert.Equal(LuaValueType.Nil, _state.Environment["escaped"].Type);
     }
 
     [Fact]

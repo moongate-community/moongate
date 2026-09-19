@@ -38,6 +38,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private CoroutineScheduler? _scheduler;
     private InstructionBudget? _budget;
     private long _callsStarted;
+    private long _chunkBudgetAborts;
     private bool _disposed;
 
     /// <summary>Gets every module bound at startup, in binding order; used by the definitions generator.</summary>
@@ -105,15 +106,20 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
         var files = new ScriptFileLoader(state, _options.ScriptsDirectory);
         var ownership = new ScriptOwnership();
-        var budget = new InstructionBudget(state, _options.MaxInstructionsPerResume, _options.HookInterval);
+        var budget = new InstructionBudget(
+            state,
+            _options.MaxInstructionsPerResume,
+            _options.MaxInstructionsPerChunk,
+            _options.HookInterval
+        );
         budget.Install();
         var scheduler = new CoroutineScheduler(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
 
         BindModules(state, scheduler, ownership);
         WriteDefinitions();
-        budget.Scoped(() =>
+        budget.Chunk(token =>
         {
-            RunPrelude(state);
+            RunPrelude(state, token);
 
             return true;
         });
@@ -167,11 +173,16 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
         try
         {
-            // A top-level chunk is one budget unit, like a resume.
-            Ready(_budget).Scoped(() => files.Load(relativePath));
+            // A top-level chunk is one budget unit, with the larger chunk limit.
+            Ready(_budget).Chunk(token => files.Load(relativePath, token));
         }
         catch (Exception exception) when (exception is LuaRuntimeException or LuaCompileException)
         {
+            if (exception is ScriptBudgetExceededException)
+            {
+                _chunkBudgetAborts++;
+            }
+
             var error = ScriptErrorParser.FromException(exception, ScriptFileLoader.Normalize(relativePath));
             ReportError(error);
 
@@ -226,7 +237,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             scheduler?.Resumed ?? 0,
             scheduler?.Finished ?? 0,
             scheduler?.Errors ?? 0,
-            scheduler?.BudgetAborts ?? 0,
+            (scheduler?.BudgetAborts ?? 0) + _chunkBudgetAborts,
             scheduler?.ActiveCount ?? 0
         );
     }
@@ -252,13 +263,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _publishedEnums = binder.PublishedEnums.ToList();
     }
 
-    private static void RunPrelude(LuaState state)
+    private static void RunPrelude(LuaState state, CancellationToken cancellationToken)
     {
         using var stream = typeof(LuaScriptEngineService).Assembly.GetManifestResourceStream(PreludeResource)
                            ?? throw new InvalidOperationException($"Embedded resource {PreludeResource} is missing.");
         using var reader = new StreamReader(stream);
         var closure = state.Load(reader.ReadToEnd().AsSpan(), "<prelude>", state.Environment);
-        SyncValueTask.Run(state.ExecuteAsync(closure, default));
+        SyncValueTask.Run(state.ExecuteAsync(closure, cancellationToken));
     }
 
     private void RunBootstrap()
@@ -276,10 +287,15 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
         try
         {
-            Ready(_budget).Scoped(() => files.Load(_options.BootstrapFile));
+            Ready(_budget).Chunk(token => files.Load(_options.BootstrapFile, token));
         }
         catch (Exception exception) when (exception is LuaRuntimeException or LuaCompileException)
         {
+            if (exception is ScriptBudgetExceededException)
+            {
+                _chunkBudgetAborts++;
+            }
+
             var error = ScriptErrorParser.FromException(exception, _options.BootstrapFile);
             ReportError(error);
 

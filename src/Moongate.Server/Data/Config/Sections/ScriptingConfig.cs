@@ -11,6 +11,9 @@ public sealed class ScriptingConfig
     /// <summary>Gets or sets the instructions one resume may execute before it is aborted.</summary>
     public int MaxInstructionsPerResume { get; set; } = 150_000;
 
+    /// <summary>Gets or sets the instructions one top-level chunk (the prelude, the bootstrap file, a file loaded by a reload) may execute before it is aborted.</summary>
+    public int MaxInstructionsPerChunk { get; set; } = 10_000_000;
+
     /// <summary>Gets or sets how often, in instructions, the budget hook runs.</summary>
     public int HookInterval { get; set; } = 1_000;
 
@@ -25,6 +28,7 @@ public sealed class ScriptingConfig
             ScriptsDirectory = scriptsDirectory,
             BootstrapFile = BootstrapFile,
             MaxInstructionsPerResume = MaxInstructionsPerResume,
+            MaxInstructionsPerChunk = MaxInstructionsPerChunk,
             HookInterval = HookInterval,
             WriteDefinitions = WriteDefinitions
         };

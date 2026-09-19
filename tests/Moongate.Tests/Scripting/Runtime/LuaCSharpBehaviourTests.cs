@@ -123,6 +123,137 @@ public sealed class LuaCSharpBehaviourTests
     }
 
     [Fact]
+    public void AHookThatThrows_StopsFiringForTheRestOfTheStatesLife()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        var hits = 0;
+        void InstallThrowingHook()
+        {
+            state.SetHook(
+                new LuaFunction("budget", (context, _) =>
+                {
+                    hits++;
+
+                    if (hits % 3 == 0)
+                    {
+                        throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
+                    }
+
+                    return new ValueTask<int>(context.Return());
+                }),
+                "",
+                1000
+            );
+        }
+
+        InstallThrowingHook();
+
+        Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("while true do end", "first", default)));
+        Assert.Equal(3, hits);
+
+        // The VM leaves its in-hook flag set when the hook throws, so the hook never fires again on this
+        // state. The next chunk is a bounded ~10,000-instruction loop, which a live hook would count ten
+        // times over; re-installing the hook does not revive it either.
+        Sync(state.DoStringAsync("local n = 0 for i = 1, 5000 do n = n + i end return n", "second", default));
+
+        Assert.Equal(3, hits);
+
+        InstallThrowingHook();
+        Sync(state.DoStringAsync("local n = 0 for i = 1, 5000 do n = n + i end return n", "third", default));
+
+        Assert.Equal(3, hits);
+    }
+
+    [Fact]
+    public void Pcall_SwallowsAnExceptionThrownFromAHook()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        var hits = 0;
+        state.SetHook(
+            new LuaFunction("budget", (context, _) =>
+            {
+                hits++;
+
+                if (hits >= 3)
+                {
+                    throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
+                }
+
+                return new ValueTask<int>(context.Return());
+            }),
+            "",
+            1000
+        );
+
+        var result = Sync(state.DoStringAsync(
+            "local ok, err = pcall(function() while true do end end) return ok, tostring(err)", "probe", default));
+
+        Assert.False(result[0].Read<bool>());
+        Assert.Contains("budget exceeded", result[1].Read<string>(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ACancelledTokenFromInsideTheHook_InterruptsABareInfiniteLoop()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        using var source = new CancellationTokenSource();
+        var instructions = 0;
+        state.SetHook(
+            new LuaFunction("budget", (context, _) =>
+            {
+                instructions += 1000;
+
+                if (instructions > 5000)
+                {
+                    source.Cancel();
+                }
+
+                return new ValueTask<int>(context.Return());
+            }),
+            "",
+            1000
+        );
+        var closure = state.Load("while true do end".AsSpan(), "probe", state.Environment);
+
+        Assert.Throws<LuaCanceledException>(() => Sync(state.ExecuteAsync(closure, source.Token)));
+
+        Assert.Equal(6000, instructions);
+    }
+
+    [Fact]
+    public void ACancelledTokenIsNotSwallowedByPcall()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        using var source = new CancellationTokenSource();
+        var instructions = 0;
+        state.SetHook(
+            new LuaFunction("budget", (context, _) =>
+            {
+                instructions += 1000;
+
+                if (instructions > 5000)
+                {
+                    source.Cancel();
+                }
+
+                return new ValueTask<int>(context.Return());
+            }),
+            "",
+            1000
+        );
+        var closure = state.Load(
+            "local ok = pcall(function() while true do end end) escaped = true return ok".AsSpan(), "probe", state.Environment);
+
+        Assert.Throws<LuaCanceledException>(() => Sync(state.ExecuteAsync(closure, source.Token)));
+
+        Assert.Equal(LuaValueType.Nil, state.Environment["escaped"].Type);
+    }
+
+    [Fact]
     public void LoadedModules_EvictionMakesRequireReloadTheModule()
     {
         using var state = LuaState.Create();

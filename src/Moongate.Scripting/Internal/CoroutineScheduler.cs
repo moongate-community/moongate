@@ -149,7 +149,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
             try
             {
-                count = _budget.Scoped(() => SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, default)));
+                count = _budget.Resume(token => SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, token)));
             }
             catch (ScriptBudgetExceededException exception)
             {

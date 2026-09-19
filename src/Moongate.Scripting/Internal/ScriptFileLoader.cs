@@ -23,7 +23,9 @@ internal sealed class ScriptFileLoader
     }
 
     /// <summary>Runs the file, or returns the values of the previous run when it is already loaded.</summary>
-    public LuaValue[] Load(string relativePath)
+    /// <param name="relativePath">Path relative to the scripts directory.</param>
+    /// <param name="cancellationToken">The budget's token for the chunk: the VM checks it per instruction, so a runaway file stops. A <c>require</c> inside the chunk runs in the same unit and goes through the same token.</param>
+    public LuaValue[] Load(string relativePath, CancellationToken cancellationToken)
     {
         var key = Normalize(relativePath);
 
@@ -46,7 +48,7 @@ internal sealed class ScriptFileLoader
 
         try
         {
-            var result = SyncValueTask.Run(_state.ExecuteAsync(closure, default));
+            var result = SyncValueTask.Run(_state.ExecuteAsync(closure, cancellationToken));
             _loaded[key] = result;
             FilesLoaded++;
 

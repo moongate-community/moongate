@@ -11,6 +11,7 @@ public sealed class ScriptingConfigTests
         {
             BootstrapFile = "boot.lua",
             MaxInstructionsPerResume = 20_000,
+            MaxInstructionsPerChunk = 400_000,
             HookInterval = 500,
             WriteDefinitions = false
         };
@@ -20,6 +21,7 @@ public sealed class ScriptingConfigTests
         Assert.Equal("/srv/moongate/scripts", options.ScriptsDirectory);
         Assert.Equal("boot.lua", options.BootstrapFile);
         Assert.Equal(20_000, options.MaxInstructionsPerResume);
+        Assert.Equal(400_000, options.MaxInstructionsPerChunk);
         Assert.Equal(500, options.HookInterval);
         Assert.False(options.WriteDefinitions);
     }
@@ -31,6 +33,7 @@ public sealed class ScriptingConfigTests
 
         Assert.Equal("init.lua", options.BootstrapFile);
         Assert.Equal(150_000, options.MaxInstructionsPerResume);
+        Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
         Assert.Equal(1_000, options.HookInterval);
         Assert.True(options.WriteDefinitions);
     }
@@ -39,6 +42,14 @@ public sealed class ScriptingConfigTests
     public void Validate_RejectsANonPositiveOrInvertedBudget(int max, int interval)
     {
         var config = new ScriptingConfig { MaxInstructionsPerResume = max, HookInterval = interval };
+
+        Assert.ThrowsAny<ArgumentException>(() => config.ToOptions("scripts"));
+    }
+
+    [Theory, InlineData(0), InlineData(-1), InlineData(500)]
+    public void Validate_RejectsANonPositiveOrTooSmallChunkBudget(int chunk)
+    {
+        var config = new ScriptingConfig { MaxInstructionsPerChunk = chunk, HookInterval = 1_000 };
 
         Assert.ThrowsAny<ArgumentException>(() => config.ToOptions("scripts"));
     }

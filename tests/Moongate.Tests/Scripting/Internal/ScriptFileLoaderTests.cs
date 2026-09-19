@@ -24,7 +24,7 @@ public sealed class ScriptFileLoaderTests
         using var state = NewState();
         var loader = new ScriptFileLoader(state, scripts.Path);
 
-        var result = loader.Load("init.lua");
+        var result = loader.Load("init.lua", default);
 
         Assert.Equal(42, result[0].Read<double>());
         Assert.Equal(42, state.Environment["value"].Read<double>());
@@ -42,7 +42,7 @@ public sealed class ScriptFileLoaderTests
         string? seen = null;
         state.Environment["probe"] = new LuaFunction("probe", (context, _) => { seen = loader.CurrentFile; return new ValueTask<int>(context.Return()); });
 
-        loader.Load("ai/guard.lua");
+        loader.Load("ai/guard.lua", default);
 
         Assert.Equal("ai/guard.lua", seen);
         Assert.Null(loader.CurrentFile);
@@ -55,12 +55,12 @@ public sealed class ScriptFileLoaderTests
         scripts.Write("a.lua", "return 1");
         using var state = NewState();
         var loader = new ScriptFileLoader(state, scripts.Path);
-        loader.Load("a.lua");
+        loader.Load("a.lua", default);
         scripts.Write("a.lua", "return 2");
 
-        var cached = loader.Load("a.lua");
+        var cached = loader.Load("a.lua", default);
         var invalidated = loader.Invalidate("a.lua");
-        var reloaded = loader.Load("a.lua");
+        var reloaded = loader.Load("a.lua", default);
 
         Assert.Equal(1, cached[0].Read<double>());
         Assert.True(invalidated);
@@ -77,13 +77,13 @@ public sealed class ScriptFileLoaderTests
         using var state = NewState();
         state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
         var loader = new ScriptFileLoader(state, scripts.Path);
-        Assert.Equal(1, loader.Load("init.lua")[0].Read<double>());
+        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
         scripts.Write("common/util.lua", "return { v = 2 }");
 
         loader.Invalidate("common/util.lua");
         loader.Invalidate("init.lua");
 
-        Assert.Equal(2, loader.Load("init.lua")[0].Read<double>());
+        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class ScriptFileLoaderTests
         using var scripts = new TemporaryScriptsDirectory();
         using var state = NewState();
 
-        Assert.Throws<FileNotFoundException>(() => new ScriptFileLoader(state, scripts.Path).Load("missing.lua"));
+        Assert.Throws<FileNotFoundException>(() => new ScriptFileLoader(state, scripts.Path).Load("missing.lua", default));
     }
 
     [Fact]
@@ -102,7 +102,7 @@ public sealed class ScriptFileLoaderTests
         scripts.Write("bad.lua", "this is not lua");
         using var state = NewState();
 
-        var exception = Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua"));
+        var exception = Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua", default));
 
         Assert.Contains("bad.lua", exception.Message, StringComparison.Ordinal);
     }

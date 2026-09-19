@@ -31,12 +31,13 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             .Subscribe<ScriptErrorEvent>((evt, _) => { _events.Add(evt); return Task.CompletedTask; });
     }
 
-    private LuaScriptEngineService NewEngine(bool writeDefinitions = false)
+    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000)
     {
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path,
             MaxInstructionsPerResume = 20_000,
+            MaxInstructionsPerChunk = maxInstructionsPerChunk,
             HookInterval = 100,
             WriteDefinitions = writeDefinitions
         };
@@ -200,6 +201,29 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         var evt = Assert.Single(_events);
         Assert.Equal("ai/guard.lua", evt.Error.File);
         Assert.Equal(2, evt.Error.Line);
+    }
+
+    [Fact]
+    public async Task LoadFile_RunawayChunk_IsAbortedAndCounted()
+    {
+        _scripts.Write("init.lua", "function check_loaded() return loaded_after_the_abort == true end");
+        _scripts.Write("spin.lua", "while true do end");
+        _scripts.Write("fine.lua", "loaded_after_the_abort = true");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => engine.LoadFile("spin.lua"));
+
+        Assert.Contains("script budget exceeded", exception.Message, StringComparison.Ordinal);
+        var evt = Assert.Single(_events);
+        Assert.Equal("spin.lua", evt.Error.File);
+        Assert.Equal(1, engine.GetMetrics().BudgetAborts);
+
+        // The budget is still armed after the abort, so a well-formed file still loads.
+        engine.LoadFile("fine.lua");
+
+        Assert.Equal([true], engine.Call("check_loaded").Values);
+        Assert.Equal(2, engine.GetMetrics().FilesLoaded);
     }
 
     [Fact]
