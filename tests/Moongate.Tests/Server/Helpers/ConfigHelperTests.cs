@@ -217,12 +217,14 @@ public sealed class ConfigHelperTests
         Assert.Equal(10_000_000L, scripting["max_instructions_per_chunk"]);
         Assert.Equal(1_000L, scripting["hook_interval"]);
         Assert.Equal(true, scripting["write_definitions"]);
+        Assert.Equal(16_777_216L, scripting["max_string_bytes"]);
         var options = config.Scripting.ToOptions(directory.Path);
         Assert.Equal("init.lua", options.BootstrapFile);
         Assert.Equal(150_000, options.MaxInstructionsPerResume);
         Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
         Assert.Equal(1_000, options.HookInterval);
         Assert.True(options.WriteDefinitions);
+        Assert.Equal(16_777_216, options.MaxStringBytes);
     }
 
     [Fact]
@@ -236,6 +238,7 @@ public sealed class ConfigHelperTests
             max_instructions_per_chunk = 500000
             hook_interval = 500
             write_definitions = false
+            max_string_bytes = 1024
             """);
         var options = ConfigHelper.Load(path).Scripting.ToOptions(directory.Path);
         Assert.Equal("boot.lua", options.BootstrapFile);
@@ -243,6 +246,15 @@ public sealed class ConfigHelperTests
         Assert.Equal(500_000, options.MaxInstructionsPerChunk);
         Assert.Equal(500, options.HookInterval);
         Assert.False(options.WriteDefinitions);
+        Assert.Equal(1024, options.MaxStringBytes);
+    }
+
+    [Fact]
+    public void Load_NonPositiveStringCap_RejectsBeforeServerStartup()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[scripting]\nmax_string_bytes = 0\n");
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
     }
 
     [Theory, InlineData(0, 1000), InlineData(150000, 0), InlineData(150000, 200000)]

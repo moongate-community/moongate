@@ -31,7 +31,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             .Subscribe<ScriptErrorEvent>((evt, _) => { _events.Add(evt); return Task.CompletedTask; });
     }
 
-    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000)
+    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000, int maxStringBytes = 16 * 1024 * 1024)
     {
         var options = new ScriptEngineOptions
         {
@@ -39,7 +39,8 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             MaxInstructionsPerResume = 20_000,
             MaxInstructionsPerChunk = maxInstructionsPerChunk,
             HookInterval = 100,
-            WriteDefinitions = writeDefinitions
+            WriteDefinitions = writeDefinitions,
+            MaxStringBytes = maxStringBytes
         };
 
         return new LuaScriptEngineService(
@@ -201,6 +202,43 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         var evt = Assert.Single(_events);
         Assert.Equal("ai/guard.lua", evt.Error.File);
         Assert.Equal(2, evt.Error.Line);
+    }
+
+    [Fact]
+    public async Task StringRep_OverTheCap_RaisesAScriptError_AndCountsTheHit()
+    {
+        _scripts.Write("init.lua", """
+            ok, err = pcall(string.rep, 'x', 2000)
+            small = string.rep('ab', 3, '-')
+            empty = string.rep('x', 0)
+            function report() return ok, err, small, empty end
+            """);
+        using var engine = NewEngine(maxStringBytes: 1024);
+        await engine.StartAsync();
+
+        var values = engine.Call("report").Values;
+
+        Assert.Equal(false, values[0]);
+        Assert.Contains("string.rep: a result of 2000 bytes exceeds the script memory cap of 1024 bytes", (string)values[1]!, StringComparison.Ordinal);
+        Assert.Equal("ab-ab-ab", values[2]);
+        Assert.Equal("", values[3]);
+        Assert.Equal(1, engine.GetMetrics().MemoryCapHits);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
+    public async Task LoadFile_StringRepOverTheCap_ReportsAScriptError()
+    {
+        _scripts.Write("ai/huge.lua", "return string.rep('0123456789', 200)");
+        using var engine = NewEngine(maxStringBytes: 1024);
+        await engine.StartAsync();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => engine.LoadFile("ai/huge.lua"));
+
+        Assert.Contains("exceeds the script memory cap", exception.Message, StringComparison.Ordinal);
+        Assert.Single(_events);
+        Assert.Equal(1, engine.GetMetrics().MemoryCapHits);
+        Assert.Equal(0, engine.GetMetrics().BudgetAborts);
     }
 
     [Fact]

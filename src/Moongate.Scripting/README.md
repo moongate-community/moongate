@@ -24,7 +24,7 @@ dotnet add package Moongate.Scripting
 
 Scripts see the base, `string`, `table`, `math`, `coroutine` and `package` libraries. `io`, `os` and `debug` are never opened, and the engine removes the rest of what reaches past the scripts directory or past the instruction budget: `dofile`, `loadfile` and `rawset`; `package.searchpath`, `package.path`, `package.cpath`, `package.loadlib` and the runtime's second `package.searchers` entry, which resolves `package.path` on the host filesystem independently of the module loader; and `coroutine.create`, `coroutine.wrap` and `coroutine.resume`, whose threads would carry neither the budget's hook nor its cancellation token. `coroutine.yield` stays, so `wait(seconds)` keeps working. `require` therefore resolves only under the scripts directory.
 
-Memory is not bounded: the budget counts instructions, and a single `string.rep` or table constructor can allocate freely. A cap is a follow-up.
+Memory is bounded where one instruction could otherwise allocate without limit: `string.rep` refuses a result larger than `MaxStringBytes` (16 MiB by default, `max_string_bytes` in the server's `[scripting]` section) with a script error, counted as a memory cap hit in the metrics. Table constructors and concatenation in a loop are paid for in instructions and stay under the budget's control; there is no cap on the total memory a state may hold.
 
 ## Example
 
