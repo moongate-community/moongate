@@ -66,6 +66,76 @@ public sealed class ScriptDirectoryModuleLoaderTests
     }
 
     [Fact]
+    public void ResolvePath_RejectsALinkWhoseTargetLeavesTheDirectory()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        using var outside = new TemporaryScriptsDirectory();
+        var secret = outside.Write("secret.lua", "return 'leaked'");
+
+        if (!TryLink(Path.Combine(scripts.Path, "leak.lua"), secret))
+        {
+            return;
+        }
+
+        var exception = Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "leak.lua"));
+
+        Assert.Contains("through a link", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ResolvePath_RejectsAPathThroughALinkedDirectoryThatLeaves()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        using var outside = new TemporaryScriptsDirectory();
+        outside.Write("lib/util.lua", "return 'leaked'");
+
+        if (!TryLink(Path.Combine(scripts.Path, "shared"), Path.Combine(outside.Path, "lib"), directory: true))
+        {
+            return;
+        }
+
+        Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "shared/util.lua"));
+    }
+
+    [Fact]
+    public void ResolvePath_AcceptsALinkWhoseTargetStaysInside()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        var real = scripts.Write("common/util.lua", "return 'fine'");
+
+        if (!TryLink(Path.Combine(scripts.Path, "alias.lua"), real))
+        {
+            return;
+        }
+
+        var resolved = ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "alias.lua");
+
+        Assert.EndsWith("alias.lua", resolved, StringComparison.Ordinal);
+    }
+
+    private static bool TryLink(string path, string target, bool directory = false)
+    {
+        try
+        {
+            if (directory)
+            {
+                Directory.CreateSymbolicLink(path, target);
+            }
+            else
+            {
+                File.CreateSymbolicLink(path, target);
+            }
+
+            return true;
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        {
+            // Creating links needs a privilege on some platforms; the containment check is then untestable here.
+            return false;
+        }
+    }
+
+    [Fact]
     public void ResolvePath_KeepsAPathInsideTheDirectory()
     {
         using var scripts = new TemporaryScriptsDirectory();

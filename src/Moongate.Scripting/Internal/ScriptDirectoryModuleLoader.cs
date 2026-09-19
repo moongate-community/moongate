@@ -30,12 +30,11 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
         return new ValueTask<LuaModule>(new LuaModule(ToRelative(moduleName), text));
     }
 
-    /// <summary>Resolves a relative script path to an absolute one, refusing anything that escapes the directory.</summary>
+    /// <summary>Resolves a relative script path to an absolute one, refusing anything that escapes the directory, symbolic links included.</summary>
     /// <remarks>
-    /// Containment is by path, not by link target: a symlink inside the scripts directory that points
-    /// outside it resolves like any other entry, and keeping such links out is the operator's
-    /// responsibility. The path is used exactly as written, so a file named <c>100%25.lua</c> is that
-    /// file and not <c>100%.lua</c>.
+    /// The path is used exactly as written, so a file named <c>100%25.lua</c> is that file and not
+    /// <c>100%.lua</c>. Every existing entry along the path that is a link is followed to its final
+    /// target, which must also lie inside the scripts directory.
     /// </remarks>
     public static string ResolvePath(string scriptsDirectory, string relativePath)
     {
@@ -55,7 +54,33 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
             throw new InvalidOperationException($"'{relativePath}' resolves outside the scripts directory.");
         }
 
+        EnsureNoLinkEscapes(root, rootWithSeparator, full, relativePath);
+
         return full;
+    }
+
+    /// <summary>Follows every link along <paramref name="full"/> below the root and refuses one whose final target leaves the directory.</summary>
+    private static void EnsureNoLinkEscapes(string root, string rootWithSeparator, string full, string relativePath)
+    {
+        var current = root;
+
+        foreach (var segment in full[rootWithSeparator.Length..].Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+        {
+            current = Path.Combine(current, segment);
+            FileSystemInfo entry = Directory.Exists(current) ? new DirectoryInfo(current) : new FileInfo(current);
+
+            if (!entry.Exists || entry.LinkTarget is null)
+            {
+                continue;
+            }
+
+            var target = entry.ResolveLinkTarget(returnFinalTarget: true)?.FullName;
+
+            if (target is null || (!target.StartsWith(rootWithSeparator, StringComparison.Ordinal) && !string.Equals(target, root, StringComparison.Ordinal)))
+            {
+                throw new InvalidOperationException($"'{relativePath}' resolves outside the scripts directory through a link.");
+            }
+        }
     }
 
     /// <summary>Maps a normalized relative path back to the require() name it is served under: "common/dialogue.lua" becomes "common.dialogue". The inverse of the name-to-path mapping.</summary>
