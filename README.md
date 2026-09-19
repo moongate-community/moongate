@@ -12,6 +12,12 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+## Getting started
+
+Use [First start](docs/getting-started.md) to build and configure the server, or
+follow the Docker guide below. The [configuration reference](docs/server-configuration.md)
+lists all TOML settings, CLI options and current implementation limits.
+
 ## Docker
 
 Every release publishes a `linux/amd64` image to
@@ -19,9 +25,13 @@ Every release publishes a `linux/amd64` image to
 See [Run with Docker](docs/docker.md) for first-start configuration, persistent
 storage, Docker Compose, logs, and upgrades.
 
-[Diagnostics](docs/diagnostics.md)
+## Server guides
 
-[Dependency security audit](docs/security-audit.md)
+- [Persistence and world saves](docs/persistence.md): entity registration, queries, autosave, backups and recovery.
+- [Packets and handlers](docs/packets.md): wire formats, default opcodes and typed game handlers.
+- [Game loop and timers](docs/game-loop-and-timers.md): thread ownership, bounded queues, scheduling and shutdown.
+- [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.
+- [Diagnostics](docs/diagnostics.md): metrics and events; [dependency security](docs/security-audit.md) covers package auditing.
 
 ## Server mode
 
@@ -63,8 +73,7 @@ end)
   `RegisterScriptModule<T>()` in `Program.cs`.
 - **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
   may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
-  with a script error; `string.rep` refuses results longer than 16,777,216 characters. Nothing a script does
-  can block or fault the loop.
+  with a script error; `string.rep` refuses results longer than 16,777,216 characters. The budget bounds VM execution; C# bindings must avoid blocking, and total memory is not capped.
 - **Sandbox:** base, `string`, `table`, `math`, `coroutine` and `package` only; no `io`,
   `os`, `debug`, `dofile`, `loadfile`, `rawset` or script-created coroutines.
 - **Errors:** every failure is logged with file and line and published as
@@ -84,8 +93,8 @@ write_definitions = true
 max_string_length = 16777216
 ```
 
-The package README, [src/Moongate.Scripting/README.md](src/Moongate.Scripting/README.md),
-documents the binding model and the sandbox in full.
+Start with [Writing Lua scripts](docs/scripting.md). The
+[package README](src/Moongate.Scripting/README.md) documents the binding model and sandbox.
 
 ## Extending Moongate
 
@@ -103,9 +112,9 @@ package list, dependencies, and the local verification command.
 
 ## Documentation
 
-The [documentation website](https://moongate-community.github.io/moongate/)
+The [documentation website](https://moongate.sh/)
 includes the [changelog](CHANGELOG.md), server guides, and library documentation.
-After the initial documentation-only publication, it is updated with releases. See [Writing documentation](docs/documentation.md)
+Automatic publication happens with releases; explicitly authorized docs-only refreshes can update the site between releases. See [Writing documentation](docs/documentation.md)
 for local preview commands and how to contribute a page.
 
 ## Contributing

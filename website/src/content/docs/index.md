@@ -9,23 +9,26 @@ hero:
     file: ../../../../images/moongate_logo.png
   actions:
     - text: Start here
-      link: /moongate/start/overview/
+      link: /start/getting-started/
       icon: right-arrow
     - text: Internal API guide
-      link: /moongate/libraries/api/
+      link: /libraries/api/
       variant: secondary
 ---
 
 ## Find your starting point
 
-Run a server with the [Docker guide](/moongate/server/docker/) or the [project overview](/moongate/start/overview/), explore the
-[libraries](/moongate/reference/nuget-packaging/), or learn how to
-[write documentation](/moongate/contributing/documentation/).
+- **Run:** [First start](/start/getting-started/), [Docker](/server/docker/) and [configuration](/server/configuration/).
+- **Keep data:** [Persistence, world saves and recovery](/server/persistence/).
+- **Build game behavior:** [Packets and handlers](/server/packets/), [game loop and timers](/server/game-loop-and-timers/), [Lua scripts](/server/scripting/).
+- **Extend or reuse:** [Plugins](/server/plugins/), [standalone TCP](/libraries/network-cookbook/) and [NuGet libraries](/reference/nuget-packaging/).
+- **Contribute:** [Contribution guide](/contributing/getting-started/) and [writing documentation](/contributing/documentation/).
 
 The internal API guide covers the implemented transport and request/reply contracts.
 Login-to-realm coordination is planned separately.
 
 ## Releases
 
-The site header shows the current Moongate version. Read the
-[changelog](/moongate/start/changelog/) for features, fixes, and breaking changes.
+The site header identifies the documented version. A docs-only development refresh
+is labelled separately from the latest release. Read the
+[changelog](/start/changelog/) for features, fixes, and breaking changes.

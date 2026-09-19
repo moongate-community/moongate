@@ -83,6 +83,10 @@ Property assignments are not automatically tracked. Persist changes through `Ups
 
 Autosave scheduling belongs to the host application. This package does not provide an automatic schema-migration framework; plan format changes and backups before changing deployed entity models.
 
+## Further reading
+
+See the [persistence cookbook](https://moongate.sh/server/persistence/) for live entity registration, ZLinq queries, world saves, backup retention and offline restore.
+
 ## License and source
 
 Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).

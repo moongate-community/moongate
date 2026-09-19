@@ -1,5 +1,8 @@
 # Writing a Lua module
 
+For authoring Lua content with the existing modules, start with
+[Writing Lua scripts](scripting.md). This guide extends the host bindings in C#.
+
 A Lua module is a plain C# class marked with `[ScriptModule("name", "help text")]`. The engine binds every registered module once, at startup, on the game loop thread, and publishes it into the running `LuaState` as a read-only global table named after the attribute. On that table:
 
 - every public instance method marked `[ScriptFunction]` becomes a callable field;

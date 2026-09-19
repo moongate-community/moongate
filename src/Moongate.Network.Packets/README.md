@@ -44,7 +44,13 @@ if (!registry.TryDecode(bytes, out var packet, out var opCode)
 Console.WriteLine($"{opCode:X2}:{ping.Sequence}");
 ```
 
+See [Packets and handlers](https://moongate.sh/server/packets/)
+for the complete built-in opcode table, a custom packet, byte-level tests and host integration.
+
 ## Binary span utilities
+
+These additional helpers were introduced on `develop` after version 0.4.0. Use a
+source reference or a release containing the addition.
 
 `Moongate.Network.Packets.Spans` also exposes `SpanReader`, `SpanWriter`, and `SpanOwner`
 for standalone binary serialization. They support signed and unsigned primitives,

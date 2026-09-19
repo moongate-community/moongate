@@ -133,4 +133,6 @@ and client mount. Removing a container does not delete its named volume.
 - **Cannot connect:** check `docker ps`, the `2593:2593` mapping, the listener
   configuration, and the host firewall.
 
-See [Diagnostics](diagnostics.md) for process metrics and diagnostic events.
+See [Configuration](server-configuration.md) for all TOML settings and CLI limits,
+[First start](getting-started.md#files-and-process-ownership) for PID ownership,
+and [Diagnostics](diagnostics.md) for process metrics and diagnostic events.

@@ -97,3 +97,6 @@ Handlers run on the diagnostics worker. A handler that needs to change entities 
 ## Plugin providers
 
 Providers implement `IMetricProvider` and are registered with `AddMetricProvider<T>()` from a plugin's `Register` method or from `Program.cs`. See [`metric-providers.md`](metric-providers.md) for the contract, threading and testing.
+
+See [Game loop and timers](game-loop-and-timers.md) for the queue, batch and timer
+settings behind the runtime metrics.
