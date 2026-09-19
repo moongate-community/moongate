@@ -1,7 +1,6 @@
 using Lua;
 using Lua.Runtime;
 using Moongate.Scripting.Data.Scripts;
-using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Interfaces.Internal;
 using Moongate.Server.Core.Interfaces.Services;
 

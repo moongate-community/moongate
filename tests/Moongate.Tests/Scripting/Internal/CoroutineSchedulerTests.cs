@@ -105,6 +105,24 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     [Fact]
+    public void CancelOwned_LetsAQueuedCallbackReturnQuietly_AndKeepsTheSchedulerRunning()
+    {
+        _scheduler.Start(Define("f", "wait(1) resumed = true"), "a.lua");
+        var queued = _timers.Timers.Single().Callback;
+
+        _scheduler.CancelOwned("a.lua");
+        // The wheel had already dequeued this callback when the owner was cancelled: it must find the
+        // coroutine gone and return, not resume a disposed entry, while the scheduler itself keeps running.
+        queued();
+
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Equal(LuaValueType.Nil, _state.Environment["resumed"].Type);
+        Assert.Equal(1, _scheduler.Resumed);
+        Assert.Equal(ScriptResultKind.Completed, _scheduler.Start(Define("g", "return 1"), "b.lua").Kind);
+    }
+
+    [Fact]
     public void Wait_ReturnsTheSecondsActuallyRequested()
     {
         _scheduler.Start(Define("f", "slept = wait(3)"), "a.lua");
