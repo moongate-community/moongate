@@ -1,7 +1,6 @@
 using Lua;
 using Lua.Runtime;
 using Moongate.Scripting.Data.Scripts;
-using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Scripting.Internal;
@@ -9,10 +8,12 @@ namespace Moongate.Scripting.Internal;
 /// <summary>
 /// Runs Lua functions as coroutines and parks a coroutine that yields ("wait", seconds) on the timer
 /// wheel. There is no run queue: the wheel's callback, already on the loop thread, resumes the coroutine.
+/// Nothing thrown by Lua leaves this class; every failure becomes a ScriptResult and an onError call.
 /// </summary>
 internal sealed class CoroutineScheduler
 {
     private const string WaitTag = "wait";
+    private static readonly double MaxWaitSeconds = TimeSpan.MaxValue.TotalSeconds;
 
     private readonly LuaState _state;
     private readonly ITimerService _timers;
@@ -21,6 +22,7 @@ internal sealed class CoroutineScheduler
     private readonly Action<ScriptErrorInfo> _onError;
     private readonly Dictionary<Guid, ScheduledCoroutine> _active = new();
     private readonly LuaStack _stack = new(32);
+    private bool _resuming;
 
     public int ActiveCount => _active.Count;
     public long Resumed { get; private set; }
@@ -43,23 +45,30 @@ internal sealed class CoroutineScheduler
         _onError = onError;
     }
 
-    public CoroutineOutcome Start(LuaFunction function, string owner, params object?[] args)
+    /// <summary>Starts <paramref name="function"/> as a coroutine owned by <paramref name="owner"/> and runs it until it returns, waits, or fails.</summary>
+    /// <exception cref="InvalidCastException">An argument has no Lua representation; nothing is registered.</exception>
+    /// <exception cref="InvalidOperationException">Called while another resume is running on this scheduler.</exception>
+    public ScriptResult Start(LuaFunction function, string owner, params object?[] args)
     {
         ArgumentNullException.ThrowIfNull(function);
         ArgumentException.ThrowIfNullOrWhiteSpace(owner);
-        // Unprotected on purpose: an error then surfaces as LuaRuntimeException with file, line and
-        // traceback, which the catch below turns into ScriptErrorInfo. Protected mode strips the position.
+        EnsureNotResuming();
+
+        // Convert before registering, so an unconvertible argument cannot leave a phantom coroutine behind.
+        var arguments = new LuaValue[args.Length];
+
+        for (var i = 0; i < args.Length; i++)
+        {
+            arguments[i] = LuaValueConverter.ToLua(args[i], args[i]?.GetType() ?? typeof(object));
+        }
+
         var coroutine = _state.CreateCoroutine(function, isProtectedMode: false);
         _budget.Install(coroutine);
         var entry = new ScheduledCoroutine(Guid.NewGuid(), coroutine, owner);
         _active[entry.Id] = entry;
         _ownership.TrackCoroutine(owner, entry.Id);
         _stack.Clear();
-
-        foreach (var arg in args)
-        {
-            _stack.Push(LuaValueConverter.ToLua(arg, arg?.GetType() ?? typeof(object)));
-        }
+        _stack.PushRange(arguments);
 
         return Resume(entry);
     }
@@ -81,58 +90,77 @@ internal sealed class CoroutineScheduler
         }
     }
 
-    private CoroutineOutcome Resume(ScheduledCoroutine entry)
+    private ScriptResult Resume(ScheduledCoroutine entry)
     {
+        EnsureNotResuming();
+        _resuming = true;
         Resumed++;
-        _budget.BeginResume();
-        int count;
 
         try
         {
-            count = SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, default));
+            int count;
+
+            try
+            {
+                count = _budget.Scoped(() => SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, default)));
+            }
+            catch (ScriptBudgetExceededException exception)
+            {
+                BudgetAborts++;
+
+                return Fail(entry, ScriptErrorParser.FromException(exception, entry.Owner));
+            }
+            catch (Exception exception)
+            {
+                return Fail(entry, ScriptErrorParser.FromException(exception, entry.Owner));
+            }
+
+            var values = _stack.AsSpan()[..count];
+
+            if (values.Length == 0 || !values[0].Read<bool>())
+            {
+                var message = values.Length > 1 ? values[1].ToString() : "coroutine failed without a message";
+
+                return Fail(entry, WithOwner(ScriptErrorParser.Parse(message, null), entry.Owner));
+            }
+
+            if (entry.Coroutine.GetStatus() == LuaThreadStatus.Dead)
+            {
+                Forget(entry);
+                Finished++;
+
+                return ScriptResult.Completed(ToClr(values[1..]));
+            }
+
+            if (values.Length >= 3 && values[1].Type == LuaValueType.String && values[1].Read<string>() == WaitTag &&
+                values[2].Type == LuaValueType.Number)
+            {
+                var seconds = values[2].Read<double>();
+
+                if (!double.IsFinite(seconds) || seconds <= 0 || seconds > MaxWaitSeconds)
+                {
+                    return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
+                        $"wait(seconds) needs a finite positive number of seconds, got {seconds}", null));
+                }
+
+                Park(entry, seconds);
+
+                return ScriptResult.Suspended;
+            }
+
+            return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
+                "unsupported yield: coroutines may only yield through wait(seconds)", null));
         }
-        catch (Exception exception)
+        finally
         {
-            return Fail(entry, ScriptErrorParser.FromException(exception, entry.Owner));
+            _resuming = false;
         }
-
-        var values = _stack.AsSpan()[..count];
-
-        if (values.Length == 0 || !values[0].Read<bool>())
-        {
-            var message = values.Length > 1 ? values[1].ToString() : "coroutine failed without a message";
-
-            return Fail(entry, ScriptErrorParser.Parse(message, null) is var parsed && parsed.File.Length == 0
-                ? parsed with { File = entry.Owner }
-                : parsed);
-        }
-
-        if (entry.Coroutine.GetStatus() == LuaThreadStatus.Dead)
-        {
-            Forget(entry);
-            Finished++;
-
-            return new CoroutineOutcome(CoroutineOutcomeKind.Completed, ToClr(values[1..]), null);
-        }
-
-        if (values.Length >= 3 && values[1].Type == LuaValueType.String && values[1].Read<string>() == WaitTag &&
-            values[2].Type == LuaValueType.Number)
-        {
-            var seconds = values[2].Read<double>();
-            Park(entry, seconds);
-
-            return CoroutineOutcome.Suspended;
-        }
-
-        return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
-            "unsupported yield: coroutines may only yield through wait(seconds)", null));
     }
 
     private void Park(ScheduledCoroutine entry, double seconds)
     {
-        var interval = TimeSpan.FromSeconds(Math.Max(seconds, 0));
         string? timerId = null;
-        timerId = _timers.RegisterTimer("lua-wait:" + entry.Owner, interval, () =>
+        timerId = _timers.RegisterTimer("lua-wait:" + entry.Owner, TimeSpan.FromSeconds(seconds), () =>
         {
             if (timerId is not null)
             {
@@ -154,25 +182,40 @@ internal sealed class CoroutineScheduler
         _ownership.TrackTimer(entry.Owner, timerId);
     }
 
-    private CoroutineOutcome Fail(ScheduledCoroutine entry, ScriptErrorInfo error)
+    private ScriptResult Fail(ScheduledCoroutine entry, ScriptErrorInfo error)
     {
-        Forget(entry);
-        Errors++;
-
-        if (InstructionBudget.IsBudgetError(error.Message))
+        if (entry.PendingTimer is not null)
         {
-            BudgetAborts++;
+            _timers.UnregisterTimer(entry.PendingTimer);
+            _ownership.ForgetTimer(entry.PendingTimer);
+            entry.PendingTimer = null;
         }
 
+        Forget(entry);
+        Errors++;
         _onError(error);
 
-        return new CoroutineOutcome(CoroutineOutcomeKind.Failed, [], error);
+        return ScriptResult.Failed(error);
     }
 
     private void Forget(ScheduledCoroutine entry)
     {
         _active.Remove(entry.Id);
         _ownership.ForgetCoroutine(entry.Id);
+    }
+
+    private void EnsureNotResuming()
+    {
+        if (_resuming)
+        {
+            throw new InvalidOperationException(
+                "Coroutine resumes cannot nest: start or resume a coroutine from a timer callback, not from inside running Lua.");
+        }
+    }
+
+    private static ScriptErrorInfo WithOwner(ScriptErrorInfo error, string owner)
+    {
+        return error.File.Length == 0 ? error with { File = owner } : error;
     }
 
     private static object?[] ToClr(ReadOnlySpan<LuaValue> values)

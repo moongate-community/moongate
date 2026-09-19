@@ -20,6 +20,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     {
         _state.OpenBasicLibrary();
         _state.OpenCoroutineLibrary();
+        _state.OpenMathLibrary();
         _budget = new InstructionBudget(_state, maxInstructionsPerResume: 5_000, hookInterval: 100);
         _budget.Install();
         _scheduler = new CoroutineScheduler(_state, _timers, _budget, _ownership, _errors.Add);
@@ -38,7 +39,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     {
         var outcome = _scheduler.Start(Define("f", "return 1, 'two'"), "a.lua");
 
-        Assert.Equal(CoroutineOutcomeKind.Completed, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Completed, outcome.Kind);
         Assert.Equal([1d, "two"], outcome.Values);
         Assert.Equal(0, _scheduler.ActiveCount);
         Assert.Equal(1, _scheduler.Finished);
@@ -59,7 +60,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     {
         var outcome = _scheduler.Start(Define("f", "wait(2.5) done = true"), "a.lua");
 
-        Assert.Equal(CoroutineOutcomeKind.Suspended, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Suspended, outcome.Kind);
         Assert.Equal(1, _scheduler.ActiveCount);
         var timer = Assert.Single(_timers.Timers);
         Assert.Equal(TimeSpan.FromSeconds(2.5), timer.Interval);
@@ -96,7 +97,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
 
         var outcome = _scheduler.Start(Define("bad", "error('kaboom')"), "bad.lua");
 
-        Assert.Equal(CoroutineOutcomeKind.Failed, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
         var error = Assert.Single(_errors);
         Assert.Equal("bad.lua", error.File);
         Assert.Equal(1, error.Line);
@@ -110,7 +111,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     {
         var outcome = _scheduler.Start(Define("spin", "while true do end"), "spin.lua");
 
-        Assert.Equal(CoroutineOutcomeKind.Failed, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
         Assert.Contains("budget exceeded", outcome.Error!.Message, StringComparison.Ordinal);
         Assert.Equal(1, _scheduler.BudgetAborts);
         Assert.Equal(0, _scheduler.ActiveCount);
@@ -120,7 +121,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     public void Budget_CountsPerResume_NotPerCoroutineLifetime()
     {
         var outcome = _scheduler.Start(Define("f", "for i = 1, 3 do local n = 0 for j = 1, 1000 do n = n + j end wait(1) end finished = true"), "a.lua");
-        Assert.Equal(CoroutineOutcomeKind.Suspended, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Suspended, outcome.Kind);
 
         _timers.Fire(_timers.Timers.Single().Id);
         _timers.Fire(_timers.Timers.Single().Id);
@@ -135,9 +136,79 @@ public sealed class CoroutineSchedulerTests : IDisposable
     {
         var outcome = _scheduler.Start(Define("f", "coroutine.yield('something', 1)"), "a.lua");
 
-        Assert.Equal(CoroutineOutcomeKind.Failed, outcome.Kind);
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
         Assert.Contains("unsupported yield", outcome.Error!.Message, StringComparison.Ordinal);
         Assert.Empty(_timers.Timers);
+    }
+
+    [Theory, InlineData("0"), InlineData("-1"), InlineData("0/0"), InlineData("math.huge"), InlineData("1e300")]
+    public void Wait_WithAnInvalidDuration_FailsTheCoroutineAndLeavesTheTimerServiceAlone(string seconds)
+    {
+        var outcome = _scheduler.Start(Define("f", $"wait({seconds}) reached = true"), "a.lua");
+
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
+        Assert.Contains("wait", outcome.Error!.Message, StringComparison.Ordinal);
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Equal(LuaValueType.Nil, _state.Environment["reached"].Type);
+    }
+
+    [Fact]
+    public void Wait_InvalidDuration_OnATimerDrivenResume_DoesNotThrowOutOfTheCallback()
+    {
+        _scheduler.Start(Define("f", "wait(1) wait(0) reached = true"), "a.lua");
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Single(_errors);
+    }
+
+    [Fact]
+    public void Start_UnconvertibleArgument_ThrowsWithoutRegisteringACoroutine()
+    {
+        Assert.Throws<InvalidCastException>(() => _scheduler.Start(Define("f", "return 1"), "a.lua", new object()));
+
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Empty(_ownership.ReleaseCoroutines("a.lua"));
+    }
+
+    [Fact]
+    public void Start_FromInsideARunningResume_IsRefused()
+    {
+        InvalidOperationException? nested = null;
+        _state.Environment["spawn"] = new LuaFunction("spawn", (context, _) =>
+        {
+            try
+            {
+                _scheduler.Start(_state.Environment["inner"].Read<LuaFunction>(), "a.lua");
+            }
+            catch (InvalidOperationException exception)
+            {
+                nested = exception;
+            }
+
+            return new ValueTask<int>(context.Return());
+        });
+        Define("inner", "return 1");
+
+        _scheduler.Start(Define("outer", "spawn()"), "a.lua");
+
+        Assert.NotNull(nested);
+        Assert.Contains("nest", nested!.Message, StringComparison.Ordinal);
+        Assert.Equal(0, _scheduler.ActiveCount);
+    }
+
+    [Fact]
+    public void Budget_IsScopedPerUnit_SoATopLevelChunkAfterAResumeStartsFresh()
+    {
+        _scheduler.Start(Define("f", "local n = 0 for i = 1, 400 do n = n + i end wait(1)"), "a.lua");
+
+        var result = _budget.Scoped(() => SyncValueTask.Run(_state.DoStringAsync("local n = 0 for i = 1, 400 do n = n + i end return n", "chunk", default)));
+
+        Assert.Equal(80200, result[0].Read<double>());
+        Assert.Equal(0, _scheduler.BudgetAborts);
     }
 
     [Fact]
