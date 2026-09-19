@@ -64,6 +64,24 @@ This package depends on Serilog and has no dependency on other Moongate packages
 
 TCP is a byte stream. Configure framing for your application protocol; transport reads do not define game-packet boundaries. This library does not automatically decode Ultima Online packets or dispatch work into a game loop. Use `Moongate.Network.Packets` for UO packet definitions and serialization.
 
+## Abstract connection metadata
+
+`INetworkConnection` exposes transport identity, completion, send/close operations and
+remote endpoint metadata. Its optional `LocalEndPoint` property has a default interface
+implementation returning null, so existing custom connection implementations do not need
+a new member. `MoongateTcpClient` supplies its actual local endpoint.
+
+```csharp
+string DescribeLocalEndpoint(Moongate.Network.Interfaces.Client.INetworkConnection connection)
+{
+    return connection.LocalEndPoint?.ToString() ?? "Local endpoint unavailable";
+}
+```
+
+Receive callbacks expose borrowed memory: decode or copy it synchronously before returning.
+Keep connection ownership separate from game sessions; the host's `IConnectionService`
+and `INetworkService` contracts live in `Moongate.Server.Core`, not in this transport library.
+
 ## License and source
 
 Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
