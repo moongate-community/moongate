@@ -64,7 +64,7 @@ runs. Two plugins sharing one ID — including a disk plugin that collides with 
 already registered — fail the whole batch with the same wording:
 
 ```
-Plugin ID '{id}' is already registered or duplicated.
+Plugin ID '{candidate.Id}' is already registered or duplicated.
 ```
 
 A dependency naming an ID nothing supplies fails with:
@@ -83,8 +83,11 @@ Plugin '{candidate.Id}' requires '{dependency.Id}' >= {dependency.MinimumVersion
 A cycle in the dependency graph fails with the path that closed it:
 
 ```
-Plugin dependency cycle: {id} -> {id} -> ... -> {id}.
+Plugin dependency cycle: {string.Join(" -> ", path.Append(candidate.Id))}.
 ```
+
+which renders as the visited IDs joined by `" -> "`, for example
+`Plugin dependency cycle: first -> second -> first.` for a two-plugin cycle.
 
 None of these four checks runs any plugin's `Register`; a rejected batch leaves
 every previously registered plugin untouched and lets the caller retry with a
@@ -114,15 +117,18 @@ needs one and a real plugin usually does not) — it looks like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moongate.Server.Core" Version="0.3.0" ExcludeAssets="runtime" />
-    <PackageReference Include="Moongate.Scripting" Version="0.3.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Moongate.Server.Core" Version="0.4.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Moongate.Scripting" Version="0.4.0" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>
 ```
 
-`0.3.0` is the version in `Directory.Build.props` at the time of writing; check it
-before pinning. `ExcludeAssets="runtime"` keeps each package's own `.dll` out of your
+`0.4.0` is the current released version; pin whatever is actually published — check
+[nuget.org/packages/Moongate.Server.Core](https://www.nuget.org/packages/Moongate.Server.Core)
+or the repository's GitHub releases page, not `Directory.Build.props`, which tracks
+`develop` and can be ahead of or behind what NuGet has published.
+`ExcludeAssets="runtime"` keeps each package's own `.dll` out of your
 build output — the host already loads `Moongate.Server.Core.dll` and
 `Moongate.Scripting.dll`, so a copy in your bundle would only be dead weight (see
 [Deployment and loading](#deployment-and-loading)). A package the host does not ship
@@ -202,8 +208,10 @@ command, restricted to `CommandSourceType.Console` and `AccountType.Regular`; se
 
 `container.AddMetricProvider<GreetingMetricProvider>()` adds
 `GreetingMetricProvider` (`samples/Moongate.Sample.Plugin/Diagnostics/GreetingMetricProvider.cs`)
-to the diagnostics collector, reporting `greeter.hello_calls` from the same counter;
-see [Registering metric providers](#registering-metric-providers).
+to the diagnostics collector. It reports the local name `hello_calls` from the same
+counter; the diagnostics service combines that with `ProviderName` ("greeter") to
+publish it in a snapshot as `greeter.hello_calls`. See
+[Registering metric providers](#registering-metric-providers).
 
 ## What Register may do
 
@@ -259,7 +267,10 @@ returns, the definitions file — is [docs/lua-modules.md](lua-modules.md).
 `AddMetricProvider<T>()` registers `T` as an additional singleton `IMetricProvider`;
 the diagnostics collector resolves every registered provider, including plugin ones,
 and folds their samples into the same snapshot and event bus described in
-[docs/diagnostics.md](diagnostics.md#plugin-providers). Naming rules, sample types
+[docs/diagnostics.md](diagnostics.md#plugin-providers). A sample's `Name` is a local
+name, not the qualified key — the collector prefixes it with the provider's own
+`ProviderName` and a dot, which is why `GreetingMetricProvider` reports the local
+name `hello_calls` rather than `greeter.hello_calls`. Naming rules, sample types
 and failure isolation are documented in full in
 [docs/metric-providers.md](metric-providers.md).
 
@@ -509,6 +520,7 @@ using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.GameLoop;
+using Moongate.Tests.TestSupport.Diagnostics;
 using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Plugins;
@@ -578,9 +590,11 @@ public sealed class SamplePluginTests
             await commands.StopAsync();
 
             var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
-            var sample = Assert.Single(await provider.CollectAsync());
-            Assert.Equal("greeter.hello_calls", sample.Name);
-            Assert.Equal(2, sample.Value);
+            using var diagnostics = new DiagnosticServiceFixture([provider]);
+            await diagnostics.Service.StartAsync();
+            var snapshot = await diagnostics.NextAsync();
+            Assert.Empty(snapshot.FailedProviders);
+            Assert.Equal(2, snapshot.Metrics["greeter.hello_calls"].Value);
 
             var definitions = await File.ReadAllTextAsync(Path.Combine(files.Directories["scripts"], "definitions.lua"));
             Assert.Contains("---@class greeter", definitions, StringComparison.Ordinal);
@@ -604,11 +618,16 @@ through `CommandSystemService` proves the Lua module, the `Tone` enum and the
 console command all resolve through the one container the loader populated — the
 same `GreeterModule` instance backs both call sites, and both a missing argument and
 an undefined numeric tone (`greet Bob 7`) are refused with the usage line rather than
-accepted. Third, asserting `greeter.hello_calls` equals `2` after exactly two `Hello`
-calls (one from Lua, one from the command) proves the shared `GreetingCounter` is
-genuinely shared, and asserting `definitions.lua` contains `---@class greeter` and
-`---@enum Tone` proves `RegisterScriptModule`/`RegisterScriptEnum` fed the editor
-tooling the plugin asked for.
+accepted. Third, wrapping the resolved provider in a real `DiagnosticService`
+through `DiagnosticServiceFixture` and collecting one snapshot proves the provider
+passes the same validation and naming a shipped provider would — `snapshot.FailedProviders`
+is empty, meaning `GreetingMetricProvider`'s local name `hello_calls` was accepted —
+and that the snapshot carries `greeter.hello_calls` (the service's own
+`ProviderName + "." + sample.Name` qualification) equal to `2` after exactly two
+`Hello` calls (one from Lua, one from the command), proving the shared
+`GreetingCounter` is genuinely shared. Asserting `definitions.lua` contains
+`---@class greeter` and `---@enum Tone` proves `RegisterScriptModule`/`RegisterScriptEnum`
+fed the editor tooling the plugin asked for.
 
 The unit approach skips the disk and the loader and exercises the registry
 directly, the way `MoongatePluginRegistryTests`
