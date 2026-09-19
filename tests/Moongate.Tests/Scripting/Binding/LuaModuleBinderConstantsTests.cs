@@ -53,6 +53,34 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
     }
 
     [Fact]
+    public void Bind_ConstantWithASetter_IsABindingError()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new SettableConstantModule()));
+
+        Assert.Contains("SettableConstantModule.Mutable", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("get-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_ConstantWhoseGetterThrows_NamesTheMemberAndKeepsTheCause()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new ThrowingConstantModule()));
+
+        Assert.Contains("ThrowingConstantModule.Broken", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("the value is not available yet", exception.Message, StringComparison.Ordinal);
+        Assert.IsType<InvalidDataException>(exception.InnerException);
+    }
+
+    [Fact]
+    public void BindEnum_OnATypeThatIsNotAnEnum_IsRefusedByName()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => _binder.BindEnum(_state, typeof(int)));
+
+        Assert.Contains("System.Int32 is not an enum", exception.Message, StringComparison.Ordinal);
+        Assert.True(_state.Environment["Int32"].Type == LuaValueType.Nil);
+    }
+
+    [Fact]
     public void Bind_ConstantAndFunctionSharingAName_IsABindingError()
     {
         var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new DuplicateNameModule()));
