@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+    <PackageId>Moongate.Api</PackageId>
+    <Description>Standalone typed MessagePack request/reply channels over mutually authenticated TLS with bounded execution and local peer authorization.</Description>
+    <PackageTags>moongate;api;messagepack;tcp;mtls</PackageTags>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../Moongate.Network/Moongate.Network.csproj" />

@@ -21,6 +21,13 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/Moongate.Api/Moongate.Api.csproj" />
+    <ProjectReference Include="../Moongate.Api.TestHost/Moongate.Api.TestHost.csproj" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <Target Name="CopyApiTestHost" AfterTargets="Build">
+    <ItemGroup>
+      <_ApiTestHostFiles Include="../Moongate.Api.TestHost/bin/$(Configuration)/net10.0/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_ApiTestHostFiles)" DestinationFiles="@(_ApiTestHostFiles->'$(OutDir)TestHost/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+  </Target>
 </Project>

@@ -10,6 +10,7 @@
         <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj" />
     </Folder>
     <Folder Name="/tests/">
+        <Project Path="tests/Moongate.Api.TestHost/Moongate.Api.TestHost.csproj" />
         <Project Path="tests/Moongate.Api.Tests/Moongate.Api.Tests.csproj" />
         <Project Path="tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj" />
         <Project Path="tests/Moongate.Network.Tests/Moongate.Network.Tests.csproj" />
