@@ -319,31 +319,27 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Removes the standard-library members that reach past the scripts directory or past the instruction
-    /// budget. Runs once, after the libraries are opened and before any script does.
-    /// </summary>
-    /// <summary>
-    /// Builds the replacement for the base library's <c>print</c>: the arguments are joined with tabs, as
-    /// Lua does, and written to the log at Information level under the file that owns the running code.
+    /// Builds the host half of the replacement for the base library's <c>print</c>: it takes one line and
+    /// writes it to the log at Information level under the file that owns the running code. The prelude
+    /// wraps it so every argument goes through Lua's own <c>tostring</c> (honouring <c>__tostring</c>) and
+    /// the results are joined with tabs, exactly as the standard <c>print</c> does.
     /// </summary>
     private LuaFunction CreatePrint(IScriptScheduler scheduler)
     {
         return new LuaFunction("print", (context, _) =>
         {
             _guard.EnsureScriptThread("print");
-            var parts = new string[context.ArgumentCount];
-
-            for (var i = 0; i < parts.Length; i++)
-            {
-                parts[i] = context.GetArgument(i).ToString();
-            }
-
-            _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, string.Join('\t', parts));
+            var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
+            _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
 
             return new ValueTask<int>(context.Return());
         });
     }
 
+    /// <summary>
+    /// Removes the standard-library members that reach past the scripts directory or past the instruction
+    /// budget. Runs once, after the libraries are opened and before any script does.
+    /// </summary>
     private static void TrimSandbox(LuaState state)
     {
         // dofile and loadfile read any path on the host, and loadfile returns the parser error, which

@@ -265,14 +265,16 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         try
         {
-            _scripts.Write("init.lua", "print('a', 1, nil, true)");
+            _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
+            // The engine captures its logger when it is constructed, so the swap above must precede NewEngine();
+            // the template filter below keeps events from other test classes out of the assertion.
             using var engine = NewEngine();
 
             await engine.StartAsync();
 
             var printed = Assert.Single(sink.Events, e => e.MessageTemplate.Text == "{ScriptFile}: {Output}");
             Assert.Equal(LogEventLevel.Information, printed.Level);
-            Assert.Equal("a\t1\tnil\ttrue", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
+            Assert.Equal("a\t1\tnil\ttrue\tcustom", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
             Assert.Equal("init.lua", Assert.IsType<ScalarValue>(printed.Properties["ScriptFile"]).Value);
             Assert.Equal(typeof(LogModule).FullName, Assert.IsType<ScalarValue>(printed.Properties["SourceContext"]).Value);
         }
