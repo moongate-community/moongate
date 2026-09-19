@@ -147,7 +147,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task EveryPublicMember_OffTheLoopThread_Throws()
+    public async Task LoadFileCallAndInvalidate_OffTheLoopThread_Throw()
     {
         using var engine = NewEngine();
         await engine.StartAsync();
@@ -156,6 +156,38 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         Assert.Throws<InvalidOperationException>(() => engine.LoadFile("init.lua"));
         Assert.Throws<InvalidOperationException>(() => engine.Call("x"));
         Assert.Throws<InvalidOperationException>(() => engine.Invalidate("init.lua"));
+    }
+
+    [Fact]
+    public async Task LoadFile_ScriptError_ReportsThenThrowsNamingFileAndLine()
+    {
+        _scripts.Write("ai/guard.lua", "local x = nil\nreturn x.field");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => engine.LoadFile("ai/guard.lua"));
+
+        Assert.StartsWith("ai/guard.lua:2:", exception.Message, StringComparison.Ordinal);
+        var evt = Assert.Single(_events);
+        Assert.Equal("ai/guard.lua", evt.Error.File);
+        Assert.Equal(2, evt.Error.Line);
+    }
+
+    [Fact]
+    public async Task StopAsync_CancelsScriptTimers_SoNoneAreLeftToFireAgainstTheDisposedState()
+    {
+        _scripts.Write("init.lua", "timer.every(1, function() end)");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        Assert.Single(_timers.Timers);
+
+        await engine.StopAsync();
+
+        Assert.Empty(_timers.Timers);
+        foreach (var timer in _timers.Timers.ToArray())
+        {
+            _timers.Fire(timer.Id);
+        }
     }
 
     [Fact]

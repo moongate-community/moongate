@@ -1,10 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
 using DryIoc;
 using Lua;
 using Lua.Standard;
 using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Data.Events;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Internal;
@@ -17,6 +15,7 @@ namespace Moongate.Scripting.Services;
 /// <summary>Owns the single LuaState: opens the sandboxed libraries, binds modules, runs the prelude and init.lua, and serves the four IScriptEngine operations.</summary>
 public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupService, IDisposable
 {
+    /// <summary>Registration priority for the startup lifecycle: starts after the game loop (-800) and timers (-900) are running, and stops before them.</summary>
     public const int StartupPriority = 70;
 
     private const string PreludeResource = "Moongate.Scripting.Assets.prelude.lua";
@@ -25,6 +24,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private readonly ScriptEngineOptions _options;
     private readonly IScriptModuleRegistry _registry;
     private readonly IResolverContext _resolver;
+    private readonly IGameLoopService _gameLoop;
     private readonly ITimerService _timers;
     private readonly IEventBusService _eventBus;
     private readonly IScriptThreadGuard _guard;
@@ -32,7 +32,6 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private LuaState? _state;
     private ScriptFileLoader? _files;
     private CoroutineScheduler? _scheduler;
-    private ScriptOwnership? _ownership;
     private InstructionBudget? _budget;
     private long _callsStarted;
     private bool _disposed;
@@ -40,6 +39,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// <summary>Gets every module bound at startup, in binding order; used by the definitions generator.</summary>
     internal IReadOnlyList<BoundModule> BoundModules => _boundModules;
 
+    /// <summary>Initializes a new instance of the <see cref="LuaScriptEngineService"/> class. Construction does no Lua work; <see cref="StartAsync"/> builds the state.</summary>
+    /// <param name="options">Scripts directory, budget and bootstrap settings.</param>
+    /// <param name="registry">Module and enum types to bind at startup, gathered from the container.</param>
+    /// <param name="resolver">Resolves each registered module type to an instance.</param>
+    /// <param name="gameLoop">Checked before every loop-affine member; error events are posted back to it.</param>
+    /// <param name="timers">Wheel that fires script timers and coroutine resumes.</param>
+    /// <param name="eventBus">Publishes <see cref="Moongate.Scripting.Data.Events.ScriptErrorEvent"/> for every script failure.</param>
     public LuaScriptEngineService(
         ScriptEngineOptions options,
         IScriptModuleRegistry registry,
@@ -52,6 +58,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _options = options;
         _registry = registry;
         _resolver = resolver;
+        _gameLoop = gameLoop;
         _timers = timers;
         _eventBus = eventBus;
         _guard = new LoopThreadGuard(gameLoop);
@@ -60,6 +67,16 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// <summary>Opens the sandboxed Lua libraries, binds every module, and runs the prelude and the bootstrap file.</summary>
     public Task StartAsync()
     {
+        if (_disposed)
+        {
+            throw new InvalidOperationException("The script engine has been disposed and cannot be restarted.");
+        }
+
+        if (_state is not null)
+        {
+            throw new InvalidOperationException("The script engine has already started.");
+        }
+
         _options.Validate();
         Directory.CreateDirectory(_options.ScriptsDirectory);
         var state = LuaState.Create();
@@ -88,7 +105,6 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _state = state;
         _files = files;
         _scheduler = scheduler;
-        _ownership = ownership;
         _budget = budget;
 
         RunBootstrap();
@@ -165,7 +181,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         Ready(_files).Invalidate(key);
     }
 
-    /// <inheritdoc />
+    /// <summary>Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread; diagnostics collectors run off the loop.</summary>
     public ScriptExecutionMetrics GetMetrics()
     {
         var scheduler = _scheduler;
@@ -229,7 +245,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         catch (Exception exception) when (exception is LuaRuntimeException or LuaCompileException)
         {
             var error = ScriptErrorParser.FromException(exception, _options.BootstrapFile);
-            _logger.Error("Bootstrap script failed at {File}:{Line}: {Message}", error.File, error.Line, error.Message);
+            ReportError(error);
 
             throw new InvalidOperationException(
                 $"Script bootstrap failed at {error.File}:{error.Line}: {error.Message}", exception);
@@ -244,7 +260,14 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private void ReportError(ScriptErrorInfo error)
     {
         _logger.Error("Script error at {File}:{Line}: {Message}", error.File, error.Line, error.Message);
-        _ = _eventBus.PublishAsync(new ScriptErrorEvent(error));
+
+        // Posted rather than published in place: onError can run inside a coroutine resume, and a bus
+        // handler that calls back into the engine would be refused (and silently swallowed by the bus)
+        // while that resume is still on the stack. Posting moves the handler to the next loop drain.
+        if (!_gameLoop.TryPost(new ScriptErrorPublishWorkItem(_eventBus, error)))
+        {
+            _logger.Warning("Script error event for {File}:{Line} could not be queued", error.File, error.Line);
+        }
     }
 
     private static T Ready<T>(T? component) where T : class
@@ -261,11 +284,14 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
 
         _disposed = true;
+        // Cancel every timer and coroutine the scheduler knows about before the state goes away: a
+        // periodic timer.every callback that fires after this point must not reach CreateCoroutine on
+        // a disposed state (the timer wheel and the loop stop after this service does).
+        _scheduler?.CancelAll();
         _state?.Dispose();
         _state = null;
         _files = null;
         _scheduler = null;
-        _ownership = null;
         _budget = null;
     }
 }

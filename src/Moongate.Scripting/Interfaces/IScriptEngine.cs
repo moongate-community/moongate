@@ -16,7 +16,10 @@ public interface IScriptEngine
     /// <param name="functionName">Name of a global function.</param>
     /// <param name="args">Arguments converted with the same rules as module functions.</param>
     /// <returns>Completed with the returned values, Suspended if the function called <c>wait</c>, or Failed with the error.</returns>
-    /// <remarks>A function whose return value the caller needs must not call <c>wait</c>: a suspended call returns no values.</remarks>
+    /// <remarks>
+    /// A function whose return value the caller needs must not call <c>wait</c>: a suspended call returns no values.
+    /// A call from the host outside any file load is owned by the bootstrap file, so invalidating it cancels such coroutines.
+    /// </remarks>
     [SuppressMessage(
         "Naming",
         "CA1716:Identifiers should not match keywords",
@@ -28,6 +31,6 @@ public interface IScriptEngine
     /// <param name="relativePath">Path relative to the scripts directory.</param>
     void Invalidate(string relativePath);
 
-    /// <summary>Returns a snapshot of the execution counters.</summary>
+    /// <summary>Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread; diagnostics collectors run off the loop.</summary>
     ScriptExecutionMetrics GetMetrics();
 }

@@ -25,6 +25,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     private readonly Dictionary<Guid, ScheduledCoroutine> _active = new();
     private readonly LuaStack _stack = new(32);
     private bool _resuming;
+    private bool _stopped;
     private ScheduledCoroutine? _current;
 
     public int ActiveCount => _active.Count;
@@ -58,6 +59,11 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     /// <exception cref="InvalidOperationException">Called while another resume is running on this scheduler.</exception>
     public ScriptResult Start(LuaFunction function, string owner, params object?[] args)
     {
+        if (_stopped)
+        {
+            return ScriptResult.Failed(new ScriptErrorInfo(owner, 0, "the script engine has stopped", null));
+        }
+
         ArgumentNullException.ThrowIfNull(function);
         ArgumentException.ThrowIfNullOrWhiteSpace(owner);
         EnsureNotResuming();
@@ -98,9 +104,41 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         }
     }
 
+    /// <summary>
+    /// Cancels every pending timer and coroutine regardless of owner, and makes every later <see cref="Start"/>
+    /// fail instead of touching the Lua state. Called once, right before the engine disposes the state: a
+    /// periodic timer callback that fires after that point must not reach <c>CreateCoroutine</c> on a disposed
+    /// state.
+    /// </summary>
+    public void CancelAll()
+    {
+        foreach (var timerId in _ownership.ReleaseAllTimers())
+        {
+            _timers.UnregisterTimer(timerId);
+        }
+
+        foreach (var entry in _active.Values)
+        {
+            if (entry.PendingTimer is not null)
+            {
+                _timers.UnregisterTimer(entry.PendingTimer);
+            }
+        }
+
+        _active.Clear();
+        _ownership.Clear();
+        _stopped = true;
+    }
+
     private ScriptResult Resume(ScheduledCoroutine entry)
     {
         EnsureNotResuming();
+
+        if (_stopped)
+        {
+            return ScriptResult.Failed(new ScriptErrorInfo(entry.Owner, 0, "the script engine has stopped", null));
+        }
+
         _resuming = true;
         _current = entry;
         Resumed++;

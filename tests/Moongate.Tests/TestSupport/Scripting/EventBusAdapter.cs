@@ -14,12 +14,14 @@ public sealed class EventBusAdapter : IEventBusService
         _bus = container.Resolve<IMoongateEventBus>();
     }
 
+    /// <inheritdoc />
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
         where TEvent : class, IMoongateEvent
     {
         return _bus.Subscribe(handler);
     }
 
+    /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
         where TEvent : class, IMoongateEvent
     {
