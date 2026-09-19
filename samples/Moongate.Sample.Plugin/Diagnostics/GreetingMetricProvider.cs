@@ -5,7 +5,7 @@ using Moongate.Server.Core.Types.Diagnostics;
 
 namespace Moongate.Sample.Plugin.Diagnostics;
 
-/// <summary>Reports how many greetings the plugin produced, as the <c>greeter.hello_calls</c> counter.</summary>
+/// <summary>Reports how many greetings the plugin produced; the diagnostics service publishes it as <c>greeter.hello_calls</c>.</summary>
 public sealed class GreetingMetricProvider : IMetricProvider
 {
     private readonly GreetingCounter _counter;
@@ -24,7 +24,7 @@ public sealed class GreetingMetricProvider : IMetricProvider
     public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        IReadOnlyList<MetricSample> samples = [new MetricSample("greeter.hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
+        IReadOnlyList<MetricSample> samples = [new MetricSample("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
 
         return new ValueTask<IReadOnlyList<MetricSample>>(samples);
     }
