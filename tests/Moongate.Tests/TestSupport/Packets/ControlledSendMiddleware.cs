@@ -12,7 +12,7 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
 
     public Task Entered => _entered.Task;
     public int SendThreadId { get; private set; }
-    public bool Fail { get; set; }
+    public Exception? Failure { get; set; }
 
     public ControlledSendMiddleware(bool blocked = false)
     {
@@ -33,7 +33,7 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
         // Intentionally block the synchronous prefix to expose accidental sends on the game loop.
         _release.Wait(TimeSpan.FromSeconds(5), CancellationToken.None);
         cancellationToken.ThrowIfCancellationRequested();
-        if (Fail) throw new IOException("Controlled send failure.");
+        if (Failure is not null) { throw Failure; }
         _frames.Writer.TryWrite(data.ToArray());
         return ValueTask.FromResult(data);
     }

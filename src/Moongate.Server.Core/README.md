@@ -17,7 +17,7 @@ dotnet add package Moongate.Server.Core
 - Plugin contracts, metadata, and registration APIs.
 - Server lifecycle events and an event bus integrated with DryIoc.
 - Registrations for server services, packet handlers, and commands.
-- Contracts and data types for sessions, the game loop, timers, world saves, and diagnostics.
+- Contracts and data types for transport connections, sessions, the game loop, timers, world saves, and diagnostics.
 
 ## Example
 
@@ -48,6 +48,43 @@ await bus.PublishAsync(new MoongateStartedEvent());
 This package depends on `Moongate.Core`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is available through the dependency graph.
 
 The executable host and implementations of server runtime services are provided by `Moongate.Server`, which is not distributed as part of this library package. Referencing this package does not start the host, listener, timers, or game loop.
+
+## Connections and game coordination
+
+`IConnectionService` tracks transport connections independently of game sessions. Its
+`TryGet` returns only live connections whose admission is still open. `DisconnectAsync`
+closes admission immediately and joins both the close request and actual transport
+completion. Closing connections remain in `Count` and membership snapshots until
+cleanup finishes. Stop is terminal and reports cleanup failures. The three-argument
+`TryGet` overload also captures an owner-requested disconnect signal atomically with the
+connection; the sender uses that stable signal to classify intentionally interrupted writes.
+Remote closure or a send failure that closes its own transport does not complete it.
+
+`INetworkService` owns listeners and raises synchronous `ConnectionAccepted`,
+`DataReceived`, and `ConnectionClosed` events. **Receive memory is borrowed until the
+callback returns:** decode or copy it before posting work elsewhere. A close notification
+precedes full transport cleanup; never synchronously wait for that cleanup in the callback.
+`NetworkListenerOptions` supplies endpoints and an optional per-connection pipeline factory.
+
+`IGameServerService` coordinates game sessions and packet dispatch above that boundary.
+`IPacketSendService` sends through the connection registry without requiring a game session.
+The executable host provides these implementations and their startup order.
+
+### Compatibility
+
+`NetworkSession` now accepts `INetworkConnection`, and its nullable `Client` property
+returns that interface. `ISessionService.GetOrCreate` also accepts `INetworkConnection`.
+These are **binary API changes: rebuild consumers and plugins**. Passing an existing
+`MoongateTcpClient` remains source-compatible. Implementations of `ISessionService`
+must update their method signature. Replace `session.NetworkSession.Client.Dispose()`
+with the owning connection/sender service's `DisconnectAsync(session.SessionId)`.
+
+Implementations of `INetworkService` must implement the three new events. Session detach
+only clears the reference; it does not close the transport. Endpoint strings remain
+snapshotted after detach, and missing local endpoint metadata remains null.
+
+See the [migration guide](https://github.com/moongate-community/moongate/blob/develop/docs/network-game-separation.md)
+for composition and shutdown examples.
 
 ## License and source
 

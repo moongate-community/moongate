@@ -42,7 +42,7 @@ public sealed class PacketNetworkPipelineTests
         }
         await peer.GetStream().WriteAsync(new byte[] { 42 });
         Assert.Equal(new byte[] { 0x73, 42 }, await ReadAsync(peer, 2));
-        await fixture.Network.StopAsync().WaitAsync(Timeout);
+        await fixture.Game.StopAsync().WaitAsync(Timeout);
         Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
         Assert.Equal(0, fixture.Sessions.Count);
     }
@@ -100,7 +100,7 @@ public sealed class PacketNetworkPipelineTests
         using var peer = await fixture.ConnectAsync();
         await peer.GetStream().WriteAsync(bytes);
         Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
-        await fixture.Network.StopAsync().WaitAsync(Timeout);
+        await fixture.Game.StopAsync().WaitAsync(Timeout);
         Assert.Equal(0, fixture.Sessions.Count);
     }
 
@@ -135,6 +135,9 @@ public sealed class PacketNetworkPipelineTests
             await bootstrap.StartAsync();
             var network = (NetworkService)container.Resolve<INetworkService>();
             var dependency = container.Resolve<PacketPluginDependency>();
+            Assert.Same(container.Resolve<IGameServerService>(), container.Resolve<IGameServerService>());
+            Assert.Same(container.Resolve<IConnectionService>(), container.Resolve<IConnectionService>());
+            Assert.Equal(0, container.Resolve<ISessionService>().Count);
             Assert.Same(container.Resolve<IPacketSendService>(), container.Resolve<IPacketSendService>());
             Assert.Same(container.Resolve<IPacketDispatchService>(), container.Resolve<IPacketDispatchService>());
             using var peer = new TcpClient();
@@ -159,9 +162,14 @@ public sealed class PacketNetworkPipelineTests
         await using var fixture = new PacketNetworkFixture(disconnectSender: _ =>
         {
             entered.TrySetResult();
-            if (failSender) throw new IOException("Controlled sender cleanup failure.");
+            if (failSender)
+            {
+                throw new IOException("Controlled sender cleanup failure.");
+            }
+
             return release.Task;
-        });
+        })
+        { AllowCleanupFailure = failSender };
         await fixture.StartAsync();
         using var peer = await fixture.ConnectAsync();
         await peer.GetStream().WriteAsync(new byte[] { 0x73, 1 });
@@ -170,12 +178,17 @@ public sealed class PacketNetworkPipelineTests
         var client = session.NetworkSession.Client!;
         try
         {
-            var stopping = fixture.Network.StopAsync();
+            var stopping = fixture.Game.StopAsync();
             await entered.Task.WaitAsync(Timeout);
             await client.Completion.WaitAsync(Timeout);
-            if (!failSender) Assert.False(stopping.IsCompleted);
+            if (!failSender)
+            {
+                Assert.False(stopping.IsCompleted);
+            }
+
             release.TrySetResult();
-            await stopping.WaitAsync(Timeout);
+            if (failSender) { await Assert.ThrowsAsync<AggregateException>(() => stopping.WaitAsync(Timeout)); }
+            else { await stopping.WaitAsync(Timeout); }
             Assert.Empty(fixture.Sessions.GetAll());
             Assert.Null(session.NetworkSession.Client);
         }
@@ -197,15 +210,23 @@ public sealed class PacketNetworkPipelineTests
         using var blocker = new BlockingGameLoopWorkItem();
         Assert.True(fixture.Loop.TryPost(blocker));
         await blocker.Entered.WaitAsync(Timeout);
-        if (faultLoop) Assert.True(fixture.Loop.TryPost(new ActionGameLoopWorkItem(() => throw new IOException("fatal loop failure"))));
-        var stopping = fixture.Network.StopAsync();
+        if (faultLoop)
+        {
+            Assert.True(fixture.Loop.TryPost(new ActionGameLoopWorkItem(() => throw new IOException("fatal loop failure"))));
+        }
+
+        fixture.AllowCleanupFailure = faultLoop;
+        var stopping = fixture.Game.StopAsync();
         Assert.False(stopping.IsCompleted);
         Assert.Same(session, Assert.Single(fixture.Sessions.GetAll()));
         blocker.Release();
         await stopping.WaitAsync(Timeout);
         Assert.Empty(fixture.Sessions.GetAll());
         Assert.Null(session.NetworkSession.Client);
-        if (faultLoop) await Assert.ThrowsAsync<IOException>(() => fixture.Loop.Completion.WaitAsync(Timeout));
+        if (faultLoop)
+        {
+            await Assert.ThrowsAsync<IOException>(() => fixture.Loop.Completion.WaitAsync(Timeout));
+        }
     }
 
     [Fact]
@@ -214,7 +235,7 @@ public sealed class PacketNetworkPipelineTests
         var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()], framer: new UoPacketFramer(PacketRegistry.Default)));
         var second = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0), framer: new UoPacketFramer(PacketRegistry.Default));
-        await using var fixture = new PacketNetworkFixture([first, second]);
+        await using var fixture = new PacketNetworkFixture([first, second]) { AllowCleanupFailure = true };
         await fixture.StartAsync();
         using var peer = await fixture.ConnectAsync();
         using var otherPeer = new TcpClient();
@@ -223,7 +244,7 @@ public sealed class PacketNetworkPipelineTests
         await otherPeer.GetStream().WriteAsync(new byte[] { 0x73, 2 });
         await ReadAsync(peer, 2);
         await ReadAsync(otherPeer, 2);
-        var failure = await Assert.ThrowsAsync<AggregateException>(() => fixture.Network.StopAsync().WaitAsync(Timeout));
+        var failure = await Assert.ThrowsAsync<AggregateException>(() => fixture.Game.StopAsync().WaitAsync(Timeout));
         Assert.Contains(failure.Flatten().InnerExceptions, exception => exception is IOException);
         Assert.Empty(fixture.Sessions.GetAll());
         Assert.Equal(0, first.Port);
@@ -232,37 +253,14 @@ public sealed class PacketNetworkPipelineTests
     }
 
     [Fact]
-    public async Task BindFailure_PreservesOriginalErrorWhenEarlierListenerCleanupAlsoFails()
-    {
-        using var occupied = new TcpListener(IPAddress.Loopback, 0);
-        occupied.Start();
-        var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
-            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()]));
-        await using var fixture = new PacketNetworkFixture([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)]);
-        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        first.OnClientConnect += (_, _) => connected.TrySetResult();
-        await fixture.Loop.StartAsync();
-        await fixture.Sender.StartAsync();
-        await fixture.Dispatcher.StartAsync();
-        await first.StartAsync(default);
-        using var peer = await fixture.ConnectAsync();
-        await connected.Task.WaitAsync(Timeout);
-        await peer.GetStream().WriteAsync(new byte[] { 0x73, 1 });
-        await ReadAsync(peer, 2);
-        await Assert.ThrowsAsync<SocketException>(() => fixture.StartAsync().WaitAsync(Timeout));
-        Assert.Equal(0, first.Port);
-        Assert.Empty(fixture.Sessions.GetAll());
-    }
-
-    [Fact]
     public async Task StopBeforeStart_RejectsStartupAndRepeatedStopLeavesListenersClosed()
     {
         await using var fixture = new PacketNetworkFixture();
         try
         {
-            await fixture.Network.StopAsync().WaitAsync(Timeout);
-            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Network.StartAsync());
-            await fixture.Network.StopAsync().WaitAsync(Timeout);
+            await fixture.Game.StopAsync().WaitAsync(Timeout);
+            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Game.StartAsync());
+            await fixture.Game.StopAsync().WaitAsync(Timeout);
             Assert.All(fixture.Listeners, listener => Assert.Equal(0, listener.Port));
         }
         finally

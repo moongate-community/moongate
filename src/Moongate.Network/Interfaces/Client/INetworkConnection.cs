@@ -19,6 +19,10 @@ public interface INetworkConnection
     /// </summary>
     EndPoint? RemoteEndPoint { get; }
 
+    /// <summary>Gets the local endpoint when exposed by the transport.</summary>
+    /// <remarks>Existing implementations without local endpoint metadata return null.</remarks>
+    EndPoint? LocalEndPoint => null;
+
     /// <summary>
     /// Indicates whether the connection is still open.
     /// </summary>

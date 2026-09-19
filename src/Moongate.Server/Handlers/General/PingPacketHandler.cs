@@ -19,7 +19,7 @@ public sealed class PingPacketHandler : IPacketHandler<PingPacket>
     {
         if (!_sender.TrySend(session.SessionId, new PingPacket(packet.Sequence)))
         {
-            session.NetworkSession.Client?.Dispose();
+            _ = _sender.DisconnectAsync(session.SessionId);
         }
     }
 }
