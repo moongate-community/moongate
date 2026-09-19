@@ -25,6 +25,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     private readonly Dictionary<Guid, ScheduledCoroutine> _active = new();
     private readonly LuaStack _stack = new(32);
     private bool _resuming;
+    private ScheduledCoroutine? _current;
 
     public int ActiveCount => _active.Count;
     public long Resumed { get; private set; }
@@ -32,8 +33,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     public long Errors { get; private set; }
     public long BudgetAborts { get; private set; }
 
-    /// <summary>Gets the file whose code is executing, used as the owner of anything it schedules; null outside a file load.</summary>
-    public string? CurrentOwner => _currentOwner();
+    /// <summary>Gets the owner of the code executing right now: the running coroutine's owner during a resume, otherwise the file being loaded; null when neither applies.</summary>
+    public string? CurrentOwner => _current?.Owner ?? _currentOwner();
 
     public CoroutineScheduler(
         LuaState state,
@@ -101,6 +102,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     {
         EnsureNotResuming();
         _resuming = true;
+        _current = entry;
         Resumed++;
 
         try
@@ -161,6 +163,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         finally
         {
             _resuming = false;
+            _current = null;
         }
     }
 

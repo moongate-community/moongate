@@ -86,6 +86,18 @@ public sealed class TimerModuleTests : IDisposable
     }
 
     [Fact]
+    public void After_FromInsideATimerDrivenCoroutine_InheritsTheStartingFilesOwner()
+    {
+        Run("timer.after(1, function() timer.after(2, function() end) end)");
+        _owner = null;
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        Assert.Single(_timers.Timers);
+        Assert.Single(_ownership.ReleaseTimers("init.lua"));
+    }
+
+    [Fact]
     public void After_OutsideAFile_UsesTheAnonymousOwner()
     {
         _owner = null;

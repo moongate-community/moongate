@@ -7,6 +7,7 @@ using Moongate.Server.Core.Interfaces.Services;
 namespace Moongate.Scripting.Modules;
 
 /// <summary>Timers for scripts. Every callback runs as a coroutine, so it may call wait().</summary>
+/// <remarks>Built in: the engine constructs it, because its dependencies are engine internals. Hosts never register it.</remarks>
 [ScriptModule("timer", "Schedules functions on the game loop.")]
 internal sealed class TimerModule
 {
@@ -16,6 +17,9 @@ internal sealed class TimerModule
     private readonly IScriptScheduler _scheduler;
     private readonly ScriptOwnership _ownership;
 
+    /// <param name="timers">The wheel that fires the callbacks, on the game loop.</param>
+    /// <param name="scheduler">Starts each callback as a coroutine and names the current owner.</param>
+    /// <param name="ownership">Records every timer under the file that created it.</param>
     public TimerModule(ITimerService timers, IScriptScheduler scheduler, ScriptOwnership ownership)
     {
         _timers = timers;
@@ -23,18 +27,24 @@ internal sealed class TimerModule
         _ownership = ownership;
     }
 
+    /// <summary>Runs <paramref name="fn"/> once, <paramref name="seconds"/> from now, as a coroutine.</summary>
+    /// <returns>A handle for <see cref="Cancel"/>.</returns>
     [ScriptFunction(helpText: "Runs fn once after the given seconds. Returns a handle for cancel.")]
     public string After(double seconds, LuaValue fn)
     {
         return Schedule(seconds, fn, repeat: false);
     }
 
+    /// <summary>Runs <paramref name="fn"/> every <paramref name="seconds"/> until cancelled, each run as a coroutine.</summary>
+    /// <returns>A handle for <see cref="Cancel"/>.</returns>
     [ScriptFunction(helpText: "Runs fn every given seconds until cancelled. Returns a handle for cancel.")]
     public string Every(double seconds, LuaValue fn)
     {
         return Schedule(seconds, fn, repeat: true);
     }
 
+    /// <summary>Cancels a pending timer by handle.</summary>
+    /// <returns>False when no timer with that handle is pending.</returns>
     [ScriptFunction(helpText: "Cancels a timer by handle. Returns false when no such timer is pending.")]
     public bool Cancel(string handle)
     {
