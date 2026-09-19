@@ -248,7 +248,10 @@ internal static class LuaDefinitionsGenerator
                 default:
                     if (char.IsControl(character))
                     {
-                        builder.Append('\\').Append(((int)character).ToString(CultureInfo.InvariantCulture));
+                        // Lua's \ddd escape greedily consumes up to three following decimal digits, so an
+                        // unpadded code (e.g. \7 before a literal "1") would read back as a different escape.
+                        // Always emitting three digits keeps every following character its own token.
+                        builder.Append('\\').Append(((int)character).ToString("D3", CultureInfo.InvariantCulture));
                     }
                     else
                     {

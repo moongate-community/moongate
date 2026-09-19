@@ -156,6 +156,21 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     [Fact]
+    public void Render_ZeroPadsControlCharacterEscapesBeforeDigits()
+    {
+        var module = new BoundModule(
+            "probe",
+            null,
+            typeof(ProbeModule),
+            new LuaTable(),
+            [],
+            [new BoundConstant("BELL", typeof(string), "\u00071", null)]
+        );
+        var text = LuaDefinitionsGenerator.Render([module], []);
+        Assert.Contains("BELL = \"\\0071\"", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Render_PrefixesEveryHelpLine()
     {
         var module = new BoundModule("probe", "first line\nsecond line", typeof(ProbeModule), new LuaTable(), [], []);
