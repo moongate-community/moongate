@@ -19,7 +19,10 @@ public sealed record ApiOptions
     /// <summary>Rejects unbounded or invalid settings before any socket is opened.</summary>
     public void Validate()
     {
-        if (MaxFrameLength is < 1 or > (16 * 1024 * 1024 - 4)) { throw new ArgumentOutOfRangeException(nameof(MaxFrameLength)); }
+        if (MaxFrameLength is < 1 or > 16 * 1024 * 1024 - 4)
+        {
+            throw new ArgumentOutOfRangeException(nameof(MaxFrameLength));
+        }
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxPendingCalls);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IncomingQueueCapacity);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(OutgoingQueueCapacity);
@@ -36,6 +39,8 @@ public sealed record ApiOptions
     internal static void ValidateTimeout(TimeSpan timeout)
     {
         if (timeout <= TimeSpan.Zero || timeout.TotalMilliseconds > uint.MaxValue - 1)
-        { throw new ArgumentOutOfRangeException(nameof(timeout), "A finite positive timeout is required."); }
+        {
+            throw new ArgumentOutOfRangeException(nameof(timeout), "A finite positive timeout is required.");
+        }
     }
 }

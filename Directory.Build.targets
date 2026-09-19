@@ -8,7 +8,7 @@
 
     <ItemGroup Condition="'$(IsPackable)' == 'true'">
         <None Include="$(MSBuildThisFileDirectory)images/moongate_logo.png"
-              Pack="true" PackagePath="/" />
-        <None Update="README.md" Pack="true" PackagePath="/" />
+              Pack="true" PackagePath="/"/>
+        <None Update="README.md" Pack="true" PackagePath="/"/>
     </ItemGroup>
 </Project>

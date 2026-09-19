@@ -1,5 +1,7 @@
 using Moongate.Api.Interfaces.Internal.Registry;
+
 namespace Moongate.Api.Data.Internal.Requests;
+
 internal sealed class ApiPendingCall
 {
     public IApiOperationRegistration Operation { get; }
@@ -7,7 +9,12 @@ internal sealed class ApiPendingCall
     public uint RequestId { get; set; }
     public ITimer? Deadline { get; set; }
     public CancellationTokenRegistration Cancellation { get; set; }
-    public ApiPendingCall(IApiOperationRegistration operation) { Operation = operation; }
+
+    public ApiPendingCall(IApiOperationRegistration operation)
+    {
+        Operation = operation;
+    }
+
     public void Release()
     {
         Deadline?.Dispose();

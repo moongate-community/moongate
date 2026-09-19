@@ -1,5 +1,6 @@
 using Moongate.Api.Data.Internal.Protocol;
 using Moongate.Api.Interfaces.Internal.Registry;
+
 namespace Moongate.Api.Data.Internal.Requests;
 
 internal sealed class ApiInboundCall : IAsyncDisposable
@@ -23,19 +24,18 @@ internal sealed class ApiInboundCall : IAsyncDisposable
 
     public void Arm(TimeProvider clock, TimeSpan remaining, Action<ApiInboundCall> expired)
     {
-        var timer = clock.CreateTimer(_ => expired(this), null, remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero, Timeout.InfiniteTimeSpan);
+        var timer = clock.CreateTimer(
+            _ => expired(this),
+            null,
+            remaining > TimeSpan.Zero ? remaining : TimeSpan.Zero,
+            Timeout.InfiniteTimeSpan
+        );
+
         lock (_gate)
         {
             if (_disposed || IsTerminal) { timer.Dispose(); }
             else { _timer = timer; }
         }
-    }
-
-    public bool TryFinish()
-    {
-        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0) { return false; }
-        lock (_gate) { _timer?.Dispose(); _timer = null; }
-        return true;
     }
 
     public void Cancel()
@@ -49,6 +49,7 @@ internal sealed class ApiInboundCall : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         Task cancelled;
+
         lock (_gate)
         {
             if (_disposed) { return; }
@@ -57,7 +58,21 @@ internal sealed class ApiInboundCall : IAsyncDisposable
             _timer = null;
             cancelled = _cancelled;
         }
+
         try { await cancelled.ConfigureAwait(false); }
         finally { _cancellation.Dispose(); }
+    }
+
+    public bool TryFinish()
+    {
+        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0) { return false; }
+
+        lock (_gate)
+        {
+            _timer?.Dispose();
+            _timer = null;
+        }
+
+        return true;
     }
 }

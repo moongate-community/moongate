@@ -1,4 +1,5 @@
 namespace Moongate.Api.Types.Protocol;
+
 /// <summary>Stable wire error codes. Zero and unspecified values are invalid.</summary>
 public enum ApiErrorCode : byte
 {
