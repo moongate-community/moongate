@@ -8,7 +8,7 @@ namespace Moongate.Scripting.Data.Scripts;
 /// <param name="Errors">Coroutines that failed, for any reason including a budget abort.</param>
 /// <param name="BudgetAborts">Units of execution stopped by the instruction budget: coroutine resumes and top-level chunks alike.</param>
 /// <param name="ActiveCoroutines">Coroutines alive right now: started and neither finished nor failed, most of them parked on a <c>wait</c>.</param>
-/// <param name="MemoryCapHits">Calls refused because their result would have exceeded the string cap; each one raised a script error in the caller.</param>
+/// <param name="StringCapHits">Calls refused because their result would have exceeded the string cap; each one raised a script error in the caller.</param>
 public sealed record ScriptExecutionMetrics(
     int FilesLoaded,
     long CallsStarted,
@@ -17,5 +17,5 @@ public sealed record ScriptExecutionMetrics(
     long Errors,
     long BudgetAborts,
     int ActiveCoroutines,
-    long MemoryCapHits
+    long StringCapHits
 );

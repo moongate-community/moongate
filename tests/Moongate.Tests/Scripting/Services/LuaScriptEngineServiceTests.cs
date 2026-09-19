@@ -233,7 +233,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         Assert.Contains("exceeds the script string cap", (string)values[6]!, StringComparison.Ordinal);
         Assert.Contains("bad argument #1 to 'rep' (string expected, got nil)", (string)values[7]!, StringComparison.Ordinal);
         Assert.Contains("bad argument #2 to 'rep' (number has no integer representation)", (string)values[8]!, StringComparison.Ordinal);
-        Assert.Equal(3, engine.GetMetrics().MemoryCapHits);
+        Assert.Equal(3, engine.GetMetrics().StringCapHits);
         Assert.Empty(_events);
     }
 
@@ -248,7 +248,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         Assert.Contains("exceeds the script string cap", exception.Message, StringComparison.Ordinal);
         Assert.Single(_events);
-        Assert.Equal(1, engine.GetMetrics().MemoryCapHits);
+        Assert.Equal(1, engine.GetMetrics().StringCapHits);
         Assert.Equal(0, engine.GetMetrics().BudgetAborts);
     }
 

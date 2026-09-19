@@ -374,8 +374,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     {
         _memoryCapHits++;
 
+        // Counts that fit a long print exactly; anything larger is astronomically over the cap anyway.
+        var shown = size <= long.MaxValue
+            ? ((long)size).ToString(System.Globalization.CultureInfo.InvariantCulture)
+            : size.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
+
         return new LuaRuntimeException(context.State,
-            $"string.rep: a result of {size:0} characters exceeds the script string cap of {cap} characters");
+            $"string.rep: a result of {shown} characters exceeds the script string cap of {cap} characters");
     }
 
     /// <summary>Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a bad-argument error.</summary>

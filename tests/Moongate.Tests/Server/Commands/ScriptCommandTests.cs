@@ -87,7 +87,7 @@ public sealed class ScriptCommandTests
                 "Coroutine errors: 2",
                 "Budget aborts: 1",
                 "Active coroutines: 5",
-                "Memory cap hits: 4"
+                "String cap hits: 4"
             ],
             lines.Select(line => line.Text).ToArray()
         );
