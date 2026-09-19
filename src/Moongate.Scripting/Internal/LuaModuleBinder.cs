@@ -12,13 +12,21 @@ internal sealed class LuaModuleBinder
     private readonly IScriptThreadGuard _guard;
     private readonly List<Type> _discoveredEnums = [];
 
+    /// <summary>Gets every enum type seen so far as a parameter or return type of a bound function, in the order they were first encountered.</summary>
     public IReadOnlyList<Type> DiscoveredEnums => _discoveredEnums;
 
+    /// <summary>Initializes a new instance of the <see cref="LuaModuleBinder"/> class.</summary>
+    /// <param name="guard">The thread guard called before every bound function invocation.</param>
     public LuaModuleBinder(IScriptThreadGuard guard)
     {
         _guard = guard;
     }
 
+    /// <summary>Reflects <paramref name="moduleInstance"/> once, publishing a read-only Lua table under its [ScriptModule] name with one LuaFunction per [ScriptFunction] method.</summary>
+    /// <returns>The bound module: its Lua table, and every function and constant published on it.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// <paramref name="moduleInstance"/>'s type carries no [ScriptModule], two of its [ScriptFunction] methods resolve to the same Lua name, or a method's signature uses a parameter or return type the converter cannot bind.
+    /// </exception>
     public BoundModule Bind(LuaState state, object moduleInstance)
     {
         ArgumentNullException.ThrowIfNull(state);

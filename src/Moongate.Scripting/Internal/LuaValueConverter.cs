@@ -5,6 +5,7 @@ namespace Moongate.Scripting.Internal;
 /// <summary>The one place that decides how CLR values and Lua values map onto each other.</summary>
 internal static class LuaValueConverter
 {
+    /// <summary>Gets whether values of <paramref name="type"/> can be converted to or from Lua by this converter.</summary>
     public static bool IsSupported(Type type)
     {
         if (type.IsEnum)
@@ -17,6 +18,8 @@ internal static class LuaValueConverter
                type == typeof(object) || type == typeof(void);
     }
 
+    /// <summary>Converts a CLR value returned by a bound method into the <see cref="LuaValue"/> Lua receives. Enums, including those boxed via <paramref name="declaredType"/>, are converted to their numeric value.</summary>
+    /// <exception cref="InvalidCastException">The value's runtime type is not one this converter knows how to send to Lua.</exception>
     public static LuaValue ToLua(object? value, Type declaredType)
     {
         if (value is null)
@@ -43,6 +46,17 @@ internal static class LuaValueConverter
         };
     }
 
+    /// <summary>
+    /// Converts a Lua argument to the CLR type a bound method parameter declares. Conversion is strict:
+    /// there is no coercion between kinds (a Lua string is never read as a number, for instance).
+    /// Integer targets (<see cref="int"/>, <see cref="long"/>) additionally require the Lua number to be
+    /// integral and within the target type's range. Enum targets accept either the enum's underlying
+    /// number or the member's name.
+    /// </summary>
+    /// <exception cref="InvalidCastException">
+    /// <paramref name="value"/> is nil for a non-nullable value type, or its Lua kind, integer-ness, or
+    /// range does not match what <paramref name="targetType"/> requires.
+    /// </exception>
     public static object? FromLua(LuaValue value, Type targetType)
     {
         if (targetType == typeof(LuaValue))
@@ -112,14 +126,20 @@ internal static class LuaValueConverter
             throw new InvalidCastException($"{number} has no integer representation for {underlying.Name}");
         }
 
+        // Range checks throw InvalidCastException like every other mismatch, so the binder turns them
+        // into a Lua "bad argument" error; a checked cast would leak an OverflowException instead.
         if (underlying == typeof(int))
         {
-            return checked((int)number);
+            return number is >= int.MinValue and <= int.MaxValue
+                ? (int)number
+                : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
         }
 
         if (underlying == typeof(long))
         {
-            return checked((long)number);
+            return number is >= long.MinValue and <= long.MaxValue
+                ? (long)number
+                : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
         }
 
         throw new InvalidCastException($"Parameters of type {targetType.FullName} are not supported.");

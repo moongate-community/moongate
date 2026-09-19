@@ -117,6 +117,22 @@ public sealed class LuaModuleBinderTests : IDisposable
         Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
     }
 
+    [Fact]
+    public void Bind_IntegerOutOfRange_RaisesALuaErrorInsteadOfOverflowing()
+    {
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return probe.add(9999999999, 1)"));
+
+        Assert.Contains("out of range", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_ModuleTable_RejectsWritesAndMetatableChanges()
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("probe.add = nil"));
+        Assert.Throws<LuaRuntimeException>(() => Run("probe.extra = 1"));
+        Assert.Throws<LuaRuntimeException>(() => Run("setmetatable(probe, {})"));
+    }
+
     public void Dispose()
     {
         _state.Dispose();
