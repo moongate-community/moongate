@@ -51,7 +51,7 @@ public sealed class GreeterModule
 
 ## Dependencies and scope
 
-This package depends on `Moongate.Core`, `Moongate.Server.Core` and `LuaCSharp`. It does not start a game loop or timers; the host provides them and registers the engine with `RegisterMoongateService<IScriptEngine, LuaScriptEngineService>`.
+This package depends on `Moongate.Core`, `Moongate.Server.Core`, `LuaCSharp` and `Serilog`. It does not start a game loop or timers; the host provides them and registers the engine with `RegisterMoongateService<IScriptEngine, LuaScriptEngineService>`.
 
 ## License and source
 
