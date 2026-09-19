@@ -1,3 +1,5 @@
+using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Helpers;
 using Moongate.Tests.TestSupport.Directories;
@@ -17,8 +19,10 @@ public sealed class ConfigHelperTests
 
         var config = ConfigHelper.Load(path);
 
+        Assert.Equal(ServerMode.Standalone, config.Mode);
         Assert.Equivalent(defaults, config);
         var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
+        Assert.Equal("standalone", document["mode"]);
         var shard = Assert.IsType<TomlTable>(document["shard"]);
         var network = Assert.IsType<TomlTable>(document["network"]);
         var diagnostics = Assert.IsType<TomlTable>(document["diagnostics"]);
@@ -67,6 +71,7 @@ public sealed class ConfigHelperTests
         var config = ConfigHelper.Load(path);
 
         Assert.Equivalent(defaults.Shard, config.Shard);
+        Assert.Equal(ServerMode.Standalone, config.Mode);
         Assert.Equal(4001, config.Network.GamePort);
         Assert.Equal(defaults.Network.ListenAddress, config.Network.ListenAddress);
         Assert.Equal(defaults.Network.EnablePingServer, config.Network.EnablePingServer);
@@ -97,6 +102,57 @@ public sealed class ConfigHelperTests
 
         Assert.Equal("Existing data", File.ReadAllText(parent));
     }
+
+    [Theory,
+     InlineData("login", true, false),
+     InlineData("game", false, true),
+     InlineData("standalone", true, true)]
+    public void Load_ServerMode_EnablesExpectedFlags(string mode, bool login, bool game)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = $"mode = \"{mode}\"\n";
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        var config = ConfigHelper.Load(path);
+
+        Assert.Equal(login, config.Mode.HasFlag(ServerMode.Login));
+        Assert.Equal(game, config.Mode.HasFlag(ServerMode.Game));
+        Assert.Equal(toml, File.ReadAllText(path));
+    }
+
+    [Theory,
+     InlineData(ServerMode.Login, "login"),
+     InlineData(ServerMode.Game, "game"),
+     InlineData(ServerMode.Login | ServerMode.Game, "standalone")]
+    public void Load_SerializedServerMode_RoundTripsReadableName(ServerMode mode, string name)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = TomlUtils.Serialize(new MoongateServerConfig { Mode = mode });
+        var document = TomlSerializer.Deserialize<TomlTable>(toml)!;
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        Assert.Equal(name, document["mode"]);
+        Assert.Equal(mode, ConfigHelper.Load(path).Mode);
+    }
+
+    [Theory,
+     InlineData("\"none\""),
+     InlineData("\"invalid\""),
+     InlineData("\"\""),
+     InlineData("0"),
+     InlineData("4"),
+     InlineData("true")]
+    public void Load_InvalidServerMode_RejectsAndPreservesFile(string value)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = $"mode = {value}\n";
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        Assert.Throws<TomlException>(() => ConfigHelper.Load(path));
+
+        Assert.Equal(toml, File.ReadAllText(path));
+    }
+
     [Fact]
     public void Load_WorldSaveDefaults_WriteSnakeCaseAndMapToOptions()
     {

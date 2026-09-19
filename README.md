@@ -56,6 +56,21 @@ published port; a root is meant for one server at a time.
 
 [Dependency security audit](docs/security-audit.md)
 
+## Server mode
+
+Set `mode` at the root of `config/moongate.toml`, before any table headers:
+
+```toml
+mode = "standalone"
+```
+
+Supported values are `"login"`, `"game"`, and `"standalone"`. Omitting the setting
+defaults to standalone. In C#, `MoongateServerConfig.Mode` uses the `ServerMode`
+flags enum, where `Standalone = Login | Game`; an empty or unknown mode is rejected.
+
+This setting currently defines the configuration contract. It does not yet select
+which services start; separate login and game runtimes will use it in a subsequent change.
+
 ## Libraries
 
 The six library packages have their own English READMEs and runnable examples.
