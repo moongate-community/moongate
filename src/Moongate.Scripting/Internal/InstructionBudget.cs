@@ -4,11 +4,11 @@ namespace Moongate.Scripting.Internal;
 
 /// <summary>
 /// Counts VM instructions through the runtime's hook and aborts a unit of execution that runs past the
-/// budget. A unit is either one coroutine resume (<c>Resume</c>) or one top-level chunk
+/// budget. A unit is either one coroutine resume (<see cref="Resume{T}"/>) or one top-level chunk
 /// (<see cref="Chunk{T}"/>); each gets a fresh counter and its own limit, and restores the enclosing
-/// unit's afterwards. The cancellation source is per unit for a chunk or a single-shot call, and per
-/// coroutine for a scheduled coroutine's resumes, which is why <c>Resume</c> has an overload taking the
-/// caller's source.
+/// unit's afterwards. A chunk's cancellation source is its own; a coroutine's belongs to the coroutine
+/// and is passed in, because the runtime checks the token of a coroutine's first resume on every later
+/// one.
 /// </summary>
 /// <remarks>
 /// The hook never throws. In LuaCSharp 0.5.6 a hook that throws leaves the VM's in-hook flag set, so the
@@ -68,20 +68,7 @@ internal sealed class InstructionBudget
     }
 
     /// <summary>
-    /// Runs one single-shot unit — a resume that will never be resumed again — under the per-resume
-    /// limit, on a source of its own. A coroutine the scheduler can resume later must use the overload
-    /// taking its own source instead.
-    /// </summary>
-    /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
-    public T Resume<T>(Func<CancellationToken, T> unit)
-    {
-        using var source = new CancellationTokenSource();
-
-        return Run(source, unit, _maxInstructionsPerResume);
-    }
-
-    /// <summary>
-    /// Runs one resume of a coroutine that owns <paramref name="unitSource"/>, under the per-resume
+    /// Runs one resume of the coroutine that owns <paramref name="unitSource"/>, under the per-resume
     /// limit. The caller's source is used and left open: the runtime keeps the token of a coroutine's
     /// first resume with its suspended frames and checks that one on every later resume, so every
     /// resume of one coroutine must carry the same token for the hook's cancellation to be seen.
