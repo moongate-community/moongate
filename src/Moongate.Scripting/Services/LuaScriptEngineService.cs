@@ -28,10 +28,10 @@ namespace Moongate.Scripting.Services;
 /// <c>coroutine.status</c> and <c>coroutine.running</c> stay, so the prelude's <c>wait</c> keeps working.
 /// </para>
 /// <para>
-/// Memory is bounded only where one instruction can allocate without limit: <c>string.rep</c> is
-/// replaced by a version that refuses a result larger than <see cref="ScriptEngineOptions.MaxStringBytes"/>
-/// with a script error. Other allocations (table constructors, concatenation in a loop) are paid for in
-/// instructions and stay under the budget's control.
+/// Memory is only partly bounded: <c>string.rep</c> is replaced by a version that refuses a result longer
+/// than <see cref="ScriptEngineOptions.MaxStringLength"/> with a script error. Everything else allocates
+/// freely under the instruction budget; a table constructor or a loop that doubles a string with
+/// <c>..</c> can build far more than the budget suggests before it is stopped.
 /// </para>
 /// </remarks>
 public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupService, IDisposable
@@ -321,7 +321,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
     /// <summary>
     /// Replaces <c>string.rep</c> with a version that refuses a result larger than
-    /// <see cref="ScriptEngineOptions.MaxStringBytes"/>: the one standard function that lets a single
+    /// <see cref="ScriptEngineOptions.MaxStringLength"/>: the one standard function that lets a single
     /// instruction allocate without limit. Semantics are otherwise Lua's (a count below one gives "",
     /// an optional separator goes between copies).
     /// </summary>
@@ -332,38 +332,64 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             return;
         }
 
-        var cap = _options.MaxStringBytes;
+        var cap = _options.MaxStringLength;
         stringLibrary["rep"] = new LuaValue(new LuaFunction("string.rep", (context, _) =>
         {
             var text = ReadStringArgument(context, 0);
-            var count = (long)Math.Floor(context.GetArgument<double>(1));
+            var requested = context.GetArgument<double>(1);
+
+            if (double.IsNaN(requested) || double.IsInfinity(requested) || requested != Math.Floor(requested))
+            {
+                throw new LuaRuntimeException(context.State, "bad argument #2 to 'rep' (number has no integer representation)");
+            }
+
             var separator = context.ArgumentCount > 2 && context.GetArgument(2).Type != LuaValueType.Nil ? ReadStringArgument(context, 2) : "";
 
-            if (count <= 0)
+            if (requested <= 0)
             {
                 return new ValueTask<int>(context.Return(""));
             }
 
+            // A count above the cap can only produce an over-cap result (or an empty one for empty
+            // inputs), so it is refused before any arithmetic that could wrap.
+            if (requested > cap)
+            {
+                throw Refuse(context, requested, cap);
+            }
+
+            var count = (int)requested;
             var size = (long)text.Length * count + (long)separator.Length * (count - 1);
 
             if (size > cap)
             {
-                _memoryCapHits++;
-
-                throw new LuaRuntimeException(context.State,
-                    $"string.rep: a result of {size} bytes exceeds the script memory cap of {cap} bytes");
+                throw Refuse(context, size, cap);
             }
 
-            return new ValueTask<int>(context.Return(string.Join(separator, Enumerable.Repeat(text, (int)count))));
+            return new ValueTask<int>(context.Return(string.Join(separator, Enumerable.Repeat(text, count))));
         }));
     }
 
+    /// <summary>Counts a refused <c>string.rep</c> and builds the script error that names the size and the cap.</summary>
+    private LuaRuntimeException Refuse(LuaFunctionExecutionContext context, double size, int cap)
+    {
+        _memoryCapHits++;
+
+        return new LuaRuntimeException(context.State,
+            $"string.rep: a result of {size:0} characters exceeds the script string cap of {cap} characters");
+    }
+
+    /// <summary>Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a bad-argument error.</summary>
     private static string ReadStringArgument(LuaFunctionExecutionContext context, int index)
     {
-        // string.rep coerces numbers to text, as every string function does.
         var value = context.GetArgument(index);
 
-        return value.Type == LuaValueType.String ? value.Read<string>() : value.ToString();
+        return value.Type switch
+        {
+            LuaValueType.String => value.Read<string>(),
+            LuaValueType.Number => value.ToString(),
+            _ => throw new LuaRuntimeException(context.State,
+                $"bad argument #{index + 1} to 'rep' (string expected, got {value.TypeToString()})")
+        };
     }
 
     /// <summary>
