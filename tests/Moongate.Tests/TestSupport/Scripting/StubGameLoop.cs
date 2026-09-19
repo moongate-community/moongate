@@ -16,6 +16,9 @@ public sealed class StubGameLoop : IGameLoopService
     /// <summary>When true, PostAsync reports IsOnLoopThread as true for the duration of the posted item's Execute, restoring the previous value afterwards.</summary>
     public bool SimulateLoopThreadWhilePosting { get; set; }
 
+    /// <summary>When true, PostAsync refuses the item with the real loop's "not accepting work" error after counting the attempt.</summary>
+    public bool ThrowOnPost { get; set; }
+
     public Task StartAsync() => Task.CompletedTask;
     public Task StopAsync() => Task.CompletedTask;
     public Task StopAsync(IGameLoopWorkItem finalWorkItem) => Task.CompletedTask;
@@ -31,6 +34,11 @@ public sealed class StubGameLoop : IGameLoopService
     public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
     {
         PostedWorkItems++;
+
+        if (ThrowOnPost)
+        {
+            throw new InvalidOperationException("The game loop is not accepting work.");
+        }
 
         if (!SimulateLoopThreadWhilePosting)
         {
