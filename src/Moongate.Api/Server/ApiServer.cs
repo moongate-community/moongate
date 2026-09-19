@@ -82,22 +82,6 @@ public sealed class ApiServer : IApiServer
         _slots = new(options.MaxConcurrentHandlers, options.MaxConcurrentHandlers);
     }
 
-    public ValueTask DisposeAsync()
-    {
-        Task dispose;
-
-        lock (_gate)
-        {
-            _disposeRequested = true;
-            BeginStop();
-            _disposeCompletion ??= DisposeCoreAsync(_stopCompletion!);
-            _ = ApiShutdown.ObserveAsync(_disposeCompletion);
-            dispose = _disposeCompletion;
-        }
-
-        return new(ApiShutdown.WaitAsync(dispose, ForceClose, _options.ShutdownTimeout, _clock, Remaining));
-    }
-
     public Task StartAsync(CancellationToken cancellationToken = default)
     {
         Task start;
@@ -331,5 +315,21 @@ public sealed class ApiServer : IApiServer
             if (ReferenceEquals(_tcp, tcp)) { _tcp = null; }
         }
         Logger.Information("API listener stopped");
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Task dispose;
+
+        lock (_gate)
+        {
+            _disposeRequested = true;
+            BeginStop();
+            _disposeCompletion ??= DisposeCoreAsync(_stopCompletion!);
+            _ = ApiShutdown.ObserveAsync(_disposeCompletion);
+            dispose = _disposeCompletion;
+        }
+
+        return new(ApiShutdown.WaitAsync(dispose, ForceClose, _options.ShutdownTimeout, _clock, Remaining));
     }
 }

@@ -14,11 +14,6 @@ internal sealed class ApiConnectionAdmission : IDisposable
         _release = release;
     }
 
-    public void Dispose()
-    {
-        if (Interlocked.Exchange(ref _owner, Released) != Released) { _release(); }
-    }
-
     public void ReleaseTransport()
     {
         if (Interlocked.CompareExchange(ref _owner, Released, SetupOwner) == SetupOwner) { _release(); }
@@ -30,5 +25,10 @@ internal sealed class ApiConnectionAdmission : IDisposable
         {
             throw new IOException("The API setup reservation is no longer available.");
         }
+    }
+
+    public void Dispose()
+    {
+        if (Interlocked.Exchange(ref _owner, Released) != Released) { _release(); }
     }
 }

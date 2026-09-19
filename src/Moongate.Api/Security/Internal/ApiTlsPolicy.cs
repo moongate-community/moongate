@@ -59,13 +59,6 @@ internal sealed class ApiTlsPolicy : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        _certificate.Dispose();
-
-        foreach (var root in _roots) { root.Dispose(); }
-    }
-
     public async ValueTask<Stream> PrepareClientAsync(
         Stream stream,
         string targetHost,
@@ -203,5 +196,12 @@ internal sealed class ApiTlsPolicy : IDisposable
         identity = peer;
 
         return true;
+    }
+
+    public void Dispose()
+    {
+        _certificate.Dispose();
+
+        foreach (var root in _roots) { root.Dispose(); }
     }
 }

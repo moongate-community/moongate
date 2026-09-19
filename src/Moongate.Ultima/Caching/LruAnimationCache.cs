@@ -109,27 +109,6 @@ public sealed class LruAnimationCache : IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        lock (_lock)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
-
-            foreach (var kvp in _list)
-            {
-                DisposeFrames(kvp.Value);
-            }
-
-            _list.Clear();
-            _map.Clear();
-        }
-    }
-
     public bool Remove(long key)
     {
         lock (_lock)
@@ -266,6 +245,27 @@ public sealed class LruAnimationCache : IDisposable
             {
                 DisposeFrames(lru.Value.Value);
             }
+        }
+    }
+
+    public void Dispose()
+    {
+        lock (_lock)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            foreach (var kvp in _list)
+            {
+                DisposeFrames(kvp.Value);
+            }
+
+            _list.Clear();
+            _map.Clear();
         }
     }
 }

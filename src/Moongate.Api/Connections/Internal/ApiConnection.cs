@@ -76,12 +76,6 @@ internal sealed class ApiConnection : IApiConnection
         return Task.CompletedTask;
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await CloseAsync().ConfigureAwait(false);
-        await Completion.WaitAsync(_options.ShutdownTimeout, _clock).ConfigureAwait(false);
-    }
-
     public Task DrainAsync()
     {
         lock (_gate)
@@ -202,5 +196,11 @@ internal sealed class ApiConnection : IApiConnection
             }
             finally { _admission?.Dispose(); }
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await CloseAsync().ConfigureAwait(false);
+        await Completion.WaitAsync(_options.ShutdownTimeout, _clock).ConfigureAwait(false);
     }
 }

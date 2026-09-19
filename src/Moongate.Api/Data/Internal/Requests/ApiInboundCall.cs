@@ -46,6 +46,19 @@ internal sealed class ApiInboundCall : IAsyncDisposable
         }
     }
 
+    public bool TryFinish()
+    {
+        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0) { return false; }
+
+        lock (_gate)
+        {
+            _timer?.Dispose();
+            _timer = null;
+        }
+
+        return true;
+    }
+
     public async ValueTask DisposeAsync()
     {
         Task cancelled;
@@ -61,18 +74,5 @@ internal sealed class ApiInboundCall : IAsyncDisposable
 
         try { await cancelled.ConfigureAwait(false); }
         finally { _cancellation.Dispose(); }
-    }
-
-    public bool TryFinish()
-    {
-        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0) { return false; }
-
-        lock (_gate)
-        {
-            _timer?.Dispose();
-            _timer = null;
-        }
-
-        return true;
     }
 }

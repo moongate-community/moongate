@@ -184,9 +184,6 @@ public sealed class TileMatrix : IDisposable
         _statics?.Close();
     }
 
-    public void Dispose()
-        => CloseStreams();
-
     public Tile[] GetLandBlock(int x, int y, bool patch = true)
     {
         if (x < 0 || y < 0 || x >= BlockWidth || y >= BlockHeight)
@@ -561,4 +558,7 @@ public sealed class TileMatrix : IDisposable
             }
         } while (_uopReader.BaseStream.Seek(nextBlock, SeekOrigin.Begin) != 0);
     }
+
+    public void Dispose()
+        => CloseStreams();
 }

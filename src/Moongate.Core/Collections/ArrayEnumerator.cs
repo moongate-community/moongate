@@ -35,8 +35,6 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
         }
     }
 
-    public void Dispose() { }
-
     public bool MoveNext()
     {
         var localList = _array;
@@ -59,4 +57,6 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
         _index = 0;
         Current = default;
     }
+
+    public void Dispose() { }
 }

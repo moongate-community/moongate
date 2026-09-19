@@ -78,6 +78,11 @@ private readonly DirectoriesConfig _directoriesConfig;
 
 If a class implements `IDisposable` or `IAsyncDisposable`, `Dispose`/`DisposeAsync` must be the last method(s) in the file.
 
+An IDE rearrange pass sorts members by kind and accessibility, which lifts `Dispose` above the methods it
+tears down. EditorConfig has no member-ordering property and `dotnet format` never reorders members, so this
+rule lives in `Moongate.slnx.DotSettings` — Rider's *Rearrange Members* reads the file layout from there — and
+`tests/Moongate.Tests/Conventions/DisposeMemberOrderTests.cs` fails the build when a formatter moves them.
+
 ## 5. Interfaces
 
 - Interfaces live only under `Interfaces` namespaces.
