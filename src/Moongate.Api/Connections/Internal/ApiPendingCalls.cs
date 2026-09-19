@@ -18,6 +18,8 @@ internal sealed class ApiPendingCalls
     private readonly Dictionary<uint, ApiPendingCall> _pending = [];
     private uint _lastAssignedId;
     private Exception? _closed;
+    private bool _accepting = true;
+    private readonly TaskCompletionSource _drained = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public uint LastAssignedId { get { lock (_outbox.SyncRoot) { return _lastAssignedId; } } }
     public int Count { get { lock (_outbox.SyncRoot) { return _reservations.Count; } } }
     public Task Completion { get; }
@@ -51,7 +53,7 @@ internal sealed class ApiPendingCalls
         var started = _clock.GetTimestamp();
         lock (_outbox.SyncRoot)
         {
-            if (_closed is not null) { throw new IOException("The API connection is closed.", _closed); }
+            if (!_accepting || _closed is not null) { throw new IOException("The API connection is closed.", _closed); }
             if (_reservations.Count >= _options.MaxPendingCalls) { throw new ApiBusyException(); }
             _reservations.Add(call);
         }
@@ -109,14 +111,37 @@ internal sealed class ApiPendingCalls
         return true;
     }
 
+    public bool IsPendingResponse(uint requestId, ushort operationId)
+    {
+        lock (_outbox.SyncRoot)
+        {
+            if (requestId == 0 || requestId > _lastAssignedId) { throw new ApiProtocolException("Response references a never-assigned request."); }
+            if (!_pending.TryGetValue(requestId, out var call)) { return false; }
+            if (call.Operation.Id != operationId) { throw new ApiProtocolException("Response operation does not match the request."); }
+            return true;
+        }
+    }
+
+    public Task StopAdmission()
+    {
+        lock (_outbox.SyncRoot)
+        {
+            _accepting = false;
+            if (_reservations.Count == 0) { _drained.TrySetResult(); }
+            return _drained.Task;
+        }
+    }
+
     public void FailAll(Exception error)
     {
         ApiPendingCall[] calls;
         lock (_outbox.SyncRoot)
         {
             _closed ??= error;
+            _accepting = false;
             calls = _reservations.ToArray();
             foreach (var call in calls) { Remove(call); }
+            _drained.TrySetResult();
         }
         foreach (var call in calls) { call.Release(); call.Source.TrySetException(error); }
     }
@@ -124,6 +149,7 @@ internal sealed class ApiPendingCalls
     private bool Remove(ApiPendingCall call)
     {
         if (!_reservations.Remove(call)) { return false; }
+        if (!_accepting && _reservations.Count == 0) { _drained.TrySetResult(); }
         if (call.RequestId != 0) { _pending.Remove(call.RequestId); _outbox.TryRemove(call.RequestId); }
         return true;
     }

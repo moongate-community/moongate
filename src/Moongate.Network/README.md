@@ -67,3 +67,5 @@ TCP is a byte stream. Configure framing for your application protocol; transport
 ## License and source
 
 Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
+
+For graceful application shutdown, `StopAcceptingAsync()` closes the listener and cancels unfinished stream preparation while established connections remain usable. Drain application work, then call `StopAsync()` or `DisposeAsync()`. A new listener generation requires a complete stop before restart.

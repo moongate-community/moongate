@@ -11,6 +11,34 @@ public sealed class ConnectionPreparationTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
+    public async Task StopAcceptingAsync_KeepsExistingConnectionUsableUntilStop()
+    {
+        var received = new TaskCompletionSource<byte>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
+        {
+            ConnectionPipelineFactory = () => new ConnectionPipeline
+            {
+                ConfigureClient = client =>
+                {
+                    client.OnConnected += (_, _) => connected.TrySetResult();
+                    client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0]);
+                }
+            }
+        });
+        await server.StartAsync(CancellationToken.None);
+        using var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        await client.ConnectAsync(server.Endpoint);
+        await connected.Task.WaitAsync(Timeout);
+        await server.StopAcceptingAsync();
+        await client.SendAsync(new byte[] { 42 });
+        Assert.Equal(42, await received.Task.WaitAsync(Timeout));
+        await server.StopAsync(CancellationToken.None);
+        await server.StartAsync(CancellationToken.None);
+        Assert.True(server.IsRunning);
+    }
+
+    [Fact]
     public async Task PrepareAsync_SlowFirstConnection_DoesNotBlockSecondConnection()
     {
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
