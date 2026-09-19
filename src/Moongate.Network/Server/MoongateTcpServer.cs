@@ -2,10 +2,12 @@ using System.Net;
 using System.Net.Sockets;
 using Moongate.Network.Client;
 using Moongate.Network.Data;
+using Moongate.Network.Data.Config;
 using Moongate.Network.Data.Events;
 using Moongate.Network.Interfaces.Framing;
 using Moongate.Network.Interfaces.Middleware;
 using Moongate.Network.Interfaces.Server;
+using Moongate.Network.Server.Internal;
 using Moongate.Network.Types.Server;
 using Serilog;
 
@@ -35,6 +37,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private readonly Dictionary<long, MoongateTcpClient> _clients = new();
     private readonly Dictionary<long, TaskCompletionSource> _clientStarts = new();
     private readonly Dictionary<long, Task> _clientCleanups = new();
+    private readonly HashSet<AcceptedConnectionSetup> _setups = [];
     private readonly List<Exception> _cleanupErrors = [];
     private readonly Func<ConnectionPipeline>? _connectionPipelineFactory;
     private readonly IPEndPoint _endPoint;
@@ -43,6 +46,9 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private readonly int _receiveBufferSize;
     private readonly int _maxFrameLength;
     private readonly bool _noDelay;
+    private readonly TcpServerOptions? _configuredOptions;
+    private int _admittedConnections;
+    private int _preparingConnections;
     private INetMiddleware[] _middlewares = [];
     private TcpServerState _state;
     private bool _disposeRequested;
@@ -126,6 +132,22 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         _connectionPipelineFactory = connectionPipelineFactory;
         _maxFrameLength = maxFrameLength;
         _noDelay = noDelay;
+    }
+
+    /// <summary>Creates a listener with bounded, asynchronous stream preparation.</summary>
+    public static MoongateTcpServer CreateConfigured(IPEndPoint endpoint, TcpServerOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(options);
+        options.Validate();
+        return new MoongateTcpServer(endpoint, options);
+    }
+
+    private MoongateTcpServer(IPEndPoint endpoint, TcpServerOptions options)
+        : this(endpoint, options.Framer, options.ReceiveBufferSize,
+            options.ConnectionPipelineFactory, options.MaxFrameLength, options.NoDelay)
+    {
+        _configuredOptions = options;
     }
 
     /// <inheritdoc />
@@ -336,6 +358,16 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
                 errors.Add(exception);
             }
             await _acceptLoopTask.ConfigureAwait(false);
+            AcceptedConnectionSetup[] setups;
+            lock (_lifecycleSync)
+            {
+                setups = _setups.ToArray();
+            }
+            foreach (var setup in setups)
+            {
+                setup.Socket.Dispose();
+            }
+            await Task.WhenAll(setups.Select(setup => setup.Completion.Task)).ConfigureAwait(false);
             MoongateTcpClient[] clients;
 
             lock (_lifecycleSync)
@@ -457,6 +489,12 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
                 continue;
             }
 
+            if (_configuredOptions is not null)
+            {
+                AdmitPreparation(accepted, cancellationToken);
+                continue;
+            }
+
             MoongateTcpClient? client = null;
             TaskCompletionSource? started = null;
 
@@ -508,6 +546,124 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
+    private void AdmitPreparation(Socket socket, CancellationToken generationToken)
+    {
+        AcceptedConnectionSetup? setup = null;
+        lock (_lifecycleSync)
+        {
+            if (_state == TcpServerState.Running && !generationToken.IsCancellationRequested &&
+                _admittedConnections < _configuredOptions!.MaxConnections &&
+                _preparingConnections < _configuredOptions.MaxConcurrentPreparations)
+            {
+                setup = new AcceptedConnectionSetup(socket);
+                _admittedConnections++;
+                _preparingConnections++;
+                _setups.Add(setup);
+            }
+        }
+        if (setup is null)
+        {
+            socket.Dispose();
+            return;
+        }
+        _ = PrepareAcceptedAsync(setup, generationToken);
+    }
+
+    private async Task PrepareAcceptedAsync(AcceptedConnectionSetup setup, CancellationToken generationToken)
+    {
+        // Start asynchronously so even a synchronously completing preparer cannot block accept.
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+        Stream? stream = null;
+        MoongateTcpClient? client = null;
+        TaskCompletionSource? started = null;
+        var promoted = false;
+        var options = _configuredOptions!;
+        using var deadline = new CancellationTokenSource(options.PreparationTimeout, options.TimeProvider);
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(generationToken, deadline.Token);
+        try
+        {
+            lifetime.Token.ThrowIfCancellationRequested();
+            var pipeline = _connectionPipelineFactory?.Invoke() ?? new ConnectionPipeline();
+            stream = new NetworkStream(setup.Socket, ownsSocket: false);
+            if (pipeline.PrepareStreamAsync is { } prepare)
+            {
+                var prepared = await prepare(stream, lifetime.Token).ConfigureAwait(false);
+                stream = prepared ?? throw new InvalidOperationException("Preparation returned no stream.");
+            }
+            lifetime.Token.ThrowIfCancellationRequested();
+            if (!stream.CanRead || !stream.CanWrite)
+            {
+                throw new InvalidOperationException("Preparation must return a readable and writable stream.");
+            }
+            client = new MoongateTcpClient(setup.Socket, stream,
+                pipeline.Middlewares ?? Volatile.Read(ref _middlewares), pipeline.Framer ?? _framer,
+                pipeline.Codec, _receiveBufferSize, _maxFrameLength, _noDelay);
+            started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            lock (_lifecycleSync)
+            {
+                generationToken.ThrowIfCancellationRequested();
+                if (_state != TcpServerState.Running)
+                {
+                    throw new OperationCanceledException(generationToken);
+                }
+                _clients.Add(client.SessionId, client);
+                _clientStarts.Add(client.SessionId, started);
+                _preparingConnections--;
+                promoted = true;
+            }
+            WireClientEvents(client);
+            pipeline.ConfigureClient?.Invoke(client);
+            await client.StartAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            if (promoted)
+            {
+                _ = GetOrStartClientCleanup(client!);
+            }
+            if (!generationToken.IsCancellationRequested)
+            {
+                ReportException(new(exception, client));
+            }
+        }
+        finally
+        {
+            started?.TrySetResult();
+            if (!promoted)
+            {
+                try
+                {
+                    if (client is not null)
+                    {
+                        await client.DisposeAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (stream is not null) { await stream.DisposeAsync().ConfigureAwait(false); }
+                        }
+                        finally { setup.Socket.Dispose(); }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    lock (_lifecycleSync) { _cleanupErrors.Add(exception); }
+                }
+            }
+            lock (_lifecycleSync)
+            {
+                if (!promoted)
+                {
+                    _admittedConnections--;
+                    _preparingConnections--;
+                }
+                _setups.Remove(setup);
+                setup.Completion.TrySetResult();
+            }
+        }
+    }
+
     private Task GetOrStartClientCleanup(MoongateTcpClient client)
     {
         TaskCompletionSource completion;
@@ -554,7 +710,10 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         {
             lock (_lifecycleSync)
             {
-                _clients.Remove(client.SessionId);
+                if (_clients.Remove(client.SessionId) && _configuredOptions is not null)
+                {
+                    _admittedConnections--;
+                }
                 _clientStarts.Remove(client.SessionId);
                 _clientCleanups.Remove(client.SessionId);
                 completion.TrySetResult();

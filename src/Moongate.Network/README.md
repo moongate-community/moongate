@@ -12,6 +12,14 @@ wrapper created before throwing. After successful setup, the client owns both th
 prepared stream and socket. Configuration failure also releases both resources.
 The existing `ConnectAsync` overload remains available with its original behavior.
 
+Use `MoongateTcpServer.CreateConfigured(endpoint, options)` for the corresponding
+accepted-connection preparation path. `TcpServerOptions` bounds both admitted
+connections and concurrent preparation operations; excess sockets close immediately.
+A slow TLS handshake does not block accepting another connection. Server stop cancels
+preparation, drains the admitted setups and owns their socket cleanup before a restart.
+Preparation callbacks must observe cancellation. The legacy constructor retains its
+original admission behavior; preparation callbacks are enabled by the configured entry points.
+
 Standalone asynchronous TCP transport with framing, middleware, and per-connection pipelines for .NET applications.
 
 ## Installation
