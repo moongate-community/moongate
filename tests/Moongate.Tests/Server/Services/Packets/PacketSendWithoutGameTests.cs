@@ -91,6 +91,37 @@ public sealed class PacketSendWithoutGameTests
     }
 
     [Fact]
+    public async Task RequestedClose_InterruptsActiveSocketWriteWithoutReportingASendFailure()
+    {
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        await using var registry = await ConnectionRegistryFixture.CreateAsync();
+        using var connection = new ControlledNetworkConnection(17)
+        {
+            SendGate = release.Task,
+            SendFailure = new IOException("write interrupted by local close")
+        };
+        registry.Service.TryRegister(connection);
+        var sender = new PacketSendService(registry.Service);
+        await sender.StartAsync();
+        try
+        {
+            Assert.True(sender.TrySend(17, new PingPacket(1)));
+            await connection.SendStarted.WaitAsync(Timeout);
+            var stopping = sender.StopAsync();
+            await connection.CloseRequested.WaitAsync(Timeout);
+            Assert.False(stopping.IsCompleted);
+            release.TrySetResult();
+            await stopping.WaitAsync(Timeout);
+            Assert.Equal(0, sender.ActiveOutboxCount);
+        }
+        finally
+        {
+            release.TrySetResult();
+            await sender.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+        }
+    }
+
+    [Fact]
     public async Task SendFailure_ClosesTransportAndRemainsObservableAtStop()
     {
         var connections = new ConnectionService();

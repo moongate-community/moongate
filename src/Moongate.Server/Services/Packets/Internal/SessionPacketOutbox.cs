@@ -75,7 +75,14 @@ internal sealed class SessionPacketOutbox
         await foreach (var frame in _queue.Reader.ReadAllAsync().ConfigureAwait(false))
         {
             if (Volatile.Read(ref _closed) != 0 || !Connection.IsConnected) { break; }
-            await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
+            try { await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false); }
+            catch (Exception exception) when (Volatile.Read(ref _closed) != 0 &&
+                                              exception is IOException or ObjectDisposedException or OperationCanceledException)
+            {
+                // A requested local close can interrupt an active write with a platform-specific socket error.
+                // Classify it here, before RunAsync requests closure in response to a genuine send failure.
+                break;
+            }
         }
     }
 }

@@ -10,6 +10,8 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Services.Game;
+using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Handlers.General;
 using Moongate.Server.Handlers.Login;
 using Moongate.Server.Services.GameLoop;
@@ -30,6 +32,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
     public PacketDispatchService Dispatcher { get; }
     public PacketSendService Sender { get; }
     public NetworkService Network { get; }
+    public GameServerService Game { get; }
     public IReadOnlyList<MoongateTcpServer> Listeners => Network.Listeners;
 
     public PacketNetworkFixture(IReadOnlyList<MoongateTcpServer>? listeners = null, Func<long, Task>? disconnectSender = null)
@@ -47,8 +50,10 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         Dispatcher = new PacketDispatchService(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
         _container.RegisterInstance<IPacketDispatchService>(Dispatcher);
         _container.RegisterInstance(new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } });
-        _container.Register<NetworkService>();
-        Network = listeners is null ? _container.Resolve<NetworkService>() : new NetworkService(listeners, Sessions, Dispatcher, networkSender, Connections);
+        Network = listeners is null
+            ? new NetworkService(GameNetworkOptionsFactory.Create(_container.Resolve<MoongateServerConfig>()), Connections)
+            : new NetworkService(listeners, Connections);
+        Game = new GameServerService(Network, Connections, Sessions, Dispatcher, networkSender);
     }
 
     public async Task StartAsync()
@@ -57,7 +62,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         await Connections.StartAsync();
         await Sender.StartAsync();
         await Dispatcher.StartAsync();
-        await Network.StartAsync();
+        await Game.StartAsync();
     }
 
     public async Task<TcpClient> ConnectAsync()
@@ -70,7 +75,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         List<Exception> failures = [];
-        foreach (var service in new IMoongateStartupService[] { Network, Dispatcher, Sender, Connections, Loop })
+        foreach (var service in new IMoongateStartupService[] { Game, Dispatcher, Sender, Connections, Loop })
         {
             try { await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5)); }
             catch (Exception exception) { failures.Add(exception); }
