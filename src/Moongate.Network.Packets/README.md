@@ -44,6 +44,34 @@ if (!registry.TryDecode(bytes, out var packet, out var opCode)
 Console.WriteLine($"{opCode:X2}:{ping.Sequence}");
 ```
 
+## Binary span utilities
+
+`Moongate.Network.Packets.Spans` also exposes `SpanReader`, `SpanWriter`, and `SpanOwner`
+for standalone binary serialization. They support signed and unsigned primitives,
+big- and little-endian values, ASCII/UTF-8/UTF-16 strings, seeking, and packet-length
+patching. `SpanReader` provides throwing reads and strict `TryRead` methods.
+
+For generic string reads and writes, `fixedLength` describes a field in encoding
+units: bytes for ASCII/UTF-8, 16-bit units for UTF-16, and 32-bit units for UTF-32.
+The legacy writer truncates the input to at most `fixedLength` UTF-16 code units,
+then encodes and zero-pads the field. If that prefix exceeds the encoded field
+width, it throws before modifying the destination.
+
+Construct a `SpanWriter` with a caller-owned `Span<byte>` for a fixed buffer, or with
+an initial capacity to rent a pooled buffer. Pass `resize: true` to enable growth.
+`EnsureCapacity` reserves total capacity; `EnsureRemainingCapacity` reserves space
+after the current cursor. `ToArray` copies the written payload; `ToSpan` transfers a
+pooled buffer to a disposable `SpanOwner` (or copies a caller-owned buffer) and resets
+the writer.
+
+Dispose writers in a `finally` block and dispose each returned owner after use.
+Pass pooled writers by `ref`: copying them would duplicate ownership of the same
+buffer. Do not retain spans across growth, ownership transfer, or disposal.
+
+Existing packet implementations continue to use `PacketReader` and `PacketWriter`.
+Their public signatures and fixed-buffer behavior are unchanged; use the standalone
+helpers when writing binary data outside those packet contracts.
+
 ## Dependencies and scope
 
 This package depends on `Moongate.Core`. It does not require `Moongate.Network` to encode or decode packets.
