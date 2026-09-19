@@ -23,7 +23,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
         _state.OpenMathLibrary();
         _budget = new InstructionBudget(_state, maxInstructionsPerResume: 5_000, hookInterval: 100);
         _budget.Install();
-        _scheduler = new CoroutineScheduler(_state, _timers, _budget, _ownership, _errors.Add);
+        _scheduler = new CoroutineScheduler(_state, _timers, _budget, _ownership, _errors.Add, () => "test.lua");
         SyncValueTask.Run(_state.DoStringAsync("function wait(s) return coroutine.yield('wait', s) end", "prelude", default));
     }
 

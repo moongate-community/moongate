@@ -1,6 +1,7 @@
 using Lua;
 using Lua.Runtime;
 using Moongate.Scripting.Data.Scripts;
+using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Scripting.Internal;
@@ -10,7 +11,7 @@ namespace Moongate.Scripting.Internal;
 /// wheel. There is no run queue: the wheel's callback, already on the loop thread, resumes the coroutine.
 /// Nothing thrown by Lua leaves this class; every failure becomes a ScriptResult and an onError call.
 /// </summary>
-internal sealed class CoroutineScheduler
+internal sealed class CoroutineScheduler : IScriptScheduler
 {
     private const string WaitTag = "wait";
     private static readonly double MaxWaitSeconds = TimeSpan.MaxValue.TotalSeconds;
@@ -20,6 +21,7 @@ internal sealed class CoroutineScheduler
     private readonly InstructionBudget _budget;
     private readonly ScriptOwnership _ownership;
     private readonly Action<ScriptErrorInfo> _onError;
+    private readonly Func<string?> _currentOwner;
     private readonly Dictionary<Guid, ScheduledCoroutine> _active = new();
     private readonly LuaStack _stack = new(32);
     private bool _resuming;
@@ -30,12 +32,16 @@ internal sealed class CoroutineScheduler
     public long Errors { get; private set; }
     public long BudgetAborts { get; private set; }
 
+    /// <summary>Gets the file whose code is executing, used as the owner of anything it schedules; null outside a file load.</summary>
+    public string? CurrentOwner => _currentOwner();
+
     public CoroutineScheduler(
         LuaState state,
         ITimerService timers,
         InstructionBudget budget,
         ScriptOwnership ownership,
-        Action<ScriptErrorInfo> onError
+        Action<ScriptErrorInfo> onError,
+        Func<string?> currentOwner
     )
     {
         _state = state;
@@ -43,6 +49,7 @@ internal sealed class CoroutineScheduler
         _budget = budget;
         _ownership = ownership;
         _onError = onError;
+        _currentOwner = currentOwner;
     }
 
     /// <summary>Starts <paramref name="function"/> as a coroutine owned by <paramref name="owner"/> and runs it until it returns, waits, or fails.</summary>
