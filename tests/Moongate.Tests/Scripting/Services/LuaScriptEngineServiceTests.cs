@@ -33,7 +33,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             .Subscribe<ScriptErrorEvent>((evt, _) => { _events.Add(evt); return Task.CompletedTask; });
     }
 
-    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000)
+    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000, int maxStringLength = 16 * 1024 * 1024)
     {
         var options = new ScriptEngineOptions
         {
@@ -41,7 +41,8 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             MaxInstructionsPerResume = 20_000,
             MaxInstructionsPerChunk = maxInstructionsPerChunk,
             HookInterval = 100,
-            WriteDefinitions = writeDefinitions
+            WriteDefinitions = writeDefinitions,
+            MaxStringLength = maxStringLength
         };
 
         return new LuaScriptEngineService(
@@ -206,6 +207,54 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task StringRep_OverTheCap_RaisesAScriptError_AndCountsTheHit()
+    {
+        _scripts.Write("init.lua", """
+            ok, err = pcall(string.rep, 'x', 2000)
+            small = string.rep('ab', 3, '-')
+            empty = string.rep('x', 0)
+            numeric = string.rep(7, 2)
+            _, wrap = pcall(string.rep, 'abc', 6148914691236516864)
+            _, huge_empty = pcall(string.rep, '', 3e9)
+            _, wrong_type = pcall(string.rep, nil, 3)
+            _, fractional = pcall(string.rep, 'x', 1.5)
+            function report() return ok, err, small, empty, numeric, wrap, huge_empty, wrong_type, fractional end
+            """);
+        using var engine = NewEngine(maxStringLength: 1024);
+        await engine.StartAsync();
+
+        var values = engine.Call("report").Values;
+
+        Assert.Equal(false, values[0]);
+        Assert.Contains("string.rep: a result of 2000 characters exceeds the script string cap of 1024 characters", (string)values[1]!, StringComparison.Ordinal);
+        Assert.Equal("ab-ab-ab", values[2]);
+        Assert.Equal("", values[3]);
+        Assert.Equal("77", values[4]);
+        // A count that would wrap the size arithmetic, and one that would overflow the repeat count, are refused before any allocation.
+        Assert.Contains("exceeds the script string cap", (string)values[5]!, StringComparison.Ordinal);
+        Assert.Contains("exceeds the script string cap", (string)values[6]!, StringComparison.Ordinal);
+        Assert.Contains("bad argument #1 to 'rep' (string expected, got nil)", (string)values[7]!, StringComparison.Ordinal);
+        Assert.Contains("bad argument #2 to 'rep' (number has no integer representation)", (string)values[8]!, StringComparison.Ordinal);
+        Assert.Equal(3, engine.GetMetrics().StringCapHits);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
+    public async Task LoadFile_StringRepOverTheCap_ReportsAScriptError()
+    {
+        _scripts.Write("ai/huge.lua", "return string.rep('0123456789', 200)");
+        using var engine = NewEngine(maxStringLength: 1024);
+        await engine.StartAsync();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => engine.LoadFile("ai/huge.lua"));
+
+        Assert.Contains("exceeds the script string cap", exception.Message, StringComparison.Ordinal);
+        Assert.Single(_events);
+        Assert.Equal(1, engine.GetMetrics().StringCapHits);
+        Assert.Equal(0, engine.GetMetrics().BudgetAborts);
+    }
+
+    [Fact]
     public async Task LoadFile_RunawayChunk_IsAbortedAndCounted()
     {
         _scripts.Write("init.lua", "function check_loaded() return loaded_after_the_abort == true end");
@@ -275,28 +324,19 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     public async Task Print_IsRoutedToTheLog_UnderTheCallingScript()
     {
         var sink = new CapturingLogSink();
-        var previous = Log.Logger;
-        Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger();
+        // The engine takes script output from a logger registered in the container, so no global swap
+        // is needed and tests in other classes cannot interfere.
+        _container.RegisterInstance<ILogger>(new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger());
+        _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
+        using var engine = NewEngine();
 
-        try
-        {
-            _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
-            // The engine captures its logger when it is constructed, so the swap above must precede NewEngine();
-            // the template filter below keeps events from other test classes out of the assertion.
-            using var engine = NewEngine();
+        await engine.StartAsync();
 
-            await engine.StartAsync();
-
-            var printed = Assert.Single(sink.Events, e => e.MessageTemplate.Text == "{ScriptFile}: {Output}");
-            Assert.Equal(LogEventLevel.Information, printed.Level);
-            Assert.Equal("a\t1\tnil\ttrue\tcustom", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
-            Assert.Equal("init.lua", Assert.IsType<ScalarValue>(printed.Properties["ScriptFile"]).Value);
-            Assert.Equal(typeof(LogModule).FullName, Assert.IsType<ScalarValue>(printed.Properties["SourceContext"]).Value);
-        }
-        finally
-        {
-            Log.Logger = previous;
-        }
+        var printed = Assert.Single(sink.Events, e => e.MessageTemplate.Text == "{ScriptFile}: {Output}");
+        Assert.Equal(LogEventLevel.Information, printed.Level);
+        Assert.Equal("a\t1\tnil\ttrue\tcustom", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
+        Assert.Equal("init.lua", Assert.IsType<ScalarValue>(printed.Properties["ScriptFile"]).Value);
+        Assert.Equal(typeof(LogModule).FullName, Assert.IsType<ScalarValue>(printed.Properties["SourceContext"]).Value);
     }
 
     [Fact]

@@ -22,6 +22,12 @@ public sealed class ScriptEngineOptions
     /// <summary>How often, in instructions, the budget hook runs.</summary>
     public int HookInterval { get; init; } = 1_000;
 
+    /// <summary>
+    /// Largest string, in characters, that <c>string.rep</c> may build in one call. The instruction budget cannot
+    /// see allocation, so this is the one place a single instruction could otherwise exhaust memory.
+    /// </summary>
+    public int MaxStringLength { get; init; } = 16 * 1024 * 1024;
+
     /// <summary>Whether .luarc.json and definitions.lua are written at startup.</summary>
     public bool WriteDefinitions { get; init; } = true;
 
@@ -35,6 +41,7 @@ public sealed class ScriptEngineOptions
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerResume);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerChunk);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(HookInterval);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxStringLength);
 
         if (HookInterval > MaxInstructionsPerResume)
         {

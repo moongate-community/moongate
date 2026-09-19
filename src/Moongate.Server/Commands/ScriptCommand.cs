@@ -67,5 +67,6 @@ public sealed class ScriptCommand : ICommandExecutor
         context.Print("Coroutine errors: {0}", metrics.Errors);
         context.Print("Budget aborts: {0}", metrics.BudgetAborts);
         context.Print("Active coroutines: {0}", metrics.ActiveCoroutines);
+        context.Print("String cap hits: {0}", metrics.StringCapHits);
     }
 }

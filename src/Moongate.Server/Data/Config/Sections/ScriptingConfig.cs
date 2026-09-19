@@ -20,6 +20,9 @@ public sealed class ScriptingConfig
     /// <summary>Gets or sets whether .luarc.json and definitions.lua are written at startup.</summary>
     public bool WriteDefinitions { get; set; } = true;
 
+    /// <summary>Gets or sets the largest string, in characters, that string.rep may build in one call.</summary>
+    public int MaxStringLength { get; set; } = 16 * 1024 * 1024;
+
     /// <summary>Validates the section before server services begin startup: a bootstrap file name, positive budgets, and a hook interval within both budgets.</summary>
     public void Validate()
     {
@@ -31,6 +34,7 @@ public sealed class ScriptingConfig
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerResume, nameof(MaxInstructionsPerResume));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerChunk, nameof(MaxInstructionsPerChunk));
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(HookInterval, nameof(HookInterval));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxStringLength, nameof(MaxStringLength));
 
         if (HookInterval > MaxInstructionsPerResume || HookInterval > MaxInstructionsPerChunk)
         {
@@ -48,7 +52,8 @@ public sealed class ScriptingConfig
             MaxInstructionsPerResume = MaxInstructionsPerResume,
             MaxInstructionsPerChunk = MaxInstructionsPerChunk,
             HookInterval = HookInterval,
-            WriteDefinitions = WriteDefinitions
+            WriteDefinitions = WriteDefinitions,
+            MaxStringLength = MaxStringLength
         };
         options.Validate();
 
