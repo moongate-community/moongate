@@ -8,6 +8,9 @@ using Moongate.Api.Interfaces.Connections;
 using Moongate.Api.Interfaces.Server;
 using Moongate.Api.Registry;
 using Moongate.Api.Security.Internal;
+using Moongate.Api.Streams.Internal;
+using Moongate.Api.Exceptions;
+using Moongate.Network.Data;
 using Moongate.Network.Client;
 using Moongate.Network.Data.Config;
 using Moongate.Network.Server;
@@ -34,6 +37,7 @@ public sealed class ApiServer : IApiServer
     private bool _running;
     private bool _stopping;
     private bool _disposeRequested;
+    private int _admitted;
     public IPEndPoint? Endpoint { get { lock (_gate) { return _running && !_stopping ? _tcp!.Endpoint : null; } } }
     public IReadOnlyList<IApiConnection> Connections
     {
@@ -98,7 +102,7 @@ public sealed class ApiServer : IApiServer
             PreparationTimeout = _options.HandshakeTimeout,
             MaxFrameLength = _options.MaxFrameLength + 4,
             TimeProvider = _clock,
-            ConnectionPipelineFactory = () => new ApiConnectionSetup(_tls, new ApiFrameFramer(_options.MaxFrameLength), Configure).Pipeline
+            ConnectionPipelineFactory = CreatePipeline
         });
         lock (_gate) { _tcp = tcp; }
         try
@@ -115,13 +119,43 @@ public sealed class ApiServer : IApiServer
         }
     }
 
-    private void Configure(MoongateTcpClient transport, ApiPeerIdentity peer)
+    private ConnectionPipeline CreatePipeline()
+    {
+        ApiConnectionAdmission? admission = null;
+        var setup = new ApiConnectionSetup(_tls, new ApiFrameFramer(_options.MaxFrameLength),
+            (transport, peer) => Configure(transport, peer, admission ?? throw new IOException("Missing API admission.")));
+        return setup.Pipeline with
+        {
+            PrepareStreamAsync = async (stream, token) =>
+            {
+                admission = ReserveAdmission();
+                var owned = new ApiAdmissionStream(stream, admission);
+                try { return await setup.Pipeline.PrepareStreamAsync!(owned, token).ConfigureAwait(false); }
+                catch { await owned.DisposeAsync().ConfigureAwait(false); throw; }
+            }
+        };
+    }
+
+    private ApiConnectionAdmission ReserveAdmission()
+    {
+        lock (_gate)
+        {
+            if (_stopping || _disposeRequested) { throw new IOException("The API listener is stopping."); }
+            if (_admitted >= _options.MaxConnections) { throw new ApiBusyException(); }
+            _admitted++;
+        }
+        return new ApiConnectionAdmission(() => { lock (_gate) { _admitted--; } });
+    }
+
+    private void Configure(MoongateTcpClient transport, ApiPeerIdentity peer, ApiConnectionAdmission admission)
     {
         ApiConnection connection;
         lock (_gate)
         {
             if (_stopping || _disposeRequested) { throw new IOException("The API listener is stopping."); }
-            connection = new ApiConnection(transport, peer, _registry, _options, _slots, _clock);
+            admission.TransferToConnection();
+            try { connection = new ApiConnection(transport, peer, _registry, _options, _slots, _clock, admission); }
+            catch { admission.Dispose(); throw; }
             transport.OnDataReceived += (_, args) => connection.Receive(args.Data);
             transport.OnDisconnected += (_, _) => _ = connection.CloseAsync();
             _connections.Add(connection);
@@ -162,7 +196,7 @@ public sealed class ApiServer : IApiServer
         Logger.Information("API listener stopped");
     }
 
-    private int Remaining() { lock (_gate) { return _connections.Count; } }
+    private int Remaining() { lock (_gate) { return _admitted; } }
 
     private void ForceClose()
     {

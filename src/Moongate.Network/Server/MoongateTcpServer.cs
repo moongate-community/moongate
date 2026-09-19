@@ -62,7 +62,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private Task? _admissionStopTask;
 
     /// <summary>
-    /// Gets a snapshot of the bound endpoint while running, or the configured endpoint otherwise.
+    /// Gets a snapshot of the bound endpoint while running or draining, or the configured endpoint otherwise.
     /// An ephemeral port is resolved after startup. Changes to the snapshot do not affect the listener.
     /// </summary>
     public IPEndPoint Endpoint
@@ -72,7 +72,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             lock (_lifecycleSync)
             {
                 var endpoint = _state == TcpServerState.Running
-                                   ? (IPEndPoint)_serverSocket!.LocalEndPoint!
+                                   ? new IPEndPoint(_endPoint.Address, _port)
                                    : _endPoint;
 
                 return (IPEndPoint)endpoint.Create(endpoint.Serialize());
@@ -92,14 +92,14 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>Gets whether the listener is accepting connections; false during graceful drain.</summary>
     public bool IsRunning
     {
         get
         {
             lock (_lifecycleSync)
             {
-                return _state == TcpServerState.Running;
+                return _state == TcpServerState.Running && _admissionStopTask is null;
             }
         }
     }

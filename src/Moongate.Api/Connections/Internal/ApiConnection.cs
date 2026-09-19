@@ -6,6 +6,7 @@ using Moongate.Api.Data.Security;
 using Moongate.Api.Dispatch.Internal;
 using Moongate.Api.Exceptions;
 using Moongate.Api.Interfaces.Connections;
+using Moongate.Api.Hosting.Internal;
 using Moongate.Api.Interfaces.Contracts;
 using Moongate.Api.Registry;
 using Moongate.Api.Serialization.Internal;
@@ -26,6 +27,7 @@ internal sealed class ApiConnection : IApiConnection
     private readonly ApiOutbox _outbox;
     private readonly ApiPendingCalls _pending;
     private readonly ApiDispatcher _dispatcher;
+    private readonly ApiConnectionAdmission? _admission;
     private Task? _drain;
     private int _closing;
     private long _lateResponses;
@@ -35,9 +37,10 @@ internal sealed class ApiConnection : IApiConnection
     internal bool IsConnected => _transport.IsConnected;
     internal long LateResponseCount => Interlocked.Read(ref _lateResponses);
 
-    public ApiConnection(INetworkConnection transport, ApiPeerIdentity peer, ApiRegistry registry, ApiOptions options, SemaphoreSlim executionSlots, TimeProvider clock)
+    public ApiConnection(INetworkConnection transport, ApiPeerIdentity peer, ApiRegistry registry, ApiOptions options, SemaphoreSlim executionSlots, TimeProvider clock, ApiConnectionAdmission? admission = null)
     {
         _transport = transport;
+        _admission = admission;
         Peer = peer;
         _registry = registry;
         _options = options with { };
@@ -134,14 +137,18 @@ internal sealed class ApiConnection : IApiConnection
         try { await _transport.Completion.ConfigureAwait(false); }
         finally
         {
-            await CloseAsync().ConfigureAwait(false);
-            await _dispatcher.Completion.ConfigureAwait(false);
-            await _pending.Completion.ConfigureAwait(false);
-            try { await _outbox.DisposeAsync().ConfigureAwait(false); }
-            catch (Exception exception)
+            try
             {
-                Logger.Debug("API writer stopped for connection {ConnectionId}: {ErrorType}", ConnectionId, exception.GetType().Name);
+                await CloseAsync().ConfigureAwait(false);
+                await _dispatcher.Completion.ConfigureAwait(false);
+                await _pending.Completion.ConfigureAwait(false);
+                try { await _outbox.DisposeAsync().ConfigureAwait(false); }
+                catch (Exception exception)
+                {
+                    Logger.Debug("API writer stopped for connection {ConnectionId}: {ErrorType}", ConnectionId, exception.GetType().Name);
+                }
             }
+            finally { _admission?.Dispose(); }
         }
     }
 

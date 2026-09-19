@@ -78,7 +78,9 @@ public class ApiLifecycleTests
     [Fact]
     public async Task StopDuringHandshake_CancelsOwnedSetupAndAllowsRestart()
     {
-        await using var pair = await ApiPair.StartAsync();
+        await using var pair = await ApiPair.StartAsync(options: new ApiOptions { MaxConnections = 1 });
+        await pair.ClientConnection.CloseAsync();
+        await Task.WhenAll(pair.ClientConnection.Completion, pair.ServerConnection.Completion).WaitAsync(TimeSpan.FromSeconds(5));
         using var rawClient = new TcpClient();
         await rawClient.ConnectAsync(pair.Server.Endpoint!);
         await pair.Server.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
@@ -86,6 +88,8 @@ public class ApiLifecycleTests
         Assert.Equal(0, await rawClient.GetStream().ReadAsync(new byte[1], timeout.Token));
         await pair.Server.StartAsync();
         Assert.NotNull(pair.Server.Endpoint);
+        await using var replacement = await pair.Client.ConnectAsync(pair.Server.Endpoint!, "localhost", "game");
+        Assert.Equal(42, (await replacement.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 })).Value);
     }
 
     [Fact]

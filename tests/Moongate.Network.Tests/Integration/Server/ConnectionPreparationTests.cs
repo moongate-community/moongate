@@ -30,7 +30,13 @@ public sealed class ConnectionPreparationTests
         using var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         await client.ConnectAsync(server.Endpoint);
         await connected.Task.WaitAsync(Timeout);
+        var bound = server.Endpoint;
         await server.StopAcceptingAsync();
+        Assert.False(server.IsRunning);
+        Assert.Equal(bound, server.Endpoint);
+        var snapshot = server.Endpoint;
+        snapshot.Port = 1;
+        Assert.Equal(bound.Port, server.Endpoint.Port);
         await client.SendAsync(new byte[] { 42 });
         Assert.Equal(42, await received.Task.WaitAsync(Timeout));
         await server.StopAsync(CancellationToken.None);

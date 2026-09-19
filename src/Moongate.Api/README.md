@@ -116,6 +116,8 @@ Authorization is local and precedes body decoding. A game endpoint can authorize
 
 This private-network deployment uses removal of a leaf fingerprint as its revocation mechanism. Update the allowlist, restart the endpoint and reconnect to apply removal or rotation. Online CRL/OCSP checks and certificate downloads are disabled; chain, expiry, usage, hostname and allowlist checks remain required. Existing sessions retain their authenticated snapshot until closed.
 
+Server admission reserves capacity before TLS and retains it until failed setup cleanup or actual API completion, including after socket disconnection while a handler remains active.
+
 Endpoints snapshot options, mappings, permissions and certificate handles. Callers may dispose their original certificate objects after construction. Endpoint-owned copies remain alive until setup, I/O and handlers actually finish. Obtain production certificates from your approved credential provider; do not embed private material in source, logs or command arguments.
 
 ## Wire format
