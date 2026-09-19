@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <AssemblyName>SamplePlugin</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" Private="false" ExcludeAssets="runtime" />
+    <ProjectReference Include="../../src/Moongate.Scripting/Moongate.Scripting.csproj" Private="false" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+</Project>
