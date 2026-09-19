@@ -12,6 +12,12 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+## Getting started
+
+Use [First start](docs/getting-started.md) to build and configure the server, or
+follow the Docker guide below. The [configuration reference](docs/server-configuration.md)
+lists all TOML settings, CLI options and current implementation limits.
+
 ## Docker
 
 Every release publishes a `linux/amd64` image to
