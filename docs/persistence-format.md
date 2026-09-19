@@ -1,5 +1,8 @@
 # Moongate binary persistence format, version 1
 
+For entity registration, save semantics and recovery procedures, start with
+[Persistence and world saves](persistence.md).
+
 Each collection owns `<name>.snapshot.bin`, `<name>.journal.bin`, and a separately
 held `<name>.lock` file in its configured directory. Collection names contain
 1–64 lowercase ASCII letters, digits, `_`, or `-`. The lock file is opened with
