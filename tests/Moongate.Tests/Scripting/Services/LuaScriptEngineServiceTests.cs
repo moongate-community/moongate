@@ -240,6 +240,21 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task StartAsync_WhenTheLoopRefusesWork_RunsTheBootstrapInline()
+    {
+        _scripts.Write("init.lua", "booted = true");
+        _loop.IsOnLoopThread = false;
+        _loop.ThrowOnPost = true;
+        using var engine = NewEngine();
+
+        await engine.StartAsync();
+
+        Assert.Equal(1, _loop.PostedWorkItems);
+        Assert.Equal(1, engine.GetMetrics().FilesLoaded);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
     public async Task StopAsync_OffTheLoopThread_DisposesThroughTheLoop()
     {
         _scripts.Write("init.lua", "timer.every(1, function() end)");

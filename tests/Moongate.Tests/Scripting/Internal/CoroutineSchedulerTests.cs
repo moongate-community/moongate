@@ -81,6 +81,30 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     [Fact]
+    public void CancelAll_UnregistersEveryTimer_AndRefusesLaterStartsAndResumes()
+    {
+        _scheduler.Start(Define("f", "wait(1) resumed = true"), "a.lua");
+        _scheduler.Start(Define("g", "wait(2) resumed = true"), "b.lua");
+        var parked = _timers.Timers.Select(timer => timer.Callback).ToArray();
+
+        _scheduler.CancelAll();
+
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        var refused = _scheduler.Start(Define("h", "return 1"), "c.lua");
+        Assert.Equal(ScriptResultKind.Failed, refused.Kind);
+        Assert.Equal("the script engine has stopped", refused.Error!.Message);
+        // A callback the wheel had already queued must return quietly instead of resuming a cancelled coroutine.
+        foreach (var callback in parked)
+        {
+            callback();
+        }
+
+        Assert.Equal(LuaValueType.Nil, _state.Environment["resumed"].Type);
+        Assert.Equal(2, _scheduler.Resumed);
+    }
+
+    [Fact]
     public void Wait_ReturnsTheSecondsActuallyRequested()
     {
         _scheduler.Start(Define("f", "slept = wait(3)"), "a.lua");

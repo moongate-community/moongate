@@ -1,7 +1,7 @@
 using Lua;
 using Moongate.Scripting.Data.Scripts;
 
-namespace Moongate.Scripting.Interfaces;
+namespace Moongate.Scripting.Interfaces.Internal;
 
 /// <summary>What modules need from the coroutine scheduler: start a function as a coroutine on behalf of the file currently running.</summary>
 internal interface IScriptScheduler
