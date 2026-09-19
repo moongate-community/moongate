@@ -107,3 +107,8 @@ The [documentation website](https://moongate-community.github.io/moongate/)
 includes the [changelog](CHANGELOG.md), server guides, and library documentation.
 After the initial documentation-only publication, it is updated with releases. See [Writing documentation](docs/documentation.md)
 for local preview commands and how to contribute a page.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding conventions,
+validation commands, and the pull request workflow. Contributions target `develop`.
