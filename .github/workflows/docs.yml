@@ -1,0 +1,68 @@
+name: Documentation
+
+# Called only by release.yml after release-please creates a release.
+on:
+  workflow_call:
+    inputs:
+      release_sha:
+        required: true
+        type: string
+      release_tag:
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout released source
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.release_sha }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: website/.nvmrc
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: website
+
+      - name: Test documentation tools
+        run: npm test
+        working-directory: website
+
+      - name: Build and validate the website
+        run: npm run build
+        working-directory: website
+        env:
+          MOONGATE_DOCS_REF: ${{ inputs.release_tag }}
+          MOONGATE_DOCS_VERSION: ${{ inputs.release_tag }}
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
