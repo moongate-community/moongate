@@ -60,10 +60,86 @@ internal sealed class LuaModuleBinder
             functions.Add(new BoundFunction(luaName, method, attribute.HelpText));
         }
 
+        var constants = BindConstants(moduleType, moduleAttribute.Name, hidden, seen);
+
         var table = ReadOnlyTable.Wrap(hidden, moduleAttribute.Name);
         state.Environment[moduleAttribute.Name] = new LuaValue(table);
 
-        return new BoundModule(moduleAttribute.Name, moduleAttribute.HelpText, moduleType, table, functions, []);
+        return new BoundModule(moduleAttribute.Name, moduleAttribute.HelpText, moduleType, table, functions, constants);
+    }
+
+    /// <summary>Publishes an enum as a read-only global table named after the type, keyed by member name with numeric values.</summary>
+    /// <exception cref="ArgumentException"><paramref name="enumType"/> is not an enum.</exception>
+    public void BindEnum(LuaState state, Type enumType)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        ArgumentNullException.ThrowIfNull(enumType);
+
+        if (!enumType.IsEnum)
+        {
+            throw new ArgumentException($"{enumType.FullName} is not an enum.", nameof(enumType));
+        }
+
+        var hidden = new LuaTable();
+
+        foreach (var name in Enum.GetNames(enumType))
+        {
+            var value = Convert.ToDouble(Enum.Parse(enumType, name), System.Globalization.CultureInfo.InvariantCulture);
+            hidden[name] = new LuaValue(value);
+        }
+
+        state.Environment[enumType.Name] = new LuaValue(ReadOnlyTable.Wrap(hidden, enumType.Name));
+        NoteEnum(enumType);
+    }
+
+    private List<BoundConstant> BindConstants(Type moduleType, string moduleName, LuaTable hidden, HashSet<string> seen)
+    {
+        var constants = new List<BoundConstant>();
+        const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+        foreach (var member in moduleType.GetMembers(flags))
+        {
+            var attribute = member.GetCustomAttribute<ScriptConstantAttribute>(inherit: false);
+
+            if (attribute is null)
+            {
+                continue;
+            }
+
+            var (type, value, isStaticReadOnly) = member switch
+            {
+                FieldInfo field => (field.FieldType, field.IsStatic ? field.GetValue(null) : null, field.IsStatic && field.IsInitOnly && field.IsPublic),
+                PropertyInfo property => (property.PropertyType, property.GetMethod?.IsStatic == true ? property.GetValue(null) : null,
+                    property.GetMethod is { IsStatic: true, IsPublic: true } && property.SetMethod is null),
+                _ => (typeof(void), null, false)
+            };
+
+            if (!isStaticReadOnly)
+            {
+                throw new InvalidOperationException(
+                    $"{moduleType.FullName}.{member.Name}: a [ScriptConstant] must be a public static readonly field or a public static get-only property.");
+            }
+
+            if (type == typeof(LuaTable) || type == typeof(LuaValue) || type == typeof(object) || !LuaValueConverter.IsSupported(type))
+            {
+                throw new InvalidOperationException(
+                    $"{moduleType.FullName}.{member.Name}: constants of type {type.Name} are not supported; use int, long, double, bool, string or an enum.");
+            }
+
+            var luaName = attribute.Name ?? member.Name;
+
+            if (!seen.Add(luaName))
+            {
+                throw new InvalidOperationException(
+                    $"{moduleType.FullName}.{member.Name}: Lua name '{luaName}' is already used in module '{moduleName}'.");
+            }
+
+            NoteEnum(type);
+            hidden[luaName] = LuaValueConverter.ToLua(value, type);
+            constants.Add(new BoundConstant(luaName, type, value, attribute.HelpText));
+        }
+
+        return constants;
     }
 
     private void ValidateSignature(Type moduleType, MethodInfo method)
