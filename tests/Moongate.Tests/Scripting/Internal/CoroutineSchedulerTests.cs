@@ -169,6 +169,21 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     [Fact]
+    public void Wait_WhenTheWheelRefusesTheTimer_FailsTheCoroutineInstead()
+    {
+        _timers.ThrowOnRegister = true;
+
+        var outcome = _scheduler.Start(Define("f", "wait(1) reached = true"), "a.lua");
+
+        Assert.Equal(ScriptResultKind.Failed, outcome.Kind);
+        Assert.Contains("'wait' could not schedule the timer", outcome.Error!.Message, StringComparison.Ordinal);
+        Assert.Contains("Timer capacity", outcome.Error.Message, StringComparison.Ordinal);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Empty(_timers.Timers);
+        Assert.Single(_errors);
+    }
+
+    [Fact]
     public void Start_UnconvertibleArgument_ThrowsWithoutRegisteringACoroutine()
     {
         Assert.Throws<InvalidCastException>(() => _scheduler.Start(Define("f", "return 1"), "a.lua", new object()));

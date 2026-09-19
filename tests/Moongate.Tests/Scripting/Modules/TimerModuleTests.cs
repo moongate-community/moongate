@@ -86,6 +86,15 @@ public sealed class TimerModuleTests : IDisposable
         Assert.Throws<LuaRuntimeException>(() => Run("timer.after(1, 'nope')"));
     }
 
+    [Theory, InlineData("0"), InlineData("-1"), InlineData("0/0")]
+    public void After_WithANonPositiveDuration_RaisesALuaErrorAndLeavesTheWheelAlone(string seconds)
+    {
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run($"timer.after({seconds}, function() end)"));
+
+        Assert.Contains("needs a positive number of seconds", exception.Message, StringComparison.Ordinal);
+        Assert.Empty(_timers.Timers);
+    }
+
     [Fact]
     public void After_FromInsideATimerDrivenCoroutine_InheritsTheStartingFilesOwner()
     {

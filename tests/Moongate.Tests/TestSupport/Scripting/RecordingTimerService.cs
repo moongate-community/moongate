@@ -11,8 +11,16 @@ public sealed class RecordingTimerService : ITimerService
     public List<RegisteredTimer> Timers { get; } = [];
     public List<string> Unregistered { get; } = [];
 
+    /// <summary>When true, RegisterTimer throws instead of registering, as the real wheel does at capacity or once closed.</summary>
+    public bool ThrowOnRegister { get; set; }
+
     public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
     {
+        if (ThrowOnRegister)
+        {
+            throw new InvalidOperationException("Timer capacity has been reached.");
+        }
+
         var id = "t" + (++_next);
         Timers.Add(new RegisteredTimer(id, name, interval, delay, repeat, callback));
 

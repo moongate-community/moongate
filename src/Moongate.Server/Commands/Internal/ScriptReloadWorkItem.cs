@@ -27,9 +27,17 @@ internal sealed class ScriptReloadWorkItem : IGameLoopWorkItem
             _engine.LoadFile(_relativePath);
             _outcome.TrySetResult(null);
         }
-        catch (Exception exception) when (exception is InvalidOperationException or FileNotFoundException)
+        catch (Exception exception)
         {
+            // Every failure is the operator's to read, not the loop's to die of: the pump rethrows a
+            // faulting work item and stops the game loop. A bad script must never do that.
             _outcome.TrySetResult(exception.Message);
+        }
+        finally
+        {
+            // Whatever happened above, the waiting command is released; TrySetResult is a no-op once
+            // the outcome is set.
+            _outcome.TrySetResult("the reload did not complete");
         }
     }
 }

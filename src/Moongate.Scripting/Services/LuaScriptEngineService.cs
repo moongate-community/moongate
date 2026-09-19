@@ -187,20 +187,26 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     {
         _guard.EnsureScriptThread(nameof(LoadFile));
         var files = Ready(_files);
+        var file = ScriptFileLoader.Normalize(relativePath);
 
         try
         {
             // A top-level chunk is one budget unit, with the larger chunk limit.
-            Ready(_budget).Chunk(token => files.Load(relativePath, token));
+            Ready(_budget).Chunk(token => files.Load(file, token));
         }
-        catch (Exception exception) when (exception is LuaRuntimeException or LuaCompileException)
+        // A missing file is the caller's error and stays as it is; a cancellation is not this engine's
+        // to report. Everything else becomes a script error: a bad chunk must not fault the game loop,
+        // and neither must a failure to read it or a failure inside the runtime itself.
+        catch (Exception exception) when (exception is not (FileNotFoundException or OperationCanceledException))
         {
             if (exception is ScriptBudgetExceededException)
             {
                 _chunkBudgetAborts++;
             }
 
-            var error = ScriptErrorParser.FromException(exception, ScriptFileLoader.Normalize(relativePath));
+            var error = exception is LuaRuntimeException or LuaCompileException
+                ? ScriptErrorParser.FromException(exception, file)
+                : new ScriptErrorInfo(file, 0, exception.Message, null);
             ReportError(error);
 
             throw new InvalidOperationException($"{error.File}:{error.Line}: {error.Message}", exception);

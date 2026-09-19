@@ -187,12 +187,10 @@ internal sealed class CoroutineScheduler : IScriptScheduler
                 if (!double.IsFinite(seconds) || seconds <= 0 || seconds > MaxWaitSeconds)
                 {
                     return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
-                        $"wait(seconds) needs a finite positive number of seconds, got {seconds}", null));
+                        $"wait(seconds) needs a positive number of seconds, got {seconds}", null));
                 }
 
-                Park(entry, seconds);
-
-                return ScriptResult.Suspended;
+                return Park(entry, seconds);
             }
 
             return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
@@ -205,29 +203,44 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         }
     }
 
-    private void Park(ScheduledCoroutine entry, double seconds)
+    private ScriptResult Park(ScheduledCoroutine entry, double seconds)
     {
         string? timerId = null;
-        timerId = _timers.RegisterTimer("lua-wait:" + entry.Owner, TimeSpan.FromSeconds(seconds), () =>
+
+        try
         {
-            if (timerId is not null)
+            timerId = _timers.RegisterTimer("lua-wait:" + entry.Owner, TimeSpan.FromSeconds(seconds), () =>
             {
-                _ownership.ForgetTimer(timerId);
-            }
+                if (timerId is not null)
+                {
+                    _ownership.ForgetTimer(timerId);
+                }
 
-            entry.PendingTimer = null;
+                entry.PendingTimer = null;
 
-            if (!_active.ContainsKey(entry.Id))
-            {
-                return;
-            }
+                if (!_active.ContainsKey(entry.Id))
+                {
+                    return;
+                }
 
-            _stack.Clear();
-            _stack.Push(new LuaValue(seconds));
-            Resume(entry);
-        });
+                _stack.Clear();
+                _stack.Push(new LuaValue(seconds));
+                Resume(entry);
+            });
+        }
+        catch (Exception exception)
+        {
+            // The wheel refuses a registration at capacity, and it closes on a callback that throws.
+            // A 'wait' that cannot be scheduled fails its own coroutine rather than the caller: this
+            // runs inside a timer callback whenever the coroutine was resumed by one.
+            return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
+                $"'wait' could not schedule the timer: {exception.Message}", null));
+        }
+
         entry.PendingTimer = timerId;
         _ownership.TrackTimer(entry.Owner, timerId);
+
+        return ScriptResult.Suspended;
     }
 
     private ScriptResult Fail(ScheduledCoroutine entry, ScriptErrorInfo error)

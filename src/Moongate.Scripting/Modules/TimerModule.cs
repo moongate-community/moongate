@@ -60,9 +60,11 @@ internal sealed class TimerModule
             throw new ArgumentException($"expected a function, got {fn.TypeToString()}", nameof(fn));
         }
 
-        if (double.IsNaN(seconds) || seconds < 0)
+        // The wheel refuses a non-positive interval by throwing; refuse it here, before it is touched,
+        // so the script sees a Lua argument error instead of the loop seeing a failing work item.
+        if (double.IsNaN(seconds) || seconds <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(seconds), "seconds must be a non-negative number");
+            throw new ArgumentOutOfRangeException(nameof(seconds), "timer needs a positive number of seconds");
         }
 
         var function = fn.Read<LuaFunction>();
