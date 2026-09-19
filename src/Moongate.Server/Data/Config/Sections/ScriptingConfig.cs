@@ -20,6 +20,24 @@ public sealed class ScriptingConfig
     /// <summary>Gets or sets whether .luarc.json and definitions.lua are written at startup.</summary>
     public bool WriteDefinitions { get; set; } = true;
 
+    /// <summary>Validates the section before server services begin startup: a bootstrap file name, positive budgets, and a hook interval within both budgets.</summary>
+    public void Validate()
+    {
+        if (string.IsNullOrWhiteSpace(BootstrapFile))
+        {
+            throw new InvalidOperationException("The scripting bootstrap_file cannot be blank.");
+        }
+
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerResume, nameof(MaxInstructionsPerResume));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxInstructionsPerChunk, nameof(MaxInstructionsPerChunk));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(HookInterval, nameof(HookInterval));
+
+        if (HookInterval > MaxInstructionsPerResume || HookInterval > MaxInstructionsPerChunk)
+        {
+            throw new ArgumentOutOfRangeException(nameof(HookInterval), "The scripting hook_interval cannot exceed either instruction budget.");
+        }
+    }
+
     /// <summary>Maps validated TOML settings to immutable engine options, using the given scripts directory.</summary>
     public ScriptEngineOptions ToOptions(string scriptsDirectory)
     {

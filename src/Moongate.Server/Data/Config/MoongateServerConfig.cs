@@ -48,5 +48,6 @@ public class MoongateServerConfig
         {
             throw new InvalidOperationException("The scripting configuration section cannot be null.");
         }
+        Scripting.Validate();
     }
 }
