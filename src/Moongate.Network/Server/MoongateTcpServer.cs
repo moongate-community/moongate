@@ -53,6 +53,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private TcpServerState _state;
     private bool _disposeRequested;
     private int _port;
+    private IPEndPoint? _boundEndPoint;
     private Socket? _serverSocket;
     private CancellationTokenSource? _listenerCancellationTokenSource;
     private CancellationTokenRegistration _startCancellationRegistration;
@@ -71,8 +72,8 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         {
             lock (_lifecycleSync)
             {
-                var endpoint = _state == TcpServerState.Running
-                                   ? new IPEndPoint(_endPoint.Address, _port)
+                var endpoint = _state == TcpServerState.Running && _boundEndPoint is { } boundEndPoint
+                                   ? boundEndPoint
                                    : _endPoint;
 
                 return (IPEndPoint)endpoint.Create(endpoint.Serialize());
@@ -258,7 +259,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             var boundSocket = socket;
             var generation = lifetime;
             var accepted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            var port = ((IPEndPoint)socket.LocalEndPoint!).Port;
+            var boundEndPoint = (IPEndPoint)socket.LocalEndPoint!;
 
             lock (_lifecycleSync)
             {
@@ -270,7 +271,8 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
                 if (_state == TcpServerState.Starting)
                 {
                     _state = TcpServerState.Running;
-                    _port = port;
+                    _boundEndPoint = boundEndPoint;
+                    _port = boundEndPoint.Port;
                 }
             }
             _ = RunAcceptLoopAsync(boundSocket, accepted, generation.Token);
@@ -416,6 +418,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             {
                 errors.AddRange(_cleanupErrors);
                 _cleanupErrors.Clear();
+                _boundEndPoint = null;
                 _serverSocket = null;
                 _listenerCancellationTokenSource = null;
                 _startCancellationRegistration = default;
