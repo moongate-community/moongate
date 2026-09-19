@@ -71,8 +71,57 @@ flags enum, where `Standalone = Login | Game`; an empty or unknown mode is rejec
 This setting currently defines the configuration contract. It does not yet select
 which services start; separate login and game runtimes will use it in a subsequent change.
 
+## Scripting
+
+Shard content runs in an embedded Lua 5.2 runtime (`Moongate.Scripting`, on
+[LuaCSharp](https://github.com/nuskey8/Lua-CSharp)) that lives entirely on the game
+loop thread. Scripts sit under `scripts/` in the server root; `init.lua` runs at
+startup, and `require` resolves only inside that directory, symbolic links included.
+
+```lua
+-- scripts/init.lua
+log.info("booted {Engine} {Version}", engine.name, engine.version)
+
+timer.every(30, function()
+    log.info("tick")
+    wait(2)                 -- parks this coroutine on the timer wheel
+    log.info("two seconds later")
+end)
+```
+
+- **Modules:** `engine` (name, version, codename), `log` (`debug`, `info`, `warning`,
+  `error`, Serilog templates), `timer` (`after`, `every`, `cancel`) and the global
+  `wait(seconds)`; `print` goes to the server log. Host modules are C# classes marked
+  `[ScriptModule]` / `[ScriptFunction]` / `[ScriptConstant]`, registered with
+  `RegisterScriptModule<T>()` in `Program.cs`.
+- **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
+  may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
+  with a script error; `string.rep` refuses results above 16 MiB. Nothing a script does
+  can block or fault the loop.
+- **Sandbox:** base, `string`, `table`, `math`, `coroutine` and `package` only; no `io`,
+  `os`, `debug`, `dofile`, `loadfile`, `rawset` or script-created coroutines.
+- **Errors:** every failure is logged with file and line and published as
+  `ScriptErrorEvent` on the event bus; only an `init.lua` failure refuses the start.
+- **Tooling:** at startup the engine writes `scripts/definitions.lua` and
+  `scripts/.luarc.json`, so an editor with the Lua language server completes every
+  bound module, function, constant and enum. The console offers `script reload <file>`
+  and `script metrics`.
+
+```toml
+[scripting]
+bootstrap_file = "init.lua"
+max_instructions_per_resume = 150000
+max_instructions_per_chunk = 10000000
+hook_interval = 1000
+write_definitions = true
+max_string_bytes = 16777216
+```
+
+The package README, [src/Moongate.Scripting/README.md](src/Moongate.Scripting/README.md),
+documents the binding model and the sandbox in full.
+
 ## Libraries
 
-The seven library packages have their own English READMEs and runnable examples.
+The eight library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
