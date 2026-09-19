@@ -53,3 +53,8 @@ test('resolves relative links from nested pages and from 404.html', async t => {
   assert.equal(errors.length, 1);
   assert(errors[0].includes('404.html') && errors[0].includes('missing.png'));
 });
+
+test('does not mistake the payload of a data srcset URL for a local file', async t => {
+  const options = await fixture(t, '<img srcset="data:image/png;base64,aGVsbG8= 1x, /moongate/logo.png 2x">');
+  assert.deepEqual(await validateSite(options), []);
+});

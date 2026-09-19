@@ -2,7 +2,9 @@
   "name": "moongate-docs",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=24.21.0 <25" },
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
   "scripts": {
     "prepare:docs": "node scripts/prepare-docs.mjs",
     "test": "node --test tests/*.test.mjs",
@@ -15,6 +17,8 @@
     "@astrojs/markdown-remark": "7.3.1",
     "@astrojs/starlight": "0.42.2",
     "astro": "7.3.3",
+    "github-slugger": "2.0.0",
+    "mdast-util-to-string": "4.0.0",
     "parse5": "8.0.1",
     "remark": "15.0.1",
     "remark-gfm": "4.0.1",

@@ -76,3 +76,29 @@ test('preserves inline HTML opening and closing tags around linked text', async 
   const result = compileDocument({ source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' }, 'Read <a href="../src/Moongate.Api/README.md">the API</a> now.\n', context);
   assert(result.includes('<a href="/moongate/libraries/api/">the API</a>'));
 });
+
+test('links sample directories to the matching released GitHub tree', async t => {
+  const context = await fixture(t);
+  assert.equal(resolveDocumentUrl('../src/Moongate.Api/', context), 'https://github.com/moongate-community/moongate/tree/v0.4.0/src/Moongate.Api/');
+  assert.throws(() => resolveDocumentUrl('../missing-directory/', context), /cannot resolve/);
+});
+
+test('retains the removed Markdown title anchor and explicit HTML title ID', async t => {
+  const context = await fixture(t);
+  const entry = { source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' };
+  const markdown = compileDocument(entry, '# Moongate.Api\n\n[Top](#moongateapi)\n', context);
+  assert(markdown.includes('id="moongateapi"'));
+  assert(markdown.includes('(#moongateapi)'));
+  const html = compileDocument(entry, '<h1 id="custom-title">Old</h1>\n\n[Top](#custom-title)\n', context);
+  assert(html.includes('id="custom-title"'));
+  assert(!html.includes('<h1'));
+});
+
+test('rewrites img and source srcset candidates, preserving descriptors and data URLs', async t => {
+  const context = await fixture(t);
+  const entry = { source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' };
+  const input = '<picture><source srcset="../images/logo.png 640w, ../images/logo.png 1280w"><img src="../images/logo.png" srcset="data:image/png;base64,AAAA 1x, ../images/logo.png 2x"></picture>';
+  const html = compileDocument(entry, input, context);
+  assert(html.includes('srcset="/moongate/generated/images/logo.png 640w, /moongate/generated/images/logo.png 1280w"'));
+  assert(html.includes('srcset="data:image/png;base64,AAAA 1x, /moongate/generated/images/logo.png 2x"'));
+});

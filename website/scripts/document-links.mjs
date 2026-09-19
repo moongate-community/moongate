@@ -6,13 +6,13 @@ const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp
 const encodePath = value => value.split('/').map(encodeURIComponent).join('/');
 
 // Follow symlinks before reading so a repository link cannot expose outside files.
-export function repositoryFile(repositoryRoot, relativePath) {
+export function repositoryFile(repositoryRoot, relativePath, allowDirectory = false) {
   const root = realpathSync(repositoryRoot);
   const candidate = path.resolve(root, relativePath);
   const contained = file => file.startsWith(`${root}${path.sep}`);
   if (!contained(candidate)) throw new Error(`Path escapes repository: ${relativePath}`);
   const real = realpathSync(candidate);
-  if (!contained(real) || !statSync(real).isFile()) throw new Error(`Not a repository file: ${relativePath}`);
+  if (!contained(real) || !(statSync(real).isFile() || (allowDirectory && statSync(real).isDirectory()))) throw new Error(`Not a repository file: ${relativePath}`);
   return real;
 }
 
@@ -40,7 +40,10 @@ export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, ent
     const decoded = decodeURIComponent(pathname);
     if (decoded.startsWith('/') || decoded.includes('\\')) throw new Error('Unsupported absolute path');
     const target = path.posix.normalize(absoluteRepositoryPath ? decoded : path.posix.join(path.posix.dirname(source), decoded));
-    repositoryFile(repositoryRoot, target);
+    const resolved = repositoryFile(repositoryRoot, target, true);
+    if (statSync(resolved).isDirectory()) {
+      return `${repositoryUrl}/tree/${encodeURIComponent(sourceRef)}/${encodePath(target)}${suffix}`;
+    }
     const entry = entries.find(value => value.source === target);
     if (entry) return `/moongate/${entry.slug}/${suffix}`;
     if (imageExtensions.has(path.posix.extname(target).toLowerCase())) {

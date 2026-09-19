@@ -60,9 +60,9 @@ outside `website/`. The dev and production build commands also prepare pages fir
 Slugs use lowercase letters, digits, hyphens, and slash-separated segments.
 Use relative links to other repository documents or source files, and preserve
 heading fragments. Imported documents become site links, local images are copied,
-and other repository files become GitHub links at the published release tag.
+and other repository files and directories become GitHub links at the published release tag.
 The first top-level title is removed from imported content because Starlight
-renders the title from the manifest. Existing absolute GitHub links to imported
+renders the title from the manifest; its original Markdown anchor or explicit HTML ID is retained. Existing absolute GitHub links to imported
 documents on `develop` or `main` are also converted.
 
 Missing source files, duplicate slugs, unresolved local links, and broken links

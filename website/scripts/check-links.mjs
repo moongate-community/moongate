@@ -2,6 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parse } from 'parse5';
+import { srcsetUrls } from './srcset.mjs';
 import { contentEntries } from '../content-manifest.mjs';
 
 async function htmlFiles(directory, prefix = '') {
@@ -21,9 +22,7 @@ function inspectHtml(html) {
       if (name === 'id' || (node.tagName === 'a' && name === 'name')) ids.add(value);
       if (name === 'href' || name === 'src') links.push(value);
       if (name === 'srcset') {
-        // The URL token ends at whitespace; data URLs may themselves contain commas.
-        const candidates = value.matchAll(/(?:^|\s*,\s*)(\S+?)(?:\s+[^,]+)?(?=\s*,|$)/g);
-        for (const candidate of candidates) links.push(candidate[1]);
+        for (const candidate of srcsetUrls(value)) links.push(candidate.url);
       }
     }
     for (const child of node.childNodes ?? []) walk(child);

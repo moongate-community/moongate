@@ -1,6 +1,9 @@
 // Authoritative source paths, public routes, and navigation placement.
 export const contentEntries = [
   { source: 'README.md', slug: 'start/overview', title: 'Overview', group: 'Start here' },
+  { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Server guides' },
+  { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Server guides' },
+  { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Server guides' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Server guides' },
   { source: 'docs/network-game-separation.md', slug: 'server/network-game-separation', title: 'Transport and game ownership', group: 'Server guides' },
   { source: 'docs/persistence-format.md', slug: 'reference/persistence-format', title: 'Persistence format', group: 'Reference' },
