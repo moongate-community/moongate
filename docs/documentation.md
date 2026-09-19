@@ -3,7 +3,8 @@
 Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
 documentation. The public site is hosted at
 [moongate-community.github.io/moongate](https://moongate-community.github.io/moongate/).
-Its first publication happens with the first release containing the website.
+The initial publication is a one-time documentation-only deployment; subsequent
+automatic updates happen with releases.
 
 ## Run locally
 
@@ -71,8 +72,8 @@ content and the authored homepage intact.
 
 ## Release publication
 
-Documentation builds and deploys **only when the existing release workflow
-creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
+After the initial documentation-only publication, automatic documentation builds
+and deployments run **only when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
 requests do not build or publish the website. There is no manual docs trigger.
 
 The `docs` job in `.github/workflows/release.yml` calls the reusable
@@ -86,6 +87,7 @@ Pages deployments are serialized. A failed deployment can be retried from its
 release workflow run without publishing a new release.
 
 Each release replaces the current website; historical versions are not hosted.
-Local builds use `develop` for source links and `development` in the title. To
+Local builds use `develop` for source links and read the current version from
+`.release-please-manifest.json` for the site title. To
 preview a release label and source ref, set `MOONGATE_DOCS_VERSION` and
 `MOONGATE_DOCS_REF` before running the build.

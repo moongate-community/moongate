@@ -1,9 +1,11 @@
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { contentEntries } from './content-manifest.mjs';
 
 const groups = ['Start here', 'Server guides', 'Libraries', 'Reference', 'Contributing'];
-const version = process.env.MOONGATE_DOCS_VERSION || 'development';
+const releaseVersion = JSON.parse(readFileSync(new URL('../.release-please-manifest.json', import.meta.url), 'utf8'))['.'];
+const version = process.env.MOONGATE_DOCS_VERSION || `v${releaseVersion}`;
 export default defineConfig({
   site: 'https://moongate-community.github.io',
   base: '/moongate',

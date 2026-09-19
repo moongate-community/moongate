@@ -18,9 +18,14 @@ hero:
 
 ## Find your starting point
 
-Run a server with the [project overview](/moongate/start/overview/), explore the
+Run a server with the [Docker guide](/moongate/server/docker/) or the [project overview](/moongate/start/overview/), explore the
 [libraries](/moongate/reference/nuget-packaging/), or learn how to
 [write documentation](/moongate/contributing/documentation/).
 
 The internal API guide covers the implemented transport and request/reply contracts.
 Login-to-realm coordination is planned separately.
+
+## Releases
+
+The site header shows the current Moongate version. Read the
+[changelog](/moongate/start/changelog/) for features, fixes, and breaking changes.
