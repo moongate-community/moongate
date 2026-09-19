@@ -137,7 +137,10 @@ internal static class LuaValueConverter
 
         if (underlying == typeof(long))
         {
-            return number is >= long.MinValue and <= long.MaxValue
+            // long.MaxValue has no exact double: comparing against it rounds the bound up to 2^63 and lets
+            // exactly 2^63 through, where the cast wraps to long.MinValue. The bound is exclusive 2^63
+            // instead; long.MinValue is exactly -2^63 and stays inclusive.
+            return number is >= long.MinValue and < 9223372036854775808.0
                 ? (long)number
                 : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
         }

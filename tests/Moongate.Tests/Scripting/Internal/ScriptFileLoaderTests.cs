@@ -86,6 +86,46 @@ public sealed class ScriptFileLoaderTests
         Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
     }
 
+    [Theory]
+    [InlineData("./ai/guard.lua")]
+    [InlineData(".//ai/guard.lua")]
+    [InlineData("././ai/guard.lua")]
+    [InlineData("/ai/guard.lua")]
+    [InlineData(".\\ai\\guard.lua")]
+    public void Load_SpellingsOfOnePath_ShareOneKey(string spelling)
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("ai/guard.lua", "runs = (runs or 0) + 1 return runs");
+        using var state = NewState();
+        var loader = new ScriptFileLoader(state, scripts.Path);
+        loader.Load("ai/guard.lua", default);
+
+        var again = loader.Load(spelling, default);
+
+        Assert.Equal(1, again[0].Read<double>());
+        Assert.Equal(1, loader.FilesLoaded);
+        Assert.Equal(["ai/guard.lua"], loader.LoadedFiles);
+    }
+
+    [Fact]
+    public void Invalidate_UsesTheNormalizedPath_ForBothTheCacheAndTheRequireName()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("common/util.lua", "return { v = 1 }");
+        scripts.Write("init.lua", "return require('common.util').v");
+        using var state = NewState();
+        state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
+        var loader = new ScriptFileLoader(state, scripts.Path);
+        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
+        scripts.Write("common/util.lua", "return { v = 2 }");
+
+        // The module was required, never loaded as a file, so only its require entry is evicted.
+        Assert.False(loader.Invalidate("./common/util.lua"));
+        Assert.True(loader.Invalidate(".\\init.lua"));
+
+        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
+    }
+
     [Fact]
     public void Load_MissingFile_ThrowsFileNotFound()
     {

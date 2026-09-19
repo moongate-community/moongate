@@ -127,6 +127,19 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     [Fact]
+    public void Bind_LongAtTwoToThe63_IsOutOfRangeInsteadOfWrapping()
+    {
+        // long.MaxValue has no exact double, so a bound of "<= long.MaxValue" rounds up to 2^63 and lets
+        // exactly 2^63 through, where the cast wraps it to long.MinValue.
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return probe.big(2^63)"));
+
+        Assert.Contains("out of range", exception.Message, StringComparison.Ordinal);
+
+        // -2^63 is exactly long.MinValue and stays accepted; doubling it wraps to zero.
+        Assert.Equal(0, Run("return probe.big(-(2^63))")[0].Read<double>());
+    }
+
+    [Fact]
     public void Bind_ModuleTable_RejectsWritesAndMetatableChanges()
     {
         // rawset bypasses the proxy's __newindex and would shadow a bound function; the binder cannot stop

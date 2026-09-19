@@ -1,5 +1,6 @@
 namespace Moongate.Scripting.Data.Config;
 
+/// <summary>Everything the script engine needs to start: where the scripts live, which file bootstraps them, and how much VM work one unit of execution may do. Read once, at startup.</summary>
 public sealed class ScriptEngineOptions
 {
     /// <summary>Directory holding init.lua and everything require can reach.</summary>
@@ -24,6 +25,9 @@ public sealed class ScriptEngineOptions
     /// <summary>Whether .luarc.json and definitions.lua are written at startup.</summary>
     public bool WriteDefinitions { get; init; } = true;
 
+    /// <summary>Checks the options before the engine builds anything, so a misconfiguration is refused at startup rather than at the first script.</summary>
+    /// <exception cref="ArgumentException"><see cref="ScriptsDirectory"/> or <see cref="BootstrapFile"/> is empty or whitespace.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">A budget or the hook interval is not positive, or the hook interval exceeds one of the budgets.</exception>
     public void Validate()
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(ScriptsDirectory);

@@ -29,6 +29,12 @@ public interface IScriptEngine
 
     /// <summary>Forgets a loaded file, cancels the coroutines and timers it owns, and evicts it from require's cache.</summary>
     /// <param name="relativePath">Path relative to the scripts directory.</param>
+    /// <exception cref="InvalidOperationException">Called off the loop thread, or the engine has not started.</exception>
+    /// <remarks>
+    /// Timers created by a required module's top-level code are owned by the file that first required it,
+    /// so invalidating the module evicts it from the require cache but cancels nothing; invalidate the
+    /// requiring file for that.
+    /// </remarks>
     void Invalidate(string relativePath);
 
     /// <summary>Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread; diagnostics collectors run off the loop.</summary>

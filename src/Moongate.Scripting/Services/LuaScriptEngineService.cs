@@ -98,13 +98,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             throw new InvalidOperationException("The script engine has already started.");
         }
 
-        await RunOnLoopAsync(Start).ConfigureAwait(false);
+        await RunOnLoopAsync(Start, "start").ConfigureAwait(false);
     }
 
     /// <summary>Disposes the engine, releasing the LuaState.</summary>
     public async Task StopAsync()
     {
-        await RunOnLoopAsync(Dispose).ConfigureAwait(false);
+        await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
     }
 
     private void Start()
@@ -112,34 +112,49 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _options.Validate();
         Directory.CreateDirectory(_options.ScriptsDirectory);
         var state = LuaState.Create();
-        state.OpenBasicLibrary();
-        state.OpenStringLibrary();
-        state.OpenTableLibrary();
-        state.OpenMathLibrary();
-        state.OpenCoroutineLibrary();
-        state.OpenModuleLibrary();
-        TrimSandbox(state);
-        state.ModuleLoader = new ScriptDirectoryModuleLoader(_options.ScriptsDirectory);
+        ScriptFileLoader files;
+        CoroutineScheduler scheduler;
+        InstructionBudget budget;
 
-        var files = new ScriptFileLoader(state, _options.ScriptsDirectory);
-        var ownership = new ScriptOwnership();
-        var budget = new InstructionBudget(
-            state,
-            _options.MaxInstructionsPerResume,
-            _options.MaxInstructionsPerChunk,
-            _options.HookInterval
-        );
-        budget.Install();
-        var scheduler = new CoroutineScheduler(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
-
-        BindModules(state, scheduler, ownership);
-        WriteDefinitions();
-        budget.Chunk(token =>
+        try
         {
-            RunPrelude(state, token);
+            state.OpenBasicLibrary();
+            state.OpenStringLibrary();
+            state.OpenTableLibrary();
+            state.OpenMathLibrary();
+            state.OpenCoroutineLibrary();
+            state.OpenModuleLibrary();
+            TrimSandbox(state);
+            state.ModuleLoader = new ScriptDirectoryModuleLoader(_options.ScriptsDirectory);
 
-            return true;
-        });
+            files = new ScriptFileLoader(state, _options.ScriptsDirectory);
+            var ownership = new ScriptOwnership();
+            budget = new InstructionBudget(
+                state,
+                _options.MaxInstructionsPerResume,
+                _options.MaxInstructionsPerChunk,
+                _options.HookInterval
+            );
+            budget.Install();
+            scheduler = new CoroutineScheduler(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
+
+            BindModules(state, scheduler, ownership);
+            WriteDefinitions();
+            budget.Chunk(token =>
+            {
+                RunPrelude(state, token);
+
+                return true;
+            });
+        }
+        catch
+        {
+            // Nothing else holds the state until _state is assigned, so a binding or prelude failure
+            // would leak it; Dispose only releases what the engine already owns.
+            state.Dispose();
+
+            throw;
+        }
 
         _state = state;
         _files = files;
@@ -155,9 +170,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// <summary>
     /// Runs a lifecycle step on the loop thread. Called from the bootstrap thread in production, so the step is posted and
     /// awaited; unit tests and any caller already on the loop run it inline, and a loop that no longer accepts work
-    /// (it faulted, or stopped before this service) runs it inline as well so shutdown still completes.
+    /// (it faulted, or stopped before this service) runs it inline as well so shutdown still completes. A loop that
+    /// accepts the step and then stops before running it fails the step rather than leaving it awaited forever.
     /// </summary>
-    private async Task RunOnLoopAsync(Action step)
+    /// <param name="step">The lifecycle step to run.</param>
+    /// <param name="stepName">Name of the step for the log line and the failure message, such as "start".</param>
+    private async Task RunOnLoopAsync(Action step, string stepName)
     {
         if (_gameLoop.IsOnLoopThread)
         {
@@ -174,9 +192,19 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
         catch (InvalidOperationException)
         {
+            _logger.Warning("The game loop is not accepting work; running {Step} inline", stepName);
             step();
 
             return;
+        }
+
+        // The item was admitted, but a loop that faults or stops before draining it would never complete
+        // it; waiting on the loop as well keeps the lifecycle from hanging.
+        await Task.WhenAny(item.Completion, _gameLoop.Completion).ConfigureAwait(false);
+
+        if (!item.Completion.IsCompleted)
+        {
+            throw new InvalidOperationException($"The game loop stopped before the script engine's {stepName} could run.");
         }
 
         await item.Completion.ConfigureAwait(false);
@@ -187,12 +215,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     {
         _guard.EnsureScriptThread(nameof(LoadFile));
         var files = Ready(_files);
+        var budget = Ready(_budget);
         var file = ScriptFileLoader.Normalize(relativePath);
 
         try
         {
             // A top-level chunk is one budget unit, with the larger chunk limit.
-            Ready(_budget).Chunk(token => files.Load(file, token));
+            budget.Chunk(token => files.Load(file, token));
         }
         // A missing file is the caller's error and stays as it is; a cancellation is not this engine's
         // to report. Everything else becomes a script error: a bad chunk must not fault the game loop,
@@ -225,17 +254,16 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         ArgumentException.ThrowIfNullOrWhiteSpace(functionName);
         var state = Ready(_state);
         var scheduler = Ready(_scheduler);
+        var owner = Ready(_files).CurrentFile ?? _options.BootstrapFile;
         _callsStarted++;
 
         if (!state.Environment.TryGetValue(functionName, out var value) || value.Type != LuaValueType.Function)
         {
-            var error = new ScriptErrorInfo("", 0, $"'{functionName}' is not a global function", null);
+            var error = new ScriptErrorInfo(owner, 0, $"'{functionName}' is not a global function", null);
             ReportError(error);
 
             return ScriptResult.Failed(error);
         }
-
-        var owner = Ready(_files).CurrentFile ?? _options.BootstrapFile;
 
         return scheduler.Start(value.Read<LuaFunction>(), owner, args);
     }
@@ -390,9 +418,10 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
     }
 
-    private static T Ready<T>(T? component) where T : class
+    private T Ready<T>(T? component) where T : class
     {
-        return component ?? throw new InvalidOperationException("The script engine has not started.");
+        return component ?? throw new InvalidOperationException(
+            _disposed ? "The script engine has been disposed." : "The script engine has not started.");
     }
 
     /// <summary>Disposes the LuaState and releases every component created at startup.</summary>

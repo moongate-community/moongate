@@ -34,12 +34,35 @@ public sealed class ScriptDirectoryModuleLoaderTests
         Assert.Throws<LuaRuntimeException>(() => SyncValueTask.Run(state.DoStringAsync("return require('nope')", "t", default)));
     }
 
-    [Theory, InlineData("../secret"), InlineData("..%2Fsecret"), InlineData("/etc/passwd"), InlineData("a/../../b")]
+    [Theory, InlineData("../secret"), InlineData("/etc/passwd"), InlineData("a/../../b")]
     public void ResolvePath_RejectsAnythingLeavingTheDirectory(string relativePath)
     {
         using var scripts = new TemporaryScriptsDirectory();
 
         Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, relativePath));
+    }
+
+    [Theory, InlineData("100%25.lua"), InlineData("..%2Fsecret.lua")]
+    public void ResolvePath_TakesThePathAsWritten_WithoutPercentDecoding(string relativePath)
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+
+        var resolved = ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, relativePath);
+
+        // Decoding would rename "100%25.lua" to "100%.lua" and turn "..%2Fsecret.lua" into a traversal;
+        // both are ordinary file names inside the directory.
+        Assert.StartsWith(Path.GetFullPath(scripts.Path), resolved, StringComparison.Ordinal);
+        Assert.EndsWith(relativePath, resolved, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("common/dialogue.lua", "common.dialogue")]
+    [InlineData("init.lua", "init")]
+    [InlineData("ai/npc/guard.lua", "ai.npc.guard")]
+    [InlineData("data", "data")]
+    public void ToModuleName_IsTheInverseOfTheNameToPathMapping(string normalizedRelativePath, string expected)
+    {
+        Assert.Equal(expected, ScriptDirectoryModuleLoader.ToModuleName(normalizedRelativePath));
     }
 
     [Fact]

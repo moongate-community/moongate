@@ -11,6 +11,9 @@ public sealed class ScriptConstantAttribute : Attribute
     /// <summary>Gets the description written to the editor definitions, if any.</summary>
     public string? HelpText { get; }
 
+    /// <summary>Initializes a new instance of the <see cref="ScriptConstantAttribute"/> class.</summary>
+    /// <param name="name">Lua name for the constant, or null to use the member name unchanged.</param>
+    /// <param name="helpText">One line describing the constant, written to the editor definitions.</param>
     public ScriptConstantAttribute(string? name = null, string? helpText = null)
     {
         Name = name;

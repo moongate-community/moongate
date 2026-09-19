@@ -64,16 +64,26 @@ internal sealed class ScriptFileLoader
     public bool Invalidate(string relativePath)
     {
         var key = Normalize(relativePath);
-        var moduleName = key.EndsWith(".lua", StringComparison.Ordinal) ? key[..^4].Replace('/', '.') : key.Replace('/', '.');
-        _state.LoadedModules[moduleName] = LuaValue.Nil;
+        _state.LoadedModules[ScriptDirectoryModuleLoader.ToModuleName(key)] = LuaValue.Nil;
 
         return _loaded.Remove(key);
     }
 
+    /// <summary>
+    /// Reduces a path to the one spelling used as a key everywhere: forward slashes, no leading separator
+    /// and no leading "./", so "./ai/guard.lua", ".\ai\guard.lua" and "ai/guard.lua" are one file. A "../"
+    /// segment is left alone for the resolver to refuse.
+    /// </summary>
     internal static string Normalize(string relativePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePath);
+        var normalized = relativePath.Replace('\\', '/').TrimStart('/');
 
-        return relativePath.Replace('\\', '/').TrimStart('/');
+        while (normalized.StartsWith("./", StringComparison.Ordinal))
+        {
+            normalized = normalized[2..].TrimStart('/');
+        }
+
+        return normalized;
     }
 }

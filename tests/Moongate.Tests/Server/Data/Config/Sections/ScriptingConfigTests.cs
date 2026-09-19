@@ -1,6 +1,6 @@
 using Moongate.Server.Data.Config.Sections;
 
-namespace Moongate.Tests.Server.Data.Config;
+namespace Moongate.Tests.Server.Data.Config.Sections;
 
 public sealed class ScriptingConfigTests
 {

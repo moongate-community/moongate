@@ -237,10 +237,6 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         await engine.StopAsync();
 
         Assert.Empty(_timers.Timers);
-        foreach (var timer in _timers.Timers.ToArray())
-        {
-            _timers.Fire(timer.Id);
-        }
     }
 
     [Fact]
