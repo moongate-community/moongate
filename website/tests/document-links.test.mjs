@@ -70,3 +70,9 @@ test('removes the first HTML H1 without removing surrounding content', async t =
   assert(!result.includes('<h1'));
   assert(result.includes('<p>Keep me</p>'));
 });
+
+test('preserves inline HTML opening and closing tags around linked text', async t => {
+  const context = await fixture(t);
+  const result = compileDocument({ source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' }, 'Read <a href="../src/Moongate.Api/README.md">the API</a> now.\n', context);
+  assert(result.includes('<a href="/moongate/libraries/api/">the API</a>'));
+});

@@ -125,3 +125,10 @@ documents the binding model and the sandbox in full.
 The eight library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
+
+## Documentation
+
+The [documentation website](https://moongate-community.github.io/moongate/)
+becomes available with the first release containing the Starlight site and is
+updated only with releases. See [Writing documentation](docs/documentation.md)
+for local preview commands and how to contribute a page.

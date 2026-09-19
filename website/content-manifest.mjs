@@ -6,6 +6,7 @@ export const contentEntries = [
   { source: 'docs/persistence-format.md', slug: 'reference/persistence-format', title: 'Persistence format', group: 'Reference' },
   { source: 'docs/nuget-packaging.md', slug: 'reference/nuget-packaging', title: 'NuGet packages', group: 'Reference' },
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
+  { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
   ...[
     ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
     ['Persistence', 'persistence'], ['Server.Core', 'server-core'], ['Api', 'api'],
