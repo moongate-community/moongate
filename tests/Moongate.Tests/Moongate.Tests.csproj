@@ -44,6 +44,7 @@
     <ProjectReference Include="../Fixtures/Plugins/FoundationPlugin/FoundationPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="../Fixtures/Plugins/DependentPlugin/DependentPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="../Fixtures/Plugins/FailingPlugin/FailingPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="../../samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" ReferenceOutputAssembly="false" Private="false" />
   </ItemGroup>
 
   <Target Name="CopyPluginFixtures" AfterTargets="Build">
@@ -64,6 +65,12 @@
     </ItemGroup>
     <Copy SourceFiles="@(_FailingPluginFiles)"
           DestinationFiles="@(_FailingPluginFiles->'$(OutDir)PluginFixtures/FailingPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+    <ItemGroup>
+      <_SamplePluginFiles Include="../../samples/Moongate.Sample.Plugin/bin/$(Configuration)/net10.0/**/*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_SamplePluginFiles)"
+          DestinationFiles="@(_SamplePluginFiles->'$(OutDir)PluginFixtures/SamplePlugin/%(RecursiveDir)%(Filename)%(Extension)')"
           SkipUnchangedFiles="true" />
   </Target>
 
