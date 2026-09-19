@@ -172,10 +172,10 @@ await ConsoleApp.RunAsync(
                             .RegisterMoongateService<ISessionService, SessionService>()
                             .RegisterMoongateService<IEventBusService, EventBusService>();
 
-                    services.Register<IMetricProvider, SystemMetricsProvider>(Reuse.Singleton);
-                    services.Register<IMetricProvider, GameLoopMetricsProvider>(Reuse.Singleton);
-                    services.Register<IMetricProvider, TimerMetricsProvider>(Reuse.Singleton);
-                    services.Register<IMetricProvider, SessionMetricsProvider>(Reuse.Singleton);
+                    services.AddMetricProvider<SystemMetricsProvider>()
+                            .AddMetricProvider<GameLoopMetricsProvider>()
+                            .AddMetricProvider<TimerMetricsProvider>()
+                            .AddMetricProvider<SessionMetricsProvider>();
                     services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(
                                 DiagnosticService.StartupPriority
                             )
