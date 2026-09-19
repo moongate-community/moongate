@@ -11,8 +11,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
-    <ProjectReference Include="../../src/Moongate.Scripting/Moongate.Scripting.csproj" />
+    <ProjectReference Include="../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" Private="false" ExcludeAssets="runtime" />
+    <ProjectReference Include="../../src/Moongate.Scripting/Moongate.Scripting.csproj" Private="false" ExcludeAssets="runtime" />
   </ItemGroup>
+
+  <!--
+    Private/ExcludeAssets above only prunes each direct reference's own output; the host
+    assemblies those two projects reference in turn (Moongate.Api, Moongate.Core, Moongate.Network,
+    Moongate.Network.Packets) still resolve as copy-local two hops down, which MSBuild does not
+    prune transitively for project references. PluginLoadContext already serves every Moongate.*
+    assembly from the host's default load context (see PluginLoadContext.Load), so none of them
+    belong in a plugin bundle; drop whatever remains.
+  -->
+  <Target Name="TrimTransitiveHostAssemblies" BeforeTargets="_CopyFilesMarkedCopyLocal">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)"
+                                Condition="$([System.String]::Copy('%(ReferenceCopyLocalPaths.Filename)').StartsWith('Moongate.'))" />
+    </ItemGroup>
+  </Target>
 
 </Project>

@@ -31,7 +31,8 @@ public sealed class GreetCommand : ICommandExecutor
 
         var tone = Tone.Plain;
 
-        if (context.Arguments.Length == 2 && !Enum.TryParse(context.Arguments[1], ignoreCase: true, out tone))
+        if (context.Arguments.Length == 2 &&
+            (!Enum.TryParse(context.Arguments[1], ignoreCase: true, out tone) || !Enum.IsDefined(tone)))
         {
             context.PrintError(Usage);
 

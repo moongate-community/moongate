@@ -29,7 +29,6 @@ public sealed class SamplePluginTests
     {
         using var files = new PluginDirectoryFixture("plugins", "scripts");
         files.Deploy("SamplePlugin", "sample");
-        Directory.CreateDirectory(files.Directories["scripts"]);
         await File.WriteAllTextAsync(Path.Combine(files.Directories["scripts"], "init.lua"),
             "greeting = greeter.hello('Moongate', Tone.Warm)\n" +
             "function report() return greeting, greeter.DEFAULT_GREETING end");
@@ -59,7 +58,17 @@ public sealed class SamplePluginTests
             var engine = container.Resolve<IScriptEngine>();
             var loop = container.Resolve<IGameLoopService>();
             var probe = new TaskCompletionSource<object?[]>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await loop.PostAsync(new ActionGameLoopWorkItem(() => probe.SetResult(engine.Call("report").Values.ToArray())));
+            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
+            {
+                try
+                {
+                    probe.SetResult(engine.Call("report").Values.ToArray());
+                }
+                catch (Exception exception)
+                {
+                    probe.SetException(exception);
+                }
+            }));
             Assert.Equal(["Hello there, Moongate!", "Hello"], await probe.Task.WaitAsync(Timeout));
 
             var commands = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
@@ -70,6 +79,9 @@ public sealed class SamplePluginTests
             var usage = Assert.Single(await commands.ExecuteAsync("greet"));
             Assert.Equal("Usage: greet <name> [plain|warm|formal]", usage.Text);
             Assert.Equal(CommandOutputLevel.Error, usage.Level);
+            var undefinedTone = Assert.Single(await commands.ExecuteAsync("greet Bob 7"));
+            Assert.Equal("Usage: greet <name> [plain|warm|formal]", undefinedTone.Text);
+            Assert.Equal(CommandOutputLevel.Error, undefinedTone.Level);
             await commands.StopAsync();
 
             var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");

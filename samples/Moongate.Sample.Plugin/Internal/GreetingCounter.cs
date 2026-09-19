@@ -1,6 +1,6 @@
 namespace Moongate.Sample.Plugin.Internal;
 
-/// <summary>Counts greetings. The module increments it on the game loop; the metric provider reads it from the diagnostics thread, so the counter is atomic.</summary>
+/// <summary>Counts greetings. Incremented from the game loop by the module and from the console thread by the command; read by the diagnostics thread; hence atomic.</summary>
 public sealed class GreetingCounter
 {
     private long _count;
