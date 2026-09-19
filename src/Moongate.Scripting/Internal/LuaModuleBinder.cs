@@ -11,9 +11,13 @@ internal sealed class LuaModuleBinder
 {
     private readonly IScriptThreadGuard _guard;
     private readonly List<Type> _discoveredEnums = [];
+    private readonly List<Type> _publishedEnums = [];
 
     /// <summary>Gets every enum type seen so far as a parameter or return type of a bound function, in the order they were first encountered.</summary>
     public IReadOnlyList<Type> DiscoveredEnums => _discoveredEnums;
+
+    /// <summary>Gets every enum type published as a global table via <see cref="BindEnum"/>, in the order it was published.</summary>
+    public IReadOnlyList<Type> PublishedEnums => _publishedEnums;
 
     /// <summary>Initializes a new instance of the <see cref="LuaModuleBinder"/> class.</summary>
     /// <param name="guard">The thread guard called before every bound function invocation.</param>
@@ -90,6 +94,11 @@ internal sealed class LuaModuleBinder
 
         state.Environment[enumType.Name] = new LuaValue(ReadOnlyTable.Wrap(hidden, enumType.Name));
         NoteEnum(enumType);
+
+        if (!_publishedEnums.Contains(enumType))
+        {
+            _publishedEnums.Add(enumType);
+        }
     }
 
     private List<BoundConstant> BindConstants(Type moduleType, string moduleName, LuaTable hidden, HashSet<string> seen)

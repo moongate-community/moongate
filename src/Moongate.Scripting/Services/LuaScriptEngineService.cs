@@ -7,6 +7,7 @@ using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Modules;
+using Moongate.Scripting.Utils;
 using Moongate.Server.Core.Interfaces.Services;
 using Serilog;
 
@@ -29,6 +30,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private readonly IEventBusService _eventBus;
     private readonly IScriptThreadGuard _guard;
     private readonly List<BoundModule> _boundModules = [];
+    private List<Type> _publishedEnums = [];
     private LuaState? _state;
     private ScriptFileLoader? _files;
     private CoroutineScheduler? _scheduler;
@@ -214,6 +216,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         {
             binder.BindEnum(state, enumType);
         }
+
+        _publishedEnums = binder.PublishedEnums.ToList();
     }
 
     private static void RunPrelude(LuaState state)
@@ -254,7 +258,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
     private void WriteDefinitions()
     {
-        // Filled in by Task 10, which adds the definitions generator.
+        if (!_options.WriteDefinitions)
+        {
+            return;
+        }
+
+        LuaDefinitionsGenerator.Write(_options.ScriptsDirectory, _boundModules, _publishedEnums);
     }
 
     private void ReportError(ScriptErrorInfo error)
