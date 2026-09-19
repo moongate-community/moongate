@@ -6,10 +6,10 @@ public sealed class PluginDirectoryFixture : IDisposable
 {
     public DirectoriesConfig Directories { get; }
 
-    public PluginDirectoryFixture()
+    public PluginDirectoryFixture(params string[] directories)
     {
         var root = Path.Combine(Path.GetTempPath(), $"moongate-plugin-loader-{Guid.NewGuid():N}");
-        Directories = new DirectoriesConfig(root, ["plugins"]);
+        Directories = new DirectoriesConfig(root, directories.Length == 0 ? ["plugins"] : directories);
     }
 
     public string Deploy(string name, string? directoryName = null)
