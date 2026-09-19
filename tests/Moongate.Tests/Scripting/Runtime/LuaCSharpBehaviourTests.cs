@@ -1,6 +1,7 @@
 using Lua;
 using Lua.Runtime;
 using Lua.Standard;
+using Moongate.Tests.TestSupport.Scripting;
 
 namespace Moongate.Tests.Scripting.Runtime;
 
@@ -128,7 +129,7 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         state.OpenModuleLibrary();
         var loads = 0;
-        state.ModuleLoader = new CountingLoader(() => { loads++; return $"return {{ n = {loads} }}"; });
+        state.ModuleLoader = new CountingModuleLoader(() => { loads++; return $"return {{ n = {loads} }}"; });
 
         var first = Sync(state.DoStringAsync("return require('m').n", "probe", default))[0].Read<double>();
         var cached = Sync(state.DoStringAsync("return require('m').n", "probe", default))[0].Read<double>();
@@ -172,25 +173,5 @@ public sealed class LuaCSharpBehaviourTests
         Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("m.LIMIT = 1", "p", default)));
         Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("m.NEW = 1", "p", default)));
         Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("setmetatable(m, {})", "p", default)));
-    }
-
-    private sealed class CountingLoader : ILuaModuleLoader
-    {
-        private readonly Func<string> _source;
-
-        public CountingLoader(Func<string> source)
-        {
-            _source = source;
-        }
-
-        public bool Exists(string moduleName)
-        {
-            return moduleName == "m";
-        }
-
-        public ValueTask<LuaModule> LoadAsync(string moduleName, CancellationToken cancellationToken)
-        {
-            return new ValueTask<LuaModule>(new LuaModule(moduleName, _source()));
-        }
     }
 }
