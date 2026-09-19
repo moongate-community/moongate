@@ -19,6 +19,7 @@ COPY ["src/Moongate.Network/Moongate.Network.csproj", "src/Moongate.Network/"]
 COPY ["src/Moongate.Network.Packets/Moongate.Network.Packets.csproj", "src/Moongate.Network.Packets/"]
 COPY ["src/Moongate.Server.Core/Moongate.Server.Core.csproj", "src/Moongate.Server.Core/"]
 COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
+COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
 COPY . .

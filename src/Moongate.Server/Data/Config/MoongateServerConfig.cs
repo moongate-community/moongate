@@ -22,6 +22,8 @@ public class MoongateServerConfig
 
     public DiagnosticConfig Diagnostics { get; set; } = new();
 
+    public ScriptingConfig Scripting { get; set; } = new();
+
     /// <summary>Validates configuration before server services begin startup.</summary>
     public void Validate()
     {
@@ -41,5 +43,10 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The diagnostics configuration section cannot be null.");
         }
         Diagnostics.ToOptions();
+
+        if (Scripting is null)
+        {
+            throw new InvalidOperationException("The scripting configuration section cannot be null.");
+        }
     }
 }
