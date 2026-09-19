@@ -7,6 +7,7 @@ using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Interfaces.Internal;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Utils;
