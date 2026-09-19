@@ -1,5 +1,3 @@
-using System.Runtime.ExceptionServices;
-
 namespace Moongate.Scripting.Internal;
 
 /// <summary>
@@ -16,12 +14,8 @@ internal static class SyncValueTask
                 "Lua execution went asynchronous. Script code must complete on the calling thread.");
         }
 
-        if (task.IsFaulted)
-        {
-            var wrapped = task.AsTask().Exception!;
-            ExceptionDispatchInfo.Capture(wrapped.InnerExceptions.Count == 1 ? wrapped.InnerException! : wrapped).Throw();
-        }
-
+        // ValueTask<T>.Result goes through GetAwaiter().GetResult(), which rethrows the original
+        // exception unwrapped; there is nothing to unwrap by hand.
         return task.Result;
     }
 

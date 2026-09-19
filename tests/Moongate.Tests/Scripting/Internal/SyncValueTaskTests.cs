@@ -21,6 +21,17 @@ public sealed class SyncValueTaskTests
     }
 
     [Fact]
+    public void Run_TaskFaultedWithSeveralExceptions_RethrowsTheFirstOneUnwrapped()
+    {
+        var source = new TaskCompletionSource<int>();
+        source.SetException([new InvalidDataException("first"), new TimeoutException("second")]);
+
+        var exception = Assert.Throws<InvalidDataException>(() => SyncValueTask.Run(new ValueTask<int>(source.Task)));
+
+        Assert.Equal("first", exception.Message);
+    }
+
+    [Fact]
     public void Run_IncompleteTask_ThrowsInsteadOfBlocking()
     {
         var source = new TaskCompletionSource<int>();
