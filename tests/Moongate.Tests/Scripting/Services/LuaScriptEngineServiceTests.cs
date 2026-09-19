@@ -9,6 +9,8 @@ using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Serilog;
+using Serilog.Events;
 
 namespace Moongate.Tests.Scripting.Services;
 
@@ -252,6 +254,34 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
 
         Assert.Equal(1, _loop.PostedWorkItems);
         Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public async Task Print_IsRoutedToTheLog_UnderTheCallingScript()
+    {
+        var sink = new CapturingLogSink();
+        var previous = Log.Logger;
+        Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger();
+
+        try
+        {
+            _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
+            // The engine captures its logger when it is constructed, so the swap above must precede NewEngine();
+            // the template filter below keeps events from other test classes out of the assertion.
+            using var engine = NewEngine();
+
+            await engine.StartAsync();
+
+            var printed = Assert.Single(sink.Events, e => e.MessageTemplate.Text == "{ScriptFile}: {Output}");
+            Assert.Equal(LogEventLevel.Information, printed.Level);
+            Assert.Equal("a\t1\tnil\ttrue\tcustom", Assert.IsType<ScalarValue>(printed.Properties["Output"]).Value);
+            Assert.Equal("init.lua", Assert.IsType<ScalarValue>(printed.Properties["ScriptFile"]).Value);
+            Assert.Equal(typeof(LogModule).FullName, Assert.IsType<ScalarValue>(printed.Properties["SourceContext"]).Value);
+        }
+        finally
+        {
+            Log.Logger = previous;
+        }
     }
 
     [Fact]

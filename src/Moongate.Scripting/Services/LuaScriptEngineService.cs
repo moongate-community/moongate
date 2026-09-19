@@ -26,6 +26,8 @@ namespace Moongate.Scripting.Services;
 /// <c>coroutine.create</c>, <c>coroutine.wrap</c> and <c>coroutine.resume</c>, whose threads would carry
 /// neither the instruction budget's hook nor its cancellation token. <c>coroutine.yield</c>,
 /// <c>coroutine.status</c> and <c>coroutine.running</c> stay, so the prelude's <c>wait</c> keeps working.
+/// <c>print</c> is replaced by a function that writes to the server log at Information level, under the
+/// script that called it, so script output never bypasses the configured sinks.
 /// </para>
 /// <para>
 /// Memory is not bounded: the budget counts instructions, and a single <c>string.rep</c> or table
@@ -40,6 +42,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private const string PreludeResource = "Moongate.Scripting.Assets.prelude.lua";
 
     private readonly ILogger _logger = Log.ForContext<LuaScriptEngineService>();
+    private readonly ILogger _scriptOutput = Log.ForContext<LogModule>();
     private readonly ScriptEngineOptions _options;
     private readonly IScriptModuleRegistry _registry;
     private readonly IResolverContext _resolver;
@@ -139,6 +142,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             scheduler = new CoroutineScheduler(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
 
             BindModules(state, scheduler, ownership);
+            state.Environment["print"] = new LuaValue(CreatePrint(scheduler));
             WriteDefinitions();
             budget.Chunk(token =>
             {
@@ -312,6 +316,24 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
 
         _publishedEnums = binder.PublishedEnums.ToList();
+    }
+
+    /// <summary>
+    /// Builds the host half of the replacement for the base library's <c>print</c>: it takes one line and
+    /// writes it to the log at Information level under the file that owns the running code. The prelude
+    /// wraps it so every argument goes through Lua's own <c>tostring</c> (honouring <c>__tostring</c>) and
+    /// the results are joined with tabs, exactly as the standard <c>print</c> does.
+    /// </summary>
+    private LuaFunction CreatePrint(IScriptScheduler scheduler)
+    {
+        return new LuaFunction("print", (context, _) =>
+        {
+            _guard.EnsureScriptThread("print");
+            var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
+            _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
+
+            return new ValueTask<int>(context.Return());
+        });
     }
 
     /// <summary>
