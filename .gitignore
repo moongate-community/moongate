@@ -592,3 +592,11 @@ definitions.lua
 dist/
 benchmarks/.compare
 .codegraph/
+
+# Starlight documentation: sources and the lockfile remain tracked.
+website/node_modules/
+website/.astro/
+website/dist/
+website/src/content/docs/generated/
+website/public/generated/
+website/.docs-stage-*/

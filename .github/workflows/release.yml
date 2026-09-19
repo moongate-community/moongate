@@ -151,3 +151,15 @@ jobs:
             --source https://api.nuget.org/v3/index.json \
             --api-key "$NUGET_API_KEY" \
             --skip-duplicate
+
+  docs:
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/docs.yml
+    with:
+      release_sha: ${{ needs.release-please.outputs.sha }}
+      release_tag: ${{ needs.release-please.outputs.tag_name }}
