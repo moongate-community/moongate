@@ -228,7 +228,7 @@ publish it in a snapshot as `greeter.hello_calls`. See
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
-| `AddPersistenceEntity<T>()` | A typed entity collection, named by the entity's `[PersistenceCollection]` attribute (needs a reference to the `Moongate.Persistence` package) | [src/Moongate.Persistence/README.md](../src/Moongate.Persistence/README.md) |
+| `AddPersistenceEntity<T>()` | A typed entity collection, named by the entity's `[PersistenceCollection]` attribute (needs a reference to the `Moongate.Persistence` package) | the helper's XML doc in [ContainerPersistenceExtensions.cs](../src/Moongate.Persistence/Extensions/ContainerPersistenceExtensions.cs); the package README covers entities and data access |
 
 `priority` only matters for a service that also implements `IMoongateStartupService`
 (`src/Moongate.Server.Core/Interfaces/Services/IMoongateStartupService.cs`): the
@@ -461,10 +461,11 @@ protected override Assembly? Load(AssemblyName assemblyName)
 
 It always tries `AssemblyLoadContext.Default` — the host's own load context — first.
 Every assembly the host ships (every `Moongate.*` assembly, Serilog,
-DryIoc, LuaCSharp, and so on) resolves there, and any copy of that same assembly
-sitting in the bundle is never touched; only `FileNotFoundException` falls through to
-the bundle's own `AssemblyDependencyResolver` (built from the bundle's
-`.deps.json`) and, failing that, a same-named `.dll` next to the entry assembly.
+DryIoc, LuaCSharp, and so on) resolves there, so a copy of that same assembly
+sitting in the bundle is not touched as long as the version the plugin references is
+no newer than the host's; only `FileNotFoundException` falls through to the bundle's
+own `AssemblyDependencyResolver` (built from the bundle's `.deps.json`) and, failing
+that, a same-named `.dll` next to the entry assembly.
 
 Consequences of that rule:
 
@@ -478,12 +479,14 @@ Consequences of that rule:
   two bundles carrying their own copies of the same third-party library get two
   separate instances of its static state, not one.
 - A dependency the host *does* ship must be compiled against a package version no
-  newer than the host you deploy to: the bundle's own copy of that assembly is never
-  loaded regardless of version, and an older reference binds cleanly to the host's
-  copy — but `PluginLoadContext.Load` only catches `FileNotFoundException`, so a
-  reference to a *newer* assembly version than the host's is refused by the default
-  context with an uncaught `FileLoadException`, which surfaces as
-  `Failed to load plugin bundle '{path}'.`
+  newer than the host you deploy to. An older reference binds cleanly to the host's
+  copy. A *newer* reference is treated as not found by the host context, so the
+  loader falls through to the bundle: with `ExcludeAssets="runtime"` there is no copy
+  there and the bundle fails to load (`Failed to load plugin bundle '{path}'.` with an
+  inner `FileNotFoundException`); if the newer `Moongate.Server.Core.dll` *is* in the
+  bundle, it loads privately, the plugin's `IMoongatePlugin` is no longer the host's
+  type, and the loader reports
+  `The assembly contains no public concrete IMoongatePlugin types.`
 
 `PluginLoaderService.LoadPlugins()` is called from `MoongateServerBootstrap.StartCoreAsync`
 (`src/Moongate.Server/Bootstrap/MoongateServerBootstrap.cs`) as the very first step,
