@@ -6,6 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/moongate-community/moongate/actions/workflows/ci.yml"><img src="https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg?branch=develop" alt="CI"></a>
+  <a href="https://github.com/moongate-community/moongate/actions/workflows/security.yml"><img src="https://github.com/moongate-community/moongate/actions/workflows/security.yml/badge.svg?branch=main" alt="Security Audit"></a>
   <a href="https://github.com/moongate-community/moongate/pkgs/container/moongate"><img src="https://img.shields.io/badge/ghcr.io-moongate-2496ED?logo=docker&logoColor=white" alt="Container image"></a>
   <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
@@ -52,6 +53,8 @@ shards from the same image by giving each container its own volume and its own
 published port; a root is meant for one server at a time.
 
 [Diagnostics](docs/diagnostics.md)
+
+[Dependency security audit](docs/security-audit.md)
 
 ## Libraries
 
