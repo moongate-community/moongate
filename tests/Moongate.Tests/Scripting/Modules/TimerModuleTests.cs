@@ -1,5 +1,6 @@
 using Lua;
 using Lua.Standard;
+using Moongate.Scripting.Binding;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Modules;

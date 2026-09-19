@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 using DryIoc;
 using Lua;
 using Lua.Standard;
+using Moongate.Scripting.Binding;
+using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;

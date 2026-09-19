@@ -1,7 +1,8 @@
 using System.Text.Json;
 using Lua;
 using Lua.Standard;
-using Moongate.Scripting.Internal;
+using Moongate.Scripting.Binding;
+using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Utils;
 using Moongate.Tests.TestSupport.Scripting;

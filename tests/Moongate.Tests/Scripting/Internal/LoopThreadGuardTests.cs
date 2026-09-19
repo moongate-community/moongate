@@ -1,3 +1,4 @@
+using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Tests.TestSupport.Scripting;
 

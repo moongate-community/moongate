@@ -1,9 +1,10 @@
 using Lua;
 using Lua.Standard;
+using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Tests.TestSupport.Scripting;
 
-namespace Moongate.Tests.Scripting.Internal;
+namespace Moongate.Tests.Scripting.Binding;
 
 public sealed class LuaModuleBinderConstantsTests : IDisposable
 {

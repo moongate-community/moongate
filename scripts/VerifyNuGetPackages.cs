@@ -17,6 +17,7 @@ internal static class VerifyNuGetPackages
         ["Moongate.Network"] = [],
         ["Moongate.Network.Packets"] = ["Moongate.Core"],
         ["Moongate.Persistence"] = ["Moongate.Core"],
+        ["Moongate.Scripting"] = ["Moongate.Core", "Moongate.Server.Core"],
         ["Moongate.Server.Core"] = ["Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
         ["Moongate.Ultima"] = []
     };
@@ -43,7 +44,7 @@ internal static class VerifyNuGetPackages
                 .Where(path => path.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)
                                || path.EndsWith(".snupkg", StringComparison.OrdinalIgnoreCase))
                 .Select(path => Path.GetFileName(path)!).ToHashSet(StringComparer.Ordinal);
-            Require(actualFiles.SetEquals(expectedFiles), "Package set differs from the six expected libraries and symbols."
+            Require(actualFiles.SetEquals(expectedFiles), "Package set differs from the seven expected libraries and symbols."
                 + $" Missing: {string.Join(", ", expectedFiles.Except(actualFiles))}."
                 + $" Unexpected: {string.Join(", ", actualFiles.Except(expectedFiles))}.");
 

@@ -2,12 +2,14 @@ using System.Reflection;
 using System.Text;
 using Lua;
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Internal;
 
-namespace Moongate.Scripting.Internal;
+namespace Moongate.Scripting.Binding;
 
 /// <summary>Turns a [ScriptModule] instance into a Lua table. Reflection runs here, once; the delegates it builds never reflect.</summary>
-internal sealed class LuaModuleBinder
+public sealed class LuaModuleBinder
 {
     private readonly IScriptThreadGuard _guard;
     private readonly List<Type> _discoveredEnums = [];
@@ -27,6 +29,8 @@ internal sealed class LuaModuleBinder
     }
 
     /// <summary>Reflects <paramref name="moduleInstance"/> once, publishing a read-only Lua table under its [ScriptModule] name with one LuaFunction per [ScriptFunction] method.</summary>
+    /// <param name="state">The Lua state to publish the module's table into.</param>
+    /// <param name="moduleInstance">The [ScriptModule]-attributed instance to bind.</param>
     /// <returns>The bound module: its Lua table, and every function and constant published on it.</returns>
     /// <exception cref="InvalidOperationException">
     /// <paramref name="moduleInstance"/>'s type carries no [ScriptModule], two of its [ScriptFunction] methods resolve to the same Lua name, or a method's signature uses a parameter or return type the converter cannot bind.
@@ -73,6 +77,8 @@ internal sealed class LuaModuleBinder
     }
 
     /// <summary>Publishes an enum as a read-only global table named after the type, keyed by member name with numeric values.</summary>
+    /// <param name="state">The Lua state to publish the enum's table into.</param>
+    /// <param name="enumType">The enum type to publish.</param>
     /// <exception cref="ArgumentException"><paramref name="enumType"/> is not an enum.</exception>
     public void BindEnum(LuaState state, Type enumType)
     {

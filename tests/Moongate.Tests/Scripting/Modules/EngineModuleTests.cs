@@ -2,6 +2,7 @@ using System.Reflection;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Utils;
+using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Modules;
 

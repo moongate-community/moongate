@@ -2,8 +2,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Lua;
+using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Data.Luarc;
-using Moongate.Scripting.Internal;
 
 namespace Moongate.Scripting.Utils;
 
