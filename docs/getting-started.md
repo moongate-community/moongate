@@ -51,7 +51,7 @@ default). Node.js is only needed to work on the documentation website.
 4. Run the same command again. Check the startup logs for loaded services and
    bound endpoints. A missing `scripts/init.lua` produces a warning and starts
    an empty scripting environment. A bootstrap script that exists but fails
-   prevents startup. Add scripts using Writing Lua scripts.
+   prevents startup. Add scripts using [Writing Lua scripts](scripting.md).
 
 5. Stop with Ctrl+C and allow shutdown to finish. After successful startup the
    host coordinates the final world save before closing persistence. A failed
@@ -86,7 +86,7 @@ filename does not make a shared save directory safe for multiple writers.
 
 Console logs show time, level, source and message. File logs roll daily and at
 10 MiB, keeping up to 30 files. For metrics see [Diagnostics](diagnostics.md);
-for backup and recovery see Persistence and world saves.
+for backup and recovery see [Persistence and world saves](persistence.md).
 
 ## Common startup problems
 

@@ -72,7 +72,7 @@ max_string_length = 16777216
 Game-loop queue limits, timer-wheel resolution, packet dispatch limits and
 internal API options are configured through their C# option objects in the host;
 they are not additional sections of this TOML file. See
-Game loop and timers, Packets and the
+[Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the
 [internal API library](../src/Moongate.Api/README.md).
 
 ## Command line and root directory
@@ -106,5 +106,5 @@ a relative root starts from the working directory. Prefer explicit absolute path
 in service managers and containers. Docker sets `MOONGATE_ROOT=/data` by default.
 
 See [First start](getting-started.md) for PID ownership, logs and troubleshooting,
-world saves for backup semantics and
-Lua scripting for budgets and sandbox boundaries.
+[world saves](persistence.md) for backup semantics and
+[Lua scripting](scripting.md) for budgets and sandbox boundaries.

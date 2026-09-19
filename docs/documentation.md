@@ -3,8 +3,8 @@
 Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
 documentation. The public site is hosted at
 [moongate-community.github.io/moongate](https://moongate-community.github.io/moongate/).
-The initial publication is a one-time documentation-only deployment; subsequent
-automatic updates happen with releases.
+Automatic updates happen with releases. An explicitly authorized docs-only
+refresh can publish a reviewed development revision without releasing binaries.
 
 ## Run locally
 
@@ -74,7 +74,7 @@ content and the authored homepage intact.
 
 After the initial documentation-only publication, automatic documentation builds
 and deployments run **only when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
-requests do not build or publish the website. There is no manual docs trigger.
+requests do not build or publish the website. There is no permanent manual docs trigger.
 
 The `docs` job in `.github/workflows/release.yml` calls the reusable
 `.github/workflows/docs.yml`, passing the released SHA and tag. It checks out
@@ -91,3 +91,17 @@ Local builds use `develop` for source links and read the current version from
 `.release-please-manifest.json` for the site title. To
 preview a release label and source ref, set `MOONGATE_DOCS_VERSION` and
 `MOONGATE_DOCS_REF` before running the build.
+
+## Authorized docs-only refreshes
+
+A maintainer may explicitly authorize a docs-only publication between releases.
+Use an isolated, temporary deployment branch/workflow, pin the checkout and
+`MOONGATE_DOCS_REF` to the reviewed source commit, and set `MOONGATE_DOCS_VERSION`
+to a label such as `develop (after v0.4.0)` when it documents unreleased work.
+Do not create a server release merely to refresh documentation.
+
+Limit the temporary trigger and Pages environment permission to that exact branch.
+After a successful deployment, verify new pages, search assets and source links on
+the public URL, remove the temporary trigger/permission and retire the deployment
+branch. Keep `.github/workflows/docs.yml` and the ordinary release workflow unchanged.
+This exception does not enable publication on every `develop` commit.
