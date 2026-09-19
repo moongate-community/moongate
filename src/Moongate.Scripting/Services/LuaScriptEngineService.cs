@@ -16,6 +16,22 @@ using Serilog;
 namespace Moongate.Scripting.Services;
 
 /// <summary>Owns the single LuaState: opens the sandboxed libraries, binds modules, runs the prelude and init.lua, and serves the four IScriptEngine operations.</summary>
+/// <remarks>
+/// <para>
+/// The sandbox opens the base, <c>string</c>, <c>table</c>, <c>math</c>, <c>coroutine</c> and
+/// <c>package</c> libraries; <c>io</c>, <c>os</c> and <c>debug</c> are never opened. It then removes
+/// <c>dofile</c>, <c>loadfile</c> and <c>rawset</c>; <c>package.searchpath</c>, <c>package.path</c>,
+/// <c>package.cpath</c>, <c>package.loadlib</c> and the runtime's second <c>package.searchers</c> entry,
+/// which resolves <c>package.path</c> on the host filesystem independently of the module loader; and
+/// <c>coroutine.create</c>, <c>coroutine.wrap</c> and <c>coroutine.resume</c>, whose threads would carry
+/// neither the instruction budget's hook nor its cancellation token. <c>coroutine.yield</c>,
+/// <c>coroutine.status</c> and <c>coroutine.running</c> stay, so the prelude's <c>wait</c> keeps working.
+/// </para>
+/// <para>
+/// Memory is not bounded: the budget counts instructions, and a single <c>string.rep</c> or table
+/// constructor can allocate freely. A cap is a follow-up.
+/// </para>
+/// </remarks>
 public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupService, IDisposable
 {
     /// <summary>Registration priority for the startup lifecycle: starts after the game loop (-800) and timers (-900) are running, and stops before them.</summary>
@@ -102,6 +118,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         state.OpenMathLibrary();
         state.OpenCoroutineLibrary();
         state.OpenModuleLibrary();
+        TrimSandbox(state);
         state.ModuleLoader = new ScriptDirectoryModuleLoader(_options.ScriptsDirectory);
 
         var files = new ScriptFileLoader(state, _options.ScriptsDirectory);
@@ -261,6 +278,46 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
 
         _publishedEnums = binder.PublishedEnums.ToList();
+    }
+
+    /// <summary>
+    /// Removes the standard-library members that reach past the scripts directory or past the instruction
+    /// budget. Runs once, after the libraries are opened and before any script does.
+    /// </summary>
+    private static void TrimSandbox(LuaState state)
+    {
+        // dofile and loadfile read any path on the host, and loadfile returns the parser error, which
+        // leaks file contents. rawset writes straight through a module's read-only proxy.
+        state.Environment["dofile"] = LuaValue.Nil;
+        state.Environment["loadfile"] = LuaValue.Nil;
+        state.Environment["rawset"] = LuaValue.Nil;
+
+        if (state.Environment["package"].TryRead<LuaTable>(out var package))
+        {
+            // The runtime installs two require searchers: the first asks state.ModuleLoader, the second
+            // resolves package.path on the host filesystem independently of it, and package.path is
+            // writable from Lua. Dropping the second searcher and the members that feed it confines
+            // require to the scripts directory; an unknown module then reports "not found".
+            if (package["searchers"].TryRead<LuaTable>(out var searchers))
+            {
+                searchers[2] = LuaValue.Nil;
+            }
+
+            package["searchpath"] = LuaValue.Nil;
+            package["path"] = LuaValue.Nil;
+            package["cpath"] = LuaValue.Nil;
+            package["loadlib"] = LuaValue.Nil;
+        }
+
+        if (state.Environment["coroutine"].TryRead<LuaTable>(out var coroutine))
+        {
+            // A coroutine a script creates carries neither the budget hook nor the unit's cancellation
+            // token, so it would run unbounded. The scheduler is the only thing that creates coroutines;
+            // scripts reach the scheduler through wait(), which yields.
+            coroutine["create"] = LuaValue.Nil;
+            coroutine["wrap"] = LuaValue.Nil;
+            coroutine["resume"] = LuaValue.Nil;
+        }
     }
 
     private static void RunPrelude(LuaState state, CancellationToken cancellationToken)

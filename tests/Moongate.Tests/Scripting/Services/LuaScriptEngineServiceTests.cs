@@ -259,13 +259,52 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task Io_And_Os_AreNotAvailableToScripts()
+    public async Task HostReachingFunctions_AreNotAvailableToScripts()
     {
-        _scripts.Write("init.lua", "function libs() return io == nil, os == nil, require ~= nil end");
+        _scripts.Write("init.lua", """
+            function libs()
+                return io == nil, os == nil, dofile == nil, loadfile == nil, rawset == nil,
+                    coroutine.create == nil, coroutine.wrap == nil, coroutine.resume == nil,
+                    package.searchpath == nil, package.loadlib == nil, package.path == nil,
+                    package.cpath == nil, #package.searchers, require ~= nil, coroutine.yield ~= nil
+            end
+            """);
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        Assert.Equal([true, true, true], engine.Call("libs").Values);
+        Assert.Equal(
+            [true, true, true, true, true, true, true, true, true, true, true, true, 1d, true, true],
+            engine.Call("libs").Values
+        );
+    }
+
+    [Fact]
+    public async Task ModuleTable_CannotBeShadowedByRawset_BecauseTheEngineRemovesIt()
+    {
+        _scripts.Write("init.lua",
+            "function shadow()\n" +
+            "    local ok = pcall(function() rawset(probe, 'add', function() return 0 end) end)\n" +
+            "    return ok, probe.add(1, 2)\n" +
+            "end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        Assert.Equal([false, 3d], engine.Call("shadow").Values);
+    }
+
+    [Fact]
+    public async Task Require_OutsideTheScriptsDirectory_IsRefused_EvenThroughPackagePath()
+    {
+        using var outside = new TemporaryScriptsDirectory();
+        outside.Write("intruder.lua", "escaped = true return 1");
+        _scripts.Write("init.lua",
+            $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]]\nreturn require('intruder')");
+        using var engine = NewEngine();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(engine.StartAsync);
+
+        Assert.Contains("not found", exception.Message, StringComparison.Ordinal);
+        Assert.Equal(0, engine.GetMetrics().FilesLoaded);
     }
 
     [Fact]

@@ -20,6 +20,12 @@ dotnet add package Moongate.Scripting
 - Every resume is bounded by an instruction count, so a runaway script cannot stall the loop.
 - `definitions.lua` and `.luarc.json` are written at startup for editor completion.
 
+## Sandbox
+
+Scripts see the base, `string`, `table`, `math`, `coroutine` and `package` libraries. `io`, `os` and `debug` are never opened, and the engine removes the rest of what reaches past the scripts directory or past the instruction budget: `dofile`, `loadfile` and `rawset`; `package.searchpath`, `package.path`, `package.cpath`, `package.loadlib` and the runtime's second `package.searchers` entry, which resolves `package.path` on the host filesystem independently of the module loader; and `coroutine.create`, `coroutine.wrap` and `coroutine.resume`, whose threads would carry neither the budget's hook nor its cancellation token. `coroutine.yield` stays, so `wait(seconds)` keeps working. `require` therefore resolves only under the scripts directory.
+
+Memory is not bounded: the budget counts instructions, and a single `string.rep` or table constructor can allocate freely. A cap is a follow-up.
+
 ## Example
 
 Bind a module to a Lua state and call it. This runs without a Moongate server; inside the server the engine service does the binding and enforces the loop thread.

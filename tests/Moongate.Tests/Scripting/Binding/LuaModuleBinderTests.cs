@@ -129,6 +129,9 @@ public sealed class LuaModuleBinderTests : IDisposable
     [Fact]
     public void Bind_ModuleTable_RejectsWritesAndMetatableChanges()
     {
+        // rawset bypasses the proxy's __newindex and would shadow a bound function; the binder cannot stop
+        // it, so the engine removes rawset from the sandbox. See
+        // LuaScriptEngineServiceTests.ModuleTable_CannotBeShadowedByRawset_BecauseTheEngineRemovesIt.
         Assert.Throws<LuaRuntimeException>(() => Run("probe.add = nil"));
         Assert.Throws<LuaRuntimeException>(() => Run("probe.extra = 1"));
         Assert.Throws<LuaRuntimeException>(() => Run("setmetatable(probe, {})"));

@@ -286,6 +286,62 @@ public sealed class LuaCSharpBehaviourTests
     }
 
     [Fact]
+    public void OpenBasicLibrary_DefinesDofileAndLoadfile()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+
+        var result = Sync(state.DoStringAsync("return type(dofile), type(loadfile), type(rawset)", "probe", default));
+
+        Assert.Equal("function", result[0].Read<string>());
+        Assert.Equal("function", result[1].Read<string>());
+        Assert.Equal("function", result[2].Read<string>());
+    }
+
+    [Fact]
+    public void OpenModuleLibrary_InstallsTwoSearchers_AndTheSecondHonoursPackagePath()
+    {
+        using var outside = new TemporaryScriptsDirectory();
+        outside.Write("intruder.lua", "return 'loaded from package.path'");
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        state.OpenStringLibrary();
+        state.OpenModuleLibrary();
+        state.ModuleLoader = new CountingModuleLoader(() => "return {}");
+
+        Assert.Equal(2, Sync(state.DoStringAsync("return #package.searchers", "probe", default))[0].Read<double>());
+
+        var result = Sync(state.DoStringAsync(
+            $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]] return require('intruder')", "probe", default));
+
+        Assert.Equal("loaded from package.path", result[0].Read<string>());
+    }
+
+    [Fact]
+    public void ACoroutineCreatedFromLua_DoesNotInheritTheHook()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        state.OpenCoroutineLibrary();
+        var hits = 0;
+        state.SetHook(new LuaFunction("count", (context, _) =>
+        {
+            hits++;
+
+            return new ValueTask<int>(context.Return());
+        }), "", 1000);
+        const string Loop = "local n = 0 for i = 1, 5000 do n = n + i end return n";
+
+        Sync(state.DoStringAsync(Loop, "inline", default));
+        var inlineHits = hits;
+        hits = 0;
+        Sync(state.DoStringAsync($"local f = coroutine.wrap(function() {Loop} end) return f()", "viaCoroutine", default));
+
+        Assert.True(inlineHits >= 5, $"the ~10,000-instruction loop should fire the hook repeatedly, fired {inlineHits}");
+        Assert.Equal(0, hits);
+    }
+
+    [Fact]
     public void ReadOnlyProxy_BlocksWritesToExistingAndNewKeys()
     {
         using var state = LuaState.Create();
