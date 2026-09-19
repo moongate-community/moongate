@@ -16,6 +16,7 @@ using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Plugins;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.GameLoop;
+using Moongate.Tests.TestSupport.Diagnostics;
 using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Plugins;
@@ -85,9 +86,11 @@ public sealed class SamplePluginTests
             await commands.StopAsync();
 
             var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
-            var sample = Assert.Single(await provider.CollectAsync());
-            Assert.Equal("greeter.hello_calls", sample.Name);
-            Assert.Equal(2, sample.Value);
+            using var diagnostics = new DiagnosticServiceFixture([provider]);
+            await diagnostics.Service.StartAsync();
+            var snapshot = await diagnostics.NextAsync();
+            Assert.Empty(snapshot.FailedProviders);
+            Assert.Equal(2, snapshot.Metrics["greeter.hello_calls"].Value);
 
             var definitions = await File.ReadAllTextAsync(Path.Combine(files.Directories["scripts"], "definitions.lua"));
             Assert.Contains("---@class greeter", definitions, StringComparison.Ordinal);
