@@ -41,6 +41,20 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     [Fact]
+    public void Render_AnnotatesEnumParameters_AsEnumOrString_InEveryPosition()
+    {
+        using var state = LuaState.Create();
+        var binder = new LuaModuleBinder(NoThreadGuard.Instance);
+        var module = binder.Bind(state, new EnumSignaturesModule());
+
+        var text = LuaDefinitionsGenerator.Render([module], [typeof(ProbeColour)]);
+
+        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.paint(colour) end", text, StringComparison.Ordinal);
+        Assert.Contains("---@param ... ProbeColour|string\n---@return integer\nfunction palette.mix(...) end", text, StringComparison.Ordinal);
+        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.tint(colour) end", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Render_DeclaresEachModuleAsAClassWithTypedFunctionsAndConstants()
     {
         var (modules, enums) = BindProbeAndLog();
