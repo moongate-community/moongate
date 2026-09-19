@@ -89,14 +89,14 @@ timer.every(30, function()
 end)
 ```
 
-- **Modules:** `engine` (name, version, codename), `log` (`debug`, `info`, `warning`,
+- **Modules:** `engine` (name, version, codename, platform), `log` (`debug`, `info`, `warning`,
   `error`, Serilog templates), `timer` (`after`, `every`, `cancel`) and the global
   `wait(seconds)`; `print` goes to the server log. Host modules are C# classes marked
   `[ScriptModule]` / `[ScriptFunction]` / `[ScriptConstant]`, registered with
   `RegisterScriptModule<T>()` in `Program.cs`.
 - **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
   may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
-  with a script error; `string.rep` refuses results above 16 MiB. Nothing a script does
+  with a script error; `string.rep` refuses results longer than 16,777,216 characters. Nothing a script does
   can block or fault the loop.
 - **Sandbox:** base, `string`, `table`, `math`, `coroutine` and `package` only; no `io`,
   `os`, `debug`, `dofile`, `loadfile`, `rawset` or script-created coroutines.
@@ -114,7 +114,7 @@ max_instructions_per_resume = 150000
 max_instructions_per_chunk = 10000000
 hook_interval = 1000
 write_definitions = true
-max_string_bytes = 16777216
+max_string_length = 16777216
 ```
 
 The package README, [src/Moongate.Scripting/README.md](src/Moongate.Scripting/README.md),
