@@ -8,10 +8,12 @@ internal static class VerifyNuGetConsumers
 {
     private static readonly Dictionary<string, string> ExpectedOutput = new(StringComparer.Ordinal)
     {
+        ["Moongate.Api"] = "API contracts: 1",
         ["Moongate.Core"] = "0x00000001: 100, 200, 5",
         ["Moongate.Network"] = "TCP listener started and stopped.",
         ["Moongate.Network.Packets"] = "73:42",
         ["Moongate.Persistence"] = "Mario",
+        ["Moongate.Scripting"] = "Hello, Moongate!",
         ["Moongate.Server.Core"] = "Started",
         ["Moongate.Ultima"] = "2x2"
     };
@@ -100,6 +102,11 @@ internal static class VerifyNuGetConsumers
         {
             expected.Add("Player.cs");
         }
+        if (id == "Moongate.Api")
+        {
+            expected.Add("IncrementRequest.cs");
+            expected.Add("IncrementResponse.cs");
+        }
         var actual = matches.Select(match => match.Groups["file"].Value).ToHashSet(StringComparer.Ordinal);
         if (matches.Count != expected.Count || !actual.SetEquals(expected))
         {
@@ -121,6 +128,13 @@ internal static class VerifyNuGetConsumers
             var memoryPack = project.Descendants("PackageReference").Single(reference => (string?)reference.Attribute("Include") == "MemoryPack");
             references.Add(new XElement("PackageReference", new XAttribute("Include", "MemoryPack"),
                 new XAttribute("Version", memoryPack.Attribute("Version")!.Value)));
+        }
+        if (id == "Moongate.Api")
+        {
+            var project = XDocument.Load(Path.Combine(repository, "src", id, $"{id}.csproj"));
+            var messagePack = project.Descendants("PackageReference").Single(reference => (string?)reference.Attribute("Include") == "MessagePack");
+            references.Add(new XElement("PackageReference", new XAttribute("Include", "MessagePack"),
+                new XAttribute("Version", messagePack.Attribute("Version")!.Value)));
         }
         new XDocument(new XElement("Project", new XAttribute("Sdk", "Microsoft.NET.Sdk"),
             new XElement("PropertyGroup",

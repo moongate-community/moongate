@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
-using Moongate.Network.Client;
+using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Data.Sessions;
 
 namespace Moongate.Server.Core.Interfaces.Services;
@@ -19,7 +19,7 @@ public interface ISessionService
     /// <summary>Returns the registered session for the client, creating it when absent.</summary>
     /// <remarks>A registered detached session is returned unchanged and is never reattached.</remarks>
     /// <exception cref="ArgumentNullException">The client is null.</exception>
-    GameSession GetOrCreate(MoongateTcpClient client);
+    GameSession GetOrCreate(INetworkConnection client);
 
     /// <summary>Attempts to find a currently registered session by its transport session identifier.</summary>
     bool TryGet(long sessionId, [NotNullWhen(true)] out GameSession? session);

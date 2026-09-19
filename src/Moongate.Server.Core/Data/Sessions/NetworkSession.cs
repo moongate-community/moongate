@@ -1,5 +1,5 @@
 using System.Net;
-using Moongate.Network.Client;
+using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Types.Sessions;
 
 namespace Moongate.Server.Core.Data.Sessions;
@@ -8,14 +8,14 @@ public sealed class NetworkSession
 {
     private readonly Lock _sync = new();
 
-    private MoongateTcpClient? _client;
+    private INetworkConnection? _client;
     private NetworkSessionState _state;
     private uint? _seed;
     private string? _clientVersion;
 
     public long SessionId { get; }
 
-    public MoongateTcpClient? Client
+    public INetworkConnection? Client
     {
         get
         {
@@ -67,7 +67,7 @@ public sealed class NetworkSession
         }
     }
 
-    public NetworkSession(MoongateTcpClient client)
+    public NetworkSession(INetworkConnection client)
     {
         ArgumentNullException.ThrowIfNull(client);
         var remoteEndPoint = client.RemoteEndPoint;

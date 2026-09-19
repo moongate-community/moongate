@@ -1,3 +1,5 @@
+using Moongate.Server.Services.Network;
+using Moongate.Tests.TestSupport.Network;
 using Moongate.Network.Packets.General;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
@@ -18,7 +20,8 @@ public sealed class PacketSendServiceTests
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var sender = new PacketSendService(sessions);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service);
         await sender.StartAsync();
         try
         {
@@ -46,7 +49,8 @@ public sealed class PacketSendServiceTests
         await using var fixture = await SessionFixture.CreateAsync();
         var sessions = new SessionService(fixture.Loop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var sender = new PacketSendService(sessions);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service);
         Assert.False(sender.TrySend(session.SessionId, new PingPacket(1)));
         await sender.StartAsync();
         Assert.False(sender.TrySend(long.MaxValue, new PingPacket(1)));
@@ -63,7 +67,7 @@ public sealed class PacketSendServiceTests
     public async Task Constructor_RejectsNonpositiveCapacity(int capacity)
     {
         await using var fixture = await SessionFixture.CreateAsync();
-        Assert.Throws<ArgumentOutOfRangeException>(() => new PacketSendService(new SessionService(fixture.Loop), capacity));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new PacketSendService(new ConnectionService(), capacity));
     }
 
     [Fact]
@@ -74,7 +78,8 @@ public sealed class PacketSendServiceTests
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var sender = new PacketSendService(sessions, 1);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service, 1);
         await sender.StartAsync();
         try
         {
@@ -82,7 +87,7 @@ public sealed class PacketSendServiceTests
             await middleware.Entered.WaitAsync(Timeout);
             Assert.True(sender.TrySend(session.SessionId, new PingPacket(2)));
             Assert.False(sender.TrySend(session.SessionId, new PingPacket(3)));
-            Assert.False(fixture.Client.IsConnected);
+            Assert.False(connections.Service.TryGet(session.SessionId, out _));
             var cleanup = sender.DisconnectAsync(session.SessionId);
             Assert.False(cleanup.IsCompleted);
             Assert.True(sessions.TryGet(session.SessionId, out _));
@@ -110,7 +115,8 @@ public sealed class PacketSendServiceTests
         var sessions = new SessionService(slow.Loop);
         sessions.GetOrCreate(slow.Client);
         sessions.GetOrCreate(fast.Client);
-        var sender = new PacketSendService(sessions);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(slow.Client, fast.Client);
+        var sender = new PacketSendService(connections.Service);
         await sender.StartAsync();
         try
         {
@@ -139,21 +145,23 @@ public sealed class PacketSendServiceTests
         }
     }
 
-    [Fact]
-    public async Task SendFailure_ClosesConnectionAndIsObservedByCleanup()
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task SendFailure_ClosesConnectionAndIsObservedByCleanup(bool canceled)
     {
         await using var fixture = await SessionFixture.CreateAsync();
-        using var middleware = new ControlledSendMiddleware { Fail = true };
+        Exception failure = canceled ? new OperationCanceledException("independent send cancellation") : new IOException("send failure");
+        using var middleware = new ControlledSendMiddleware { Failure = failure };
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
         sessions.GetOrCreate(fixture.Client);
-        var sender = new PacketSendService(sessions);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service);
         await sender.StartAsync();
         Assert.True(sender.TrySend(fixture.Client.SessionId, new PingPacket(1)));
         await fixture.Client.Completion.WaitAsync(Timeout);
-        await sender.DisconnectAsync(fixture.Client.SessionId).WaitAsync(Timeout);
         Assert.False(sender.TrySend(fixture.Client.SessionId, new PingPacket(2)));
-        await sender.StopAsync().WaitAsync(Timeout);
+        var error = await Assert.ThrowsAsync<AggregateException>(() => sender.StopAsync().WaitAsync(Timeout));
+        Assert.Contains(failure, error.Flatten().InnerExceptions);
     }
 
     [Fact]
@@ -164,7 +172,8 @@ public sealed class PacketSendServiceTests
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
         sessions.GetOrCreate(fixture.Client);
-        var sender = new PacketSendService(sessions);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service);
         await sender.StartAsync();
         try
         {

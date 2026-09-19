@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
-using Moongate.Network.Client;
+using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 
@@ -24,7 +24,7 @@ public sealed class SessionService : ISessionService
         return _sessions.Values.ToArray();
     }
 
-    public GameSession GetOrCreate(MoongateTcpClient client)
+    public GameSession GetOrCreate(INetworkConnection client)
     {
         ArgumentNullException.ThrowIfNull(client);
         return _sessions.GetOrAdd(

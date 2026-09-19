@@ -1,11 +1,29 @@
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Sessions;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Network;
 
 namespace Moongate.Tests.Integration.Sessions;
 
 public sealed class NetworkSessionTests
 {
+    [Fact]
+    public void AbstractConnection_DetachPreservesMetadataWithoutClosingTransport()
+    {
+        using var connection = new ControlledNetworkConnection(7);
+        var session = new NetworkSession(connection);
+        Assert.Same(connection, session.Client);
+        session.SetClientVersion("7.0.90.15");
+        session.DetachClient();
+        Assert.Null(session.Client);
+        Assert.Equal("127.0.0.1:5151", session.RemoteEndPoint);
+        Assert.Equal("127.0.0.1:2593", session.LocalEndPoint);
+        Assert.Equal(NetworkSessionState.Disconnected, session.State);
+        Assert.True(connection.IsConnected);
+        Assert.Equal(0, connection.CloseCalls);
+        Assert.Throws<InvalidOperationException>(() => session.SetSeed(1));
+    }
+
     [Fact]
     public async Task DetachClient_RetainsConnectionSnapshotWithoutClosingSocket()
     {

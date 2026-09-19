@@ -225,22 +225,6 @@ public sealed class FileIndex : IDisposable
         }
     }
 
-    /// <summary>
-    /// Releases the underlying .mul / .uop FileStream so the next access
-    /// re-opens fresh. Additive — existing code paths that ignore the
-    /// disposable contract keep working because EnsureOpen handles a
-    /// disposed FileAccessor.Stream gracefully.
-    /// </summary>
-    public void Dispose()
-    {
-        FileAccessor?.Stream?.Dispose();
-
-        if (FileAccessor != null)
-        {
-            FileAccessor.Stream = null;
-        }
-    }
-
     public Stream Seek(int index, out int length, out int extra, out bool patched)
     {
         if (FileAccessor is null)
@@ -490,5 +474,21 @@ public sealed class FileIndex : IDisposable
         FileAccessor.Stream = stream;
 
         return stream;
+    }
+
+    /// <summary>
+    /// Releases the underlying .mul / .uop FileStream so the next access
+    /// re-opens fresh. Additive — existing code paths that ignore the
+    /// disposable contract keep working because EnsureOpen handles a
+    /// disposed FileAccessor.Stream gracefully.
+    /// </summary>
+    public void Dispose()
+    {
+        FileAccessor?.Stream?.Dispose();
+
+        if (FileAccessor != null)
+        {
+            FileAccessor.Stream = null;
+        }
     }
 }

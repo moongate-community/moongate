@@ -13,11 +13,13 @@ internal static class VerifyNuGetPackages
     private const string IconHash = "44501F487EF8670A73FF709A8F78CE33154B8ED42F13245A579ECCd056BC4A0F";
     private static readonly Dictionary<string, string[]> InternalDependencies = new(StringComparer.Ordinal)
     {
+        ["Moongate.Api"] = ["Moongate.Network"],
         ["Moongate.Core"] = [],
         ["Moongate.Network"] = [],
         ["Moongate.Network.Packets"] = ["Moongate.Core"],
         ["Moongate.Persistence"] = ["Moongate.Core"],
-        ["Moongate.Server.Core"] = ["Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
+        ["Moongate.Scripting"] = ["Moongate.Core", "Moongate.Server.Core"],
+        ["Moongate.Server.Core"] = ["Moongate.Api", "Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
         ["Moongate.Ultima"] = []
     };
 
@@ -43,7 +45,7 @@ internal static class VerifyNuGetPackages
                 .Where(path => path.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase)
                                || path.EndsWith(".snupkg", StringComparison.OrdinalIgnoreCase))
                 .Select(path => Path.GetFileName(path)!).ToHashSet(StringComparer.Ordinal);
-            Require(actualFiles.SetEquals(expectedFiles), "Package set differs from the six expected libraries and symbols."
+            Require(actualFiles.SetEquals(expectedFiles), $"Package set differs from the {InternalDependencies.Count} expected libraries and symbols."
                 + $" Missing: {string.Join(", ", expectedFiles.Except(actualFiles))}."
                 + $" Unexpected: {string.Join(", ", actualFiles.Except(expectedFiles))}.");
 

@@ -1,3 +1,5 @@
+using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Helpers;
 using Moongate.Tests.TestSupport.Directories;
@@ -17,8 +19,10 @@ public sealed class ConfigHelperTests
 
         var config = ConfigHelper.Load(path);
 
+        Assert.Equal(ServerMode.Standalone, config.Mode);
         Assert.Equivalent(defaults, config);
         var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
+        Assert.Equal("standalone", document["mode"]);
         var shard = Assert.IsType<TomlTable>(document["shard"]);
         var network = Assert.IsType<TomlTable>(document["network"]);
         var diagnostics = Assert.IsType<TomlTable>(document["diagnostics"]);
@@ -67,6 +71,7 @@ public sealed class ConfigHelperTests
         var config = ConfigHelper.Load(path);
 
         Assert.Equivalent(defaults.Shard, config.Shard);
+        Assert.Equal(ServerMode.Standalone, config.Mode);
         Assert.Equal(4001, config.Network.GamePort);
         Assert.Equal(defaults.Network.ListenAddress, config.Network.ListenAddress);
         Assert.Equal(defaults.Network.EnablePingServer, config.Network.EnablePingServer);
@@ -97,6 +102,57 @@ public sealed class ConfigHelperTests
 
         Assert.Equal("Existing data", File.ReadAllText(parent));
     }
+
+    [Theory,
+     InlineData("login", true, false),
+     InlineData("game", false, true),
+     InlineData("standalone", true, true)]
+    public void Load_ServerMode_EnablesExpectedFlags(string mode, bool login, bool game)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = $"mode = \"{mode}\"\n";
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        var config = ConfigHelper.Load(path);
+
+        Assert.Equal(login, config.Mode.HasFlag(ServerMode.Login));
+        Assert.Equal(game, config.Mode.HasFlag(ServerMode.Game));
+        Assert.Equal(toml, File.ReadAllText(path));
+    }
+
+    [Theory,
+     InlineData(ServerMode.Login, "login"),
+     InlineData(ServerMode.Game, "game"),
+     InlineData(ServerMode.Login | ServerMode.Game, "standalone")]
+    public void Load_SerializedServerMode_RoundTripsReadableName(ServerMode mode, string name)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = TomlUtils.Serialize(new MoongateServerConfig { Mode = mode });
+        var document = TomlSerializer.Deserialize<TomlTable>(toml)!;
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        Assert.Equal(name, document["mode"]);
+        Assert.Equal(mode, ConfigHelper.Load(path).Mode);
+    }
+
+    [Theory,
+     InlineData("\"none\""),
+     InlineData("\"invalid\""),
+     InlineData("\"\""),
+     InlineData("0"),
+     InlineData("4"),
+     InlineData("true")]
+    public void Load_InvalidServerMode_RejectsAndPreservesFile(string value)
+    {
+        using var directory = new TemporaryDirectory();
+        var toml = $"mode = {value}\n";
+        var path = directory.CreateFile("moongate.toml", toml);
+
+        Assert.Throws<TomlException>(() => ConfigHelper.Load(path));
+
+        Assert.Equal(toml, File.ReadAllText(path));
+    }
+
     [Fact]
     public void Load_WorldSaveDefaults_WriteSnakeCaseAndMapToOptions()
     {
@@ -149,4 +205,71 @@ public sealed class ConfigHelperTests
         Assert.Throws<InvalidOperationException>(config.Validate);
     }
 
+    [Fact]
+    public void Load_ScriptingDefaults_WriteSnakeCaseAndMapToOptions()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        var config = ConfigHelper.Load(path);
+        var scripting = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["scripting"]);
+        Assert.Equal("init.lua", scripting["bootstrap_file"]);
+        Assert.Equal(150_000L, scripting["max_instructions_per_resume"]);
+        Assert.Equal(10_000_000L, scripting["max_instructions_per_chunk"]);
+        Assert.Equal(1_000L, scripting["hook_interval"]);
+        Assert.Equal(true, scripting["write_definitions"]);
+        Assert.Equal(16_777_216L, scripting["max_string_length"]);
+        var options = config.Scripting.ToOptions(directory.Path);
+        Assert.Equal("init.lua", options.BootstrapFile);
+        Assert.Equal(150_000, options.MaxInstructionsPerResume);
+        Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
+        Assert.Equal(1_000, options.HookInterval);
+        Assert.True(options.WriteDefinitions);
+        Assert.Equal(16_777_216, options.MaxStringLength);
+    }
+
+    [Fact]
+    public void Load_ScriptingOverrides_MapsConfiguredValues()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", """
+            [scripting]
+            bootstrap_file = "boot.lua"
+            max_instructions_per_resume = 20000
+            max_instructions_per_chunk = 500000
+            hook_interval = 500
+            write_definitions = false
+            max_string_length = 1024
+            """);
+        var options = ConfigHelper.Load(path).Scripting.ToOptions(directory.Path);
+        Assert.Equal("boot.lua", options.BootstrapFile);
+        Assert.Equal(20_000, options.MaxInstructionsPerResume);
+        Assert.Equal(500_000, options.MaxInstructionsPerChunk);
+        Assert.Equal(500, options.HookInterval);
+        Assert.False(options.WriteDefinitions);
+        Assert.Equal(1024, options.MaxStringLength);
+    }
+
+    [Fact]
+    public void Load_NonPositiveStringCap_RejectsBeforeServerStartup()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[scripting]\nmax_string_length = 0\n");
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
+    }
+
+    [Theory, InlineData(0, 1000), InlineData(150000, 0), InlineData(150000, 200000)]
+    public void Load_InvalidScriptingBudget_RejectsBeforeServerStartup(int resumeBudget, int hookInterval)
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml",
+            $"[scripting]\nmax_instructions_per_resume = {resumeBudget}\nhook_interval = {hookInterval}\n");
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
+    }
+
+    [Fact]
+    public void Validate_BlankScriptingBootstrapFile_RejectsBeforeServerStartup()
+    {
+        var config = new MoongateServerConfig { Scripting = { BootstrapFile = " " } };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+    }
 }
