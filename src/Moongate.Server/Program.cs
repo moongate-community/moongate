@@ -193,9 +193,9 @@ await ConsoleApp.RunAsync(
                             )
                             .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
                             .RegisterScriptModule<LogModule>()
-                            .RegisterCommand<ScriptReloadCommand>(
+                            .RegisterCommand<ScriptCommand>(
                                 "script",
-                                "Reloads a script file: script reload <file>.",
+                                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
                                 CommandSourceType.Console,
                                 AccountType.Administrator
                             )

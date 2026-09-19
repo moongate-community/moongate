@@ -15,6 +15,9 @@ public sealed class FakeScriptEngine : IScriptEngine
     /// <summary>Gets or sets the exception <see cref="LoadFile"/> throws instead of loading.</summary>
     public Exception? LoadFileThrows { get; set; }
 
+    /// <summary>Gets or sets the snapshot <see cref="GetMetrics"/> returns; null derives one from <see cref="Loaded"/>.</summary>
+    public ScriptExecutionMetrics? Metrics { get; set; }
+
     /// <inheritdoc />
     public void LoadFile(string relativePath)
     {
@@ -41,6 +44,6 @@ public sealed class FakeScriptEngine : IScriptEngine
     /// <inheritdoc />
     public ScriptExecutionMetrics GetMetrics()
     {
-        return new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0);
+        return Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0);
     }
 }
