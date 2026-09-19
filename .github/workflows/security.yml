@@ -1,0 +1,93 @@
+name: Security Audit
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nuget-audit:
+    # Manual runs must follow the same main-only policy as pushes and schedules.
+    if: github.ref == 'refs/heads/main'
+    runs-on: [self-hosted, gung-dotnet]
+    timeout-minutes: 15
+
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+
+    defaults:
+      run:
+        shell: bash
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Restore and audit dependencies
+        id: audit
+        run: |
+          mkdir -p artifacts/security
+          # Force a fresh audit, including when package assets are already cached.
+          # NU1900/NU1905 prevent an unavailable audit source from passing the check.
+          # NU1903/NU1904 fail for high/critical findings; low/moderate stay warnings.
+          dotnet restore Moongate.slnx --force --no-http-cache \
+            -p:NuGetAudit=true \
+            -p:NuGetAuditMode=all \
+            -p:NuGetAuditLevel=low \
+            -warnaserror:NU1900,NU1903,NU1904,NU1905 \
+            2>&1 | tee artifacts/security/restore.log
+
+      - name: Generate vulnerability report
+        id: report
+        if: ${{ !cancelled() && steps.audit.outcome != 'skipped' }}
+        run: >
+          dotnet package list --project Moongate.slnx
+          --vulnerable --include-transitive --no-restore
+          --format json --output-version 1
+          > artifacts/security/vulnerabilities.json
+
+      - name: Publish workflow summary
+        if: ${{ !cancelled() && steps.audit.outcome != 'skipped' }}
+        env:
+          AUDIT_OUTCOME: ${{ steps.audit.outcome }}
+          REPORT_OUTCOME: ${{ steps.report.outcome }}
+        run: |
+          {
+            echo '## NuGet security audit'
+            echo
+            echo "- Restore and audit: **${AUDIT_OUTCOME}**"
+            echo "- JSON report: **${REPORT_OUTCOME}**"
+            echo
+            echo 'High/critical vulnerabilities and audit-source errors fail this check.'
+            echo 'Low/moderate vulnerabilities remain warnings. Download security-audit for the full report.'
+            echo
+            echo '```text'
+            cat artifacts/security/restore.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload audit report
+        if: ${{ !cancelled() && steps.audit.outcome != 'skipped' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: security-audit
+          path: artifacts/security/
+          if-no-files-found: error
+          retention-days: 14
