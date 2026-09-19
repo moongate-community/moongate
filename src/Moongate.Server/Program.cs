@@ -7,6 +7,10 @@ using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
+using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Modules;
+using Moongate.Scripting.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Commands;
@@ -71,7 +75,7 @@ await ConsoleApp.RunAsync(
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
 
-        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save"]);
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save", "scripts"]);
 
         var serverArgs = new MoongateServerArgs()
         {
@@ -147,6 +151,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
                     services.RegisterInstance(serverConfig.WorldSave.ToOptions());
+                    services.RegisterInstance(serverConfig.Scripting.ToOptions(directoriesConfig["scripts"]));
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance<TimeProvider>(TimeProvider.System);
@@ -185,6 +190,14 @@ await ConsoleApp.RunAsync(
                                 "Echoes back its arguments.",
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
+                            )
+                            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
+                            .RegisterScriptModule<LogModule>()
+                            .RegisterCommand<ScriptReloadCommand>(
+                                "script",
+                                "Reloads a script file: script reload <file>.",
+                                CommandSourceType.Console,
+                                AccountType.Administrator
                             )
                             .RegisterMoongateService<IConsolePromptService>(consolePrompt)
                             .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(priority: 1000);

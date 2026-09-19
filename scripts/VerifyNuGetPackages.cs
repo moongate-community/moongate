@@ -18,6 +18,7 @@ internal static class VerifyNuGetPackages
         ["Moongate.Network"] = [],
         ["Moongate.Network.Packets"] = ["Moongate.Core"],
         ["Moongate.Persistence"] = ["Moongate.Core"],
+        ["Moongate.Scripting"] = ["Moongate.Core", "Moongate.Server.Core"],
         ["Moongate.Server.Core"] = ["Moongate.Api", "Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
         ["Moongate.Ultima"] = []
     };
