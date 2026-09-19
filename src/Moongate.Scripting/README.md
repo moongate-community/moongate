@@ -55,7 +55,7 @@ public sealed class GreeterModule
 }
 ```
 
-See [Writing Lua scripts](https://moongate-community.github.io/moongate/server/scripting/)
+See [Writing Lua scripts](https://moongate.sh/server/scripting/)
 for bootstrap/module examples, timer ownership, reload and editor support.
 
 ## Dependencies and scope

@@ -112,7 +112,7 @@ package list, dependencies, and the local verification command.
 
 ## Documentation
 
-The [documentation website](https://moongate-community.github.io/moongate/)
+The [documentation website](https://moongate.sh/)
 includes the [changelog](CHANGELOG.md), server guides, and library documentation.
 Automatic publication happens with releases; explicitly authorized docs-only refreshes can update the site between releases. See [Writing documentation](docs/documentation.md)
 for local preview commands and how to contribute a page.

@@ -58,7 +58,7 @@ await server.StopAsync(CancellationToken.None);
 Console.WriteLine("TCP listener started and stopped.");
 ```
 
-See the [standalone TCP cookbook](https://moongate-community.github.io/moongate/libraries/network-cookbook/)
+See the [standalone TCP cookbook](https://moongate.sh/libraries/network-cookbook/)
 for a runnable framed client/server exchange, per-connection middleware and cleanup.
 
 ## Dependencies and scope

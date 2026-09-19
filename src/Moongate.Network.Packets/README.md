@@ -44,7 +44,7 @@ if (!registry.TryDecode(bytes, out var packet, out var opCode)
 Console.WriteLine($"{opCode:X2}:{ping.Sequence}");
 ```
 
-See [Packets and handlers](https://moongate-community.github.io/moongate/server/packets/)
+See [Packets and handlers](https://moongate.sh/server/packets/)
 for the complete built-in opcode table, a custom packet, byte-level tests and host integration.
 
 ## Binary span utilities

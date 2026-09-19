@@ -85,7 +85,7 @@ Autosave scheduling belongs to the host application. This package does not provi
 
 ## Further reading
 
-See the [persistence cookbook](https://moongate-community.github.io/moongate/server/persistence/) for live entity registration, ZLinq queries, world saves, backup retention and offline restore.
+See the [persistence cookbook](https://moongate.sh/server/persistence/) for live entity registration, ZLinq queries, world saves, backup retention and offline restore.
 
 ## License and source
 

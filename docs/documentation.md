@@ -1,8 +1,8 @@
 # Writing documentation
 
 Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
-documentation. The public site is hosted at
-[moongate-community.github.io/moongate](https://moongate-community.github.io/moongate/).
+documentation. The public site uses the GitHub Pages custom domain at
+[moongate.sh](https://moongate.sh/).
 Automatic updates happen with releases. An explicitly authorized docs-only
 refresh can publish a reviewed development revision without releasing binaries.
 
@@ -15,7 +15,7 @@ npm --prefix website ci
 npm --prefix website run dev
 ```
 
-Open the `/moongate/` URL printed by Astro. Development search is unavailable;
+Open the `/` URL printed by Astro. Development search is unavailable;
 use the production preview to check the search index.
 
 ```sh
@@ -24,7 +24,7 @@ npm --prefix website run build
 npm --prefix website run preview -- --host 127.0.0.1 --port 4321
 ```
 
-Open `http://127.0.0.1:4321/moongate/`. The build imports the source documents,
+Open `http://127.0.0.1:4321/`. The build imports the source documents,
 builds the site and search index, and validates local links, images, and fragments.
 External links are not fetched by the validator.
 
@@ -83,7 +83,8 @@ when release-please creates the release using `GITHUB_TOKEN`.
 
 The jobs run on GitHub-hosted Ubuntu runners. GitHub Pages must use **GitHub
 Actions** as its source, and the `github-pages` environment must permit `main`.
-Pages deployments are serialized. A failed deployment can be retried from its
+The custom domain is `moongate.sh`; the build and link checker share its root base
+path through `website/site-config.mjs`. Pages deployments are serialized. A failed deployment can be retried from its
 release workflow run without publishing a new release.
 
 Each release replaces the current website; historical versions are not hosted.

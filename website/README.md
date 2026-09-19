@@ -11,7 +11,7 @@ npm --prefix website run build
 npm --prefix website run preview -- --host 127.0.0.1 --port 4321
 ```
 
-Open `/moongate/` on the local server. Search requires a production build.
+Open `/` on the local server. Search requires a production build.
 After editing a source outside `website/`, rerun `npm --prefix website run prepare:docs`.
 
 See [Writing documentation](../docs/documentation.md) for source ownership,

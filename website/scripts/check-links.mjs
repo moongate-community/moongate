@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { parse } from 'parse5';
 import { srcsetUrls } from './srcset.mjs';
 import { contentEntries } from '../content-manifest.mjs';
+import { docsSite, docsBasePath } from '../site-config.mjs';
 
 async function htmlFiles(directory, prefix = '') {
   const files = [];
@@ -75,7 +76,7 @@ export async function validateSite({ directory, site, basePath, expectedSlugs = 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   const errors = await validateSite({
     directory: fileURLToPath(new URL('../dist/', import.meta.url)),
-    site: 'https://moongate-community.github.io', basePath: '/moongate/',
+    site: docsSite, basePath: docsBasePath,
     expectedSlugs: contentEntries.map(entry => entry.slug),
   });
   if (errors.length) {

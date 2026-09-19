@@ -58,3 +58,14 @@ test('does not mistake the payload of a data srcset URL for a local file', async
   const options = await fixture(t, '<img srcset="data:image/png;base64,aGVsbG8= 1x, /moongate/logo.png 2x">');
   assert.deepEqual(await validateSite(options), []);
 });
+
+
+test('validates custom-domain root links and rejects stale project-prefixed links', async t => {
+  const options = await fixture(t, '<a href="https://moongate.sh/libraries/api/#wire-format">API</a><img src="/logo.png">');
+  options.site = 'https://moongate.sh';
+  options.basePath = '/';
+  assert.deepEqual(await validateSite(options), []);
+  await writeFile(join(options.directory, 'index.html'), '<a href="/moongate/libraries/api/">Stale</a>');
+  const errors = await validateSite(options);
+  assert(errors.some(error => error.includes('/moongate/libraries/api/')));
+});

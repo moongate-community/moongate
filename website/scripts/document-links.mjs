@@ -1,5 +1,6 @@
 import { realpathSync, statSync } from 'node:fs';
 import path from 'node:path';
+import { docsBasePath } from '../site-config.mjs';
 
 const repositoryUrl = 'https://github.com/moongate-community/moongate';
 const imageExtensions = new Set(['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.avif', '.ico']);
@@ -17,7 +18,7 @@ export function repositoryFile(repositoryRoot, relativePath, allowDirectory = fa
 }
 
 export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, entries, assets }) {
-  if (!url || url.startsWith('#') || url.startsWith('?') || url.startsWith('/moongate/')) return url;
+  if (!url || url.startsWith('#') || url.startsWith('?') || (url.startsWith(docsBasePath) && !url.startsWith('//'))) return url;
   let local = url;
   let absoluteRepositoryPath = false;
   if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(url)) {
@@ -45,9 +46,9 @@ export function resolveDocumentUrl(url, { source, repositoryRoot, sourceRef, ent
       return `${repositoryUrl}/tree/${encodeURIComponent(sourceRef)}/${encodePath(target)}${suffix}`;
     }
     const entry = entries.find(value => value.source === target);
-    if (entry) return `/moongate/${entry.slug}/${suffix}`;
+    if (entry) return `${docsBasePath}${entry.slug}/${suffix}`;
     if (imageExtensions.has(path.posix.extname(target).toLowerCase())) {
-      const assetUrl = `/moongate/generated/${encodePath(target)}`;
+      const assetUrl = `${docsBasePath}generated/${encodePath(target)}`;
       assets.set(target, assetUrl);
       return `${assetUrl}${suffix}`;
     }

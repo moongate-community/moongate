@@ -88,9 +88,9 @@ for composition and shutdown examples.
 
 ## Runtime guides
 
-See [packets and handlers](https://moongate-community.github.io/moongate/server/packets/),
-[game loop and timers](https://moongate-community.github.io/moongate/server/game-loop-and-timers/)
-and [world saves](https://moongate-community.github.io/moongate/server/persistence/)
+See [packets and handlers](https://moongate.sh/server/packets/),
+[game loop and timers](https://moongate.sh/server/game-loop-and-timers/)
+and [world saves](https://moongate.sh/server/persistence/)
 for registration, threading, completion and shutdown examples.
 
 ## License and source
