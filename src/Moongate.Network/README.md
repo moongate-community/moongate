@@ -2,6 +2,16 @@
 
 # Moongate.Network
 
+`MoongateTcpClient.ConnectConfiguredAsync` accepts `TcpClientOptions` to prepare
+a transport stream and install callbacks before reception starts. For example,
+`ConnectionPipeline.PrepareStreamAsync` can authenticate an `SslStream`, while
+`ConfigureClient` subscribes to receive events before the first byte is delivered.
+The preparation token covers the connection/setup deadline and caller cancellation.
+The returned stream must own its input stream; if preparation throws, dispose any
+wrapper created before throwing. After successful setup, the client owns both the
+prepared stream and socket. Configuration failure also releases both resources.
+The existing `ConnectAsync` overload remains available with its original behavior.
+
 Standalone asynchronous TCP transport with framing, middleware, and per-connection pipelines for .NET applications.
 
 ## Installation
