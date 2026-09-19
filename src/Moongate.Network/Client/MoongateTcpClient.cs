@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using Serilog;
 using Moongate.Network.Buffers.Internal;
+using Moongate.Network.Data.Config;
 using Moongate.Network.Data.Events;
 using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Interfaces.Codecs;
@@ -330,6 +331,71 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         }
     }
 
+
+    /// <summary>Connects and installs a prepared stream and callbacks before receiving any data.</summary>
+    public static async Task<MoongateTcpClient> ConnectConfiguredAsync(
+        IPEndPoint endpoint, TcpClientOptions options, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(options);
+        options.Validate();
+        using var deadline = new CancellationTokenSource(options.PreparationTimeout, options.TimeProvider);
+        using var preparation = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, deadline.Token);
+        var socket = new Socket(endpoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        Stream? stream = null;
+        MoongateTcpClient? client = null;
+        try
+        {
+            await socket.ConnectAsync(endpoint, preparation.Token).ConfigureAwait(false);
+            stream = new NetworkStream(socket, ownsSocket: false);
+            if (options.Pipeline.PrepareStreamAsync is { } prepare)
+            {
+                var prepared = await prepare(stream, preparation.Token).ConfigureAwait(false);
+                stream = prepared ?? throw new InvalidOperationException("Preparation returned no stream.");
+            }
+            preparation.Token.ThrowIfCancellationRequested();
+            if (!stream.CanRead || !stream.CanWrite)
+            {
+                throw new InvalidOperationException("Preparation must return a readable and writable stream.");
+            }
+            client = new MoongateTcpClient(socket, stream,
+                options.Pipeline.Middlewares, options.Pipeline.Framer, options.Pipeline.Codec,
+                options.ReceiveBufferSize, options.MaxFrameLength, options.NoDelay);
+            options.Pipeline.ConfigureClient?.Invoke(client);
+            await client.StartAsync(cancellationToken).ConfigureAwait(false);
+            if (!client.IsConnected)
+            {
+                throw new IOException("The connection closed during configuration.");
+            }
+            return client;
+        }
+        catch (OperationCanceledException exception) when (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
+            await ReleaseAsync().ConfigureAwait(false);
+            throw new TimeoutException("Connection preparation timed out.", exception);
+        }
+        catch
+        {
+            await ReleaseAsync().ConfigureAwait(false);
+            throw;
+        }
+
+        async ValueTask ReleaseAsync()
+        {
+            if (client is not null)
+            {
+                await client.DisposeAsync().ConfigureAwait(false);
+            }
+            else
+            {
+                try
+                {
+                    if (stream is not null) { await stream.DisposeAsync().ConfigureAwait(false); }
+                }
+                finally { socket.Dispose(); }
+            }
+        }
+    }
 
     /// <summary>
     /// Checks whether this client pipeline contains at least one middleware instance of the specified type.

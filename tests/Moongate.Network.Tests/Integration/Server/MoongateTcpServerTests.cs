@@ -11,6 +11,35 @@ public sealed class MoongateTcpServerTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
+    [Fact]
+    public async Task Endpoint_ConfiguredAddressChangesAfterBind_PreservesBoundSnapshotDuringDrain()
+    {
+        var configuredEndpoint = new IPEndPoint(IPAddress.Loopback, 0);
+        await using var server = new MoongateTcpServer(configuredEndpoint);
+        await server.StartAsync(CancellationToken.None).WaitAsync(Timeout);
+        var boundEndpoint = server.Endpoint;
+
+        configuredEndpoint.Address = IPAddress.Any;
+        configuredEndpoint.Port = 1;
+
+        Assert.Equal(IPAddress.Loopback, boundEndpoint.Address);
+        Assert.Equal(boundEndpoint, server.Endpoint);
+        var returnedEndpoint = server.Endpoint;
+        returnedEndpoint.Address = IPAddress.None;
+        returnedEndpoint.Port = 2;
+        Assert.Equal(boundEndpoint, server.Endpoint);
+
+        await server.StopAcceptingAsync().WaitAsync(Timeout);
+
+        Assert.False(server.IsRunning);
+        Assert.Equal(boundEndpoint, server.Endpoint);
+        Assert.Equal(boundEndpoint.Port, server.Port);
+
+        await server.StopAsync(CancellationToken.None).WaitAsync(Timeout);
+
+        Assert.Equal(configuredEndpoint, server.Endpoint);
+    }
+
     [Theory]
     [InlineData(0, 1, "receiveBufferSize")]
     [InlineData(1024 * 1024 + 1, 1, "receiveBufferSize")]

@@ -73,6 +73,6 @@ which services start; separate login and game runtimes will use it in a subseque
 
 ## Libraries
 
-The six library packages have their own English READMEs and runnable examples.
+The seven library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
