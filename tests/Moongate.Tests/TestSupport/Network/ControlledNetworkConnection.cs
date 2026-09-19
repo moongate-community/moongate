@@ -10,6 +10,7 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _closeRequested = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly Channel<byte[]> _sent = Channel.CreateUnbounded<byte[]>();
+    private readonly TaskCompletionSource _sendStarted = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private int _connected = 1;
     private int _closeCalls;
 
@@ -20,6 +21,9 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     public INetFramer? Framer => null;
     public Task Completion => _completion.Task;
     public Task CloseRequested => _closeRequested.Task;
+    public Task SendStarted => _sendStarted.Task;
+    public Task? SendGate { get; init; }
+    public Exception? SendFailure { get; init; }
     public int CloseCalls => Volatile.Read(ref _closeCalls);
     public bool DelayCompletion { get; init; }
     public bool DelayDisconnectionState { get; init; }
@@ -41,12 +45,14 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         if (!DelayCompletion) { Complete(); }
     }
 
-    public Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
+    public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
         if (!IsConnected) { throw new IOException("Connection is closed."); }
+        _sendStarted.TrySetResult();
+        if (SendGate is not null) { await SendGate.WaitAsync(cancellationToken); }
+        if (SendFailure is not null) { throw SendFailure; }
         _sent.Writer.TryWrite(payload.ToArray());
-        return Task.CompletedTask;
     }
 
     public Task<byte[]> ReadSentAsync(CancellationToken token)

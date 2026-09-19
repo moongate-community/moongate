@@ -14,6 +14,7 @@ namespace Moongate.Server.Services.Network;
 public class NetworkService : INetworkService
 {
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
+    private readonly IConnectionService _connections;
     private readonly ISessionService _sessionService;
     private readonly IPacketDispatchService _dispatcher;
     private readonly IPacketSendService _sender;
@@ -30,17 +31,20 @@ public class NetworkService : INetworkService
         MoongateServerConfig config,
         ISessionService sessionService,
         IPacketDispatchService dispatcher,
-        IPacketSendService sender
+        IPacketSendService sender,
+        IConnectionService connections
     )
-        : this(CreateListeners(config), sessionService, dispatcher, sender) { }
+        : this(CreateListeners(config), sessionService, dispatcher, sender, connections) { }
 
     internal NetworkService(
         IReadOnlyList<MoongateTcpServer> listeners,
         ISessionService sessionService,
         IPacketDispatchService dispatcher,
-        IPacketSendService sender
+        IPacketSendService sender,
+        IConnectionService connections
     )
     {
+        _connections = connections;
         _sessionService = sessionService;
         _dispatcher = dispatcher;
         _sender = sender;
@@ -137,6 +141,11 @@ public class NetworkService : INetworkService
 
     private void TcpServerOnOnClientConnect(object? sender, TcpClientEventArgs e)
     {
+        if (!_connections.TryRegister(e.Client))
+        {
+            e.Client.Dispose();
+            return;
+        }
         _sessionService.GetOrCreate(e.Client);
         _logger.Information(
             "Client connected from {Address} with session ID {SessionId}",

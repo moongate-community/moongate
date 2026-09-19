@@ -198,6 +198,7 @@ public sealed class PacketNetworkPipelineTests
         Assert.True(fixture.Loop.TryPost(blocker));
         await blocker.Entered.WaitAsync(Timeout);
         if (faultLoop) Assert.True(fixture.Loop.TryPost(new ActionGameLoopWorkItem(() => throw new IOException("fatal loop failure"))));
+        fixture.AllowCleanupFailure = faultLoop;
         var stopping = fixture.Network.StopAsync();
         Assert.False(stopping.IsCompleted);
         Assert.Same(session, Assert.Single(fixture.Sessions.GetAll()));
@@ -214,7 +215,7 @@ public sealed class PacketNetworkPipelineTests
         var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()], framer: new UoPacketFramer(PacketRegistry.Default)));
         var second = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0), framer: new UoPacketFramer(PacketRegistry.Default));
-        await using var fixture = new PacketNetworkFixture([first, second]);
+        await using var fixture = new PacketNetworkFixture([first, second]) { AllowCleanupFailure = true };
         await fixture.StartAsync();
         using var peer = await fixture.ConnectAsync();
         using var otherPeer = new TcpClient();
@@ -238,10 +239,11 @@ public sealed class PacketNetworkPipelineTests
         occupied.Start();
         var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()]));
-        await using var fixture = new PacketNetworkFixture([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)]);
+        await using var fixture = new PacketNetworkFixture([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)]) { AllowCleanupFailure = true };
         var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         first.OnClientConnect += (_, _) => connected.TrySetResult();
         await fixture.Loop.StartAsync();
+        await fixture.Connections.StartAsync();
         await fixture.Sender.StartAsync();
         await fixture.Dispatcher.StartAsync();
         await first.StartAsync(default);

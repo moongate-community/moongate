@@ -6,33 +6,29 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
-/// <summary>Snapshots outgoing packets and sends them through bounded per-connection queues.</summary>
+/// <summary>Snapshots outgoing packets and sends them through bounded, game-independent connection queues.</summary>
 public sealed class PacketSendService : IPacketSendService
 {
     private readonly Lock _gate = new();
-    private readonly ISessionService _sessions;
+    private readonly IConnectionService _connections;
     private readonly int _capacity;
     private readonly Dictionary<long, SessionPacketOutbox> _outboxes = new();
+    private readonly Dictionary<long, Task> _cleanups = new();
+    private readonly List<Exception> _failures = [];
     private readonly ILogger _logger = Log.ForContext<PacketSendService>();
-
     private bool _running;
     private bool _stopped;
+    private Task? _stopTask;
 
     internal int ActiveOutboxCount
     {
-        get
-        {
-            lock (_gate)
-            {
-                return _outboxes.Count;
-            }
-        }
+        get { lock (_gate) { return _outboxes.Count; } }
     }
 
-    public PacketSendService(ISessionService sessions, int capacity = 128)
+    public PacketSendService(IConnectionService connections, int capacity = 128)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
-        _sessions = sessions;
+        _connections = connections;
         _capacity = capacity;
     }
 
@@ -41,14 +37,9 @@ public sealed class PacketSendService : IPacketSendService
     {
         lock (_gate)
         {
-            if (_stopped)
-            {
-                throw new InvalidOperationException("The packet sender cannot restart after shutdown.");
-            }
-
+            if (_stopped) { throw new InvalidOperationException("The packet sender cannot restart after shutdown."); }
             _running = true;
         }
-
         return Task.CompletedTask;
     }
 
@@ -59,12 +50,8 @@ public sealed class PacketSendService : IPacketSendService
         {
             _running = false;
             _stopped = true;
-            foreach (var outbox in _outboxes.Values)
-            {
-                outbox.Close();
-            }
-
-            return Task.WhenAll(_outboxes.Values.Select(outbox => outbox.Completion));
+            foreach (var outbox in _outboxes.Values) { outbox.Close(); }
+            return _stopTask ??= StopCoreAsync();
         }
     }
 
@@ -73,34 +60,25 @@ public sealed class PacketSendService : IPacketSendService
     {
         lock (_gate)
         {
-            if (!_running || !_sessions.TryGet(sessionId, out var session) ||
-                session.NetworkSession.Client is not { IsConnected: true } client)
-            {
-                return false;
-            }
-
+            if (!_running || !_connections.TryGet(sessionId, out var connection)) { return false; }
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new SessionPacketOutbox(client, _capacity, Retire);
+                outbox = new SessionPacketOutbox(connection, _capacity, _connections.DisconnectAsync);
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
             }
+            else if (!ReferenceEquals(outbox.Connection, connection)) { return false; }
 
             try
             {
-                // Snapshot before returning: callers may reuse their outgoing packet after admission.
-                if (outbox.TryWrite(PacketCodec.Encode(packet)))
-                {
-                    return true;
-                }
-
+                if (outbox.TryWrite(PacketCodec.Encode(packet))) { return true; }
                 _logger.Warning("Outbound packet queue is full or closed for session {SessionId}", sessionId);
             }
             catch (Exception exception)
             {
                 _logger.Error(exception, "Could not encode outgoing packet for session {SessionId}", sessionId);
             }
-
             outbox.Close();
             return false;
         }
@@ -116,24 +94,53 @@ public sealed class PacketSendService : IPacketSendService
                 outbox.Close();
                 return outbox.Completion;
             }
-
-            if (_sessions.TryGet(sessionId, out var session) && session.NetworkSession.Client is { } client)
+            var cleanup = _connections.DisconnectAsync(sessionId);
+            if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
             {
-                // Closing changes IsConnected synchronously, preventing subsequent admission even
-                // while the dispatcher still owns retirement of this session from its registry.
-                client.Dispose();
-                return client.Completion;
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
             }
-
-            return Task.CompletedTask;
+            return cleanup;
         }
     }
 
-    private void Retire(long sessionId)
+    private async Task ObserveCleanupAsync(long sessionId, Task cleanup, SessionPacketOutbox? outbox)
     {
-        lock (_gate)
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+        try { await cleanup.ConfigureAwait(false); }
+        catch (Exception exception)
         {
-            _outboxes.Remove(sessionId);
+            lock (_gate) { _failures.Add(exception); }
+            _logger.Error(exception, "Outgoing connection cleanup failed for session {SessionId}", sessionId);
+        }
+        finally
+        {
+            lock (_gate)
+            {
+                if (outbox is not null && _outboxes.TryGetValue(sessionId, out var current) && ReferenceEquals(current, outbox))
+                {
+                    _outboxes.Remove(sessionId);
+                }
+                _cleanups.Remove(sessionId);
+            }
+        }
+    }
+
+    private async Task StopCoreAsync()
+    {
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+        while (true)
+        {
+            Task[] pending;
+            lock (_gate)
+            {
+                pending = _cleanups.Values.ToArray();
+                if (pending.Length == 0)
+                {
+                    if (_failures.Count > 0) { throw new AggregateException(_failures); }
+                    return;
+                }
+            }
+            await Task.WhenAll(pending).ConfigureAwait(false);
         }
     }
 }

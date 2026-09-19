@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
-using Moongate.Network.Client;
+using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 
@@ -32,7 +32,7 @@ internal sealed class SessionCountSourceStub : ISessionService
         throw new NotSupportedException();
     }
 
-    public GameSession GetOrCreate(MoongateTcpClient client)
+    public GameSession GetOrCreate(INetworkConnection client)
     {
         throw new NotSupportedException();
     }

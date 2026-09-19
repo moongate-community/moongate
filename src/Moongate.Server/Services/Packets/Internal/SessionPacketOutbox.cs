@@ -1,22 +1,22 @@
 using System.Threading.Channels;
-using Moongate.Network.Client;
-using Serilog;
+using Moongate.Network.Interfaces.Client;
 
 namespace Moongate.Server.Services.Packets.Internal;
 
 internal sealed class SessionPacketOutbox
 {
-    private readonly MoongateTcpClient _client;
     private readonly Channel<byte[]> _queue;
-    private readonly Action<long> _retire;
-    private readonly ILogger _logger = Log.ForContext<SessionPacketOutbox>();
+    private readonly Func<long, Task> _disconnect;
+    private readonly TaskCompletionSource _closure = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private int _closed;
 
+    public INetworkConnection Connection { get; }
     public Task Completion { get; private set; } = Task.CompletedTask;
 
-    public SessionPacketOutbox(MoongateTcpClient client, int capacity, Action<long> retire)
+    public SessionPacketOutbox(INetworkConnection connection, int capacity, Func<long, Task> disconnect)
     {
-        _client = client;
-        _retire = retire;
+        Connection = connection;
+        _disconnect = disconnect;
         _queue = Channel.CreateBounded<byte[]>(new BoundedChannelOptions(capacity)
         {
             SingleReader = true,
@@ -28,67 +28,54 @@ internal sealed class SessionPacketOutbox
 
     public void Start()
     {
-        // Transport middleware can block before its first await. Start the entire drain off-loop.
+        // Middleware can block synchronously: one worker per connection, never per packet.
         Completion = Task.Run(RunAsync);
     }
 
     public bool TryWrite(byte[] frame)
     {
-        return _queue.Writer.TryWrite(frame);
+        return Volatile.Read(ref _closed) == 0 && _queue.Writer.TryWrite(frame);
     }
 
     public void Close()
     {
+        if (Interlocked.Exchange(ref _closed, 1) != 0) { return; }
         _queue.Writer.TryComplete();
-        _client.Dispose();
+        _ = CloseConnectionAsync();
+    }
+
+    private async Task CloseConnectionAsync()
+    {
+        try
+        {
+            // The registry closes admission synchronously before yielding for transport cleanup.
+            await _disconnect(Connection.SessionId).ConfigureAwait(false);
+            _closure.TrySetResult();
+        }
+        catch (Exception exception) { _closure.TrySetException(exception); }
     }
 
     private async Task RunAsync()
     {
-        try
-        {
-            var drain = DrainAsync();
-            // A peer can disconnect while this outbox is idle and no further packet is sent.
-            await Task.WhenAny(drain, _client.Completion).ConfigureAwait(false);
-            Close();
-            try
-            {
-                await drain.ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (!_client.IsConnected)
-            {
-                // Closing the transport cancels any admitted send.
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Outgoing packet send failed for session {SessionId}", _client.SessionId);
-            }
-
-            try
-            {
-                await _client.Completion.ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Outgoing connection cleanup failed for session {SessionId}", _client.SessionId);
-            }
-        }
-        finally
-        {
-            _retire(_client.SessionId);
-        }
+        List<Exception> failures = [];
+        var drain = DrainAsync();
+        await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
+        Close();
+        try { await drain.ConfigureAwait(false); }
+        catch (OperationCanceledException) when (!Connection.IsConnected) { }
+        catch (Exception exception) { failures.Add(exception); }
+        try { await _closure.Task.ConfigureAwait(false); }
+        catch (Exception exception) { failures.Add(exception); }
+        while (_queue.Reader.TryRead(out _)) { }
+        if (failures.Count > 0) { throw new AggregateException(failures); }
     }
 
     private async Task DrainAsync()
     {
         await foreach (var frame in _queue.Reader.ReadAllAsync().ConfigureAwait(false))
         {
-            if (!_client.IsConnected)
-            {
-                break;
-            }
-
-            await _client.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
+            if (Volatile.Read(ref _closed) != 0 || !Connection.IsConnected) { break; }
+            await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
