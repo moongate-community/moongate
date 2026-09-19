@@ -45,7 +45,7 @@ using Moongate.Server.Core.Types.Diagnostics;
 
 namespace Moongate.Sample.Plugin.Diagnostics;
 
-/// <summary>Reports how many greetings the plugin produced, as the <c>greeter.hello_calls</c> counter.</summary>
+/// <summary>Reports how many greetings the plugin produced; the diagnostics service publishes it as <c>greeter.hello_calls</c>.</summary>
 public sealed class GreetingMetricProvider : IMetricProvider
 {
     private readonly GreetingCounter _counter;
@@ -64,7 +64,7 @@ public sealed class GreetingMetricProvider : IMetricProvider
     public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        IReadOnlyList<MetricSample> samples = [new MetricSample("greeter.hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
+        IReadOnlyList<MetricSample> samples = [new MetricSample("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
 
         return new ValueTask<IReadOnlyList<MetricSample>>(samples);
     }
@@ -89,7 +89,7 @@ public void Register(Container container)
 }
 ```
 
-`GreetingCounter` is registered first, as an instance, so both `GreeterModule` and `GreetingMetricProvider` resolve the same shared object. Calling `CollectAsync` produces one sample: name `greeter.hello_calls`, unit `calls`, type `Counter`.
+`GreetingCounter` is registered first, as an instance, so both `GreeterModule` and `GreetingMetricProvider` resolve the same shared object. Calling `CollectAsync` produces one sample: local name `hello_calls`, unit `calls`, type `Counter` — `DiagnosticService` publishes it as `greeter.hello_calls` (see [The contract](#the-contract)).
 
 ## The contract
 
@@ -179,7 +179,7 @@ public enum DiagnosticMetricType
 
 Use `Gauge` for a value that can move up or down between samples, such as `game_loop.queue_depth` or `system.working_set_bytes` in the built-in metrics table. Use `Counter` for a value that only accumulates since the process started, such as `game_loop.accepted_work_items_total`; `DiagnosticService` enforces the "only accumulates" half by rejecting a negative `Counter` value, but it cannot detect a counter that silently resets to a lower number and still reports a valid, non-negative value — that stays a semantic contract between the provider and its consumers (see [Common mistakes](#common-mistakes)).
 
-`DiagnosticService` builds the key each sample appears under in `DiagnosticSnapshot.Metrics` as `ProviderName + "." + sample.Name`. As `docs/diagnostics.md` states: "Provider names and local metric names must match `[a-z][a-z0-9_]*`." That pattern applies to `sample.Name` the same way it applies to `ProviderName`, so the local name a provider returns cannot itself contain a `.` — it is the leaf part only, in snake_case, with the provider prefix added by the service. Local names must also be unique within one provider's own result; a repeat is rejected the same way an invalid name is (see [Failures](#failures)). Units are short nouns — `calls`, `bytes`, `seconds`, `count` — matching the built-in metrics table, not abbreviations or symbols.
+`DiagnosticService` builds the key each sample appears under in `DiagnosticSnapshot.Metrics` as `ProviderName + "." + sample.Name`. As `docs/diagnostics.md` states: "Provider names and local metric names must match `[a-z][a-z0-9_]*`." That pattern applies to `sample.Name` the same way it applies to `ProviderName`, so the local name a provider returns cannot itself contain a `.` — it is the leaf part only, in snake_case, with the provider prefix added by the service. `GreetingMetricProvider`'s sample above is exactly this: it returns the local name `hello_calls`, and `DiagnosticService` qualifies it into the `greeter.hello_calls` key that shows up in the snapshot (see [Testing](#testing) for a test that collects it through the real service and checks that key). Local names must also be unique within one provider's own result; a repeat is rejected the same way an invalid name is (see [Failures](#failures)). Units are short nouns — `calls`, `bytes`, `seconds`, `count` — matching the built-in metrics table, not abbreviations or symbols.
 
 ## Failures
 
@@ -452,16 +452,18 @@ public async Task StartAsync_PublishesSnapshotBeforeEventAndReadsDoNotCollect()
 }
 ```
 
-The sample plugin's own provider is exercised end to end in `tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs`, which resolves it from the container, calls `CollectAsync` directly, and checks the sample it returns:
+The sample plugin's own provider is exercised end to end in `tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs`, which resolves it from the container and collects it through a real `DiagnosticService` (via `DiagnosticServiceFixture`, the same fixture `DiagnosticServiceTests` uses) rather than calling `CollectAsync` directly — proving the qualified name from [The contract](#the-contract) round-trips through the service's own validation:
 
 ```csharp
 var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
-var sample = Assert.Single(await provider.CollectAsync());
-Assert.Equal("greeter.hello_calls", sample.Name);
-Assert.Equal(2, sample.Value);
+using var diagnostics = new DiagnosticServiceFixture([provider]);
+await diagnostics.Service.StartAsync();
+var snapshot = await diagnostics.NextAsync();
+Assert.Empty(snapshot.FailedProviders);
+Assert.Equal(2, snapshot.Metrics["greeter.hello_calls"].Value);
 ```
 
-The count is `2` because the test calls `greeter.hello` once from Lua and once more through the `greet` console command before collecting.
+The count is `2` because the test calls `greeter.hello` once from Lua and once more through the `greet` console command before collecting. `FailedProviders` is empty and `greeter.hello_calls` is present, so the sample's local name (`hello_calls`) passed `DiagnosticService`'s validation and was qualified into the snapshot key exactly as the naming rule predicts.
 
 ## Common mistakes
 
