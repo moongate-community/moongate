@@ -318,6 +318,71 @@ public sealed class LuaCSharpBehaviourTests
     }
 
     [Fact]
+    public void ASuspendedCoroutine_KeepsTheTokenOfItsFirstResume()
+    {
+        using var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        state.OpenCoroutineLibrary();
+        Sync(state.DoStringAsync(
+            "function job() coroutine.yield('wait', 1) local n = 0 for i = 1, 5000 do n = n + i end return n end",
+            "probe",
+            default
+        ));
+        var job = state.Environment["job"].Read<LuaFunction>();
+        CancellationTokenSource? target = null;
+        var instructions = 0;
+        var hook = new LuaFunction("budget", (context, _) =>
+        {
+            instructions += 500;
+
+            if (instructions > 1000)
+            {
+                target?.Cancel();
+            }
+
+            return new ValueTask<int>(context.Return());
+        });
+
+        // Cancelling the token of the *second* resume does not stop the coroutine: the ~10,000-instruction
+        // loop runs to its end even though the token it was resumed with is cancelled.
+        using var firstResume = new CancellationTokenSource();
+        using var secondResume = new CancellationTokenSource();
+        var yielded = state.CreateCoroutine(job, isProtectedMode: false);
+        yielded.SetHook(hook, "", 500);
+        var stack = new LuaStack(16);
+        Sync(yielded.ResumeAsync(stack, firstResume.Token));
+        Assert.Equal(LuaThreadStatus.Suspended, yielded.GetStatus());
+        target = secondResume;
+        instructions = 0;
+        stack.Clear();
+        stack.Push(new LuaValue(1));
+
+        var count = Sync(yielded.ResumeAsync(stack, secondResume.Token));
+
+        Assert.Equal(2, count);
+        Assert.Equal(LuaThreadStatus.Dead, yielded.GetStatus());
+        Assert.Equal(12502500, stack.AsSpan()[1].Read<double>());
+        Assert.True(secondResume.IsCancellationRequested);
+        Assert.True(instructions > 1000, $"the hook fired {instructions} instructions in, so it did cancel");
+
+        // Cancelling the token of the *first* resume does stop it, on the second resume.
+        using var keptToken = new CancellationTokenSource();
+        using var ignoredToken = new CancellationTokenSource();
+        var other = state.CreateCoroutine(job, isProtectedMode: false);
+        other.SetHook(hook, "", 500);
+        var otherStack = new LuaStack(16);
+        Sync(other.ResumeAsync(otherStack, keptToken.Token));
+        target = keptToken;
+        instructions = 0;
+        otherStack.Clear();
+        otherStack.Push(new LuaValue(1));
+
+        Assert.Throws<LuaCanceledException>(() => Sync(other.ResumeAsync(otherStack, ignoredToken.Token)));
+
+        Assert.False(ignoredToken.IsCancellationRequested);
+    }
+
+    [Fact]
     public void ACoroutineCreatedFromLua_DoesNotInheritTheHook()
     {
         using var state = LuaState.Create();

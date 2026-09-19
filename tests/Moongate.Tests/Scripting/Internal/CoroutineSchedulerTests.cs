@@ -248,6 +248,48 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     [Fact]
+    public void Budget_AbortsARunawayResumeAfterAWait()
+    {
+        _scheduler.Start(Define("f", "wait(1) while true do end"), "a.lua");
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        var error = Assert.Single(_errors);
+        Assert.Contains("script budget exceeded", error.Message, StringComparison.Ordinal);
+        Assert.Equal(1, _scheduler.BudgetAborts);
+        Assert.Equal(0, _scheduler.ActiveCount);
+    }
+
+    [Fact]
+    public void Budget_StopsAnOverBudgetResumeAfterAWait_BeforeItsSideEffects()
+    {
+        // The bounded twin of the test above: ~200,000 instructions against a 5,000 limit. On a build
+        // where the resume's token is not the one the runtime checks this finishes instead of hanging,
+        // so the regression shows up as a failure rather than a timeout.
+        _scheduler.Start(Define("f", "wait(1) local n = 0 for i = 1, 100000 do n = n + i end finished = true"), "a.lua");
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        Assert.Equal(LuaValueType.Nil, _state.Environment["finished"].Type);
+        Assert.Contains("script budget exceeded", Assert.Single(_errors).Message, StringComparison.Ordinal);
+        Assert.Equal(1, _scheduler.BudgetAborts);
+    }
+
+    [Fact]
+    public void Budget_AbortsARunawayResumeAfterAWait_ThroughPcall()
+    {
+        _scheduler.Start(Define("f", "wait(1) pcall(function() while true do end end) escaped = true"), "a.lua");
+
+        _timers.Fire(_timers.Timers.Single().Id);
+
+        var error = Assert.Single(_errors);
+        Assert.Contains("script budget exceeded", error.Message, StringComparison.Ordinal);
+        Assert.Equal(1, _scheduler.BudgetAborts);
+        Assert.Equal(0, _scheduler.ActiveCount);
+        Assert.Equal(LuaValueType.Nil, _state.Environment["escaped"].Type);
+    }
+
+    [Fact]
     public void Budget_CannotBeSwallowedByPcall()
     {
         var outcome = _scheduler.Start(Define("f", "pcall(function() while true do end end) escaped = true"), "a.lua");

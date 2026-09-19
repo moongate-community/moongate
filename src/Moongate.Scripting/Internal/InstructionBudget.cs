@@ -4,9 +4,11 @@ namespace Moongate.Scripting.Internal;
 
 /// <summary>
 /// Counts VM instructions through the runtime's hook and aborts a unit of execution that runs past the
-/// budget. A unit is either one coroutine resume (<see cref="Resume{T}"/>) or one top-level chunk
-/// (<see cref="Chunk{T}"/>); each gets a fresh counter, its own limit and its own cancellation source,
-/// and restores the enclosing unit's afterwards.
+/// budget. A unit is either one coroutine resume (<c>Resume</c>) or one top-level chunk
+/// (<see cref="Chunk{T}"/>); each gets a fresh counter and its own limit, and restores the enclosing
+/// unit's afterwards. The cancellation source is per unit for a chunk or a single-shot call, and per
+/// coroutine for a scheduled coroutine's resumes, which is why <c>Resume</c> has an overload taking the
+/// caller's source.
 /// </summary>
 /// <remarks>
 /// The hook never throws. In LuaCSharp 0.5.6 a hook that throws leaves the VM's in-hook flag set, so the
@@ -65,28 +67,53 @@ internal sealed class InstructionBudget
         }), "", _hookInterval);
     }
 
-    /// <summary>Runs one coroutine resume, or one host call, under the per-resume limit.</summary>
+    /// <summary>
+    /// Runs one single-shot unit — a resume that will never be resumed again — under the per-resume
+    /// limit, on a source of its own. A coroutine the scheduler can resume later must use the overload
+    /// taking its own source instead.
+    /// </summary>
     /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
     public T Resume<T>(Func<CancellationToken, T> unit)
     {
-        return Run(unit, _maxInstructionsPerResume);
+        using var source = new CancellationTokenSource();
+
+        return Run(source, unit, _maxInstructionsPerResume);
     }
 
-    /// <summary>Runs one top-level chunk (the prelude, the bootstrap file, a file loaded by LoadFile) under the per-chunk limit.</summary>
+    /// <summary>
+    /// Runs one resume of a coroutine that owns <paramref name="unitSource"/>, under the per-resume
+    /// limit. The caller's source is used and left open: the runtime keeps the token of a coroutine's
+    /// first resume with its suspended frames and checks that one on every later resume, so every
+    /// resume of one coroutine must carry the same token for the hook's cancellation to be seen.
+    /// </summary>
+    /// <param name="unitSource">The coroutine's source, owned and disposed by the caller.</param>
+    /// <param name="unit">The resume, given the source's token.</param>
+    /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
+    public T Resume<T>(CancellationTokenSource unitSource, Func<CancellationToken, T> unit)
+    {
+        ArgumentNullException.ThrowIfNull(unitSource);
+
+        return Run(unitSource, unit, _maxInstructionsPerResume);
+    }
+
+    /// <summary>Runs one top-level chunk (the prelude, the bootstrap file, a file loaded by LoadFile) under the per-chunk limit, on a source of its own.</summary>
     /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
     public T Chunk<T>(Func<CancellationToken, T> unit)
     {
-        return Run(unit, _maxInstructionsPerChunk);
+        using var source = new CancellationTokenSource();
+
+        return Run(source, unit, _maxInstructionsPerChunk);
     }
 
-    private T Run<T>(Func<CancellationToken, T> unit, int limit)
+    private T Run<T>(CancellationTokenSource source, Func<CancellationToken, T> unit, int limit)
     {
         ArgumentNullException.ThrowIfNull(unit);
         var enclosingInstructions = _instructionsThisUnit;
         var enclosingLimit = _limit;
         var enclosingUnit = _unit;
         var enclosingAbort = _abort;
-        var source = new CancellationTokenSource();
+        // The counter and the limit are per unit even when the source is not: a coroutine that waits
+        // often may run indefinitely, as long as no single resume runs past the limit.
         _instructionsThisUnit = 0;
         _limit = limit;
         _unit = source;
@@ -116,7 +143,6 @@ internal sealed class InstructionBudget
             _limit = enclosingLimit;
             _unit = enclosingUnit;
             _abort = enclosingAbort;
-            source.Dispose();
         }
     }
 }

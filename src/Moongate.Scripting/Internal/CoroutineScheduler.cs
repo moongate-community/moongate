@@ -97,10 +97,17 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
         foreach (var id in _ownership.ReleaseCoroutines(owner))
         {
-            if (_active.Remove(id, out var entry) && entry.PendingTimer is not null)
+            if (!_active.Remove(id, out var entry))
+            {
+                continue;
+            }
+
+            if (entry.PendingTimer is not null)
             {
                 _timers.UnregisterTimer(entry.PendingTimer);
             }
+
+            entry.Dispose();
         }
     }
 
@@ -123,6 +130,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
             {
                 _timers.UnregisterTimer(entry.PendingTimer);
             }
+
+            entry.Dispose();
         }
 
         _active.Clear();
@@ -149,7 +158,9 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
             try
             {
-                count = _budget.Resume(token => SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, token)));
+                // The coroutine's own source, not a per-resume one: the runtime keeps the token of the
+                // first resume with the suspended frames and checks that one on every later resume.
+                count = _budget.Resume(entry.Budget, token => SyncValueTask.Run(entry.Coroutine.ResumeAsync(_stack, token)));
             }
             catch (ScriptBudgetExceededException exception)
             {
@@ -259,10 +270,12 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         return ScriptResult.Failed(error);
     }
 
+    /// <summary>Drops a finished or failed coroutine and releases its budget source; the entry is never resumed again.</summary>
     private void Forget(ScheduledCoroutine entry)
     {
         _active.Remove(entry.Id);
         _ownership.ForgetCoroutine(entry.Id);
+        entry.Dispose();
     }
 
     private void EnsureNotResuming()

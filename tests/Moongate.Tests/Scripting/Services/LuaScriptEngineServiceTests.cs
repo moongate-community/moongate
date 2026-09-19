@@ -257,19 +257,21 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     [Fact]
     public async Task HostReachingFunctions_AreNotAvailableToScripts()
     {
+        _scripts.Write("common/util.lua", "return { greeting = 'still reachable' }");
         _scripts.Write("init.lua", """
             function libs()
                 return io == nil, os == nil, dofile == nil, loadfile == nil, rawset == nil,
                     coroutine.create == nil, coroutine.wrap == nil, coroutine.resume == nil,
                     package.searchpath == nil, package.loadlib == nil, package.path == nil,
-                    package.cpath == nil, #package.searchers, require ~= nil, coroutine.yield ~= nil
+                    package.cpath == nil, #package.searchers, require ~= nil, coroutine.yield ~= nil,
+                    require('common.util').greeting
             end
             """);
         using var engine = NewEngine();
         await engine.StartAsync();
 
         Assert.Equal(
-            [true, true, true, true, true, true, true, true, true, true, true, true, 1d, true, true],
+            [true, true, true, true, true, true, true, true, true, true, true, true, 1d, true, true, "still reachable"],
             engine.Call("libs").Values
         );
     }
