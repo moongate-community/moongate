@@ -20,8 +20,8 @@
 set -euo pipefail
 
 usage() {
-    sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
-    exit 2
+    sed -n '2,19p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+    exit "${1:-2}"
 }
 
 fail() {
@@ -36,22 +36,37 @@ out="$repository/artifacts/api-certs"
 days=""
 positional=()
 scratch=""
-trap '[ -n "$scratch" ] && rm -f "$scratch"' EXIT
+request=""
+# Paths of a leaf being issued; cleared once every file is in place, so a
+# failure half-way never leaves a private key next to an empty certificate.
+partial=""
+cleanup() {
+    rm -f -- "$scratch" "$request"
+
+    if [ -n "$partial" ]; then
+        rm -f -- "$partial.crt" "$partial.key" "$partial.pfx"
+        printf 'api-certificates: removed the partially issued files for %s\n' "$partial" >&2
+    fi
+}
+trap cleanup EXIT
 
 while [ $# -gt 0 ]; do
     case "$1" in
         --out)
-            [ $# -ge 2 ] || fail "--out needs a directory"
+            [ $# -ge 2 ] && [ "${2#-}" = "$2" ] || fail "--out needs a directory"
             out="$2"
             shift 2
             ;;
         --days)
-            [ $# -ge 2 ] || fail "--days needs a number"
+            [ $# -ge 2 ] && [ "${2#-}" = "$2" ] || fail "--days needs a number"
             days="$2"
             shift 2
             ;;
         -h | --help)
-            usage
+            usage 0
+            ;;
+        -*)
+            fail "unknown option $1"
             ;;
         *)
             positional+=("$1")
@@ -89,11 +104,11 @@ init() {
     refuse_existing "$out/ca.key"
     (
         umask 077
-        openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out "$out/ca.key" 2>/dev/null
+        openssl genpkey -quiet -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out "$out/ca.key"
     )
     openssl req -x509 -new -key "$out/ca.key" -sha256 -days "$ca_days" \
         -subj "/CN=Moongate API CA" \
-        -addext "basicConstraints=critical,CA:TRUE" \
+        -addext "basicConstraints=critical,CA:TRUE,pathlen:0" \
         -addext "keyUsage=critical,keyCertSign" \
         -addext "subjectKeyIdentifier=hash" \
         -out "$out/ca.crt"
@@ -130,8 +145,7 @@ issue() {
     fi
 
     scratch="$(mktemp)"
-    local extensions="$scratch"
-    cat >"$extensions" <<EOF
+    cat >"$scratch" <<EOF
 basicConstraints=critical,CA:FALSE
 keyUsage=critical,digitalSignature
 extendedKeyUsage=$usage_oid
@@ -140,22 +154,22 @@ subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid
 EOF
 
+    partial="$out/$name"
     (
         umask 077
-        openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out "$out/$name.key" 2>/dev/null
+        openssl genpkey -quiet -algorithm RSA -pkeyopt rsa_keygen_bits:2048 -out "$out/$name.key"
     )
-    local request
     request="$(mktemp)"
     openssl req -new -key "$out/$name.key" -sha256 -subj "/CN=$name" -out "$request"
     openssl x509 -req -in "$request" -CA "$out/ca.crt" -CAkey "$out/ca.key" -CAcreateserial \
-        -days "$leaf_days" -sha256 -extfile "$extensions" -out "$out/$name.crt" 2>/dev/null
-    rm -f "$request"
+        -days "$leaf_days" -sha256 -extfile "$scratch" -out "$out/$name.crt"
     (
         umask 077
         MOONGATE_PFX_PASSWORD="$password" openssl pkcs12 -export \
             -inkey "$out/$name.key" -in "$out/$name.crt" -certfile "$out/ca.crt" \
             -name "$name" -passout env:MOONGATE_PFX_PASSWORD -out "$out/$name.pfx"
     )
+    partial=""
     printf 'Issued %s certificate %s (valid %s days)\n' "$role" "$out/$name.crt" "$leaf_days"
     printf 'SHA-256 fingerprint for PeersByCertificateSha256: %s\n' "$(fingerprint_of "$out/$name.crt")"
 }

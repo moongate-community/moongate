@@ -8,22 +8,24 @@ internal sealed class ScriptedCertificates : IDisposable
 {
     private const string PfxPassword = "test-only";
 
-    private readonly string _directory;
-
-    public string Directory => _directory;
+    /// <summary>Gets the temporary directory the script writes into; deleted on dispose.</summary>
+    public string OutputDirectory { get; }
 
     public ScriptedCertificates()
     {
-        _directory = Path.Combine(Path.GetTempPath(), "moongate-api-certs-" + Guid.NewGuid().ToString("N"));
+        OutputDirectory = Path.Combine(Path.GetTempPath(), "moongate-api-certs-" + Guid.NewGuid().ToString("N"));
     }
 
+    /// <summary>Returns whether both bash and openssl can be found on the PATH, which the script needs.</summary>
     public static bool IsOpenSslAvailable()
     {
-        var path = Environment.GetEnvironmentVariable("PATH") ?? "";
+        var directories = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator);
 
-        return path.Split(Path.PathSeparator).Any(directory => File.Exists(Path.Combine(directory, "openssl")));
+        return new[] { "openssl", "bash" }.All(tool => directories.Any(directory =>
+            File.Exists(Path.Combine(directory, tool)) || File.Exists(Path.Combine(directory, tool + ".exe"))));
     }
 
+    /// <summary>Locates the script by walking up from the test output directory to the repository root.</summary>
     public static string ScriptPath()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -41,8 +43,8 @@ internal sealed class ScriptedCertificates : IDisposable
         return Path.Combine(directory.FullName, "scripts", "api-certificates.sh");
     }
 
-    /// <summary>Runs the script with the given arguments and returns its exit code and combined output.</summary>
-    public (int ExitCode, string Output) Run(params string[] arguments)
+    /// <summary>Runs the script with the given arguments plus the output directory, returning its exit code and combined output.</summary>
+    public async Task<(int ExitCode, string Output)> RunAsync(params string[] arguments)
     {
         var start = new ProcessStartInfo("bash")
         {
@@ -59,39 +61,43 @@ internal sealed class ScriptedCertificates : IDisposable
         }
 
         start.ArgumentList.Add("--out");
-        start.ArgumentList.Add(_directory);
+        start.ArgumentList.Add(OutputDirectory);
         start.Environment["MOONGATE_PFX_PASSWORD"] = PfxPassword;
         using var process = Process.Start(start) ?? throw new InvalidOperationException("bash did not start");
         process.StandardInput.Close();
-        var output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
-        process.WaitForExit();
+        var standardOutput = process.StandardOutput.ReadToEndAsync();
+        var standardError = process.StandardError.ReadToEndAsync();
+        await process.WaitForExitAsync();
 
-        return (process.ExitCode, output);
+        return (process.ExitCode, await standardOutput + await standardError);
     }
 
+    /// <summary>Loads ca.crt.</summary>
     public X509Certificate2 LoadRoot()
     {
-        return X509CertificateLoader.LoadCertificateFromFile(Path.Combine(_directory, "ca.crt"));
+        return X509CertificateLoader.LoadCertificateFromFile(Path.Combine(OutputDirectory, "ca.crt"));
     }
 
+    /// <summary>Loads a leaf from its PEM certificate and key files.</summary>
     public X509Certificate2 LoadLeaf(string name)
     {
         return X509Certificate2.CreateFromPemFile(
-            Path.Combine(_directory, name + ".crt"),
-            Path.Combine(_directory, name + ".key")
+            Path.Combine(OutputDirectory, name + ".crt"),
+            Path.Combine(OutputDirectory, name + ".key")
         );
     }
 
+    /// <summary>Loads a leaf from its PKCS#12 file with the password the script was given.</summary>
     public X509Certificate2 LoadPfx(string name)
     {
-        return X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(_directory, name + ".pfx"), PfxPassword);
+        return X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(OutputDirectory, name + ".pfx"), PfxPassword);
     }
 
     public void Dispose()
     {
-        if (System.IO.Directory.Exists(_directory))
+        if (Directory.Exists(OutputDirectory))
         {
-            System.IO.Directory.Delete(_directory, true);
+            Directory.Delete(OutputDirectory, true);
         }
     }
 }
