@@ -36,10 +36,15 @@ internal sealed class TestCertificateAuthority : IDisposable
 
     public ApiTlsOptions Options(X509Certificate2 local, X509Certificate2 remote, string remoteId)
     {
+        return Options(Root, local, remote, remoteId);
+    }
+
+    public static ApiTlsOptions Options(X509Certificate2 root, X509Certificate2 local, X509Certificate2 remote, string remoteId)
+    {
         return new ApiTlsOptions
         {
             Certificate = local,
-            TrustedRoots = new[] { Root },
+            TrustedRoots = new[] { root },
             PeersByCertificateSha256 = new Dictionary<string, ApiPeerIdentity>
             {
                 [remote.GetCertHashString(HashAlgorithmName.SHA256)] = new(remoteId, new ushort[] { 100 })

@@ -120,6 +120,19 @@ Server admission reserves capacity before TLS and retains it until failed setup 
 
 Endpoints snapshot options, mappings, permissions and certificate handles. Callers may dispose their original certificate objects after construction. Endpoint-owned copies remain alive until setup, I/O and handlers actually finish. Obtain production certificates from your approved credential provider; do not embed private material in source, logs or command arguments.
 
+## Generate a private CA
+
+The repository ships `scripts/api-certificates.sh` (bash and OpenSSL), which produces certificates in exactly the shape the policy validates: an RSA 4096 CA restricted to signing leaves (`pathlen:0`, ten years), server leaves with the `serverAuth` usage and a DNS name equal to the host clients connect to, client leaves with the `clientAuth` usage, all RSA 2048 with `digitalSignature` and two-year validity by default.
+
+```shell
+scripts/api-certificates.sh init                       # artifacts/api-certs/ca.crt, ca.key
+scripts/api-certificates.sh issue server game.internal # game.internal.crt/.key/.pfx
+scripts/api-certificates.sh issue client admin-console # admin-console.crt/.key/.pfx
+scripts/api-certificates.sh fingerprint admin-console  # SHA-256 for the allowlist
+```
+
+`ca.crt` is what `TrustedRoots` takes on both sides; `ca.key` (and the `ca.srl` serial file next to it) stays with whoever issues certificates. Each endpoint loads its own leaf as `Certificate`: from the PKCS#12 file with `X509CertificateLoader.LoadPkcs12FromFile`, which works on every platform, or on Linux and macOS from the PEM pair with `X509Certificate2.CreateFromPemFile` (on Windows a PEM-loaded key is ephemeral and `SslStream` rejects it for server authentication). The PKCS#12 password is read from `MOONGATE_PFX_PASSWORD` or prompted for; the script never takes it as an argument. `issue` prints the leaf's SHA-256 fingerprint in the form `PeersByCertificateSha256` expects, and `fingerprint` prints it again later. To revoke a peer, remove its fingerprint and restart the endpoint; the script produces no CRL or OCSP material because the policy never consults them. Existing files are never overwritten, and a failed `issue` removes what it had started writing. Pass `--out DIR` to write somewhere other than `artifacts/api-certs`, and `--days N` to change the validity of whatever the accompanying command creates.
+
 ## Wire format
 
 Every frame begins with a four-byte unsigned big-endian length **excluding the prefix**, followed by one MessagePack array:
