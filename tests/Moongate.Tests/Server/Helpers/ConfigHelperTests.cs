@@ -205,4 +205,59 @@ public sealed class ConfigHelperTests
         Assert.Throws<InvalidOperationException>(config.Validate);
     }
 
+    [Fact]
+    public void Load_ScriptingDefaults_WriteSnakeCaseAndMapToOptions()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        var config = ConfigHelper.Load(path);
+        var scripting = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["scripting"]);
+        Assert.Equal("init.lua", scripting["bootstrap_file"]);
+        Assert.Equal(150_000L, scripting["max_instructions_per_resume"]);
+        Assert.Equal(10_000_000L, scripting["max_instructions_per_chunk"]);
+        Assert.Equal(1_000L, scripting["hook_interval"]);
+        Assert.Equal(true, scripting["write_definitions"]);
+        var options = config.Scripting.ToOptions(directory.Path);
+        Assert.Equal("init.lua", options.BootstrapFile);
+        Assert.Equal(150_000, options.MaxInstructionsPerResume);
+        Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
+        Assert.Equal(1_000, options.HookInterval);
+        Assert.True(options.WriteDefinitions);
+    }
+
+    [Fact]
+    public void Load_ScriptingOverrides_MapsConfiguredValues()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", """
+            [scripting]
+            bootstrap_file = "boot.lua"
+            max_instructions_per_resume = 20000
+            max_instructions_per_chunk = 500000
+            hook_interval = 500
+            write_definitions = false
+            """);
+        var options = ConfigHelper.Load(path).Scripting.ToOptions(directory.Path);
+        Assert.Equal("boot.lua", options.BootstrapFile);
+        Assert.Equal(20_000, options.MaxInstructionsPerResume);
+        Assert.Equal(500_000, options.MaxInstructionsPerChunk);
+        Assert.Equal(500, options.HookInterval);
+        Assert.False(options.WriteDefinitions);
+    }
+
+    [Theory, InlineData(0, 1000), InlineData(150000, 0), InlineData(150000, 200000)]
+    public void Load_InvalidScriptingBudget_RejectsBeforeServerStartup(int resumeBudget, int hookInterval)
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml",
+            $"[scripting]\nmax_instructions_per_resume = {resumeBudget}\nhook_interval = {hookInterval}\n");
+        Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
+    }
+
+    [Fact]
+    public void Validate_BlankScriptingBootstrapFile_RejectsBeforeServerStartup()
+    {
+        var config = new MoongateServerConfig { Scripting = { BootstrapFile = " " } };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+    }
 }
