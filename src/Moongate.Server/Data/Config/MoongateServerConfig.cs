@@ -16,6 +16,8 @@ public class MoongateServerConfig
 
     public NetworkConfig Network { get; set; } = new NetworkConfig();
 
+    public ApiConfig Api { get; set; } = new();
+
     public UltimaConfig Ultima { get; set; } = new UltimaConfig();
 
     public WorldSaveConfig WorldSave { get; set; } = new();
@@ -31,6 +33,12 @@ public class MoongateServerConfig
         {
             throw new InvalidOperationException("The server mode must be Login, Game, or Standalone.");
         }
+
+        if (Api is null)
+        {
+            throw new InvalidOperationException("The api configuration section cannot be null.");
+        }
+        Api.Validate();
 
         if (WorldSave is null)
         {

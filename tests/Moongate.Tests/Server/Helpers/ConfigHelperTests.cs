@@ -11,6 +11,71 @@ namespace Moongate.Tests.Server.Helpers;
 public sealed class ConfigHelperTests
 {
     [Fact]
+    public void Load_ApiDefaults_PersistsDisabledListenerInSnakeCase()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        var config = ConfigHelper.Load(path);
+        Assert.False(config.Api.Enabled);
+        Assert.Equal(2594, config.Api.Port);
+        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
+        var api = Assert.IsType<TomlTable>(document["api"]);
+        Assert.Equal(false, api["enabled"]);
+        Assert.Equal(2594L, api["port"]);
+        Assert.Equal("0.0.0.0", api["listen_address"]);
+        Assert.Equal("MOONGATE_API_CERTIFICATE_PASSWORD", api["certificate_password_environment_variable"]);
+    }
+
+    [Fact]
+    public void Load_ExistingFileWithoutApi_PreservesFileAndDefaultsToDisabled()
+    {
+        using var directory = new TemporaryDirectory();
+        const string toml = "[network]\ngame_port = 4001\n";
+        var path = directory.CreateFile("moongate.toml", toml);
+        var config = ConfigHelper.Load(path);
+        Assert.False(config.Api.Enabled);
+        Assert.Equal(2594, config.Api.Port);
+        Assert.Equal(toml, File.ReadAllText(path));
+    }
+
+    [Fact]
+    public void Load_ApiOverrides_ReadsEndpointTlsAndPeerPermissions()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", """
+            [api]
+            enabled = true
+            listen_address = "::1"
+            port = 4002
+            certificate_path = "certs/server.pfx"
+            certificate_password_environment_variable = "TEST_API_PASSWORD"
+            trusted_root_paths = ["certs/root.pem"]
+            [[api.peers]]
+            certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
+            peer_id = "admin"
+            allowed_operations = [100, 65535]
+            """);
+        var api = ConfigHelper.Load(path).Api;
+        Assert.True(api.Enabled);
+        Assert.Equal("::1", api.ListenAddress);
+        Assert.Equal(4002, api.Port);
+        Assert.Equal("certs/server.pfx", api.CertificatePath);
+        Assert.Equal("TEST_API_PASSWORD", api.CertificatePasswordEnvironmentVariable);
+        Assert.Equal(["certs/root.pem"], api.TrustedRootPaths);
+        var peer = Assert.Single(api.Peers);
+        Assert.Equal("admin", peer.PeerId);
+        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations);
+    }
+
+    [Fact]
+    public void Load_EnabledApiWithoutTls_RejectsBeforeStartup()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[api]\nenabled = true\n");
+        Assert.Throws<InvalidOperationException>(() => ConfigHelper.Load(path));
+    }
+
+    [Fact]
     public void Load_MissingFile_CreatesParentsAndPersistsModelDefaultsInSnakeCase()
     {
         using var directory = new TemporaryDirectory();
