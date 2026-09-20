@@ -70,12 +70,18 @@ public sealed class ApiCertificateStoreTests
         Assert.True(second.MatchesHostname("localhost", false, false));
     }
 
-    [Fact]
-    public async Task Load_ConcurrentCreators_PublishOneCompleteIdentity()
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task Load_ConcurrentCreators_PublishOneCompleteIdentity(bool repairPublicCopy)
     {
         using var directory = new TemporaryDirectory();
         var directories = new DirectoriesConfig(directory.Path, ["config"]);
         var config = GenerationConfig();
+        if (repairPublicCopy)
+        {
+            using var existing = new ApiCertificateStore().Load(config, directories, TimeProvider.System);
+            // Also exercise simultaneous reads/replacement of an existing export on Windows.
+            File.WriteAllText(Path.Combine(directories["config"], config.CertificatePath) + ".pem", "stale public copy");
+        }
         using var ready = new CountdownEvent(4);
         var start = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var tasks = Enumerable.Range(0, 4).Select(_ => Task.Run(async () =>

@@ -43,7 +43,7 @@ internal sealed class ApiCertificateStore
                 // Appending also supports a configured PFX path that already ends in .pem.
                 var publicPath = path + ".pem";
                 var pem = certificate.ExportCertificatePem();
-                if (!File.Exists(publicPath) || File.ReadAllText(publicPath) != pem)
+                if (!PublicCopyMatches(publicPath, pem))
                 {
                     Publish(publicPath, System.Text.Encoding.ASCII.GetBytes(pem), overwrite: true);
                 }
@@ -81,6 +81,17 @@ internal sealed class ApiCertificateStore
         var bytes = certificate.Export(X509ContentType.Pfx, password);
         try { return Publish(path, bytes, overwrite: false); }
         finally { CryptographicOperations.ZeroMemory(bytes); }
+    }
+
+    private static bool PublicCopyMatches(string path, string pem)
+    {
+        if (!File.Exists(path)) { return false; }
+        // Readers must permit atomic replacement by another creator on Windows as well as Unix.
+        using var reader = new StreamReader(path, new FileStreamOptions
+        {
+            Mode = FileMode.Open, Access = FileAccess.Read, Share = FileShare.Read | FileShare.Delete
+        });
+        return reader.ReadToEnd() == pem;
     }
 
     private static bool Publish(string path, byte[] bytes, bool overwrite)
