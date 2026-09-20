@@ -4,6 +4,7 @@ namespace Moongate.Tests.TestSupport.Scripts;
 [AttributeUsage(AttributeTargets.Method)]
 internal sealed class ShellFactAttribute : FactAttribute
 {
+    /// <summary>Skips the fact when the shell or one of the tools the script needs is missing.</summary>
     public ShellFactAttribute()
     {
         if (!ScriptedInstall.AreToolsAvailable())

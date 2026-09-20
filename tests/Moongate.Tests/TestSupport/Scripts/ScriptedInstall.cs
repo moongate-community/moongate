@@ -19,6 +19,7 @@ internal sealed class ScriptedInstall : IDisposable
     /// <summary>Gets the directory the script links the command into.</summary>
     public string BinDirectory { get; }
 
+    /// <summary>Creates the temporary release, install and bin directories this run uses.</summary>
     public ScriptedInstall()
     {
         _root = Path.Combine(Path.GetTempPath(), "moongate-install-" + Guid.NewGuid().ToString("N"));
@@ -119,6 +120,7 @@ internal sealed class ScriptedInstall : IDisposable
         return Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
     }
 
+    /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
     public void Dispose()
     {
         if (Directory.Exists(_root))

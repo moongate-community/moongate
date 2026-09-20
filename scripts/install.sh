@@ -216,22 +216,49 @@ main() {
 
     STAGING_DIR="${INSTALL_DIR}.new.$$"
     old_dir="${INSTALL_DIR}.old.$$"
-    $SUDO rm -rf "$STAGING_DIR" "$old_dir"
-    $SUDO mkdir -p "$(dirname "$INSTALL_DIR")" "$BIN_DIR"
-    $SUDO cp -R "${WORK_DIR}/moongate-${rid}" "$STAGING_DIR"
-    $SUDO chmod 0755 "${STAGING_DIR}/Moongate.Server"
 
-    if [ -e "$INSTALL_DIR" ]; then
-        $SUDO mv "$INSTALL_DIR" "$old_dir"
+    if ! $SUDO rm -rf "$STAGING_DIR" "$old_dir"; then
+        fail "could not clear a leftover staging directory beside ${INSTALL_DIR}"
     fi
 
-    $SUDO mv "$STAGING_DIR" "$INSTALL_DIR"
+    if ! $SUDO mkdir -p "$(dirname "$INSTALL_DIR")" "$BIN_DIR"; then
+        fail "could not create $(dirname "$INSTALL_DIR") or ${BIN_DIR}"
+    fi
+
+    if ! $SUDO cp -R "${WORK_DIR}/moongate-${rid}" "$STAGING_DIR"; then
+        fail "could not stage the new files in ${STAGING_DIR}"
+    fi
+
+    if ! $SUDO chmod 0755 "${STAGING_DIR}/Moongate.Server"; then
+        fail "could not make ${STAGING_DIR}/Moongate.Server executable"
+    fi
+
+    if [ -e "$INSTALL_DIR" ] && ! $SUDO mv "$INSTALL_DIR" "$old_dir"; then
+        fail "could not move the current installation aside; ${INSTALL_DIR} is untouched"
+    fi
+
+    # The previous installation is parked in $old_dir from here. If the swap fails, put it
+    # back: a failed upgrade must leave the working version in place, not nothing at all.
+    if ! $SUDO mv "$STAGING_DIR" "$INSTALL_DIR"; then
+        if [ -d "$old_dir" ] && $SUDO mv "$old_dir" "$INSTALL_DIR"; then
+            fail "could not install into ${INSTALL_DIR}; the previous installation is back in place"
+        fi
+
+        fail "could not install into ${INSTALL_DIR}; the previous installation is in ${old_dir}"
+    fi
+
     STAGING_DIR=""
-    $SUDO rm -rf "$old_dir"
+    $SUDO rm -rf "$old_dir" || true
     echo "  install    ${INSTALL_DIR}"
 
-    $SUDO rm -f "${BIN_DIR}/moongate"
-    $SUDO ln -s "${INSTALL_DIR}/Moongate.Server" "${BIN_DIR}/moongate"
+    if ! $SUDO rm -f "${BIN_DIR}/moongate"; then
+        fail "could not replace ${BIN_DIR}/moongate"
+    fi
+
+    if ! $SUDO ln -s "${INSTALL_DIR}/Moongate.Server" "${BIN_DIR}/moongate"; then
+        fail "could not link ${BIN_DIR}/moongate"
+    fi
+
     echo "  link       ${BIN_DIR}/moongate"
 
     cat <<'NEXT'
