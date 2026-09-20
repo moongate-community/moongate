@@ -105,9 +105,13 @@ FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported r
 
 Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as `IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
 
+Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. Schema comparison has no migration history: it compares the current database with the current attributes and does not record the prior application model.
+
+`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This acknowledged provider limitation must not be hidden with a silent Npgsql major override. Upgrade the provider/driver combination only after running the PostgreSQL compatibility tests.
+
 ## Further reading
 
-See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership, world saves, transactions, and PostgreSQL backup/restore.
+See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership, world saves, transactions, and database backup responsibility.
 
 ## License and source
 

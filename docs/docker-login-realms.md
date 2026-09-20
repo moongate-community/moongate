@@ -156,8 +156,8 @@ backup or restore workflow; that policy belongs to the operator.
 ## Reproducible local smoke
 
 From the repository root, this disposable gate uses a unique Compose project,
-temporary volumes, and PostgreSQL trust authentication confined to its private
-test network:
+temporary volumes, and synthetic process-only passwords on its private test
+network:
 
 ```sh
 sh examples/docker/login-realms/smoke.sh
@@ -165,8 +165,10 @@ sh examples/docker/login-realms/smoke.sh
 
 It verifies missing-input failure, builds the local images, previews and applies
 the real sample schema, checks runtime SELECT/INSERT/UPDATE/DELETE and DDL denial,
-and checks clean startup and shutdown logs. Its generated password-like values exist only in the process
-environment. The deployable Compose file remains authenticated.
+and checks clean startup and shutdown logs. The Realm 1 passwords contain literal
+text-`COPY` escape sequences, and both roles must authenticate over TCP before the
+schema gate continues. These disposable values exist only in the process
+environment; no plaintext credential file is created.
 
 ## Troubleshooting
 

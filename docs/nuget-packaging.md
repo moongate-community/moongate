@@ -52,6 +52,11 @@ an administrative Npgsql connection. It creates a unique
 only that generated database. Missing configuration fails with an actionable
 message; it never silently skips.
 
+The current `FreeSql.Provider.PostgreSQL` 3.5.311 dependency resolves Npgsql
+5.0.18. Keep that acknowledged provider constraint rather than silently
+overriding Npgsql to another major. A provider/driver upgrade must pass the real
+PostgreSQL package consumer and solution compatibility tests described here.
+
 The solution's PostgreSQL fixtures use the same contract. Point it only at an
 isolated test server whose admin role may create/drop databases:
 

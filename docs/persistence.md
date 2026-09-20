@@ -46,6 +46,10 @@ Use stable, explicit table and column names. Map `Serial` keys to PostgreSQL
 mapped by FreeSql. Every complex property requires an explicit supported mapping,
 navigation mapping, or explicit omission such as `IsIgnore`; do not assume an
 unannotated complex object graph will be serialized or cascaded automatically.
+Persistence mapping is immutable and attribute-only for a CLR type, and it must
+be identical in every owner. A module selects ownership and database target; it
+cannot remap the type. Application and plugin code must not reconfigure a
+persistence type through another raw FreeSql instance.
 
 Register modules and every entity they declare before schema preparation:
 
@@ -78,6 +82,11 @@ Only targets with registered entities resolve their connection. Values use
 Npgsql `key=value;` syntax, for example
 `Host=db;Port=5432;Database=realm;Username=runtime;Password=...`. Supply them from
 your service manager or secret provider.
+
+`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
+driver branch is an acknowledged provider limitation. Do not silently override
+the Npgsql major version: upgrade the FreeSql provider as a compatible set and
+run the PostgreSQL compatibility suite before deploying it.
 
 `auto_sync_schema` defaults to false. Normal startup compares the registered
 model with PostgreSQL and fails if DDL is required. Preview and apply changes with
@@ -126,6 +135,10 @@ handles ordinary model changes, but it cannot infer business meaning. Use its
 `OldName` metadata for a supported table or column rename. Use separately reviewed,
 versioned SQL for transformations such as splitting a value, backfilling rows,
 changing units, merging tables, or enforcing a new invariant.
+
+Moongate and FreeSql keep no migration history. Schema preview compares the
+current attributed model with the current database; it is not a recorded version
+sequence or a reliable detector of the previous application model.
 
 Test every migration on production-like data. Preview first, stop the affected
 runtime, apply, verify, then start the new code. Downgrades are operator-managed: generated synchronization

@@ -1,19 +1,14 @@
 #!/usr/bin/env sh
 set -eu
 
-read_password()
+read_quoted_password_with_sentinel()
 {
     secret_file=$1
     if [ ! -r "$secret_file" ]; then
         echo "Required database secret is not readable: $secret_file" >&2
         exit 1
     fi
-    cat -- "$secret_file"
-}
-
-quote_connection_value()
-{
-    printf '%s' "$1" | sed 's/"/""/g'
+    { cat -- "$secret_file"; printf x; } | sed 's/"/""/g'
 }
 
 export_connection()
@@ -22,10 +17,11 @@ export_connection()
     database_name=$2
     user_name=$3
     secret_file=$4
-    password=$(quote_connection_value "$(read_password "$secret_file")")
-    host=$(quote_connection_value "${MOONGATE_DATABASE_HOST:-postgres}")
-    database=$(quote_connection_value "$database_name")
-    user=$(quote_connection_value "$user_name")
+    password=$(read_quoted_password_with_sentinel "$secret_file")
+    password=${password%x}
+    host=$(printf '%s' "${MOONGATE_DATABASE_HOST:-postgres}" | sed 's/"/""/g')
+    database=$(printf '%s' "$database_name" | sed 's/"/""/g')
+    user=$(printf '%s' "$user_name" | sed 's/"/""/g')
     port=${MOONGATE_DATABASE_PORT:-5432}
     export "$variable_name=Host=\"$host\";Port=$port;Database=\"$database\";Username=\"$user\";Password=\"$password\";Pooling=true"
 }

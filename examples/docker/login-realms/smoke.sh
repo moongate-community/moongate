@@ -5,7 +5,7 @@ example_directory=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 repository=$(CDPATH= cd -- "$example_directory/../../.." && pwd)
 project="moongate-smoke-$(date +%s)-$$"
 temporary_directory=$(mktemp -d)
-compose="docker compose -p $project -f $example_directory/compose.yaml -f $example_directory/compose.smoke.yaml"
+compose="docker compose -p $project -f $example_directory/compose.yaml"
 
 cleanup()
 {
@@ -23,20 +23,28 @@ then
     exit 1
 fi
 
-# Disposable values exist only in this process environment. The smoke override
-# selects PostgreSQL trust authentication, so no generated credential is stored.
+# Disposable values exist only in this process environment. The Realm 1 values
+# contain literal PostgreSQL text-COPY escapes to prove exact password handling.
 export UO_DATA_PATH="$temporary_directory/uo"
 export MOONGATE_POSTGRES_ADMIN_PASSWORD="smoke-admin-$project"
 export MOONGATE_ACCOUNTS_SCHEMA_PASSWORD="smoke-accounts-schema-$project"
 export MOONGATE_ACCOUNTS_RUNTIME_PASSWORD="smoke-accounts-runtime-$project"
-export MOONGATE_REALM_1_SCHEMA_PASSWORD="smoke-realm-1-schema-$project"
-export MOONGATE_REALM_1_RUNTIME_PASSWORD="smoke-realm-1-runtime-$project"
+export MOONGATE_REALM_1_SCHEMA_PASSWORD='smoke-schema-\t-\N-\\-'"$project"
+export MOONGATE_REALM_1_RUNTIME_PASSWORD='smoke-runtime-\n-\x41-\\-'"$project"
 export MOONGATE_REALM_2_SCHEMA_PASSWORD="smoke-realm-2-schema-$project"
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="smoke-realm-2-runtime-$project"
 
 $compose config --quiet
 $compose build login game-1 game-2 schema-preview schema-apply
-$compose up -d postgres
+$compose up -d --wait postgres
+
+$compose exec -T -e PGPASSWORD="$MOONGATE_REALM_1_SCHEMA_PASSWORD" postgres \
+    psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_realm_1_schema \
+    -d moongate_realm_1 -c "SELECT current_user;" | grep -Fx moongate_realm_1_schema >/dev/null
+$compose exec -T -e PGPASSWORD="$MOONGATE_REALM_1_RUNTIME_PASSWORD" postgres \
+    psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime \
+    -d moongate_realm_1 -c "SELECT current_user;" | grep -Fx moongate_realm_1_runtime >/dev/null
+echo "PASS: schema and runtime roles authenticate over TCP with exact secret values"
 
 preview=$($compose run --rm schema-preview)
 printf '%s\n' "$preview" | grep -F 'sample_greeter' >/dev/null

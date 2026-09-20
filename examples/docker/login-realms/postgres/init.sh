@@ -9,10 +9,7 @@ provision_role()
         --set=role_name="$role_name" <<SQL
 SELECT format('CREATE ROLE %I LOGIN', :'role_name')
 WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = :'role_name') \gexec
-CREATE TEMP TABLE moongate_password (value text);
-COPY moongate_password FROM '$secret_file';
-SELECT format('ALTER ROLE %I PASSWORD %L', :'role_name', (SELECT value FROM moongate_password)) \gexec
-DROP TABLE moongate_password;
+SELECT format('ALTER ROLE %I PASSWORD %L', :'role_name', pg_read_file('$secret_file')) \gexec
 SQL
 }
 
