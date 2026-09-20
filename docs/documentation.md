@@ -3,8 +3,8 @@
 Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
 documentation. The public site uses the GitHub Pages custom domain at
 [moongate.sh](https://moongate.sh/).
-Automatic updates happen with releases. An explicitly authorized docs-only
-refresh can publish a reviewed development revision without releasing binaries.
+Releases publish the site automatically, and the same workflow can be run by hand to publish
+documentation between releases.
 
 ## Run locally
 
@@ -41,6 +41,9 @@ Do not edit or commit `website/src/content/docs/generated/` or
 `website/public/generated/`. The importer replaces these directories.
 It preserves the original files, including NuGet smoke-test markers and code examples.
 
+The importer also copies `scripts/install.sh` to `website/public/install.sh`, which the site
+serves at `https://moongate.sh/install.sh`. Edit the script, never the copy.
+
 After editing an imported source while the dev server is running, run this in a
 second terminal:
 
@@ -73,8 +76,8 @@ content and the authored homepage intact.
 ## Release publication
 
 After the initial documentation-only publication, automatic documentation builds
-and deployments run **only when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
-requests do not build or publish the website. There is no permanent manual docs trigger.
+and deployments run **when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
+requests do not build or publish the website.
 
 The `docs` job in `.github/workflows/release.yml` calls the reusable
 `.github/workflows/docs.yml`, passing the released SHA and tag. It checks out
@@ -93,16 +96,15 @@ Local builds use `develop` for source links and read the current version from
 preview a release label and source ref, set `MOONGATE_DOCS_VERSION` and
 `MOONGATE_DOCS_REF` before running the build.
 
-## Authorized docs-only refreshes
+## Publish between releases
 
-A maintainer may explicitly authorize a docs-only publication between releases.
-Use an isolated, temporary deployment branch/workflow, pin the checkout and
-`MOONGATE_DOCS_REF` to the reviewed source commit, and set `MOONGATE_DOCS_VERSION`
-to a label such as `develop (after v0.4.0)` when it documents unreleased work.
-Do not create a server release merely to refresh documentation.
+`.github/workflows/docs.yml` also runs from **Actions → Documentation → Run workflow**. Choose
+the branch to publish and leave both inputs empty: the site is built from that branch, source
+links point at `develop`, and the title shows the version in `.release-please-manifest.json`.
+To reproduce exactly what a release publishes, set `release_sha` to the released commit and
+`release_tag` to its tag.
 
-Limit the temporary trigger and Pages environment permission to that exact branch.
-After a successful deployment, verify new pages, search assets and source links on
-the public URL, remove the temporary trigger/permission and retire the deployment
-branch. Keep `.github/workflows/docs.yml` and the ordinary release workflow unchanged.
-This exception does not enable publication on every `develop` commit.
+The `github-pages` environment must permit the branch the run starts from, and deployments are
+serialized, so a manual run and a release run cannot publish at the same time. Each publication
+replaces the whole site; historical versions are not hosted. After a manual publication, check
+the pages you changed, the search index and the source links on the public URL.

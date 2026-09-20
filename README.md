@@ -12,6 +12,15 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+## Install on Linux
+
+```sh
+curl -fsSL https://moongate.sh/install.sh | sh
+```
+
+Installs the latest release into `/opt/moongate` and links it as `moongate`. See
+[Install on Linux](docs/installation.md) for the options, upgrades and removal.
+
 ## Getting started
 
 Use [First start](docs/getting-started.md) to build and configure the server, or
