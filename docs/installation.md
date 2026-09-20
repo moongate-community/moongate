@@ -28,9 +28,18 @@ against glibc. On macOS and Windows, take the archive for your platform from the
 
 ## First start
 
+Give the server a directory of its own and point it there:
+
 ```sh
+sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
 moongate --root-directory /srv/moongate
 ```
+
+Always pass `--root-directory`. Without it the server uses the directory the binary sits in,
+which is the installation directory, and writes its configuration, logs, saves and world saves
+into it. Upgrading replaces that whole directory, so a shard kept there loses its world the next
+time the install line is run. Run as an ordinary user, the attempt fails instead, with
+`Access to the path '/opt/moongate/moongate.pid.lock' is denied`.
 
 On a fresh root the server writes `config/moongate.toml` and exits, because the default client
 path is `ChangeMe`. Set it to your own Ultima Online client data, which Moongate does not
@@ -50,6 +59,9 @@ against a second instance, and how to shut it down without interrupting a world 
 Run the same line again. The new release is staged beside the current one and swapped in with a
 rename, so a failed download or a bad checksum leaves the running installation untouched. Stop
 the server first: replacing the binary under a live process is not supported.
+
+The upgrade replaces `/opt/moongate` entirely and deletes the copy it moved aside. Nothing you
+want to keep belongs in there, which is why the server root goes somewhere else.
 
 ## Remove
 

@@ -23,9 +23,10 @@ curl -fsSL https://moongate.sh/install.sh | sh
 ```
 
 Installs the latest release on Linux, x64 and arm64: the archive's contents land in
-`/opt/moongate` and the command becomes `moongate`. Nothing else is created, because you choose
-where the server root goes at the first start. [What it installs, how to upgrade, how to remove
-it](/start/install/), and how to read the script before running it.
+`/opt/moongate` and the command becomes `moongate`. Start it with a root directory of its own,
+`moongate --root-directory /srv/moongate`, because upgrades replace the installation directory.
+[What it installs, how to upgrade, how to remove it](/start/install/), and how to read the
+script before running it.
 
 ## Find your starting point
 
