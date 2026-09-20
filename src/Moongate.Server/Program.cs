@@ -203,6 +203,7 @@ await ConsoleApp.RunAsync(
                             .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(priority: 1000);
 
                     PacketPipelineRegistration.Register(services);
+                    ApiServerRegistration.Register(services);
 
                     return services;
                 }
