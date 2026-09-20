@@ -123,7 +123,7 @@ package list, dependencies, and the local verification command.
 
 The [documentation website](https://moongate.sh/)
 includes the [changelog](CHANGELOG.md), server guides, and library documentation.
-Automatic publication happens with releases; explicitly authorized docs-only refreshes can update the site between releases. See [Writing documentation](docs/documentation.md)
+Releases publish the site automatically, and the same workflow can be run by hand between releases. See [Writing documentation](docs/documentation.md)
 for local preview commands and how to contribute a page.
 
 ## Contributing

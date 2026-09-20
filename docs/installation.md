@@ -98,7 +98,8 @@ tar -xzf moongate-linux-x64-0.4.0.tar.gz
 
 ## When it refuses
 
-Every refusal prints one line starting with `moongate:` and installs nothing.
+Every refusal prints one line starting with `moongate:`. Up to `could not install into`,
+nothing was installed; the two link messages come after the files are already in place.
 
 | Message | Meaning |
 | --- | --- |
@@ -108,7 +109,8 @@ Every refusal prints one line starting with `moongate:` and installs nothing.
 | `curl or wget is required`, `tar is required`, `sha256sum or shasum is required` | Install the named tool |
 | `root privileges are required` | Re-run with `sudo`, or set `MOONGATE_INSTALL_DIR` and `MOONGATE_BIN_DIR` |
 | `could not resolve the latest release; set MOONGATE_VERSION` | The releases page did not redirect to a version tag; pin one with `MOONGATE_VERSION` |
-| `release v... has no asset for ...`, `release v... has no checksum for ...` | That version has no archive, or no checksum file, for this architecture; `linux-arm64` exists from 0.5.0 onwards |
+| `release v... has no asset for ...`, `release v... has no checksum for ...` | That version has no archive, or no checksum file, for this architecture, or the download itself failed; `linux-arm64` exists from 0.5.0 onwards |
 | `checksum mismatch for ...` | The download does not match the published checksum; nothing was installed |
 | `the archive could not be extracted`, `the archive does not contain moongate-.../Moongate.Server` | The downloaded archive is damaged or has an unexpected layout |
-| `could not stage the new files in ...`, `could not install into ...`, `could not link ...` | The filesystem refused a step of the installation, for instance a full disk. An upgrade puts the previous installation back, and the message says where it ended up |
+| `could not clear a leftover staging directory beside ...`, `could not create ...`, `could not stage the new files in ...`, `could not make ... executable`, `could not move the current installation aside; ... is untouched`, `could not install into ...` | The filesystem refused a step of the installation, for instance a full disk. Nothing new is installed, an upgrade keeps the previous installation, and the message says where it is |
+| `could not replace .../moongate`, `could not link .../moongate` | The new files are in place under `/opt/moongate`, but the `moongate` symlink could not be replaced. Fix the bin directory and run the line again, or make the link yourself with `sudo ln -sfn /opt/moongate/Moongate.Server /usr/local/bin/moongate` |

@@ -1,6 +1,6 @@
 name: Documentation
 
-# Called only by release.yml after release-please creates a release.
+# Called by release.yml after release-please creates a release, or run by hand from the Actions tab.
 on:
   workflow_call:
     inputs:

@@ -29,6 +29,7 @@ Login-to-realm coordination is planned separately.
 
 ## Releases
 
-The site header identifies the documented version. A docs-only development refresh
-is labelled separately from the latest release. Read the
+The site header identifies the documented version. A publication made by hand between
+releases keeps the label of the latest release, so a page may describe work that is not
+in it yet. Read the
 [changelog](/start/changelog/) for features, fixes, and breaking changes.

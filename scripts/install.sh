@@ -23,6 +23,8 @@ REPOSITORY_URL="https://github.com/moongate-community/moongate"
 BASE_URL="${MOONGATE_BASE_URL:-${REPOSITORY_URL}/releases/download}"
 INSTALL_DIR="${MOONGATE_INSTALL_DIR:-/opt/moongate}"
 BIN_DIR="${MOONGATE_BIN_DIR:-/usr/local/bin}"
+# A trailing slash would put the staging directory inside the installation itself.
+INSTALL_DIR="${INSTALL_DIR%/}"
 SUDO=""
 WORK_DIR=""
 STAGING_DIR=""
@@ -240,7 +242,11 @@ main() {
     # The previous installation is parked in $old_dir from here. If the swap fails, put it
     # back: a failed upgrade must leave the working version in place, not nothing at all.
     if ! $SUDO mv "$STAGING_DIR" "$INSTALL_DIR"; then
-        if [ -d "$old_dir" ] && $SUDO mv "$old_dir" "$INSTALL_DIR"; then
+        if [ ! -d "$old_dir" ]; then
+            fail "could not install into ${INSTALL_DIR}; nothing was installed"
+        fi
+
+        if $SUDO mv "$old_dir" "$INSTALL_DIR"; then
             fail "could not install into ${INSTALL_DIR}; the previous installation is back in place"
         fi
 
