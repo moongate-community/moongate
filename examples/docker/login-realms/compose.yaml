@@ -1,0 +1,70 @@
+# Topology example: mode does not yet select a role-specific runtime.
+# Account sharing, realm discovery and login handoff are not implemented.
+name: moongate-login-realms
+
+x-moongate: &moongate
+  build:
+    context: ../../..
+    dockerfile: src/Moongate.Server/Dockerfile
+  stop_grace_period: 60s
+  networks:
+    - moongate
+
+x-ultima: &ultima
+  type: bind
+  source: ${UO_DATA_PATH:?Set UO_DATA_PATH to your absolute Ultima Online client directory}
+  target: /uo
+  read_only: true
+  bind:
+    create_host_path: false
+
+services:
+  login:
+    <<: *moongate
+    ports:
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${LOGIN_PORT:-2593}:2593"
+    configs:
+      - source: login-config
+        target: /data/config/moongate.toml
+    volumes:
+      - login-data:/data
+      - *ultima
+
+  game-1:
+    <<: *moongate
+    ports:
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
+    configs:
+      - source: game-1-config
+        target: /data/config/moongate.toml
+    volumes:
+      - game-1-data:/data
+      - *ultima
+
+  game-2:
+    <<: *moongate
+    ports:
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
+    configs:
+      - source: game-2-config
+        target: /data/config/moongate.toml
+    volumes:
+      - game-2-data:/data
+      - *ultima
+
+configs:
+  login-config:
+    file: ./config/login.toml
+  game-1-config:
+    file: ./config/game-1.toml
+  game-2-config:
+    file: ./config/game-2.toml
+
+volumes:
+  login-data:
+  game-1-data:
+  game-2-data:
+
+networks:
+  moongate:
+    driver: bridge
